@@ -30,9 +30,7 @@ namespace HardStopGuardian
             {
                 var defaults = new List<CheckupItem>
                 {
-                    new() { Label = "Tomar remédio", Time = new TimeSpan(8, 0, 0) },
-                    new() { Label = "Regar as plantas", Time = new TimeSpan(8, 0, 0) },
-                    new() { Label = "Teste", Time = new TimeSpan(18, 14, 0) }
+                    // Vazio
                 };
                 Save(defaults);
                 return defaults;

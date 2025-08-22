@@ -142,6 +142,6 @@ namespace HardStopGuardian
             base.OnFormClosing(e);
         }
 
-        private void UpdateCountdownLabel() => _cd.Text = $"Aguarde {_remaining} s…";
+        private void UpdateCountdownLabel() => _cd.Text = $"Aguarde {_remaining}s...";
     }
 }
