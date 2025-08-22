@@ -14,6 +14,7 @@ namespace HardStopGuardian
         };
         private readonly Button _ok = new() { Text = "OK", DialogResult = DialogResult.OK };
         private readonly Button _cancel = new() { Text = "Cancelar", DialogResult = DialogResult.Cancel };
+        public void SetInitialTime(DateTime dt) => _time.Value = dt;
 
         public DateTime SelectedTime => _time.Value;
 
