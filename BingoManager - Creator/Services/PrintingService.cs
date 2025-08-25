@@ -131,13 +131,15 @@ namespace BingoCreator.Services
         }
 
         // Imprimir Cartelas
-        public static void PrintCards5x5(string setName, List<List<DataRow>> allCards, int cardsQnt, string cardsTitle, string cardsEnd, string themeKey)
+        public static void PrintCards5x5(string setName, List<List<DataRow>> allCards, int cardsQnt, string cardsTitle, string cardsEnd, string themeKey, string headerKey, string modelKey)
         {
             string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             string fileName = $"Cartelas - {setName}.pdf";
-            string filePath = Path.Combine(desktop, fileName); 
-            
+            string filePath = Path.Combine(desktop, fileName);
+
             var theme = ThemeCatalog.Get(themeKey);
+            DesignService.Header5x5 = string.IsNullOrWhiteSpace(headerKey) ? "SORTE" : headerKey.Trim();
+            DesignService.CellStyle = string.IsNullOrWhiteSpace(modelKey) ? "SQUARE" : modelKey.Trim();
 
             var document = new PdfDocument();
             document.Info.Title = $"Cartelas - {cardsTitle}";
@@ -185,13 +187,14 @@ namespace BingoCreator.Services
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        public static void PrintCards4x4(string setName, List<List<DataRow>> allCards, int cardsQnt, string cardsTitle, string cardsEnd, string themeKey)
+        public static void PrintCards4x4(string setName, List<List<DataRow>> allCards, int cardsQnt, string cardsTitle, string cardsEnd, string themeKey, string modelKey)
         {
             string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string fileName = $"Cartelas - {setName}.pdf";
             string filePath = Path.Combine(desktop, fileName);
 
             var theme = ThemeCatalog.Get(themeKey);
+            DesignService.CellStyle = string.IsNullOrWhiteSpace(modelKey) ? "SQUARE" : modelKey.Trim();
 
             var document = new PdfDocument();
             document.Info.Title = $"Cartelas 4×4 – {cardsTitle}";
@@ -245,7 +248,7 @@ namespace BingoCreator.Services
         private static void DrawCards5x5(XGraphics gfx, double x, double y, double width, double height, List<DataRow> cardsElements, int cardNumber, string titleText, string footerText, Theme theme, XPen pen, XFont titleFont, XFont headerFont, XFont elementFont, XFont footerFont, XFont numberFont)
         {
             double padding = 8;
-            double cellH = 40;                 // mantém sua altura original
+            double cellH = 40;     // altura fixa que você usa hoje
             double headerH = cellH;
 
             var cardRect = new XRect(x, y, width, height);
@@ -255,19 +258,24 @@ namespace BingoCreator.Services
             var titleRect = new XRect(x + padding, y + padding, width - 2 * padding, headerH - padding);
             DesignService.DrawHeaderBand(gfx, titleRect, theme, titleText, titleFont);
 
-            // Cabeçalho B I N G O
-            string[] headers = { "S", "O", "R", "T", "E" };
+            // Cabeçalho (SORTE/BINGO) conforme seleção
+            string[] headers = DesignService.GetHeader5x5Letters();
             double cellW = width / 5.0;
 
             for (int j = 0; j < 5; j++)
             {
                 var r = new XRect(x + j * cellW, y + headerH, cellW, cellH);
-                gfx.DrawRectangle(XBrushes.White, r);
+                var headOverlay = new XSolidBrush(DesignService.WithOpacity(theme.HeaderBg, DesignService.CellOverlayOpacity));
+                gfx.DrawRectangle(headOverlay, r);
                 gfx.DrawRectangle(pen, r);
                 gfx.DrawString(headers[j], headerFont, DesignService.TextBrush(theme), r, XStringFormats.Center);
+
             }
 
-            // Grid 5x5
+            // Grid 5×5 com estilo de célula
+            var modelKey = DesignService.CellStyle; // "SQUARE" ou "ROUNDED"
+            double radius = 9;
+
             for (int row = 0; row < 5; row++)
             {
                 for (int col = 0; col < 5; col++)
@@ -276,10 +284,10 @@ namespace BingoCreator.Services
                     double yy = y + 2 * cellH + row * cellH;
                     var cell = new XRect(xx, yy, cellW, cellH);
 
-                    gfx.DrawRectangle(XBrushes.White, cell);
-                    gfx.DrawRectangle(pen, cell);
+                    DesignService.FillCellBackground(gfx, cell, theme, modelKey, radius);
+                    DesignService.StrokeCellBorder(gfx, cell, theme, pen, modelKey, radius);
 
-                    int idx = col * 5 + row; // mantém seu mapeamento original
+                    int idx = col * 5 + row;
                     if (idx < cardsElements.Count)
                     {
                         string name = cardsElements[idx]?["Name"]?.ToString() ?? string.Empty;
@@ -289,43 +297,89 @@ namespace BingoCreator.Services
                 }
             }
 
-            // Rodapé (mensagem + número/tema)
+            // Rodapé (faixa + texto responsivo em 2 linhas, limitado a 80% do título)
             double footerY = y + 7 * cellH;
-            var footerRect = new XRect(x + padding, footerY, (width * 0.72) - padding, cellH - padding);
-            gfx.DrawString(footerText, footerFont, DesignService.AccentBrush(theme), footerRect, XStringFormats.Center);
+            double bandPad = padding;
 
-            var numRect = new XRect(x + (width * 0.72), footerY, (width * 0.28) - padding, cellH - padding);
+            var bandRect = new XRect(x + bandPad, footerY + bandPad / 2.0, width - 2 * bandPad, cellH - bandPad);
+
+            // faixa com transparência (como no header)
+            var footerBg = DesignService.WithOpacity(theme.HeaderBg, DesignService.FooterBandOpacity);
+            gfx.DrawRectangle(new XSolidBrush(footerBg), bandRect);
+
+            // 72% / 28% (mensagem / número)
+            double leftW = bandRect.Width * 0.72;
+            double rightW = bandRect.Width - leftW;
+
+            var footerRect = new XRect(bandRect.X, bandRect.Y, leftW, bandRect.Height);
+            var numRect = new XRect(footerRect.Right, bandRect.Y, rightW, bandRect.Height);
+
+            // limite da mensagem: máx 80% do título
+            double footerMaxPt = Math.Min(Math.Min(cellH * 0.60, 18), titleFont.Size * 0.80);
+
+            // fonte da MENSAGEM (até 2 linhas)
+            var footerFontFit = DesignService.FitFontForTwoLines(
+                gfx, footerText, theme.FontTitle, XFontStyle.Bold,
+                maxWidth: footerRect.Width - 6,
+                maxHeight: footerRect.Height - 4,
+                maxPointSize: footerMaxPt,
+                minPointSize: 9
+            );
+
+            // desenha a MENSAGEM (2 linhas máx.)
+            DrawWrappedCenteredText(
+                gfx,
+                footerText,
+                footerFontFit,
+                new XRect(footerRect.X + 3, footerRect.Y + 2, footerRect.Width - 6, footerRect.Height - 4)
+            );
+
+            // NÚMERO = 80% do tamanho FINAL da mensagem (e ainda respeita a caixa)
             string idText = $"Cartela {cardNumber:0000}";
-            gfx.DrawString(idText, numberFont, DesignService.AccentBrush(theme), numRect, XStringFormats.Center);
+            double numTargetPt = footerFontFit.Size * 0.80;                    // << regra pedida
+            double numberMaxPt = Math.Min(numTargetPt, Math.Min(cellH * 0.55, 16));
+
+            var numberFontFit = DesignService.FitFontToRect(
+                gfx, idText, theme.FontTitle, XFontStyle.Bold,
+                maxWidth: numRect.Width - 6, maxHeight: numRect.Height - 4,
+                maxPointSize: numberMaxPt, minPointSize: 8
+            );
+
+            // textos em preto
+            gfx.DrawString(idText, numberFontFit, DesignService.TextBrush(theme), numRect, XStringFormats.Center);
+
         }
 
         private static void DrawCards4x4( XGraphics gfx, double x, double y, double width, double height, List<DataRow> cardsElements, int cardNumber, string titleText, string footerText, Theme theme, XPen pen, XFont titleFont, XFont elementFont, XFont footerFont, XFont numberFont)
         {
             double padding = 8;
-            double cellH = height / 6.0;     // 1 linha título + 4 linhas grid + 1 linha rodapé
+            double cellH = height / 6.0; // 1 título + 4 grid + 1 rodapé
             double headerH = cellH;
 
             var cardRect = new XRect(x, y, width, height);
             DesignService.DrawCardBackground(gfx, cardRect, theme, cornerRadius: 12);
 
-            // Cabeçalho colorido com “bolha” e título central
+            // Cabeçalho
             var titleRect = new XRect(x + padding, y + padding, width - 2 * padding, headerH - padding);
             DesignService.DrawHeaderBand(gfx, titleRect, theme, titleText, titleFont);
 
-            // Grid 4×4 (células brancas com borda do tema)
+            // Grid 4×4 com estilo de célula
             double gridTop = y + headerH;
             double cellW = width / 4.0;
+
+            var modelKey = DesignService.CellStyle; // "SQUARE" ou "ROUNDED"
+            double radius = 9;
 
             for (int row = 0; row < 4; row++)
             {
                 for (int col = 0; col < 4; col++)
                 {
-                    double xx = x + col * cellW; 
+                    double xx = x + col * cellW;
                     double yy = gridTop + row * cellH;
                     var cell = new XRect(xx, yy, cellW, cellH);
 
-                    gfx.DrawRectangle(XBrushes.White, cell);
-                    gfx.DrawRectangle(pen, cell);
+                    DesignService.FillCellBackground(gfx, cell, theme, modelKey, radius);
+                    DesignService.StrokeCellBorder(gfx, cell, theme, pen, modelKey, radius);
 
                     int idx = row * 4 + col;
                     if (idx < cardsElements.Count)
@@ -337,14 +391,54 @@ namespace BingoCreator.Services
                 }
             }
 
-            // Rodapé: mensagem + número/tema em cor de destaque
+            // Rodapé (faixa + texto responsivo em 2 linhas, limitado a 80% do título)
             double footerY = y + headerH + 4 * cellH;
-            var footerRect = new XRect(x + padding, footerY, (width * 0.72) - padding, cellH - padding);
-            gfx.DrawString(footerText, footerFont, DesignService.AccentBrush(theme), footerRect, XStringFormats.Center);
+            double bandPad = padding;
 
-            var numRect = new XRect(x + (width * 0.72), footerY, (width * 0.28) - padding, cellH - padding);
+            var bandRect = new XRect(x + bandPad, footerY + bandPad / 2.0, width - 2 * bandPad, cellH - bandPad);
+
+            // faixa com transparência
+            var footerBg = DesignService.WithOpacity(theme.HeaderBg, DesignService.FooterBandOpacity);
+            gfx.DrawRectangle(new XSolidBrush(footerBg), bandRect);
+
+            double leftW = bandRect.Width * 0.72;
+            double rightW = bandRect.Width - leftW;
+
+            var footerRect = new XRect(bandRect.X, bandRect.Y, leftW, bandRect.Height);
+            var numRect = new XRect(footerRect.Right, bandRect.Y, rightW, bandRect.Height);
+
+            // máx 80% do título
+            double footerMaxPt = Math.Min(Math.Min(cellH * 0.60, 16), titleFont.Size * 0.80);
+
+            // fonte da MENSAGEM (até 2 linhas)
+            var footerFontFit = DesignService.FitFontForTwoLines(
+                gfx, footerText, theme.FontTitle, XFontStyle.Bold,
+                maxWidth: footerRect.Width - 6,
+                maxHeight: footerRect.Height - 4,
+                maxPointSize: footerMaxPt,
+                minPointSize: 9
+            );
+
+            DrawWrappedCenteredText(
+                gfx,
+                footerText,
+                footerFontFit,
+                new XRect(footerRect.X + 3, footerRect.Y + 2, footerRect.Width - 6, footerRect.Height - 4)
+            );
+
+            // NÚMERO = 80% do tamanho FINAL da mensagem
             string idText = $"Cartela {cardNumber:0000}";
-            gfx.DrawString(idText, numberFont, DesignService.AccentBrush(theme), numRect, XStringFormats.Center);
+            double numTargetPt = footerFontFit.Size * 0.80;
+            double numberMaxPt = Math.Min(numTargetPt, Math.Min(cellH * 0.55, 14));
+
+            var numberFontFit = DesignService.FitFontToRect(
+                gfx, idText, theme.FontTitle, XFontStyle.Bold,
+                maxWidth: numRect.Width - 6, maxHeight: numRect.Height - 4,
+                maxPointSize: numberMaxPt, minPointSize: 8
+            );
+
+            gfx.DrawString(idText, numberFontFit, DesignService.TextBrush(theme), numRect, XStringFormats.Center);
+
         }
 
 

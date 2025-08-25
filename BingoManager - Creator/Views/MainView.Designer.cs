@@ -57,6 +57,10 @@
             lblListName = new Label();
             lblListTitle = new Label();
             tabCreateCards = new TabPage();
+            cboCardsHeader = new ComboBox();
+            lblCardsHeader = new Label();
+            cboCardsModel = new ComboBox();
+            lblCardsModel = new Label();
             cboCardsTheme = new ComboBox();
             lblCardsTheme = new Label();
             grpCardsSize = new GroupBox();
@@ -69,7 +73,7 @@
             boxCardsQuant = new TextBox();
             lblCardsEnd = new Label();
             boxCardsEnd = new TextBox();
-            lblCardsHeader = new Label();
+            lblCardsPage = new Label();
             lblCardsMessage = new Label();
             boxCardsTitle = new TextBox();
             boxCardsName = new TextBox();
@@ -94,8 +98,6 @@
             lblEditText2 = new Label();
             lblEditText1 = new Label();
             lblEditHeader = new Label();
-            cboCardModel = new ComboBox();
-            lblCardsModel = new Label();
             pnlMainView.SuspendLayout();
             tabControlMain.SuspendLayout();
             tabCreatePage.SuspendLayout();
@@ -430,7 +432,9 @@
             // 
             // tabCreateCards
             // 
-            tabCreateCards.Controls.Add(cboCardModel);
+            tabCreateCards.Controls.Add(cboCardsHeader);
+            tabCreateCards.Controls.Add(lblCardsHeader);
+            tabCreateCards.Controls.Add(cboCardsModel);
             tabCreateCards.Controls.Add(lblCardsModel);
             tabCreateCards.Controls.Add(cboCardsTheme);
             tabCreateCards.Controls.Add(lblCardsTheme);
@@ -442,7 +446,7 @@
             tabCreateCards.Controls.Add(boxCardsQuant);
             tabCreateCards.Controls.Add(lblCardsEnd);
             tabCreateCards.Controls.Add(boxCardsEnd);
-            tabCreateCards.Controls.Add(lblCardsHeader);
+            tabCreateCards.Controls.Add(lblCardsPage);
             tabCreateCards.Controls.Add(lblCardsMessage);
             tabCreateCards.Controls.Add(boxCardsTitle);
             tabCreateCards.Controls.Add(boxCardsName);
@@ -454,6 +458,48 @@
             tabCreateCards.TabIndex = 2;
             tabCreateCards.Text = "Cards";
             tabCreateCards.UseVisualStyleBackColor = true;
+            // 
+            // cboCardsHeader
+            // 
+            cboCardsHeader.Anchor = AnchorStyles.Top;
+            cboCardsHeader.FormattingEnabled = true;
+            cboCardsHeader.Location = new Point(912, 147);
+            cboCardsHeader.Name = "cboCardsHeader";
+            cboCardsHeader.Size = new Size(202, 23);
+            cboCardsHeader.TabIndex = 42;
+            // 
+            // lblCardsHeader
+            // 
+            lblCardsHeader.Anchor = AnchorStyles.Top;
+            lblCardsHeader.Font = new Font("Segoe UI", 12F);
+            lblCardsHeader.ImageAlign = ContentAlignment.MiddleLeft;
+            lblCardsHeader.Location = new Point(802, 136);
+            lblCardsHeader.Name = "lblCardsHeader";
+            lblCardsHeader.Size = new Size(104, 38);
+            lblCardsHeader.TabIndex = 41;
+            lblCardsHeader.Text = "Cabeçalho:";
+            lblCardsHeader.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // cboCardsModel
+            // 
+            cboCardsModel.Anchor = AnchorStyles.Top;
+            cboCardsModel.FormattingEnabled = true;
+            cboCardsModel.Location = new Point(503, 414);
+            cboCardsModel.Name = "cboCardsModel";
+            cboCardsModel.Size = new Size(202, 23);
+            cboCardsModel.TabIndex = 40;
+            // 
+            // lblCardsModel
+            // 
+            lblCardsModel.Anchor = AnchorStyles.Top;
+            lblCardsModel.Font = new Font("Segoe UI", 12F);
+            lblCardsModel.ImageAlign = ContentAlignment.MiddleLeft;
+            lblCardsModel.Location = new Point(393, 403);
+            lblCardsModel.Name = "lblCardsModel";
+            lblCardsModel.Size = new Size(104, 38);
+            lblCardsModel.TabIndex = 39;
+            lblCardsModel.Text = "Modelo:";
+            lblCardsModel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // cboCardsTheme
             // 
@@ -499,6 +545,7 @@
             radCardsSize5.TabStop = true;
             radCardsSize5.Text = "Cartelas 5x5 (45+ Elementos)";
             radCardsSize5.UseVisualStyleBackColor = true;
+            radCardsSize5.CheckedChanged += radCardsSize5_CheckedChanged;
             // 
             // radCardsSize4
             // 
@@ -510,6 +557,7 @@
             radCardsSize4.TabStop = true;
             radCardsSize4.Text = "Cartelas 4x4 (35+ Elementos)";
             radCardsSize4.UseVisualStyleBackColor = true;
+            radCardsSize4.CheckedChanged += radCardsSize4_CheckedChanged;
             // 
             // btnCardsExport
             // 
@@ -586,24 +634,24 @@
             boxCardsEnd.Size = new Size(395, 29);
             boxCardsEnd.TabIndex = 28;
             // 
-            // lblCardsHeader
+            // lblCardsPage
             // 
-            lblCardsHeader.Dock = DockStyle.Top;
-            lblCardsHeader.Font = new Font("Segoe UI", 16F);
-            lblCardsHeader.Location = new Point(0, 0);
-            lblCardsHeader.Name = "lblCardsHeader";
-            lblCardsHeader.Size = new Size(1168, 87);
-            lblCardsHeader.TabIndex = 27;
-            lblCardsHeader.Text = "Criar Cartelas";
-            lblCardsHeader.TextAlign = ContentAlignment.MiddleCenter;
+            lblCardsPage.Dock = DockStyle.Top;
+            lblCardsPage.Font = new Font("Segoe UI", 16F);
+            lblCardsPage.Location = new Point(0, 0);
+            lblCardsPage.Name = "lblCardsPage";
+            lblCardsPage.Size = new Size(1168, 87);
+            lblCardsPage.TabIndex = 27;
+            lblCardsPage.Text = "Criar Cartelas";
+            lblCardsPage.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblCardsMessage
             // 
             lblCardsMessage.Anchor = AnchorStyles.Top;
             lblCardsMessage.Font = new Font("Segoe UI", 12F);
-            lblCardsMessage.Location = new Point(819, 185);
+            lblCardsMessage.Location = new Point(819, 345);
             lblCardsMessage.Name = "lblCardsMessage";
-            lblCardsMessage.Size = new Size(295, 305);
+            lblCardsMessage.Size = new Size(295, 145);
             lblCardsMessage.TabIndex = 26;
             lblCardsMessage.Text = "Mensagem";
             lblCardsMessage.TextAlign = ContentAlignment.MiddleCenter;
@@ -859,27 +907,6 @@
             lblEditHeader.Text = "Editar";
             lblEditHeader.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // cboCardModel
-            // 
-            cboCardModel.Anchor = AnchorStyles.Top;
-            cboCardModel.FormattingEnabled = true;
-            cboCardModel.Location = new Point(503, 414);
-            cboCardModel.Name = "cboCardModel";
-            cboCardModel.Size = new Size(202, 23);
-            cboCardModel.TabIndex = 40;
-            // 
-            // lblCardsModel
-            // 
-            lblCardsModel.Anchor = AnchorStyles.Top;
-            lblCardsModel.Font = new Font("Segoe UI", 12F);
-            lblCardsModel.ImageAlign = ContentAlignment.MiddleLeft;
-            lblCardsModel.Location = new Point(393, 403);
-            lblCardsModel.Name = "lblCardsModel";
-            lblCardsModel.Size = new Size(104, 38);
-            lblCardsModel.TabIndex = 39;
-            lblCardsModel.Text = "Modelo:";
-            lblCardsModel.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // MainView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -934,7 +961,7 @@
         private Label lblListDescription;
         private Label lblListName;
         private Label lblListTitle;
-        private Label lblCardsHeader;
+        private Label lblCardsPage;
         private Label lblCardsMessage;
         private TextBox boxCardsTitle;
         private TextBox boxCardsName;
@@ -974,7 +1001,9 @@
         private Button btnListTxt;
         private ComboBox cboCardsTheme;
         private Label lblCardsTheme;
-        private ComboBox cboCardModel;
+        private ComboBox cboCardsModel;
         private Label lblCardsModel;
+        private ComboBox cboCardsHeader;
+        private Label lblCardsHeader;
     }
 }

@@ -10,7 +10,7 @@ namespace BingoCreator.Services
 {
     internal class GeneratingService
     {
-        public static int CreateCards(int listId, string setName, string setTitle, string setEnd, int setQnt, int cardsSize, string themeKey)
+        public static int CreateCards(int listId, string setName, string setTitle, string setEnd, int setQnt, int cardsSize, string themeKey, string headerKey, string modelKey)
         {
             Random random = new Random();
 
@@ -67,7 +67,7 @@ namespace BingoCreator.Services
                     }
                 }
 
-                PrintingService.PrintCards5x5(setName, allCards, allCards.Count, setTitle, setEnd, themeKey);
+                PrintingService.PrintCards5x5(setName, allCards, allCards.Count, setTitle, setEnd, themeKey, headerKey, modelKey);
                 PrintingService.PrintList5(setName, columnB, columnI, columnN, columnG, columnO);
 
                 return setId5;
@@ -96,7 +96,7 @@ namespace BingoCreator.Services
                     }
                 }
 
-                PrintingService.PrintCards4x4(setName, allCards, allCards.Count, setTitle, setEnd, themeKey);
+                PrintingService.PrintCards4x4(setName, allCards, allCards.Count, setTitle, setEnd, themeKey, modelKey);
                 PrintingService.PrintList4(setTitle, ElementsList, themeKey);
                 PrintingService.PrintCutPapers(setTitle, ElementsList, themeKey);
 

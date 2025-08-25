@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using PdfSharpCore.Drawing;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace BingoCreator.Services
 {
@@ -16,42 +17,81 @@ namespace BingoCreator.Services
             return XColor.FromArgb(a, r, g, b);
         }
 
-        public static readonly Theme Standart = new(
-            "STANDART", "Padrão",
-            Hex("FFFFFF"), Hex("F2F2F2"), Hex("222222"),
-            Hex("000000"), Hex("666666"),
-            fontTitle: "Poppins", fontBody: "Nunito", eco: true
+        public static readonly Theme Green = new(
+            "GREEN", "Verde",
+            Hex("ECF8F1"), // Primary: fundo do cartão
+            Hex("D6F3E5"), // HeaderBg: faixa do título
+            Hex("2E7E68"), // Border: linhas/bordas
+            Hex("111111"), // Text
+            Hex("111111"), // Accent: detalhes/ID
+            fontTitle: "Poppins", fontBody: "Nunito",
+            eco: false,
+            estilo: BackgroundStyle.Liso
+        );
+
+        public static readonly Theme Pink = new(
+            "PINK", "Rosa",
+            Hex("FFF0F6"), // Primary 
+            Hex("FFE1EC"), // HeaderBg 
+            Hex("C04A7A"), // Border
+            Hex("111111"), // Text
+            Hex("111111"), // Accent
+            fontTitle: "Poppins", fontBody: "Nunito",
+            eco: false,
+            estilo: BackgroundStyle.Liso
         );
 
         public static readonly Theme Black = new(
             "BLACK", "Preto",
             Hex("F6F7F9"), Hex("E9ECEF"), Hex("4F4F4F"),
-            Hex("000000"), Hex("6C757D"),
-            fontTitle: "Poppins", fontBody: "Nunito"
+            Hex("000000"), Hex("111111"),
+            fontTitle: "Poppins", fontBody: "Nunito",
+            eco: false,
+            estilo: BackgroundStyle.Liso
         );
 
         public static readonly Theme Blue = new(
             "BLUE", "Azul",
             Hex("EDF4FF"), Hex("D6E7FF"), Hex("3A7BD5"),
-            Hex("111111"), Hex("7DA6F6"),
-            fontTitle: "Poppins", fontBody: "Nunito"
+            Hex("111111"), Hex("111111"),
+            fontTitle: "Poppins", fontBody: "Nunito",
+            eco: false,
+            estilo: BackgroundStyle.Liso
         );
 
         public static readonly Theme Orange = new(
             "ORANGE", "Laranja",
             Hex("FFF6E5"), Hex("FFE7BF"), Hex("7A5C4B"),
-            Hex("111111"), Hex("FFC47D"),
-            fontTitle: "Poppins", fontBody: "Nunito"
+            Hex("111111"), Hex("111111"),
+            fontTitle: "Poppins", fontBody: "Nunito",
+            eco: false,
+            estilo: BackgroundStyle.Liso
         );
+
+        public static readonly Theme OrangeStrips = new(
+            "ORANGESTRIPS", "Laranja Xadrez",
+            Hex("FFFBF3"), // Primary (mais claro)
+            Hex("FFEBD1"), // HeaderBg (mais claro)
+            Hex("8E5E2A"), // Border (marrom suave, menos contrastado)
+            Hex("111111"), // Text (preto)
+            Hex("FFD5A6"), // Accent (laranja claro - usado no xadrez)
+            fontTitle: "Poppins", fontBody: "Nunito",
+            eco: false, estilo: BackgroundStyle.Xadrez
+        );
+
 
         private static readonly IReadOnlyDictionary<string, Theme> _all =
             new Dictionary<string, Theme>(StringComparer.OrdinalIgnoreCase)
             {
-                ["STANDART"] = Standart,
+                ["GREEN"] = Green,
+                ["PINK"] = Pink,
                 ["BLACK"] = Black,
                 ["BLUE"] = Blue,
-                ["ORANGE"] = Orange
+                ["ORANGE"] = Orange,
+                ["ORANGESTRIPS"] = OrangeStrips
             };
+
+
 
         public static Theme Get(string key) =>
             _all.TryGetValue(key ?? "", out var t) ? t : Black;

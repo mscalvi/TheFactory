@@ -2,7 +2,9 @@ using BingoCreator.Models;
 using BingoCreator.Services;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Infrastructure;
 using System.Globalization;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -65,6 +67,26 @@ namespace BingoCreator
             cboCardsTheme.DisplayMember = "Name";
             cboCardsTheme.ValueMember = "Key";
             cboCardsTheme.DataSource = themeOptions;
+
+            cboCardsModel.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboCardsModel.DisplayMember = "Text";
+            cboCardsModel.ValueMember = "Value";
+            cboCardsModel.DataSource = new[]
+            {
+                new { Text = "Quadradas (fundo branco)",           Value = "SQUARE"  },
+                new { Text = "Arredondadas (fundo do tema)",       Value = "ROUNDED" }
+            };
+            cboCardsModel.SelectedValue = "SQUARE";
+
+            cboCardsHeader.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboCardsHeader.DisplayMember = "Text";
+            cboCardsHeader.ValueMember = "Value";
+            cboCardsHeader.DataSource = new[]
+            {
+                new { Text = "SORTE", Value = "SORTE" },
+                new { Text = "BINGO", Value = "BINGO" }
+            };
+            cboCardsHeader.SelectedValue = "SORTE";
         }
 
 
@@ -128,7 +150,7 @@ namespace BingoCreator
 
                     List<int> elements = new List<int>();
                     elements.Add(elementId);
-                    
+
                     try
                     {
                         DataService.AlocateElements(selectedList, elements);
@@ -331,8 +353,8 @@ namespace BingoCreator
                     continue;
 
                 aprovados.Add(name);
-                
-                
+
+
                 //if (raw.Length == 0) continue;
 
                 //var cleaned = CleanName(raw); // remove acentos/especiais; trim e normaliza espaços
@@ -433,7 +455,8 @@ namespace BingoCreator
                     lblCardsMessage.Text = $"Apenas números na quantidade! A quantidade máxima permitida é {maxQuantity}.";
                     return;
                 }
-            } else
+            }
+            else
             {
                 lblCardsMessage.Text = $"Apenas números na quantidade! A quantidade máxima permitida é {maxQuantity}.";
                 return;
@@ -493,7 +516,11 @@ namespace BingoCreator
                 try
                 {
                     btnCardsExport.Enabled = false;
-                    int generatedCards = GeneratingService.CreateCards(cards.ListId, cards.Name, cards.Title, cards.End, cards.Quantity, cards.CardsSize, cards.Theme);
+
+                    cards.Model = (cboCardsModel.SelectedValue as string) ?? "SQUARE";
+                    cards.Header = (cboCardsHeader.SelectedValue as string) ?? "SORTE";
+
+                    int generatedCards = GeneratingService.CreateCards(cards.ListId, cards.Name, cards.Title, cards.End, cards.Quantity, cards.CardsSize, cards.Theme, cards.Header, cards.Model);
                     lblCardsMessage.Text = "Cartelas criadas com sucesso.";
 
                     try
@@ -520,12 +547,25 @@ namespace BingoCreator
                     lblCardsMessage.Text = "Erro ao gerar as cartelas.";
                     btnCardsExport.Enabled = true;
                 }
-                
+
             }
             else
             {
                 lblCardsMessage.Text = "Selecione uma Lista!";
             }
+        }
+
+        // Habilitar e Desabilitar Header
+        private void radCardsSize4_CheckedChanged(object sender, EventArgs e)
+        {
+            cboCardsHeader.Enabled = false;
+            cboCardsHeader.SelectedValue = -1;
+        }
+
+        private void radCardsSize5_CheckedChanged(object sender, EventArgs e)
+        {
+            cboCardsHeader.Enabled = true;
+            cboCardsHeader.SelectedValue = 1;
         }
     }
 }

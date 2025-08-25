@@ -24,6 +24,10 @@ namespace BingoCreator.Models
 
         public string Theme { get; set; }
 
+        public string Header { get; set; }
+
+        public string Model { get; set; }
+
         public List<ElementModel> GroupB { get; set; }
         public List<ElementModel> GroupI { get; set; }
         public List<ElementModel> GroupN { get; set; }

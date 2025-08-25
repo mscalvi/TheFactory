@@ -2,6 +2,9 @@
 
 namespace BingoCreator.Services
 {
+    // Fundo do cartão: liso (sólido) ou xadrez (gingham)
+    internal enum BackgroundStyle { Liso, Xadrez }
+
     internal sealed class Theme
     {
         public string Key { get; }
@@ -15,11 +18,18 @@ namespace BingoCreator.Services
         public string FontBody { get; }
         public bool Eco { get; }
 
+
+        // NOVO: estilo do fundo
+        public BackgroundStyle Estilo { get; set; }
+
         public Theme(string key, string display, XColor primary, XColor headerBg, XColor border,
-                     XColor text, XColor accent, string fontTitle, string fontBody, bool eco = false)
+                     XColor text, XColor accent, string fontTitle, string fontBody,
+                     bool eco = false, BackgroundStyle estilo = BackgroundStyle.Liso)
         {
             Key = key; DisplayName = display; Primary = primary; HeaderBg = headerBg;
-            Border = border; Text = text; Accent = accent; FontTitle = fontTitle; FontBody = fontBody; Eco = eco;
+            Border = border; Text = text; Accent = accent;
+            FontTitle = fontTitle; FontBody = fontBody; Eco = eco;
+            Estilo = estilo; // padrão: Liso
         }
     }
 }
