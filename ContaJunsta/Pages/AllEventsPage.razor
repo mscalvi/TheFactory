@@ -1,5 +1,6 @@
 ﻿@page "/events"
 @inject NavigationManager Nav
+@inject ContaJunsta.Services.DataService Data
 
 <main class="page-root">
 
@@ -35,16 +36,16 @@
 </main>
 
 @code {
-    // placeholder até ligar no DataService
-    private List<EventItem> events = new()
-  {
-    // Remova estes exemplos quando conectar ao storage
-    new EventItem("sample-1", "Viagem Exemplo 1"),
-    new EventItem("sample-2", "Churrasco Exemplo 2"),
-    new EventItem("sample-3", "Reunião Exemplo 3")
-  };
+    private List<(string Id, string Name)> events = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var list = await Data.GetAllEventsAsync(onlyOpen: true);
+        events = list.Select(e => (e.Id, e.Name)).ToList();
+    }
 
     private void OpenEvent(string id) => Nav.NavigateTo($"/events/{id}");
     private void GoBack() => Nav.NavigateTo("/");
-    private record EventItem(string Id, string Name);
 }
+
+

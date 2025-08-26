@@ -1,10 +1,16 @@
 ﻿@page "/events/new"
 @inject NavigationManager Nav
+@inject ContaJunsta.Services.DataService Data
 
 <main class="page-root">
     <header class="page-header">
         <h1 class="page-title">NOVO EVENTO</h1>
     </header>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="error-box">@error</div>
+    }
 
     <section class="page-card">
         <div class="field">
@@ -43,10 +49,9 @@
             </div>
         </div>
 
-
         <div class="actions">
+            <button class="home-btn" @onclick="SaveAsync" disabled="@(!CanSave)">Salvar</button>
             <button class="home-btn ghost" @onclick="Cancel">Voltar</button>
-            <button class="home-btn" @onclick="Save" disabled="@(!CanSave)">Salvar</button>
         </div>
     </section>
 </main>
@@ -55,11 +60,13 @@
     string name = "";
     List<string> participants = new();
     string participantInput = "";
+    string error = "";
 
     bool CanSave => !string.IsNullOrWhiteSpace(name) && participants.Count >= 2;
 
     void AddParticipant()
     {
+        error = "";
         var n = (participantInput ?? "").Trim();
         if (string.IsNullOrWhiteSpace(n)) return;
         if (participants.Any(x => string.Equals(x, n, StringComparison.OrdinalIgnoreCase))) return;
@@ -68,21 +75,36 @@
         participantInput = "";
     }
 
-    void RemoveParticipant(string n) => participants.Remove(n);
+    void RemoveParticipant(string n)
+    {
+        error = "";
+        participants.Remove(n);
+    }
 
     void Cancel()
     {
-        // limpa e volta para a Home
+        error = "";
         name = "";
         participants.Clear();
         participantInput = "";
         Nav.NavigateTo("/");
     }
 
-    void Save()
+    async Task SaveAsync()
     {
-        if (!CanSave) return;
-        // (próximo passo: persistir; por enquanto só navega)
-        Nav.NavigateTo("/events");
+        try
+        {
+            error = "";
+            if (!CanSave) { error = "Preencha o nome e adicione pelo menos 2 participantes."; return; }
+
+            // cria evento + pessoas e navega para a página do evento
+            var id = await Data.CreateEventAsync(name.Trim(), participants);
+            Nav.NavigateTo($"/events/{id}");
+        }
+        catch (Exception ex)
+        {
+            error = "Não foi possível criar o evento. " + ex.Message;
+            Console.Error.WriteLine(ex);
+        }
     }
 }

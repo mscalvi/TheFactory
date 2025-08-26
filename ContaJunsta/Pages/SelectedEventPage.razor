@@ -1,10 +1,274 @@
 ﻿@page "/events/{id}"
-@using Microsoft.AspNetCore.Components
+@using ContaJunsta.Models
+@inject NavigationManager Nav
+@inject ContaJunsta.Services.DataService Data
 
-<h1>Evento selecionado</h1>
-<p>Id: @Id</p>
-<p>(Seções "Adicionar" e "Fechar" virão depois.)</p>
+<main class="page-root">
+
+    <header class="page-header">
+        <h1 class="page-title">EVENTO</h1>
+        <p class="subtitle">
+            <strong>@eventName</strong> · @participants.Count participante(s)
+        </p>
+    </header>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="error-box">@error</div>
+    }
+
+    <!-- Abas -->
+    <nav class="tabbar">
+        <button class="tab-btn @(tab == "add" ? "active" : "")" @onclick="SetTabAdd">Adicionar</button>
+        <button class="tab-btn @(tab == "close" ? "active" : "")" @onclick="SetTabClose">Fechar</button>
+    </nav>
+
+    @if (tab == "add")
+    {
+        <!-- EEA: Adicionar lançamento -->
+        <section class="page-card">
+            <div class="field">
+                <label>Descrição</label>
+                <input class="input" @bind="desc" placeholder="Ex.: Mercado, Combustível..." />
+            </div>
+
+            <div class="field">
+                <label>Valor (R$)</label>
+                <input class="input" type="number" step="0.01" inputmode="decimal"
+                       @bind="valueStr" placeholder="0,00 (positivo = despesa; negativo = ganho)" />
+            </div>
+
+            <div class="field">
+                <label>Responsável (pagou/recebeu)</label>
+                <select class="input" @bind="responsibleId">
+                    @foreach (var p in participants)
+                    {
+                        <option value="@p.Id">@p.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Participantes da divisão (mínimo 1)</label>
+                <div class="checklist">
+                    @foreach (var p in participants)
+                    {
+                        <label class="check-item">
+                            <input type="checkbox"
+                                   checked="@IsSelected(p.Id)"
+                                   @onchange="(e => SetSelected(p.Id, e?.Value))" />
+                            <span>@p.Name</span>
+                        </label>
+                    }
+                </div>
+                @if (selectedIds.Count == 0)
+                {
+                    <small class="hint">Selecione ao menos 1 pessoa.</small>
+                }
+            </div>
+
+            <div class="actions">
+                <button class="home-btn" disabled="@(!CanAdd)" @onclick="AddBillAsync">Adicionar lançamento</button>
+                <button class="home-btn ghost" @onclick="GoBack">Voltar</button>
+            </div>
+
+            <!-- Lista de lançamentos reais -->
+            <div class="list-box">
+                <h2 class="h2">Lançamentos</h2>
+                @if (loading)
+                {
+                    <div class="empty">Carregando…</div>
+                }
+                else if (bills.Count == 0)
+                {
+                    <div class="empty">Nenhum lançamento ainda.</div>
+                }
+                else
+                {
+                    <ul class="bills">
+                        @foreach (var b in bills)
+                        {
+                            <li>
+                                <div class="row">
+                                    <div>
+                                        <div class="bill-desc">@b.Description</div>
+                                        <div class="bill-meta">R$ @FormatCents(b.Cents) · Resp.: @NameOf(b.ResponsibleId)</div>
+                                    </div>
+                                </div>
+                                <div class="bill-meta small">Divisão: @string.Join(", ", b.ParticipantNames)</div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </section>
+    }
+    else
+    {
+        <!-- EEF: Fechar (placeholders; cálculo/exports entram depois) -->
+        <section class="page-card">
+            <h2 class="h2">Resumo por pessoa</h2>
+            <div class="empty">Pagou / Deveria / Saldo (ligaremos o cálculo em seguida).</div>
+
+            <h2 class="h2" style="margin-top:16px;">Transferências sugeridas</h2>
+            <div class="empty">Lista “X paga R$Y para Z”.</div>
+
+            <div class="actions">
+                <button class="home-btn" disabled title="Em breve">Exportar TXT</button>
+                <button class="home-btn" disabled title="Em breve">Exportar CSV</button>
+                <button class="home-btn ghost" disabled title="Em breve">Fechar evento</button>
+                <button class="home-btn ghost" @onclick="GoBack">Voltar</button>
+            </div>
+        </section>
+    }
+
+</main>
 
 @code {
-    [Parameter] public string Id { get; set; } = "";
+    [Parameter] public string? Id { get; set; }
+
+    // estado
+    string tab = "add";
+    string eventName = "(carregando...)";
+    string error = "";
+    bool loading = false;
+
+    record P(string Id, string Name);
+    List<P> participants = new();
+
+    // formulário
+    string desc = "";
+    string valueStr = "";
+    string responsibleId = "";
+    HashSet<string> selectedIds = new();
+
+    // listagem
+    record BillView(string Id, string Description, int Cents, string ResponsibleId, List<string> ParticipantNames);
+    List<BillView> bills = new();
+
+    // ------- lifecycle -------
+    protected override async Task OnParametersSetAsync()
+    {
+        error = "";
+        loading = true;
+        try
+        {
+            if (string.IsNullOrWhiteSpace(Id)) throw new InvalidOperationException("Id do evento ausente na rota.");
+
+            var events = await Data.GetAllEventsAsync(false);
+            eventName = events.FirstOrDefault(e => e.Id == Id)?.Name ?? "(sem nome)";
+
+            var people = await Data.GetPersonsByEventAsync(Id);
+            participants = people.Select(p => new P(p.Id, p.Name ?? "(sem nome)")).ToList();
+
+            if (participants.Count > 0)
+            {
+                responsibleId = participants[0].Id;
+                selectedIds = new(participants.Select(p => p.Id)); // pré-seleciona todos
+            }
+
+            await LoadBillsAsync();
+        }
+        catch (Exception ex)
+        {
+            error = "Falha ao carregar o evento. " + ex.Message;
+            Console.Error.WriteLine(ex);
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    async Task LoadBillsAsync()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(Id)) return;
+            var raw = await Data.GetBillsByEventAsync(Id);
+
+            bills = raw.Select(b => new BillView(
+                b.Id ?? "",
+                b.Description ?? "",
+                b.Cents,
+                b.ResponsiblePersonId ?? "",
+                participants
+                  .Where(p => (b.ParticipantIds ?? new List<string>()).Contains(p.Id))
+                  .Select(p => p.Name)
+                  .ToList()
+            ))
+            .OrderBy(b => b.Description)
+            .ToList();
+        }
+        catch (Exception ex)
+        {
+            error = "Erro ao carregar lançamentos. " + ex.Message;
+            Console.Error.WriteLine(ex);
+        }
+    }
+
+    // ------- ações -------
+    bool CanAdd =>
+      !string.IsNullOrWhiteSpace(desc) &&
+      ParseCents(valueStr) != 0 &&
+      selectedIds.Count >= 1;
+
+    void SetTabAdd() => tab = "add";
+    void SetTabClose() => tab = "close";
+
+    bool IsSelected(string id) => selectedIds.Contains(id);
+
+    void SetSelected(string id, object? val)
+    {
+        // checkbox em Blazor pode vir como "true"/"false" (string) ou bool; tratamos os dois
+        var isChecked = val is bool b ? b : string.Equals(val?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
+        if (isChecked) selectedIds.Add(id);
+        else selectedIds.Remove(id);
+    }
+
+    async Task AddBillAsync()
+    {
+        error = "";
+        try
+        {
+            if (string.IsNullOrWhiteSpace(Id)) throw new InvalidOperationException("Evento inválido.");
+            var cents = ParseCents(valueStr);
+            if (cents == 0) throw new InvalidOperationException("Valor precisa ser diferente de zero.");
+            if (selectedIds.Count < 1) throw new InvalidOperationException("Selecione pelo menos 1 pessoa.");
+
+            var bill = new BillModel
+                {
+                    EventId = Id!,
+                    Description = (desc ?? "").Trim(),
+                    Cents = cents,
+                    ResponsiblePersonId = responsibleId ?? "",
+                    ParticipantIds = selectedIds.ToList()
+                };
+            await Data.AddBillAsync(bill);
+
+            desc = ""; valueStr = "";
+            await LoadBillsAsync();
+        }
+        catch (Exception ex)
+        {
+            error = "Não foi possível adicionar o lançamento. " + ex.Message;
+            Console.Error.WriteLine(ex);
+        }
+    }
+
+    void GoBack() => Nav.NavigateTo("/events");
+
+    // ------- helpers -------
+    string NameOf(string id) => participants.FirstOrDefault(p => p.Id == id)?.Name ?? id;
+    static string FormatCents(int cents) => (cents / 100.0).ToString("N2");
+
+    static int ParseCents(string? s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return 0;
+        var norm = s.Replace("R$", "").Trim().Replace(".", "").Replace(",", ".");
+        return (int)Math.Round(
+          double.TryParse(norm, System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture, out var d)
+            ? d * 100.0 : 0);
+    }
 }
