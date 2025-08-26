@@ -79,6 +79,17 @@ namespace BingoCreator.Services
             eco: false, estilo: BackgroundStyle.Xadrez
         );
 
+        public static readonly Theme RedStrips = new(
+            "REDSTRIPS", "Vermelho Xadrez",
+            Hex("FFF9FA"), // Primary
+            Hex("FFEFF2"), // HeaderBg 
+            Hex("A86262"), // Border
+            Hex("111111"), // Text
+            Hex("FFC9CF"), // Accent
+            fontTitle: "Poppins", fontBody: "Nunito",
+            eco: false, estilo: BackgroundStyle.Xadrez
+        );
+
 
         private static readonly IReadOnlyDictionary<string, Theme> _all =
             new Dictionary<string, Theme>(StringComparer.OrdinalIgnoreCase)
@@ -88,7 +99,8 @@ namespace BingoCreator.Services
                 ["BLACK"] = Black,
                 ["BLUE"] = Blue,
                 ["ORANGE"] = Orange,
-                ["ORANGESTRIPS"] = OrangeStrips
+                ["ORANGESTRIPS"] = OrangeStrips,
+                ["REDSTRIPS"] = RedStrips
             };
 
 
