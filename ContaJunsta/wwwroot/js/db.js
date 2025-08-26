@@ -1,6 +1,6 @@
 ﻿(() => {
     const DB_NAME = "contajunsta-db";
-    const DB_VERSION = 2; // migração p/ camelCase
+    const DB_VERSION = 2;
     const STORES = { events: "events", persons: "persons", bills: "bills" };
 
     let dbPromise;
@@ -126,6 +126,13 @@
         await txDone(tx);
         return res;
     }
+    async function deleteBill(billId) {
+        const db = await getDb();
+        const tx = db.transaction([STORES.bills], "readwrite");
+        await reqP(tx.objectStore(STORES.bills).delete(billId));
+        await txDone(tx);
+        return true;
+    }
 
     async function deleteEventCascade(eventId) {
         const db = await getDb();
@@ -151,7 +158,7 @@
     window.ContaJunstaDb = {
         addEvent, updateEvent, getAllEvents,
         addPersons, getPersonsByEvent,
-        addBill, getBillsByEvent,
+        addBill, getBillsByEvent, deleteBill,   
         deleteEventCascade
     };
 })();

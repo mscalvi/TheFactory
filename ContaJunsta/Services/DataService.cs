@@ -49,4 +49,10 @@ public class DataService
 
     public Task DeleteEventCascadeAsync(string eventId) =>
         _js.InvokeVoidAsync("ContaJunstaDb.deleteEventCascade", eventId).AsTask();
+
+    public Task DeleteBillAsync(string billId) =>
+    _js.InvokeVoidAsync("ContaJunstaDb.deleteBill", billId).AsTask();
+
 }
+
+
