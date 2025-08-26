@@ -1,0 +1,145 @@
+﻿.page-root {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.page-header {
+    position: absolute;
+    top: 8vh;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.page-title {
+    margin: 0;
+    font-size: clamp(22px,5.5vw,38px);
+    letter-spacing: .08em;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(0,0,0,.25), 0 2px 0 rgba(0,0,0,.18), 0 3px 6px rgba(0,0,0,.30);
+}
+
+.page-card {
+    width: min(560px,92vw);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    top: 6vh; /* um pouco abaixo do centro */
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+label {
+    font-weight: 600;
+}
+
+.hint {
+    color: #777;
+}
+
+.input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.15);
+    background: #fff;
+}
+
+/* área da lista com “respiro” visível */
+.participants-box {
+    min-height: 84px;
+    padding: 10px;
+    border: 1px dashed rgba(0,0,0,.15);
+    border-radius: 10px;
+    background: #fafbfc;
+}
+
+.muted {
+    color: #888;
+}
+
+.add-row {
+    display: flex;
+    gap: 8px;
+}
+
+    .add-row .input {
+        flex: 1 1 80%;
+        min-width: 0;
+    }
+
+    .add-row .home-btn {
+        width: auto; 
+        flex: 0 0 20%;
+        padding: 10px 12px;
+    }
+
+.plist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .plist li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        border: 1px solid rgba(0,0,0,.12);
+        border-radius: 10px;
+        background: #fff;
+    }
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* Botões no mesmo estilo da Home */
+.home-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.15);
+    background: #f0f3f6;
+    cursor: pointer;
+}
+
+    .home-btn:hover:not([disabled]) {
+        filter: brightness(.98);
+    }
+
+    .home-btn:active:not([disabled]) {
+        transform: translateY(1px);
+    }
+
+    .home-btn[disabled] {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    .home-btn.ghost {
+        background: transparent;
+    }
+
+.icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,.12);
+    background: #fff;
+    cursor: pointer;
+}

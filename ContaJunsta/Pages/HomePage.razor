@@ -1,0 +1,14 @@
+﻿@page "/"
+@inject NavigationManager Nav
+
+<main class="home-root">
+    <header class="home-header">
+        <h1 class="home-title">CONTAJUNSTA</h1>
+    </header>
+
+    <section class="home-actions">
+        <button class="home-btn" @onclick="@(() => Nav.NavigateTo("/events"))">Eventos</button>
+        <button class="home-btn" @onclick="@(() => Nav.NavigateTo("/events/new"))">Novo evento</button>
+        <button class="home-btn" disabled title="(Prata)" aria-disabled="true">Histórico (Prata)</button>
+    </section>
+</main>
