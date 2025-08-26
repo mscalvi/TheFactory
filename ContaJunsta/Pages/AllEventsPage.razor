@@ -1,0 +1,50 @@
+﻿@page "/events"
+@inject NavigationManager Nav
+
+<main class="page-root">
+
+    <header class="page-header">
+        <h1 class="page-title">EVENTOS</h1>
+    </header>
+
+    <!-- Área central que ocupa a página e permite rolagem -->
+    <section class="list-area">
+        <div class="events-list">
+            @if (events.Count == 0)
+            {
+                <div class="empty">
+                    Nenhum evento ainda.
+                </div>
+            }
+            else
+            {
+                @foreach (var e in events)
+                {
+                    <button class="home-btn event-btn" @onclick="@(() => OpenEvent(e.Id))">
+                        @e.Name
+                    </button>
+                }
+            }
+        </div>
+    </section>
+
+    <footer class="page-footer">
+        <button class="home-btn ghost" @onclick="@GoBack">Voltar</button>
+    </footer>
+
+</main>
+
+@code {
+    // placeholder até ligar no DataService
+    private List<EventItem> events = new()
+  {
+    // Remova estes exemplos quando conectar ao storage
+    new EventItem("sample-1", "Viagem Exemplo 1"),
+    new EventItem("sample-2", "Churrasco Exemplo 2"),
+    new EventItem("sample-3", "Reunião Exemplo 3")
+  };
+
+    private void OpenEvent(string id) => Nav.NavigateTo($"/events/{id}");
+    private void GoBack() => Nav.NavigateTo("/");
+    private record EventItem(string Id, string Name);
+}

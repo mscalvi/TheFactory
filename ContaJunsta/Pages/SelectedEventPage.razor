@@ -1,0 +1,10 @@
+﻿@page "/events/{id}"
+@using Microsoft.AspNetCore.Components
+
+<h1>Evento selecionado</h1>
+<p>Id: @Id</p>
+<p>(Seções "Adicionar" e "Fechar" virão depois.)</p>
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+}

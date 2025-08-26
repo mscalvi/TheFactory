@@ -1,0 +1,88 @@
+﻿@page "/events/new"
+@inject NavigationManager Nav
+
+<main class="page-root">
+    <header class="page-header">
+        <h1 class="page-title">NOVO EVENTO</h1>
+    </header>
+
+    <section class="page-card">
+        <div class="field">
+            <label>Nome do evento</label>
+            <input class="input" @bind="name" placeholder="Ex.: Viagem Búzios 2025" />
+            @if (string.IsNullOrWhiteSpace(name))
+            {
+                <small class="hint">Obrigatório.</small>
+            }
+        </div>
+
+        <div class="field">
+            <label>Participantes</label>
+            <div class="add-row">
+                <input class="input" @bind="participantInput" placeholder="Nome do participante" />
+                <button type="button" class="home-btn" @onclick="AddParticipant">Adicionar</button>
+            </div>
+
+            <div class="participants-box">
+                @if (participants.Count == 0)
+                {
+                    <small class="muted">Nenhum participante adicionado ainda. Adicione pelo menos 2.</small>
+                }
+                else
+                {
+                    <ul class="plist">
+                        @foreach (var p in participants)
+                        {
+                            <li>
+                                <span>@p</span>
+                                <button type="button" class="icon" title="Remover" @onclick="() => RemoveParticipant(p)">×</button>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+
+        <div class="actions">
+            <button class="home-btn ghost" @onclick="Cancel">Voltar</button>
+            <button class="home-btn" @onclick="Save" disabled="@(!CanSave)">Salvar</button>
+        </div>
+    </section>
+</main>
+
+@code {
+    string name = "";
+    List<string> participants = new();
+    string participantInput = "";
+
+    bool CanSave => !string.IsNullOrWhiteSpace(name) && participants.Count >= 2;
+
+    void AddParticipant()
+    {
+        var n = (participantInput ?? "").Trim();
+        if (string.IsNullOrWhiteSpace(n)) return;
+        if (participants.Any(x => string.Equals(x, n, StringComparison.OrdinalIgnoreCase))) return;
+
+        participants.Add(n);
+        participantInput = "";
+    }
+
+    void RemoveParticipant(string n) => participants.Remove(n);
+
+    void Cancel()
+    {
+        // limpa e volta para a Home
+        name = "";
+        participants.Clear();
+        participantInput = "";
+        Nav.NavigateTo("/");
+    }
+
+    void Save()
+    {
+        if (!CanSave) return;
+        // (próximo passo: persistir; por enquanto só navega)
+        Nav.NavigateTo("/events");
+    }
+}
