@@ -2,37 +2,28 @@
 @inject NavigationManager Nav
 @inject ContaJunsta.Services.DataService Data
 
-<main class="page-root">
+<main class="events-root">
+    <h1 class="page-title">EVENTOS</h1>
 
-    <header class="page-header">
-        <h1 class="page-title">EVENTOS</h1>
-    </header>
-
-    <!-- Área central que ocupa a página e permite rolagem -->
-    <section class="list-area">
-        <div class="events-list">
-            @if (events.Count == 0)
+    @if (events.Count == 0)
+    {
+        <div class="empty">Nenhum evento aberto. Crie um novo.</div>
+    }
+    else
+    {
+        <ul class="events-list">
+            @foreach (var e in events)
             {
-                <div class="empty">
-                    Nenhum evento ainda.
-                </div>
+                <li>
+                    <button class="events-btn" @onclick="@(() => OpenEvent(e.Id))">@e.Name</button>
+                </li>
             }
-            else
-            {
-                @foreach (var e in events)
-                {
-                    <button class="home-btn event-btn" @onclick="@(() => OpenEvent(e.Id))">
-                        @e.Name
-                    </button>
-                }
-            }
-        </div>
-    </section>
+        </ul>
+    }
 
-    <footer class="page-footer">
-        <button class="home-btn ghost" @onclick="@GoBack">Voltar</button>
-    </footer>
-
+    <div class="actions">
+        <button class="home-btn ghost" @onclick="GoHome">Voltar</button>
+    </div>
 </main>
 
 @code {
@@ -44,8 +35,6 @@
         events = list.Select(e => (e.Id, e.Name)).ToList();
     }
 
-    private void OpenEvent(string id) => Nav.NavigateTo($"/events/{id}");
-    private void GoBack() => Nav.NavigateTo("/");
+    void OpenEvent(string id) => Nav.NavigateTo($"/events/{id}");
+    void GoHome() => Nav.NavigateTo("/");
 }
-
-

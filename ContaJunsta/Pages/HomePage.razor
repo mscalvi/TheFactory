@@ -2,13 +2,17 @@
 @inject NavigationManager Nav
 
 <main class="home-root">
-    <header class="home-header">
-        <h1 class="home-title">CONTAJUNSTA</h1>
-    </header>
+    <h1 class="home-title">CONTAJUNSTA</h1>
 
-    <section class="home-actions">
-        <button class="home-btn" @onclick="@(() => Nav.NavigateTo("/events"))">Eventos</button>
-        <button class="home-btn" @onclick="@(() => Nav.NavigateTo("/events/new"))">Novo evento</button>
-        <button class="home-btn" disabled title="(Prata)" aria-disabled="true">Histórico (Prata)</button>
-    </section>
+    <div class="home-actions">
+        <button class="home-btn" @onclick="GoToEvents">Eventos</button>
+        <button class="home-btn" @onclick="GoToNew">Novo Evento</button>
+        <button class="home-btn" @onclick="GoToHistory">Histórico</button>
+    </div>
 </main>
+
+@code {
+    void GoToEvents() => Nav.NavigateTo("/events");
+    void GoToNew() => Nav.NavigateTo("/events/new");
+    void GoToHistory() => Nav.NavigateTo("/history");
+}

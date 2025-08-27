@@ -15,7 +15,9 @@
     <section class="page-card">
         <div class="field">
             <label>Nome do evento</label>
-            <input class="input" @bind="name" placeholder="Ex.: Viagem Búzios 2025" />
+            <input class="input event-name"
+                   @bind="name" @bind:event="oninput"
+                   placeholder="Ex.: Viagem 2026" />
             @if (string.IsNullOrWhiteSpace(name))
             {
                 <small class="hint">Obrigatório.</small>
@@ -24,34 +26,34 @@
 
         <div class="field">
             <label>Participantes</label>
-            <div class="add-row">
-                <input class="input" @bind="participantInput" placeholder="Nome do participante" />
-                <button type="button" class="home-btn" @onclick="AddParticipant">Adicionar</button>
+
+            <div class="input-row">
+                <input class="input participant-input"
+                       @bind="participantInput"
+                       placeholder="Nome do participante" />
+                <button class="home-btn add-btn" @onclick="AddParticipant">Adicionar</button>
             </div>
 
-            <div class="participants-box">
-                @if (participants.Count == 0)
+            <ul class="participants">
+                @foreach (var p in participants)
                 {
-                    <small class="muted">Nenhum participante adicionado ainda. Adicione pelo menos 2.</small>
+                    <li>
+                        <span>@p</span>
+                        <button class="icon danger" title="Remover" @onclick="() => RemoveParticipant(p)">×</button>
+                    </li>
                 }
-                else
-                {
-                    <ul class="plist">
-                        @foreach (var p in participants)
-                        {
-                            <li>
-                                <span>@p</span>
-                                <button type="button" class="icon" title="Remover" @onclick="() => RemoveParticipant(p)">×</button>
-                            </li>
-                        }
-                    </ul>
-                }
-            </div>
+            </ul>
+
+            @if (participants.Count < 2)
+            {
+                <small class="hint">Nenhum participante adicionado ainda. Adicione pelo menos 2.</small>
+            }
         </div>
 
+
         <div class="actions">
-            <button class="home-btn" @onclick="SaveAsync" disabled="@(!CanSave)">Salvar</button>
             <button class="home-btn ghost" @onclick="Cancel">Voltar</button>
+            <button class="home-btn" @onclick="SaveAsync" disabled="@(!CanSave)">Salvar</button>
         </div>
     </section>
 </main>
@@ -62,7 +64,7 @@
     string participantInput = "";
     string error = "";
 
-    bool CanSave => !string.IsNullOrWhiteSpace(name) && participants.Count >= 2;
+    bool CanSave => !string.IsNullOrWhiteSpace(name?.Trim()) && participants.Count >= 2;
 
     void AddParticipant()
     {

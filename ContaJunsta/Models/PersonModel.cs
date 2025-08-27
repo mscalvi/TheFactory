@@ -1,5 +1,4 @@
 ﻿namespace ContaJunsta.Models;
-
 public class PersonModel
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();

@@ -1,6 +1,4 @@
-﻿using System.Text;
-using Microsoft.JSInterop;
-using ContaJunsta.Services;
+﻿using Microsoft.JSInterop;
 
 namespace ContaJunsta.Services;
 
@@ -12,9 +10,8 @@ public class ExportService
     public Task SaveTextAsync(string filename, string content) =>
         _js.InvokeVoidAsync("ContaJunstaFiles.saveText", filename, content).AsTask();
 
-    // Helpers de formatação
-    public static string CentsToPtbr(int cents)
-        => (cents / 100.0).ToString("N2");
+    // helpers STATIC (para usar como ExportService.CentsToPtbr(...))
+    public static string CentsToPtbr(int cents) => (cents / 100.0).ToString("N2");
 
     public static string CsvEscape(string s)
     {

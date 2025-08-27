@@ -7,11 +7,11 @@
 
 .page-header {
     text-align: center;
-    margin-top: 6vh;
+    margin: 8px 0 12px 0;
 }
 
 .page-title {
-    margin: 0;
+    margin: 0 0 8px 0;
     font-size: clamp(22px,5.5vw,38px);
     letter-spacing: .08em;
     font-weight: 900;
@@ -47,22 +47,41 @@
 
 .tabbar {
     display: flex;
+    align-items: flex-end;
     gap: 8px;
-    justify-content: center;
-    margin: 16px 0;
+    width: min(720px, 94vw);
+    margin: 10px auto 12px auto;
+    border-bottom: 1px solid rgba(0,0,0,.12);
 }
 
 .tab-btn {
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,.15);
-    background: #f0f3f6;
+    padding: 8px 12px;
+    border: 1px solid transparent;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background: #f3f4f6;
     cursor: pointer;
+    font-weight: 600;
 }
 
     .tab-btn.active {
-        background: #e6f4ea;
+        background: #ffffff;
+        border-color: rgba(0,0,0,.12);
+        border-bottom-color: #ffffff;
     }
+
+    .tab-btn.back {
+        background: #eef2f7;
+        color: #333;
+        border: 1px solid rgba(0,0,0,.10);
+    }
+        .tab-btn.back:hover {
+            filter: brightness(.98);
+        }
+
+.tab-spacer {
+    flex: 1 1 auto;
+}
 
 .page-card {
     width: min(720px,94vw);
@@ -262,4 +281,84 @@ select.input {
     list-style: disc inside;
     padding: 0;
     margin: 8px 0 0 0;
+}
+
+/* --- Responsividade e proteção contra scroll horizontal --- */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.page-root {
+    padding: 16px;
+    overflow-x: hidden;
+}
+
+.page-card {
+    width: min(720px, 100vw);
+}
+
+/* Inputs e selects nunca passam da largura */
+.input, select.input {
+    max-width: 100%;
+}
+
+/* Botões podem quebrar linha se precisar (evita estourar) */
+.actions {
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Nomes/descrições longos não estouram o layout */
+.bill-desc, .bill-meta {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Grid das checkboxes mais elástica em telas estreitas */
+.checklist {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+/* Tabela de resumo: colunas numéricas encolhem bem em telas pequenas */
+.summary-table {
+    grid-template-columns: 1fr minmax(84px, 22vw) minmax(84px, 22vw) minmax(84px, 22vw);
+}
+
+/* Quebra de layout para celulares bem estreitos */
+@media (max-width: 480px) {
+    .page-header {
+        margin-top: 2vh;
+    }
+
+    .page-title {
+        font-size: clamp(20px, 7vw, 32px);
+    }
+
+    .page-card {
+        padding: 6px;
+        gap: 10px;
+    }
+
+    .tabbar {
+        gap: 6px;
+    }
+
+    .tab-btn {
+        padding: 7px 10px;
+    }
+
+    /* Reduz levemente paddings dos itens */
+    .bills li {
+        padding: 8px 10px;
+    }
+
+    /* Números podem quebrar linha se for preciso */
+    .summary-table .row > div {
+        white-space: normal;
+    }
 }

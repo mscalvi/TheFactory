@@ -8,7 +8,6 @@ public class DataService
     private readonly IJSRuntime _js;
     public DataService(IJSRuntime js) => _js = js;
 
-    // EVENTS
     public async Task<string> CreateEventAsync(string name, IEnumerable<string> participantNames)
     {
         var evt = new EventModel { Name = name };
@@ -51,8 +50,5 @@ public class DataService
         _js.InvokeVoidAsync("ContaJunstaDb.deleteEventCascade", eventId).AsTask();
 
     public Task DeleteBillAsync(string billId) =>
-    _js.InvokeVoidAsync("ContaJunstaDb.deleteBill", billId).AsTask();
-
+        _js.InvokeVoidAsync("ContaJunstaDb.deleteBill", billId).AsTask();
 }
-
-

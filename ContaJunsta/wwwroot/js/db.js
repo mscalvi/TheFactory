@@ -1,11 +1,9 @@
 ﻿(() => {
     const DB_NAME = "contajunsta-db";
-    const DB_VERSION = 2;
+    const DB_VERSION = 2; // camelCase
     const STORES = { events: "events", persons: "persons", bills: "bills" };
-
     let dbPromise;
 
-    // Helpers
     const reqP = (req) => new Promise((ok, err) => { req.onsuccess = () => ok(req.result); req.onerror = () => err(req.error); });
     const txDone = (tx) => new Promise((ok, err) => { tx.oncomplete = () => ok(); tx.onerror = () => err(tx.error); tx.onabort = () => err(tx.error); });
 
@@ -15,15 +13,11 @@
                 const req = indexedDB.open(DB_NAME, DB_VERSION);
                 req.onupgradeneeded = () => {
                     const db = req.result;
-
-                    // DROP & CREATE (simples em dev)
                     if (db.objectStoreNames.contains(STORES.events)) db.deleteObjectStore(STORES.events);
                     if (db.objectStoreNames.contains(STORES.persons)) db.deleteObjectStore(STORES.persons);
                     if (db.objectStoreNames.contains(STORES.bills)) db.deleteObjectStore(STORES.bills);
 
-                    // Stores camelCase
                     db.createObjectStore(STORES.events, { keyPath: "id" });
-
                     const p = db.createObjectStore(STORES.persons, { keyPath: "id" });
                     p.createIndex("eventId", "eventId", { unique: false });
 
@@ -38,7 +32,7 @@
         return dbPromise;
     }
 
-    // Normalizadores (aceitam PascalCase ou camelCase)
+    // normalizadores
     const normEvent = (e) => ({
         id: e?.id ?? e?.Id,
         name: e?.name ?? e?.Name ?? "",
@@ -46,13 +40,9 @@
         createdAt: e?.createdAt ?? e?.CreatedAt ?? new Date().toISOString(),
         closedAt: e?.closedAt ?? e?.ClosedAt ?? null
     });
-
     const normPerson = (p) => ({
-        id: p?.id ?? p?.Id,
-        eventId: p?.eventId ?? p?.EventId,
-        name: p?.name ?? p?.Name ?? ""
+        id: p?.id ?? p?.Id, eventId: p?.eventId ?? p?.EventId, name: p?.name ?? p?.Name ?? ""
     });
-
     const normBill = (b) => ({
         id: b?.id ?? b?.Id,
         eventId: b?.eventId ?? b?.EventId,
@@ -64,101 +54,60 @@
     });
 
     // EVENTS
-    async function addEvent(evt) {
-        const db = await getDb();
-        const tx = db.transaction([STORES.events], "readwrite");
-        await reqP(tx.objectStore(STORES.events).put(normEvent(evt)));
-        await txDone(tx);
-        return true;
-    }
-
-    async function updateEvent(evt) {
-        const db = await getDb();
-        const tx = db.transaction([STORES.events], "readwrite");
-        await reqP(tx.objectStore(STORES.events).put(normEvent(evt))); // <- parênteses OK
-        await txDone(tx);
-        return true;
-    }
-
+    async function addEvent(evt) { const db = await getDb(); const tx = db.transaction([STORES.events], "readwrite"); await reqP(tx.objectStore(STORES.events).put(normEvent(evt))); await txDone(tx); return true; }
+    async function updateEvent(evt) { const db = await getDb(); const tx = db.transaction([STORES.events], "readwrite"); await reqP(tx.objectStore(STORES.events).put(normEvent(evt))); await txDone(tx); return true; }
     async function getAllEvents(onlyOpen) {
-        const db = await getDb();
-        const tx = db.transaction([STORES.events], "readonly");
-        const list = await reqP(tx.objectStore(STORES.events).getAll());
-        await txDone(tx);
+        const db = await getDb(); const tx = db.transaction([STORES.events], "readonly");
+        const list = await reqP(tx.objectStore(STORES.events).getAll()); await txDone(tx);
         const filtered = onlyOpen ? list.filter(e => (e.status ?? "Open") === "Open") : list;
         return filtered.sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
     }
 
     // PERSONS
     async function addPersons(persons) {
-        if (!persons || !persons.length) return true;
-        const db = await getDb();
-        const tx = db.transaction([STORES.persons], "readwrite");
-        const store = tx.objectStore(STORES.persons);
+        if (!persons?.length) return true;
+        const db = await getDb(); const tx = db.transaction([STORES.persons], "readwrite"); const store = tx.objectStore(STORES.persons);
         for (const p of persons) { await reqP(store.put(normPerson(p))); }
-        await txDone(tx);
-        return true;
+        await txDone(tx); return true;
     }
-
     async function getPersonsByEvent(eventId) {
-        const db = await getDb();
-        const tx = db.transaction([STORES.persons], "readonly");
-        const idx = tx.objectStore(STORES.persons).index("eventId");
-        const res = await reqP(idx.getAll(IDBKeyRange.only(eventId)));
-        await txDone(tx);
-        return res;
+        const db = await getDb(); const tx = db.transaction([STORES.persons], "readonly");
+        const idx = tx.objectStore(STORES.persons).index("eventId"); const res = await reqP(idx.getAll(IDBKeyRange.only(eventId)));
+        await txDone(tx); return res;
     }
 
     // BILLS
-    async function addBill(bill) {
-        const db = await getDb();
-        const tx = db.transaction([STORES.bills], "readwrite");
-        await reqP(tx.objectStore(STORES.bills).put(normBill(bill)));
-        await txDone(tx);
-        return true;
-    }
-
+    async function addBill(bill) { const db = await getDb(); const tx = db.transaction([STORES.bills], "readwrite"); await reqP(tx.objectStore(STORES.bills).put(normBill(bill))); await txDone(tx); return true; }
     async function getBillsByEvent(eventId) {
-        const db = await getDb();
-        const tx = db.transaction([STORES.bills], "readonly");
-        const idx = tx.objectStore(STORES.bills).index("eventId");
-        const res = await reqP(idx.getAll(IDBKeyRange.only(eventId)));
-        await txDone(tx);
-        return res;
+        const db = await getDb(); const tx = db.transaction([STORES.bills], "readonly");
+        const idx = tx.objectStore(STORES.bills).index("eventId"); const res = await reqP(idx.getAll(IDBKeyRange.only(eventId)));
+        await txDone(tx); return res;
     }
     async function deleteBill(billId) {
-        const db = await getDb();
-        const tx = db.transaction([STORES.bills], "readwrite");
-        await reqP(tx.objectStore(STORES.bills).delete(billId));
-        await txDone(tx);
-        return true;
+        const db = await getDb(); const tx = db.transaction([STORES.bills], "readwrite");
+        await reqP(tx.objectStore(STORES.bills).delete(billId)); await txDone(tx); return true;
     }
 
     async function deleteEventCascade(eventId) {
         const db = await getDb();
         const tx = db.transaction([STORES.events, STORES.persons, STORES.bills], "readwrite");
-
-        // delete event
         tx.objectStore(STORES.events).delete(eventId);
 
-        // delete persons
         const pIdx = tx.objectStore(STORES.persons).index("eventId");
         const persons = await reqP(pIdx.getAll(IDBKeyRange.only(eventId)));
         for (const p of persons) tx.objectStore(STORES.persons).delete(p.id);
 
-        // delete bills
         const bIdx = tx.objectStore(STORES.bills).index("eventId");
         const bills = await reqP(bIdx.getAll(IDBKeyRange.only(eventId)));
         for (const b of bills) tx.objectStore(STORES.bills).delete(b.id);
 
-        await txDone(tx);
-        return true;
+        await txDone(tx); return true;
     }
 
     window.ContaJunstaDb = {
         addEvent, updateEvent, getAllEvents,
         addPersons, getPersonsByEvent,
-        addBill, getBillsByEvent, deleteBill,   
+        addBill, getBillsByEvent, deleteBill,
         deleteEventCascade
     };
 })();
