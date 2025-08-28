@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using CommunityToolkit.Maui.Storage;
 using System.Text;
 
 namespace ContaJunstaApp.Services;
@@ -7,34 +8,29 @@ public class ExportService
 {
     private readonly IJSRuntime _js;
     private readonly IFileSaver? _fileSaver;
-    public ExportService(IJSRuntime js, IServiceProvider sp)
+
+    public ExportService(IJSRuntime js, IFileSaver? fileSaver = null)
     {
         _js = js;
-        _fileSaver = sp.GetService<IFileSaver>();
+        _fileSaver = fileSaver;
     }
 
     public async Task SaveTextAsync(string filename, string content)
     {
         try
         {
-            await _js.InvokeVoidAsync("ContaJunstaAppFiles.saveText", filename, content); // web
+            await _js.InvokeVoidAsync("ContaJunstaFiles.saveText", filename, content); // web/js
         }
-        catch
+        catch when (_fileSaver != null)
         {
-            if (_fileSaver is null) throw;
             using var ms = new MemoryStream(Encoding.UTF8.GetBytes(content));
-            await _fileSaver.SaveAsync(filename, ms, CancellationToken.None);          // Android nativo
+            await _fileSaver!.SaveAsync(filename, ms, CancellationToken.None);        // nativo
         }
     }
 
-    // helpers STATIC (para usar como ExportService.CentsToPtbr(...))
     public static string CentsToPtbr(int cents) => (cents / 100.0).ToString("N2");
-
-    public static string CsvEscape(string s)
-    {
-        if (s is null) return "";
-        var needQuotes = s.Contains(',') || s.Contains('"') || s.Contains('\n') || s.Contains('\r');
-        if (!needQuotes) return s;
-        return "\"" + s.Replace("\"", "\"\"") + "\"";
-    }
+    public static string CsvEscape(string s) =>
+        string.IsNullOrEmpty(s) ? "" :
+        (s.Contains(',') || s.Contains('"') || s.Contains('\n') || s.Contains('\r'))
+          ? "\"" + s.Replace("\"", "\"\"") + "\"" : s;
 }

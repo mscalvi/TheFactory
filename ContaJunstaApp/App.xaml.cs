@@ -1,12 +1,10 @@
-﻿namespace ContaJunstaApp
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
+﻿namespace ContaJunstaApp;
 
-            MainPage = new MainPage();
-        }
+public partial class App : Application
+{
+    public App()
+    {
+        InitializeComponent();
+        MainPage = new MainPage(); // ou AppShell se você usa Shell
     }
 }

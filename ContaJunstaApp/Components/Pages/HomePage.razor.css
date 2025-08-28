@@ -1,4 +1,13 @@
-﻿.home-root {
+﻿* {
+    box-sizing: border-box;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.home-root {
     min-height: 60dvh;
     display: flex;
     flex-direction: column;
