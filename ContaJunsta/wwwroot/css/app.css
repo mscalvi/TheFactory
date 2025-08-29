@@ -1,0 +1,90 @@
+﻿/* ===== Reset mínimo p/ mobile ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    /* permitir scroll lateral TEMPORÁRIO enquanto corrigimos quem vaza */
+    overflow-x: auto;
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+}
+
+/* Nada deve ultrapassar a largura da tela */
+img, svg, canvas, video, audio, iframe {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Texto longo/URLs quebram linha */
+:where(h1,h2,h3,h4,h5,h6,p,li,td,th,span,button,a,div) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Container da UI */
+.app-shell {
+    min-height: 100vh;
+}
+
+.app-container {
+    width: 100%;
+    max-width: min(560px, 100%);
+    margin: 0 auto;
+    padding: 12px;
+}
+
+    /* Garante que nenhum filho do container estoure */
+    .app-container, .app-container * {
+        max-width: 100%;
+    }
+
+/* Forms */
+input, select, textarea, button {
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Tabelas: rolagem horizontal própria (em vez de vazar a página) */
+table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Flex/Bootstrap: permitir quebra de linha + impedir min-width estourar */
+:where(.row, .grid, .flex, .d-flex, .btn-group, .input-group, .nav, .nav-tabs) {
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+/* NÃO mexer em .row margins aqui (deixamos o padrão do Bootstrap) */
+
+/* Abas do evento (se usar) */
+.cj-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.cj-tab {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    background: #f8f8f8;
+}
+
+    .cj-tab.active {
+        background: #fff;
+        border-bottom: 1px solid #fff;
+    }

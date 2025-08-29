@@ -1,0 +1,14 @@
+.app-shell {
+    min-height: 100vh;
+}
+
+.app-container {
+    max-width: min(560px, 100vw);
+    margin: 0 auto;
+    padding: 12px;
+}
+
+/* remove qualquer overflow horizontal */
+html, body {
+    overflow-x: hidden;
+}

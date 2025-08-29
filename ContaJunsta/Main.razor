@@ -1,0 +1,17 @@
+@using Microsoft.AspNetCore.Components.Routing
+@using ContaJunsta.Components.Pages
+
+<Router AppAssembly="@typeof(Main).Assembly"
+        AdditionalAssemblies="new[] { typeof(HomePage).Assembly }"
+        PreferExactMatches="true">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData"
+                   DefaultLayout="@typeof(ContaJunsta.Components.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(ContaJunsta.Components.Layout.MainLayout)">
+            <div style="padding:16px">Página não encontrada.</div>
+        </LayoutView>
+    </NotFound>
+</Router>
