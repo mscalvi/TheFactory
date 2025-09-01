@@ -1,0 +1,127 @@
+.page-root {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: 18dvh auto 2dvh auto 1fr;
+    align-content: start;
+    padding: 0 16px 24px;
+}
+
+.page-title {
+    grid-row: 2;
+    margin: 0;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: clamp(20px, 6vw, 32px);
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(640px, 92vw);
+}
+
+.section {
+    grid-row: 4;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: min(980px, 96vw);
+    margin-bottom: 14px;
+    border: 1px solid rgba(0,0,0,.10);
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+}
+
+.section-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.empty {
+    grid-row: 4;
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: min(560px, 92vw);
+    padding: 16px 0;
+}
+
+.card-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.card {
+    border: 1px solid rgba(0,0,0,.12);
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+}
+
+.card-head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.card-title-wrap {
+    display: grid;
+    gap: 2px;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.card-sub {
+    font-size: 13px;
+    opacity: .8;
+}
+
+.card-meta {
+    font-size: 13px;
+    opacity: .75;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.card-btn, .ghost-btn {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.12);
+    background: #f7f9fb;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+    .card-btn.warn {
+        background: #fff4f4;
+        border-color: rgba(200,0,0,.18);
+    }
+
+.muted {
+    opacity: .7;
+}
+
+.center {
+    text-align: center;
+}

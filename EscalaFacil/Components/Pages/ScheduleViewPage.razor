@@ -1,0 +1,134 @@
+﻿@page "/schedules/{id}"
+@using EscalaFacil.Components.Models
+@using EscalaFacil.Components.Services
+@inject IDataStore Data
+@inject NavigationManager Nav
+
+<main class="page-root">
+    <h1 class="page-title">ESCALA</h1>
+
+    @if (loading)
+    {
+        <p class="muted center">Carregando…</p>
+    }
+    else if (schedule is null || team is null)
+    {
+        <p class="muted center">Escala não encontrada.</p>
+    }
+    else
+    {
+        <section class="form-wrap">
+            <div class="section">
+                <div class="meta">
+                    <div><strong>Equipe:</strong> @team.Name</div>
+                    <div><strong>Escala:</strong> @schedule.Name</div>
+                    <div><strong>Turnos:</strong> @schedule.Shifts.Count</div>
+                    <div><strong>Cobertura:</strong> @schedule.Assignments.Count/@schedule.Shifts.Count</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 18%;">Data</th>
+                            <th style="width: 16%;">Horário</th>
+                            <th style="width: 22%;">Cargo</th>
+                            <th>Designado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sh in orderedShifts)
+                        {
+                            var a = schedule.Assignments.FirstOrDefault(x => x.ShiftId == sh.Id);
+                            <tr>
+                                <td>@sh.Start:dd/MM/yyyy</td>
+                                <td>@sh.Start:HH\\:mm – @sh.End:HH\\:mm</td>
+                                <td>@RoleName(sh.RoleId)</td>
+                                <td>@(a is null ? "—" : MemberName(a.MemberId))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <button class="primary-btn" @onclick="ExportCsv" disabled="@(orderedShifts.Count == 0)">Exportar CSV</button>
+                <button class="ghost-btn" @onclick="Editar">Editar</button>
+                <button class="ghost-btn" @onclick="Voltar">Voltar</button>
+            </div>
+        </section>
+    }
+</main>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    private bool loading = true;
+    private ScheduleModel? schedule;
+    private TeamModel? team;
+    private List<ShiftModel> orderedShifts = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        loading = true;
+
+        // localizar por Id
+        foreach (var teamKey in Data.EnumerateKeys("teams/").Where(k => k.Count(c => c == '/') == 1))
+        {
+            var t = await Data.LoadAsync<TeamModel>(teamKey);
+            if (t is null) continue;
+
+            var schedKey = DataKeys.Schedule(t.Id, Id!);
+            if (await Data.ExistsAsync(schedKey))
+            {
+                schedule = await Data.LoadAsync<ScheduleModel>(schedKey);
+                team = t;
+                break;
+            }
+        }
+
+        if (schedule is not null)
+            orderedShifts = schedule.Shifts.OrderBy(s => s.Start).ToList();
+
+        loading = false;
+    }
+
+    private string MemberName(string id) => team?.Members.FirstOrDefault(m => m.Id == id)?.Name ?? "—";
+    private string RoleName(string id)
+        => string.IsNullOrWhiteSpace(id) ? "—" : (team?.Roles.FirstOrDefault(r => r.Id == id)?.Name ?? "—");
+
+    private async Task ExportCsv()
+    {
+        if (schedule is null || team is null) return;
+
+        var lines = new List<string> { "Data,Início,Fim,Cargo,Designado" };
+        foreach (var sh in orderedShifts)
+        {
+            var a = schedule.Assignments.FirstOrDefault(x => x.ShiftId == sh.Id);
+            var name = a is null ? "" : MemberName(a.MemberId);
+            var role = RoleName(sh.RoleId);
+            lines.Add($"{sh.Start:dd/MM/yyyy},{sh.Start:HH\\:mm},{sh.End:HH\\:mm},{role},{name}");
+        }
+        var csv = string.Join(Environment.NewLine, lines);
+
+        var dir = Microsoft.Maui.Storage.FileSystem.CacheDirectory;
+        var path = System.IO.Path.Combine(dir, $"Escala_{schedule.Name}_{DateTime.Now:yyyyMMddHHmmss}.csv");
+        await System.IO.File.WriteAllTextAsync(path, csv);
+
+        await Microsoft.Maui.ApplicationModel.Share.Default.RequestAsync(
+            new Microsoft.Maui.ApplicationModel.DataTransfer.ShareFileRequest
+            {
+                Title = $"Escala - {schedule.Name}",
+                File = new Microsoft.Maui.ApplicationModel.DataTransfer.ShareFile(path)
+            });
+    }
+
+    private void Editar()
+    {
+        if (schedule is null) return;
+        Nav.NavigateTo($"/schedules/{schedule.Id}/result");
+    }
+
+    private void Voltar() => Nav.NavigateTo("/history");
+}

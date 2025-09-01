@@ -1,0 +1,148 @@
+.page-root {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: 18dvh auto 2dvh auto 1fr;
+    align-content: start;
+    padding: 0 16px 24px;
+}
+
+.page-title {
+    grid-row: 2;
+    margin: 0;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: clamp(20px, 6vw, 32px);
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(640px, 92vw);
+}
+
+.form-wrap {
+    grid-row: 4;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: min(720px, 92vw);
+    display: grid;
+    gap: 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .field.row {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+
+label {
+    font-size: 14px;
+    opacity: .8;
+}
+
+.text, .textarea {
+    width: 100%;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 16px;
+    background: #fff;
+}
+
+.textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.grow {
+    flex: 1;
+}
+
+.section {
+    border: 1px solid rgba(0,0,0,.10);
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+}
+
+.section-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.bulk summary {
+    cursor: pointer;
+    font-size: 14px;
+    opacity: .9;
+    margin-bottom: 6px;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+    .row.right {
+        justify-content: flex-end;
+    }
+
+.primary-btn, .ghost-btn, .mini-btn {
+    padding: 12px 16px;
+    min-height: 44px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.15);
+    background: #f0f3f6;
+    cursor: pointer;
+}
+
+.mini-btn {
+    padding: 10px 12px;
+    min-height: 40px;
+    font-size: 14px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+.chip-list {
+    list-style: none;
+    margin: 10px 0 0 0;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f7f9fb;
+    border: 1px solid rgba(0,0,0,.1);
+    font-size: 14px;
+}
+
+.chip-x {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
