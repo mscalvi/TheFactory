@@ -237,7 +237,6 @@ namespace BingoCreator
         // Importar Lista por Pasta de Imagens
         private void btnListImport_Clicked(object sender, EventArgs e)
         {
-
             using var fbd = new FolderBrowserDialog
             {
                 Description = "Selecione a pasta contendo os arquivos da lista (capa .Capa e elementos)."
@@ -249,11 +248,19 @@ namespace BingoCreator
             string folder = fbd.SelectedPath;
             string listName = Path.GetFileName(folder);
 
-            // 1) Localiza o arquivo de capa (filename sem extensão == ".Capa")
-            var imageFiles = Directory.EnumerateFiles(folder, "*.png")
-                              .Concat(Directory.EnumerateFiles(folder, "*.jpg"))
-                              .ToList();
+            // 1) Coleta arquivos de imagem (png primeiro, depois jpg e jpeg)
+            var imageFiles = new[] { "*.png", "*.jpg", "*.jpeg" }
+                .SelectMany(p => Directory.EnumerateFiles(folder, p))
+                .ToList();
 
+            if (imageFiles.Count == 0)
+            {
+                MessageBox.Show("Nenhuma imagem .png ou .jpg encontrada na pasta selecionada.",
+                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 1.1) Localiza a capa (filename sem extensão == ".Capa")
             string coverFile = imageFiles
                 .FirstOrDefault(f =>
                     Path.GetFileNameWithoutExtension(f)
@@ -265,40 +272,112 @@ namespace BingoCreator
                 ? Path.GetFileName(coverFile)
                 : null;
 
-            int listId = DataService.CreateList(listName, description: "", imagename: coverImageName);
+            int listId;
+            try
+            {
+                listId = DataService.CreateList(listName, description: "", imagename: coverImageName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Falha ao criar a lista \"{listName}\": {ex.Message}",
+                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            // 3) Importa cada arquivo de elemento (todos exceto a capa)
+            // 3) Importa cada arquivo de elemento (todos exceto a capa),
+            // registrando não importados e motivos
+            var notImported = new List<(string Name, string Reason)>();
+            var seenBaseNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            int importedCount = 0;
+
             foreach (var file in imageFiles)
             {
                 string fileNameNoExt = Path.GetFileNameWithoutExtension(file);
                 if (fileNameNoExt.Equals(".Capa", StringComparison.OrdinalIgnoreCase))
-                    continue;   // pula o arquivo de capa
+                    continue; // pula a capa
 
-                // Nome base sem extensão
-                string baseName = fileNameNoExt;
+                string baseName = fileNameNoExt?.Trim() ?? "";
 
-                // Grava o elemento no banco
-                int elementId = DataService.CreateElement(
-                    name: baseName,
-                    cardName: baseName,
-                    note1: "",
-                    note2: "",
-                    imageName: Path.GetFileName(file),
-                    addTime: DateTime.Now.ToString("MMddyyyy - HH:mm:ss")
-                );
+                // Nome vazio ou só espaços
+                if (string.IsNullOrWhiteSpace(baseName))
+                {
+                    notImported.Add((Path.GetFileName(file), "Nome vazio (arquivo com nome inválido)."));
+                    continue;
+                }
 
-                // Associa na lista
-                DataService.AlocateElements(listId, new List<int> { elementId });
+                // Duplicata dentro da própria pasta (mesmo baseName em png/jpg, etc.)
+                if (!seenBaseNames.Add(baseName))
+                {
+                    notImported.Add((baseName, "Duplicado na pasta (mesmo nome-base)."));
+                    continue;
+                }
+
+                // Tenta criar o elemento
+                int elementId = 0;
+                try
+                {
+                    elementId = DataService.CreateElement(
+                        name: baseName,
+                        cardName: baseName,
+                        note1: "",
+                        note2: "",
+                        imageName: Path.GetFileName(file),
+                        addTime: DateTime.Now.ToString("MMddyyyy - HH:mm:ss")
+                    );
+
+                    if (elementId <= 0)
+                    {
+                        notImported.Add((baseName, "Falha ao criar elemento (ID inválido retornado)."));
+                        continue;
+                    }
+                }
+                catch (Exception exCreate)
+                {
+                    // Se o backend lançar exceção por chave única/duplicata etc., a mensagem vai junto
+                    notImported.Add((baseName, $"Erro ao criar: {exCreate.Message}"));
+                    continue;
+                }
+
+                // Tenta associar na lista
+                try
+                {
+                    DataService.AlocateElements(listId, new List<int> { elementId });
+                    importedCount++;
+                }
+                catch (Exception exLink)
+                {
+                    // Elemento foi criado mas não conseguiu associar
+                    notImported.Add((baseName, $"Criado, mas falha ao associar na lista: {exLink.Message}"));
+                    // (Opcional) você poderia tentar desfazer a criação aqui, se tiver método para isso.
+                }
             }
 
-            MessageBox.Show($"Importação concluída para a lista \"{listName}\"!",
-                            "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // 4) Monta a mensagem final
+            var sb = new StringBuilder();
+            sb.AppendLine($"Importação concluída para a lista \"{listName}\".");
+            sb.AppendLine($"Itens importados: {importedCount}/{imageFiles.Count - (coverFile != null ? 1 : 0)}");
+
+            if (coverFile == null)
+                sb.AppendLine("Atenção: arquivo de capa \".Capa\" não foi encontrado.");
+
+            if (notImported.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine("Não importados (nome: motivo):");
+                // Limita a 30 linhas para não estourar MessageBox; ajuste se quiser
+                foreach (var (name, reason) in notImported.Take(30))
+                    sb.AppendLine($"- {name}: {reason}");
+                if (notImported.Count > 30)
+                    sb.AppendLine($"... e mais {notImported.Count - 30} itens.");
+            }
+
+            MessageBox.Show(sb.ToString(), "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Recarrega combobox de listas, se for o caso
             LoadLists();
         }
 
-        // Importar Lista por TXT, remove acentos (de preferência não ter acentos) e caracteres não permitidos
+        // Importar Lista por TXT, remove acentos e caracteres não permitidos
         private void btnListTxt_Clicked(object sender, EventArgs e)
         {
             using var ofd = new OpenFileDialog

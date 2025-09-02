@@ -183,7 +183,7 @@ namespace BingoCreator.Services
             }
 
             document.Save(filePath);
-            MessageBox.Show($"Cartelas 4×4 salvas no Desktop:\n{fileName}", "Sucesso",
+            MessageBox.Show($"Cartelas 5×5 salvas no Desktop:\n{fileName}", "Sucesso",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
