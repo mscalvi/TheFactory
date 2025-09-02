@@ -18,43 +18,75 @@ namespace BingoCreator.Services
     internal class PrintingService
     {
         // Métodos de Suporte
-            // Desenha texto com quebra de linha dentro do retângulo, centralizado (H e V).
-        private static void DrawWrappedCenteredText(XGraphics gfx, string text, XFont font, XRect rect)
+        // Desenha texto com quebra de linha dentro do retângulo, centralizado (H e V).
+        private static void DrawWrappedCenteredText(
+            XGraphics gfx,
+            string text,
+            XFont baseFont,
+            XRect rect,
+            int maxLines = 10,
+            double minPoint = 7.5,
+            double lineSpacing = 1.10,
+            XBrush brush = null)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
+            brush ??= XBrushes.Black;
 
-            // Altura de linha (um pequeno leading para não “grudar”)
-            double lineH = gfx.MeasureString("Ag", font).Height * 1.1;
+            var f = baseFont;
 
-            // Quebra por largura
-            var lines = WrapByWidth(gfx, text, font, rect.Width);
-
-            // Limita pela altura disponível
-            int maxLines = Math.Max(1, (int)Math.Floor(rect.Height / lineH));
-            if (lines.Count > maxLines)
+            while (true)
             {
-                lines = lines.GetRange(0, maxLines);
-                // adiciona reticências na última linha se precisar
-                string last = lines[^1];
-                while (last.Length > 0 && gfx.MeasureString(last + "…", font).Width > rect.Width)
-                    last = last[..^1];
-                lines[^1] = last.Length > 0 ? last + "…" : "…";
-            }
+                double lineH = gfx.MeasureString("Ag", f).Height * lineSpacing;
+                var lines = WrapByWidth(gfx, text, f, rect.Width);
 
-            // Centraliza verticalmente
-            double totalH = lines.Count * lineH;
-            double y = rect.Y + (rect.Height - totalH) / 2.0;
+                int allowedByHeight = Math.Max(1, (int)Math.Floor(rect.Height / lineH));
+                int allowed = Math.Min(maxLines, allowedByHeight);
 
-            // Desenha cada linha centralizada horizontalmente
-            foreach (var ln in lines)
-            {
-                gfx.DrawString(ln, font, XBrushes.Black,
-                    new XRect(rect.X, y, rect.Width, lineH), XStringFormats.TopCenter);
-                y += lineH;
+                if (lines.Count <= allowed)
+                {
+                    double totalH = lines.Count * lineH;
+                    double y = rect.Y + (rect.Height - totalH) / 2.0;
+
+                    foreach (var ln in lines)
+                    {
+                        gfx.DrawString(ln, f, brush,
+                            new XRect(rect.X, y, rect.Width, lineH),
+                            XStringFormats.TopCenter);
+                        y += lineH;
+                    }
+                    return;
+                }
+
+                // diminui o tamanho da fonte
+                double nextPt = f.Size - 0.5;
+                if (nextPt < minPoint)
+                {
+                    // chegou no limite: desenha o que couber (sem "…")
+                    lines = lines.Take(allowed).ToList();
+                    double totalH = lines.Count * lineH;
+                    double y = rect.Y + (rect.Height - totalH) / 2.0;
+
+                    foreach (var ln in lines)
+                    {
+                        gfx.DrawString(ln, f, brush,
+                            new XRect(rect.X, y, rect.Width, lineH),
+                            XStringFormats.TopCenter);
+                        y += lineH;
+                    }
+                    return;
+                }
+
+                // ✅ NÃO use f.Options (não existe em PdfSharpCore)
+                f = new XFont(f.Name, nextPt, f.Style);
+                // Se precisar garantir Unicode/Embedding, use o overload com XPdfFontOptions:
+                // using PdfSharpCore.Pdf;
+                // var opts = new XPdfFontOptions(PdfFontEncoding.Unicode, PdfFontEmbedding.Always);
+                // f = new XFont(f.Name, nextPt, f.Style, opts);
             }
         }
 
-            // Quebra “por palavras”; se a palavra for maior que a largura, quebra por caracteres.
+
+        // Quebra “por palavras”; se a palavra for maior que a largura, quebra por caracteres.
         private static List<string> WrapByWidth(XGraphics gfx, string text, XFont font, double maxW)
         {
             var tokens = Regex.Split(text, @"(\s+)"); // preserva espaços
@@ -131,7 +163,15 @@ namespace BingoCreator.Services
         }
 
         // Imprimir Cartelas
-        public static void PrintCards5x5(string setName, List<List<DataRow>> allCards, int cardsQnt, string cardsTitle, string cardsEnd, string themeKey, string headerKey, string modelKey)
+        public static void PrintCards5x5(
+            string setName,
+            List<List<DataRow>> allCards,
+            int cardsQnt,
+            string cardsTitle,
+            string cardsEnd,
+            string themeKey,
+            string headerKey,
+            string modelKey)
         {
             string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             string fileName = $"Cartelas - {setName}.pdf";
@@ -146,40 +186,82 @@ namespace BingoCreator.Services
 
             const double margin = 40;
             const double cellHeight = 40;
-            double pageWidth, pageHeight;
-            double cardWidth = 0;
+            const double gapY = 100;           // espaço entre as 2 cartelas
+            const bool showCut = true;
+            const bool dottedCut = true;
+
             double cardHeight = cellHeight * 8;
+            double pageWidth = 0, pageHeight = 0, cardWidth = 0;
 
             var titleFont = DesignService.CreateFont(theme.FontTitle, 17, XFontStyle.Bold);
             var headerFont = DesignService.CreateFont(theme.FontTitle, 15, XFontStyle.Bold);
-            var compFont = DesignService.CreateFont(theme.FontBody, 10, XFontStyle.Regular);
+            var compFont = DesignService.CreateFont(theme.FontBody, 10, XFontStyle.Bold);
             var footerFont = DesignService.CreateFont(theme.FontTitle, 12, XFontStyle.Bold);
             var numberFont = DesignService.CreateFont(theme.FontTitle, 12, XFontStyle.Bold);
-
             var pen = DesignService.Pen(theme, 0.8);
 
             XGraphics gfx = null;
             PdfPage page = null;
 
+            // variáveis por página
+            double midY = 0;          // linha central da área útil
+            double yTop = 0, yBottom = 0;
+            bool hasSecondOnPage = false;
+
             for (int i = 0; i < cardsQnt; i++)
             {
+                // Nova página a cada par
                 if (i % 2 == 0)
                 {
                     page = document.AddPage();
                     page.Size = PdfSharpCore.PageSize.A4;
+
                     pageWidth = page.Width;
                     pageHeight = page.Height;
                     cardWidth = pageWidth - 2 * margin;
 
                     gfx = XGraphics.FromPdfPage(page);
+
+                    // Esta página terá 2 cartelas?
+                    hasSecondOnPage = (i + 1 < cardsQnt);
+
+                    // Centro da área útil
+                    double usableH = pageHeight - 2 * margin;
+                    midY = margin + usableH / 2.0;
+
+                    if (hasSecondOnPage)
+                    {
+                        // Posicionamento simétrico em torno de midY
+                        yTop = midY - (gapY / 2.0) - cardHeight;
+                        yBottom = midY + (gapY / 2.0);
+                    }
+                    else
+                    {
+                        // Página com uma cartela só: centraliza
+                        yTop = midY - cardHeight / 2.0;
+                    }
                 }
 
-                double y0 = margin + (i % 2) * (cardHeight + 20);
+                // Qual Y usar nesta cartela?
+                double y0 = (!hasSecondOnPage)
+                            ? yTop
+                            : (i % 2 == 0 ? yTop : yBottom);
 
                 DrawCards5x5(
                     gfx, margin, y0, cardWidth, cardHeight,
                     allCards[i], i + 1, cardsTitle, cardsEnd,
-                    theme, pen, titleFont, headerFont, compFont, footerFont, numberFont);
+                    theme, pen, titleFont, headerFont, compFont, footerFont, numberFont
+                );
+
+                // Depois de desenhar a 2ª cartela da página, desenhe a linha de corte exatamente em midY
+                if (showCut && hasSecondOnPage && (i % 2 == 1))
+                {
+                    var cutPen = new XPen(XColors.Gray, 0.6)
+                    {
+                        DashStyle = dottedCut ? XDashStyle.Dot : XDashStyle.Solid
+                    };
+                    gfx.DrawLine(cutPen, margin, midY, pageWidth - margin, midY);
+                }
             }
 
             document.Save(filePath);
@@ -189,6 +271,34 @@ namespace BingoCreator.Services
 
         public static void PrintCards4x4(string setName, List<List<DataRow>> allCards, int cardsQnt, string cardsTitle, string cardsEnd, string themeKey, string modelKey)
         {
+            // === Validações (antes de criar o documento) ===
+            var errors = new List<string>();
+            if (!string.IsNullOrEmpty(cardsTitle) && cardsTitle.Length > 120)
+                errors.Add($"Título com {cardsTitle.Length} caracteres (máx 120).");
+            if (!string.IsNullOrEmpty(cardsEnd) && cardsEnd.Length > 200)
+                errors.Add($"Mensagem final com {cardsEnd.Length} caracteres (máx 200).");
+
+            // nomes das cartelas (máx 50)
+            for (int ci = 0; ci < Math.Min(cardsQnt, allCards.Count); ci++)
+            {
+                var rows = allCards[ci];
+                for (int k = 0; k < rows.Count; k++)
+                {
+                    string n = rows[k]?["Name"]?.ToString()
+                             ?? rows[k]?["CardName"]?.ToString()
+                             ?? string.Empty;
+                    if (n.Length > 50)
+                        errors.Add($"Cartela {ci + 1}, item {k + 1}: nome com {n.Length} caracteres (máx 50): \"{n}\"");
+                }
+            }
+
+            if (errors.Count > 0)
+            {
+                MessageBox.Show("Não foi possível gerar o PDF:\n" + string.Join("\n", errors),
+                    "Validação de Conteúdo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string fileName = $"Cartelas - {setName}.pdf";
             string filePath = Path.Combine(desktop, fileName);
@@ -201,6 +311,8 @@ namespace BingoCreator.Services
 
             const double margin = 36;
             const double gap = 14;
+            const bool showCutLines = true;  
+            const bool dottedCut = true;      
 
             XGraphics gfx = null;
             PdfPage page = null;
@@ -229,6 +341,13 @@ namespace BingoCreator.Services
                     // ✅ 3 cartelas empilhadas (2 gaps entre elas)
                     double available = pageHeight - 2 * margin - 2 * gap;
                     cardHeight = available / 3.0;
+                    if (showCutLines)
+                    {
+                        double yCut1 = margin + cardHeight + gap / 2.0;
+                        double yCut2 = margin + 2 * cardHeight + 1.5 * gap;
+                        DrawHorizontalCutLine(gfx, margin, pageWidth - margin, yCut1, dottedCut);
+                        DrawHorizontalCutLine(gfx, margin, pageWidth - margin, yCut2, dottedCut);
+                    }
                 }
 
                 int rowInPage = i % 3; // 0..2
@@ -242,6 +361,13 @@ namespace BingoCreator.Services
             document.Save(filePath);
             MessageBox.Show($"Cartelas 4×4 salvas no Desktop:\n{fileName}", "Sucesso",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        
+        private static void DrawHorizontalCutLine(XGraphics gfx, double x1, double x2, double y, bool dotted = true, double thickness = 0.6)
+        {
+            var pen = new XPen(XColors.Gray, thickness);
+            pen.DashStyle = dotted ? XDashStyle.Dot : XDashStyle.Solid;
+            gfx.DrawLine(pen, x1, y, x2, y);
         }
 
         // Desenho das Cartelas
@@ -292,7 +418,8 @@ namespace BingoCreator.Services
                     {
                         string name = cardsElements[idx]?["Name"]?.ToString() ?? string.Empty;
                         DrawWrappedCenteredText(gfx, name, elementFont,
-                            new XRect(cell.X + 3, cell.Y + 3, cell.Width - 6, cell.Height - 6));
+                            new XRect(cell.X + 3, cell.Y + 3, cell.Width - 6, cell.Height - 6),
+                            maxLines: 3, minPoint: 7.5);
                     }
                 }
             }
@@ -326,12 +453,12 @@ namespace BingoCreator.Services
                 minPointSize: 9
             );
 
-            // desenha a MENSAGEM (2 linhas máx.)
             DrawWrappedCenteredText(
                 gfx,
                 footerText,
                 footerFontFit,
-                new XRect(footerRect.X + 3, footerRect.Y + 2, footerRect.Width - 6, footerRect.Height - 4)
+                new XRect(footerRect.X + 3, footerRect.Y + 2, footerRect.Width - 6, footerRect.Height - 4),
+                maxLines: 2, minPoint: 8
             );
 
             // NÚMERO = 80% do tamanho FINAL da mensagem (e ainda respeita a caixa)
@@ -386,7 +513,8 @@ namespace BingoCreator.Services
                     {
                         string name = cardsElements[idx]?["Name"]?.ToString() ?? string.Empty;
                         DrawWrappedCenteredText(gfx, name, elementFont,
-                            new XRect(cell.X + 3, cell.Y + 3, cell.Width - 6, cell.Height - 6));
+                            new XRect(cell.X + 3, cell.Y + 3, cell.Width - 6, cell.Height - 6),
+                            maxLines: 3, minPoint: 7.5);
                     }
                 }
             }
@@ -423,7 +551,8 @@ namespace BingoCreator.Services
                 gfx,
                 footerText,
                 footerFontFit,
-                new XRect(footerRect.X + 3, footerRect.Y + 2, footerRect.Width - 6, footerRect.Height - 4)
+                new XRect(footerRect.X + 3, footerRect.Y + 2, footerRect.Width - 6, footerRect.Height - 4),
+                maxLines: 2, minPoint: 8
             );
 
             // NÚMERO = 80% do tamanho FINAL da mensagem
@@ -694,7 +823,9 @@ namespace BingoCreator.Services
 
                         if (idx < total)
                         {
-                            DrawWrappedCenteredText(gfx, items[idx], cellFont, new XRect(cellRect.X + 4, cellRect.Y + 3, cellRect.Width - 8, cellRect.Height - 6));
+                            DrawWrappedCenteredText(gfx, items[idx], cellFont,
+    new XRect(cellRect.X + 4, cellRect.Y + 3, cellRect.Width - 8, cellRect.Height - 6),
+    maxLines: 2, minPoint: 8);
                             idx++;
                         }
                     }

@@ -69,13 +69,27 @@
     void AddParticipant()
     {
         error = "";
-        var n = (participantInput ?? "").Trim();
-        if (string.IsNullOrWhiteSpace(n)) return;
-        if (participants.Any(x => string.Equals(x, n, StringComparison.OrdinalIgnoreCase))) return;
+        var raw = (participantInput ?? "").Trim();
+        if (string.IsNullOrWhiteSpace(raw)) return;
 
-        participants.Add(n);
+        // remove reticências ocasionais e divide por vírgulas (também tolera ; e quebras de linha)
+        raw = raw.Replace("…", "");
+
+        var names = raw
+            .Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(n => n.Trim())
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Distinct(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var n in names)
+        {
+            if (!participants.Any(x => string.Equals(x, n, StringComparison.OrdinalIgnoreCase)))
+                participants.Add(n);
+        }
+
         participantInput = "";
     }
+
 
     void RemoveParticipant(string n)
     {

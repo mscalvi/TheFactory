@@ -362,3 +362,55 @@ html, body {
         white-space: normal;
     }
 }
+
+/* ---- Checkboxes mais compactas e com mais espaço para texto ---- */
+.checklist {
+    /* dá um pouco mais de largura mínima para caber nomes curtos sem quebrar tanto */
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 6px;
+}
+
+.check-item {
+    /* grade: 1 col estreita pro checkbox + 1fr pro texto */
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px; /* um pouco mais denso */
+}
+
+    /* tira margens nativas e limita tamanho visual do checkbox */
+    .check-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        /* opcional: ligeiro scale se o user-agent renderizar grande */
+        transform: scale(0.95);
+        transform-origin: left center;
+        /* opcional: cor do check (browsers modernos) */
+        accent-color: #334155;
+    }
+
+    /* texto ocupa o restante e pode quebrar */
+    .check-item span {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        line-height: 1.2;
+    }
+
+/* em telas muito estreitas, deixe a coluna mínima um pouco menor */
+@media (max-width: 480px) {
+    .checklist {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .check-item {
+        gap: 6px;
+        padding: 5px 7px;
+        grid-template-columns: 16px 1fr;
+    }
+
+        .check-item input[type="checkbox"] {
+            transform: scale(0.9);
+        }
+}

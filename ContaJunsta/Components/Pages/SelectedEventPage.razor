@@ -26,32 +26,23 @@
         <div class="error-box">@error</div>
     }
 
-    <!-- Abas -->
-    <nav class="tabbar">
-        <button class="tab-btn @(tab == "add" ? "active" : null)" @onclick="SetTabAdd">Lançamentos</button>
-        <button class="tab-btn @(tab == "close" ? "active" : null)" @onclick="SetTabClose">Fechamento</button>
-        <span class="tab-spacer"></span>
-        <button class="tab-btn back" @onclick="GoBack">Voltar</button>
-    </nav>
-
-
-    @if (tab == "add")
+    @if (view == "main")
     {
-        <!-- EEA: Adicionar lançamento -->
+        <!-- TELA PRINCIPAL: adicionar + lista -->
         <section class="page-card">
             <div class="field">
-                <label>Descrição</label>
+                <label>Onde gastou?</label>
                 <input class="input" @bind="desc" @bind:event="oninput" disabled="@isClosed" placeholder="Mercado, Combustível, Empréstimos, Loteria..." />
             </div>
 
             <div class="field">
-                <label>Valor (R$)</label>
+                <label>Quanto foi?</label>
                 <input class="input" inputmode="decimal" @bind="valueStr" @bind:event="oninput" disabled="@isClosed"
                        placeholder="0,00 (positivo = despesa; negativo = ganho)" />
             </div>
 
             <div class="field">
-                <label>Responsável (pagou/recebeu)</label>
+                <label>Quem pagou?</label>
                 <select class="input" @bind="responsibleId" disabled="@isClosed">
                     @foreach (var p in participants)
                     {
@@ -61,7 +52,7 @@
             </div>
 
             <div class="field">
-                <label>Participantes da divisão</label>
+                <label>Quem divide?</label>
                 <div class="checklist">
                     @foreach (var p in participants)
                     {
@@ -123,10 +114,17 @@
                 }
             </div>
         </section>
+
+        <!-- Rodapé de ações da tela principal -->
+        <div class="actions" style="margin-top:16px;">
+            <button class="home-btn ghost" @onclick="ShowPreviewAsync">Conferir Parcial</button>
+            <button class="home-btn danger" @onclick="CloseEventAsync" disabled="@CloseDisabled" title="@CloseBtnTitle">Fechar Evento</button>
+            <button class="home-btn ghost" @onclick="GoHome">Voltar</button>
+        </div>
     }
-    else
+    else if (view == "preview")
     {
-        <!-- EEF: Fechar -->
+        <!-- FECHAMENTO (prévia) -->
         <section class="page-card">
             <h2 class="h2">Resumo por pessoa</h2>
 
@@ -150,7 +148,7 @@
                             <div>@s.Name</div>
                             <div>R$ @FormatCents(s.Paid)</div>
                             <div>R$ @FormatCents(s.Should)</div>
-                            <div class="@(s.Balance>=0 ? "ok" : "warn")">R$ @FormatCents(s.Balance)</div>
+                            <div class="@(s.Balance >= 0 ? "ok" : "warn")">R$ @FormatCents(s.Balance)</div>
                         </div>
                     }
                 </div>
@@ -176,13 +174,66 @@
             }
 
             <div class="actions">
-                <button class="home-btn" @onclick="ExportTxtAsync" disabled="@closeLoading">Exportar TXT</button>
-                <button class="home-btn" @onclick="ExportCsvAsync" disabled="@closeLoading">Exportar CSV</button>
-
-                <button class="home-btn danger" @onclick="CloseEventAsync" disabled="@CloseDisabled" title="@CloseBtnTitle">Fechar evento</button>
-                <button class="home-btn danger" @onclick="DeleteEventAsync" disabled="@closeLoading">Excluir evento</button>
+                <button class="home-btn ghost" @onclick="BackToEvent">Voltar</button>
             </div>
+        </section>
+    }
+    else
+    {
+        <!-- FECHAMENTO (evento fechado) -->
+        <section class="page-card">
+            <h2 class="h2">Resumo por pessoa</h2>
 
+            @if (closeLoading)
+            {
+                <div class="empty">Calculando…</div>
+            }
+            else if (summaries.Count == 0)
+            {
+                <div class="empty">Sem lançamentos para calcular.</div>
+            }
+            else
+            {
+                <div class="summary-table">
+                    <div class="row head">
+                        <div>Pessoa</div><div>Pagou</div><div>Total</div><div>Faltam</div>
+                    </div>
+                    @foreach (var s in summaries)
+                    {
+                        <div class="row">
+                            <div>@s.Name</div>
+                            <div>R$ @FormatCents(s.Paid)</div>
+                            <div>R$ @FormatCents(s.Should)</div>
+                            <div class="@(s.Balance >= 0 ? "ok" : "warn")">R$ @FormatCents(s.Balance)</div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <h2 class="h2" style="margin-top:16px;">Transferências sugeridas</h2>
+            @if (closeLoading)
+            {
+                <div class="empty">Calculando…</div>
+            }
+            else if (transfers.Count == 0)
+            {
+                <div class="empty">Nenhum acerto necessário.</div>
+            }
+            else
+            {
+                <ul class="transfers">
+                    @foreach (var t in transfers)
+                    {
+                        <li>@NameOf(t.FromId) paga R$ @FormatCents(t.Cents) para @NameOf(t.ToId)</li>
+                    }
+                </ul>
+            }
+
+            <div class="actions">
+                <button class="home-btn" @onclick="ExportCsvAsync" disabled="@closeLoading">Exportar CSV</button>
+                <button class="home-btn" @onclick="ExportTxtAsync" disabled="@closeLoading">Exportar TXT</button>
+                <button class="home-btn ghost" @onclick="BackToEvent">Voltar</button>
+            </div>
         </section>
     }
 
@@ -191,8 +242,8 @@
 @code {
     [Parameter] public string? Id { get; set; }
 
-    // estado
-    string tab = "add";
+    // estado de tela: "main" (padrão), "preview" (parcial), "closed" (fechado)
+    string view = "main";
     string eventName = "(carregando...)";
     string error = "";
     bool isClosed = false;
@@ -212,12 +263,11 @@
     List<BillView> bills = new();
     bool loadingBills = false;
 
-    // aba Fechar
+    // fechamento
     bool closeLoading = false;
     List<CalculationService.PersonSummary> summaries = new();
     List<CalculationService.Transfer> transfers = new();
 
-    // ---------- lifecycle ----------
     protected override async Task OnParametersSetAsync()
     {
         fromHistory = QueryIs(new Uri(Nav.Uri), "from", "history");
@@ -250,8 +300,15 @@
 
             await LoadBillsAsync();
 
-            if (isClosed) { tab = "close"; await RecomputeAsync(); }
-            else if (tab == "close") { await RecomputeAsync(); }
+            if (isClosed)
+            {
+                view = "closed";
+                await RecomputeAsync();
+            }
+            else
+            {
+                view = "main";
+            }
         }
         catch (Exception ex)
         {
@@ -260,7 +317,7 @@
         }
     }
 
-    // ---------- carregar/exibir lançamentos ----------
+    // carregar/exibir lançamentos
     async Task LoadBillsAsync()
     {
         try
@@ -294,14 +351,11 @@
         }
     }
 
-    // ---------- ações ----------
+    // ações
     bool CanAdd =>
         !string.IsNullOrWhiteSpace(desc) &&
         ParseCents(valueStr) != 0 &&
         selectedIds.Count >= 1;
-
-    void SetTabAdd() => tab = "add";
-    async Task SetTabClose() { tab = "close"; await RecomputeAsync(); }
 
     void OnCheckChange(string id, ChangeEventArgs e)
     {
@@ -326,19 +380,17 @@
             if (selectedIds.Count < 1) throw new InvalidOperationException("Selecione pelo menos 1 pessoa.");
 
             var bill = new BillModel
-                {
-                    EventId = Id!,
-                    Description = (desc ?? "").Trim(),
-                    Cents = cents,
-                    ResponsiblePersonId = responsibleId ?? "",
-                    ParticipantIds = selectedIds.ToList()
-                };
+            {
+                EventId = Id!,
+                Description = (desc ?? "").Trim(),
+                Cents = cents,
+                ResponsiblePersonId = responsibleId ?? "",
+                ParticipantIds = selectedIds.ToList()
+            };
             await Data.AddBillAsync(bill);
 
             ResetForm();
             await LoadBillsAsync();
-
-            if (tab == "close") await RecomputeAsync();
         }
         catch (Exception ex)
         {
@@ -354,13 +406,19 @@
             if (!await JS.InvokeAsync<bool>("confirm", "Excluir este lançamento?")) return;
             await Data.DeleteBillAsync(billId);
             await LoadBillsAsync();
-            if (tab == "close") await RecomputeAsync();
+            if (view != "main") await RecomputeAsync();
         }
         catch (Exception ex)
         {
             error = "Não foi possível excluir o lançamento. " + ex.Message;
             Console.Error.WriteLine(ex);
         }
+    }
+
+    async Task ShowPreviewAsync()
+    {
+        view = "preview";
+        await RecomputeAsync();
     }
 
     async Task CloseEventAsync()
@@ -376,7 +434,8 @@
                     return;
 
                 await Data.DeleteEventCascadeAsync(Id);
-                Nav.NavigateTo("/events");
+                // volta pra Home conforme pedido
+                Nav.NavigateTo("/");
                 return;
             }
 
@@ -385,7 +444,10 @@
 
             await Data.CloseEventAsync(Id);
             isClosed = true;
-            Nav.NavigateTo("/events"); // fechados não aparecem na lista de abertos
+
+            // mostra a área de fechamento com opções de export
+            view = "closed";
+            await RecomputeAsync();
         }
         catch (Exception ex)
         {
@@ -420,7 +482,9 @@
         }
     }
 
-    void GoBack() => Nav.NavigateTo(fromHistory ? "/history" : "/events");
+    void GoHome() => Nav.NavigateTo("/");
+
+    void BackToEvent() => view = "main";
 
     async Task DeleteEventAsync()
     {
@@ -435,7 +499,7 @@
             if (!ok) return;
 
             await Data.DeleteEventCascadeAsync(Id);
-            Nav.NavigateTo("/events");
+            Nav.NavigateTo("/");
         }
         catch (Exception ex)
         {
@@ -444,8 +508,7 @@
         }
     }
 
-
-    // ---------- helpers ----------
+    // helpers
     string NameOf(string id) => participants.FirstOrDefault(p => p.Id == id)?.Name ?? id;
 
     static string FormatCents(int cents) => (cents / 100.0).ToString("N2");
@@ -494,11 +557,9 @@
 
     void ResetForm()
     {
-        // limpa descrição e valor
         desc = "";
         valueStr = "";
 
-        // volta para defaults (primeiro participante como responsável e todos selecionados)
         if (participants.Count > 0)
         {
             responsibleId = participants[0].Id;
@@ -507,7 +568,6 @@
     }
 
     bool CloseDisabled => closeLoading || isClosed;
-
     string? CloseBtnTitle => isClosed ? "Evento já fechado" : (closeLoading ? "Calculando…" : null);
 
     bool fromHistory = false;
@@ -527,7 +587,7 @@
         return false;
     }
 
-    // ---- Exportar TXT (resumo) ----
+    // Exportar TXT (resumo)
     async Task ExportTxtAsync()
     {
         try
@@ -535,10 +595,8 @@
             error = "";
             if (string.IsNullOrWhiteSpace(Id)) { error = "Evento inválido."; return; }
 
-            // Garante cálculo atualizado
-            if (tab != "close") { tab = "close"; await RecomputeAsync(); }
+            await RecomputeAsync();
 
-            // Sem lançamentos?
             var rawBills = await Data.GetBillsByEventAsync(Id);
             if (rawBills.Count == 0) { error = "Não há lançamentos para exportar."; return; }
 
@@ -568,7 +626,7 @@
         }
     }
 
-    // ---- Exportar CSV (lançamentos crus) ----
+    // Exportar CSV (lançamentos crus)
     async Task ExportCsvAsync()
     {
         try
@@ -607,12 +665,10 @@
         }
     }
 
-    // ---- utilitário de nome de arquivo ----
     static string Slug(string s)
     {
         var bad = System.IO.Path.GetInvalidFileNameChars();
         var clean = new string((s ?? "").Select(ch => bad.Contains(ch) ? '-' : ch).ToArray());
         return string.IsNullOrWhiteSpace(clean) ? "export" : clean;
     }
-
 }
