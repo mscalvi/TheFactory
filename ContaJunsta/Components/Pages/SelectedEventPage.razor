@@ -125,8 +125,8 @@
     else if (view == "preview")
     {
         <!-- FECHAMENTO (prévia) -->
-        <section class="page-card">
-            <h2 class="h2">Resumo por pessoa</h2>
+        <section class="page-card preview-compact">
+            <h2 class="h2">Fechamento Parcial</h2>
 
             @if (closeLoading)
             {
@@ -140,12 +140,12 @@
             {
                 <div class="summary-table">
                     <div class="row head">
-                        <div>Pessoa</div><div>Pagou</div><div>Total</div><div>Faltam</div>
+                        <div>Pessoa</div><div>Pagou</div><div>Total</div><div>Deveria</div>
                     </div>
                     @foreach (var s in summaries)
                     {
                         <div class="row">
-                            <div>@s.Name</div>
+                            <div>@ShortName(s.Name)</div>
                             <div>R$ @FormatCents(s.Paid)</div>
                             <div>R$ @FormatCents(s.Should)</div>
                             <div class="@(s.Balance >= 0 ? "ok" : "warn")">R$ @FormatCents(s.Balance)</div>
@@ -168,7 +168,7 @@
                 <ul class="transfers">
                     @foreach (var t in transfers)
                     {
-                        <li>@NameOf(t.FromId) paga R$ @FormatCents(t.Cents) para @NameOf(t.ToId)</li>
+                        <li>@ShortName(NameOf(t.FromId)) paga R$ @FormatCents(t.Cents) para @ShortName(NameOf(t.ToId))</li>
                     }
                 </ul>
             }
@@ -196,7 +196,7 @@
             {
                 <div class="summary-table">
                     <div class="row head">
-                        <div>Pessoa</div><div>Pagou</div><div>Total</div><div>Faltam</div>
+                        <div>Pessoa</div><div>Pagou</div><div>Total</div><div>Deveria</div>
                     </div>
                     @foreach (var s in summaries)
                     {
@@ -671,4 +671,26 @@
         var clean = new string((s ?? "").Select(ch => bad.Contains(ch) ? '-' : ch).ToArray());
         return string.IsNullOrWhiteSpace(clean) ? "export" : clean;
     }
+
+    string ShortName(string? full)
+    {
+        var s = (full ?? "").Trim();
+        if (s.Length <= 9) return s; // se já é curto, mantém
+
+        var parts = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var first = parts.ElementAtOrDefault(0) ?? s;
+        var second = parts.ElementAtOrDefault(1);
+
+        if (!string.IsNullOrEmpty(second))
+        {
+            var f = first.Length <= 4 ? first : first.Substring(0, 4);
+            var sec = second.Length <= 2 ? second : second.Substring(0, 2);
+            return f + sec; // ex.: "MarcVi"
+        }
+        else
+        {
+            return first.Length <= 7 ? first : first.Substring(0, 7); // ex.: "Marcelo"
+        }
+    }
+
 }

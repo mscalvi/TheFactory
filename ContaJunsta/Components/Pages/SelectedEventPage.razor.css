@@ -414,3 +414,22 @@ html, body {
             transform: scale(0.9);
         }
 }
+
+/* ----- Modo compacto para o fechamento parcial ----- */
+.preview-compact .summary-table {
+    font-size: 13px; /* texto menor */
+    grid-template-columns: 1fr minmax(72px, 20vw) minmax(72px, 20vw) minmax(72px, 20vw);
+    gap: 4px 8px;
+}
+
+    .preview-compact .summary-table .row > div {
+        padding: 4px 0;
+    }
+
+.preview-compact .h2 {
+    margin-bottom: 6px;
+}
+
+.preview-compact .transfers {
+    font-size: 14px;
+}
