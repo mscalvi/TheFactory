@@ -1,0 +1,281 @@
+@page "/schedules/{id}/result"
+@using EscalaFacil.Components.Models
+@using EscalaFacil.Components.Services
+@inject IDataStore Data
+@inject ISchedulerService Scheduler
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<main class="page-root">
+    <h1 class="page-title">RESULTADO</h1>
+
+    @if (loading)
+    {
+        <p class="muted center">Gerando…</p>
+    }
+    else if (schedule is null || team is null)
+    {
+        <p class="muted center">Escala não encontrada.</p>
+    }
+    else
+    {
+        <section class="form-wrap">
+            <div class="section">
+                <div class="meta">
+                    <div><strong>Equipe:</strong> @team.Name</div>
+                    <div><strong>Escala:</strong> @schedule.Name</div>
+                    <div><strong>Turnos:</strong> @schedule.Shifts.Count</div>
+                </div>
+                <div class="summary">
+                    <span><strong>Cobertura:</strong> @summary.FilledShifts/@summary.TotalShifts</span>
+                    <span>·</span>
+                    <span><strong>Pessoas distintas:</strong> @summary.DistinctPeople</span>
+                </div>
+                <div class="chips">
+                    @foreach (var kv in summary.CountByMember.OrderBy(kv => MemberName(kv.Key)))
+                    {
+                        <span class="chip" title="@MemberName(kv.Key)">@MemberName(kv.Key): @kv.Value</span>
+                    }
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Atribuições</h2>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 18%;">Data</th>
+                            <th style="width: 16%;">Horário</th>
+                            <th style="width: 22%;">Cargo</th>
+                            <th style="width: 34%;">Designado</th>
+                            <th style="width: 10%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sh in orderedShifts)
+                        {
+                            var current = schedule.Assignments.FirstOrDefault(a => a.ShiftId == sh.Id)?.MemberId ?? "";
+                            var cands = CandidatesFor(sh);
+                            <tr>
+                                <td>@sh.Start:dd/MM/yyyy</td>
+                                <td>@sh.Start:HH\\:mm – @sh.End:HH\\:mm</td>
+                                <td>@RoleName(sh.RoleId)</td>
+                                <td>
+                                    <select class="select" value="@current" @onchange="(e)=>OnChangeAssignment(sh, e.Value?.ToString())">
+                                        <option value="">— sem designação —</option>
+                                        @foreach (var mid in cands)
+                                        {
+                                            <option value="@mid">@MemberName(mid)</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="icon-btn" title="Limpar" @onclick="() => ClearAssignment(sh.Id)">×</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <button class="primary-btn" @onclick="Regenerate">Regerar</button>
+                <button class="ghost-btn" @onclick="ExportCsv" disabled="@(orderedShifts.Count == 0)">Exportar CSV</button>
+                <button class="ghost-btn" @onclick="ViewMode">Visualizar</button>
+                <button class="ghost-btn" @onclick="Voltar">Voltar</button>
+            </div>
+        </section>
+    }
+</main>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    private bool loading = true;
+    private ScheduleModel? schedule;
+    private TeamModel? team;
+    private List<ShiftModel> orderedShifts = new();
+    private ScheduleSummary summary = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadAndEnsureGenerated();
+    }
+
+    private async Task LoadAndEnsureGenerated(bool forceRegen = false)
+    {
+        loading = true;
+        schedule = null; team = null; orderedShifts.Clear();
+        summary = new();
+
+        // localizar a escala pela Id (varrendo equipes)
+        foreach (var teamKey in Data.EnumerateKeys("teams/").Where(k => k.Count(c => c == '/') == 1))
+        {
+            var t = await Data.LoadAsync<TeamModel>(teamKey);
+            if (t is null) continue;
+
+            var schedKey = DataKeys.Schedule(t.Id, Id!);
+            if (await Data.ExistsAsync(schedKey))
+            {
+                schedule = await Data.LoadAsync<ScheduleModel>(schedKey);
+                team = t;
+                break;
+            }
+        }
+
+        if (schedule is null || team is null)
+        {
+            loading = false;
+            return;
+        }
+
+        orderedShifts = schedule.Shifts.OrderBy(s => s.Start).ToList();
+
+        if (forceRegen || schedule.Assignments.Count == 0)
+        {
+            var (assigns, sum) = Scheduler.Generate(team, schedule, maxPerPersonCap: 3);
+            schedule.Assignments = assigns;
+            summary = sum;
+            await Data.SaveAsync(DataKeys.Schedule(team.Id, schedule.Id), schedule);
+        }
+        else
+        {
+            summary = BuildSummary(schedule);
+        }
+
+        loading = false;
+    }
+
+    private ScheduleSummary BuildSummary(ScheduleModel s)
+    {
+        return new ScheduleSummary
+        {
+            TotalShifts = s.Shifts.Count,
+            FilledShifts = s.Assignments.Count,
+            DistinctPeople = s.Assignments.Select(a => a.MemberId).Distinct().Count(),
+            CountByMember = s.Assignments.GroupBy(a => a.MemberId).ToDictionary(g => g.Key, g => g.Count())
+        };
+    }
+
+    private string MemberName(string memberId)
+        => team?.Members.FirstOrDefault(m => m.Id == memberId)?.Name ?? "—";
+
+    private string RoleName(string roleId)
+        => string.IsNullOrWhiteSpace(roleId)
+            ? "—"
+            : (team?.Roles.FirstOrDefault(r => r.Id == roleId)?.Name ?? "—");
+
+    private IEnumerable<string> CandidatesFor(ShiftModel sh)
+    {
+        if (schedule is null || team is null) yield break;
+
+        var avail = schedule.Availability.Where(a => a.ShiftId == sh.Id).Select(a => a.MemberId).ToHashSet();
+        foreach (var m in team.Members.Where(mm => mm.IsActive))
+        {
+            if (!avail.Contains(m.Id)) continue;
+            if (!(m.RoleIds.Count == 0 || string.IsNullOrWhiteSpace(sh.RoleId) || m.RoleIds.Contains(sh.RoleId)))
+                continue;
+
+            yield return m.Id;
+        }
+    }
+
+    private async Task OnChangeAssignment(ShiftModel sh, string? newMemberId)
+    {
+        if (schedule is null || team is null) return;
+
+        // remover atual
+        schedule.Assignments.RemoveAll(a => a.ShiftId == sh.Id);
+
+        if (!string.IsNullOrWhiteSpace(newMemberId))
+        {
+            // checa conflito
+            if (HasConflict(newMemberId, sh))
+            {
+                await JS.InvokeVoidAsync("alert", $"Conflito de horário para {MemberName(newMemberId)}.");
+                StateHasChanged();
+                return;
+            }
+
+            schedule.Assignments.Add(new Assignment { ShiftId = sh.Id, MemberId = newMemberId });
+        }
+
+        summary = BuildSummary(schedule);
+        await Data.SaveAsync(DataKeys.Schedule(team.Id, schedule.Id), schedule);
+        StateHasChanged();
+    }
+
+    private void ClearAssignment(string shiftId)
+    {
+        if (schedule is null) return;
+        schedule.Assignments.RemoveAll(a => a.ShiftId == shiftId);
+        summary = BuildSummary(schedule);
+    }
+
+    private bool HasConflict(string memberId, ShiftModel target)
+    {
+        if (schedule is null) return false;
+        foreach (var a in schedule.Assignments)
+        {
+            if (a.MemberId != memberId) continue;
+            var other = schedule.Shifts.First(s => s.Id == a.ShiftId);
+            if (Overlaps(target.Start, target.End, other.Start, other.End))
+                return true;
+        }
+        return false;
+    }
+
+    private static bool Overlaps(DateTime aStart, DateTime aEnd, DateTime bStart, DateTime bEnd)
+        => aStart < bEnd && bStart < aEnd;
+
+    private async Task Regenerate()
+    {
+        if (schedule is null || team is null) return;
+
+        var seed = Random.Shared.Next();
+        var (assigns, sum) = Scheduler.Generate(team, schedule, maxPerPersonCap: 3, shuffleSeed: seed);
+        schedule.Assignments = assigns;
+        summary = sum;
+
+        await Data.SaveAsync(DataKeys.Schedule(team.Id, schedule.Id), schedule);
+    }
+
+    private async Task ExportCsv()
+    {
+        if (schedule is null || team is null) return;
+
+        var lines = new List<string> { "Data,Início,Fim,Cargo,Designado" };
+        foreach (var sh in orderedShifts)
+        {
+            var a = schedule.Assignments.FirstOrDefault(x => x.ShiftId == sh.Id);
+            var name = a is null ? "" : MemberName(a.MemberId);
+            var role = RoleName(sh.RoleId);
+            lines.Add($"{sh.Start:dd/MM/yyyy},{sh.Start:HH\\:mm},{sh.End:HH\\:mm},{role},{name}");
+        }
+        var csv = string.Join(Environment.NewLine, lines);
+
+        // salva e compartilha
+        var dir = Microsoft.Maui.Storage.FileSystem.CacheDirectory;
+        var path = System.IO.Path.Combine(dir, $"Escala_{schedule.Name}_{DateTime.Now:yyyyMMddHHmmss}.csv");
+        await System.IO.File.WriteAllTextAsync(path, csv);
+
+        await Microsoft.Maui.ApplicationModel.Share.Default.RequestAsync(
+            new Microsoft.Maui.ApplicationModel.DataTransfer.ShareFileRequest
+            {
+                Title = $"Escala - {schedule.Name}",
+                File = new Microsoft.Maui.ApplicationModel.DataTransfer.ShareFile(path)
+            });
+    }
+
+    private void ViewMode()
+    {
+        if (schedule is null) return;
+        Nav.NavigateTo($"/schedules/{schedule.Id}");
+    }
+
+    private void Voltar()
+    {
+        Nav.NavigateTo("/history");
+    }
+}

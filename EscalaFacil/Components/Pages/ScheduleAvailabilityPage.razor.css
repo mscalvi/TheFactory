@@ -1,0 +1,125 @@
+.page-root {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: 18dvh auto 2dvh auto 1fr;
+    align-content: start;
+    padding: 0 16px 24px;
+}
+
+.page-title {
+    grid-row: 2;
+    margin: 0;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: clamp(20px, 6vw, 32px);
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(640px, 92vw);
+}
+
+.form-wrap {
+    grid-row: 4;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: min(980px, 96vw);
+    display: grid;
+    gap: 16px;
+}
+
+.section {
+    border: 1px solid rgba(0,0,0,.10);
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+}
+
+.meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+.section-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.grid-scroll {
+    overflow: auto;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 12px;
+}
+
+.grid-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: max-content;
+    min-width: 100%;
+}
+
+    .grid-table th, .grid-table td {
+        border-bottom: 1px solid rgba(0,0,0,.08);
+        border-right: 1px solid rgba(0,0,0,.08);
+        padding: 8px 10px;
+        font-size: 14px;
+        white-space: nowrap;
+        background: #fff;
+    }
+
+        .grid-table th:first-child,
+        .grid-table td:first-child {
+            border-left: 1px solid rgba(0,0,0,.08);
+        }
+
+.sticky-col {
+    position: sticky;
+    left: 0;
+    background: #fafbfc;
+    z-index: 1;
+    font-weight: 700;
+}
+
+.th-wrap {
+    display: grid;
+    gap: 2px;
+}
+
+.role {
+    font-size: 12px;
+    opacity: .75;
+}
+
+.cell {
+    text-align: center;
+}
+
+.primary-btn, .ghost-btn {
+    padding: 12px 16px;
+    min-height: 44px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.15);
+    background: #f0f3f6;
+    cursor: pointer;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.muted {
+    opacity: .7;
+}
+
+.center {
+    text-align: center;
+}

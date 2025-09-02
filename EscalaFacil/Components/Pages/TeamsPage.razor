@@ -1,0 +1,99 @@
+﻿@page "/teams"
+@using EscalaFacil.Components.Models
+@using EscalaFacil.Components.Services
+@inject IDataStore Data
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<main class="page-root">
+    <h1 class="page-title">EQUIPES</h1>
+
+    <div class="actions-bar">
+        <button class="primary-btn" @onclick="NewTeam">Nova Equipe</button>
+    </div>
+
+    @if (loading)
+    {
+        <p class="muted">Carregando…</p>
+    }
+    else if (teams.Count == 0)
+    {
+        <div class="empty">
+            <p>Nenhuma equipe cadastrada.</p>
+            <button class="ghost-btn" @onclick="NewTeam">Criar a primeira equipe</button>
+        </div>
+    }
+    else
+    {
+        <ul class="card-list">
+            @foreach (var t in teams)
+            {
+                <li class="card">
+                    <div class="card-head">
+                        <h2 class="card-title">@t.Name</h2>
+                        <div class="card-meta">
+                            <span>@t.Members.Count membro(s)</span>
+                            <span>·</span>
+                            <span>@t.Roles.Count cargo(s)</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-btn" @onclick="() => EditTeam(t.Id)">Abrir</button>
+                        <button class="card-btn warn" @onclick="() => DeleteTeam(t.Id, t.Name)">Excluir</button>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+</main>
+
+@code {
+    private bool loading = true;
+    private List<TeamModel> teams = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTeams();
+    }
+
+    private async Task LoadTeams()
+    {
+        loading = true;
+        teams.Clear();
+
+        // Apenas chaves "teams/{id}" (não inclui schedules)
+        var all = Data.EnumerateKeys("teams/");
+        var topLevelTeamKeys = all
+            .Where(k => k.Count(c => c == '/') == 1); // "teams/{id}"
+
+        foreach (var key in topLevelTeamKeys)
+        {
+            var team = await Data.LoadAsync<TeamModel>(key);
+            if (team != null) teams.Add(team);
+        }
+
+        // Ordena por nome
+        teams = teams.OrderBy(t => t.Name, StringComparer.OrdinalIgnoreCase).ToList();
+        loading = false;
+        StateHasChanged();
+    }
+
+    void NewTeam() => Nav.NavigateTo("/teams/new");
+    void EditTeam(string id) => Nav.NavigateTo($"/teams/{id}");
+
+    async Task DeleteTeam(string id, string name)
+    {
+        var ok = await JS.InvokeAsync<bool>("confirm", $"Excluir a equipe \"{name}\"?\nIsto removerá também as escalas desta equipe.");
+        if (!ok) return;
+
+        // Apaga escalas do time
+        var schedPrefix = $"teams/{id}/schedules/";
+        foreach (var key in Data.EnumerateKeys(schedPrefix).ToList())
+            await Data.DeleteAsync(key);
+
+        // Apaga a equipe
+        await Data.DeleteAsync(DataKeys.Team(id));
+
+        await LoadTeams();
+    }
+}

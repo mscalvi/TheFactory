@@ -1,0 +1,207 @@
+﻿@page "/schedules/new"
+@using Microsoft.AspNetCore.Components
+@using EscalaFacil.Components.Models
+@using EscalaFacil.Components.Services
+@inject IDataStore Data
+@inject NavigationManager Nav
+
+@* Querystring opcional: ?teamId={id} *@
+@code {
+    [SupplyParameterFromQuery(Name = "teamId")] public string? TeamIdQ { get; set; }
+}
+
+<main class="page-root">
+    <h1 class="page-title">NOVA ESCALA</h1>
+
+    <section class="form-wrap">
+        <div class="section">
+            <div class="field">
+                <label>Equipe</label>
+                <select class="select" @bind="selectedTeamId" @onchange="OnTeamChanged">
+                    <option value="">— selecione —</option>
+                    @foreach (var t in teams)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Nome da escala</label>
+                <input class="text" @bind="scheduleName" placeholder="Ex.: Setembro - Cultos da manhã" />
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Adicionar turno</h2>
+
+            <div class="grid-4">
+                <div class="field">
+                    <label>Início</label>
+                    <input class="text" type="datetime-local" @bind="newStart" />
+                </div>
+                <div class="field">
+                    <label>Fim</label>
+                    <input class="text" type="datetime-local" @bind="newEnd" />
+                </div>
+                <div class="field">
+                    <label>Cargo</label>
+                    <select class="select" @bind="newRoleId">
+                        <option value="">— opcional —</option>
+                        @if (selectedTeam is not null)
+                        {
+                            @foreach (var r in selectedTeam.Roles)
+                            {
+                                <option value="@r.Id">@r.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="field align-end">
+                    <button class="mini-btn" @onclick="AddShift" disabled="@(!CanAddShift)">Adicionar</button>
+                </div>
+            </div>
+
+            <div class="row right">
+                <input class="text small" type="number" min="1" step="1" @bind="dupCount" />
+                <button class="mini-btn" @onclick="DuplicateLast" disabled="@(shifts.Count == 0)">Duplicar último (+@dupCount dia(s))</button>
+            </div>
+
+            @if (shifts.Count == 0)
+            {
+                <p class="muted">Nenhum turno adicionado ainda.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 34%;">Início</th>
+                            <th style="width: 34%;">Fim</th>
+                            <th style="width: 24%;">Cargo</th>
+                            <th style="width: 8%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sh in shifts)
+                        {
+                            <tr>
+                                <td>@sh.Start.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@sh.End.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@RoleName(sh.RoleId)</td>
+                                <td><button class="icon-btn" title="Remover" @onclick="() => RemoveShift(sh.Id)">×</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="actions">
+            <button class="primary-btn" @onclick="SaveAndGo" disabled="@(!CanSave)">Continuar</button>
+            <button class="ghost-btn" @onclick="Cancel">Cancelar</button>
+        </div>
+    </section>
+</main>
+
+@code {
+    private List<TeamModel> teams = new();
+    private TeamModel? selectedTeam;
+    private string? selectedTeamId;
+    private string scheduleName = string.Empty;
+
+    private List<ShiftModel> shifts = new();
+
+    // builder do turno
+    private DateTime? newStart;
+    private DateTime? newEnd;
+    private string? newRoleId;
+    private int dupCount = 3;
+
+    private bool CanAddShift => newStart.HasValue && newEnd.HasValue && newEnd > newStart;
+    private bool CanSave => selectedTeam is not null && !string.IsNullOrWhiteSpace(scheduleName) && shifts.Count > 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // carrega equipes
+        foreach (var key in Data.EnumerateKeys("teams/").Where(k => k.Count(c => c == '/') == 1))
+        {
+            var t = await Data.LoadAsync<TeamModel>(key);
+            if (t != null) teams.Add(t);
+        }
+
+        if (!string.IsNullOrEmpty(TeamIdQ) && teams.Any(t => t.Id == TeamIdQ))
+        {
+            selectedTeamId = TeamIdQ;
+            selectedTeam = teams.First(t => t.Id == TeamIdQ);
+        }
+    }
+
+    private void OnTeamChanged(ChangeEventArgs _)
+    {
+        selectedTeam = teams.FirstOrDefault(t => t.Id == selectedTeamId);
+    }
+
+    private void AddShift()
+    {
+        if (!CanAddShift) return;
+        var sh = new ShiftModel
+        {
+            Start = newStart!.Value,
+            End = newEnd!.Value,
+            RoleId = newRoleId ?? ""
+        };
+        shifts.Add(sh);
+
+        // limpa builder
+        newStart = null;
+        newEnd = null;
+        newRoleId = null;
+    }
+
+    private void DuplicateLast()
+    {
+        if (shifts.Count == 0) return;
+        int n = Math.Max(1, dupCount);
+        var last = shifts.Last();
+
+        for (int i = 1; i <= n; i++)
+        {
+            shifts.Add(new ShiftModel
+            {
+                Start = last.Start.AddDays(i),
+                End = last.End.AddDays(i),
+                RoleId = last.RoleId
+            });
+        }
+    }
+
+    private void RemoveShift(string id)
+    {
+        var idx = shifts.FindIndex(s => s.Id == id);
+        if (idx >= 0) shifts.RemoveAt(idx);
+    }
+
+    private string RoleName(string? roleId)
+        => string.IsNullOrWhiteSpace(roleId)
+            ? "—"
+            : (selectedTeam?.Roles.FirstOrDefault(r => r.Id == roleId)?.Name ?? "—");
+
+    private async Task SaveAndGo()
+    {
+        if (!CanSave) return;
+
+        var sched = new ScheduleModel
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            TeamId = selectedTeam!.Id,
+            Name = scheduleName,
+            Shifts = shifts.OrderBy(s => s.Start).ToList()
+        };
+
+        await Data.SaveAsync(DataKeys.Schedule(sched.TeamId, sched.Id), sched);
+        Nav.NavigateTo($"/schedules/{sched.Id}/availability");
+    }
+
+    private void Cancel() => Nav.NavigateTo("/teams");
+}

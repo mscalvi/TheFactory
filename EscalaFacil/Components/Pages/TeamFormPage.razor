@@ -1,0 +1,178 @@
+@page "/teams/new"
+@page "/teams/{id}"
+@using EscalaFacil.Components.Models
+@using EscalaFacil.Components.Services
+@inject IDataStore Data
+@inject NavigationManager Nav
+
+<main class="page-root">
+    <h1 class="page-title">@Title</h1>
+
+    <section class="form-wrap">
+        <div class="field">
+            <label>Nome da equipe</label>
+            <input class="text" @bind="team.Name" placeholder="Ex.: Ministério de Louvor" />
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Membros</h2>
+            <div class="field row">
+                <input class="text grow" @bind="singleMember" placeholder="Nome do membro" @onkeydown="OnMemberKeydown" />
+                <button class="mini-btn" @onclick="AddSingleMember">Adicionar</button>
+            </div>
+
+            <details class="bulk">
+                <summary>Adicionar em massa (uma linha por nome)</summary>
+                <textarea class="textarea" @bind="bulkMembers" placeholder="Maria Silva&#10;João Souza&#10;..."></textarea>
+                <div class="row right">
+                    <button class="mini-btn" @onclick="AddBulkMembers">Adicionar da lista</button>
+                </div>
+            </details>
+
+            <ul class="chip-list">
+                @foreach (var m in team.Members)
+                {
+                    <li class="chip">
+                        <span>@m.Name</span>
+                        <button type="button" class="chip-x" title="Remover" @onclick="() => RemoveMember(m.Id)">×</button>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Cargos</h2>
+            <div class="field row">
+                <input class="text grow" @bind="singleRole" placeholder="Ex.: Som, Recepção…" @onkeydown="OnRoleKeydown" />
+                <button class="mini-btn" @onclick="AddSingleRole">Adicionar</button>
+            </div>
+
+            <ul class="chip-list">
+                @foreach (var r in team.Roles)
+                {
+                    <li class="chip">
+                        <span>@r.Name</span>
+                        <button type="button" class="chip-x" title="Remover" @onclick="() => RemoveRole(r.Id)">×</button>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="actions">
+            <button class="primary-btn" disabled="@(!CanSave)" @onclick="Save">Salvar</button>
+            <button class="ghost-btn" @onclick="Cancel">Cancelar</button>
+        </div>
+    </section>
+</main>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    private TeamModel team = new();
+    private string singleMember = string.Empty;
+    private string bulkMembers = string.Empty;
+    private string singleRole = string.Empty;
+
+    private string Title => string.IsNullOrEmpty(Id) ? "NOVA EQUIPE" : "EDITAR EQUIPE";
+    private bool CanSave => !string.IsNullOrWhiteSpace(team.Name);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(Id))
+        {
+            var loaded = await Data.LoadAsync<TeamModel>(DataKeys.Team(Id));
+            if (loaded != null)
+                team = loaded;
+            else
+                Nav.NavigateTo("/teams");
+        }
+        else
+        {
+            // Novo: já gera Id
+            team.Id = string.IsNullOrEmpty(team.Id) ? Guid.NewGuid().ToString("N") : team.Id;
+        }
+    }
+
+    private async Task Save()
+    {
+        await Data.SaveAsync(DataKeys.Team(team.Id), team);
+
+        if (string.IsNullOrEmpty(Id))
+        {
+            // Após criar, encaminha para criar escala
+            Nav.NavigateTo($"/schedules/new?teamId={team.Id}");
+        }
+        else
+        {
+            // Edição: volta para a lista
+            Nav.NavigateTo("/teams");
+        }
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/teams");
+    }
+
+    private void AddSingleMember()
+    {
+        var name = (singleMember ?? "").Trim();
+        if (string.IsNullOrEmpty(name)) return;
+
+        if (!team.Members.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase)))
+            team.Members.Add(new MemberModel { Name = name });
+
+        singleMember = string.Empty;
+    }
+
+    private void AddBulkMembers()
+    {
+        if (string.IsNullOrWhiteSpace(bulkMembers)) return;
+
+        var lines = bulkMembers
+            .Replace("\r", "")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (var name in lines)
+        {
+            if (team.Members.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase)))
+                continue;
+
+            team.Members.Add(new MemberModel { Name = name });
+        }
+        bulkMembers = string.Empty;
+    }
+
+    private void RemoveMember(string id)
+    {
+        var idx = team.Members.FindIndex(m => m.Id == id);
+        if (idx >= 0) team.Members.RemoveAt(idx);
+    }
+
+    private void OnMemberKeydown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") AddSingleMember();
+    }
+
+    private void AddSingleRole()
+    {
+        var name = (singleRole ?? "").Trim();
+        if (string.IsNullOrEmpty(name)) return;
+
+        if (!team.Roles.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase)))
+            team.Roles.Add(new RoleModel { Name = name });
+
+        singleRole = string.Empty;
+    }
+
+    private void RemoveRole(string id)
+    {
+        var idx = team.Roles.FindIndex(r => r.Id == id);
+        if (idx >= 0) team.Roles.RemoveAt(idx);
+    }
+
+    private void OnRoleKeydown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") AddSingleRole();
+    }
+}

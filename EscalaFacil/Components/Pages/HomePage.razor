@@ -1,0 +1,18 @@
+@page "/"
+@inject NavigationManager Nav
+
+<main class="home-root">
+    <h1 class="home-title">ESCALA FÁCIL</h1>
+
+    <div class="home-actions">
+        <button class="home-btn" @onclick="GoToTeams">Equipes</button>
+        <button class="home-btn" @onclick="GoToNewSchedule">Nova Escala</button>
+        <button class="home-btn" @onclick="GoToHistory">Histórico</button>
+    </div>
+</main>
+
+@code {
+    void GoToTeams() => Nav.NavigateTo("/teams");
+    void GoToNewSchedule() => Nav.NavigateTo("/schedules/new");
+    void GoToHistory() => Nav.NavigateTo("/history");
+}
