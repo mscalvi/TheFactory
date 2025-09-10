@@ -41,36 +41,45 @@ namespace GeradorCartas___Guildas.Services
             using var img1 = (Bitmap)Image.FromFile(TplType1Png);
             using var img2 = (Bitmap)Image.FromFile(TplType2Png);
 
+            // Sanidade do tamanho dos templates (evita bitmaps absurdos)
+            EnsureReasonableSize(img1);
+            EnsureReasonableSize(img2);
+
             var pdf = new PdfDocument();
             pdf.Info.Title = string.IsNullOrWhiteSpace(title) ? "Guildas - Cartas (Personagens)" : title;
 
-            // medidas
+            // medidas base (mm → pt)
             const double mmToPt = 72.0 / 25.4;
             double cardWmm = 63, cardHmm = 88;
             double marginMm = 10, gapMm = 5;
             int cols = 3, rows = 3;
 
-            var pageWpt = XUnit.FromMillimeter(210).Point;
-            var pageHpt = XUnit.FromMillimeter(297).Point;
+            // Página A4 retrato
+            var pageWidthPt = XUnit.FromMillimeter(210).Point;
+            var pageHeightPt = XUnit.FromMillimeter(297).Point;
             var marginPt = marginMm * mmToPt;
             var gapPt = gapMm * mmToPt;
             var cardWpt = cardWmm * mmToPt;
             var cardHpt = cardHmm * mmToPt;
 
-            // grade
+            // grade base (antes de centralizar)
             var cellRects = new List<XRect>();
             for (int r = 0; r < rows; r++)
+            {
                 for (int c = 0; c < cols; c++)
                 {
                     double x = marginPt + c * (cardWpt + gapPt);
                     double y = marginPt + r * (cardHpt + gapPt);
                     cellRects.Add(new XRect(x, y, cardWpt, cardHpt));
                 }
+            }
 
+            // Centralização (se a grade ficar maior que a área útil, o offset pode ser negativo — ok)
             double gridW = cols * cardWpt + (cols - 1) * gapPt;
             double gridH = rows * cardHpt + (rows - 1) * gapPt;
-            double offsetX = (pageWpt - 2 * marginPt - gridW) / 2.0;
-            double offsetY = (pageHpt - 2 * marginPt - gridH) / 2.0;
+            double offsetX = (pageWidthPt - 2 * marginPt - gridW) / 2.0;
+            double offsetY = (pageHeightPt - 2 * marginPt - gridH) / 2.0;
+
             for (int i = 0; i < cellRects.Count; i++)
             {
                 var r = cellRects[i];
@@ -80,6 +89,7 @@ namespace GeradorCartas___Guildas.Services
             foreach (var chunk in Chunk(chars, cols * rows))
             {
                 var page = pdf.AddPage();
+                // **Use XUnit para evitar overflow interno**
                 page.Width = XUnit.FromMillimeter(210);
                 page.Height = XUnit.FromMillimeter(297);
 
@@ -90,19 +100,21 @@ namespace GeradorCartas___Guildas.Services
                     var ch = chunk[i];
                     var rect = cellRects[i];
 
+                    // Escolha do template: **apenas Prep > 0 ativa o Model2**
                     bool isType2 = ch.Prep > 0;
                     var tpl = isType2 ? img2 : img1;
                     var fields = isType2 ? fields2 : fields1;
 
                     using var bmp = RenderCardBitmap(tpl, fields, ch);
 
-                    // converte bitmap -> PNG bytes -> XImage
+                    // bitmap → PNG bytes → XImage
                     byte[] pngBytes;
                     using (var ms = new MemoryStream())
                     {
                         bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                         pngBytes = ms.ToArray();
                     }
+
                     using var ximg = XImage.FromStream(() => new MemoryStream(pngBytes));
                     gfx.DrawImage(ximg, rect);
                 }
@@ -117,8 +129,25 @@ namespace GeradorCartas___Guildas.Services
             string outPath = Path.Combine(OutputDir, outName);
 
             pdf.Save(outPath);
-            try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = outPath, UseShellExecute = true }); } catch { }
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = outPath,
+                    UseShellExecute = true
+                });
+            }
+            catch { /* abrir é melhor esforço */ }
+
             pdf.Close();
+        }
+
+        private static void EnsureReasonableSize(Bitmap bmp)
+        {
+            // 300–1200 dpi equivalem, para 63×88 mm, a ~744×1039 até ~2976×4157
+            // Aceitamos até 6000 px em qualquer dimensão como guarda-chuva
+            if (bmp.Width <= 0 || bmp.Height <= 0 || bmp.Width > 6000 || bmp.Height > 6000)
+                throw new InvalidDataException($"Template PNG com tamanho inesperado: {bmp.Width}x{bmp.Height}.");
         }
 
         private static List<FieldDef> LoadFields(string csvPath)
@@ -131,9 +160,11 @@ namespace GeradorCartas___Guildas.Services
             if (lines.Length <= 1) return list;
 
             // Cabeçalho: Field;x%;y%;w%;h%;align;fontMinPt;fontMaxPt;bold
-            foreach (var line in lines.Skip(1))
+            foreach (var raw in lines.Skip(1))
             {
+                var line = raw?.Trim();
                 if (string.IsNullOrWhiteSpace(line)) continue;
+
                 var parts = line.Split(';');
                 if (parts.Length < 9) continue;
 
@@ -147,10 +178,20 @@ namespace GeradorCartas___Guildas.Services
                 float fmax = (float)ParseDouble(parts[7]);
                 bool bold = ParseBool(parts[8]);
 
+                // clamp de percentuais e fontes (defensivo)
+                xp = Clamp01(xp); yp = Clamp01(yp);
+                wp = Math.Max(0.01, Clamp01(wp)); // evita 0
+                hp = Math.Max(0.01, Clamp01(hp));
+                if (fmin < 2) fmin = 2;
+                if (fmax < 2) fmax = 2;
+                if (fmax < fmin) (fmax, fmin) = (fmin, fmax);
+
                 list.Add(new FieldDef(name, xp, yp, wp, hp, align, fmin, fmax, bold));
             }
             return list;
         }
+
+        private static double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
 
         private static double ParseDouble(string s)
         {
@@ -185,11 +226,23 @@ namespace GeradorCartas___Guildas.Services
                 string val = GetValueForField(ch, f.Name);
                 if (string.IsNullOrWhiteSpace(val)) continue;
 
-                // retângulo (em px)
-                var rx = (float)(f.Xp * template.Width);
-                var ry = (float)(f.Yp * template.Height);
-                var rw = (float)(f.Wp * template.Width);
-                var rh = (float)(f.Hp * template.Height);
+                // retângulo em px (com clamp defensivo)
+                float rx = (float)(f.Xp * template.Width);
+                float ry = (float)(f.Yp * template.Height);
+                float rw = (float)(f.Wp * template.Width);
+                float rh = (float)(f.Hp * template.Height);
+
+                if (float.IsNaN(rx) || float.IsNaN(ry) || float.IsNaN(rw) || float.IsNaN(rh))
+                    continue;
+
+                // manter dentro da imagem e com tamanho mínimo
+                if (rw < 1f) rw = 1f;
+                if (rh < 1f) rh = 1f;
+                if (rx < 0f) rx = 0f;
+                if (ry < 0f) ry = 0f;
+                if (rx + rw > template.Width) rw = template.Width - rx;
+                if (ry + rh > template.Height) rh = template.Height - ry;
+
                 var rect = new RectangleF(rx, ry, rw, rh);
 
                 var style = f.Bold ? FontStyle.Bold : FontStyle.Regular;
@@ -197,10 +250,26 @@ namespace GeradorCartas___Guildas.Services
                 using var brush = new SolidBrush(Color.Black);
                 using var sf = BuildStringFormat(f.Align);
 
-                DrawStringWrapped(g, val, font, brush, rect, sf);
+                try
+                {
+                    DrawStringWrapped(g, val, font, brush, rect, sf);
+                }
+                catch (OverflowException ex)
+                {
+                    throw new OverflowException(
+                        $"Overflow ao desenhar '{f.Name}' ret={rect} tpl={template.Width}x{template.Height} val='{Trunc(val, 60)}'",
+                        ex
+                    );
+                }
             }
 
             return bmp;
+        }
+
+        private static string Trunc(string s, int n)
+        {
+            if (string.IsNullOrEmpty(s) || s.Length <= n) return s;
+            return s.Substring(0, n) + "…";
         }
 
         private static string GetValueForField(CharacterModel c, string fieldName)
@@ -213,15 +282,15 @@ namespace GeradorCartas___Guildas.Services
                 case "class": return JoinNonEmpty(" - ", c.Order, c.Class, string.IsNullOrWhiteSpace(c.Trait) ? null : c.Trait);
                 case "faction": return c.Faction;
                 case "health": return c.Health.ToString();
-                case "resistence": return c.Resistence;
+                case "resistence": return c.Resistence; // você padronizou assim no CSV/Model
                 case "atack": return c.Atack.ToString();
-                case "damage": return c.Damage;
+                case "damage": return c.Damage;     // "Damage" = AtackType (string) conforme seu ajuste
                 case "bravery": return c.Bravery.ToString();
                 case "art": return c.Art;
                 case "lore": return c.Lore;
                 case "hab1": return c.Hab1;
                 case "credits": return JoinNonEmpty(" - ", c.Credits, c.Info, c.Edition);
-                // Campos auxiliares (se estiverem no CSV e quiser mostrar):
+                // auxiliares (se tiver no CSV e quiser mostrar)
                 case "hab2": return c.Hab2;
                 case "prep": return c.Prep > 0 ? c.Prep.ToString() : string.Empty;
                 case "description": return c.Description;
@@ -250,9 +319,12 @@ namespace GeradorCartas___Guildas.Services
 
         private static Font FitFont(Graphics g, string text, string family, float maxPt, float minPt, RectangleF rect, FontStyle style)
         {
+            // guardas para evitar valores inválidos que explodam o GDI+
+            if (maxPt < 2) maxPt = 2;
+            if (minPt < 2) minPt = 2;
             if (maxPt < minPt) (maxPt, minPt) = (minPt, maxPt);
-            float size = maxPt;
 
+            float size = maxPt;
             while (size > minPt)
             {
                 using var f = new Font(family, size, style, GraphicsUnit.Point);
@@ -268,11 +340,13 @@ namespace GeradorCartas___Guildas.Services
         {
             using var sf = new StringFormat(StringFormatFlags.LineLimit);
             sf.Trimming = StringTrimming.EllipsisWord;
-            return g.MeasureString(text, font, new SizeF(rect.Width, 10000), sf);
+            return g.MeasureString(text, font, new SizeF(Math.Max(1, rect.Width), 10000), sf);
         }
 
         private static void DrawStringWrapped(Graphics g, string text, Font font, Brush brush, RectangleF rect, StringFormat sf)
         {
+            // evitar largura/altura zero
+            if (rect.Width < 1f || rect.Height < 1f) return;
             g.DrawString(text, font, brush, rect, sf);
         }
 
@@ -295,6 +369,7 @@ namespace GeradorCartas___Guildas.Services
         {
             var pen = new XPen(XColors.DarkGray, 0.4) { DashStyle = XDashStyle.Dot };
 
+            // verticais
             for (int c = 1; c < cols; c++)
             {
                 double x = cellRects[c].Left;
@@ -303,6 +378,7 @@ namespace GeradorCartas___Guildas.Services
                 gfx.DrawLine(pen, x, yTop, x, yBottom);
             }
 
+            // horizontais
             for (int r = 1; r < rows; r++)
             {
                 double y = cellRects[r * cols].Top;
