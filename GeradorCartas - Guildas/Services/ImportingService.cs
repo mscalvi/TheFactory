@@ -97,12 +97,12 @@ namespace GeradorCartas___Guildas.Services
                 throw new FileNotFoundException("Arquivo não encontrado.", filePath);
 
             using var wb = new XLWorkbook(filePath);
-            var ws = wb.Worksheets.First(); // única planilha
+            var ws = wb.Worksheets.First(); // uma única planilha
 
             var lastRow = ws.LastRowUsed()?.RowNumber() ?? 1;
             var lastCol = ws.LastColumnUsed()?.ColumnNumber() ?? 0;
 
-            // Cabeçalhos exatos (linha 1) — case-insensitive; ordem não importa
+            // Mapear cabeçalhos exatos na linha 1 (case-insensitive)
             var headerIndex = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             for (int c = 1; c <= lastCol; c++)
             {
@@ -111,79 +111,103 @@ namespace GeradorCartas___Guildas.Services
                     headerIndex[h] = c;
             }
 
+            // Cabeçalhos esperados conforme sua planilha
             string[] required = {
                 "ID","Name","Description","Faction","Lore","Order","Class","Body","Trait","Strength",
                 "Cost","Health","Bravery","Atack","Damage","Resistence","Hab1","Hab2","Prep",
                 "Credits","Info","Edition"
             };
             foreach (var req in required)
-            {
                 if (!headerIndex.ContainsKey(req))
                     throw new InvalidDataException($"Cabeçalho obrigatório ausente: '{req}'.");
-            }
 
-            _characters.Clear();
+            var list = new List<CharacterModel>();
 
             for (int r = 2; r <= lastRow; r++)
             {
-                // Parada: ID vazio => fim da tabela
+                // Lê todos os campos como string
                 string id = Read(ws, r, headerIndex["ID"]);
                 if (string.IsNullOrWhiteSpace(id))
-                    break;
+                    break; // Fim da tabela quando Id vazio
 
-                // Strings
                 string name = Read(ws, r, headerIndex["Name"]);
-                string description = Read(ws, r, headerIndex["Description"]);
-                string faction = Read(ws, r, headerIndex["Faction"]);
+                string desc = Read(ws, r, headerIndex["Description"]);
+                string fact = Read(ws, r, headerIndex["Faction"]);
                 string lore = Read(ws, r, headerIndex["Lore"]);
                 string order = Read(ws, r, headerIndex["Order"]);
-                string @class = Read(ws, r, headerIndex["Class"]);
+                string cls = Read(ws, r, headerIndex["Class"]);
+                string bodyT = Read(ws, r, headerIndex["Body"]);
                 string trait = Read(ws, r, headerIndex["Trait"]);
-                string resistence = Read(ws, r, headerIndex["Resistence"]);
+                string strT = Read(ws, r, headerIndex["Strength"]);
+                string costT = Read(ws, r, headerIndex["Cost"]);
+                string hpT = Read(ws, r, headerIndex["Health"]);
+                string brvT = Read(ws, r, headerIndex["Bravery"]);
+                string atkT = Read(ws, r, headerIndex["Atack"]);
+                string dmg = Read(ws, r, headerIndex["Damage"]);
+                string res = Read(ws, r, headerIndex["Resistence"]);
                 string hab1 = Read(ws, r, headerIndex["Hab1"]);
                 string hab2 = Read(ws, r, headerIndex["Hab2"]);
-                string credits = Read(ws, r, headerIndex["Credits"]);
+                string prepT = Read(ws, r, headerIndex["Prep"]);
+                string cred = Read(ws, r, headerIndex["Credits"]);
                 string info = Read(ws, r, headerIndex["Info"]);
-                string edition = Read(ws, r, headerIndex["Edition"]);
-                string damage = Read(ws, r, headerIndex["Damage"]);
+                string edit = Read(ws, r, headerIndex["Edition"]);
 
-                // Ints
-                int body = ReadInt(ws, r, headerIndex["Body"]);
-                int strength = ReadInt(ws, r, headerIndex["Strength"]);
-                int cost = ReadInt(ws, r, headerIndex["Cost"]);
-                int health = ReadInt(ws, r, headerIndex["Health"]);
-                int bravery = ReadInt(ws, r, headerIndex["Bravery"]);
-                int atack = ReadInt(ws, r, headerIndex["Atack"]);
-                int prep = ReadInt(ws, r, headerIndex["Prep"]);
+                // HasPrep: true se veio algum valor "real" (0,1,2,...) — false se vazio/traço
+                bool hasPrep = !(string.IsNullOrWhiteSpace(prepT) ||
+                                 prepT.Trim() == "-" || prepT.Trim() == "–" || prepT.Trim() == "—");
 
-                _characters.Add(new CharacterModel
+                // Parse seguro para inteiros (aceita cultura atual e invariant; "-" vira 0)
+                static int ParseInt(string s)
+                {
+                    if (string.IsNullOrWhiteSpace(s)) return 0;
+                    s = s.Trim();
+                    if (s == "-" || s == "–" || s == "—") return 0;
+                    if (int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var v)) return v;
+                    if (int.TryParse(s, NumberStyles.Integer, CultureInfo.CurrentCulture, out v)) return v;
+                    // fallback: tenta double e arredonda
+                    s = s.Replace(',', '.');
+                    if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
+                        return (int)Math.Round(dv);
+                    return 0;
+                }
+
+                int body = ParseInt(bodyT);
+                int str = ParseInt(strT);
+                int cost = ParseInt(costT);
+                int hp = ParseInt(hpT);
+                int brv = ParseInt(brvT);
+                int atk = ParseInt(atkT);
+                int prepV = hasPrep ? ParseInt(prepT) : 0; 
+
+                list.Add(new CharacterModel
                 {
                     Id = id,
-                    Name = name,
-                    Description = description,
-                    Faction = faction,
+                    Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name,
+                    Description = desc,
+                    Faction = fact,
                     Lore = lore,
                     Order = order,
-                    Class = @class,
+                    Class = cls,
                     Body = body,
                     Trait = trait,
-                    Strength = strength,
+                    Strength = str,
                     Cost = cost,
-                    Health = health,
-                    Bravery = bravery,
-                    Atack = atack,
-                    Damage = damage,
-                    Resistence = resistence,
+                    Health = hp,
+                    Bravery = brv,
+                    Atack = atk,
+                    Damage = dmg,
+                    Resistence = res,
                     Hab1 = hab1,
                     Hab2 = hab2,
-                    Prep = prep,
-                    Credits = credits,
+                    Prep = prepV,
+                    HasPrep = hasPrep,       
+                    Credits = cred,
                     Info = info,
-                    Edition = edition
+                    Edition = edit
                 });
             }
 
-            return new List<CharacterModel>(_characters);
+            return list;
         }
 
         // Helpers

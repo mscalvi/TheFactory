@@ -21,8 +21,9 @@ namespace GeradorCartas___Guildas.Models
         public string Damage { get; set; }
         public int Bravery { get; set; }
         public string Hab1 { get; set; }
-        public int Prep { get; set; }
         public string Hab2 { get; set; }
+        public bool HasPrep { get; set; }
+        public int Prep { get; set; }
         public string Art {  get; set; }
         public string Lore { get; set; }
         public string Credits { get; set; }
