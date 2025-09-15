@@ -21,12 +21,5 @@ namespace GeradorCartas___Guildas.Models
         public string Credits { get; set; }
         public string Info { get; set; }
         public string Edition { get; set; }
-
-
-        //Auxiliares
-        public string Function { get; set; }
-        public int Body { get; set; }
-        public int Strength { get; set; }
-        public string Description { get; set; }
     }
 }

@@ -32,6 +32,9 @@
             tabctrlMainView = new TabControl();
             tabCreation = new TabPage();
             pnlCreateMaps = new Panel();
+            btnImportListRelics = new Button();
+            btnImportListPersonalities = new Button();
+            btnImportListActions = new Button();
             btnImportListCharacters = new Button();
             btnImportListMaps = new Button();
             tabEdition = new TabPage();
@@ -73,6 +76,9 @@
             // 
             // pnlCreateMaps
             // 
+            pnlCreateMaps.Controls.Add(btnImportListRelics);
+            pnlCreateMaps.Controls.Add(btnImportListPersonalities);
+            pnlCreateMaps.Controls.Add(btnImportListActions);
             pnlCreateMaps.Controls.Add(btnImportListCharacters);
             pnlCreateMaps.Controls.Add(btnImportListMaps);
             pnlCreateMaps.Dock = DockStyle.Fill;
@@ -81,9 +87,39 @@
             pnlCreateMaps.Size = new Size(1038, 519);
             pnlCreateMaps.TabIndex = 0;
             // 
+            // btnImportListRelics
+            // 
+            btnImportListRelics.Location = new Point(705, 49);
+            btnImportListRelics.Name = "btnImportListRelics";
+            btnImportListRelics.Size = new Size(299, 86);
+            btnImportListRelics.TabIndex = 5;
+            btnImportListRelics.Text = "Importar Relíquias";
+            btnImportListRelics.UseVisualStyleBackColor = true;
+            btnImportListRelics.Click += btnImportListRelics_Click;
+            // 
+            // btnImportListPersonalities
+            // 
+            btnImportListPersonalities.Location = new Point(378, 160);
+            btnImportListPersonalities.Name = "btnImportListPersonalities";
+            btnImportListPersonalities.Size = new Size(299, 86);
+            btnImportListPersonalities.TabIndex = 4;
+            btnImportListPersonalities.Text = "Importar Personalidades";
+            btnImportListPersonalities.UseVisualStyleBackColor = true;
+            btnImportListPersonalities.Click += btnImportListPersonalities_Click;
+            // 
+            // btnImportListActions
+            // 
+            btnImportListActions.Location = new Point(378, 49);
+            btnImportListActions.Name = "btnImportListActions";
+            btnImportListActions.Size = new Size(299, 86);
+            btnImportListActions.TabIndex = 3;
+            btnImportListActions.Text = "Importar Ações";
+            btnImportListActions.UseVisualStyleBackColor = true;
+            btnImportListActions.Click += btnImportListActions_Click;
+            // 
             // btnImportListCharacters
             // 
-            btnImportListCharacters.Location = new Point(370, 134);
+            btnImportListCharacters.Location = new Point(50, 49);
             btnImportListCharacters.Name = "btnImportListCharacters";
             btnImportListCharacters.Size = new Size(299, 86);
             btnImportListCharacters.TabIndex = 2;
@@ -93,7 +129,7 @@
             // 
             // btnImportListMaps
             // 
-            btnImportListMaps.Location = new Point(370, 250);
+            btnImportListMaps.Location = new Point(50, 160);
             btnImportListMaps.Name = "btnImportListMaps";
             btnImportListMaps.Size = new Size(299, 86);
             btnImportListMaps.TabIndex = 1;
@@ -135,5 +171,8 @@
         private Button btnImportListMaps;
         private TabPage tabEdition;
         private Button btnImportListCharacters;
+        private Button btnImportListRelics;
+        private Button btnImportListPersonalities;
+        private Button btnImportListActions;
     }
 }

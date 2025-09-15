@@ -1,95 +1,110 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.ExtendedProperties;
 using GeradorCartas___Guildas.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace GeradorCartas___Guildas.Services
 {
     internal class ImportingService
     {
-        // Creation
+        // Storage
         private readonly List<MapModel> _maps = new();
         public IReadOnlyList<MapModel> Maps => _maps;
 
         private readonly List<CharacterModel> _characters = new();
         public IReadOnlyList<CharacterModel> Characters => _characters;
 
-        // Import Maps
+        private readonly List<ActionsModel> _actions = new();
+        public IReadOnlyList<ActionsModel> Actions => _actions;
+
+        private readonly List<PersonalityModel> _personalities = new();
+        public IReadOnlyList<PersonalityModel> Personalities => _personalities;
+
+        private readonly List<RelicModel> _relics = new();
+        public IReadOnlyList<RelicModel> Relics => _relics;
+
+        // =========================
+        // Entradas públicas
+        // =========================
+
         public List<MapModel> ImportMapsList(string filePath)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
-                throw new ArgumentException("Caminho do arquivo não informado.", nameof(filePath));
-            if (!File.Exists(filePath))
-                throw new FileNotFoundException("Arquivo não encontrado.", filePath);
-
-            using var wb = new XLWorkbook(filePath);
-            var ws = wb.Worksheets.First(); // única planilha
-
-            var lastRow = ws.LastRowUsed()?.RowNumber() ?? 1;
-            var lastCol = ws.LastColumnUsed()?.ColumnNumber() ?? 0;
-
-            // Cabeçalhos exatos (linha 1)
-            var headerIndex = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            for (int c = 1; c <= lastCol; c++)
-            {
-                var h = ws.Cell(1, c).GetString().Trim();
-                if (!string.IsNullOrEmpty(h) && !headerIndex.ContainsKey(h))
-                    headerIndex[h] = c;
-            }
-
-            string[] required = { "Id", "Exp", "Type", "Name", "Description", "Option1", "Option2", "Lore", "Credits", "Info", "Edition" };
-            foreach (var req in required)
-            {
-                if (!headerIndex.ContainsKey(req))
-                    throw new InvalidDataException($"Cabeçalho obrigatório ausente: '{req}'.");
-            }
-
             _maps.Clear();
-
-            for (int r = 2; r <= lastRow; r++)
-            {
-                // PARADA: se Id estiver vazio, fim da tabela
-                string id = Read(ws, r, headerIndex["Id"]);
-                if (string.IsNullOrWhiteSpace(id))
-                    break;
-
-                string exp = Read(ws, r, headerIndex["Exp"]);
-                string type = Read(ws, r, headerIndex["Type"]);
-                string name = Read(ws, r, headerIndex["Name"]);
-                string desc = Read(ws, r, headerIndex["Description"]);
-                string op1 = Read(ws, r, headerIndex["Option1"]);
-                string op2 = Read(ws, r, headerIndex["Option2"]);
-                string lore = Read(ws, r, headerIndex["Lore"]);
-                string cred = Read(ws, r, headerIndex["Credits"]);
-                string info = Read(ws, r, headerIndex["Info"]);
-                string edit = Read(ws, r, headerIndex["Edition"]);
-
-                _maps.Add(new MapModel
+            _maps.AddRange(ImportList<MapModel>(
+                filePath,
+                requiredHeaders: new[] { "Id" },
+                postProcess: (m, _, __) =>
                 {
-                    Id = id,
-                    Exp = exp,
-                    Type = type,
-                    Name = name,
-                    Description = desc,
-                    Option1 = op1,
-                    Option2 = op2,
-                    Art = id,     // mantém sua adaptação
-                    Lore = lore,
-                    Credits = cred,
-                    Info = info,
-                    Edition = edit
-                });
-            }
-
+                    if (string.IsNullOrWhiteSpace(m.Art)) m.Art = m.Id;
+                }));
             return new List<MapModel>(_maps);
         }
 
-        // Import Characters
         public List<CharacterModel> ImportCharactersList(string filePath)
+        {
+            _characters.Clear();
+            _characters.AddRange(ImportList<CharacterModel>(
+                filePath,
+                requiredHeaders: new[] { "Id" },
+                postProcess: (c, _, __) =>
+                {
+                    c.HasPrep = c.Prep > 0;
+                    // Se quiser forçar Art = Id:
+                    // if (string.IsNullOrWhiteSpace(c.Art)) c.Art = c.Id;
+                }));
+            return new List<CharacterModel>(_characters);
+        }
+
+        public List<ActionsModel> ImportActionsList(string filePath)
+        {
+            _actions.Clear();
+            _actions.AddRange(ImportList<ActionsModel>(
+                filePath,
+                requiredHeaders: new[] { "Id" },
+                postProcess: (a, _, __) =>
+                {
+                    if (string.IsNullOrWhiteSpace(a.Art)) a.Art = a.Id;
+                }));
+            return new List<ActionsModel>(_actions);
+        }
+
+        public List<PersonalityModel> ImportPersonalitiesList(string filePath)
+        {
+            _personalities.Clear();
+            _personalities.AddRange(ImportList<PersonalityModel>(
+                filePath,
+                requiredHeaders: new[] { "Id" },
+                postProcess: (p, _, __) =>
+                {
+                    if (string.IsNullOrWhiteSpace(p.Art)) p.Art = p.Id;
+                }));
+            return new List<PersonalityModel>(_personalities);
+        }
+
+        public List<RelicModel> ImportRelicsList(string filePath)
+        {
+            _relics.Clear();
+            _relics.AddRange(ImportList<RelicModel>(
+                filePath,
+                requiredHeaders: new[] { "Id" },
+                postProcess: (r, _, __) =>
+                {
+                    if (string.IsNullOrWhiteSpace(r.Art)) r.Art = r.Id;
+                }));
+            return new List<RelicModel>(_relics);
+        }
+
+        // =========================
+        // Importador genérico
+        // =========================
+        private static List<T> ImportList<T>(
+            string filePath,
+            Action<T, Dictionary<string, int>, IXLWorksheet>? postProcess = null,
+            IEnumerable<string>? requiredHeaders = null) where T : new()
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("Caminho do arquivo não informado.", nameof(filePath));
@@ -97,12 +112,12 @@ namespace GeradorCartas___Guildas.Services
                 throw new FileNotFoundException("Arquivo não encontrado.", filePath);
 
             using var wb = new XLWorkbook(filePath);
-            var ws = wb.Worksheets.First(); // uma única planilha
+            var ws = wb.Worksheets.First();
 
             var lastRow = ws.LastRowUsed()?.RowNumber() ?? 1;
             var lastCol = ws.LastColumnUsed()?.ColumnNumber() ?? 0;
 
-            // Mapear cabeçalhos exatos na linha 1 (case-insensitive)
+            // Cabeçalhos na linha 1 (case-insensitive)
             var headerIndex = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             for (int c = 1; c <= lastCol; c++)
             {
@@ -111,131 +126,178 @@ namespace GeradorCartas___Guildas.Services
                     headerIndex[h] = c;
             }
 
-            // Cabeçalhos esperados conforme sua planilha
-            string[] required = {
-                "ID","Name","Description","Faction","Lore","Order","Class","Body","Trait","Strength",
-                "Cost","Health","Bravery","Atack","Damage","Resistence","Hab1","Hab2","Prep",
-                "Credits","Info","Edition"
-            };
-            foreach (var req in required)
-                if (!headerIndex.ContainsKey(req))
-                    throw new InvalidDataException($"Cabeçalho obrigatório ausente: '{req}'.");
+            if (requiredHeaders != null)
+                foreach (var req in requiredHeaders)
+                    if (!headerIndex.ContainsKey(req))
+                        throw new InvalidDataException($"Cabeçalho obrigatório ausente: '{req}'.");
 
-            var list = new List<CharacterModel>();
+            // Propriedades settable do T
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                 .Where(p => p.CanWrite)
+                                 .ToArray();
+            var propMap = props.ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase);
+
+            // Coluna Id (aceita "Id" ou "ID")
+            int idCol = -1;
+            if (headerIndex.TryGetValue("Id", out var c1)) idCol = c1;
+            else if (headerIndex.TryGetValue("ID", out var c2)) idCol = c2;
+
+            var list = new List<T>();
 
             for (int r = 2; r <= lastRow; r++)
             {
-                // Lê todos os campos como string
-                string id = Read(ws, r, headerIndex["ID"]);
-                if (string.IsNullOrWhiteSpace(id))
-                    break; // Fim da tabela quando Id vazio
-
-                string name = Read(ws, r, headerIndex["Name"]);
-                string desc = Read(ws, r, headerIndex["Description"]);
-                string fact = Read(ws, r, headerIndex["Faction"]);
-                string lore = Read(ws, r, headerIndex["Lore"]);
-                string order = Read(ws, r, headerIndex["Order"]);
-                string cls = Read(ws, r, headerIndex["Class"]);
-                string bodyT = Read(ws, r, headerIndex["Body"]);
-                string trait = Read(ws, r, headerIndex["Trait"]);
-                string strT = Read(ws, r, headerIndex["Strength"]);
-                string costT = Read(ws, r, headerIndex["Cost"]);
-                string hpT = Read(ws, r, headerIndex["Health"]);
-                string brvT = Read(ws, r, headerIndex["Bravery"]);
-                string atkT = Read(ws, r, headerIndex["Atack"]);
-                string dmg = Read(ws, r, headerIndex["Damage"]);
-                string res = Read(ws, r, headerIndex["Resistence"]);
-                string hab1 = Read(ws, r, headerIndex["Hab1"]);
-                string hab2 = Read(ws, r, headerIndex["Hab2"]);
-                string prepT = Read(ws, r, headerIndex["Prep"]);
-                string cred = Read(ws, r, headerIndex["Credits"]);
-                string info = Read(ws, r, headerIndex["Info"]);
-                string edit = Read(ws, r, headerIndex["Edition"]);
-
-                // HasPrep: true se veio algum valor "real" (0,1,2,...) — false se vazio/traço
-                bool hasPrep = !(string.IsNullOrWhiteSpace(prepT) ||
-                                 prepT.Trim() == "-" || prepT.Trim() == "–" || prepT.Trim() == "—");
-
-                // Parse seguro para inteiros (aceita cultura atual e invariant; "-" vira 0)
-                static int ParseInt(string s)
+                bool breakRow = false;
+                if (idCol > 0)
                 {
-                    if (string.IsNullOrWhiteSpace(s)) return 0;
-                    s = s.Trim();
-                    if (s == "-" || s == "–" || s == "—") return 0;
-                    if (int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var v)) return v;
-                    if (int.TryParse(s, NumberStyles.Integer, CultureInfo.CurrentCulture, out v)) return v;
-                    // fallback: tenta double e arredonda
-                    s = s.Replace(',', '.');
-                    if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
-                        return (int)Math.Round(dv);
-                    return 0;
+                    var idVal = ReadString(ws, r, idCol);
+                    if (string.IsNullOrWhiteSpace(idVal)) breakRow = true;
+                }
+                else
+                {
+                    bool any = false;
+                    for (int c = 1; c <= lastCol; c++)
+                        if (!string.IsNullOrWhiteSpace(ws.Cell(r, c).GetString())) { any = true; break; }
+                    if (!any) breakRow = true;
+                }
+                if (breakRow) break;
+
+                var item = new T();
+
+                // Seta propriedades a partir de colunas de mesmo nome
+                foreach (var kv in propMap)
+                {
+                    if (!headerIndex.TryGetValue(kv.Key, out var col)) continue;
+
+                    string s = ReadString(ws, r, col);
+                    try
+                    {
+                        object? converted = ConvertStringTo(kv.Value.PropertyType, s);
+                        if (converted != null)
+                            kv.Value.SetValue(item, converted);
+                    }
+                    catch { /* ignora conversões inválidas */ }
                 }
 
-                int body = ParseInt(bodyT);
-                int str = ParseInt(strT);
-                int cost = ParseInt(costT);
-                int hp = ParseInt(hpT);
-                int brv = ParseInt(brvT);
-                int atk = ParseInt(atkT);
-                int prepV = hasPrep ? ParseInt(prepT) : 0; 
-
-                list.Add(new CharacterModel
-                {
-                    Id = id,
-                    Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name,
-                    Description = desc,
-                    Faction = fact,
-                    Lore = lore,
-                    Order = order,
-                    Class = cls,
-                    Body = body,
-                    Trait = trait,
-                    Strength = str,
-                    Cost = cost,
-                    Health = hp,
-                    Bravery = brv,
-                    Atack = atk,
-                    Damage = dmg,
-                    Resistence = res,
-                    Hab1 = hab1,
-                    Hab2 = hab2,
-                    Prep = prepV,
-                    HasPrep = hasPrep,       
-                    Credits = cred,
-                    Info = info,
-                    Edition = edit
-                });
+                postProcess?.Invoke(item, headerIndex, ws);
+                list.Add(item);
             }
 
             return list;
         }
 
+        // =========================
         // Helpers
-        private static string Read(IXLWorksheet ws, int row, int col)
+        // =========================
+        private static string ReadString(IXLWorksheet ws, int row, int col)
         {
+            if (col <= 0) return string.Empty;
             var cell = ws.Cell(row, col);
             return cell?.GetFormattedString()?.Trim() ?? string.Empty;
         }
-        private static int ReadInt(IXLWorksheet ws, int row, int col)
+
+        private static object? ConvertStringTo(Type t, string s)
         {
-            if (col <= 0) return 0;
-            var cell = ws.Cell(row, col);
-            if (cell == null) return 0;
+            if (t == typeof(string))
+                return s ?? string.Empty;
 
-            if (cell.TryGetValue<double>(out var d))
-                return (int)Math.Round(d);
+            if (t == typeof(int) || t == typeof(int?))
+            {
+                int v = ParseIntSafe(s);
+                return t == typeof(int?) ? (int?)v : v;
+            }
 
-            var s = cell.GetString()?.Trim();
-            if (string.IsNullOrEmpty(s)) return 0;
+            if (t == typeof(double) || t == typeof(double?))
+            {
+                double v = ParseDoubleSafe(s);
+                return t == typeof(double?) ? (double?)v : v;
+            }
 
-            if (int.TryParse(s, NumberStyles.Any, CultureInfo.CurrentCulture, out var vi)) return vi;
-            if (int.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out vi)) return vi;
+            if (t == typeof(decimal) || t == typeof(decimal?))
+            {
+                decimal v = ParseDecimalSafe(s);
+                return t == typeof(decimal?) ? (decimal?)v : v;
+            }
 
-            if (double.TryParse(s, NumberStyles.Any, CultureInfo.CurrentCulture, out var vd)) return (int)Math.Round(vd);
-            if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out vd)) return (int)Math.Round(vd);
+            if (t == typeof(bool) || t == typeof(bool?))
+            {
+                bool v = ParseBoolSafe(s);
+                return t == typeof(bool?) ? (bool?)v : v;
+            }
+
+            if (t.IsEnum)
+            {
+                try { return Enum.Parse(t, s, ignoreCase: true); }
+                catch { return Activator.CreateInstance(t); }
+            }
+
+            return null; // tipos complexos: ignorar
+        }
+
+        private static int ParseIntSafe(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return 0;
+            s = s.Trim();
+            if (s == "-" || s == "–" || s == "—") return 0;
+
+            if (int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var vi)) return vi;
+            if (int.TryParse(s, NumberStyles.Integer, CultureInfo.CurrentCulture, out vi)) return vi;
+
+            s = s.Replace(',', '.');
+            if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var vd))
+                return (int)Math.Round(vd);
 
             return 0;
         }
 
+        private static double ParseDoubleSafe(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return 0d;
+            s = s.Trim();
+            if (s == "-" || s == "–" || s == "—") return 0d;
+
+            if (double.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var v)) return v;
+            if (double.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out v)) return v;
+
+            s = s.Replace(',', '.');
+            if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out v)) return v;
+
+            return 0d;
+        }
+
+        private static decimal ParseDecimalSafe(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return 0m;
+            s = s.Trim();
+            if (s == "-" || s == "–" || s == "—") return 0m;
+
+            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.InvariantCulture, out var v)) return v;
+            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.CurrentCulture, out v)) return v;
+
+            s = s.Replace(',', '.');
+            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.InvariantCulture, out v)) return v;
+
+            return 0m;
+        }
+
+        private static bool ParseBoolSafe(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return false;
+            s = s.Trim();
+
+            if (bool.TryParse(s, out var vb)) return vb;
+
+            // Inteiros 0/1
+            if (int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var vi))
+                return vi != 0;
+            if (int.TryParse(s, NumberStyles.Integer, CultureInfo.CurrentCulture, out vi))
+                return vi != 0;
+
+            // "sim"/"não"
+            if (string.Equals(s, "sim", StringComparison.OrdinalIgnoreCase)) return true;
+            if (string.Equals(s, "nao", StringComparison.OrdinalIgnoreCase)) return false;
+            if (string.Equals(s, "não", StringComparison.OrdinalIgnoreCase)) return false;
+
+            return false;
+        }
     }
 }

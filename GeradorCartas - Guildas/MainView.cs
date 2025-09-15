@@ -1,5 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 using System.Windows.Forms;
 using GeradorCartas___Guildas.Models;
 using GeradorCartas___Guildas.Services;
@@ -13,12 +15,20 @@ namespace GeradorCartas___Guildas
 
         private List<MapModel> _maps = new();
         private List<CharacterModel> _characters = new();
+        private List<ActionsModel> _actions = new();
+        private List<PersonalityModel> _personalities = new();
+        private List<RelicModel> _relics = new();
+
         private string _lastFilePath;
+
         public MainView()
         {
             InitializeComponent();
         }
 
+        // =========================
+        // Characters (já existia)
+        // =========================
         private void btnImportListCharacters_Click(object sender, EventArgs e)
         {
             using var ofd = new OpenFileDialog
@@ -30,7 +40,7 @@ namespace GeradorCartas___Guildas
 
             var filePath = ofd.FileName;
 
-            // 1) Importa personagens
+            // 1) Importa
             List<CharacterModel> characters;
             try
             {
@@ -44,15 +54,15 @@ namespace GeradorCartas___Guildas
 
             if (characters == null || characters.Count == 0)
             {
-                MessageBox.Show(this, "Nenhum personagem encontrado.", "Aten��o", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "Nenhum personagem encontrado.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2) Gera e salva/imprime PDF
+            // 2) Imprime
             try
             {
                 _printingService.PrintCharacterCards(characters);
-                MessageBox.Show(this, $"Gerado PDF com {characters.Count} cartas.", "Conclu�do", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, $"Gerado PDF com {characters.Count} cartas.", "Concluído", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -60,6 +70,9 @@ namespace GeradorCartas___Guildas
             }
         }
 
+        // =========================
+        // Maps (atualizado p/ imprimir)
+        // =========================
         private void btnImportListMaps_Click(object sender, EventArgs e)
         {
             using var ofd = new OpenFileDialog
@@ -67,22 +80,207 @@ namespace GeradorCartas___Guildas
                 Title = "Selecione o arquivo .xlsm",
                 Filter = "Planilhas Excel (*.xlsm;*.xlsx)|*.xlsm;*.xlsx|Todos os arquivos (*.*)|*.*"
             };
-
             if (ofd.ShowDialog(this) != DialogResult.OK) return;
 
-            _lastFilePath = ofd.FileName;
+            var filePath = ofd.FileName;
 
-            var maps = _importingService.ImportMapsList(_lastFilePath);
-            _maps = maps ?? new List<MapModel>();
+            // 1) Importa
+            List<MapModel> maps;
+            try
+            {
+                maps = _importingService.ImportMapsList(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao importar: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            // Feedback simples (ajuste para Label/StatusBar, se tiver)
-            MessageBox.Show(
-                this,
-                $"Importadas {_maps.Count} cartas de Mapas, de:\n{_lastFilePath}",
-                "Importa��o conclu�da",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+            if (maps == null || maps.Count == 0)
+            {
+                MessageBox.Show(this, "Nenhum mapa encontrado.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            _maps = maps;
+            _lastFilePath = filePath;
+
+            // 2) Imprime
+            try
+            {
+                _printingService.PrintMapCards(maps);
+                MessageBox.Show(this, $"Gerado PDF com {maps.Count} cartas de Mapa.", "Concluído", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao gerar/imprimir: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // =========================
+        // Actions
+        // =========================
+        private void btnImportListActions_Click(object sender, EventArgs e)
+        {
+            using var ofd = new OpenFileDialog
+            {
+                Title = "Selecione o arquivo .xlsm",
+                Filter = "Planilhas Excel (*.xlsm;*.xlsx)|*.xlsm;*.xlsx|Todos os arquivos (*.*)|*.*"
+            };
+            if (ofd.ShowDialog(this) != DialogResult.OK) return;
+
+            var filePath = ofd.FileName;
+
+            // 1) Importa
+            List<ActionsModel> actions;
+            try
+            {
+                actions = _importingService.ImportActionsList(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao importar: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (actions == null || actions.Count == 0)
+            {
+                MessageBox.Show(this, "Nenhuma carta de Ação encontrada.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            _actions = actions;
+            _lastFilePath = filePath;
+
+            // 2) Imprime
+            try
+            {
+                _printingService.PrintActionCards(actions);
+                MessageBox.Show(this, $"Gerado PDF com {actions.Count} cartas de Ação.", "Concluído", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao gerar/imprimir: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // =========================
+        // Personalities
+        // =========================
+        private void btnImportListPersonalities_Click(object sender, EventArgs e)
+        {
+            using var ofd = new OpenFileDialog
+            {
+                Title = "Selecione o arquivo .xlsm",
+                Filter = "Planilhas Excel (*.xlsm;*.xlsx)|*.xlsm;*.xlsx|Todos os arquivos (*.*)|*.*"
+            };
+            if (ofd.ShowDialog(this) != DialogResult.OK) return;
+
+            var filePath = ofd.FileName;
+
+            // 1) Importa
+            List<PersonalityModel> personalities;
+            try
+            {
+                personalities = _importingService.ImportPersonalitiesList(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao importar: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (personalities == null || personalities.Count == 0)
+            {
+                MessageBox.Show(this, "Nenhuma carta de Personalidade encontrada.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            _personalities = personalities;
+            _lastFilePath = filePath;
+
+            // 2) Imprime
+            try
+            {
+                _printingService.PrintPersonalityCards(personalities);
+                MessageBox.Show(this, $"Gerado PDF com {personalities.Count} cartas de Personalidade.", "Concluído", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao gerar/imprimir: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // =========================
+        // Relics
+        // =========================
+        private void btnImportListRelics_Click(object sender, EventArgs e)
+        {
+            using var ofd = new OpenFileDialog
+            {
+                Title = "Selecione o arquivo .xlsm",
+                Filter = "Planilhas Excel (*.xlsm;*.xlsx)|*.xlsm;*.xlsx|Todos os arquivos (*.*)|*.*"
+            };
+            if (ofd.ShowDialog(this) != DialogResult.OK) return;
+
+            var filePath = ofd.FileName;
+
+            // 1) Importa
+            List<RelicModel> relics;
+            try
+            {
+                relics = _importingService.ImportRelicsList(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao importar: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (relics == null || relics.Count == 0)
+            {
+                MessageBox.Show(this, "Nenhuma carta de Relíquia encontrada.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            _relics = relics;
+            _lastFilePath = filePath;
+
+            // 2) Imprime
+            try
+            {
+                // Sem regras especiais, usamos o método genérico.
+                _printingService.PrintCards(
+                    relics,
+                    r => "RelicModel1", // ModelKey → design_RelicModel1.png / fields_RelicModel1.csv
+                    (r, field) => ReflectiveGet(r, field),
+                    outputName: "Relics",
+                    title: "Guildas - Cartas (Relíquias)");
+
+                MessageBox.Show(this, $"Gerado PDF com {relics.Count} cartas de Relíquia.", "Concluído", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Erro ao gerar/imprimir: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // =========
+        // Helper
+        // =========
+        private static string ReflectiveGet<T>(T obj, string field)
+        {
+            if (obj == null || string.IsNullOrWhiteSpace(field)) return string.Empty;
+            var prop = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .FirstOrDefault(p => string.Equals(p.Name, field, StringComparison.OrdinalIgnoreCase));
+            if (prop == null) return string.Empty;
+
+            var val = prop.GetValue(obj);
+            if (val == null) return string.Empty;
+
+            return val is IFormattable f
+                ? f.ToString(null, CultureInfo.InvariantCulture)
+                : val.ToString();
         }
     }
 }

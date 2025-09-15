@@ -1,63 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
+﻿using GeradorCartas___Guildas.Models;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
-using GeradorCartas___Guildas.Models;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace GeradorCartas___Guildas.Services
 {
     internal class PrintingService
     {
-        // ==========================
-        // Config de assets e saída
-        // ==========================
         private const string TemplatesDir = @"assets\templates";
-        private static readonly string TplType1Png = Path.Combine(TemplatesDir, "design_CharacterModel1.png");
-        private static readonly string TplType2Png = Path.Combine(TemplatesDir, "design_CharacterModel2.png");
-        private static readonly string TplType3Png = Path.Combine(TemplatesDir, "design_CharacterModel3.png");
-        private static readonly string FieldsType1Csv = Path.Combine(TemplatesDir, "fields_CharacterModel1.csv");
-        private static readonly string FieldsType2Csv = Path.Combine(TemplatesDir, "fields_CharacterModel2.csv");
-        private static readonly string FieldsType3Csv = Path.Combine(TemplatesDir, "fields_CharacterModel3.csv");
-
         private const string OutputDir = "output";
         private const double TargetDpi = 300.0;
 
-        // ======================================================
-        // ENTRADA → monta PDF A4 com grade 3x3 de cartas (63×88)
-        // ======================================================
-        public void PrintCharacterCards(List<CharacterModel> chars, string outputName = null, string title = null)
+        // =========================
+        // Genérico p/ qualquer T
+        // =========================
+        public void PrintCards<T>(
+            List<T> items,
+            Func<T, string> selectModelKey,                    // ex.: c => $"CharacterModel{DetectCharacterVariant(c)}"
+            Func<T, string, string> fieldResolver,             // ex.: (c, field) => CharacterFieldResolver(c, field)
+            string outputName = null,
+            string title = null)
         {
-            if (chars == null || chars.Count == 0)
-                throw new InvalidOperationException("Nenhum personagem para gerar.");
+            if (items == null || items.Count == 0)
+                throw new InvalidOperationException("Nenhum item para gerar.");
 
             var drawing = new DrawingService();
 
-            // 1) CSVs por modelo
-            var fields1 = drawing.LoadFields(FieldsType1Csv);
-            var fields2 = drawing.LoadFields(FieldsType2Csv);
-            var fields3 = drawing.LoadFields(FieldsType3Csv);
-            if (fields1.Count == 0) throw new InvalidDataException($"CSV vazio ou inválido: {FieldsType1Csv}");
-            if (fields2.Count == 0) throw new InvalidDataException($"CSV vazio ou inválido: {FieldsType2Csv}");
-            if (fields3.Count == 0) throw new InvalidDataException($"CSV vazio ou inválido: {FieldsType3Csv}");
-
-            // 2) Templates PNG
-            using var img1 = (Bitmap)Image.FromFile(TplType1Png);
-            using var img2 = (Bitmap)Image.FromFile(TplType2Png);
-            using var img3 = (Bitmap)Image.FromFile(TplType3Png);
-
-            // 3) Documento PDF
-            var pdf = new PdfDocument
-            {
-                Info = { Title = string.IsNullOrWhiteSpace(title) ? "Guildas - Cartas (Personagens)" : title }
-            };
-
-            // 4) Medidas físicas (A4; carta MTG 63 × 88 mm)
+            // A4 + Carta 63x88
             const double mmToPt = 72.0 / 25.4;
-            double pageWmm = 210, pageHmm = 297;  // A4
-            double cardWmm = 63, cardHmm = 88;    // Carta
+            double pageWmm = 210, pageHmm = 297;
+            double cardWmm = 63, cardHmm = 88;
             double marginMm = 10, gapMm = 5;
             int cols = 3, rows = 3;
 
@@ -65,81 +43,282 @@ namespace GeradorCartas___Guildas.Services
             double marginPt = marginMm * mmToPt, gapPt = gapMm * mmToPt;
             double cardWpt = cardWmm * mmToPt, cardHpt = cardHmm * mmToPt;
 
-            // Bitmap alvo de cada carta em pixels (300 DPI)
             int cardWpx = (int)Math.Round(cardWmm / 25.4 * TargetDpi);
             int cardHpx = (int)Math.Round(cardHmm / 25.4 * TargetDpi);
 
-            // 5) Grade 3×3 (destinos em pontos)
             var cellRects = BuildGridRects(cols, rows, marginPt, gapPt, cardWpt, cardHpt);
             CenterGridInPage(cellRects, pageWpt, pageHpt, marginPt);
 
-            // 6) Páginas
-            foreach (var chunk in Chunk(chars, cols * rows))
+            var pdf = new PdfDocument
             {
-                var page = pdf.AddPage();
-                page.Width = XUnit.FromMillimeter(pageWmm);
-                page.Height = XUnit.FromMillimeter(pageHmm);
+                Info = { Title = string.IsNullOrWhiteSpace(title) ? "Guildas - Cartas" : title }
+            };
 
-                using var gfx = XGraphics.FromPdfPage(page);
+            // Cache de assets por ModelKey
+            var cache = new Dictionary<string, (Bitmap tpl, List<DrawingService.FieldDef> fields)>(StringComparer.OrdinalIgnoreCase);
 
-                for (int i = 0; i < chunk.Count; i++)
-                {
-                    var ch = chunk[i];
-                    var rect = cellRects[i];
-
-                    // Seleciona modelo (1, 2 ou 3)
-                    int model = DetectModel(ch);
-                    Bitmap tpl;
-                    List<DrawingService.FieldDef> fields;
-                    switch (model)
-                    {
-                        case 2: tpl = img2; fields = fields2; break;
-                        case 3: tpl = img3; fields = fields3; break;
-                        default: tpl = img1; fields = fields1; break;
-                    }
-
-                    // Renderiza a carta em bitmap 300 DPI via DrawingService
-                    using var bmp = drawing.RenderCardBitmap(tpl, fields, ch, cardWpx, cardHpx, (float)TargetDpi);
-
-                    // Insere no PDF no retângulo da célula
-                    using var ms = new MemoryStream();
-                    bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    ms.Position = 0;
-                    using var ximg = XImage.FromStream(() => new MemoryStream(ms.ToArray()));
-                    gfx.DrawImage(ximg, rect.X, rect.Y, rect.Width, rect.Height);
-                }
-            }
-
-            // 7) Salva PDF
-            Directory.CreateDirectory(OutputDir);
-            string name = string.IsNullOrWhiteSpace(outputName)
-                ? $"Characters_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"
-                : $"{Sanitize(outputName)}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
-            string outPath = Path.Combine(OutputDir, name);
-
-            pdf.Save(outPath);
             try
             {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = outPath, UseShellExecute = true });
+                foreach (var chunk in Chunk(items, cols * rows))
+                {
+                    var page = pdf.AddPage();
+                    page.Width = XUnit.FromMillimeter(pageWmm);
+                    page.Height = XUnit.FromMillimeter(pageHmm);
+
+                    using var gfx = XGraphics.FromPdfPage(page);
+
+                    for (int i = 0; i < chunk.Count; i++)
+                    {
+                        var item = chunk[i];
+                        var rect = cellRects[i];
+
+                        string modelKey = selectModelKey(item); // ex.: "CharacterModel2"
+                        if (string.IsNullOrWhiteSpace(modelKey))
+                            throw new InvalidDataException("ModelKey vazio.");
+
+                        if (!cache.TryGetValue(modelKey, out var asset))
+                        {
+                            string png = Path.Combine(TemplatesDir, $"design_{modelKey}.png");
+                            string csv = Path.Combine(TemplatesDir, $"fields_{modelKey}.csv");
+
+                            if (!File.Exists(png)) throw new FileNotFoundException($"Template não encontrado: {png}");
+                            if (!File.Exists(csv)) throw new FileNotFoundException($"CSV não encontrado: {csv}");
+
+                            var fields = drawing.LoadFields(csv);
+                            if (fields.Count == 0) throw new InvalidDataException($"CSV vazio/ inválido: {csv}");
+
+                            var tpl = (Bitmap)Image.FromFile(png);
+                            cache[modelKey] = (tpl, fields);
+                            asset = cache[modelKey];
+                        }
+
+                        using var bmp = drawing.RenderCardBitmap(
+                            asset.tpl,
+                            asset.fields,
+                            fieldName => fieldResolver(item, fieldName),
+                            cardWpx, cardHpx, (float)TargetDpi);
+
+                        using var ms = new MemoryStream();
+                        bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        ms.Position = 0;
+                        using var ximg = XImage.FromStream(() => new MemoryStream(ms.ToArray()));
+                        gfx.DrawImage(ximg, rect.X, rect.Y, rect.Width, rect.Height);
+                    }
+                }
+
+                Directory.CreateDirectory(OutputDir);
+                string name = string.IsNullOrWhiteSpace(outputName)
+                    ? $"Cards_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"
+                    : $"{Sanitize(outputName)}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+                string outPath = Path.Combine(OutputDir, name);
+
+                pdf.Save(outPath);
+                try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = outPath, UseShellExecute = true }); } catch { }
             }
-            catch { }
-            pdf.Close();
+            finally
+            {
+                // Dispose dos templates do cache
+                foreach (var kv in cache.Values) kv.tpl.Dispose();
+                pdf.Close();
+            }
         }
 
-        // =========================================
-        // MODELO → decide 1/2/3 conforme dados
-        // =========================================
-        private static int DetectModel(CharacterModel c)
+        // =========================
+        // Compat: Characters 1/2/3
+        // =========================
+        public void PrintCharacterCards(List<CharacterModel> chars, string outputName = null, string title = null)
+        {
+            PrintCards(
+                chars,
+                c => $"CharacterModel{DetectCharacterVariant(c)}",
+                CharacterFieldResolver,
+                outputName,
+                title ?? "Guildas - Cartas (Personagens)");
+        }
+
+        public void PrintActionCards(List<ActionsModel> actions, string outputName = null, string title = null)
+        {
+            PrintCards(
+                actions,
+                a => "ActionModel1",
+                ActionsFieldResolver,
+                outputName,
+                title ?? "Guildas - Cartas (Ações)");
+        }
+
+        public void PrintMapCards(List<MapModel> maps, string outputName = null, string title = null)
+        {
+            PrintCards(
+                maps,
+                m => "MapModel1",
+                MapFieldResolver,
+                outputName,
+                title ?? "Guildas - Cartas (Mapa)");
+        }
+
+        public void PrintPersonalityCards(List<PersonalityModel> personalities, string outputName = null, string title = null)
+        {
+            PrintCards(
+                personalities,
+                p => $"PersonalityModel{DetectPersonalityVariant(p)}",
+                PersonalityFieldResolver,
+                outputName,
+                title ?? "Guildas - Cartas (Personalidades)");
+        }
+
+        private static int DetectCharacterVariant(CharacterModel c)
         {
             bool hasHab2 = !string.IsNullOrWhiteSpace(c.Hab2);
-            if (!hasHab2) return 1;     // Modelo 1: só Hab1
-            if (c.HasPrep) return 2;    // Modelo 2: Hab1 + Hab2 + Prep
-            return 3;                   // Modelo 3: Hab1 + Hab2 (sem Prep)
+            if (!hasHab2) return 1;
+            if (c.HasPrep) return 2;
+            return 3;
         }
 
-        // =========================================
-        // GRADE → retângulos e centralização
-        // =========================================
+        // ========== Actions ==========
+        private static string ActionsFieldResolver(ActionsModel a, string field)
+        {
+            if (string.Equals(field, "Rules", StringComparison.OrdinalIgnoreCase))
+                return JoinRules(a);
+
+            // fallback: propriedades diretas (Id, Name, Guild, Art, Lore, Credits, Info, Edition)
+            return ReflectiveResolver(a, field);
+        }
+
+        private static string JoinRules(ActionsModel a)
+        {
+            var parts = new[]
+            {
+        string.IsNullOrWhiteSpace(a.Rules1) ? null : "- " + a.Rules1.Trim(),
+        string.IsNullOrWhiteSpace(a.Rules2) ? null : "- " + a.Rules2.Trim(),
+        string.IsNullOrWhiteSpace(a.Rules3) ? null : "- " + a.Rules3.Trim(),
+        string.IsNullOrWhiteSpace(a.Rules4) ? null : "- " + a.Rules4.Trim(),
+    }.Where(s => !string.IsNullOrWhiteSpace(s));
+
+            return string.Join("\n", parts); // uma por linha; quebra automática continua funcionando
+        }
+
+        // =========== Map ============
+        private static string MapFieldResolver(MapModel m, string field)
+        {
+            // Prefixamos somente Option1/Option2, conforme Type; os demais campos seguem normais.
+            if (field.Equals("Option1", StringComparison.OrdinalIgnoreCase))
+                return PrefixOption(m.Type, m.Option1, isFirst: true);
+            if (field.Equals("Option2", StringComparison.OrdinalIgnoreCase))
+                return PrefixOption(m.Type, m.Option2, isFirst: false);
+
+            return ReflectiveResolver(m, field);
+        }
+
+        private static string PrefixOption(string type, string option, bool isFirst)
+        {
+            if (string.IsNullOrWhiteSpace(option)) return string.Empty;
+
+            string t = NormalizeType(type);
+            string prefix = null;
+
+            // Regras:
+            // Desafio → Option1: "Passou: ", Option2: "Falhou: "
+            if (t == "desafio")
+                prefix = isFirst ? "Passou: " : "Falhou: ";
+
+            // Descanso / Cidade → Option1/2 com "Opção 1: " / "Opção 2: "
+            else if (t == "descanso" || t == "cidade")
+                prefix = isFirst ? "Opção 1: " : "Opção 2: ";
+
+            // Besta / Criminosos → Option1: "O inimigo tem: " / Option2: "Após o combate: "
+            else if (t == "besta" || t == "criminosos")
+                prefix = isFirst ? "O inimigo tem: " : "Após o combate: ";
+
+            // Evento Público → Option1: "Participar: " / Option2: "Continuar viagem: "
+            else if (t == "evento publico") // (diacríticos já normalizados)
+                prefix = isFirst ? "Participar: " : "Continuar viagem: ";
+
+            // Encontro → sem prefixo
+            else if (t == "encontro")
+                prefix = null;
+
+            // Caso não caia em nenhuma categoria, não prefixa.
+            return AddPrefixIfMissing(option.Trim(), prefix);
+        }
+
+        private static string NormalizeType(string type)
+        {
+            if (string.IsNullOrWhiteSpace(type)) return string.Empty;
+            var s = RemoveDiacritics(type).Trim().ToLowerInvariant();
+            // colapsa múltiplos espaços:
+            s = string.Join(" ", s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+            return s;
+        }
+
+        private static string AddPrefixIfMissing(string text, string prefix)
+        {
+            if (string.IsNullOrEmpty(prefix)) return text;
+            // Evita duplicar caso o dado já venha com o mesmo prefixo
+            if (text.StartsWith(prefix, true, CultureInfo.InvariantCulture)) return text;
+            return prefix + text;
+        }
+
+        private static string RemoveDiacritics(string s)
+        {
+            var norm = s.Normalize(NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder(capacity: s.Length);
+            foreach (var ch in norm)
+            {
+                var uc = CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        // ======== Personalities ========
+        private static int DetectPersonalityVariant(PersonalityModel p)
+        {
+            bool hasHab2 = !string.IsNullOrWhiteSpace(p.Hab2);   // Model3/4 têm Hab2
+            bool hasPrep = p.Prep > 0;                           // Model2/4 têm Prep
+
+            // Model1: sem Hab2 e sem Prep
+            if (!hasHab2 && !hasPrep) return 1;
+
+            // Model2: Hab1 + Prep, sem Hab2
+            if (!hasHab2 && hasPrep) return 2;
+
+            // Model3: Hab1 + Hab2, sem Prep
+            if (hasHab2 && !hasPrep) return 3;
+
+            // Model4: Hab1 + Hab2 + Prep
+            return 4;
+        }
+
+        private static string PersonalityFieldResolver(PersonalityModel p, string field)
+        {
+            // Sem regras especiais: usa as props do modelo (Id, Name, Type, Cost, Requirements, Hab1, Prep, Hab2, Art, Lore, Credits, Info, Edition)
+            return ReflectiveResolver(p, field);
+        }
+
+        // ======== Fallback reflexivo (se você já tiver um, mantenha o seu) ========
+        private static string ReflectiveResolver<T>(T obj, string field)
+        {
+            if (obj == null || string.IsNullOrWhiteSpace(field)) return string.Empty;
+
+            var prop = typeof(T).GetProperties()
+                .FirstOrDefault(p => string.Equals(p.Name, field, StringComparison.OrdinalIgnoreCase));
+            if (prop == null) return string.Empty;
+
+            var val = prop.GetValue(obj);
+            if (val == null) return string.Empty;
+
+            return val switch
+            {
+                IFormattable f => f.ToString(null, CultureInfo.InvariantCulture),
+                _ => val.ToString()
+            };
+        }
+
+
+        // ===========
+        // Grid utils
+        // ===========
         private static List<XRect> BuildGridRects(int cols, int rows, double marginPt, double gapPt, double cardWpt, double cardHpt)
         {
             var cellRects = new List<XRect>(cols * rows);
@@ -173,9 +352,6 @@ namespace GeradorCartas___Guildas.Services
             }
         }
 
-        // =========================================
-        // UTILS
-        // =========================================
         private static IEnumerable<List<T>> Chunk<T>(IEnumerable<T> src, int size)
         {
             var buf = new List<T>(size);
@@ -196,6 +372,40 @@ namespace GeradorCartas___Guildas.Services
             foreach (var ch in Path.GetInvalidFileNameChars())
                 s = s.Replace(ch, '_');
             return s;
+        }
+
+        // ===============================
+        // Character → resolver de campos
+        // ===============================
+        private static string CharacterFieldResolver(CharacterModel c, string fieldName)
+        {
+            switch ((fieldName ?? "").Trim().ToLowerInvariant())
+            {
+                case "id": return c.Id;
+                case "name": return c.Name;
+                case "cost": return c.Cost.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                case "class":
+                    {
+                        string trait = (string.IsNullOrWhiteSpace(c.Trait) || c.Trait == "-" || c.Trait == "–" || c.Trait == "—")
+                                       ? null : c.Trait;
+                        return trait is null ? (c.Class ?? string.Empty) : $"{c.Class} - {trait}";
+                    }
+                case "faction":
+                    return string.Join(" - ", new[] { c.Order, c.Faction }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                case "health": return c.Health.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                case "resistence": return c.Resistence;
+                case "atack": return c.Atack.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                case "damage": return c.Damage;
+                case "bravery": return c.Bravery.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                case "art": return c.Art;
+                case "lore": return c.Lore;
+                case "hab1": return c.Hab1;
+                case "hab2": return c.Hab2;
+                case "prep": return c.HasPrep ? c.Prep.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                case "credits": return string.Join(" - ", new[] { c.Credits, c.Info, c.Edition }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                case "description": return c.Description;
+                default: return string.Empty;
+            }
         }
     }
 }

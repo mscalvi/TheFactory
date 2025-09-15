@@ -4,44 +4,32 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Pdf;
-using GeradorCartas___Guildas.Models;
 
 namespace GeradorCartas___Guildas.Services
 {
     internal class DrawingService
     {
-        // ==========================
-        // “Knobs” globais de layout
-        // ==========================
-        private const float FONT_SCALE = 0.88f;    // escala global dos tamanhos do CSV (0.80–0.95)
-        private const float PADDING_PCT = 0.020f;  // padding padrão (2%)
-        private const float PAD_HAB_EXTRA = 0.010f;// extra p/ Hab1/Hab2 (1%)
-        private const float LINE_SPACING = 0.92f;  // espaçamento entre linhas (92%)
+        private const float FONT_SCALE = 0.88f;
+        private const float PADDING_PCT = 0.020f;
+        private const float PAD_HAB_EXTRA = 0.010f;
+        private const float LINE_SPACING = 0.92f;
         private const string FONT_FAMILY = "Segoe UI";
 
-        // Name em duas linhas
-        private const float NAME_BOTTOM_RATIO = 0.75f; // base = 65% do topo
-        private const float NAME_LINESPACE = 0.75f;    // distância entre topo e base = 60% da altura do topo
+        private const float NAME_BOTTOM_RATIO = 0.75f;
+        private const float NAME_LINESPACE = 0.75f;
 
-        // Campos que funcionam melhor em 1 linha (sem quebra)
-        private static readonly HashSet<string> SingleLineFields = new(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> DefaultSingleLine = new(StringComparer.OrdinalIgnoreCase)
         { "name","id","cost","health","resistence","atack","damage","bravery","prep","body","strength" };
 
-        // Diretórios aceitáveis para imagens
         private static readonly string[] ImageDirs = {
             @"assets\image", @"assets\images",
             @"Assets\Image", @"Assets\Images"
         };
 
-        // Definição de um campo do CSV (percentuais relativos ao PNG)
-        internal record FieldDef(string Name, double Xp, double Yp, double Wp, double Hp,
-                                 string Align, float FontMin, float FontMax, bool Bold);
+        internal record FieldDef(
+            string Name, double Xp, double Yp, double Wp, double Hp,
+            string Align, float FontMin, float FontMax, bool Bold, bool SingleLine);
 
-        // =========================================
-        // CSV → carrega campos (nome, retângulo...)
-        // =========================================
         internal List<FieldDef> LoadFields(string csvPath)
         {
             var list = new List<FieldDef>();
@@ -55,10 +43,9 @@ namespace GeradorCartas___Guildas.Services
                 var line = lines[i];
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
-                // Delimitador: tenta ;, depois TAB
                 string[] parts = line.Split(';');
                 if (parts.Length < 2) parts = line.Split('\t');
-                if (parts.Length < 9) continue; // linha incompleta
+                if (parts.Length < 9) continue;
 
                 string name = parts[0].Trim();
                 double xp = ParseDouble(parts[1]);
@@ -70,6 +57,10 @@ namespace GeradorCartas___Guildas.Services
                 float fmax = (float)ParseDouble(parts[7]) * FONT_SCALE;
                 bool bold = ParseBool(parts[8]);
 
+                bool singleLine = parts.Length >= 10
+                    ? ParseBool(parts[9])
+                    : DefaultSingleLine.Contains(name);
+
                 xp = Clamp01(xp); yp = Clamp01(yp);
                 wp = Math.Max(0.01, Clamp01(wp));
                 hp = Math.Max(0.01, Clamp01(hp));
@@ -77,18 +68,15 @@ namespace GeradorCartas___Guildas.Services
                 if (fmax < 2) fmax = 2;
                 if (fmax < fmin) (fmax, fmin) = (fmin, fmax);
 
-                list.Add(new FieldDef(name, xp, yp, wp, hp, align, fmin, fmax, bold));
+                list.Add(new FieldDef(name, xp, yp, wp, hp, align, fmin, fmax, bold, singleLine));
             }
             return list;
         }
 
-        // =========================================
-        // RENDER → desenha UMA carta em bitmap
-        // =========================================
         internal Bitmap RenderCardBitmap(
             Bitmap template,
             List<FieldDef> fields,
-            CharacterModel ch,
+            Func<string, string> valueResolver,
             int cardWidthPx,
             int cardHeightPx,
             float targetDpi)
@@ -102,23 +90,19 @@ namespace GeradorCartas___Guildas.Services
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
-            // Fundo do template
+            // Fundo
             g.DrawImage(template,
                         new Rectangle(0, 0, cardWidthPx, cardHeightPx),
                         new Rectangle(0, 0, template.Width, template.Height),
                         GraphicsUnit.Pixel);
 
-            // Campos
-            // Campos
             foreach (var f in fields)
             {
-                // Retângulo base
                 float rx = (float)(f.Xp * cardWidthPx);
                 float ry = (float)(f.Yp * cardHeightPx);
                 float rw = (float)(f.Wp * cardWidthPx);
                 float rh = (float)(f.Hp * cardHeightPx);
 
-                // Padding global (+ extra em Hab1/Hab2)
                 float pad = MathF.Min(rw, rh) * PADDING_PCT;
                 if (f.Name.Equals("Hab1", StringComparison.OrdinalIgnoreCase) ||
                     f.Name.Equals("Hab2", StringComparison.OrdinalIgnoreCase))
@@ -130,24 +114,25 @@ namespace GeradorCartas___Guildas.Services
                 var rect = new RectangleF(rx, ry, rw, rh);
                 var style = f.Bold ? FontStyle.Bold : FontStyle.Regular;
 
-                // 1) ART primeiro (independe de valor no CSV/Model)
+                // ART (usa "Art" e "Id" do resolver)
                 if (f.Name.Equals("Art", StringComparison.OrdinalIgnoreCase))
                 {
                     try
                     {
-                        var artPath = ResolveArtPath(ch);
+                        string art = valueResolver("Art");
+                        string id = valueResolver("Id");
+                        var artPath = ResolveArtPath(art, id);
                         if (!string.IsNullOrEmpty(artPath) && File.Exists(artPath))
                         {
-                            using var art = Image.FromFile(artPath);
-                            DrawImageCover(g, art, rect);
+                            using var artImg = Image.FromFile(artPath);
+                            DrawImageCover(g, artImg, rect);
                         }
                     }
-                    catch { /* ignora erro para não travar */ }
+                    catch { }
                     continue;
                 }
 
-                // 2) Demais campos
-                string val = GetValueForField(ch, f.Name);
+                string val = valueResolver(f.Name);
                 if (string.IsNullOrWhiteSpace(val)) continue;
 
                 if (f.Name.Equals("Name", StringComparison.OrdinalIgnoreCase))
@@ -156,52 +141,13 @@ namespace GeradorCartas___Guildas.Services
                     continue;
                 }
 
-                bool singleLine = SingleLineFields.Contains(f.Name);
-                using var font = FitFontAuto(g, val, FONT_FAMILY, f.FontMax, f.FontMin, rect, style, singleLine, LINE_SPACING);
-                DrawText(g, val, font, rect, f.Align, singleLine, LINE_SPACING);
+                using var font = FitFontAuto(g, val, FONT_FAMILY, f.FontMax, f.FontMin, rect, style, f.SingleLine, LINE_SPACING);
+                DrawText(g, val, font, rect, f.Align, f.SingleLine, LINE_SPACING);
             }
-
 
             return bmp;
         }
 
-        // =========================================
-        // VALORES → mapeia CSV → CharacterModel
-        // =========================================
-        private static string GetValueForField(CharacterModel c, string fieldName)
-        {
-            switch (fieldName.Trim().ToLowerInvariant())
-            {
-                case "id": return c.Id;
-                case "name": return c.Name; // split só no desenho (mantendo vírgula na linha de cima)
-                case "cost": return c.Cost.ToString(CultureInfo.InvariantCulture);
-                case "class":
-                    {
-                        string trait = (string.IsNullOrWhiteSpace(c.Trait) || c.Trait == "-" || c.Trait == "–" || c.Trait == "—")
-                                       ? null : c.Trait;
-                        return trait is null ? (c.Class ?? string.Empty) : $"{c.Class} - {trait}";
-                    }
-                case "faction":
-                    return string.Join(" - ", new[] { c.Order, c.Faction }.Where(s => !string.IsNullOrWhiteSpace(s)));
-                case "health": return c.Health.ToString(CultureInfo.InvariantCulture);
-                case "resistence": return c.Resistence;
-                case "atack": return c.Atack.ToString(CultureInfo.InvariantCulture);
-                case "damage": return c.Damage;
-                case "bravery": return c.Bravery.ToString(CultureInfo.InvariantCulture);
-                case "art": return c.Art;
-                case "lore": return c.Lore;
-                case "hab1": return c.Hab1;
-                case "hab2": return c.Hab2;
-                case "prep": return c.HasPrep ? c.Prep.ToString(CultureInfo.InvariantCulture) : string.Empty;
-                case "credits": return string.Join(" - ", new[] { c.Credits, c.Info, c.Edition }.Where(x => !string.IsNullOrWhiteSpace(x)));
-                case "description": return c.Description;
-                default: return string.Empty;
-            }
-        }
-
-        // =========================================
-        // TEXTO/NAME/WRAP
-        // =========================================
         private static void DrawText(Graphics g, string text, Font font, RectangleF rect, string hAlign, bool singleLine, float lineSpacing)
         {
             if (singleLine)
@@ -319,7 +265,6 @@ namespace GeradorCartas___Guildas.Services
                     else { hi = mid; }
                 }
             }
-
             return new Font(family, best, style, GraphicsUnit.Point);
         }
 
@@ -349,38 +294,28 @@ namespace GeradorCartas___Guildas.Services
             if (string.IsNullOrWhiteSpace(name)) return (string.Empty, string.Empty);
             int idx = name.IndexOf(',');
             if (idx < 0) return (name.Trim(), string.Empty);
-            string top = name.Substring(0, idx + 1).TrimEnd(); // mantém a vírgula
+            string top = name.Substring(0, idx + 1).TrimEnd();
             string bottom = name.Substring(idx + 1).TrimStart();
             return (top, bottom);
         }
 
-        // =========================================
-        // IMAGEM
-        // =========================================
-        private static string ResolveArtPath(CharacterModel ch)
+        private static string ResolveArtPath(string art, string id)
         {
             IEnumerable<string> Candidates()
             {
-                // 1) Se Art foi definido no modelo, usa exatamente esse arquivo
-                if (!string.IsNullOrWhiteSpace(ch.Art))
-                    foreach (var d in ImageDirs) yield return Path.Combine(d, ch.Art);
+                if (!string.IsNullOrWhiteSpace(art))
+                    foreach (var d in ImageDirs) yield return Path.Combine(d, art);
 
-                // 2) Senão, tenta por Id (mesmo nome do personagem)
-                if (!string.IsNullOrWhiteSpace(ch.Id))
+                if (!string.IsNullOrWhiteSpace(id))
                     foreach (var d in ImageDirs)
                     {
-                        yield return Path.Combine(d, $"{ch.Id}.png");
-                        yield return Path.Combine(d, $"{ch.Id}.jpg");
-                        yield return Path.Combine(d, $"{ch.Id}.jpeg");
+                        yield return Path.Combine(d, $"{id}.png");
+                        yield return Path.Combine(d, $"{id}.jpg");
+                        yield return Path.Combine(d, $"{id}.jpeg");
                     }
-
-                // 3) Sem fallback global — retorna null se nada existir
-                yield break;
             }
-
             return Candidates().FirstOrDefault(File.Exists);
         }
-
 
         private static void DrawImageCover(Graphics g, Image img, RectangleF dest)
         {
@@ -402,13 +337,9 @@ namespace GeradorCartas___Guildas.Services
                 float sy = (img.Height - srcH) / 2f;
                 src = new RectangleF(0, sy, srcW, srcH);
             }
-
             g.DrawImage(img, dest, src, GraphicsUnit.Pixel);
         }
 
-        // =========================================
-        // Helpers
-        // =========================================
         private static double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
 
         private static double ParseDouble(string s)
