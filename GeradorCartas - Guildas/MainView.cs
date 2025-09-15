@@ -249,11 +249,12 @@ namespace GeradorCartas___Guildas
             // 2) Imprime
             try
             {
-                // Sem regras especiais, usamos o método genérico.
                 _printingService.PrintCards(
                     relics,
-                    r => "RelicModel1", // ModelKey → design_RelicModel1.png / fields_RelicModel1.csv
-                    (r, field) => ReflectiveGet(r, field),
+                    r => "RelicModel1",
+                    (r, field) => field.Equals("Art", StringComparison.OrdinalIgnoreCase)
+                        ? "RelicModelArt.png"                // ← FORÇADO
+                        : ReflectiveGet(r, field),           // ← ORIGINAL
                     outputName: "Relics",
                     title: "Guildas - Cartas (Relíquias)");
 

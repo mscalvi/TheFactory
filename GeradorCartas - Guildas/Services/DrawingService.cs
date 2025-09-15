@@ -114,6 +114,13 @@ namespace GeradorCartas___Guildas.Services
                 var rect = new RectangleF(rx, ry, rw, rh);
                 var style = f.Bold ? FontStyle.Bold : FontStyle.Regular;
 
+                if (f.Name.Equals("Lore", StringComparison.OrdinalIgnoreCase)
+                    || f.Name.Equals("Lore1", StringComparison.OrdinalIgnoreCase)
+                    || f.Name.Equals("Lore2", StringComparison.OrdinalIgnoreCase))
+                {
+                    style |= FontStyle.Italic;
+                }
+
                 // ART (usa "Art" e "Id" do resolver)
                 if (f.Name.Equals("Art", StringComparison.OrdinalIgnoreCase))
                 {

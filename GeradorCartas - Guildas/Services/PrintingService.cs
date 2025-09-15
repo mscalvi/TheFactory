@@ -177,12 +177,29 @@ namespace GeradorCartas___Guildas.Services
         // ========== Actions ==========
         private static string ActionsFieldResolver(ActionsModel a, string field)
         {
-            if (string.Equals(field, "Rules", StringComparison.OrdinalIgnoreCase))
-                return JoinRules(a);
+            if (field.Equals("Art", StringComparison.OrdinalIgnoreCase))
+            {
+                // return a.Art; // ← ORIGINAL (deixe comentado para poder voltar)
 
-            // fallback: propriedades diretas (Id, Name, Guild, Art, Lore, Credits, Info, Edition)
+                // Usa o prefixo do Name para decidir a arte genérica
+                var n = NormalizeType(a.Name ?? string.Empty); // helper que já temos (remove acentos e baixa a caixa)
+
+                if (n.StartsWith("montar")) return "AcMontarModelArt.png";
+                if (n.StartsWith("planejar")) return "AcPlanejarModelArt.png";
+                if (n.StartsWith("aventurar")) return "AcAventurarModelArt.png";
+                if (n.StartsWith("recrutar")) return "AcRecrutarModelArt.png";
+                if (n.StartsWith("cochilar")) return "AcCochilarModelArt.png";
+                if (n.StartsWith("enfrentar")) return "AcEnfrentarModelArt.png";
+
+                return a.Art; // fallback se não casar
+            }
+
+            if (field.Equals("Rules", StringComparison.OrdinalIgnoreCase))
+                return JoinRules(a); // (já tínhamos)
+
             return ReflectiveResolver(a, field);
         }
+
 
         private static string JoinRules(ActionsModel a)
         {
@@ -200,14 +217,33 @@ namespace GeradorCartas___Guildas.Services
         // =========== Map ============
         private static string MapFieldResolver(MapModel m, string field)
         {
-            // Prefixamos somente Option1/Option2, conforme Type; os demais campos seguem normais.
+            if (field.Equals("Art", StringComparison.OrdinalIgnoreCase))
+            {
+                // return m.Art; // ← ORIGINAL (descomente para voltar)
+
+                var t = NormalizeType(m.Type ?? string.Empty); // remove acentos e deixa minúsculo
+
+                if (t.StartsWith("desafio")) return "AvDesafioModelArt.png";
+                if (t.StartsWith("descanso")) return "AvDescansoModelArt.png";
+                if (t.StartsWith("criminosos")) return "AvCriminososModelArt.png";
+                if (t.StartsWith("besta")) return "AvBestaModelArt.png";
+                if (t.StartsWith("encontro")) return "AvEncontroModelArt.png";
+                if (t.StartsWith("evento")           // cobre "Evento" e "Evento Público"
+                    || t == "evento publico") return "AvEventoModelArt.png";
+                if (t.StartsWith("cidade")) return "AvCidadeModelArt.png";
+
+                return m.Art; // fallback para tipos não mapeados (ex.: "Descanso")
+            }
+
             if (field.Equals("Option1", StringComparison.OrdinalIgnoreCase))
                 return PrefixOption(m.Type, m.Option1, isFirst: true);
+
             if (field.Equals("Option2", StringComparison.OrdinalIgnoreCase))
                 return PrefixOption(m.Type, m.Option2, isFirst: false);
 
             return ReflectiveResolver(m, field);
         }
+
 
         private static string PrefixOption(string type, string option, bool isFirst)
         {
@@ -219,19 +255,19 @@ namespace GeradorCartas___Guildas.Services
             // Regras:
             // Desafio → Option1: "Passou: ", Option2: "Falhou: "
             if (t == "desafio")
-                prefix = isFirst ? "Passou: " : "Falhou: ";
+                prefix = isFirst ? "Passou - " : "Falhou - ";
 
             // Descanso / Cidade → Option1/2 com "Opção 1: " / "Opção 2: "
             else if (t == "descanso" || t == "cidade")
-                prefix = isFirst ? "Opção 1: " : "Opção 2: ";
+                prefix = isFirst ? "Opção 1 - " : "Opção 2 - ";
 
             // Besta / Criminosos → Option1: "O inimigo tem: " / Option2: "Após o combate: "
             else if (t == "besta" || t == "criminosos")
-                prefix = isFirst ? "O inimigo tem: " : "Após o combate: ";
+                prefix = isFirst ? "O inimigo tem - " : "Após o combate - ";
 
             // Evento Público → Option1: "Participar: " / Option2: "Continuar viagem: "
             else if (t == "evento publico") // (diacríticos já normalizados)
-                prefix = isFirst ? "Participar: " : "Continuar viagem: ";
+                prefix = isFirst ? "Participar - " : "Continuar viagem - ";
 
             // Encontro → sem prefixo
             else if (t == "encontro")
@@ -289,12 +325,31 @@ namespace GeradorCartas___Guildas.Services
             // Model4: Hab1 + Hab2 + Prep
             return 4;
         }
-
         private static string PersonalityFieldResolver(PersonalityModel p, string field)
         {
-            // Sem regras especiais: usa as props do modelo (Id, Name, Type, Cost, Requirements, Hab1, Prep, Hab2, Art, Lore, Credits, Info, Edition)
+            // Intercepta somente o campo "Art" para forçar arte genérica por prefixo do Type
+            if (field.Equals("Art", StringComparison.OrdinalIgnoreCase))
+            {
+                // return p.Art; // ← ORIGINAL (descomente para voltar ao comportamento anterior)
+
+                var tNorm = NormalizeType(p.Type ?? string.Empty); // usa a mesma helper do Map (remove acentos e baixa a caixa)
+                if (tNorm.StartsWith("item -"))
+                    return "PeItemModelArt.png";
+                if (tNorm.StartsWith("construcao -"))
+                    return "PeConstrucoesModelArt.png";
+                if (tNorm.StartsWith("companheiro -"))
+                    return "PeCompanheirosModelArt.png";
+                if (tNorm.StartsWith("atividade"))
+                    return "PeAtividadeModelArt.png";
+
+                // Fallback: mantém o que vier da planilha
+                return p.Art;
+            }
+
+            // Demais campos vão por reflexão normalmente
             return ReflectiveResolver(p, field);
         }
+
 
         // ======== Fallback reflexivo (se você já tiver um, mantenha o seu) ========
         private static string ReflectiveResolver<T>(T obj, string field)
@@ -397,7 +452,9 @@ namespace GeradorCartas___Guildas.Services
                 case "atack": return c.Atack.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 case "damage": return c.Damage;
                 case "bravery": return c.Bravery.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                case "art": return c.Art;
+                case "art":
+                    // return c.Art; // ← ORIGINAL (comente para poder voltar)
+                    return "CharacterModelArt.png"; // ← FORÇADO (garanta o arquivo em assets\image(s))
                 case "lore": return c.Lore;
                 case "hab1": return c.Hab1;
                 case "hab2": return c.Hab2;

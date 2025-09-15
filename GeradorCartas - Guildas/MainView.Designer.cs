@@ -133,7 +133,7 @@
             btnImportListMaps.Name = "btnImportListMaps";
             btnImportListMaps.Size = new Size(299, 86);
             btnImportListMaps.TabIndex = 1;
-            btnImportListMaps.Text = "Importar Listas";
+            btnImportListMaps.Text = "Importar Mapas";
             btnImportListMaps.UseVisualStyleBackColor = true;
             btnImportListMaps.Click += btnImportListMaps_Click;
             // 

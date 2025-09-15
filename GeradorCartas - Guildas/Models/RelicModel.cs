@@ -11,7 +11,7 @@ namespace GeradorCartas___Guildas.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
-        public string Rairty { get; set; }
+        public string Rarity { get; set; }
         public string Hab { get; set; }
         public string Art { get; set; }
         public string Lore1 { get; set; }
