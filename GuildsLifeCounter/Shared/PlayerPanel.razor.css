@@ -1,0 +1,333 @@
+﻿.panel {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    border: 1px solid #d0d0d0;
+    background: #fff;
+    color: #111;
+    box-shadow: 0 6px 24px rgba(0,0,0,.08);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+
+@media (prefers-color-scheme:dark) {
+    .panel {
+        background: #161616;
+        color: #eee;
+        border-color: #2a2a2a;
+        box-shadow: 0 6px 24px rgba(0,0,0,.35)
+    }
+}
+
+.panel-inner {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    padding: 12px;
+    gap: 10px;
+    grid-template-columns: 1fr minmax(100px, 22vw) 1fr; /* esq | centro | dir */
+    grid-template-rows: auto auto 1fr auto auto; /* nome | + | conteúdo | - | 5x1 */
+    align-items: center;
+    justify-items: center;
+}
+
+/* Nome topo */
+.name-box {
+    grid-column: 1/-1;
+    grid-row: 1;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid #d0d0d0;
+    background: rgba(255,255,255,.85);
+    font-weight: 800;
+    text-align: center;
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (prefers-color-scheme:dark) {
+    .name-box {
+        background: rgba(34,34,34,.75);
+        border-color: #2a2a2a
+    }
+}
+
+/* Linha dos + (acima) */
+.plus.left {
+    grid-column: 1;
+    grid-row: 2
+}
+
+.plus.right {
+    grid-column: 3;
+    grid-row: 2
+}
+
+/* Linha conteúdo */
+.left {
+    grid-column: 1;
+    grid-row: 3
+}
+
+.center {
+    grid-column: 2;
+    grid-row: 3
+}
+
+.right {
+    grid-column: 3;
+    grid-row: 3
+}
+
+/* Linha dos − (abaixo) */
+.minus.left {
+    grid-column: 1;
+    grid-row: 4
+}
+
+.minus.right {
+    grid-column: 3;
+    grid-row: 4
+}
+
+/* Tira 5×1 */
+.bottom-strip {
+    grid-column: 1/-1;
+    grid-row: 5;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 10px
+}
+
+.chip {
+    aspect-ratio: 1/1;
+    border-radius: 12px;
+    border: 1px solid #d0d0d0;
+    background: #f7f7f7
+}
+
+@media (prefers-color-scheme:dark) {
+    .chip {
+        background: #222;
+        border-color: #2a2a2a
+    }
+}
+
+.spacer {
+    width: 1px;
+    height: 1px;
+    grid-column: 2
+}
+
+/* Ícones / fallback */
+.icon-wrap {
+    position: relative;
+    display: grid;
+    place-items: center
+}
+
+.icon-img {
+    width: clamp(56px,14vw,120px);
+    height: clamp(56px,14vw,120px);
+    object-fit: contain;
+    image-rendering: auto;
+}
+
+.side-circle {
+    width: clamp(56px,14vw,120px);
+    height: clamp(56px,14vw,120px);
+    border-radius: 9999px;
+    border: 2px dashed #b8b8b8;
+    background: transparent;
+}
+
+@media (prefers-color-scheme:dark) {
+    .side-circle {
+        border-color: #555
+    }
+}
+
+/* Número sobreposto ao ícone/círculo */
+.counter {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    font-size: clamp(18px,3.2vw,28px);
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,.35);
+}
+
+/* Botões */
+.btn-round.small {
+    width: clamp(36px,6vw,56px);
+    height: clamp(36px,6vw,56px);
+    border-radius: 9999px;
+    border: 1px solid #d0d0d0;
+    background: #f6f6f6;
+    display: grid;
+    place-items: center;
+    font-size: clamp(18px,3.2vw,24px);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+@media (prefers-color-scheme:dark) {
+    .btn-round.small {
+        background: #222;
+        border-color: #2a2a2a;
+        color: #eee
+    }
+}
+
+.btn-square.big {
+    width: clamp(100px,22vw,220px);
+    height: clamp(100px,22vw,220px);
+    border-radius: 18px;
+    border: 1px solid #d0d0d0;
+    background: #e9eefc;
+    display: grid;
+    place-items: center;
+    font-size: clamp(28px,8vw,56px);
+    font-weight: 900;
+    cursor: pointer;
+}
+
+@media (prefers-color-scheme:dark) {
+    .btn-square.big {
+        background: #1f2a44;
+        border-color: #2a2a2a;
+        color: #e5ecff
+    }
+}
+
+/* Overlay do picker */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 1000
+}
+
+.picker {
+    width: 100%;
+    max-width: 720px;
+    background: #fff;
+    color: #111;
+    border-radius: 16px;
+    border: 1px solid #d0d0d0;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+}
+
+@media (prefers-color-scheme:dark) {
+    .picker {
+        background: #161616;
+        color: #eee;
+        border-color: #2a2a2a
+    }
+}
+
+.picker-header h3 {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(1.1rem,2.2vw,1.6rem);
+    font-weight: 800
+}
+
+.picker-grid {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(120px,1fr));
+    gap: 10px;
+    max-height: 60vh;
+    overflow: auto
+}
+
+@media (min-width:640px) {
+    .picker-grid {
+        grid-template-columns: repeat(4,minmax(120px,1fr))
+    }
+}
+
+@media (min-width:960px) {
+    .picker-grid {
+        grid-template-columns: repeat(5,minmax(120px,1fr))
+    }
+}
+
+.tile {
+    border: 1px solid #d0d0d0;
+    border-radius: 12px;
+    background: #f7f7f7;
+    padding: 10px;
+    min-height: 84px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 700;
+    text-align: center
+}
+
+    .tile.active {
+        outline: 3px solid #3b82f6;
+        outline-offset: -3px
+    }
+
+@media (prefers-color-scheme:dark) {
+    .tile {
+        background: #222;
+        border-color: #2a2a2a
+    }
+}
+
+.thumb {
+    pointer-events: none
+}
+
+.empty {
+    grid-column: 1/-1;
+    text-align: center;
+    opacity: .8;
+    padding: 16px 0
+}
+
+.picker-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end
+}
+
+.btn {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-weight: 700
+}
+
+    .btn.ghost {
+        background: transparent;
+        border-color: #c9c9c9
+    }
+
+    .btn.primary {
+        background: #3b82f6;
+        color: #fff
+    }
+
+        .btn.primary:disabled {
+            opacity: .5;
+            cursor: not-allowed
+        }

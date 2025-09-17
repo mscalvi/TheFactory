@@ -1,0 +1,51 @@
+﻿@page "/"
+@inject NavigationManager Nav
+@inject GuildsLifeCounter.Services.MatchService Match
+
+<div class="home-wrap">
+    <div class="card">
+        <h2>Configuração</h2>
+
+        <div class="group">
+            <div class="label">Quantidade de jogadores</div>
+            <div class="options-grid">
+                @for (var i = 1; i <= 6; i++)
+                {
+                    var n = i;  // <-- evita capturar o i do for
+                                <label class="option">
+                                    <input type="radio"
+                                           name="players"
+                                           value="@n"
+                                           checked="@(SelectedPlayers == n)"
+                                           @onchange="() => SelectedPlayers = n">
+                                    <span>@n</span>
+                                </label>
+                }
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="label">Modo de jogo</div>
+            <select class="select" @bind="SelectedMode">
+                <option value="0">Normal</option>
+                <option value="1">Completo</option>
+            </select>
+        </div>
+
+        <button class="primary" @onclick="NovaPartida">Nova Partida</button>
+    </div>
+</div>
+
+
+@code {
+    private int SelectedPlayers = 1; // padrão
+    private int SelectedMode = 0;    // 0=Normal, 1=Completo
+
+    private void NovaPartida()
+    {
+        SelectedPlayers = Math.Clamp(SelectedPlayers, 1, 6);
+        Match.NewMatch(SelectedPlayers, SelectedMode);
+        //Nav.NavigateTo($"/match/{SelectedPlayers}");
+        Nav.NavigateTo("/match"); // por enquanto, sempre a rota sem parâmetro
+    }
+}
