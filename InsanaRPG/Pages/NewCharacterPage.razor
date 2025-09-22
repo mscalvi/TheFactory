@@ -1,9 +1,8 @@
 ﻿@page "/new-character"
-@rendermode InteractiveServer
 @using System.Linq
-@using InsanaRPG.Components.Data
-@using InsanaRPG.Components.Models
-@using InsanaRPG.Components.Services
+@using InsanaRPG.Data
+@using InsanaRPG.Models
+@using InsanaRPG.Services
 @inject CharacterCreationService CreationService
 @inject Microsoft.JSInterop.IJSRuntime JS
 
@@ -428,19 +427,12 @@
             <div class="success-box">
                 <h3>Personagem criado: @LastCreated.Nome</h3>
 
-                <p><strong>Origem / Trilha:</strong> @LastCreated.Origem / @LastCreated.Trilha</p>
+                <p><strong>Origem e Trilha:</strong> @LastCreated.Origem, @LastCreated.Trilha</p>
                 <p><strong>Fardo:</strong> @LastCreated.Fardo</p>
 
-                <h4>Atributos</h4>
-                <ul>
-                    @foreach (var a in AtributosData.AtributosOrdem.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
-                    {
-                        <li>@a: @GetAttr(a)</li>
-                    }
-                </ul>
 
-                <h4>Descrições</h4>
-                <ul>
+                <h4>Como outros percebem você:</h4>
+                <ul class="plain-list">
                     <li>Destreza: @LastCreated.DescDestreza</li>
                     <li>Instinto: @LastCreated.DescInstinto</li>
                     <li>Inteligência: @LastCreated.DescInteligencia</li>
@@ -450,7 +442,7 @@
                 </ul>
 
                 <h4>Treinamentos</h4>
-                <ul>
+                <ul class="plain-list">
                     @foreach (var t in Selecionadas.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
                     {
                         <li>@t</li>
@@ -458,15 +450,15 @@
                 </ul>
 
                 <h4>Pontos Cegos</h4>
-                <ul>
+                <ul class="plain-list">
                     @foreach (var c in GetAllPontosCegosOrdenados())
                     {
                         <li>@c</li>
                     }
                 </ul>
 
-                <h4>Quantizadas</h4>
-                <ul>
+                <h4>Características Numéricas</h4>
+                <ul class="plain-list">
                     <li>Vida: @LastCreated.Vida</li>
                     <li>Feridas: @LastCreated.Feridas</li>
                     <li>Fadiga: @LastCreated.Fadiga</li>
@@ -479,7 +471,7 @@
                 </ul>
 
                 <h4>Proficiências</h4>
-                <ul>
+                <ul class="plain-list profs-two-col">
                     @foreach (var item in LastProfs.OrderBy(kv => kv.Key, StringComparer.CurrentCultureIgnoreCase))
                     {
                         <li>@item.Key: @item.Value%</li>

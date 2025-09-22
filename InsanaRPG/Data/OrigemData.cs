@@ -1,4 +1,4 @@
-﻿namespace InsanaRPG.Components.Data;
+﻿namespace InsanaRPG.Data;
 
 public static class OrigemData
 {
