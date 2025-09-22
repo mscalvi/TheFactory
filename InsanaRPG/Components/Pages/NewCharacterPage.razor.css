@@ -7,6 +7,18 @@
     margin: 8px 0 16px;
 }
 
+.text-block {
+    max-width: 820px;
+    margin: 8px auto 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(0,0,0,.04);
+    min-height: 64px;
+    text-align: center;
+}
+
+/* Navegador */
+
 .step-nav {
     display: flex;
     gap: 8px;
@@ -24,11 +36,20 @@
     font-weight: 700;
     cursor: pointer;
 }
+    .step.valid {
+        background: #1b7f3a;
+        color: #fff;
+    }
+
+    .step.invalid {
+        background: #a3342c;
+        color: #fff;
+    }
 
     .step.active {
         background: #ffd54f;
     }
-    /* amarelo */
+
     .step:disabled {
         opacity: .6;
         cursor: not-allowed;
@@ -47,6 +68,8 @@
     margin: 0 0 12px;
 }
 
+/* Atributos */
+
 .points {
     display: flex;
     gap: 8px;
@@ -58,7 +81,7 @@
 .attrs-grid {
     display: grid;
     gap: 10px;
-    max-width: 640px;
+    max-width: 400px;
     margin: 0 auto;
 }
 
@@ -100,4 +123,213 @@
     min-width: 32px;
     text-align: center;
     font-variant-numeric: tabular-nums;
+}
+
+/* Origens */
+
+.origem-desc {
+    min-height: 160px;
+    padding: 10px;
+    border-radius: 10px;
+    resize: vertical;
+}
+
+.origens-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+    justify-items: stretch; 
+    margin-bottom: 12px;
+}
+
+.trilhas-grid {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 12px 0;
+    flex-wrap: wrap;
+}
+
+.radio-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 400px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.08);
+}
+
+/* Treinamentos*/
+
+.treino-notes-wrap {
+    max-width: 820px;
+    margin: 0 auto 16px;
+    display: grid;
+    gap: 6px;
+}
+
+.treino-notes {
+    min-height: 140px;
+    padding: 10px;
+    border-radius: 10px;
+    resize: vertical;
+}
+
+.profs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 10px;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.prof-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.08);
+}
+
+/* Fardos */
+
+.fardos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+    justify-items: stretch;
+    margin-bottom: 12px;
+}
+
+.radio-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.08);
+}
+
+.text-block {
+    max-width: 820px;
+    margin: 8px auto 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(0,0,0,.04);
+    min-height: 64px;
+}
+
+/* Descrição */
+
+.desc-table-wrap {
+    overflow-x: auto;
+}
+
+.desc-table {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto 12px;
+    border-collapse: collapse;
+}
+
+    .desc-table th, .desc-table td {
+        border-bottom: 1px solid rgba(0,0,0,.08);
+        padding: 8px 10px;
+        vertical-align: middle;
+    }
+
+    .desc-table th {
+        text-align: left;
+    }
+
+.choice label {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.muted {
+    opacity: .6;
+}
+
+.hint {
+    text-align: center;
+    opacity: .85;
+    margin-top: 10px;
+}
+
+/* Pontos Cegos */
+
+.sub-title {
+    text-align: center;
+    margin: 16px 0 8px;
+}
+
+.attr-block {
+    max-width: 980px;
+    margin: 12px auto;
+}
+
+.attr-block-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.is-disabled {
+    opacity: .6;
+    pointer-events: none;
+}
+
+.opcoes-grid {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 8px 0;
+    flex-wrap: wrap;
+}
+
+/* Finais */
+.char-form {
+    max-width: 820px;
+    margin: 0 auto 16px;
+    display: grid;
+    gap: 10px;
+}
+
+.text-input {
+    height: 40px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.15);
+}
+
+.text-area {
+    min-height: 120px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.15);
+    resize: vertical;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.btn.btn-primary {
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.success-box {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(0,0,0,.05);
 }

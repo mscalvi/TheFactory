@@ -1,128 +1,834 @@
 ﻿@page "/new-character"
+@rendermode InteractiveServer
 @using System.Linq
+@using InsanaRPG.Components.Data
+@using InsanaRPG.Components.Models
+@using InsanaRPG.Components.Services
+@inject CharacterCreationService CreationService
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 <div class="page-wrap">
     <h1 class="title">Novo Personagem</h1>
 
     <nav class="step-nav" aria-label="Navegação do formulário">
-        @for (var s = 1; s <= 6; s++)
+        @for (var s = 0; s <= 7; s++)
         {
+            var step = s;
             <button type="button"
-                    class="step @(currentStep == s ? "active" : null)"
-                    @onclick="(() => currentStep = s)">
-                @s
+                    class="step @(currentStep == step ? "active" : null) @GetStepCss(step)"
+                    @onclick="() => GoToStep(step)">
+                @step
             </button>
         }
     </nav>
 
-    <!-- Etapa 1: Atributos -->
-    <section class="step-panel @(currentStep == 1 ? "visible" : "hidden")" aria-labelledby="step1-title">
-        <h2 id="step1-title" class="section-title">Atributos</h2>
+    <!-- 0: Explicações -->
+    <section class="step-panel @(currentStep == 0 ? "visible" : "hidden")">
+        <h2 class="section-title">Explicações de Cálculos</h2>
+
+        <div class="text-block">
+            <p>
+                O sistema conta apenas com Proficiências para serem testadas, sendo que os Atributos aqui escolhidos são
+                para criação do personagem e descrição do mesmo.
+            </p>
+            <p>
+                O aumento das Proficiências é dividido em fase. Até 60% o crescimento é 1 pra 1, dos 60% aos 80% é 2 pra 1, e dos 80% pra cima é 3 pra 1.
+            </p>
+        </div>
+    </section>
+
+    <!-- 1: Origens e Trilhas -->
+    <section class="step-panel @(currentStep == 1 ? "visible" : "hidden")">
+        <h2 class="section-title">Origem</h2>
+
+        <div class="text-block">
+            <p>As grandes mudanças da Era afetaram todos, juntando pessoas das mais diferentes origens.</p>
+            <p>Escolha o grupo de Origem de seu personagem, assim como a Trilha que ele percorreu até aqui.</p>
+            <p>Cada opção de Trilha garante <strong>+15%</strong>, <strong>+10%</strong> e <strong>+5%</strong> nas Proficiências indicadas.</p>
+        </div>
+
+        <!-- Origens -->
+        <div class="origens-grid" role="radiogroup" aria-label="Origens">
+            @foreach (var o in OrigemData.Ordem)
+            {
+                var key = o;
+                <label class="radio-item">
+                    <input type="radio"
+                           name="origem"
+                           value="@key"
+                           checked="@(SelectedOrigem == key)"
+                           @onchange="(_) => OnSelectOrigem(key)" />
+                    <span>@key</span>
+                </label>
+            }
+        </div>
+
+        <!-- Descrição da origem -->
+        <div class="text-block">
+            @if (!string.IsNullOrEmpty(SelectedOrigem))
+            {
+                @GetOrigemDesc(SelectedOrigem)
+            }
+            else
+            {
+                <span style="opacity:.7">Selecione uma origem acima.</span>
+            }
+        </div>
+
+        <!-- Trilhas -->
+        <div class="trilhas-grid" role="radiogroup" aria-label="Trilhas percorridas">
+            @if (!string.IsNullOrEmpty(SelectedOrigem))
+            {
+                var opcoes = GetTrilhas(SelectedOrigem);
+                @for (int i = 0; i < opcoes.Length; i++)
+                {
+                    var opt = opcoes[i];
+                    <label class="radio-item">
+                        <input type="radio"
+                               name="origem-trilha"
+                               value="@opt"
+                               checked="@(SelectedTrilha == opt)"
+                               @onchange="(_) => OnSelectTrilha(opt)" />
+                        <span>@opt</span>
+                    </label>
+                }
+            }
+        </div>
+
+        <!-- Descrição da trilha + bônus -->
+        <div class="text-block">
+            @if (!string.IsNullOrEmpty(SelectedOrigem) && !string.IsNullOrEmpty(SelectedTrilha))
+            {
+                <div style="display:grid; gap:8px;">
+                    <div>@GetTrilhaDesc(SelectedOrigem, SelectedTrilha)</div>
+
+                    @if (OrigemData.TrilhaProfs.TryGetValue((SelectedOrigem, SelectedTrilha), out var bonus))
+                    {
+                        <div class="bonus-box">
+                            <div class="bonus-row"><strong>+15%</strong> @bonus.ProfMais15</div>
+                            <div class="bonus-row"><strong>+10%</strong> @bonus.ProfMais10</div>
+                            <div class="bonus-row"><strong>+5%</strong>  @bonus.ProfMais5</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="muted">Sem bônus definidos para esta trilha.</div>
+                    }
+                </div>
+            }
+            else
+            {
+                <span style="opacity:.7">Selecione uma trilha.</span>
+            }
+        </div>
+    </section>
+
+    <!-- 2: Treinamentos -->
+    <section class="step-panel @(currentStep == 2 ? "visible" : "hidden")">
+        <h2 class="section-title">Treinamentos</h2>
+
+        <div class="text-block">
+            <p>Independente da Origem e da Trilha, todos possuem interesses particulares.</p>
+            <p>Em quais proficiências seu personagem teve mais treinamentos especializados? No que ele se da melhor?</p>
+            <p>Escolha três opções para receber +15%.</p>
+        </div>
+
+        <div class="profs-grid" aria-label="Proficiencias">
+            @foreach (var prof in ProficienciasData.Ordem.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
+            {
+                var key = prof;
+                <label class="prof-item">
+                    <input type="checkbox"
+                           checked="@Selecionadas.Contains(key)"
+                           @onchange="(e) => ToggleProf(key, e.Value is bool b && b)" />
+                    <span>@key</span>
+                </label>
+            }
+        </div>
+    </section>
+
+    <!-- 3: Fardos -->
+    <section class="step-panel @(currentStep == 3 ? "visible" : "hidden")">
+        <h2 class="section-title">Fardos</h2>
+
+        <div class="text-block">
+            <p>
+                Ninguém passou ileso pelos últimos anos, e todos carregam um fardo próprio.
+            </p>
+            <p>
+                Escolha um grupo de proficiências para receber -15%. O fardo escolhido não é obrigatório 
+                na descrição de seu personagem, mas pode ficar mais interessante se estiver lá.
+            </p>
+        </div>
+
+        <div class="fardos-grid" role="radiogroup" aria-label="Fardos">
+            @foreach (var f in FardosData.Ordem.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
+            {
+                var key = f;
+                <label class="radio-item">
+                    <input type="radio" name="fardo" value="@key"
+                           checked="@(SelectedFardo == key)"
+                           @onchange="(_) => OnSelectFardo(key)" />
+                    <span>@key</span>
+                </label>
+            }
+        </div>
+
+        <div class="text-block">
+            @if (!string.IsNullOrEmpty(SelectedFardo))
+            {
+                var lista = GetAfeta(SelectedFardo);
+                <div>
+                    <strong>Afeta: </strong>
+                    @if (lista.Length == 0)
+                    {
+                        <span> (sem mapeamento)</span>
+                    }
+                    else
+                    {
+                        <span> @string.Join(", ", lista) </span>
+                    }
+                </div>
+            }
+            else
+            {
+                <span style="opacity:.7">Selecione um fardo acima.</span>
+            }
+        </div>
+    </section>
+
+    <!-- 4: Atributos-->
+    <section class="step-panel @(currentStep == 4 ? "visible" : "hidden")">
+        <h2 id="step-title" class="section-title">Atributos</h2>
+
+        <div class="text-block">
+            <p>
+                Cada ponto de atributo equivale a 10-x% em todas as proficiências relacionadas a ele, onde x é o total de pontos
+                já atribuídos naquele atributo.
+            </p>
+            <p>
+                Os atributos também são utilizados para definir as características descritívas de um personagem.
+            </p>
+        </div>
 
         <div class="points">
             <span>Pontos sobrando:</span>
-            <strong>@PointsRemaining</strong>
+            <strong>@PontosSobrando</strong>
         </div>
 
         <div class="attrs-grid">
-            @foreach (var a in AttributeOrder)
+            @foreach (var a in AtributosData.AtributosOrdem)
             {
-                // captura local para evitar qualquer ambiguidade de fechamento
                 var key = a;
                 <div class="attr-row">
                     <span class="attr-name">@key</span>
                     <div class="attr-ctrls">
-                        <button type="button"
-                                class="attr-btn"
-                                @onclick="() => Decrement(key)"
-                                disabled="@(!CanDecrement(key))"
-                                aria-label="Diminuir @key">
-                            -
-                        </button>
-
+                        <button type="button" class="attr-btn" @onclick="() => Decrement(key)" disabled="@(!PodeDescer(key))" aria-label="Diminuir @key"> - </button>
                         <span class="attr-value">@GetValue(key)</span>
-
-                        <button type="button"
-                                class="attr-btn"
-                                @onclick="() => Increment(key)"
-                                disabled="@(!CanIncrement(key))"
-                                aria-label="Aumentar @key">
-                            +
-                        </button>
+                        <button type="button" class="attr-btn" @onclick="() => Increment(key)" disabled="@(!PodeSubir(key))" aria-label="Aumentar @key"> + </button>
                     </div>
                 </div>
             }
         </div>
     </section>
 
-    <!-- Etapas 2–6 (placeholders) -->
-    <section class="step-panel @(currentStep == 2 ? "visible" : "hidden")">
-        <h2 class="section-title">Etapa 2</h2>
-        <p>(Adicionar conteúdo mais tarde.)</p>
-    </section>
-    <section class="step-panel @(currentStep == 3 ? "visible" : "hidden")">
-        <h2 class="section-title">Etapa 3</h2>
-        <p>(Adicionar conteúdo mais tarde.)</p>
-    </section>
-    <section class="step-panel @(currentStep == 4 ? "visible" : "hidden")">
-        <h2 class="section-title">Etapa 4</h2>
-        <p>(Adicionar conteúdo mais tarde.)</p>
-    </section>
+    <!-- 5: Descrição -->
     <section class="step-panel @(currentStep == 5 ? "visible" : "hidden")">
-        <h2 class="section-title">Etapa 5</h2>
-        <p>(Adicionar conteúdo mais tarde.)</p>
+        <h2 class="section-title">Descrição Sugerida</h2>
+
+        <div class="text-block">
+            <p>Descrição sugerida para o personagem, de acordo com os valores de atributos dele. É possível ignorar,
+            mas com uma penalidade: um Ponto Cego (-10%) em uma proficiência referente ao atributo ignorado.</p>
+        </div>
+
+        <div class="desc-table-wrap">
+            <table class="desc-table">
+                <thead>
+                    <tr>
+                        <th>Atributo</th>
+                        <th>Menos</th>
+                        <th>Padrão</th>
+                        <th>Mais</th>
+                        <th>Oposto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var attr in AtributosData.AtributosOrdem)
+                    {
+                        var valor = GetValue(attr);
+                        var vMenos = valor - 1;
+                        var vMais = valor + 1;
+                        var optGroup = $"desc-{attr}";
+
+                        var textoMenos = DescricaoData.Get(attr, vMenos);
+                        var textoAtual = DescricaoData.Get(attr, valor);
+                        var textoMais = DescricaoData.Get(attr, vMais);
+
+                        var escolha = GetEscolha(attr);
+
+                        <tr>
+                            <td><strong>@attr</strong> (@valor)</td>
+
+                            <td class="choice">
+                                @if (vMenos >= 1)
+                                {
+                                    <label>
+                                        <input type="radio"
+                                               name="@optGroup"
+                                               value="v-1"
+                                               checked="@(escolha == "v-1")"
+                                               @onchange='(_) => SetEscolha(attr, "v-1")'/>
+                                        <span>@textoMenos</span>
+                                    </label>
+                                }
+                                else
+                                {
+                                    <span class="muted">-</span>
+                                }
+                            </td>
+
+                            <td class="choice">
+                                <label>
+                                    <input type="radio"
+                                           name="@optGroup"
+                                           value="v"
+                                           checked="@(escolha == "v")"
+                                           @onchange='(_) => SetEscolha(attr, "v")' />
+                                    <span>@textoAtual</span>
+                                </label>
+                            </td>
+
+                            <td class="choice">
+                                @if (vMais <= 6)
+                                {
+                                    <label>
+                                        <input type="radio"
+                                               name="@optGroup"
+                                               value="v+1"
+                                               checked="@(escolha == "v+1")"
+                                               @onchange='(_) => SetEscolha(attr, "v+1")' />
+                                        <span>@textoMais</span>
+                                    </label>
+                                }
+                                else
+                                {
+                                    <span class="muted">-</span>
+                                }
+                            </td>
+
+                            <td class="choice">
+                                <label>
+                                    <input type="radio"
+                                           name="@optGroup"
+                                           value="ignorar"
+                                           checked="@(escolha == "ignorar")"
+                                           @onchange='(_) => SetEscolha(attr, "ignorar")' />
+                                    <span>Ignorar</span>
+                                </label>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
     </section>
+
+    <!-- 6: Pontos Cegos -->
     <section class="step-panel @(currentStep == 6 ? "visible" : "hidden")">
-        <h2 class="section-title">Etapa 6</h2>
-        <p>(Adicionar conteúdo mais tarde.)</p>
+        <h2 class="section-title">Ponto Cego</h2>
+
+        <div class="text-block">
+            <p>Todo mundo tem áreas que realmente pena para melhorar. Cada Ponto Cego garante -10% na proficiência escolhida.</p>
+            <p>Não é possível escolher uma proficiência que tenha sido treinada anteriormente, a não ser que a descrição para o atributo dela tenha sido ignorada.</p>
+            <p>Escolha dois Pontos Cegos, e mais um para cada descrição ignorada.</p>
+        </div>
+
+        <div class="profs-grid" aria-label="Pontos cegos (geral)">
+            @foreach (var prof in ProficienciasData.Ordem.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
+            {
+                var key = prof;
+                var bloqueada = Selecionadas.Contains(key);
+                <label class="prof-item @(bloqueada ? "is-disabled" : null)">
+                    <input type="checkbox" disabled="@bloqueada"
+                           checked="@PontoCegoSelecionados.Contains(key)"
+                           @onchange="(e) => TogglePontoCego(key, e.Value is bool b && b)" />
+                    <span>@key @if(bloqueada){
+                    <em style="opacity:.6"> (treinada)</em>
+                }
+</span>
+            </label>
+                        }
+        </div>
+
+        @{
+            var ignorados = AtributosData.AtributosOrdem.Where(a => GetEscolha(a) == VIgnorar).ToArray();
+        }
+
+        @if (ignorados.Length > 0)
+        {
+            <h3 class="sub-title">Pontos Cegos por Atributo Ignorado</h3>
+            @foreach (var attr in ignorados)
+            {
+                var grupo = $"pc-{attr}";
+                var opcoes = AtrProfRelData.Mapa.TryGetValue(attr, out var arr) ? arr : Array.Empty<string>();
+                <div class="attr-block">
+                    <div class="attr-block-title">@attr</div>
+                    <div class="opcoes-grid" role="radiogroup" aria-label="@attr">
+                        @foreach (var opt in opcoes.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
+                        {
+                            var bloqueada = Selecionadas.Contains(opt) || PontoCegoSelecionados.Contains(opt);
+                            <label class="radio-item @(bloqueada ? "is-disabled" : null)">
+                                <input type="radio" name="@grupo" value="@opt"
+                                       disabled="@bloqueada"
+                                       checked="@(GetPontoCegoEscolha(attr) == opt)"
+                                       @onchange='(_) => SetPontoCegoEscolha(attr, opt)' />
+                                <span>@opt @if(bloqueada){
+                                <em style="opacity:.6">(indisponivel)</em>
+                            }
+         </span>
+                        </label>
+                    }
+                </div>
+            </div>
+        }
+                }
     </section>
+
+    <!-- 7: Finais e Envio -->
+    <section class="step-panel @(currentStep == 7 ? "visible" : "hidden")">
+        <h2 class="section-title">Dados Finais</h2>
+
+        <div class="char-form">
+            <label for="nome">Nome</label>
+            <input id="nome" class="text-input" @bind="Nome" placeholder="Nome do personagem, de preferência com sobrenome." />
+
+            <label for="historia">História</label>
+            <textarea id="historia" class="text-area" @bind="Historia" placeholder="Breve resumo da história do personagem."></textarea>
+
+            <label for="temperamento">Temperamento</label>
+            <textarea id="temperamento" class="text-area" @bind="Temperamento" placeholder="Como reage ao mundo?"></textarea>
+
+            <label for="sonho">Sonhos</label>
+            <textarea id="sonho" class="text-area" @bind="Sonho" placeholder="Maior desejo ou objetivo distante..."></textarea>
+        </div>
+
+        <div class="actions">
+            <button type="button"
+                    class="btn btn-primary"
+                    title="Criar personagem"
+                    disabled="@( !AllValid() )"
+                    @onclick="CreateCharacter">
+                Criar
+            </button>
+        </div>
+
+        @if (LastCreated != null)
+        {
+            <div class="success-box">
+                <h3>Personagem criado: @LastCreated.Nome</h3>
+
+                <p><strong>Origem / Trilha:</strong> @LastCreated.Origem / @LastCreated.Trilha</p>
+                <p><strong>Fardo:</strong> @LastCreated.Fardo</p>
+
+                <h4>Atributos</h4>
+                <ul>
+                    @foreach (var a in AtributosData.AtributosOrdem.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
+                    {
+                        <li>@a: @GetAttr(a)</li>
+                    }
+                </ul>
+
+                <h4>Descrições</h4>
+                <ul>
+                    <li>Destreza: @LastCreated.DescDestreza</li>
+                    <li>Instinto: @LastCreated.DescInstinto</li>
+                    <li>Inteligência: @LastCreated.DescInteligencia</li>
+                    <li>Presença: @LastCreated.DescPresenca</li>
+                    <li>Vigor: @LastCreated.DescVigor</li>
+                    <li>Vontade: @LastCreated.DescVontade</li>
+                </ul>
+
+                <h4>Treinamentos</h4>
+                <ul>
+                    @foreach (var t in Selecionadas.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
+                    {
+                        <li>@t</li>
+                    }
+                </ul>
+
+                <h4>Pontos Cegos</h4>
+                <ul>
+                    @foreach (var c in GetAllPontosCegosOrdenados())
+                    {
+                        <li>@c</li>
+                    }
+                </ul>
+
+                <h4>Quantizadas</h4>
+                <ul>
+                    <li>Vida: @LastCreated.Vida</li>
+                    <li>Feridas: @LastCreated.Feridas</li>
+                    <li>Fadiga: @LastCreated.Fadiga</li>
+                    <li>Sanidade: @LastCreated.Sanidade</li>
+                    <li>Estresse: @LastCreated.Estresse</li>
+                    <li>Resistência Física: @LastCreated.ResistenciaFisica</li>
+                    <li>Resistência Emocional: @LastCreated.ResistenciaEmocional</li>
+                    <li>Tolerância Alquímica: @LastCreated.ToleranciaAlquimica</li>
+                    <li>Reputação: @LastCreated.Reputacao</li>
+                </ul>
+
+                <h4>Proficiências</h4>
+                <ul>
+                    @foreach (var item in LastProfs.OrderBy(kv => kv.Key, StringComparer.CurrentCultureIgnoreCase))
+                    {
+                        <li>@item.Key: @item.Value%</li>
+                    }
+                </ul>
+            </div>
+        }
+
+    </section>
+
 </div>
 
 @code {
-    private const int PointsPool = 20;
-    private const int MinAttr = 0;
-    private const int MaxAttr = 6;
+    private int currentStep = 0;
 
-    private int currentStep = 1;
-
-    private static readonly string[] AttributeOrder = new[]
+    private void GoToStep(int step)
     {
-        "Destreza", "Instinto", "Inteligencia", "Presenca", "Vigor", "Vontade"
-    };
+        currentStep = step;
+        if (currentStep == 6) SyncTab6();
+    }
 
-    private readonly Dictionary<string, int> attrs = new Dictionary<string, int>
+    // 1- Origens
+    private string SelectedOrigem = string.Empty;
+    private string SelectedTrilha = string.Empty;
+
+    private void SelectOrigem(string key)
     {
-        ["Destreza"] = 0,
-        ["Instinto"] = 0,
-        ["Inteligencia"] = 0,
-        ["Presenca"] = 0,
-        ["Vigor"] = 0,
-        ["Vontade"] = 0
-    };
+        SelectedOrigem = key;
+        if (!OrigemData.OrigemDesc.ContainsKey(key))
+            OrigemData.OrigemDesc[key] = string.Empty;
+    }
 
-    private int PointsSpent => attrs.Values.Sum();
-    private int PointsRemaining => Math.Max(0, PointsPool - PointsSpent);
+    private void OnSelectOrigem(string origem)
+    {
+        SelectedOrigem = origem;
+        var ops = GetTrilhas(origem);
+        SelectedTrilha = ops.Length > 0 ? ops[0] : string.Empty;
+    }
 
-    private int GetValue(string key) => attrs[key];
+    private void OnSelectTrilha(string opcao) => SelectedTrilha = opcao;
 
-    private bool CanIncrement(string key) => PointsRemaining > 0 && attrs[key] < MaxAttr;
-    private bool CanDecrement(string key) => attrs[key] > MinAttr;
+    private string GetOrigemDesc(string origem)
+      => OrigemData.OrigemDesc.TryGetValue(origem, out var txt) ? txt : string.Empty;
+
+    private string[] GetTrilhas(string origem)
+      => OrigemData.Trilha.TryGetValue(origem, out var ops) ? ops : Array.Empty<string>();
+
+    private string GetTrilhaDesc(string origem, string opcao)
+      => OrigemData.TrilhaDesc.TryGetValue((origem, opcao), out var txt) ? txt : $"{origem} / {opcao}.";
+
+    // 2- Treinamentos
+    private string TreinamentosNotas = string.Empty;
+    private HashSet<string> Selecionadas = new HashSet<string>(StringComparer.Ordinal);
+
+    private void ToggleProf(string key, bool isChecked)
+    {
+        if (isChecked) Selecionadas.Add(key);
+        else Selecionadas.Remove(key);
+    }
+
+    // 3- Fardos
+    private string SelectedFardo = string.Empty;
+
+    private void OnSelectFardo(string fardo)
+    {
+        SelectedFardo = fardo;
+    }
+
+    private string[] GetAfeta(string fardo)
+    {
+        return FardosData.Afeta.TryGetValue(fardo, out var arr)
+            ? arr
+            : Array.Empty<string>();
+    }
+
+    // 4- Atributos
+    private const int PontosTotais = 20;
+    private const int AtributoMin = 1;
+    private const int AtributoMax = 6;
+
+    private int PontosGastos => AtributosData.Atributos.Values.Sum();
+    private int PontosSobrando => Math.Max(0, PontosTotais - PontosGastos);
+
+    private int GetValue(string key) => AtributosData.Atributos[key];
+
+    private bool PodeSubir(string key) => PontosSobrando > 0 && AtributosData.Atributos[key] < AtributoMax;
+    private bool PodeDescer(string key) => AtributosData.Atributos[key] > AtributoMin;
 
     private void Increment(string key)
     {
-        if (CanIncrement(key))
+        if (PodeSubir(key))
         {
-            attrs[key] = attrs[key] + 1;
+            AtributosData.Atributos[key] = AtributosData.Atributos[key] + 1;
+            ResetEscolhaDoAtributo(key);
+            SyncTab6();
             StateHasChanged();
         }
     }
 
     private void Decrement(string key)
     {
-        if (CanDecrement(key))
+        if (PodeDescer(key))
         {
-            attrs[key] = attrs[key] - 1;
+            AtributosData.Atributos[key] = AtributosData.Atributos[key] - 1;
+            ResetEscolhaDoAtributo(key);
+            SyncTab6();
             StateHasChanged();
         }
     }
+
+    // 5- Descrição Sugerida
+    private const string VMenos1 = "v-1";
+    private const string VAtual = "v";
+    private const string VMais1 = "v+1";
+    private const string VIgnorar = "ignorar";
+
+    private readonly Dictionary<string, string> DescEscolhas = new(StringComparer.Ordinal);
+
+    private string GetEscolha(string atributo)
+        => DescEscolhas.TryGetValue(atributo, out var v) ? v : VAtual;
+
+    private void SetEscolha(string atributo, string escolha)
+    {
+        DescEscolhas[atributo] = escolha;
+        SyncTab6();                
+        StateHasChanged();
+    }
+
+    private void ResetEscolhaDoAtributo(string atributo)
+    {
+        DescEscolhas[atributo] = VAtual;
+        SyncTab6();               
+    }
+
+    // 6- Ponto Cego
+    private HashSet<string> PontoCegoSelecionados = new HashSet<string>(StringComparer.Ordinal);
+
+    private void TogglePontoCego(string key, bool isChecked)
+    {
+        if (isChecked) PontoCegoSelecionados.Add(key);
+        else PontoCegoSelecionados.Remove(key);
+    }
+
+    private readonly Dictionary<string, string> PontoCegoEscolhaPorAtributo = new(StringComparer.Ordinal);
+
+    private string GetPontoCegoEscolha(string atributo)
+        => PontoCegoEscolhaPorAtributo.TryGetValue(atributo, out var v) ? v : string.Empty;
+
+    private void SetPontoCegoEscolha(string atributo, string prof)
+    {
+        PontoCegoSelecionados.Remove(prof);
+        PontoCegoEscolhaPorAtributo[atributo] = prof;
+    }
+
+    private void SyncTab6()
+    {
+        var ignorados = AtributosData.AtributosOrdem.Where(a => GetEscolha(a) == VIgnorar)
+                                      .ToHashSet(StringComparer.Ordinal);
+
+        var chaves = PontoCegoEscolhaPorAtributo.Keys.ToList();
+        foreach (var k in chaves)
+            if (!ignorados.Contains(k))
+                PontoCegoEscolhaPorAtributo.Remove(k);
+
+    }
+
+    // 7- Finais
+    private string Nome = string.Empty;
+    private string Historia = string.Empty;
+    private string Temperamento = string.Empty;
+    private string Sonho = string.Empty;
+
+    private CharacterModel? LastCreated;
+    private List<KeyValuePair<string, int>> LastProfs = new();
+
+    private async Task CreateCharacter()
+    {
+        // Bloqueio: se qualquer aba (0..6) estiver inválida, envia para a primeira inválida e não cria
+        for (int s = 0; s <= 6; s++)
+        {
+            if (!IsStepValid(s))
+            {
+                GoToStep(s);
+                return;
+            }
+        }
+
+        var m = new CharacterModel
+        {
+            // ===== Atributos
+            Destreza = GetAttr("Destreza"),
+            Instinto = GetAttr("Instinto"),
+            Inteligencia = GetAttr("Inteligência"),
+            Presenca = GetAttr("Presença"),
+            Vigor = GetAttr("Vigor"),
+            Vontade = GetAttr("Vontade"),
+
+            // ===== Origem / Trilha
+            Origem = SelectedOrigem ?? string.Empty,
+            Trilha = SelectedTrilha ?? string.Empty,
+
+            // ===== Fardo
+            Fardo = SelectedFardo ?? string.Empty,
+
+            // ===== Descrições
+            DescDestreza = GetDescricaoEscolhida("Destreza"),
+            DescInstinto = GetDescricaoEscolhida("Instinto"),
+            DescInteligencia = GetDescricaoEscolhida("Inteligência"),
+            DescPresenca = GetDescricaoEscolhida("Presença"),
+            DescVigor = GetDescricaoEscolhida("Vigor"),
+            DescVontade = GetDescricaoEscolhida("Vontade"),
+
+            // ===== Dados finais
+            Nome = Nome ?? string.Empty,
+            Historia = Historia ?? string.Empty,
+            Temperamento = Temperamento ?? string.Empty,
+            Sonho = Sonho ?? string.Empty
+        };
+
+        // ===== Pontos Cegos (checkboxes + rádios dos ignorados)
+        var pontosCegos = new HashSet<string>(PontoCegoSelecionados, StringComparer.Ordinal);
+        foreach (var kv in PontoCegoEscolhaPorAtributo)
+        {
+            if (!string.IsNullOrWhiteSpace(kv.Value))
+                pontosCegos.Add(kv.Value);
+        }
+        var pcList = pontosCegos.Take(8).ToList();
+        if (pcList.Count > 0) m.PontoCego1 = pcList.ElementAtOrDefault(0);
+        if (pcList.Count > 1) m.PontoCego2 = pcList.ElementAtOrDefault(1);
+        if (pcList.Count > 2) m.PontoCego3 = pcList.ElementAtOrDefault(2);
+        if (pcList.Count > 3) m.PontoCego4 = pcList.ElementAtOrDefault(3);
+        if (pcList.Count > 4) m.PontoCego5 = pcList.ElementAtOrDefault(4);
+        if (pcList.Count > 5) m.PontoCego6 = pcList.ElementAtOrDefault(5);
+        if (pcList.Count > 6) m.PontoCego7 = pcList.ElementAtOrDefault(6);
+        if (pcList.Count > 7) m.PontoCego8 = pcList.ElementAtOrDefault(7);
+
+        // ===== Cálculos
+        CreationService.ComputeDerived(m);
+        CreationService.ComputeProficiencias(
+            m,
+            treinamentos: Selecionadas,
+            pontosCegos: pontosCegos
+        );
+
+        // ===== Preparar lista de proficiências para exibir
+        LastProfs = BuildProfList(m);
+        LastCreated = m;
+
+        // opcional: ir para a aba 7 (se não estiver nela)
+        currentStep = 7;
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private static readonly Dictionary<string, Func<CharacterModel, int>> ProfGet = new(StringComparer.Ordinal)
+    {
+        ["Acrobacia e Equilíbrio"] = m => m.AcrobaciaEquilibro,
+        ["Armas de Tiro"] = m => m.ArmasTiro,
+        ["Condução e Montaria"] = m => m.ConducaoMontaria,
+        ["Medicina Prática"] = m => m.MedicinaPratica,
+        ["Ofício e Engenharia"] = m => m.OficioEngenharia,
+        ["Furtividade"] = m => m.Furtividade,
+        ["Intuição"] = m => m.Intuicao,
+        ["Navegação e Direcionamento"] = m => m.NavegacaoDirecionamento,
+        ["Percepção"] = m => m.Percecao,
+        ["Reflexo e Esquiva"] = m => m.ReflexoEsquiva,
+        ["Alquimia e Natureza"] = m => m.AlquimiaNatureza,
+        ["História e Religião"] = m => m.HistoriaReligiao,
+        ["Leitura e Decifração"] = m => m.LeituraDecifracao,
+        ["Matemática e Física"] = m => m.MatematicaFisica,
+        ["Medicina Teórica"] = m => m.MedicinaTeorica,
+        ["Carisma e Charme"] = m => m.CarismaCharme,
+        ["Comércio e Negócios"] = m => m.ComercioNegocios,
+        ["Disfarce"] = m => m.Disfarce,
+        ["Intimidação"] = m => m.Intimidacao,
+        ["Persuasão Animal"] = m => m.PersuasaoAnimal,
+        ["Armamentos"] = m => m.Armamentos,
+        ["Atletismo"] = m => m.Atletismo,
+        ["Briga"] = m => m.Briga,
+        ["Constituição"] = m => m.Constituicao,
+        ["Força"] = m => m.Forca,
+        ["Autocontrole"] = m => m.Autocontrole,
+        ["Avaliação e Riscos"] = m => m.AvaliacaoRiscos,
+        ["Foco e Concentração"] = m => m.FocoConcentracao,
+        ["Meditação e Recobro"] = m => m.MeditacaoRecobro,
+        ["Resiliência e Disciplina"] = m => m.ResilienciaDisciplina
+    };
+
+    private static List<KeyValuePair<string, int>> BuildProfList(CharacterModel m)
+    {
+        var list = new List<KeyValuePair<string, int>>(ProficienciasData.Ordem.Length);
+        foreach (var nome in ProficienciasData.Ordem.OrderBy(n => n, StringComparer.CurrentCultureIgnoreCase))
+        {
+            if (ProfGet.TryGetValue(nome, out var getter))
+                list.Add(new KeyValuePair<string, int>(nome, getter(m)));
+        }
+
+        return list;
+    }
+
+    private bool IsStepValid(int step)
+    {
+        switch (step)
+        {
+            case 0: return true; // explicações
+            case 1: return !string.IsNullOrWhiteSpace(SelectedOrigem) && !string.IsNullOrWhiteSpace(SelectedTrilha);
+            case 2: return Selecionadas.Count == 3;
+            case 3: return !string.IsNullOrWhiteSpace(SelectedFardo);
+            case 4: return PontosSobrando == 0;
+            case 5: return true; // descrição é opcional (Ignorar vira ponto cego)
+            case 6:
+                var ignorados = AtributosData.AtributosOrdem.Count(a => GetEscolha(a) == VIgnorar);
+                var requeridos = 2 + ignorados;
+                var radiosIgnorados = PontoCegoEscolhaPorAtributo.Values.Where(v => !string.IsNullOrWhiteSpace(v));
+                var totalSelecionado = new HashSet<string>(PontoCegoSelecionados.Concat(radiosIgnorados), StringComparer.Ordinal).Count;
+                return totalSelecionado >= requeridos;
+            case 7: return !string.IsNullOrWhiteSpace(Nome);
+            default: return false;
+        }
+    }
+
+    private string GetStepCss(int step) => IsStepValid(step) ? "valid" : "invalid";
+
+    private bool AllValid() => Enumerable.Range(0, 7).All(IsStepValid); // 0..6 precisam estar ok antes de criar
+
+    // -------- Ajudantes --------
+    private int GetAttr(string label)
+        => AtributosData.Atributos.TryGetValue(label, out var v) ? v : 0;
+
+    private string GetDescricaoEscolhida(string atributo)
+    {
+        var escolha = GetEscolha(atributo); 
+        var valor = GetAttr(atributo);
+        int alvo = escolha switch
+        {
+            VMenos1 => valor - 1,
+            VAtual => valor,
+            VMais1 => valor + 1,
+            VIgnorar => 0 // sem descrição quando escolhe Ignorar
+        };
+        return alvo >= 1 && alvo <= 6 ? DescricaoData.Get(atributo, alvo) : string.Empty;
+    }
+
+    private IEnumerable<string> GetAllPontosCegosOrdenados()
+    {
+        var set = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var s in PontoCegoSelecionados) if (!string.IsNullOrWhiteSpace(s)) set.Add(s);
+        foreach (var s in PontoCegoEscolhaPorAtributo.Values) if (!string.IsNullOrWhiteSpace(s)) set.Add(s);
+        return set.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase);
+    }
+
 }

@@ -1,10 +1,13 @@
 using InsanaRPG.Components;
+using InsanaRPG.Components.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<CharacterCreationService>();
 
 var app = builder.Build();
 
