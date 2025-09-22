@@ -1,0 +1,144 @@
+﻿@using GuildsLifeCounter.Models
+@using GuildsLifeCounter.Shared
+@inject GuildsLifeCounter.Services.MatchService Match
+@inject GuildsLifeCounter.Services.CharacterPoolService Pool
+
+<div class="panel">
+    <div class="panel-inner" @key="CurrentPlayer?.Lider">
+        <!-- Linha 1: Nome (mostra líder se houver) -->
+        <div class="name-box">@HeaderText</div>
+
+        <!-- Linha 2: + acima das “bolas” -->
+        <button type="button" class="btn-round small plus left" @onclick="IncMoney">+</button>
+        <div class="spacer"></div>
+        <button type="button" class="btn-round small plus right" @onclick="IncIngr">+</button>
+
+        <!-- Linha 3: ícone Dinheiro | centro | ícone Ingredientes -->
+        <div class="icon-wrap left">
+            <img src="Assets/Icons/DinheiroModel.png"
+                 alt="Dinheiro" class="icon-img"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.side-circle').style.display='grid';" />
+            <div class="side-circle" style="display:none;"></div>
+            <div class="counter">@Money</div>
+        </div>
+
+        @if (HasLeader)
+        {
+            <div class="leader-tile center">@LeaderName</div>
+        }
+        else
+        {
+            <button type="button" class="btn-square big center" @onclick="OpenPicker">+</button>
+        }
+
+        <div class="icon-wrap right">
+            <img src="Assets/Icons/IngredientesModel.png"
+                 alt="Ingredientes" class="icon-img"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.side-circle').style.display='grid';" />
+            <div class="side-circle" style="display:none;"></div>
+            <div class="counter">@Ingredients</div>
+        </div>
+
+        <!-- Linha 4: − abaixo das “bolas” -->
+        <button type="button" class="btn-round small minus left" @onclick="DecMoney">−</button>
+        <div class="spacer"></div>
+        <button type="button" class="btn-round small minus right" @onclick="DecIngr">−</button>
+
+        <!-- Linha 5: tirinha 5×1 -->
+        <div class="bottom-strip">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="chip"></div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (showPicker)
+{
+    <div class="overlay">
+        <div class="picker">
+            <div class="picker-header">
+                <h3>@(SelectedCharacterName ?? "Selecione um personagem")</h3>
+            </div>
+
+            <div class="picker-grid">
+                @foreach (var c in Pool.GetAvailable())
+                {
+                    <button type="button"
+                            class="@($"tile {(selectedCharacterId == c.Id ? "active" : "")}")"
+                            @onclick="() => SelectCharacter(c.Id)">
+                        <div class="thumb">@c.Nome</div>
+                    </button>
+                }
+                @if (Pool.GetAvailable().Count == 0)
+                {
+                    <div class="empty">Todos os personagens já foram escolhidos.</div>
+                }
+            </div>
+
+            <div class="picker-actions">
+                <button type="button" class="btn ghost" @onclick="ClosePicker">Cancelar</button>
+                <button type="button" class="btn primary" disabled="@(!CanConfirm)" @onclick="ConfirmPicker">Confirmar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    // Qual player este painel representa (0 = primeiro). Para 1 player, deixe 0.
+    [Parameter] public int PlayerIndex { get; set; } = 0;
+
+    // Contadores laterais
+    private int Money { get; set; } = 5;
+    private int Ingredients { get; set; } = 0;
+
+    // Picker
+    private bool showPicker;
+    private string? selectedCharacterId;
+
+    private PlayerModel? CurrentPlayer =>
+        Match.Current is null || Match.Current.Players.Count <= PlayerIndex
+          ? null : Match.Current.Players[PlayerIndex];
+
+    private bool HasLeader => !string.IsNullOrWhiteSpace(CurrentPlayer?.Lider);
+    private string LeaderName => Pool.Find(CurrentPlayer?.Lider)?.Nome ?? "";
+    private string HeaderText => HasLeader ? LeaderName : $"Player {PlayerIndex + 1}";
+
+    private void IncMoney() => Money = Math.Min(Money + 1, 999);
+    private void DecMoney() => Money = Math.Max(Money - 1, 0);
+    private void IncIngr() => Ingredients = Math.Min(Ingredients + 1, 999);
+    private void DecIngr() => Ingredients = Math.Max(Ingredients - 1, 0);
+
+    private void OpenPicker()
+    {
+        selectedCharacterId = null;
+        showPicker = true;
+    }
+    private void ClosePicker()
+    {
+        selectedCharacterId = null;
+        showPicker = false;
+    }
+    private void SelectCharacter(string id) => selectedCharacterId = id;
+    private string? SelectedCharacterName => Pool.Find(selectedCharacterId)?.Nome;
+    private bool CanConfirm => !string.IsNullOrWhiteSpace(selectedCharacterId);
+
+    private void ConfirmPicker()
+    {
+        var p = CurrentPlayer;
+        if (p is null) { ClosePicker(); return; }
+
+        // Libera o antigo (se houver) e tenta reservar o novo
+        Pool.Release(p.Lider);
+        if (selectedCharacterId is not null && Pool.TryReserve(selectedCharacterId))
+        {
+            p.Lider = selectedCharacterId;
+            // opcional: notificar serviço se você usa evento Match.Changed
+            Match.Notify();
+        }
+
+        ClosePicker();
+        StateHasChanged();
+    }
+}

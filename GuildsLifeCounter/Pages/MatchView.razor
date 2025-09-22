@@ -1,0 +1,10 @@
+﻿@page "/match"
+@page "/match/{Players:int}"
+
+<div class="single-wrap">
+    <GuildsLifeCounter.Shared.PlayerPanel PlayerIndex="0" />
+</div>
+
+@code {
+    [Parameter] public int Players { get; set; } = 1;
+}
