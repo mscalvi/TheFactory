@@ -1,0 +1,128 @@
+﻿@page "/new-character"
+@using System.Linq
+
+<div class="page-wrap">
+    <h1 class="title">Novo Personagem</h1>
+
+    <nav class="step-nav" aria-label="Navegação do formulário">
+        @for (var s = 1; s <= 6; s++)
+        {
+            <button type="button"
+                    class="step @(currentStep == s ? "active" : null)"
+                    @onclick="(() => currentStep = s)">
+                @s
+            </button>
+        }
+    </nav>
+
+    <!-- Etapa 1: Atributos -->
+    <section class="step-panel @(currentStep == 1 ? "visible" : "hidden")" aria-labelledby="step1-title">
+        <h2 id="step1-title" class="section-title">Atributos</h2>
+
+        <div class="points">
+            <span>Pontos sobrando:</span>
+            <strong>@PointsRemaining</strong>
+        </div>
+
+        <div class="attrs-grid">
+            @foreach (var a in AttributeOrder)
+            {
+                // captura local para evitar qualquer ambiguidade de fechamento
+                var key = a;
+                <div class="attr-row">
+                    <span class="attr-name">@key</span>
+                    <div class="attr-ctrls">
+                        <button type="button"
+                                class="attr-btn"
+                                @onclick="() => Decrement(key)"
+                                disabled="@(!CanDecrement(key))"
+                                aria-label="Diminuir @key">
+                            -
+                        </button>
+
+                        <span class="attr-value">@GetValue(key)</span>
+
+                        <button type="button"
+                                class="attr-btn"
+                                @onclick="() => Increment(key)"
+                                disabled="@(!CanIncrement(key))"
+                                aria-label="Aumentar @key">
+                            +
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Etapas 2–6 (placeholders) -->
+    <section class="step-panel @(currentStep == 2 ? "visible" : "hidden")">
+        <h2 class="section-title">Etapa 2</h2>
+        <p>(Adicionar conteúdo mais tarde.)</p>
+    </section>
+    <section class="step-panel @(currentStep == 3 ? "visible" : "hidden")">
+        <h2 class="section-title">Etapa 3</h2>
+        <p>(Adicionar conteúdo mais tarde.)</p>
+    </section>
+    <section class="step-panel @(currentStep == 4 ? "visible" : "hidden")">
+        <h2 class="section-title">Etapa 4</h2>
+        <p>(Adicionar conteúdo mais tarde.)</p>
+    </section>
+    <section class="step-panel @(currentStep == 5 ? "visible" : "hidden")">
+        <h2 class="section-title">Etapa 5</h2>
+        <p>(Adicionar conteúdo mais tarde.)</p>
+    </section>
+    <section class="step-panel @(currentStep == 6 ? "visible" : "hidden")">
+        <h2 class="section-title">Etapa 6</h2>
+        <p>(Adicionar conteúdo mais tarde.)</p>
+    </section>
+</div>
+
+@code {
+    private const int PointsPool = 20;
+    private const int MinAttr = 0;
+    private const int MaxAttr = 6;
+
+    private int currentStep = 1;
+
+    private static readonly string[] AttributeOrder = new[]
+    {
+        "Destreza", "Instinto", "Inteligencia", "Presenca", "Vigor", "Vontade"
+    };
+
+    private readonly Dictionary<string, int> attrs = new Dictionary<string, int>
+    {
+        ["Destreza"] = 0,
+        ["Instinto"] = 0,
+        ["Inteligencia"] = 0,
+        ["Presenca"] = 0,
+        ["Vigor"] = 0,
+        ["Vontade"] = 0
+    };
+
+    private int PointsSpent => attrs.Values.Sum();
+    private int PointsRemaining => Math.Max(0, PointsPool - PointsSpent);
+
+    private int GetValue(string key) => attrs[key];
+
+    private bool CanIncrement(string key) => PointsRemaining > 0 && attrs[key] < MaxAttr;
+    private bool CanDecrement(string key) => attrs[key] > MinAttr;
+
+    private void Increment(string key)
+    {
+        if (CanIncrement(key))
+        {
+            attrs[key] = attrs[key] + 1;
+            StateHasChanged();
+        }
+    }
+
+    private void Decrement(string key)
+    {
+        if (CanDecrement(key))
+        {
+            attrs[key] = attrs[key] - 1;
+            StateHasChanged();
+        }
+    }
+}
