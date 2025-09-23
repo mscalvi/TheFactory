@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InsanaRPG.Components.Models
+namespace InsanaRPG.Models
 {
     public class CharacterModel
     {

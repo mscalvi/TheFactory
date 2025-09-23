@@ -4,10 +4,10 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using InsanaRPG.Components.Data;
-using InsanaRPG.Components.Models;
+using InsanaRPG.Data;
+using InsanaRPG.Models;
 
-namespace InsanaRPG.Components.Services
+namespace InsanaRPG.Services
 {
     public sealed class CharacterCreationService
     {
@@ -17,13 +17,13 @@ namespace InsanaRPG.Components.Services
             if (m is null) throw new ArgumentNullException(nameof(m));
 
             m.Vida = 20 + 2 * m.Vigor;
-            m.Feridas = 1 + (m.Vontade / 2);
-            m.Fadiga = 1 + (m.Vigor / 2);
+            m.Feridas = m.Vontade;
+            m.Fadiga = m.Vigor;
             m.Sanidade = 10 + m.Instinto;
-            m.Estresse = 1 + (m.Inteligencia / 2);
+            m.Estresse = m.Inteligencia;
             m.ResistenciaFisica = m.Destreza * 5;
             m.ResistenciaEmocional = m.Vontade * 5;
-            m.ToleranciaAlquimica = ((m.Vigor + m.Instinto) / 2) * 5;
+            m.ToleranciaAlquimica = ((m.Vigor + m.Instinto)) * 5;
             m.Reputacao = 4 + m.Presenca;
         }
 

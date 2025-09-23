@@ -1,0 +1,31 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<div class="main-layout">
+    @Body
+</div>
+
+@code {
+    private IJSObjectReference? _pwaModule;
+    private bool _initialized;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_initialized)
+        {
+            // Importa /wwwroot/js/pwa.js como ES module
+            _pwaModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/pwa.js");
+            await _pwaModule.InvokeVoidAsync("setupPwa");
+            _initialized = true;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_pwaModule is not null)
+        {
+            try { await _pwaModule.DisposeAsync(); } catch { }
+        }
+    }
+}
