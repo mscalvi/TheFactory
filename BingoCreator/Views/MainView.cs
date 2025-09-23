@@ -24,7 +24,7 @@ namespace BingoCreator
 
             DesignService.UseDefaultLogo();
 
-            LoadLists();
+            CreatePageLoad();
         }
 
         private sealed class ThemeOption
@@ -34,39 +34,34 @@ namespace BingoCreator
         }
 
         // Métodos de Carregamento
-        // Método para carregar as ComboBox de Listas
-        private void LoadLists()
+        // Método para carregar as ComboBox
+        private void CreatePageLoad()
         {
-            ListModel[] AllLists;
-            {
-                DataTable dt = DataService.GetLists();
-                AllLists = dt.AsEnumerable()
-                                  .Select(row => new ListModel
-                                  {
-                                      Id = Convert.ToInt32(row["Id"]),
-                                      Name = row["Name"].ToString(),
-                                      Description = row["Description"].ToString(),
-                                      ImageName = row["ImageName"].ToString()
-                                  })
-                                  .ToArray();
-            }
+            // Listas para criação
+            var dtLists = DataService.GetLists();
+            var lists = dtLists.AsEnumerable()
+                .Select(r => new ListModel
+                {
+                    Id = Convert.ToInt32(r["Id"]),
+                    Name = r["Name"]?.ToString() ?? "",
+                    Description = r["Description"]?.ToString() ?? "",
+                    ImageName = r["ImageName"]?.ToString() ?? ""
+                }).ToArray();
 
             cboElementList.Items.Clear();
             cboCardsList.Items.Clear();
-
-            foreach (var lm in AllLists)
+            foreach (var lm in lists)
             {
                 cboElementList.Items.Add(lm);
                 cboCardsList.Items.Add(lm);
             }
-
             cboElementList.DisplayMember = "Name";
             cboCardsList.DisplayMember = "Name";
 
+            // Temas / modelo / cabeçalho (como você já tinha)
             var themeOptions = ThemeCatalog.All
-                .Select(kvp => new ThemeOption { Key = kvp.Key, Name = kvp.Value.DisplayName })
+                .Select(k => new ThemeOption { Key = k.Key, Name = k.Value.DisplayName })
                 .ToList();
-
             cboCardsTheme.DropDownStyle = ComboBoxStyle.DropDownList;
             cboCardsTheme.DisplayMember = "Name";
             cboCardsTheme.ValueMember = "Key";
@@ -75,22 +70,345 @@ namespace BingoCreator
             cboCardsModel.DropDownStyle = ComboBoxStyle.DropDownList;
             cboCardsModel.DisplayMember = "Text";
             cboCardsModel.ValueMember = "Value";
-            cboCardsModel.DataSource = new[]
-            {
-                new { Text = "Quadradas (fundo branco)",           Value = "SQUARE"  },
-                new { Text = "Arredondadas (fundo do tema)",       Value = "ROUNDED" }
-            };
+            cboCardsModel.DataSource = new[] {
+        new { Text = "Quadradas (fundo branco)",     Value = "SQUARE"  },
+        new { Text = "Arredondadas (fundo do tema)", Value = "ROUNDED" }
+    };
             cboCardsModel.SelectedValue = "SQUARE";
 
             cboCardsHeader.DropDownStyle = ComboBoxStyle.DropDownList;
             cboCardsHeader.DisplayMember = "Text";
             cboCardsHeader.ValueMember = "Value";
-            cboCardsHeader.DataSource = new[]
-            {
-                new { Text = "SORTE", Value = "SORTE" },
-                new { Text = "BINGO", Value = "BINGO" }
-            };
+            cboCardsHeader.DataSource = new[] {
+        new { Text = "SORTE", Value = "SORTE" },
+        new { Text = "BINGO", Value = "BINGO" }
+    };
             cboCardsHeader.SelectedValue = "SORTE";
+        }
+        private void EditPageLoad()
+        {
+            // cbo1
+            cboEdit1.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboEdit1.Items.Clear();
+            cboEdit1.Items.AddRange(new[] { "Conjuntos", "Listas", "Elementos" });
+
+            // cbo2 / cbo3
+            cboEdit2.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboEdit3.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            // desinscreve e reinscreve (evita múltiplos handlers)
+            cboEdit1.SelectedIndexChanged -= cboEdit1_SelectedIndexChanged;
+            cboEdit2.SelectedIndexChanged -= cboEdit2_SelectedIndexChanged;
+            cboEdit3.SelectedIndexChanged -= cboEdit3_SelectedIndexChanged;
+
+            cboEdit1.SelectedIndexChanged += cboEdit1_SelectedIndexChanged;
+            cboEdit2.SelectedIndexChanged += cboEdit2_SelectedIndexChanged;
+            cboEdit3.SelectedIndexChanged += cboEdit3_SelectedIndexChanged;
+
+            cboEdit1.SelectedIndex = -1;
+            cboEdit2.DataSource = null; cboEdit2.Enabled = false;
+            cboEdit3.DataSource = null; cboEdit3.Enabled = false;
+
+            ClearEditFields();
+        }
+        private void cboEdit1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ClearEditFields();
+
+            var sel = cboEdit1.SelectedItem?.ToString();
+            cboEdit2.DataSource = null; cboEdit2.Enabled = false;
+            cboEdit3.DataSource = null; cboEdit3.Enabled = false;
+
+            if (string.IsNullOrEmpty(sel)) return;
+
+            switch (sel)
+            {
+                case "Conjuntos":
+                    {
+                        var dt = DataService.GetAllCardSets();
+                        cboEdit2.DisplayMember = "Name";
+                        cboEdit2.ValueMember = "Id";
+                        cboEdit2.DataSource = dt;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit2.Enabled = true;
+                        break;
+                    }
+                case "Listas":
+                    {
+                        var dt = DataService.GetLists();
+                        cboEdit2.DisplayMember = "Name";
+                        cboEdit2.ValueMember = "Id";
+                        cboEdit2.DataSource = dt;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit2.Enabled = true;
+                        break;
+                    }
+                case "Elementos":
+                    {
+                        var dt = DataService.GetAllElements(); // ordenado por Name
+                        cboEdit2.DisplayMember = "Name";
+                        cboEdit2.ValueMember = "Id";
+                        cboEdit2.DataSource = dt;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit2.Enabled = true;
+
+                        // Situação 3: cbo3 desabilitada
+                        cboEdit3.DataSource = null;
+                        cboEdit3.Enabled = false;
+                        break;
+                    }
+            }
+        }
+        private void cboEdit2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ClearEditFields();
+
+            var sel1 = cboEdit1.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(sel1)) return;
+
+            if (cboEdit2.SelectedValue == null || !int.TryParse(cboEdit2.SelectedValue.ToString(), out int id))
+            {
+                cboEdit3.DataSource = null; cboEdit3.Enabled = false;
+                return;
+            }
+
+            switch (sel1)
+            {
+                case "Conjuntos":
+                    {
+                        // carrega set e elementos dele
+                        var set = DataService.GetCardSetById(id);
+                        var items = new List<(int Id, string Name, string Kind)>();
+
+                        // 1º o próprio conjunto
+                        items.Add((set.Id, set.Name, "SET"));
+
+                        // depois os elementos do conjunto (use os GroupB.. ou AllElements)
+                        var elems = (set.CardsSize == 5)
+                            ? new[] { set.GroupB, set.GroupI, set.GroupN, set.GroupG, set.GroupO }
+                                .Where(g => g != null).SelectMany(g => g).ToList()
+                            : (set.AllElements ?? new List<ElementModel>());
+                        foreach (var el in elems.DistinctBy(x => x.Id))
+                            items.Add((el.Id, el.CardName?.Trim().Length > 0 ? el.CardName : el.Name, "ELE"));
+
+                        cboEdit3.DisplayMember = "Name";
+                        cboEdit3.ValueMember = "Id";
+                        cboEdit3.DataSource = items.Select(t => new { t.Id, t.Name, t.Kind }).ToList();
+                        cboEdit3.SelectedIndex = 0;
+                        cboEdit3.Enabled = true;
+
+                        ApplySetFields(set);
+                        break;
+                    }
+
+                case "Listas":
+                    {
+                        // carrega lista + elementos da lista
+                        var list = DataService.GetListById(id);
+                        var rows = DataService.GetElementsInList(id);
+
+                        var items = new List<(int Id, string Name, string Kind)>();
+                        items.Add((list.Id, list.Name, "LIST"));
+
+                        foreach (var r in rows)
+                        {
+                            int eid = Convert.ToInt32(r["Id"]);
+                            string name = r["CardName"]?.ToString();
+                            if (string.IsNullOrWhiteSpace(name))
+                                name = r["Name"]?.ToString() ?? "";
+                            items.Add((eid, name, "ELE"));
+                        }
+
+                        cboEdit3.DisplayMember = "Name";
+                        cboEdit3.ValueMember = "Id";
+                        cboEdit3.DataSource = items.Select(t => new { t.Id, t.Name, t.Kind }).ToList();
+                        cboEdit3.SelectedIndex = 0; // própria lista
+                        cboEdit3.Enabled = true;
+
+                        // Preenche campos da lista
+                        ApplyListFields(list, rows.Count);
+                        break;
+                    }
+
+                case "Elementos":
+                    {
+                        // Sem “filhos”: preenche direto pelo elemento
+                        var row = DataService.GetElementById(id);
+                        if (row != null)
+                        {
+                            var em = new ElementModel
+                            {
+                                Id = id,
+                                Name = row["Name"]?.ToString() ?? "",
+                                CardName = row["CardName"]?.ToString() ?? "",
+                                Note1 = row.Table.Columns.Contains("Note1") ? row["Note1"]?.ToString() ?? "" : "",
+                                Note2 = row.Table.Columns.Contains("Note2") ? row["Note2"]?.ToString() ?? "" : ""
+                            };
+                            ApplyElementFields(em);
+                        }
+                        cboEdit3.DataSource = null;
+                        cboEdit3.Enabled = false;
+                        break;
+                    }
+            }
+        }
+        private void cboEdit3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var sel1 = cboEdit1.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(sel1)) return;
+            if (cboEdit2.SelectedValue == null || !int.TryParse(cboEdit2.SelectedValue.ToString(), out int parentId)) return;
+
+            var data = cboEdit3.SelectedItem;
+            if (data == null) return;
+
+            var propId = data.GetType().GetProperty("Id");
+            var propKind = data.GetType().GetProperty("Kind");
+            int id = (int)(propId?.GetValue(data) ?? 0);
+            string kind = propKind?.GetValue(data)?.ToString() ?? "";
+
+            if (sel1 == "Conjuntos")
+            {
+                if (kind == "SET")
+                {
+                    var set = DataService.GetCardSetById(id);
+                    ApplySetFields(set);
+                }
+                else
+                {
+                    var row = DataService.GetElementById(id);
+                    if (row != null)
+                    {
+                        var em = new ElementModel
+                        {
+                            Id = id,
+                            Name = row["Name"]?.ToString() ?? "",
+                            CardName = row["CardName"]?.ToString() ?? "",
+                            Note1 = row.Table.Columns.Contains("Note1") ? row["Note1"]?.ToString() ?? "" : "",
+                            Note2 = row.Table.Columns.Contains("Note2") ? row["Note2"]?.ToString() ?? "" : ""
+                        };
+                        ApplyElementFields(em);
+                    }
+                }
+            }
+            else if (sel1 == "Listas")
+            {
+                if (kind == "LIST")
+                {
+                    var list = DataService.GetListById(id);
+                    int count = DataService.GetElementsInList(id).Count;
+                    ApplyListFields(list, count);
+                }
+                else // "ELE"
+                {
+                    var row = DataService.GetElementById(id);
+                    if (row != null)
+                    {
+                        var em = new ElementModel
+                        {
+                            Id = id,
+                            Name = row["Name"]?.ToString() ?? "",
+                            CardName = row["CardName"]?.ToString() ?? "",
+                            Note1 = row.Table.Columns.Contains("Note1") ? row["Note1"]?.ToString() ?? "" : "",
+                            Note2 = row.Table.Columns.Contains("Note2") ? row["Note2"]?.ToString() ?? "" : ""
+                        };
+                        ApplyElementFields(em);
+                    }
+                }
+            }
+        }
+        private void ClearEditFields()
+        {
+            lblEditText1.Text = lblEditText2.Text = lblEditText3.Text = lblEditText4.Text = lblEditText5.Text = "";
+            boxEditText1.Text = boxEditText2.Text = boxEditText3.Text = boxEditText4.Text = boxEditText5.Text = "";
+
+            // mostra tudo por padrão
+            SetFieldVisible(1, false);
+            SetFieldVisible(2, false);
+            SetFieldVisible(3, false);
+            SetFieldVisible(4, false);
+            SetFieldVisible(5, false);
+        }
+
+        private void SetFieldVisible(int idx, bool visible)
+        {
+            switch (idx)
+            {
+                case 1: lblEditText1.Visible = boxEditText1.Visible = visible; break;
+                case 2: lblEditText2.Visible = boxEditText2.Visible = visible; break;
+                case 3: lblEditText3.Visible = boxEditText3.Visible = visible; break;
+                case 4: lblEditText4.Visible = boxEditText4.Visible = visible; break;
+                case 5: lblEditText5.Visible = boxEditText5.Visible = visible; break;
+            }
+        }
+        private void ApplySetFields(CardSetModel set)
+        {
+            ClearEditFields();
+
+            lblEditText1.Text = "Nome:";
+            lblEditText2.Text = "Título:";
+            lblEditText3.Text = "Anotação 1:";
+            lblEditText4.Text = "Cartelas Criadas:";
+            lblEditText5.Text = "Estilo";
+
+            boxEditText1.Text = set.Name ?? "";
+            boxEditText2.Text = set.Title ?? "";
+            boxEditText3.Text = set.End ?? "";
+            boxEditText4.Text = set.Quantity.ToString();
+            boxEditText5.Text = $"{(set.Model ?? "SQUARE")}, {(set.Theme ?? "-")}";
+
+            SetFieldVisible(1, true);
+            SetFieldVisible(2, true);
+            SetFieldVisible(3, true);
+            SetFieldVisible(4, true);
+            SetFieldVisible(5, true);
+        }
+        private void ApplyListFields(ListModel list, int elementCount)
+        {
+            ClearEditFields();
+
+            lblEditText1.Text = "Nome:";
+            lblEditText2.Text = "Descrição:";
+            lblEditText3.Text = "Total de Elementos:";
+
+            boxEditText1.Text = list?.Name ?? "";
+            boxEditText2.Text = list?.Description ?? "";
+            boxEditText3.Text = elementCount.ToString();
+
+            UpdatePicEdit(list.ImageName);
+
+            SetFieldVisible(1, true);
+            SetFieldVisible(2, true);
+            SetFieldVisible(3, true);
+
+            // “os 2 campos não preenchidos devem sumir”
+            SetFieldVisible(4, false);
+            SetFieldVisible(5, false);
+        }
+        private void ApplyElementFields(ElementModel em)
+        {
+            ClearEditFields();
+
+            lblEditText1.Text = "Nome:";
+            lblEditText2.Text = "Nome para Cartela:";
+            lblEditText3.Text = "Anotação 1:";
+            lblEditText4.Text = "Anotação 2:";
+            lblEditText5.Text = "Listas:";
+
+            boxEditText1.Text = em?.Name ?? "";
+            boxEditText2.Text = em?.CardName ?? "";
+            boxEditText3.Text = em?.Note1 ?? "";
+            boxEditText4.Text = em?.Note2 ?? "";
+
+            UpdatePicEdit(em.ImageName);
+
+            var lists = DataService.GetListsForElement(em.Id);
+            boxEditText5.Text = lists;
+
+            SetFieldVisible(1, true);
+            SetFieldVisible(2, true);
+            SetFieldVisible(3, true);
+            SetFieldVisible(4, true);
+            SetFieldVisible(5, true);
         }
 
 
@@ -157,7 +475,7 @@ namespace BingoCreator
                     boxListName.Text = "";
                     boxListDescription.Text = "";
 
-                    LoadLists();
+                    CreatePageLoad();
                 }
             }
             catch (Exception ex)
@@ -254,6 +572,7 @@ namespace BingoCreator
                 lblListMessage.Text = "Erro inesperado ao criar cartelas: " + ex.Message;
             }
         }
+
 
         // Métodos de Importação
         // Importar Lista por Pasta de Imagens
@@ -396,7 +715,7 @@ namespace BingoCreator
             MessageBox.Show(sb.ToString(), "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Recarrega combobox de listas, se for o caso
-            LoadLists();
+            CreatePageLoad();
         }
 
         // Importar Lista por TXT, remove acentos e caracteres não permitidos
@@ -509,7 +828,7 @@ namespace BingoCreator
             }
 
             // recarrega UI se necessário
-            LoadLists();
+            CreatePageLoad();
         }
 
         private static string CleanName(string s)
@@ -534,7 +853,8 @@ namespace BingoCreator
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
 
-        // Habilitar e Desabilitar Header
+
+        // Helpers
         private void radCardsSize4_CheckedChanged(object sender, EventArgs e)
         {
             cboCardsHeader.Enabled = false;
@@ -546,5 +866,51 @@ namespace BingoCreator
             cboCardsHeader.Enabled = true;
             cboCardsHeader.SelectedValue = 1;
         }
+
+        private void UpdatePicEdit(string imageName)
+        {
+            // Limpa imagem anterior (evita lock)
+            if (picEdit.Image != null)
+            {
+                var old = picEdit.Image;
+                picEdit.Image = null;
+                old.Dispose();
+            }
+
+            if (string.IsNullOrWhiteSpace(imageName))
+            {
+                picEdit.Image = null;
+                return;
+            }
+
+            // Resolva caminho: se não for absoluto, torne relativo ao app
+            string path = imageName;
+            if (!Path.IsPathRooted(path))
+            {
+                // Se no DB você salva só "images/..." relativo ao app:
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                                    imageName.Replace('/', Path.DirectorySeparatorChar));
+            }
+
+            if (!File.Exists(path))
+            {
+                picEdit.Image = null; // ou uma imagem “placeholder” se preferir
+                return;
+            }
+
+            try
+            {
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    picEdit.Image = Image.FromStream(fs);
+                }
+                picEdit.SizeMode = PictureBoxSizeMode.Zoom; // ajuste se preferir StretchImage, etc.
+            }
+            catch
+            {
+                picEdit.Image = null;
+            }
+        }
+
     }
 }

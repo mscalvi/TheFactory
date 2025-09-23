@@ -11,14 +11,21 @@ namespace BingoCreator.Services
     {
         public static void ExportDataBase(int cardsetid)
         {
-            CardSetModel cards = new CardSetModel();
+            CardSetModel cards = DataService.GetCardSetById(cardsetid);
 
-            //Função para pegar CardSet pelo Id
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var folder = Path.Combine(desktop, Sanitize(cards.Name));
+            Directory.CreateDirectory(folder);
+            var fileName = $"{cards.Name}DB.db";
+            var filePath = Path.Combine(folder, fileName);
 
-            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            string dbPath = Path.Combine(desktop, cards.Name, "CustomBingoDB.db");
-
-            DataService.ExportGameDatabaseToPath(cards.Id, dbPath);
+            DataService.ExportGameDatabaseToPath(cards.Id, filePath);
+        }
+        static string Sanitize(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return "Cartelas";
+            foreach (var c in Path.GetInvalidFileNameChars()) s = s.Replace(c, '_');
+            return s;
         }
     }
 }

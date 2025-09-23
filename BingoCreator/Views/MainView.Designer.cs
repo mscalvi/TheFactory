@@ -80,13 +80,14 @@
             lblCardsTitle = new Label();
             lblCardsName = new Label();
             tabEditPage = new TabPage();
+            cboEdit3 = new ComboBox();
+            cboEdit2 = new ComboBox();
             boxEditText5 = new TextBox();
             lblEditText5 = new Label();
             btnEditExclude = new Button();
-            flwEditItens = new FlowLayoutPanel();
             btnEditEdit = new Button();
             lblEditMessage = new Label();
-            cboEdit = new ComboBox();
+            cboEdit1 = new ComboBox();
             picEdit = new PictureBox();
             boxEditText4 = new TextBox();
             boxEditText3 = new TextBox();
@@ -119,7 +120,7 @@
             pnlMainView.Dock = DockStyle.Fill;
             pnlMainView.Location = new Point(0, 0);
             pnlMainView.Name = "pnlMainView";
-            pnlMainView.Size = new Size(1190, 744);
+            pnlMainView.Size = new Size(1190, 641);
             pnlMainView.TabIndex = 0;
             // 
             // tabControlMain
@@ -130,7 +131,7 @@
             tabControlMain.Location = new Point(0, 0);
             tabControlMain.Name = "tabControlMain";
             tabControlMain.SelectedIndex = 0;
-            tabControlMain.Size = new Size(1190, 744);
+            tabControlMain.Size = new Size(1190, 641);
             tabControlMain.TabIndex = 2;
             // 
             // tabCreatePage
@@ -139,7 +140,7 @@
             tabCreatePage.Location = new Point(4, 24);
             tabCreatePage.Name = "tabCreatePage";
             tabCreatePage.Padding = new Padding(3);
-            tabCreatePage.Size = new Size(1182, 716);
+            tabCreatePage.Size = new Size(1182, 613);
             tabCreatePage.TabIndex = 1;
             tabCreatePage.Text = "CreatePage";
             tabCreatePage.UseVisualStyleBackColor = true;
@@ -153,7 +154,7 @@
             tabControlCreate.Location = new Point(3, 3);
             tabControlCreate.Name = "tabControlCreate";
             tabControlCreate.SelectedIndex = 0;
-            tabControlCreate.Size = new Size(1176, 710);
+            tabControlCreate.Size = new Size(1176, 607);
             tabControlCreate.TabIndex = 0;
             // 
             // tabCreateElement
@@ -174,7 +175,7 @@
             tabCreateElement.Location = new Point(4, 24);
             tabCreateElement.Name = "tabCreateElement";
             tabCreateElement.Padding = new Padding(3);
-            tabCreateElement.Size = new Size(1168, 682);
+            tabCreateElement.Size = new Size(1168, 579);
             tabCreateElement.TabIndex = 0;
             tabCreateElement.Text = "Element";
             tabCreateElement.UseVisualStyleBackColor = true;
@@ -214,6 +215,7 @@
             // 
             // cboElementList
             // 
+            cboElementList.Anchor = AnchorStyles.Top;
             cboElementList.FormattingEnabled = true;
             cboElementList.Location = new Point(275, 418);
             cboElementList.Name = "cboElementList";
@@ -244,7 +246,7 @@
             // 
             boxElementNote1.Anchor = AnchorStyles.Top;
             boxElementNote1.Font = new Font("Segoe UI", 12F);
-            boxElementNote1.Location = new Point(275, 273);
+            boxElementNote1.Location = new Point(275, 282);
             boxElementNote1.Name = "boxElementNote1";
             boxElementNote1.Size = new Size(395, 29);
             boxElementNote1.TabIndex = 3;
@@ -253,7 +255,7 @@
             // 
             boxElementCardName.Anchor = AnchorStyles.Top;
             boxElementCardName.Font = new Font("Segoe UI", 12F);
-            boxElementCardName.Location = new Point(275, 216);
+            boxElementCardName.Location = new Point(275, 219);
             boxElementCardName.Name = "boxElementCardName";
             boxElementCardName.Size = new Size(395, 29);
             boxElementCardName.TabIndex = 2;
@@ -329,7 +331,7 @@
             tabCreateList.Location = new Point(4, 24);
             tabCreateList.Name = "tabCreateList";
             tabCreateList.Padding = new Padding(3);
-            tabCreateList.Size = new Size(1168, 682);
+            tabCreateList.Size = new Size(1168, 579);
             tabCreateList.TabIndex = 1;
             tabCreateList.Text = "List";
             tabCreateList.UseVisualStyleBackColor = true;
@@ -455,7 +457,7 @@
             tabCreateCards.Controls.Add(lblCardsName);
             tabCreateCards.Location = new Point(4, 24);
             tabCreateCards.Name = "tabCreateCards";
-            tabCreateCards.Size = new Size(1168, 682);
+            tabCreateCards.Size = new Size(1168, 579);
             tabCreateCards.TabIndex = 2;
             tabCreateCards.Text = "Cards";
             tabCreateCards.UseVisualStyleBackColor = true;
@@ -707,13 +709,14 @@
             // 
             // tabEditPage
             // 
+            tabEditPage.Controls.Add(cboEdit3);
+            tabEditPage.Controls.Add(cboEdit2);
             tabEditPage.Controls.Add(boxEditText5);
             tabEditPage.Controls.Add(lblEditText5);
             tabEditPage.Controls.Add(btnEditExclude);
-            tabEditPage.Controls.Add(flwEditItens);
             tabEditPage.Controls.Add(btnEditEdit);
             tabEditPage.Controls.Add(lblEditMessage);
-            tabEditPage.Controls.Add(cboEdit);
+            tabEditPage.Controls.Add(cboEdit1);
             tabEditPage.Controls.Add(picEdit);
             tabEditPage.Controls.Add(boxEditText4);
             tabEditPage.Controls.Add(boxEditText3);
@@ -727,10 +730,30 @@
             tabEditPage.Controls.Add(lblEditHeader);
             tabEditPage.Location = new Point(4, 24);
             tabEditPage.Name = "tabEditPage";
-            tabEditPage.Size = new Size(1182, 716);
+            tabEditPage.Size = new Size(1182, 613);
             tabEditPage.TabIndex = 2;
             tabEditPage.Text = "EditPage";
             tabEditPage.UseVisualStyleBackColor = true;
+            // 
+            // cboEdit3
+            // 
+            cboEdit3.Anchor = AnchorStyles.Top;
+            cboEdit3.FormattingEnabled = true;
+            cboEdit3.Location = new Point(27, 203);
+            cboEdit3.Name = "cboEdit3";
+            cboEdit3.Size = new Size(391, 23);
+            cboEdit3.TabIndex = 34;
+            cboEdit3.SelectedIndexChanged += cboEdit3_SelectedIndexChanged;
+            // 
+            // cboEdit2
+            // 
+            cboEdit2.Anchor = AnchorStyles.Top;
+            cboEdit2.FormattingEnabled = true;
+            cboEdit2.Location = new Point(27, 161);
+            cboEdit2.Name = "cboEdit2";
+            cboEdit2.Size = new Size(391, 23);
+            cboEdit2.TabIndex = 33;
+            cboEdit2.SelectedIndexChanged += cboEdit2_SelectedIndexChanged;
             // 
             // boxEditText5
             // 
@@ -756,26 +779,19 @@
             // btnEditExclude
             // 
             btnEditExclude.Anchor = AnchorStyles.Top;
-            btnEditExclude.Location = new Point(820, 619);
+            btnEditExclude.Location = new Point(970, 502);
             btnEditExclude.Name = "btnEditExclude";
-            btnEditExclude.Size = new Size(267, 76);
+            btnEditExclude.Size = new Size(167, 94);
             btnEditExclude.TabIndex = 30;
             btnEditExclude.Text = "Excluir";
             btnEditExclude.UseVisualStyleBackColor = true;
             // 
-            // flwEditItens
-            // 
-            flwEditItens.Location = new Point(27, 148);
-            flwEditItens.Name = "flwEditItens";
-            flwEditItens.Size = new Size(391, 401);
-            flwEditItens.TabIndex = 29;
-            // 
             // btnEditEdit
             // 
             btnEditEdit.Anchor = AnchorStyles.Top;
-            btnEditEdit.Location = new Point(499, 619);
+            btnEditEdit.Location = new Point(970, 405);
             btnEditEdit.Name = "btnEditEdit";
-            btnEditEdit.Size = new Size(267, 76);
+            btnEditEdit.Size = new Size(167, 94);
             btnEditEdit.TabIndex = 28;
             btnEditEdit.Text = "Editar";
             btnEditEdit.UseVisualStyleBackColor = true;
@@ -784,26 +800,29 @@
             // 
             lblEditMessage.Anchor = AnchorStyles.Top;
             lblEditMessage.Font = new Font("Segoe UI", 12F);
-            lblEditMessage.Location = new Point(27, 585);
+            lblEditMessage.Location = new Point(27, 486);
             lblEditMessage.Name = "lblEditMessage";
             lblEditMessage.Size = new Size(391, 110);
             lblEditMessage.TabIndex = 27;
             lblEditMessage.Text = "Mensagem";
             lblEditMessage.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // cboEdit
+            // cboEdit1
             // 
-            cboEdit.FormattingEnabled = true;
-            cboEdit.Location = new Point(27, 119);
-            cboEdit.Name = "cboEdit";
-            cboEdit.Size = new Size(391, 23);
-            cboEdit.TabIndex = 24;
+            cboEdit1.Anchor = AnchorStyles.Top;
+            cboEdit1.FormattingEnabled = true;
+            cboEdit1.Location = new Point(27, 119);
+            cboEdit1.Name = "cboEdit1";
+            cboEdit1.Size = new Size(391, 23);
+            cboEdit1.TabIndex = 24;
+            cboEdit1.SelectedIndexChanged += cboEdit1_SelectedIndexChanged;
             // 
             // picEdit
             // 
+            picEdit.Anchor = AnchorStyles.Top;
             picEdit.Location = new Point(742, 405);
             picEdit.Name = "picEdit";
-            picEdit.Size = new Size(395, 191);
+            picEdit.Size = new Size(208, 191);
             picEdit.TabIndex = 26;
             picEdit.TabStop = false;
             // 
@@ -918,7 +937,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1190, 744);
+            ClientSize = new Size(1190, 641);
             Controls.Add(pnlMainView);
             Name = "MainView";
             Text = "BingoCreator";
@@ -984,10 +1003,9 @@
         private Button btnElementCreate;
         private Button btnListCreate;
         private Button btnCardsExport;
-        private FlowLayoutPanel flwEditItens;
         private Button btnEditEdit;
         private Label lblEditMessage;
-        private ComboBox cboEdit;
+        private ComboBox cboEdit1;
         private PictureBox picEdit;
         private TextBox boxEditText4;
         private TextBox boxEditText3;
@@ -1014,5 +1032,7 @@
         private ComboBox cboCardsHeader;
         private Label lblCardsHeader;
         private NumericUpDown boxCardsQuantity;
+        private ComboBox cboEdit2;
+        private ComboBox cboEdit3;
     }
 }
