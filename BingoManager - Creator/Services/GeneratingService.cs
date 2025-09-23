@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BingoCreator.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -10,20 +11,24 @@ namespace BingoCreator.Services
 {
     internal class GeneratingService
     {
-        public static int CreateCards(int listId, string setName, string setTitle, string setEnd, int setQnt, int cardsSize, string themeKey, string headerKey, string modelKey)
+        public static int CreateCards(CardSetModel cards)
         {
             Random random = new Random();
 
             List<List<DataRow>> allCards = new List<List<DataRow>>();
 
-            List<DataRow> ElementsList = DataService.GetElementsInList(listId);
+            List<DataRow> ElementsList = DataService.GetElementsInList(cards.ListId);
 
             ElementsList = ElementsList.OrderBy(x => random.Next()).ToList();
+
+            cards.AllElements = ElementsList.Select(ToElementModel).ToList();
 
             int elementsPerColumn = 1;
             int remainder = 1;
 
-            if (cardsSize == 5)
+            cards.AddDate = DateTime.Now.ToString("MMddyyyy - HH:mm:ss");
+
+            if (cards.CardsSize == 5)
             {
                 elementsPerColumn = ElementsList.Count / 5;
                 remainder = ElementsList.Count % 5;
@@ -34,17 +39,21 @@ namespace BingoCreator.Services
                 List<DataRow> columnG = ElementsList.Skip(columnB.Count + columnI.Count + columnN.Count).Take(elementsPerColumn + (remainder > 3 ? 1 : 0)).ToList();
                 List<DataRow> columnO = ElementsList.Skip(columnB.Count + columnI.Count + columnN.Count + columnG.Count).Take(elementsPerColumn).ToList();
 
-                string groupB = string.Join(",", columnB.Select(c => c["Id"].ToString()));
-                string groupI = string.Join(",", columnI.Select(c => c["Id"].ToString()));
-                string groupN = string.Join(",", columnN.Select(c => c["Id"].ToString()));
-                string groupG = string.Join(",", columnG.Select(c => c["Id"].ToString()));
-                string groupO = string.Join(",", columnO.Select(c => c["Id"].ToString()));
+                cards.GroupB = columnB.Select(ToElementModel).ToList();
+                cards.GroupI = columnI.Select(ToElementModel).ToList();
+                cards.GroupN = columnN.Select(ToElementModel).ToList();
+                cards.GroupG = columnG.Select(ToElementModel).ToList();
+                cards.GroupO = columnO.Select(ToElementModel).ToList();
 
-                string addTime = DateTime.Now.ToString("MMddyyyy - HH:mm:ss");
+                cards.GroupBIds = string.Join(",", columnB.Select(c => c["Id"].ToString()));
+                cards.GroupIIds = string.Join(",", columnI.Select(c => c["Id"].ToString()));
+                cards.GroupNIds = string.Join(",", columnN.Select(c => c["Id"].ToString()));
+                cards.GroupGIds = string.Join(",", columnG.Select(c => c["Id"].ToString()));
+                cards.GroupOIds = string.Join(",", columnO.Select(c => c["Id"].ToString()));
 
-                int setId5 = DataService.CreateCardList5(listId, setName, setTitle, setEnd, setQnt, cardsSize, groupB, groupI, groupN, groupG, groupO, addTime);
+                int setId = DataService.CreateCardsSet(cards);
 
-                for (int i = 1; i <= setQnt; i++)
+                for (int i = 1; i <= cards.Quantity; i++)
                 {
                     var tempB = new List<DataRow>(columnB);
                     var tempI = new List<DataRow>(columnI);
@@ -62,24 +71,17 @@ namespace BingoCreator.Services
                     var companyIds = selected.Select(c => Convert.ToInt32(c["Id"])).ToList();
                     if (companyIds.Count == 25)
                     {
-                        DataService.CreateCard5(listId, companyIds, i, setId5);
+                        DataService.CreateCard5(cards.ListId, companyIds, i, setId);
                         allCards.Add(selected);
                     }
                 }
+                return setId;
 
-                PrintingService.PrintCards5x5(setName, allCards, allCards.Count, setTitle, setEnd, themeKey, headerKey, modelKey);
-                PrintingService.PrintList5(setName, columnB, columnI, columnN, columnG, columnO);
-
-                return setId5;
-
-            } else if (cardsSize == 4)
+            } else if (cards.CardsSize == 4)
             {
-                string elementsAll = string.Join(",", ElementsList.Select(c => c["Id"].ToString()));
-                string addTime = DateTime.Now.ToString("MMddyyyy - HH:mm:ss");
+                int setId = DataService.CreateCardsSet(cards);
 
-                int setId4 = DataService.CreateCardList4(listId, setName, setTitle, setEnd, setQnt, cardsSize, elementsAll, addTime);
-
-                for (int i = 1; i <= setQnt; i++)
+                for (int i = 1; i <= cards.Quantity; i++)
                 {
                     var tempList = new List<DataRow>(ElementsList);
 
@@ -91,16 +93,12 @@ namespace BingoCreator.Services
 
                     if (elementIds.Count == 16)
                     {
-                        DataService.CreateCard4(listId, elementIds, i, setId4);
+                        DataService.CreateCard4(cards.ListId, elementIds, i, setId);
                         allCards.Add(selected);
                     }
                 }
 
-                PrintingService.PrintCards4x4(setName, allCards, allCards.Count, setTitle, setEnd, themeKey, modelKey);
-                PrintingService.PrintList4(setTitle, ElementsList, themeKey);
-                PrintingService.PrintCutPapers(setTitle, ElementsList, themeKey);
-
-                return setId4;
+                return setId;
             } else
             {
                 return -1;
@@ -119,29 +117,12 @@ namespace BingoCreator.Services
             return selected;
         }
 
-        public static int CreateDataBase(int setId, int cardsSize)
+        private static ElementModel ToElementModel(DataRow r) => new ElementModel
         {
-            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            string dbPath = Path.Combine(desktop, "CustomBingoDB.db");
-
-            if (cardsSize == 5)
-            {
-                DataService.ExportGameDatabaseToPath(setId, dbPath);
-            }
-            else if (cardsSize == 4)
-            {
-                MessageBox.Show("Exportação 4x4 ainda não implementada.");
-                return -1;
-            }
-            else
-            {
-                MessageBox.Show("Tamanho inválido de cartela.");
-                return -1;
-            }
-
-            return 0;
-        }
-
-
+            Id = Convert.ToInt32(r["Id"]),
+            Name = r["Name"]?.ToString() ?? "",
+            CardName = r["CardName"]?.ToString() ?? "",
+            ImageName = r["ImageName"]?.ToString() ?? ""
+        };
     }
 }

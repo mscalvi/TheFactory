@@ -7,6 +7,7 @@ using System.IO;
 using System.Data;
 using System.Data.SQLite;
 using System.ComponentModel.Design;
+using BingoCreator.Models;
 
 namespace BingoCreator.Services
 {
@@ -49,13 +50,15 @@ namespace BingoCreator.Services
             using (var connection = GetConnection())
             {
                 connection.Open();
+
                 using (var command = new SQLiteCommand("PRAGMA foreign_keys = ON;", connection))
                 {
                     command.ExecuteNonQuery();
                 }
-                // Lista de comandos SQL para criar as tabelas
+
                 var createTableCommands = new List<string>
         {
+            // ----- Elements -----
             @"
             CREATE TABLE IF NOT EXISTS ElementsTable (
                 Id INTEGER PRIMARY KEY NOT NULL UNIQUE,
@@ -67,6 +70,7 @@ namespace BingoCreator.Services
                 AddTime TEXT NOT NULL
             );",
 
+            // ----- Lists -----
             @"
             CREATE TABLE IF NOT EXISTS ListsTable (
                 Id INTEGER PRIMARY KEY,
@@ -75,47 +79,45 @@ namespace BingoCreator.Services
                 ImageName TEXT
             );",
 
+            // ----- Alocation (Element <-> List) -----
             @"
             CREATE TABLE IF NOT EXISTS AlocationTable (
                 ElementId INTEGER REFERENCES ElementsTable(Id),
-                ListId INTEGER REFERENCES ListsTable(Id),
+                ListId INTEGER  REFERENCES ListsTable(Id),
                 PRIMARY KEY (ElementId, ListId)
             );",
 
+            // ===== Unified Card Sets (4x4 and 5x5) =====
             @"
-            CREATE TABLE IF NOT EXISTS CardsSets5Table (
-                SetId INTEGER PRIMARY KEY NOT NULL UNIQUE,
-                ListId INTEGER REFERENCES ListsTable(Id),
-                Title TEXT NOT NULL,
-                End TEXT,
-                Quantity INTEGER NOT NULL,
-                Name TEXT UNIQUE,
+            CREATE TABLE IF NOT EXISTS CardsSets (
+                SetId     INTEGER PRIMARY KEY NOT NULL UNIQUE,
+                ListId    INTEGER NOT NULL REFERENCES ListsTable(Id),
+                Title     TEXT NOT NULL,
+                End       TEXT,
+                Quantity  INTEGER NOT NULL,
+                Name      TEXT UNIQUE,
                 CardsSize INTEGER NOT NULL,
-                AddTime TEXT,
-                GroupB TEXT,
-                GroupI TEXT,
-                GroupN TEXT,
-                GroupG TEXT,
-                GroupO TEXT
+                AddTime   TEXT,
+                -- 5x5
+                GroupB    TEXT,
+                GroupI    TEXT,
+                GroupN    TEXT,
+                GroupG    TEXT,
+                GroupO    TEXT,
+                -- 4x4
+                Elements  TEXT,
+                -- NOVOS CAMPOS
+                Theme     TEXT,
+                Header    TEXT,
+                Model     TEXT
+            );
             );",
 
-            @"
-            CREATE TABLE IF NOT EXISTS CardsSets4Table (
-                SetId INTEGER PRIMARY KEY NOT NULL UNIQUE,
-                ListId INTEGER REFERENCES ListsTable(Id),
-                Title TEXT NOT NULL,
-                End TEXT,
-                Quantity INTEGER NOT NULL,
-                Name TEXT UNIQUE,
-                CardsSize INTEGER NOT NULL,
-                AddTime TEXT,
-                Elements TEXT
-            );",
-
+            // ----- Cards 5x5 (referência agora em CardsSets) -----
             @"
             CREATE TABLE IF NOT EXISTS CardsList5Table (
                 Id INTEGER PRIMARY KEY,
-                SetId INTEGER NOT NULL REFERENCES CardsSets5Table(SetId),
+                SetId INTEGER NOT NULL REFERENCES CardsSets(SetId),
                 ListId INTEGER NOT NULL REFERENCES ListsTable(Id),
                 CardNumber INTEGER NOT NULL,
                 EleB1 INTEGER NOT NULL REFERENCES ElementsTable(Id),
@@ -143,24 +145,24 @@ namespace BingoCreator.Services
                 EleO3 INTEGER NOT NULL REFERENCES ElementsTable(Id),
                 EleO4 INTEGER NOT NULL REFERENCES ElementsTable(Id),
                 EleO5 INTEGER NOT NULL REFERENCES ElementsTable(Id)
-                
             );",
 
+            // ----- Cards 4x4 (referência agora em CardsSets) -----
             @"
             CREATE TABLE IF NOT EXISTS CardsList4Table (
                 Id INTEGER PRIMARY KEY,
-                SetId INTEGER NOT NULL REFERENCES CardsSets4Table(SetId),
+                SetId INTEGER NOT NULL REFERENCES CardsSets(SetId),
                 ListId INTEGER NOT NULL REFERENCES ListsTable(Id),
                 CardNumber INTEGER NOT NULL,
-                Ele1 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele2 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele3 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele4 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele5 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele6 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele7 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele8 INTEGER NOT NULL REFERENCES ElementsTable(Id),
-                Ele9 INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele1  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele2  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele3  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele4  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele5  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele6  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele7  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele8  INTEGER NOT NULL REFERENCES ElementsTable(Id),
+                Ele9  INTEGER NOT NULL REFERENCES ElementsTable(Id),
                 Ele10 INTEGER NOT NULL REFERENCES ElementsTable(Id),
                 Ele11 INTEGER NOT NULL REFERENCES ElementsTable(Id),
                 Ele12 INTEGER NOT NULL REFERENCES ElementsTable(Id),
@@ -171,7 +173,6 @@ namespace BingoCreator.Services
             );"
         };
 
-                // Executa cada comando para criar as tabelas
                 foreach (var commandText in createTableCommands)
                 {
                     using (var command = new SQLiteCommand(commandText, connection))
@@ -187,8 +188,6 @@ namespace BingoCreator.Services
         // Criar Elemento
         public static int CreateElement(string name, string cardName, string note1, string note2, string imageName, string addTime)
         {
-            int elementId;
-
             using (var connection = GetConnection())
             {
                 connection.Open();
@@ -206,11 +205,9 @@ namespace BingoCreator.Services
                     command.Parameters.AddWithValue("@ImageName", imageName);
                     command.Parameters.AddWithValue("@AddTime", addTime);
 
-                    elementId = Convert.ToInt32(command.ExecuteScalar());
+                    return Convert.ToInt32(command.ExecuteScalar());
                 }
             }
-
-            return elementId;
         }
 
         // Criar Lista
@@ -235,39 +232,105 @@ namespace BingoCreator.Services
             }
         }
 
-        // Criar Conjunto de Cartelas 5x5
-        public static int CreateCardList5(int listId, string name, string title, string end, int quantity, int cardsSize, string groupB, string groupI, string groupN, string groupG, string groupO, string addTime)
+        // Criar Conjunto de Cartelas
+        public static int CreateCardsSet(CardSetModel cards)
         {
-            using (var connection = GetConnection())
+            if (cards == null) throw new ArgumentNullException(nameof(cards));
+            if (cards.CardsSize != 4 && cards.CardsSize != 5)
+                throw new ArgumentException("CardsSize deve ser 4 ou 5.", nameof(cards.CardsSize));
+
+            string addTime = string.IsNullOrWhiteSpace(cards.AddDate)
+                ? DateTime.Now.ToString("MMddyyyy - HH:mm:ss")
+                : cards.AddDate;
+
+            using var connection = GetConnection();
+            connection.Open();
+
+            if (cards.CardsSize == 5)
             {
-                connection.Open();
+                string sql = @"
+            INSERT INTO CardsSets
+                (ListId, Name, Title, End, Quantity, CardsSize,
+                 GroupB, GroupI, GroupN, GroupG, GroupO,
+                 AddTime, Theme, Header, Model)
+            VALUES
+                (@ListId, @Name, @Title, @End, @Quantity, @CardsSize,
+                 @GroupB, @GroupI, @GroupN, @GroupG, @GroupO,
+                 @AddTime, @Theme, @Header, @Model);
+            SELECT last_insert_rowid();";
 
-                // Query para inserir uma nova linha na tabela CardsSetsTable
-                string insertQuery = "INSERT INTO CardsSets5Table (ListId, Name, Title, End, Quantity, CardsSize, GroupB, GroupI, GroupN, GroupG, GroupO, AddTime) VALUES (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @GroupB, @GroupI, @GroupN, @GroupG, @GroupO, @AddTime)";
+                using var cmd = new SQLiteCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@ListId", cards.ListId);
+                cmd.Parameters.AddWithValue("@Name", cards.Name ?? "");
+                cmd.Parameters.AddWithValue("@Title", cards.Title ?? "");
+                cmd.Parameters.AddWithValue("@End", cards.End ?? "");
+                cmd.Parameters.AddWithValue("@Quantity", cards.Quantity);
+                cmd.Parameters.AddWithValue("@CardsSize", cards.CardsSize);
 
-                using (var command = new SQLiteCommand(insertQuery, connection))
+                string groupB = !string.IsNullOrWhiteSpace(cards.GroupBIds) ? cards.GroupBIds
+                                 : string.Join(",", (cards.GroupB ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
+                string groupI = !string.IsNullOrWhiteSpace(cards.GroupIIds) ? cards.GroupIIds
+                                 : string.Join(",", (cards.GroupI ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
+                string groupN = !string.IsNullOrWhiteSpace(cards.GroupNIds) ? cards.GroupNIds
+                                 : string.Join(",", (cards.GroupN ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
+                string groupG = !string.IsNullOrWhiteSpace(cards.GroupGIds) ? cards.GroupGIds
+                                 : string.Join(",", (cards.GroupG ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
+                string groupO = !string.IsNullOrWhiteSpace(cards.GroupOIds) ? cards.GroupOIds
+                                 : string.Join(",", (cards.GroupO ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
+
+                cmd.Parameters.AddWithValue("@GroupB", groupB);
+                cmd.Parameters.AddWithValue("@GroupI", groupI);
+                cmd.Parameters.AddWithValue("@GroupN", groupN);
+                cmd.Parameters.AddWithValue("@GroupG", groupG);
+                cmd.Parameters.AddWithValue("@GroupO", groupO);
+
+                cmd.Parameters.AddWithValue("@AddTime", addTime);
+                cmd.Parameters.AddWithValue("@Theme", cards.Theme ?? "");
+                cmd.Parameters.AddWithValue("@Header", cards.Header ?? "");
+                cmd.Parameters.AddWithValue("@Model", cards.Model ?? "");
+
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+            else // 4x4
+            {
+                string elementsStr;
+                if (!string.IsNullOrWhiteSpace(cards.GroupBIds + cards.GroupIIds + cards.GroupNIds + cards.GroupGIds + cards.GroupOIds))
                 {
-                    command.Parameters.AddWithValue("@ListId", listId);
-                    command.Parameters.AddWithValue("@Name", name);
-                    command.Parameters.AddWithValue("@Title", title);
-                    command.Parameters.AddWithValue("@End", end);
-                    command.Parameters.AddWithValue("@Quantity", quantity);
-                    command.Parameters.AddWithValue("@CardsSize", cardsSize);
-                    command.Parameters.AddWithValue("@GroupB", groupB);
-                    command.Parameters.AddWithValue("@GroupI", groupI);
-                    command.Parameters.AddWithValue("@GroupN", groupN);
-                    command.Parameters.AddWithValue("@GroupG", groupG);
-                    command.Parameters.AddWithValue("@GroupO", groupO);
-                    command.Parameters.AddWithValue("@AddTime", addTime);
-
-                    command.ExecuteNonQuery();
+                    var ids16 = string.Join(",", new[] { cards.GroupBIds, cards.GroupIIds, cards.GroupNIds, cards.GroupGIds, cards.GroupOIds }
+                        .Where(s => !string.IsNullOrWhiteSpace(s)))
+                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.Trim()).Where(s => s.Length > 0).Take(16);
+                    elementsStr = string.Join(",", ids16);
                 }
-
-                // Recupera o último SetId inserido
-                using (var command = new SQLiteCommand("SELECT last_insert_rowid();", connection))
+                else if (cards.AllElements != null && cards.AllElements.Count > 0)
                 {
-                    return Convert.ToInt32(command.ExecuteScalar());
+                    elementsStr = string.Join(",", cards.AllElements.Select(e => e.Id).Take(16));
                 }
+                else elementsStr = "";
+
+                string sql = @"
+            INSERT INTO CardsSets
+                (ListId, Name, Title, End, Quantity, CardsSize, Elements,
+                 AddTime, Theme, Header, Model)
+            VALUES
+                (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @Elements,
+                 @AddTime, @Theme, @Header, @Model);
+            SELECT last_insert_rowid();";
+
+                using var cmd = new SQLiteCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@ListId", cards.ListId);
+                cmd.Parameters.AddWithValue("@Name", cards.Name ?? "");
+                cmd.Parameters.AddWithValue("@Title", cards.Title ?? "");
+                cmd.Parameters.AddWithValue("@End", cards.End ?? "");
+                cmd.Parameters.AddWithValue("@Quantity", cards.Quantity);
+                cmd.Parameters.AddWithValue("@CardsSize", cards.CardsSize);
+                cmd.Parameters.AddWithValue("@Elements", elementsStr);
+                cmd.Parameters.AddWithValue("@AddTime", addTime);
+                cmd.Parameters.AddWithValue("@Theme", cards.Theme ?? "");
+                cmd.Parameters.AddWithValue("@Header", cards.Header ?? "");
+                cmd.Parameters.AddWithValue("@Model", cards.Model ?? "");
+
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
@@ -311,39 +374,7 @@ namespace BingoCreator.Services
             }
         }
 
-        // Criar Conjunto de Cartelas
-        public static int CreateCardList4(int listId, string name, string title, string end, int quantity, int cardsSize, string elements, string addTime)
-        {
-            using (var connection = GetConnection())
-            {
-                connection.Open();
-
-                // Query para inserir uma nova linha na tabela CardsSetsTable
-                string insertQuery = "INSERT INTO CardsSets4Table (ListId, Name, Title, End, Quantity, CardsSize, Elements, AddTime) VALUES (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @Elements, @AddTime)";
-
-                using (var command = new SQLiteCommand(insertQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@ListId", listId);
-                    command.Parameters.AddWithValue("@Name", name);
-                    command.Parameters.AddWithValue("@Title", title);
-                    command.Parameters.AddWithValue("@End", end);
-                    command.Parameters.AddWithValue("@Quantity", quantity);
-                    command.Parameters.AddWithValue("@CardsSize", cardsSize);
-                    command.Parameters.AddWithValue("@Elements", elements);
-                    command.Parameters.AddWithValue("@AddTime", addTime);
-
-                    command.ExecuteNonQuery();
-                }
-
-                // Recupera o último SetId inserido
-                using (var command = new SQLiteCommand("SELECT last_insert_rowid();", connection))
-                {
-                    return Convert.ToInt32(command.ExecuteScalar());
-                }
-            }
-        }
-
-        // Criar Cartelas
+        // Criar Cartelas 4x4
         public static void CreateCard4(int listId, List<int> elementsIds, int cardNumber, int setId)
         {
             string query = @"INSERT INTO CardsList4Table 
@@ -612,7 +643,7 @@ namespace BingoCreator.Services
             }
         }
 
-        // Retornar todos os Elementos em um pedido
+        // Retornar todos os Elementos em uma Lista
         public static List<DataRow> GetElementsByIds(List<int> ids)
         {
             if (ids == null || ids.Count == 0)
@@ -656,7 +687,7 @@ namespace BingoCreator.Services
             throw new NotImplementedException();
         }
 
-        // Método para retornar todas as listas
+        // Método para retornar todas as Listas
         public static DataTable GetLists()
         {
             using (var connection = GetConnection())
@@ -705,6 +736,227 @@ namespace BingoCreator.Services
             }
 
             return elementsList;
+        }
+
+        // Método para retornar uma Lista pelo Id
+        public static ListModel? GetListById(int listId)
+        {
+            const string sql = @"
+        SELECT 
+            l.Id,
+            l.Name,
+            l.Description,
+            l.ImageName,
+            COUNT(a.ElementId) AS ElementCount
+        FROM ListsTable l
+        LEFT JOIN AlocationTable a ON a.ListId = l.Id
+        WHERE l.Id = @ListId
+        GROUP BY l.Id, l.Name, l.Description, l.ImageName
+        LIMIT 1;";
+
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+
+                using (var command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@ListId", listId);
+
+                    using (var adapter = new SQLiteDataAdapter(command))
+                    {
+                        var dt = new DataTable();
+                        adapter.Fill(dt);
+                        if (dt.Rows.Count == 0) return null;
+
+                        var row = dt.Rows[0];
+                        return new ListModel
+                        {
+                            Id = Convert.ToInt32(row["Id"]),
+                            Name = row["Name"]?.ToString() ?? "",
+                            Description = row["Description"]?.ToString() ?? "",
+                            ImageName = row["ImageName"]?.ToString() ?? "",
+                            ElementCount = row["ElementCount"] == DBNull.Value ? 0 : Convert.ToInt32(row["ElementCount"])
+                        };
+                    }
+                }
+            }
+        }
+
+        // Método para retornar um Card Set pelo Id
+        public static CardSetModel? GetCardSetById(int setId)
+        {
+            const string sql = @"
+        SELECT
+            SetId,
+            ListId,
+            Name,
+            Title,
+            End,
+            Quantity,
+            CardsSize,
+            AddTime,
+            GroupB,
+            GroupI,
+            GroupN,
+            GroupG,
+            GroupO,
+            Elements,
+            Theme,
+            Header,
+            Model
+        FROM CardsSets
+        WHERE SetId = @SetId
+        LIMIT 1;";
+
+            using var connection = GetConnection();
+            connection.Open();
+
+            using var command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@SetId", setId);
+
+            using var adapter = new SQLiteDataAdapter(command);
+            var dt = new DataTable();
+            adapter.Fill(dt);
+
+            if (dt.Rows.Count == 0) return null;
+
+            var row = dt.Rows[0];
+
+            // ————— Helpers locais —————
+            static List<int> ParseIds(string? csv)
+            {
+                if (string.IsNullOrWhiteSpace(csv)) return new List<int>();
+                return csv
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(s => s.Length > 0 && int.TryParse(s, out _))
+                    .Select(int.Parse)
+                    .ToList();
+            }
+
+            static List<ElementModel> LoadElements(List<int> ids)
+            {
+                if (ids.Count == 0) return new List<ElementModel>();
+                var rows = GetElementsByIds(ids); // já existe no seu DataService
+                return rows.Select(r => new ElementModel
+                {
+                    Id = Convert.ToInt32(r["Id"]),
+                    Name = r["Name"]?.ToString() ?? "",
+                    CardName = r["CardName"]?.ToString() ?? "",
+                    // Se precisar: ImageName = r.Table.Columns.Contains("ImageName") ? r["ImageName"]?.ToString() ?? "" : ""
+                }).ToList();
+            }
+            // ————————————————————————
+
+            var model = new CardSetModel
+            {
+                Id = Convert.ToInt32(row["SetId"]),
+                ListId = Convert.ToInt32(row["ListId"]),
+                Name = row["Name"]?.ToString() ?? "",
+                Title = row["Title"]?.ToString() ?? "",
+                End = row["End"]?.ToString() ?? "",
+                Quantity = Convert.ToInt32(row["Quantity"]),
+                CardsSize = Convert.ToInt32(row["CardsSize"]),
+                AddDate = row["AddTime"]?.ToString() ?? "",
+
+                // CSVs dos grupos/elements
+                GroupBIds = row["GroupB"]?.ToString() ?? "",
+                GroupIIds = row["GroupI"]?.ToString() ?? "",
+                GroupNIds = row["GroupN"]?.ToString() ?? "",
+                GroupGIds = row["GroupG"]?.ToString() ?? "",
+                GroupOIds = row["GroupO"]?.ToString() ?? "",
+
+                // 4x4
+                // Elements está na coluna "Elements" — será usado para preencher AllElements
+
+                // Estilo/tema/cabeçalho
+                Theme = row.Table.Columns.Contains("Theme") ? (row["Theme"]?.ToString() ?? "") : "",
+                Header = row.Table.Columns.Contains("Header") ? (row["Header"]?.ToString() ?? "") : "",
+                Model = row.Table.Columns.Contains("Model") ? (row["Model"]?.ToString() ?? "") : ""
+            };
+
+            // Preencher ListName e ListSize (ElementCount) via ListsTable
+            var list = GetListById(model.ListId); // seu método que retorna ListModel?
+            model.ListName = list?.Name ?? "";
+            model.ListSize = list?.ElementCount ?? 0;
+
+            // Carregar elementos conforme o tamanho das cartelas
+            if (model.CardsSize == 5)
+            {
+                var idsB = ParseIds(model.GroupBIds);
+                var idsI = ParseIds(model.GroupIIds);
+                var idsN = ParseIds(model.GroupNIds);
+                var idsG = ParseIds(model.GroupGIds);
+                var idsO = ParseIds(model.GroupOIds);
+
+                model.GroupB = LoadElements(idsB);
+                model.GroupI = LoadElements(idsI);
+                model.GroupN = LoadElements(idsN);
+                model.GroupG = LoadElements(idsG);
+                model.GroupO = LoadElements(idsO);
+
+                // União para AllElements (sem duplicatas)
+                model.AllElements = new[] { model.GroupB, model.GroupI, model.GroupN, model.GroupG, model.GroupO }
+                    .Where(g => g != null)
+                    .SelectMany(g => g!)
+                    .GroupBy(e => e.Id)
+                    .Select(g => g.First())
+                    .ToList();
+            }
+            else if (model.CardsSize == 4)
+            {
+                var elementsCsv = row["Elements"]?.ToString() ?? "";
+                var ids = ParseIds(elementsCsv);
+                model.AllElements = LoadElements(ids);
+
+                // Mantém Group* como null em 4x4
+                model.GroupB = null;
+                model.GroupI = null;
+                model.GroupN = null;
+                model.GroupG = null;
+                model.GroupO = null;
+            }
+            else
+            {
+                // Se algum dado antigo tiver CardsSize diferente, apenas evita nulls
+                model.AllElements ??= new List<ElementModel>();
+            }
+
+            return model;
+        }
+
+        // Método par retornar todas as Cards de um Set
+        public static List<DataRow> GetCardsBySetId(int setId)
+        {
+            const string metaSql = @"
+        SELECT CardsSize
+        FROM CardsSets
+        WHERE SetId = @SetId
+        LIMIT 1;";
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using (var metaCmd = new SQLiteCommand(metaSql, conn))
+            {
+                metaCmd.Parameters.AddWithValue("@SetId", setId);
+                object? cs = metaCmd.ExecuteScalar();
+                if (cs == null) return new List<DataRow>();
+
+                int cardsSize = Convert.ToInt32(cs);
+
+                string listSql = cardsSize == 5
+                    ? "SELECT * FROM CardsList5Table WHERE SetId = @SetId ORDER BY CardNumber;"
+                    : "SELECT * FROM CardsList4Table WHERE SetId = @SetId ORDER BY CardNumber;";
+
+                using var listCmd = new SQLiteCommand(listSql, conn);
+                listCmd.Parameters.AddWithValue("@SetId", setId);
+
+                using var adp = new SQLiteDataAdapter(listCmd);
+                var dt = new DataTable();
+                adp.Fill(dt);
+                return dt.AsEnumerable().ToList();
+            }
         }
 
 

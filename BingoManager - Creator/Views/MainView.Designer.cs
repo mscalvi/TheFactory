@@ -57,6 +57,7 @@
             lblListName = new Label();
             lblListTitle = new Label();
             tabCreateCards = new TabPage();
+            boxCardsQuantity = new NumericUpDown();
             cboCardsHeader = new ComboBox();
             lblCardsHeader = new Label();
             cboCardsModel = new ComboBox();
@@ -70,7 +71,6 @@
             lblCardsList = new Label();
             cboCardsList = new ComboBox();
             lblCardsQuant = new Label();
-            boxCardsQuant = new TextBox();
             lblCardsEnd = new Label();
             boxCardsEnd = new TextBox();
             lblCardsPage = new Label();
@@ -105,6 +105,7 @@
             tabCreateElement.SuspendLayout();
             tabCreateList.SuspendLayout();
             tabCreateCards.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).BeginInit();
             grpCardsSize.SuspendLayout();
             tabEditPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picEdit).BeginInit();
@@ -351,7 +352,7 @@
             btnListImport.Name = "btnListImport";
             btnListImport.Size = new Size(295, 76);
             btnListImport.TabIndex = 23;
-            btnListImport.Text = "Importar Pasta";
+            btnListImport.Text = "Importar Pasta de Imagens";
             btnListImport.UseVisualStyleBackColor = true;
             btnListImport.Click += btnListImport_Clicked;
             // 
@@ -432,6 +433,7 @@
             // 
             // tabCreateCards
             // 
+            tabCreateCards.Controls.Add(boxCardsQuantity);
             tabCreateCards.Controls.Add(cboCardsHeader);
             tabCreateCards.Controls.Add(lblCardsHeader);
             tabCreateCards.Controls.Add(cboCardsModel);
@@ -443,7 +445,6 @@
             tabCreateCards.Controls.Add(lblCardsList);
             tabCreateCards.Controls.Add(cboCardsList);
             tabCreateCards.Controls.Add(lblCardsQuant);
-            tabCreateCards.Controls.Add(boxCardsQuant);
             tabCreateCards.Controls.Add(lblCardsEnd);
             tabCreateCards.Controls.Add(boxCardsEnd);
             tabCreateCards.Controls.Add(lblCardsPage);
@@ -458,6 +459,18 @@
             tabCreateCards.TabIndex = 2;
             tabCreateCards.Text = "Cards";
             tabCreateCards.UseVisualStyleBackColor = true;
+            // 
+            // boxCardsQuantity
+            // 
+            boxCardsQuantity.Anchor = AnchorStyles.Top;
+            boxCardsQuantity.Font = new Font("Segoe UI", 12F);
+            boxCardsQuantity.Location = new Point(310, 339);
+            boxCardsQuantity.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            boxCardsQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            boxCardsQuantity.Name = "boxCardsQuantity";
+            boxCardsQuantity.Size = new Size(395, 29);
+            boxCardsQuantity.TabIndex = 43;
+            boxCardsQuantity.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // cboCardsHeader
             // 
@@ -604,15 +617,6 @@
             lblCardsQuant.Text = "Quantidade:";
             lblCardsQuant.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // boxCardsQuant
-            // 
-            boxCardsQuant.Anchor = AnchorStyles.Top;
-            boxCardsQuant.Font = new Font("Segoe UI", 12F);
-            boxCardsQuant.Location = new Point(310, 345);
-            boxCardsQuant.Name = "boxCardsQuant";
-            boxCardsQuant.Size = new Size(395, 29);
-            boxCardsQuant.TabIndex = 30;
-            // 
             // lblCardsEnd
             // 
             lblCardsEnd.Anchor = AnchorStyles.Top;
@@ -630,9 +634,10 @@
             boxCardsEnd.Anchor = AnchorStyles.Top;
             boxCardsEnd.Font = new Font("Segoe UI", 12F);
             boxCardsEnd.Location = new Point(310, 276);
+            boxCardsEnd.MaxLength = 300;
             boxCardsEnd.Name = "boxCardsEnd";
             boxCardsEnd.Size = new Size(395, 29);
-            boxCardsEnd.TabIndex = 28;
+            boxCardsEnd.TabIndex = 25;
             // 
             // lblCardsPage
             // 
@@ -661,15 +666,17 @@
             boxCardsTitle.Anchor = AnchorStyles.Top;
             boxCardsTitle.Font = new Font("Segoe UI", 12F);
             boxCardsTitle.Location = new Point(310, 207);
+            boxCardsTitle.MaxLength = 300;
             boxCardsTitle.Name = "boxCardsTitle";
             boxCardsTitle.Size = new Size(395, 29);
-            boxCardsTitle.TabIndex = 25;
+            boxCardsTitle.TabIndex = 24;
             // 
             // boxCardsName
             // 
             boxCardsName.Anchor = AnchorStyles.Top;
             boxCardsName.Font = new Font("Segoe UI", 12F);
             boxCardsName.Location = new Point(310, 138);
+            boxCardsName.MaxLength = 50;
             boxCardsName.Name = "boxCardsName";
             boxCardsName.Size = new Size(395, 29);
             boxCardsName.TabIndex = 23;
@@ -914,7 +921,8 @@
             ClientSize = new Size(1190, 744);
             Controls.Add(pnlMainView);
             Name = "MainView";
-            Text = "BingoManager - Creator";
+            Text = "BingoCreator";
+            WindowState = FormWindowState.Maximized;
             pnlMainView.ResumeLayout(false);
             tabControlMain.ResumeLayout(false);
             tabCreatePage.ResumeLayout(false);
@@ -925,6 +933,7 @@
             tabCreateList.PerformLayout();
             tabCreateCards.ResumeLayout(false);
             tabCreateCards.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).EndInit();
             grpCardsSize.ResumeLayout(false);
             tabEditPage.ResumeLayout(false);
             tabEditPage.PerformLayout();
@@ -971,7 +980,6 @@
         private Label lblCardsList;
         private ComboBox cboCardsList;
         private Label lblCardsQuant;
-        private TextBox boxCardsQuant;
         private Label lblCardsEnd;
         private Button btnElementCreate;
         private Button btnListCreate;
@@ -1005,5 +1013,6 @@
         private Label lblCardsModel;
         private ComboBox cboCardsHeader;
         private Label lblCardsHeader;
+        private NumericUpDown boxCardsQuantity;
     }
 }
