@@ -25,12 +25,7 @@ namespace BingoCreator
             DesignService.UseDefaultLogo();
 
             CreatePageLoad();
-        }
-
-        private sealed class ThemeOption
-        {
-            public string Key { get; init; }
-            public string Name { get; init; }
+            EditPageLoad();
         }
 
         // Métodos de Carregamento
@@ -71,19 +66,28 @@ namespace BingoCreator
             cboCardsModel.DisplayMember = "Text";
             cboCardsModel.ValueMember = "Value";
             cboCardsModel.DataSource = new[] {
-        new { Text = "Quadradas (fundo branco)",     Value = "SQUARE"  },
-        new { Text = "Arredondadas (fundo do tema)", Value = "ROUNDED" }
-    };
+                new { Text = "Quadradas (fundo branco)",     Value = "SQUARE"  },
+                new { Text = "Arredondadas (fundo do tema)", Value = "ROUNDED" }
+            };
             cboCardsModel.SelectedValue = "SQUARE";
 
             cboCardsHeader.DropDownStyle = ComboBoxStyle.DropDownList;
             cboCardsHeader.DisplayMember = "Text";
             cboCardsHeader.ValueMember = "Value";
             cboCardsHeader.DataSource = new[] {
-        new { Text = "SORTE", Value = "SORTE" },
-        new { Text = "BINGO", Value = "BINGO" }
-    };
+                new { Text = "SORTE", Value = "SORTE" },
+                new { Text = "BINGO", Value = "BINGO" }
+            };
             cboCardsHeader.SelectedValue = "SORTE";
+
+            cboCardsSize.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboCardsSize.DisplayMember = "Text";
+            cboCardsSize.ValueMember = "Value";
+            cboCardsSize.DataSource = new[] {
+                new { Text = "4x4", Value = "4" },
+                new { Text = "5x5", Value = "5" }
+            };
+            cboCardsSize.SelectedValue = "5";
         }
         private void EditPageLoad()
         {
@@ -318,8 +322,23 @@ namespace BingoCreator
         }
         private void ClearEditFields()
         {
+            ActiveSetId = -1;
+            ActiveListId = -1;
+            ActiveElementId = -1;
+
+            btnEditEdit.Enabled = false;
+            btnEditExclude.Enabled = false;
+
             lblEditText1.Text = lblEditText2.Text = lblEditText3.Text = lblEditText4.Text = lblEditText5.Text = "";
             boxEditText1.Text = boxEditText2.Text = boxEditText3.Text = boxEditText4.Text = boxEditText5.Text = "";
+            lblEditImage.Text = "";
+            lblEditMessage.Text = "Nada Selecionado";
+
+            boxEditText1.Enabled = true;
+            boxEditText2.Enabled = true;
+            boxEditText3.Enabled = true;
+            boxEditText4.Enabled = true;
+            boxEditText5.Enabled = true;
 
             // mostra tudo por padrão
             SetFieldVisible(1, false);
@@ -344,17 +363,27 @@ namespace BingoCreator
         {
             ClearEditFields();
 
+            ActiveSetId = set.Id;
+            btnEditEdit.Enabled = true;
+            btnEditExclude.Enabled = true;
+
+            lblEditMessage.Text = $"Id do Conjunto selecionado: {set.Id.ToString()}";
+
             lblEditText1.Text = "Nome:";
-            lblEditText2.Text = "Título:";
-            lblEditText3.Text = "Anotação 1:";
+            lblEditText2.Text = "Título e Final:";
+            lblEditText3.Text = "Estilo:";
             lblEditText4.Text = "Cartelas Criadas:";
-            lblEditText5.Text = "Estilo";
+            lblEditText5.Text = "Lista:";
 
             boxEditText1.Text = set.Name ?? "";
-            boxEditText2.Text = set.Title ?? "";
-            boxEditText3.Text = set.End ?? "";
+            boxEditText2.Text = $"{set.Title} - {set.End}";
+            boxEditText3.Text = $"{set.Model}, {set.Theme}, Tamanho {set.CardsSize}";
             boxEditText4.Text = set.Quantity.ToString();
-            boxEditText5.Text = $"{(set.Model ?? "SQUARE")}, {(set.Theme ?? "-")}";
+            boxEditText5.Text = $"{set.ListName}, {set.ListSize} Elementos";
+
+            boxEditText3.Enabled = false;
+            boxEditText4.Enabled = false;
+            boxEditText5.Enabled = false;
 
             SetFieldVisible(1, true);
             SetFieldVisible(2, true);
@@ -366,27 +395,66 @@ namespace BingoCreator
         {
             ClearEditFields();
 
+            ActiveListId = list.Id;
+            btnEditEdit.Enabled = true;
+            btnEditExclude.Enabled = true;
+
+            lblEditMessage.Text = $"Id da Lista selecionada: {list.Id.ToString()}";
+
+            var setsDt = DataService.GetCardSetsByListId(list.Id);
+
             lblEditText1.Text = "Nome:";
             lblEditText2.Text = "Descrição:";
             lblEditText3.Text = "Total de Elementos:";
+            lblEditText4.Text = "Conjuntos Criados:";
 
             boxEditText1.Text = list?.Name ?? "";
             boxEditText2.Text = list?.Description ?? "";
             boxEditText3.Text = elementCount.ToString();
+            if (setsDt.Rows.Count > 0)
+            {
+                var linhas = setsDt.AsEnumerable()
+                    .Select(r =>
+                    {
+                        var setId = Convert.ToInt32(r["SetId"]);
+                        var name = r["Name"]?.ToString() ?? "";
+                        var title = r["Title"]?.ToString() ?? "";
+                        var size = Convert.ToInt32(r["CardsSize"]);
+                        var qnt = Convert.ToInt32(r["Quantity"]);
+                        var when = r["AddTime"]?.ToString() ?? "";
+                        return $"#{setId} – {name}  |  {title}  |  {size}x{size}  |  {qnt} cartelas  |  {when}";
+                    });
+
+                boxEditText4.Text = string.Join(Environment.NewLine, linhas);
+                btnEditExclude.Enabled = false;
+            }
+            else
+            {
+                boxEditText4.Text = "Nenhum conjunto usa esta lista.";
+                btnEditExclude.Enabled = true;
+            }
+
+            boxEditText3.Enabled = false;
+            boxEditText4.Enabled = false;
 
             UpdatePicEdit(list.ImageName);
 
             SetFieldVisible(1, true);
             SetFieldVisible(2, true);
             SetFieldVisible(3, true);
+            SetFieldVisible(4, true);
 
-            // “os 2 campos não preenchidos devem sumir”
-            SetFieldVisible(4, false);
             SetFieldVisible(5, false);
         }
         private void ApplyElementFields(ElementModel em)
         {
             ClearEditFields();
+
+            ActiveElementId = em.Id;
+            btnEditEdit.Enabled = true;
+            btnEditExclude.Enabled = true;
+
+            lblEditMessage.Text = $"Id do Elemento selecionado: {em.Id.ToString()}";
 
             lblEditText1.Text = "Nome:";
             lblEditText2.Text = "Nome para Cartela:";
@@ -400,6 +468,8 @@ namespace BingoCreator
             boxEditText4.Text = em?.Note2 ?? "";
 
             UpdatePicEdit(em.ImageName);
+
+            boxEditText5.Enabled = false;
 
             var lists = DataService.GetListsForElement(em.Id);
             boxEditText5.Text = lists;
@@ -427,14 +497,15 @@ namespace BingoCreator
             if (cboElementList.SelectedIndex > -1)
             {
                 list = cboElementList.SelectedItem as ListModel;
-            } else
+            }
+            else
             {
                 list.Id = 0;
             }
 
             try
             {
-                var creation = CreatingService.CreateElement(element, list); 
+                var creation = CreatingService.CreateElement(element, list);
 
                 lblElementMessage.Text = creation.Message;
 
@@ -452,7 +523,6 @@ namespace BingoCreator
                 lblElementMessage.Text = "Erro inesperado ao criar elemento: " + ex.Message;
             }
         }
-
         // Criar Lista
         private void btnListCreate_Clicked(object sender, EventArgs e)
         {
@@ -480,10 +550,9 @@ namespace BingoCreator
             }
             catch (Exception ex)
             {
-                    lblListMessage.Text = "Erro inesperado ao criar lista: " + ex.Message;
+                lblListMessage.Text = "Erro inesperado ao criar lista: " + ex.Message;
             }
         }
-
         // Criar Cartelas
         private void btnExportCards_Click(object sender, EventArgs e)
         {
@@ -499,17 +568,16 @@ namespace BingoCreator
             var list = cboCardsList.SelectedItem as ListModel;
             cards.ListId = list.Id;
 
-            if (radCardsSize4.Checked)
-            {
-                cards.CardsSize = 4;
-            } else
-            {
-                cards.CardsSize = 5;
-            }
-
             cards.Theme = cboCardsTheme.SelectedValue as string ?? "MINIMAL";
             cards.Model = (cboCardsModel.SelectedValue as string) ?? "SQUARE";
             cards.Header = (cboCardsHeader.SelectedValue as string) ?? "SORTE";
+
+            int size = 5;
+            if (cboCardsSize.SelectedValue is int v)
+                size = v;
+            else if (int.TryParse(cboCardsSize.SelectedValue?.ToString(), out var parsed))
+                size = parsed;
+            cards.CardsSize = size;
 
             try
             {
@@ -524,7 +592,7 @@ namespace BingoCreator
                     cboCardsList.SelectedIndex = -1;
                     cboCardsTheme.SelectedIndex = -1;
                     btnCardsExport.Enabled = true;
-                    radCardsSize5.Checked = true;
+                    cboCardsList.SelectedIndex = -1;
                 }
 
                 var printAns = MessageBox.Show(
@@ -539,7 +607,7 @@ namespace BingoCreator
                     try
                     {
                         PrintingService.PrintCards(creation.Id);
-                        lblListMessage.Text = "PDFs gerados com sucesso";
+                        lblCardsMessage.Text = "PDFs gerados com sucesso";
 
                         var exportAns = MessageBox.Show(
                             "Deseja exportar o banco de dados do jogo também?",
@@ -553,23 +621,23 @@ namespace BingoCreator
                             try
                             {
                                 ExportingService.ExportDataBase(creation.Id);
-                                lblListMessage.Text = "Banco de dados exportado com sucesso";
+                                lblCardsMessage.Text = "Banco de dados exportado com sucesso";
                             }
                             catch (Exception ex)
                             {
-                                lblListMessage.Text = "Erro inesperado ao exportar o banco de dados: " + ex.Message;
+                                lblCardsMessage.Text = "Erro inesperado ao exportar o banco de dados: " + ex.Message;
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        lblListMessage.Text = "Erro inesperado ao gerar PDFs: " + ex.Message;
+                        lblCardsMessage.Text = "Erro inesperado ao gerar PDFs: " + ex.Message;
                     }
                 }
             }
             catch (Exception ex)
             {
-                lblListMessage.Text = "Erro inesperado ao criar cartelas: " + ex.Message;
+                lblCardsMessage.Text = "Erro inesperado ao criar cartelas: " + ex.Message;
             }
         }
 
@@ -773,26 +841,6 @@ namespace BingoCreator
                     continue;
 
                 aprovados.Add(name);
-
-
-                //if (raw.Length == 0) continue;
-
-                //var cleaned = CleanName(raw); // remove acentos/especiais; trim e normaliza espaços
-
-                //if (string.IsNullOrWhiteSpace(cleaned))
-                //{
-                //    rejeitados.Add($"{raw}  — vazio após limpeza");
-                //    continue;
-                //}
-                //if (cleaned.Length > 50)
-                //{
-                //    rejeitados.Add($"{raw}  — > 50 caracteres (limpo ficou com {cleaned.Length})");
-                //    continue;
-                //}
-                //if (!seen.Add(cleaned)) // dedup por nome limpo
-                //    continue;
-
-                //aprovados.Add(cleaned);
             }
 
             // cria a lista sem imagem de capa
@@ -831,42 +879,47 @@ namespace BingoCreator
             CreatePageLoad();
         }
 
-        private static string CleanName(string s)
+
+        // Métodos de Edição
+        private int ActiveSetId = -1;
+        private int ActiveListId = -1;
+        private int ActiveElementId = -1;
+        private void btnEditExclude_Click(object sender, EventArgs e)
         {
-            s = RemoveDiacritics(s);
-            // permite letras, dígitos, espaço, hífen e underscore
-            s = Regex.Replace(s, @"[^\w \-]", ""); // \w = [A-Za-z0-9_]
-            s = Regex.Replace(s, @"\s+", " ").Trim();
-            return s;
+            if (ActiveElementId > 0)
+            {
+                MessageBox.Show($"Elemento {ActiveElementId} selecionado",
+                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            if (ActiveListId > 0)
+            {
+                DataService.DeleteListAndAllocations(ActiveListId);
+                MessageBox.Show($"Lista {ActiveListId} apagada.",
+                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                cboEdit1.SelectedIndex = -1;
+                cboEdit2.SelectedIndex = -1;
+                cboEdit3.SelectedIndex = -1;
+                ClearEditFields();
+            }
+            if (ActiveSetId > 0)
+            {
+                DataService.DeleteCardsBySetId(ActiveSetId);
+                DataService.DeleteCardSet(ActiveSetId);
+                MessageBox.Show($"Set {ActiveSetId} apagado.",
+                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                cboEdit1.SelectedIndex = -1;
+                cboEdit2.SelectedIndex = -1;
+                cboEdit3.SelectedIndex = -1;
+                ClearEditFields();
+            }
         }
 
-        private static string RemoveDiacritics(string text)
-        {
-            var normalized = text.Normalize(NormalizationForm.FormD);
-            var sb = new StringBuilder(capacity: text.Length);
-            foreach (var c in normalized)
-            {
-                var uc = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (uc != UnicodeCategory.NonSpacingMark)
-                    sb.Append(c);
-            }
-            return sb.ToString().Normalize(NormalizationForm.FormC);
-        }
+
 
 
         // Helpers
-        private void radCardsSize4_CheckedChanged(object sender, EventArgs e)
-        {
-            cboCardsHeader.Enabled = false;
-            cboCardsHeader.SelectedValue = -1;
-        }
-
-        private void radCardsSize5_CheckedChanged(object sender, EventArgs e)
-        {
-            cboCardsHeader.Enabled = true;
-            cboCardsHeader.SelectedValue = 1;
-        }
-
         private void UpdatePicEdit(string imageName)
         {
             // Limpa imagem anterior (evita lock)
@@ -912,5 +965,35 @@ namespace BingoCreator
             }
         }
 
+        private sealed class ThemeOption
+        {
+            public string Key { get; init; }
+            public string Name { get; init; }
+        }
+
+        private static string RemoveDiacritics(string text)
+        {
+            var normalized = text.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder(capacity: text.Length);
+            foreach (var c in normalized)
+            {
+                var uc = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private void cboCardsSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboCardsSize.SelectedValue == "4")
+            {
+                cboCardsHeader.Enabled = false;
+            }
+            if (cboCardsSize.SelectedValue == "5")
+            {
+                cboCardsHeader.Enabled = true;
+            }
+        }
     }
 }

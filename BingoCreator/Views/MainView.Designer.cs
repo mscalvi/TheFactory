@@ -57,6 +57,8 @@
             lblListName = new Label();
             lblListTitle = new Label();
             tabCreateCards = new TabPage();
+            lblCardsSize = new Label();
+            cboCardsSize = new ComboBox();
             boxCardsQuantity = new NumericUpDown();
             cboCardsHeader = new ComboBox();
             lblCardsHeader = new Label();
@@ -64,9 +66,6 @@
             lblCardsModel = new Label();
             cboCardsTheme = new ComboBox();
             lblCardsTheme = new Label();
-            grpCardsSize = new GroupBox();
-            radCardsSize5 = new RadioButton();
-            radCardsSize4 = new RadioButton();
             btnCardsExport = new Button();
             lblCardsList = new Label();
             cboCardsList = new ComboBox();
@@ -107,7 +106,6 @@
             tabCreateList.SuspendLayout();
             tabCreateCards.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).BeginInit();
-            grpCardsSize.SuspendLayout();
             tabEditPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picEdit).BeginInit();
             SuspendLayout();
@@ -120,7 +118,7 @@
             pnlMainView.Dock = DockStyle.Fill;
             pnlMainView.Location = new Point(0, 0);
             pnlMainView.Name = "pnlMainView";
-            pnlMainView.Size = new Size(1190, 641);
+            pnlMainView.Size = new Size(1190, 708);
             pnlMainView.TabIndex = 0;
             // 
             // tabControlMain
@@ -131,7 +129,7 @@
             tabControlMain.Location = new Point(0, 0);
             tabControlMain.Name = "tabControlMain";
             tabControlMain.SelectedIndex = 0;
-            tabControlMain.Size = new Size(1190, 641);
+            tabControlMain.Size = new Size(1190, 708);
             tabControlMain.TabIndex = 2;
             // 
             // tabCreatePage
@@ -140,7 +138,7 @@
             tabCreatePage.Location = new Point(4, 24);
             tabCreatePage.Name = "tabCreatePage";
             tabCreatePage.Padding = new Padding(3);
-            tabCreatePage.Size = new Size(1182, 613);
+            tabCreatePage.Size = new Size(1182, 680);
             tabCreatePage.TabIndex = 1;
             tabCreatePage.Text = "CreatePage";
             tabCreatePage.UseVisualStyleBackColor = true;
@@ -154,7 +152,7 @@
             tabControlCreate.Location = new Point(3, 3);
             tabControlCreate.Name = "tabControlCreate";
             tabControlCreate.SelectedIndex = 0;
-            tabControlCreate.Size = new Size(1176, 607);
+            tabControlCreate.Size = new Size(1176, 674);
             tabControlCreate.TabIndex = 0;
             // 
             // tabCreateElement
@@ -175,7 +173,7 @@
             tabCreateElement.Location = new Point(4, 24);
             tabCreateElement.Name = "tabCreateElement";
             tabCreateElement.Padding = new Padding(3);
-            tabCreateElement.Size = new Size(1168, 579);
+            tabCreateElement.Size = new Size(1168, 646);
             tabCreateElement.TabIndex = 0;
             tabCreateElement.Text = "Element";
             tabCreateElement.UseVisualStyleBackColor = true;
@@ -331,7 +329,7 @@
             tabCreateList.Location = new Point(4, 24);
             tabCreateList.Name = "tabCreateList";
             tabCreateList.Padding = new Padding(3);
-            tabCreateList.Size = new Size(1168, 579);
+            tabCreateList.Size = new Size(1168, 646);
             tabCreateList.TabIndex = 1;
             tabCreateList.Text = "List";
             tabCreateList.UseVisualStyleBackColor = true;
@@ -435,6 +433,8 @@
             // 
             // tabCreateCards
             // 
+            tabCreateCards.Controls.Add(lblCardsSize);
+            tabCreateCards.Controls.Add(cboCardsSize);
             tabCreateCards.Controls.Add(boxCardsQuantity);
             tabCreateCards.Controls.Add(cboCardsHeader);
             tabCreateCards.Controls.Add(lblCardsHeader);
@@ -442,7 +442,6 @@
             tabCreateCards.Controls.Add(lblCardsModel);
             tabCreateCards.Controls.Add(cboCardsTheme);
             tabCreateCards.Controls.Add(lblCardsTheme);
-            tabCreateCards.Controls.Add(grpCardsSize);
             tabCreateCards.Controls.Add(btnCardsExport);
             tabCreateCards.Controls.Add(lblCardsList);
             tabCreateCards.Controls.Add(cboCardsList);
@@ -457,10 +456,32 @@
             tabCreateCards.Controls.Add(lblCardsName);
             tabCreateCards.Location = new Point(4, 24);
             tabCreateCards.Name = "tabCreateCards";
-            tabCreateCards.Size = new Size(1168, 579);
+            tabCreateCards.Size = new Size(1168, 646);
             tabCreateCards.TabIndex = 2;
             tabCreateCards.Text = "Cards";
             tabCreateCards.UseVisualStyleBackColor = true;
+            // 
+            // lblCardsSize
+            // 
+            lblCardsSize.Anchor = AnchorStyles.Top;
+            lblCardsSize.Font = new Font("Segoe UI", 12F);
+            lblCardsSize.ImageAlign = ContentAlignment.MiddleLeft;
+            lblCardsSize.Location = new Point(393, 537);
+            lblCardsSize.Name = "lblCardsSize";
+            lblCardsSize.Size = new Size(104, 38);
+            lblCardsSize.TabIndex = 45;
+            lblCardsSize.Text = "Tamanho:";
+            lblCardsSize.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // cboCardsSize
+            // 
+            cboCardsSize.Anchor = AnchorStyles.Top;
+            cboCardsSize.FormattingEnabled = true;
+            cboCardsSize.Location = new Point(503, 548);
+            cboCardsSize.Name = "cboCardsSize";
+            cboCardsSize.Size = new Size(202, 23);
+            cboCardsSize.TabIndex = 44;
+            cboCardsSize.SelectedIndexChanged += cboCardsSize_SelectedIndexChanged;
             // 
             // boxCardsQuantity
             // 
@@ -536,43 +557,6 @@
             lblCardsTheme.TabIndex = 37;
             lblCardsTheme.Text = "Cor:";
             lblCardsTheme.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // grpCardsSize
-            // 
-            grpCardsSize.Anchor = AnchorStyles.Top;
-            grpCardsSize.Controls.Add(radCardsSize5);
-            grpCardsSize.Controls.Add(radCardsSize4);
-            grpCardsSize.Location = new Point(67, 533);
-            grpCardsSize.Name = "grpCardsSize";
-            grpCardsSize.Size = new Size(638, 100);
-            grpCardsSize.TabIndex = 36;
-            grpCardsSize.TabStop = false;
-            grpCardsSize.Text = "Tamanho das Cartelas";
-            // 
-            // radCardsSize5
-            // 
-            radCardsSize5.Anchor = AnchorStyles.Top;
-            radCardsSize5.Checked = true;
-            radCardsSize5.Location = new Point(321, 44);
-            radCardsSize5.Name = "radCardsSize5";
-            radCardsSize5.Size = new Size(200, 32);
-            radCardsSize5.TabIndex = 1;
-            radCardsSize5.TabStop = true;
-            radCardsSize5.Text = "Cartelas 5x5 (45+ Elementos)";
-            radCardsSize5.UseVisualStyleBackColor = true;
-            radCardsSize5.CheckedChanged += radCardsSize5_CheckedChanged;
-            // 
-            // radCardsSize4
-            // 
-            radCardsSize4.Anchor = AnchorStyles.Top;
-            radCardsSize4.Location = new Point(64, 44);
-            radCardsSize4.Name = "radCardsSize4";
-            radCardsSize4.Size = new Size(200, 32);
-            radCardsSize4.TabIndex = 0;
-            radCardsSize4.TabStop = true;
-            radCardsSize4.Text = "Cartelas 4x4 (35+ Elementos)";
-            radCardsSize4.UseVisualStyleBackColor = true;
-            radCardsSize4.CheckedChanged += radCardsSize4_CheckedChanged;
             // 
             // btnCardsExport
             // 
@@ -730,7 +714,7 @@
             tabEditPage.Controls.Add(lblEditHeader);
             tabEditPage.Location = new Point(4, 24);
             tabEditPage.Name = "tabEditPage";
-            tabEditPage.Size = new Size(1182, 613);
+            tabEditPage.Size = new Size(1182, 680);
             tabEditPage.TabIndex = 2;
             tabEditPage.Text = "EditPage";
             tabEditPage.UseVisualStyleBackColor = true;
@@ -785,6 +769,7 @@
             btnEditExclude.TabIndex = 30;
             btnEditExclude.Text = "Excluir";
             btnEditExclude.UseVisualStyleBackColor = true;
+            btnEditExclude.Click += btnEditExclude_Click;
             // 
             // btnEditEdit
             // 
@@ -937,7 +922,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1190, 641);
+            ClientSize = new Size(1190, 708);
             Controls.Add(pnlMainView);
             Name = "MainView";
             Text = "BingoCreator";
@@ -953,7 +938,6 @@
             tabCreateCards.ResumeLayout(false);
             tabCreateCards.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).EndInit();
-            grpCardsSize.ResumeLayout(false);
             tabEditPage.ResumeLayout(false);
             tabEditPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picEdit).EndInit();
@@ -1020,9 +1004,6 @@
         private Button btnEditExclude;
         private TextBox boxEditText5;
         private Label lblEditText5;
-        private GroupBox grpCardsSize;
-        private RadioButton radCardsSize5;
-        private RadioButton radCardsSize4;
         private Button btnListImport;
         private Button btnListTxt;
         private ComboBox cboCardsTheme;
@@ -1034,5 +1015,7 @@
         private NumericUpDown boxCardsQuantity;
         private ComboBox cboEdit2;
         private ComboBox cboEdit3;
+        private Label lblCardsSize;
+        private ComboBox cboCardsSize;
     }
 }

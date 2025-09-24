@@ -29,7 +29,7 @@ namespace BingoCreator.Services
                 return;
             }
 
-            List<DataRow> setCards = DataService.GetCardsBySetId (setId);
+            List<DataRow> setCards = DataService.GetCardsBySetId (cards.Id);
 
             List<List<ElementModel>> cardElements = DataService.GetCardElementsBySet(setCards);
 
@@ -154,6 +154,8 @@ namespace BingoCreator.Services
             var theme = ThemeCatalog.Get(cards.Theme);
             DesignService.CellStyle = string.IsNullOrWhiteSpace(cards.Model) ? "SQUARE" : cards.Model.Trim();
 
+            int teste = cards.AllElements.Count;
+
             var document = new PdfDocument();
             document.Info.Title = $"Cartelas 4×4 – {cards.Name}";
 
@@ -224,70 +226,58 @@ namespace BingoCreator.Services
             var font = new XFont("Segoe UI", 14, XFontStyle.Regular);
             var titleFont = new XFont("Segoe UI", 18, XFontStyle.Bold);
 
-            // Converte os grupos para List<string> (CardName com fallback para Name)
-            var groups = new Dictionary<string, List<string>>
+            // Header dinâmico: se inválido, cai para "SORTE"
+            string header = string.IsNullOrWhiteSpace(cards.Header) ? "SORTE" : cards.Header.Trim().ToUpperInvariant();
+            if (header.Length != 5) header = "SORTE";
+
+            // Converte grupos para List<string> (CardName com fallback para Name)
+            var gB = (cards.GroupB ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).Where(s => s.Length > 0).ToList();
+            var gI = (cards.GroupI ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).Where(s => s.Length > 0).ToList();
+            var gN = (cards.GroupN ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).Where(s => s.Length > 0).ToList();
+            var gG = (cards.GroupG ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).Where(s => s.Length > 0).ToList();
+            var gO = (cards.GroupO ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).Where(s => s.Length > 0).ToList();
+
+            var groups = new (string Title, List<string> Items)[]
             {
-                { "Coluna B", (cards.GroupB ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).ToList() },
-                { "Coluna I", (cards.GroupI ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).ToList() },
-                { "Coluna N", (cards.GroupN ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).ToList() },
-                { "Coluna G", (cards.GroupG ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).ToList() },
-                { "Coluna O", (cards.GroupO ?? new()).Select(e => (e?.CardName ?? e?.Name ?? "").Trim()).ToList() },
+        ($"Coluna {header[0]}", gB),
+        ($"Coluna {header[1]}", gI),
+        ($"Coluna {header[2]}", gN),
+        ($"Coluna {header[3]}", gG),
+        ($"Coluna {header[4]}", gO),
             };
 
             int index = 1;
             const double margin = 40;
             const double lineSpacingExtra = 6;
 
-            foreach (var kv in groups)
+            foreach (var (title, items) in groups)
             {
-                // nova página para cada coluna
                 var page = document.AddPage();
                 var gfx = XGraphics.FromPdfPage(page);
 
-                // desenha o título da coluna
                 double y = margin;
-                gfx.DrawString(
-                    kv.Key,
-                    titleFont,
-                    XBrushes.Black,
-                    new XRect(margin, y, page.Width - 2 * margin, 24),
-                    XStringFormats.TopCenter
-                );
+                gfx.DrawString(title, titleFont, XBrushes.Black,
+                    new XRect(margin, y, page.Width - 2 * margin, 24), XStringFormats.TopCenter);
                 y += 24;
 
-                // altura da linha baseada na fonte
                 double lineHeight = gfx.MeasureString("Ag", font).Height + lineSpacingExtra;
 
-                foreach (var row in kv.Value)
+                foreach (var row in items)
                 {
-                    // texto: usa a string diretamente
-                    string text = $"{index}- {row}";
-
-                    // quebra de página se não couber
                     if (y + lineHeight + margin > page.Height)
                     {
                         page = document.AddPage();
                         gfx = XGraphics.FromPdfPage(page);
                         y = margin;
 
-                        // redesenha o título na página nova
-                        gfx.DrawString(
-                            kv.Key,
-                            titleFont,
-                            XBrushes.Black,
-                            new XRect(margin, y, page.Width - 2 * margin, 24),
-                            XStringFormats.TopCenter
-                        );
+                        gfx.DrawString(title, titleFont, XBrushes.Black,
+                            new XRect(margin, y, page.Width - 2 * margin, 24), XStringFormats.TopCenter);
                         y += 24;
                     }
 
-                    gfx.DrawString(
-                        text,
-                        font,
-                        XBrushes.Black,
-                        new XRect(margin, y, page.Width - 2 * margin, lineHeight),
-                        XStringFormats.TopLeft
-                    );
+                    string text = $"{index}- {row}";
+                    gfx.DrawString(text, font, XBrushes.Black,
+                        new XRect(margin, y, page.Width - 2 * margin, lineHeight), XStringFormats.TopLeft);
 
                     y += lineHeight;
                     index++;
@@ -295,8 +285,7 @@ namespace BingoCreator.Services
             }
 
             document.Save(filePath);
-            MessageBox.Show($"Lista salva no Desktop:\n{fileName}", "Sucesso",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            PrintCutPapers(cards);
         }
 
         public static void PrintList4(CardSetModel cards)
@@ -380,7 +369,8 @@ namespace BingoCreator.Services
             int cols = 4,
             int rows = 10,
             string preferColumn = "CardName",
-            bool showCropMarks = true)
+            bool showCropMarks = true,
+            bool showColumnLetterPerCell = false) 
         {
             // Pasta destino
             var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
@@ -406,22 +396,55 @@ namespace BingoCreator.Services
 
             bool preferName = string.Equals(preferColumn, "Name", StringComparison.OrdinalIgnoreCase);
 
-            var baseItems = src
-                .Select(e =>
+            string header = string.IsNullOrWhiteSpace(cards.Header) ? "SORTE" : cards.Header.Trim().ToUpperInvariant();
+            if (header.Length != 5) header = "SORTE";
+
+
+            List<(char? Col, string Text)> baseItems;
+
+            if (cards.CardsSize == 5)
+            {
+                // Cria pares (coluna, elemento) preservando de onde vem
+                var groups = new List<(char Col, IEnumerable<ElementModel> Elems)>
+    {
+        (header[0], cards.GroupB ?? new List<ElementModel>()),
+        (header[1], cards.GroupI ?? new List<ElementModel>()),
+        (header[2], cards.GroupN ?? new List<ElementModel>()),
+        (header[3], cards.GroupG ?? new List<ElementModel>()),
+        (header[4], cards.GroupO ?? new List<ElementModel>())
+    };
+
+                baseItems = groups.SelectMany(g =>
+                    g.Elems.Select(e =>
+                    {
+                        var first = preferName ? e?.Name : e?.CardName;
+                        var fallback = preferName ? e?.CardName : e?.Name;
+                        var text = (first ?? fallback ?? string.Empty).Trim();
+                        return (text.Length > 0) ? ((char?)g.Col, text) : ((char?)null, null);
+                    })
+                    .Where(t => t.Item2 != null)!
+                ).ToList();
+            }
+            else
+            {
+                var srcAll = cards.AllElements ?? new List<ElementModel>();
+                baseItems = srcAll.Select(e =>
                 {
                     var first = preferName ? e?.Name : e?.CardName;
                     var fallback = preferName ? e?.CardName : e?.Name;
-                    return (first ?? fallback ?? string.Empty).Trim();
+                    var text = (first ?? fallback ?? string.Empty).Trim();
+                    return (text.Length > 0) ? ((char?)null, text) : ((char?)null, null);
                 })
-                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Where(t => t.Item2 != null)!
                 .ToList();
+            }
 
             // 2) Replica para múltiplas cópias por item
             copiesPerItem = Math.Max(1, copiesPerItem);
-            var items = new List<string>(baseItems.Count * copiesPerItem);
-            foreach (var s in baseItems)
+            var items = new List<(char? Col, string Text)>(baseItems.Count * copiesPerItem);
+            foreach (var t in baseItems)
                 for (int k = 0; k < copiesPerItem; k++)
-                    items.Add(s);
+                    items.Add(t);
 
             // 3) PDF e layout
             var doc = new PdfDocument();
@@ -478,15 +501,31 @@ namespace BingoCreator.Services
                         var cellRect = new XRect(x, y, cellW, cellH);
                         gfx.DrawRectangle(pen, cellRect);
 
-                        if (idx < total)
+                        if (idx < items.Count)
                         {
-                            DrawWrappedCenteredText(
-                                gfx, items[idx], cellFont,
-                                new XRect(cellRect.X + 4, cellRect.Y + 3, cellRect.Width - 8, cellRect.Height - 6),
-                                maxLines: 2, minPoint: 8
-                            );
+                            var (colLetter, text) = items[idx];
+
+                            // Retângulo da célula
+                            var inner = new XRect(cellRect.X + 4, cellRect.Y + 3, cellRect.Width - 8, cellRect.Height - 6);
+
+                            if (showColumnLetterPerCell && cards.CardsSize == 5 && colLetter.HasValue)
+                            {
+                                // Desenha a letra da coluna no topo (um pouco menor/mais forte)
+                                var letterFont = DesignService.CreateFont(theme.FontTitle, 9, XFontStyle.Bold);
+                                var letterRect = new XRect(inner.X, inner.Y, inner.Width, 12);
+                                // Centralizado no topo
+                                gfx.DrawString(colLetter.Value.ToString(), letterFont, XBrushes.Black, letterRect, XStringFormats.TopCenter);
+
+                                // Empurra a área de texto do item para baixo da letra
+                                inner = new XRect(inner.X, letterRect.Bottom + 2, inner.Width, inner.Height - (letterRect.Height + 2));
+                            }
+
+                            // Nome do item (quebra de linha centralizada)
+                            DrawWrappedCenteredText(gfx, text, cellFont, inner, maxLines: 2, minPoint: 8);
+
                             idx++;
                         }
+
                     }
                 }
 

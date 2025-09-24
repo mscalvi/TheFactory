@@ -67,7 +67,9 @@ namespace BingoCreator.Services
                 Note1 TEXT,
                 Note2 TEXT,
                 ImageName TEXT,
-                Obsolete INTEGER,
+                Obsolete INTEGER NOT NULL DEFAULT 0,
+                ParentId INTEGER NULL,
+                Version INTEGER NOT NULL DEFAULT 1,
                 AddTime TEXT NOT NULL
             );",
 
@@ -77,7 +79,9 @@ namespace BingoCreator.Services
                 Id INTEGER PRIMARY KEY,
                 Name TEXT,
                 Description TEXT,
-                Obsolete INTEGER,
+                Obsolete INTEGER NOT NULL DEFAULT 0, 
+                ParentId INTEGER NULL, 
+                Version INTEGER NOT NULL DEFAULT 1,
                 ImageName TEXT
             );",
 
@@ -113,7 +117,9 @@ namespace BingoCreator.Services
                 Theme     TEXT,
                 Header    TEXT,
                 Model     TEXT,
-                Obsolete INTEGER
+                Obsolete INTEGER NOT NULL DEFAULT 0, 
+                ParentId INTEGER NULL, 
+                Version INTEGER NOT NULL DEFAULT 1
             );",
 
             // ----- Cards 5x5 (referência agora em CardsSets) -----
@@ -254,11 +260,11 @@ namespace BingoCreator.Services
                 string sql = @"
             INSERT INTO CardsSets
                 (ListId, Name, Title, End, Quantity, CardsSize,
-                 GroupB, GroupI, GroupN, GroupG, GroupO,
+                 GroupB, GroupI, GroupN, GroupG, GroupO, Elements,
                  AddTime, Theme, Header, Model)
             VALUES
                 (@ListId, @Name, @Title, @End, @Quantity, @CardsSize,
-                 @GroupB, @GroupI, @GroupN, @GroupG, @GroupO,
+                 @GroupB, @GroupI, @GroupN, @GroupG, @GroupO, @Elements,
                  @AddTime, @Theme, @Header, @Model);
             SELECT last_insert_rowid();";
 
@@ -280,13 +286,33 @@ namespace BingoCreator.Services
                                  : string.Join(",", (cards.GroupG ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
                 string groupO = !string.IsNullOrWhiteSpace(cards.GroupOIds) ? cards.GroupOIds
                                  : string.Join(",", (cards.GroupO ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
+                
+                string ElementsCsv()
+                {
+                    var seen = new HashSet<string>();
+                    var order = new[] { groupB, groupI, groupN, groupG, groupO };
+                    var list = new List<string>();
+
+                    foreach (var part in order)
+                    {
+                        if (string.IsNullOrWhiteSpace(part)) continue;
+                        foreach (var tok in part.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var id = tok.Trim();
+                            if (id.Length == 0) continue;
+                            if (seen.Add(id)) list.Add(id);
+                        }
+                    }
+                    return string.Join(",", list);
+                }
+                string elements = ElementsCsv();
 
                 cmd.Parameters.AddWithValue("@GroupB", groupB);
                 cmd.Parameters.AddWithValue("@GroupI", groupI);
                 cmd.Parameters.AddWithValue("@GroupN", groupN);
                 cmd.Parameters.AddWithValue("@GroupG", groupG);
                 cmd.Parameters.AddWithValue("@GroupO", groupO);
-
+                cmd.Parameters.AddWithValue("@Elements", elements);
                 cmd.Parameters.AddWithValue("@AddTime", addTime);
                 cmd.Parameters.AddWithValue("@Theme", cards.Theme ?? "");
                 cmd.Parameters.AddWithValue("@Header", cards.Header ?? "");
@@ -296,29 +322,47 @@ namespace BingoCreator.Services
             }
             else // 4x4
             {
-                string elementsStr;
-                if (!string.IsNullOrWhiteSpace(cards.GroupBIds + cards.GroupIIds + cards.GroupNIds + cards.GroupGIds + cards.GroupOIds))
+                // Fonte primária: o pool completo vindo no modelo
+                // (cards.AllElements deve conter TODOS os elementos candidatos do set 4x4)
+                IEnumerable<int> idsSource;
+
+                if (cards.AllElements != null && cards.AllElements.Count > 0)
                 {
-                    var ids16 = string.Join(",", new[] { cards.GroupBIds, cards.GroupIIds, cards.GroupNIds, cards.GroupGIds, cards.GroupOIds }
-                        .Where(s => !string.IsNullOrWhiteSpace(s)))
-                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(s => s.Trim()).Where(s => s.Length > 0).Take(16);
-                    elementsStr = string.Join(",", ids16);
+                    idsSource = cards.AllElements.Select(e => e.Id);
                 }
-                else if (cards.AllElements != null && cards.AllElements.Count > 0)
+                else
                 {
-                    elementsStr = string.Join(",", cards.AllElements.Select(e => e.Id).Take(16));
+                    // Fallback: carrega TODOS os elementos da lista associada (não apenas 16)
+                    // Ordena por CardName (fallback Name) para manter determinismo
+                    idsSource = GetElementsInList(cards.ListId)
+                        .OrderBy(r =>
+                        {
+                            var card = r.Table.Columns.Contains("CardName") ? r["CardName"]?.ToString() : null;
+                            var name = r.Table.Columns.Contains("Name") ? r["Name"]?.ToString() : null;
+                            return string.IsNullOrWhiteSpace(card) ? name : card;
+                        })
+                        .Select(r => Convert.ToInt32(r["Id"]));
                 }
-                else elementsStr = "";
+
+                // Limpa, remove duplicados — **sem** limitar a 16
+                var idsAll = idsSource
+                    .Where(id => id > 0)
+                    .Distinct()
+                    .ToList();
+
+                if (idsAll.Count < 16)
+                    throw new InvalidOperationException("Para 4x4, é necessário pelo menos 16 elementos no pool.");
+
+                string elementsStr = string.Join(",", idsAll);
 
                 string sql = @"
-            INSERT INTO CardsSets
-                (ListId, Name, Title, End, Quantity, CardsSize, Elements,
-                 AddTime, Theme, Header, Model)
-            VALUES
-                (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @Elements,
-                 @AddTime, @Theme, @Header, @Model);
-            SELECT last_insert_rowid();";
+        INSERT INTO CardsSets
+            (ListId, Name, Title, End, Quantity, CardsSize, Elements,
+             AddTime, Theme, Header, Model)
+        VALUES
+            (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @Elements,
+             @AddTime, @Theme, @Header, @Model);
+        SELECT last_insert_rowid();";
 
                 using var cmd = new SQLiteCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@ListId", cards.ListId);
@@ -335,6 +379,7 @@ namespace BingoCreator.Services
 
                 return Convert.ToInt32(cmd.ExecuteScalar());
             }
+
         }
 
         // Criar Cartelas 5x5
@@ -1074,9 +1119,16 @@ namespace BingoCreator.Services
             }
             else if (model.CardsSize == 4)
             {
-                var elementsCsv = row["Elements"]?.ToString() ?? "";
-                var ids = ParseIds(elementsCsv);
-                model.AllElements = LoadElements(ids);
+                var rows = GetElementsInList(model.ListId); // DataRows: Id, Name, CardName, ImageName
+                model.AllElements = rows
+                    .Select(r => new ElementModel
+                    {
+                        Id = Convert.ToInt32(r["Id"]),
+                        Name = r["Name"]?.ToString() ?? "",
+                        CardName = r["CardName"]?.ToString() ?? ""
+                    })
+                    .OrderBy(e => string.IsNullOrWhiteSpace(e.CardName) ? e.Name : e.CardName)
+                    .ToList();
 
                 // Mantém Group* como null em 4x4
                 model.GroupB = null;
@@ -1263,54 +1315,134 @@ namespace BingoCreator.Services
             return string.Join("; ", names);
         }
 
+        // Método para retornar todos os CardSets que usam determinada Lista
+        public static DataTable GetCardSetsByListId(int listId)
+        {
+            using var conn = GetConnection();
+            conn.Open();
+
+            // Obs.: se quiser por data, troque para ORDER BY datetime(AddTime) DESC,
+            // mas seu formato "MMddyyyy - HH:mm:ss" pode não ordenar bem como datetime do SQLite.
+            const string sql = @"
+        SELECT SetId, Name, Title, CardsSize, Quantity, AddTime
+        FROM CardsSets
+        WHERE ListId = @ListId
+        ORDER BY SetId DESC;";
+
+            using var cmd = new SQLiteCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@ListId", listId);
+
+            using var adp = new SQLiteDataAdapter(cmd);
+            var dt = new DataTable();
+            adp.Fill(dt);
+            return dt;
+        }
+
+
+
 
         // Métodos de Edição
-        // Método para atualizar um Elemento existente
-        public static void UpdateElement(int id, string name, string cardName, string note1, string note2, string imageName, string addTime)
+
+        // Apaga TODAS as cartelas (4x4 e 5x5) de um CardSet
+        public static int DeleteCardsBySetId(int setId)
         {
-            using (var connection = GetConnection())
+            using var conn = GetConnection();
+            conn.Open();
+            using var tx = conn.BeginTransaction();
+
+            int total = 0;
+
+            using (var cmd = new SQLiteCommand("DELETE FROM CardsList5Table WHERE SetId = @SetId;", conn, tx))
             {
-                connection.Open();
-                string updateQuery = @"
-                    UPDATE ElementsTable 
-                    SET Name = @Name, CardName = @CardName, Note1 = @Note1, Note2 = @Note2, ImageName = @ImageName, AddTime = @AddTime 
-                    WHERE Id = @Id;";
-
-                using (var command = new SQLiteCommand(updateQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    command.Parameters.AddWithValue("@Name", name);
-                    command.Parameters.AddWithValue("@CardName", cardName);
-                    command.Parameters.AddWithValue("@Note1", note1);
-                    command.Parameters.AddWithValue("@Note2", note2);
-                    command.Parameters.AddWithValue("@ImageName", imageName);
-                    command.Parameters.AddWithValue("@AddTime", addTime);
-
-                    command.ExecuteNonQuery();
-                }
+                cmd.Parameters.AddWithValue("@SetId", setId);
+                total += cmd.ExecuteNonQuery();
             }
+
+            using (var cmd = new SQLiteCommand("DELETE FROM CardsList4Table WHERE SetId = @SetId;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@SetId", setId);
+                total += cmd.ExecuteNonQuery();
+            }
+
+            tx.Commit();
+            return total; // total de linhas removidas das tabelas de cartelas
         }
 
-        // Método para remover Elementos de uma Lista
-        public static void UnalocateElements(int listId, List<string> elementsIds)
+        // Apaga o CardSet e todas as suas cartelas
+        public static bool DeleteCardSet(int setId)
         {
-            using (var connection = GetConnection())
+            using var conn = GetConnection();
+            conn.Open();
+            using var tx = conn.BeginTransaction();
+
+            // 1) Apaga cartelas relacionadas
+            using (var cmd = new SQLiteCommand("DELETE FROM CardsList5Table WHERE SetId = @SetId;", conn, tx))
             {
-                connection.Open();
+                cmd.Parameters.AddWithValue("@SetId", setId);
+                cmd.ExecuteNonQuery();
+            }
+            using (var cmd = new SQLiteCommand("DELETE FROM CardsList4Table WHERE SetId = @SetId;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@SetId", setId);
+                cmd.ExecuteNonQuery();
+            }
 
-                foreach (string elementId in elementsIds)
+            // 2) Apaga o CardSet em si
+            int affected;
+            using (var cmd = new SQLiteCommand("DELETE FROM CardsSets WHERE SetId = @SetId;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@SetId", setId);
+                affected = cmd.ExecuteNonQuery();
+            }
+
+            tx.Commit();
+            return affected > 0; // true se o CardSet existia e foi apagado
+        }
+
+        // Apaga uma Lista e todas suas Alocações
+        public static void DeleteListAndAllocations(int listId)
+        {
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var tx = conn.BeginTransaction();
+
+            // 1) Checa se a lista está sendo usada por algum conjunto
+            const string checkSql = @"SELECT 1 FROM CardsSets WHERE ListId = @ListId LIMIT 1;";
+            using (var checkCmd = new SQLiteCommand(checkSql, conn, tx))
+            {
+                checkCmd.Parameters.AddWithValue("@ListId", listId);
+                var inUse = checkCmd.ExecuteScalar();
+                if (inUse != null) // há pelo menos um registro
                 {
-                    string deleteQuery = "DELETE FROM AlocationTable WHERE ListId = @ListId AND ElementId = @ElementId";
-
-                    using (var command = new SQLiteCommand(deleteQuery, connection))
-                    {
-                        command.Parameters.AddWithValue("@ListId", listId);
-                        command.Parameters.AddWithValue("@ElementId", elementId);
-
-                        command.ExecuteNonQuery();
-                    }
+                    tx.Rollback();
+                    throw new InvalidOperationException("Esta lista está em uso por um ou mais conjuntos e não pode ser excluída.");
                 }
             }
+
+            // 2) Remove alocações (ElementId <-> ListId)
+            const string delAllocSql = @"DELETE FROM AlocationTable WHERE ListId = @ListId;";
+            using (var delAlloc = new SQLiteCommand(delAllocSql, conn, tx))
+            {
+                delAlloc.Parameters.AddWithValue("@ListId", listId);
+                delAlloc.ExecuteNonQuery();
+            }
+
+            // 3) Remove a própria lista
+            const string delListSql = @"DELETE FROM ListsTable WHERE Id = @ListId;";
+            using (var delList = new SQLiteCommand(delListSql, conn, tx))
+            {
+                delList.Parameters.AddWithValue("@ListId", listId);
+                int affected = delList.ExecuteNonQuery();
+                if (affected == 0)
+                {
+                    tx.Rollback();
+                    throw new InvalidOperationException("Lista não encontrada para exclusão.");
+                }
+            }
+
+            tx.Commit();
         }
+
     }
 }
