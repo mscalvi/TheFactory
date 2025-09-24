@@ -1,0 +1,162 @@
+﻿@page "/"
+
+@using System.Globalization
+@using Microsoft.AspNetCore.Components.Forms
+@using DeltaDaily.Components.Models
+
+@code {
+    private readonly CultureInfo ptBR = new("pt-BR");
+    private DayModel Day = new();
+
+    private string DiaDaSemana =>
+        ptBR.TextInfo.ToTitleCase(Day.Data.ToString("dddd", ptBR));
+    private string DataCurta => Day.Data.ToString("dd/MM/yy", ptBR);
+
+    private List<WorkModel> Entradas { get; } = new();
+
+    private void AdicionarEntrada()
+        => Entradas.Add(new WorkModel());
+
+    private void RemoverEntrada(WorkModel item)
+        => Entradas.Remove(item);
+}
+
+<section>
+    <!-- BLOCO 0 - Automático -->
+    <header aria-labelledby="blk0-title">
+        <h2 id="blk0-title">Hoje</h2>
+        <div>
+            <div><span>Dia de hoje: </span><strong>@DiaDaSemana</strong></div>
+            <div><span>Data de hoje: </span><strong>@DataCurta</strong></div>
+        </div>
+    </header>
+
+    <!-- BLOCO 1 - Básicos -->
+    <section>
+        <h2>Informações tradicionais</h2>
+
+        <div>
+            <label>
+                <span>1º Despertar</span><br />
+                <input type="time" @bind="Day.PrimeiroDespertar" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <span>Sair da Cama</span><br />
+                <input type="time" @bind="Day.SairDaCama" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" @bind="Day.TomouRemedio" />
+                <span>Remédio</span>
+            </label>
+
+            @if (Day.TomouRemedio)
+            {
+                <div>
+                    <label>
+                        <span>Dose</span><br />
+                        <input type="text" @bind="Day.DoseRemedio" />
+                    </label>
+                </div>
+
+                <div>
+                    <label>
+                        <span>Horário</span><br />
+                        <input type="time" @bind="Day.HorarioRemedio" />
+                    </label>
+                </div>
+            }
+        </div>
+
+        <div>
+            <label>
+                <span>Logout</span><br />
+                <input type="time" @bind="Day.LogoutHora" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <span>Deitar</span><br />
+                <input type="time" @bind="Day.DeitarHora" />
+            </label>
+        </div>
+    </section>
+
+    <!-- BLOCO 2 - Produtividade -->
+    <!-- BLOCO 2: Produtividade (mínimo) -->
+<section aria-labelledby="blk2-title">
+  <h2 id="blk2-title">Produtividade</h2>
+
+  <button type="button" @onclick="AdicionarEntrada">Adicionar entrada</button>
+
+  @if (Entradas.Count == 0)
+  {
+    <p>Nenhuma entrada.</p>
+  }
+  else
+  {
+    @foreach (var item in Entradas.ToList())
+    {
+      <fieldset>
+        <legend>Entrada</legend>
+
+        <div>
+          <label>
+            <span>Plano</span><br />
+            <InputSelect @bind-Value="item.Plano">
+              @* vazio por enquanto, opções virão depois *@
+            </InputSelect>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            <span>Duração</span><br />
+            <InputTime @bind-Value="item.Duracao" />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            <span>Tipo</span><br />
+            <InputSelect @bind-Value="item.Tipo">
+              @* vazio por enquanto *@
+            </InputSelect>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            <span>Foco</span><br />
+            <InputSelect @bind-Value="item.Foco">
+              @* vazio por enquanto *@
+            </InputSelect>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            <span>Técnica</span><br />
+            <InputSelect @bind-Value="item.Tecnica">
+              @* vazio por enquanto *@
+            </InputSelect>
+          </label>
+        </div>
+
+        <div>
+          <button type="button" @onclick="@(() => RemoverEntrada(item))">Remover</button>
+        </div>
+      </fieldset>
+    }
+  }
+</section>
+
+
+
+</section>
