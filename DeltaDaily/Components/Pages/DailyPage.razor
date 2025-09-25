@@ -90,72 +90,72 @@
 
     <!-- BLOCO 2 - Produtividade -->
     <!-- BLOCO 2: Produtividade (mínimo) -->
-<section aria-labelledby="blk2-title">
-  <h2 id="blk2-title">Produtividade</h2>
+    <section aria-labelledby="blk2-title">
+        <h2 id="blk2-title">Produtividade</h2>
 
-  <button type="button" @onclick="AdicionarEntrada">Adicionar entrada</button>
+        <button type="button" @onclick="AdicionarEntrada">Adicionar entrada</button>
 
-  @if (Entradas.Count == 0)
-  {
-    <p>Nenhuma entrada.</p>
-  }
-  else
-  {
-    @foreach (var item in Entradas.ToList())
-    {
-      <fieldset>
-        <legend>Entrada</legend>
+        @if (Entradas.Count == 0)
+        {
+            <p>Nenhuma entrada.</p>
+        }
+        else
+        {
+            @foreach (var item in Entradas.ToList())
+            {
+            <fieldset>
+                <legend>Entrada</legend>
 
-        <div>
-          <label>
-            <span>Plano</span><br />
-            <InputSelect @bind-Value="item.Plano">
-              @* vazio por enquanto, opções virão depois *@
-            </InputSelect>
-          </label>
-        </div>
+                <div>
+                <label>
+                <span>Plano</span><br />
+                <InputSelect @bind-Value="item.Plano">
+                  @* vazio por enquanto, opções virão depois *@
+                </InputSelect>
+              </label>
+            </div>
 
-        <div>
-          <label>
-            <span>Duração</span><br />
-            <InputTime @bind-Value="item.Duracao" />
-          </label>
-        </div>
+            <div>
+              <label>
+                <span>Duração</span><br />
+                <InputTime @bind-Value="item.Duracao" />
+              </label>
+            </div>
 
-        <div>
-          <label>
-            <span>Tipo</span><br />
-            <InputSelect @bind-Value="item.Tipo">
-              @* vazio por enquanto *@
-            </InputSelect>
-          </label>
-        </div>
+            <div>
+              <label>
+                <span>Tipo</span><br />
+                <InputSelect @bind-Value="item.Tipo">
+                  @* vazio por enquanto *@
+                </InputSelect>
+              </label>
+            </div>
 
-        <div>
-          <label>
-            <span>Foco</span><br />
-            <InputSelect @bind-Value="item.Foco">
-              @* vazio por enquanto *@
-            </InputSelect>
-          </label>
-        </div>
+            <div>
+              <label>
+                <span>Foco</span><br />
+                <InputSelect @bind-Value="item.Foco">
+                  @* vazio por enquanto *@
+                </InputSelect>
+              </label>
+            </div>
 
-        <div>
-          <label>
-            <span>Técnica</span><br />
-            <InputSelect @bind-Value="item.Tecnica">
-              @* vazio por enquanto *@
-            </InputSelect>
-          </label>
-        </div>
+            <div>
+              <label>
+                <span>Técnica</span><br />
+                <InputSelect @bind-Value="item.Tecnica">
+                  @* vazio por enquanto *@
+                </InputSelect>
+              </label>
+            </div>
 
-        <div>
-          <button type="button" @onclick="@(() => RemoverEntrada(item))">Remover</button>
-        </div>
-      </fieldset>
-    }
-  }
-</section>
+            <div>
+              <button type="button" @onclick="@(() => RemoverEntrada(item))">Remover</button>
+            </div>
+          </fieldset>
+        }
+      }
+    </section>
 
 
 
