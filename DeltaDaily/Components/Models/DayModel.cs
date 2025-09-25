@@ -1,4 +1,7 @@
-﻿namespace DeltaDaily.Components.Models;
+﻿using DeltaDaily.Components.Data;
+using static DeltaDaily.Components.Data.DreamsData;
+
+namespace DeltaDaily.Components.Models;
 
 public class DayModel
 {
@@ -18,4 +21,13 @@ public class DayModel
     // Bloco 2
     public List<WorkModel> Dedicadas { get; set; } = new();
     public List<WorkModel> Extras { get; set; } = new();
+
+    // Bloco 3
+    private SleepData.SleepQuality? QualidadeSono { get; set; }
+    private DreamsData.SonhoTipo? TipoSonhos { get; set; }
+    private string? NotasSonhos { get; set; }
+
+    private HumorData.Humor? HumorMedio { get; set; }
+    private bool VariacaoHumor { get; set; }
+    private string? VariacaoHumorNotas { get; set; }
 }

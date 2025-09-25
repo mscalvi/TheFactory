@@ -89,9 +89,8 @@
     </section>
 
     <!-- BLOCO 2 - Produtividade -->
-    <!-- BLOCO 2: Produtividade (mínimo) -->
-    <section aria-labelledby="blk2-title">
-        <h2 id="blk2-title">Produtividade</h2>
+    <section>
+        <h2>Produtividade</h2>
 
         <button type="button" @onclick="AdicionarEntrada">Adicionar entrada</button>
 
@@ -118,7 +117,7 @@
             <div>
               <label>
                 <span>Duração</span><br />
-                <InputTime @bind-Value="item.Duracao" />
+                    <input type="time" @bind="item.Duracao"/>
               </label>
             </div>
 
@@ -157,6 +156,215 @@
       }
     </section>
 
+    <!-- BLOCO 3: Informações de saúde -->
+    <section>
+      <h2>Saúde</h2>
 
+      <!-- Qualidade do Sono -->
+      <div>
+        <label>
+          <span>Qualidade do Sono</span><br />
+          <InputSelect @bind-Value="QualidadeSonoSel">
+            <option value="">(selecione)</option>
+            @foreach (var q in Enum.GetValues<QualidadeSono>())
+            {
+              <option value="@q">@q</option>
+            }
+          </InputSelect>
+        </label>
+      </div>
+
+      <!-- Sonhos -->
+      <div>
+        <label>
+          <span>Sonhos</span><br />
+          <InputSelect @bind-Value="SonhoSel">
+            <option value="">(selecione)</option>
+            @foreach (var s in Enum.GetValues<SonhoTipo>())
+            {
+              <option value="@s">@s</option>
+            }
+          </InputSelect>
+        </label>
+      </div>
+
+      <!-- (se tiver sonhos) Anotações de Sonhos -->
+      @if (SonhoSel.HasValue && SonhoSel.Value != SonhoTipo.Nenhum)
+      {
+        <div>
+          <label>
+            <span>Anotações de Sonhos</span><br />
+            <InputTextArea @bind-Value="SonhoNotas" rows="3" placeholder="Opcional" />
+          </label>
+        </div>
+      }
+
+      <!-- Humor Médio -->
+      <div>
+        <label>
+          <span>Humor Médio</span><br />
+          <InputSelect @bind-Value="HumorMedio">
+            <option value="">(selecione)</option>
+            @foreach (var h in Enum.GetValues<HumorNivel>())
+            {
+              <option value="@h">@h</option>
+            }
+          </InputSelect>
+        </label>
+      </div>
+
+      <!-- Variação de Humor -->
+      <div>
+        <label>
+          <InputCheckbox @bind-Value="VariacaoHumor" />
+          <span>Variação de Humor</span>
+        </label>
+      </div>
+
+      @if (VariacaoHumor)
+      {
+        <div>
+          <label>
+            <span>Anotações de Humor</span><br />
+            <InputTextArea @bind-Value="VariacaoHumorNotas" rows="3" placeholder="Opcional" />
+          </label>
+        </div>
+      }
+
+      <hr />
+
+      <!-- Exercício Físico -->
+      <h3>Exercício Físico</h3>
+      <button type="button" @onclick="AdicionarExercicio">Adicionar exercício</button>
+
+      @if (Exercicios.Count == 0)
+      {
+        <p>Nenhum exercício.</p>
+      }
+      else
+      {
+        @foreach (var ex in Exercicios.ToList())
+        {
+          <fieldset>
+            <legend>Exercício</legend>
+
+            <div>
+              <label>
+                <span>Hora</span><br />
+                <InputTime @bind-Value="ex.Hora" />
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <span>Duração</span><br />
+                <InputTime @bind-Value="ex.Duracao" />
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <span>Modalidade</span><br />
+                <InputSelect @bind-Value="ex.Modalidade">
+                  <option value="">(selecione)</option>
+                  @foreach (var m in Enum.GetValues<ModalidadeExercicio>())
+                  {
+                    <option value="@m">@m</option>
+                  }
+                </InputSelect>
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <span>Cansaço</span><br />
+                <InputSelect @bind-Value="ex.Cansaco">
+                  <option value="">(selecione)</option>
+                  @foreach (var n in Enum.GetValues<Nivel>())
+                  {
+                    <option value="@n">@n</option>
+                  }
+                </InputSelect>
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <span>Ânimo</span><br />
+                <InputSelect @bind-Value="ex.Animo">
+                  <option value="">(selecione)</option>
+                  @foreach (var n in Enum.GetValues<Nivel>())
+                  {
+                    <option value="@n">@n</option>
+                  }
+                </InputSelect>
+              </label>
+            </div>
+
+            <div>
+              <button type="button" @onclick="@(() => RemoverExercicio(ex))">Remover</button>
+            </div>
+          </fieldset>
+        }
+      }
+
+      <hr />
+
+      <!-- Alimentação -->
+      <h3>Alimentação</h3>
+      <button type="button" @onclick="AdicionarRefeicao">Adicionar refeição</button>
+
+      @if (Refeicoes.Count == 0)
+      {
+        <p>Nenhuma refeição.</p>
+      }
+      else
+      {
+        @foreach (var rf in Refeicoes.ToList())
+        {
+          <fieldset>
+            <legend>Refeição</legend>
+
+            <div>
+              <label>
+                <span>Tipo</span><br />
+                <InputSelect @bind-Value="rf.Tipo">
+                  <option value="">(selecione)</option>
+                  @foreach (var t in Enum.GetValues<TipoRefeicao>())
+                  {
+                    <option value="@t">@t</option>
+                  }
+                </InputSelect>
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <span>Alimentos</span><br />
+                <InputTextArea @bind-Value="rf.Alimentos" rows="2" />
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <span>Horário</span><br />
+                <InputTime @bind-Value="rf.Horario" />
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <span>Calorias</span><br />
+                <InputText @bind-Value="rf.Calorias" placeholder="Ex.: 350" />
+              </label>
+            </div>
+
+            <div>
+              <button type="button" @onclick="@(() => RemoverRefeicao(rf))">Remover</button>
+            </div>
+          </fieldset>
+        }
+      }
+    </section>
 
 </section>
