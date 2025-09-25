@@ -81,6 +81,12 @@ namespace BingoCreator
                 new { Text = "5x5", Value = "5" }
             };
             cboCardsSize.SelectedValue = "5";
+
+            var dt = DataService.GetAllCardSets();
+            cboAddCardsList.DisplayMember = "Name";
+            cboAddCardsList.ValueMember = "Id";
+            cboAddCardsList.DataSource = dt;
+            cboAddCardsList.SelectedIndex = -1;
         }
         private void EditPageLoad()
         {
@@ -681,6 +687,105 @@ namespace BingoCreator
                 lblCardsMessage.Text = "Erro inesperado ao criar cartelas: " + ex.Message;
             }
         }
+        // Criar mais Cartelas
+        private void btnAddCards_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 1) Qual conjunto?
+                if (!TryGetSetIdFromCombo(cboAddCardsList, out int setId, out string setName))
+                {
+                    MessageBox.Show("Selecione um conjunto válido.", "Adicionar cartelas",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 2) Quantas cartelas?
+                int howMany = 0;
+                if (boxAddQuant is NumericUpDown nud)
+                    howMany = (int)nud.Value;
+                else
+                    howMany = int.TryParse(boxAddQuant?.Text, out var v) ? v : 0;
+
+                if (howMany <= 0)
+                {
+                    MessageBox.Show("Informe uma quantidade maior que zero.", "Adicionar cartelas",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                Cursor.Current = Cursors.WaitCursor;
+
+                // 3) Gera e insere novas cartelas (sem duplicar)
+                int created = GeneratingService.AddCardsToSet(setId, howMany);
+
+                Cursor.Current = Cursors.Default;
+
+                // 4) Mostra total atualizado (Quantity é atualizado no AddCardsToSet)
+                var updated = DataService.GetCardSetById(setId);
+                int total = updated?.Quantity ?? 0;
+
+                MessageBox.Show(
+                    $"Adicionadas {created} cartelas ao conjunto \"{setName}\".\n" +
+                    $"Total agora: {total}.",
+                    "Adicionar cartelas",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show("Falha ao adicionar cartelas: " + ex.Message,
+                    "Adicionar cartelas", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Helper para extrair o SetId de uma ComboBox populada de formas diferentes
+        private bool TryGetSetIdFromCombo(ComboBox combo, out int id, out string name)
+        {
+            id = 0; name = "";
+
+            if (combo == null || combo.SelectedItem == null) return false;
+
+            var it = combo.SelectedItem;
+
+            // Se você colocou objetos CardSetModel na combo
+            if (it is CardSetModel m)
+            {
+                id = m.Id;
+                name = m.Name ?? "";
+                return id > 0;
+            }
+
+            // Se a combo está ligada num DataTable (DataRowView)
+            if (it is DataRowView drv)
+            {
+                if (drv.DataView?.Table?.Columns.Contains("Id") == true)
+                    id = Convert.ToInt32(drv["Id"]);
+                name = drv.DataView?.Table?.Columns.Contains("Name") == true
+                     ? (drv["Name"]?.ToString() ?? "")
+                     : (combo.Text ?? "");
+                return id > 0;
+            }
+
+            // Se você configurou ValueMember = "Id"
+            if (combo.SelectedValue is int v && v > 0)
+            {
+                id = v;
+                name = combo.Text ?? "";
+                return true;
+            }
+
+            // Fallback: tenta parsear o texto (não ideal, mas evita travar)
+            if (int.TryParse(combo.SelectedValue?.ToString(), out var v2) && v2 > 0)
+            {
+                id = v2;
+                name = combo.Text ?? "";
+                return true;
+            }
+
+            return false;
+        }
+
 
 
         // Métodos de Importação
@@ -1218,12 +1323,12 @@ namespace BingoCreator
                                               .Select(r => Convert.ToInt32(r["Id"]))
                                               .ToHashSet();
 
-                var all = DataService.GetAllElements(); 
+                var all = DataService.GetAllElements();
 
                 foreach (DataRow r in all.Rows)
                 {
                     int id = Convert.ToInt32(r["Id"]);
-                    if (allocatedIds.Contains(id)) continue; 
+                    if (allocatedIds.Contains(id)) continue;
 
                     string card = r.Table.Columns.Contains("CardName") ? r["CardName"]?.ToString() : null;
                     string name = r.Table.Columns.Contains("Name") ? r["Name"]?.ToString() : null;
@@ -1232,9 +1337,9 @@ namespace BingoCreator
                     var cb = new CheckBox
                     {
                         Text = text,
-                        Tag = id,           
+                        Tag = id,
                         AutoSize = true,
-                        Checked = false,    
+                        Checked = false,
                         Margin = new Padding(8, 4, 8, 4)
                     };
 

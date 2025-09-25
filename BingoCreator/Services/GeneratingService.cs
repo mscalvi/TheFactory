@@ -11,6 +11,7 @@ namespace BingoCreator.Services
 {
     internal class GeneratingService
     {
+        private static readonly Random _rng = new Random();
         public static int CreateCards(CardSetModel cards)
         {
             Random random = new Random();
@@ -124,5 +125,137 @@ namespace BingoCreator.Services
             CardName = r["CardName"]?.ToString() ?? "",
             ImageName = r["ImageName"]?.ToString() ?? ""
         };
+
+
+        public static int AddCardsToSet(int setId, int howMany)
+        {
+            if (setId <= 0 || howMany <= 0) return 0;
+
+            // 1) Carrega metadados do set + pools
+            var set = DataService.GetCardSetById(setId);
+            if (set == null) throw new InvalidOperationException("Set não encontrado.");
+
+            int created = 0;
+            int nextNumber = DataService.GetMaxCardNumberBySetId(setId) + 1;
+
+            if (set.CardsSize == 5)
+            {
+                // pools por coluna (IDs)
+                var poolB = (set.GroupB ?? new List<ElementModel>()).Select(e => e.Id).Distinct().ToList();
+                var poolI = (set.GroupI ?? new List<ElementModel>()).Select(e => e.Id).Distinct().ToList();
+                var poolN = (set.GroupN ?? new List<ElementModel>()).Select(e => e.Id).Distinct().ToList();
+                var poolG = (set.GroupG ?? new List<ElementModel>()).Select(e => e.Id).Distinct().ToList();
+                var poolO = (set.GroupO ?? new List<ElementModel>()).Select(e => e.Id).Distinct().ToList();
+
+                // sanidade
+                if (poolB.Count < 5 || poolI.Count < 5 || poolN.Count < 5 || poolG.Count < 5 || poolO.Count < 5)
+                    throw new InvalidOperationException("Alguma coluna possui menos de 5 elementos disponíveis.");
+
+                var signatures = DataService.GetExistingSignatures5(setId);
+
+                // 2) gera novas cartelas
+                for (int k = 0; k < howMany; k++)
+                {
+                    // tenta algumas permutações diferentes até não colidir
+                    const int MAX_TRIES = 200;
+                    List<int> chosenB = null, chosenI = null, chosenN = null, chosenG = null, chosenO = null;
+                    string sig = null;
+
+                    for (int t = 0; t < MAX_TRIES; t++)
+                    {
+                        chosenB = TakeRandom(poolB, 5);
+                        chosenI = TakeRandom(poolI, 5);
+                        chosenN = TakeRandom(poolN, 5);
+                        chosenG = TakeRandom(poolG, 5);
+                        chosenO = TakeRandom(poolO, 5);
+
+                        var all = new List<int>(25);
+                        all.AddRange(chosenB);
+                        all.AddRange(chosenI);
+                        all.AddRange(chosenN);
+                        all.AddRange(chosenG);
+                        all.AddRange(chosenO);
+
+                        sig = string.Join("-", all);
+                        if (!signatures.Contains(sig))
+                        {
+                            signatures.Add(sig);
+                            break;
+                        }
+                        sig = null;
+                    }
+
+                    if (sig == null)
+                        throw new InvalidOperationException("Não foi possível gerar cartelas novas sem duplicar as já existentes.");
+
+                    // monta na ordem esperada por CreateCard5 (B... O...)
+                    var elementsIds = new List<int>(25);
+                    elementsIds.AddRange(chosenB);
+                    elementsIds.AddRange(chosenI);
+                    elementsIds.AddRange(chosenN);
+                    elementsIds.AddRange(chosenG);
+                    elementsIds.AddRange(chosenO);
+
+                    DataService.CreateCard5(set.ListId, elementsIds, nextNumber++, setId);
+                    created++;
+                }
+            }
+            else if (set.CardsSize == 4)
+            {
+                // pool global de IDs (TODOS os elementos do set, não apenas 16)
+                var pool = (set.AllElements ?? new List<ElementModel>()).Select(e => e.Id).Distinct().ToList();
+                if (pool.Count < 16)
+                    throw new InvalidOperationException("O conjunto 4×4 precisa ter pelo menos 16 elementos disponíveis.");
+
+                var signatures = DataService.GetExistingSignatures4(setId);
+
+                for (int k = 0; k < howMany; k++)
+                {
+                    const int MAX_TRIES = 200;
+                    List<int> chosen = null;
+                    string sig = null;
+
+                    for (int t = 0; t < MAX_TRIES; t++)
+                    {
+                        chosen = TakeRandom(pool, 16);
+                        sig = string.Join("-", chosen);
+                        if (!signatures.Contains(sig))
+                        {
+                            signatures.Add(sig);
+                            break;
+                        }
+                        sig = null;
+                    }
+
+                    if (sig == null)
+                        throw new InvalidOperationException("Não foi possível gerar cartelas novas sem duplicar as já existentes.");
+
+                    DataService.CreateCard4(set.ListId, chosen, nextNumber++, setId);
+                    created++;
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException($"CardsSize inválido ({set.CardsSize}).");
+            }
+
+            // 3) Atualiza Quantity do set
+            DataService.UpdateCardSetQuantity(setId, (set.Quantity) + created);
+
+            return created;
+        }
+
+        // utilitário: sorteia k itens distintos da lista (sem modificar a original)
+        private static List<int> TakeRandom(List<int> source, int k)
+        {
+            var arr = source.ToList(); // cópia
+                                       // Fisher–Yates parcial
+            for (int i = 0; i < k; i++)
+            {
+                int j = _rng.Next(i, arr.Count);
+                (arr[i], arr[j]) = (arr[j], arr[i]);
+            }
+            return arr.Take(k).ToList();
+        }
     }
 }

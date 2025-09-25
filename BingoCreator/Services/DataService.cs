@@ -522,6 +522,91 @@ namespace BingoCreator.Services
             return removed;
         }
 
+        // Máximo número de cartela já existente no set (0 se não há)
+        public static int GetMaxCardNumberBySetId(int setId)
+        {
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+
+            // tenta nas 5x5
+            using (var cmd = new SQLiteCommand(
+                "SELECT IFNULL(MAX(CardNumber),0) FROM CardsList5Table WHERE SetId=@SetId;", conn))
+            {
+                cmd.Parameters.AddWithValue("@SetId", setId);
+                var val = Convert.ToInt32(cmd.ExecuteScalar());
+                if (val > 0) return val;
+            }
+
+            // tenta nas 4x4
+            using (var cmd = new SQLiteCommand(
+                "SELECT IFNULL(MAX(CardNumber),0) FROM CardsList4Table WHERE SetId=@SetId;", conn))
+            {
+                cmd.Parameters.AddWithValue("@SetId", setId);
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        // Assinaturas existentes (5x5): "B1-B2-...-O5"
+        public static HashSet<string> GetExistingSignatures5(int setId)
+        {
+            var set = new HashSet<string>(StringComparer.Ordinal);
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(
+                "SELECT EleB1,EleB2,EleB3,EleB4,EleB5," +
+                "       EleI1,EleI2,EleI3,EleI4,EleI5," +
+                "       EleN1,EleN2,EleN3,EleN4,EleN5," +
+                "       EleG1,EleG2,EleG3,EleG4,EleG5," +
+                "       EleO1,EleO2,EleO3,EleO4,EleO5 " +
+                "FROM CardsList5Table WHERE SetId=@SetId;", conn);
+            cmd.Parameters.AddWithValue("@SetId", setId);
+
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                var ids = new List<int>(25);
+                for (int i = 0; i < 25; i++) ids.Add(Convert.ToInt32(r.GetValue(i)));
+                set.Add(string.Join("-", ids));
+            }
+            return set;
+        }
+
+        // Assinaturas existentes (4x4): "E1-E2-...-E16"
+        public static HashSet<string> GetExistingSignatures4(int setId)
+        {
+            var set = new HashSet<string>(StringComparer.Ordinal);
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(
+                "SELECT Ele1,Ele2,Ele3,Ele4,Ele5,Ele6,Ele7,Ele8," +
+                "       Ele9,Ele10,Ele11,Ele12,Ele13,Ele14,Ele15,Ele16 " +
+                "FROM CardsList4Table WHERE SetId=@SetId;", conn);
+            cmd.Parameters.AddWithValue("@SetId", setId);
+
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                var ids = new List<int>(16);
+                for (int i = 0; i < 16; i++) ids.Add(Convert.ToInt32(r.GetValue(i)));
+                set.Add(string.Join("-", ids));
+            }
+            return set;
+        }
+
+        // Atualiza a quantidade declarada no conjunto
+        public static void UpdateCardSetQuantity(int setId, int newQuantity)
+        {
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+            using var cmd = new SQLiteCommand(
+                "UPDATE CardsSets SET Quantity=@Qnt WHERE SetId=@SetId;", conn);
+            cmd.Parameters.AddWithValue("@Qnt", newQuantity);
+            cmd.Parameters.AddWithValue("@SetId", setId);
+            cmd.ExecuteNonQuery();
+        }
+
 
 
         // Exportação
