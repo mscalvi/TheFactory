@@ -127,7 +127,7 @@ namespace BingoCreator.Services
                 list.Description = "*";
             }
 
-            if (!string.IsNullOrEmpty(list.Name))
+            if (string.IsNullOrEmpty(list.Name))
             {
                 return new ErrorModel
                 {
@@ -159,7 +159,7 @@ namespace BingoCreator.Services
 
             try
             {
-                string relativePath = Path.Combine("images", "capa." + list.Name + ".png");
+                string relativePath = Path.Combine("images", ".Capa.png");
                 list.Id = DataService.CreateList(list.Name, list.Description, relativePath);
 
                 return new ErrorModel
@@ -198,6 +198,7 @@ namespace BingoCreator.Services
             ListModel list = DataService.GetListById(cards.ListId);
             cards.ListName = list.Name;
             cards.ListSize = list.ElementCount;
+            cards.ImageName = list.ImageName;
 
             if (string.IsNullOrEmpty(cards.Name))
             {

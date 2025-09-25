@@ -103,6 +103,7 @@ namespace BingoCreator.Services
                 Title     TEXT NOT NULL,
                 End       TEXT,
                 Quantity  INTEGER NOT NULL,
+                ImageName TEXT,
                 Name      TEXT UNIQUE,
                 CardsSize INTEGER NOT NULL,
                 AddTime   TEXT,
@@ -260,11 +261,11 @@ namespace BingoCreator.Services
             {
                 string sql = @"
             INSERT INTO CardsSets
-                (ListId, Name, Title, End, Quantity, CardsSize,
+                (ListId, Name, Title, End, Quantity, CardsSize, ImageName,
                  GroupB, GroupI, GroupN, GroupG, GroupO, Elements,
                  AddTime, Theme, Header, Model)
             VALUES
-                (@ListId, @Name, @Title, @End, @Quantity, @CardsSize,
+                (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @ImageName,
                  @GroupB, @GroupI, @GroupN, @GroupG, @GroupO, @Elements,
                  @AddTime, @Theme, @Header, @Model);
             SELECT last_insert_rowid();";
@@ -276,6 +277,7 @@ namespace BingoCreator.Services
                 cmd.Parameters.AddWithValue("@End", cards.End ?? "");
                 cmd.Parameters.AddWithValue("@Quantity", cards.Quantity);
                 cmd.Parameters.AddWithValue("@CardsSize", cards.CardsSize);
+                cmd.Parameters.AddWithValue("@ImageName", cards.ImageName ?? "");
 
                 string groupB = !string.IsNullOrWhiteSpace(cards.GroupBIds) ? cards.GroupBIds
                                  : string.Join(",", (cards.GroupB ?? Enumerable.Empty<ElementModel>()).Select(e => e.Id));
@@ -358,10 +360,10 @@ namespace BingoCreator.Services
 
                 string sql = @"
         INSERT INTO CardsSets
-            (ListId, Name, Title, End, Quantity, CardsSize, Elements,
+            (ListId, Name, Title, End, Quantity, CardsSize, Elements, ImageName,
              AddTime, Theme, Header, Model)
         VALUES
-            (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @Elements,
+            (@ListId, @Name, @Title, @End, @Quantity, @CardsSize, @Elements, @ImageName,
              @AddTime, @Theme, @Header, @Model);
         SELECT last_insert_rowid();";
 
@@ -372,6 +374,7 @@ namespace BingoCreator.Services
                 cmd.Parameters.AddWithValue("@End", cards.End ?? "");
                 cmd.Parameters.AddWithValue("@Quantity", cards.Quantity);
                 cmd.Parameters.AddWithValue("@CardsSize", cards.CardsSize);
+                cmd.Parameters.AddWithValue("@ImageName", cards.ImageName ?? "");
                 cmd.Parameters.AddWithValue("@Elements", elementsStr);
                 cmd.Parameters.AddWithValue("@AddTime", addTime);
                 cmd.Parameters.AddWithValue("@Theme", cards.Theme ?? "");
@@ -479,6 +482,47 @@ namespace BingoCreator.Services
             }
         }
 
+        // Confere se Elemento já está em uma Lista
+        public static bool IsElementInList(int listId, int elementId)
+        {
+            const string sql = @"SELECT 1 FROM AlocationTable 
+                         WHERE ListId=@ListId AND ElementId=@ElementId LIMIT 1;";
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+            using var cmd = new SQLiteCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@ListId", listId);
+            cmd.Parameters.AddWithValue("@ElementId", elementId);
+            return cmd.ExecuteScalar() != null;
+        }
+
+        // Remove lista de Elementos de uma Lista
+        public static int RemoveElementsFromList(int listId, IEnumerable<int> elementIds)
+        {
+            var ids = elementIds?.Distinct().ToList();
+            if (listId <= 0 || ids == null || ids.Count == 0) return 0;
+
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+            using var tx = conn.BeginTransaction();
+
+            // cria parâmetros dinâmicos para o IN
+            var paramNames = new List<string>();
+            for (int i = 0; i < ids.Count; i++) paramNames.Add($"@E{i}");
+
+            string sql = $@"DELETE FROM AlocationTable
+                    WHERE ListId = @ListId AND ElementId IN ({string.Join(",", paramNames)});";
+
+            using var cmd = new SQLiteCommand(sql, conn, tx);
+            cmd.Parameters.AddWithValue("@ListId", listId);
+            for (int i = 0; i < ids.Count; i++)
+                cmd.Parameters.AddWithValue(paramNames[i], ids[i]);
+
+            int removed = cmd.ExecuteNonQuery();
+            tx.Commit();
+            return removed;
+        }
+
+
 
         // Exportação
         // Método de Conexão
@@ -530,6 +574,7 @@ namespace BingoCreator.Services
             SetId INTEGER PRIMARY KEY,
             Title TEXT,
             Qnt INTEGER,
+            ImageName TEXT,
             GroupB TEXT,
             GroupI TEXT,
             GroupN TEXT,
@@ -598,7 +643,7 @@ namespace BingoCreator.Services
             using var conn = new SQLiteConnection(_connectionString);
             conn.Open();
             const string sql = @"
-        SELECT SetId, Title, Quantity, GroupB, GroupI, GroupN, GroupG, GroupO
+        SELECT SetId, Title, ImageName, Quantity, GroupB, GroupI, GroupN, GroupG, GroupO
         FROM CardsSets
         WHERE SetId = @SetId AND CardsSize = 5
         LIMIT 1;";
@@ -662,6 +707,7 @@ namespace BingoCreator.Services
 
             string title = setRow["Title"]?.ToString() ?? "";
             int quantity = Convert.ToInt32(setRow["Quantity"]);
+            string image = setRow["ImageName"]?.ToString() ?? "";
             string groupB = setRow["GroupB"]?.ToString() ?? "";
             string groupI = setRow["GroupI"]?.ToString() ?? "";
             string groupN = setRow["GroupN"]?.ToString() ?? "";
@@ -670,12 +716,13 @@ namespace BingoCreator.Services
 
             // CardsSets no DB do jogo (SetId=0)
             const string insertSet = @"
-        INSERT INTO CardsSets (SetId, Title, Qnt, GroupB, GroupI, GroupN, GroupG, GroupO)
-        VALUES (0, @Title, @Qnt, @GroupB, @GroupI, @GroupN, @GroupG, @GroupO);";
+        INSERT INTO CardsSets (SetId, Title, Qnt, ImageName, GroupB, GroupI, GroupN, GroupG, GroupO)
+        VALUES (0, @Title, @Qnt, @ImageName, @GroupB, @GroupI, @GroupN, @GroupG, @GroupO);";
             using (var cmd = new SQLiteCommand(insertSet, conn))
             {
                 cmd.Parameters.AddWithValue("@Title", title);
                 cmd.Parameters.AddWithValue("@Qnt", quantity);
+                cmd.Parameters.AddWithValue("@ImageName", image);
                 cmd.Parameters.AddWithValue("@GroupB", groupB);
                 cmd.Parameters.AddWithValue("@GroupI", groupI);
                 cmd.Parameters.AddWithValue("@GroupN", groupN);

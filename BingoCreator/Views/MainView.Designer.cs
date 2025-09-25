@@ -56,6 +56,15 @@
             lblListDescription = new Label();
             lblListName = new Label();
             lblListTitle = new Label();
+            tabCreateAlocation = new TabPage();
+            btnAlocateRemove = new Button();
+            btnAlocateAdd = new Button();
+            pnlAlocateElements = new Panel();
+            flwAlocateElements = new FlowLayoutPanel();
+            pnlAlocateList = new Panel();
+            flwAlocateList = new FlowLayoutPanel();
+            lblAlocateTitle = new Label();
+            cboAlocateList = new ComboBox();
             tabCreateCards = new TabPage();
             lblCardsSize = new Label();
             cboCardsSize = new ComboBox();
@@ -105,6 +114,9 @@
             tabControlCreate.SuspendLayout();
             tabCreateElement.SuspendLayout();
             tabCreateList.SuspendLayout();
+            tabCreateAlocation.SuspendLayout();
+            pnlAlocateElements.SuspendLayout();
+            pnlAlocateList.SuspendLayout();
             tabCreateCards.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).BeginInit();
             tabEditPage.SuspendLayout();
@@ -148,6 +160,7 @@
             // 
             tabControlCreate.Controls.Add(tabCreateElement);
             tabControlCreate.Controls.Add(tabCreateList);
+            tabControlCreate.Controls.Add(tabCreateAlocation);
             tabControlCreate.Controls.Add(tabCreateCards);
             tabControlCreate.Dock = DockStyle.Fill;
             tabControlCreate.Location = new Point(3, 3);
@@ -431,6 +444,102 @@
             lblListTitle.TabIndex = 13;
             lblListTitle.Text = "Criar Lista";
             lblListTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // tabCreateAlocation
+            // 
+            tabCreateAlocation.Controls.Add(btnAlocateRemove);
+            tabCreateAlocation.Controls.Add(btnAlocateAdd);
+            tabCreateAlocation.Controls.Add(pnlAlocateElements);
+            tabCreateAlocation.Controls.Add(pnlAlocateList);
+            tabCreateAlocation.Controls.Add(lblAlocateTitle);
+            tabCreateAlocation.Controls.Add(cboAlocateList);
+            tabCreateAlocation.Location = new Point(4, 24);
+            tabCreateAlocation.Name = "tabCreateAlocation";
+            tabCreateAlocation.Size = new Size(1168, 646);
+            tabCreateAlocation.TabIndex = 3;
+            tabCreateAlocation.Text = "Alocate";
+            tabCreateAlocation.UseVisualStyleBackColor = true;
+            // 
+            // btnAlocateRemove
+            // 
+            btnAlocateRemove.Anchor = AnchorStyles.Top;
+            btnAlocateRemove.Location = new Point(737, 585);
+            btnAlocateRemove.Name = "btnAlocateRemove";
+            btnAlocateRemove.Size = new Size(428, 58);
+            btnAlocateRemove.TabIndex = 18;
+            btnAlocateRemove.Text = "Remover";
+            btnAlocateRemove.UseVisualStyleBackColor = true;
+            btnAlocateRemove.Click += btnAlocateRemove_Click;
+            // 
+            // btnAlocateAdd
+            // 
+            btnAlocateAdd.Anchor = AnchorStyles.Top;
+            btnAlocateAdd.Location = new Point(307, 585);
+            btnAlocateAdd.Name = "btnAlocateAdd";
+            btnAlocateAdd.Size = new Size(428, 58);
+            btnAlocateAdd.TabIndex = 17;
+            btnAlocateAdd.Text = "Adicionar";
+            btnAlocateAdd.UseVisualStyleBackColor = true;
+            btnAlocateAdd.Click += btnAlocateAdd_Click;
+            // 
+            // pnlAlocateElements
+            // 
+            pnlAlocateElements.Anchor = AnchorStyles.Top;
+            pnlAlocateElements.Controls.Add(flwAlocateElements);
+            pnlAlocateElements.Location = new Point(307, 90);
+            pnlAlocateElements.Name = "pnlAlocateElements";
+            pnlAlocateElements.Size = new Size(858, 489);
+            pnlAlocateElements.TabIndex = 16;
+            // 
+            // flwAlocateElements
+            // 
+            flwAlocateElements.AutoScroll = true;
+            flwAlocateElements.AutoSize = true;
+            flwAlocateElements.Dock = DockStyle.Fill;
+            flwAlocateElements.Location = new Point(0, 0);
+            flwAlocateElements.Name = "flwAlocateElements";
+            flwAlocateElements.Size = new Size(858, 489);
+            flwAlocateElements.TabIndex = 0;
+            // 
+            // pnlAlocateList
+            // 
+            pnlAlocateList.Anchor = AnchorStyles.Top;
+            pnlAlocateList.Controls.Add(flwAlocateList);
+            pnlAlocateList.Location = new Point(3, 119);
+            pnlAlocateList.Name = "pnlAlocateList";
+            pnlAlocateList.Size = new Size(298, 524);
+            pnlAlocateList.TabIndex = 15;
+            // 
+            // flwAlocateList
+            // 
+            flwAlocateList.AutoScroll = true;
+            flwAlocateList.AutoSize = true;
+            flwAlocateList.Dock = DockStyle.Fill;
+            flwAlocateList.Location = new Point(0, 0);
+            flwAlocateList.Name = "flwAlocateList";
+            flwAlocateList.Size = new Size(298, 524);
+            flwAlocateList.TabIndex = 0;
+            // 
+            // lblAlocateTitle
+            // 
+            lblAlocateTitle.Dock = DockStyle.Top;
+            lblAlocateTitle.Font = new Font("Segoe UI", 16F);
+            lblAlocateTitle.Location = new Point(0, 0);
+            lblAlocateTitle.Name = "lblAlocateTitle";
+            lblAlocateTitle.Size = new Size(1168, 87);
+            lblAlocateTitle.TabIndex = 14;
+            lblAlocateTitle.Text = "Alocar Elementos";
+            lblAlocateTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // cboAlocateList
+            // 
+            cboAlocateList.Anchor = AnchorStyles.Top;
+            cboAlocateList.FormattingEnabled = true;
+            cboAlocateList.Location = new Point(3, 90);
+            cboAlocateList.Name = "cboAlocateList";
+            cboAlocateList.Size = new Size(298, 23);
+            cboAlocateList.TabIndex = 0;
+            cboAlocateList.SelectedIndexChanged += cboAlocateList_SelectedIndexChanged;
             // 
             // tabCreateCards
             // 
@@ -949,6 +1058,11 @@
             tabCreateElement.PerformLayout();
             tabCreateList.ResumeLayout(false);
             tabCreateList.PerformLayout();
+            tabCreateAlocation.ResumeLayout(false);
+            pnlAlocateElements.ResumeLayout(false);
+            pnlAlocateElements.PerformLayout();
+            pnlAlocateList.ResumeLayout(false);
+            pnlAlocateList.PerformLayout();
             tabCreateCards.ResumeLayout(false);
             tabCreateCards.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).EndInit();
@@ -1032,5 +1146,14 @@
         private Label lblCardsSize;
         private ComboBox cboCardsSize;
         private Button btnEditDeleteAll;
+        private TabPage tabCreateAlocation;
+        private Panel pnlAlocateElements;
+        private FlowLayoutPanel flwAlocateElements;
+        private Panel pnlAlocateList;
+        private FlowLayoutPanel flwAlocateList;
+        private Label lblAlocateTitle;
+        private ComboBox cboAlocateList;
+        private Button btnAlocateRemove;
+        private Button btnAlocateAdd;
     }
 }

@@ -1,16 +1,7 @@
 using BingoCreator.Models;
 using BingoCreator.Services;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.Infrastructure;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Reflection.PortableExecutable;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace BingoCreator
 {
@@ -45,15 +36,17 @@ namespace BingoCreator
 
             cboElementList.Items.Clear();
             cboCardsList.Items.Clear();
+            cboCardsList.Items.Clear();
             foreach (var lm in lists)
             {
                 cboElementList.Items.Add(lm);
                 cboCardsList.Items.Add(lm);
+                cboAlocateList.Items.Add(lm);
             }
             cboElementList.DisplayMember = "Name";
             cboCardsList.DisplayMember = "Name";
+            cboAlocateList.DisplayMember = "Name";
 
-            // Temas / modelo / cabeçalho (como você já tinha)
             var themeOptions = ThemeCatalog.All
                 .Select(k => new ThemeOption { Key = k.Key, Name = k.Value.DisplayName })
                 .ToList();
@@ -517,6 +510,14 @@ namespace BingoCreator
                     boxElementNote1.Text = "";
                     boxElementNote2.Text = "";
                     cboElementList.SelectedIndex = -1;
+
+                    EditPageLoad();
+                    CreatePageLoad();
+                }
+                else
+                {
+                    lblElementMessage.Text = $"{creation.Message}";
+                    return;
                 }
             }
             catch (Exception ex)
@@ -547,6 +548,12 @@ namespace BingoCreator
                     boxListDescription.Text = "";
 
                     CreatePageLoad();
+                    EditPageLoad();
+                }
+                else
+                {
+                    lblListMessage.Text = $"{creation.Message}";
+                    return;
                 }
             }
             catch (Exception ex)
@@ -560,14 +567,21 @@ namespace BingoCreator
             btnCardsExport.Enabled = false;
 
             CardSetModel cards = new CardSetModel();
+            ListModel list = new ListModel();
+
+            list = cboCardsList.SelectedItem as ListModel;
+            if (list == null)
+            {
+                lblCardsMessage.Text = "Dados insuficientes";
+                btnCardsExport.Enabled = true;
+                return;
+            }
+            cards.ListId = list.Id;
 
             cards.Name = boxCardsName.Text.Trim();
             cards.Title = boxCardsTitle.Text.Trim();
             cards.End = boxCardsEnd.Text.Trim();
             cards.Quantity = (int)boxCardsQuantity.Value;
-
-            var list = cboCardsList.SelectedItem as ListModel;
-            cards.ListId = list.Id;
 
             cards.Theme = cboCardsTheme.SelectedValue as string ?? "MINIMAL";
             cards.Model = (cboCardsModel.SelectedValue as string) ?? "SQUARE";
@@ -594,6 +608,20 @@ namespace BingoCreator
                     cboCardsTheme.SelectedIndex = -1;
                     btnCardsExport.Enabled = true;
                     cboCardsList.SelectedIndex = -1;
+                }
+                else
+                {
+                    lblCardsMessage.Text = $"{creation.Message}";
+
+                    boxCardsName.Text = string.Empty;
+                    boxCardsQuantity.Value = 100;
+                    boxCardsTitle.Text = string.Empty;
+                    boxCardsEnd.Text = string.Empty;
+                    cboCardsList.SelectedIndex = -1;
+                    cboCardsTheme.SelectedIndex = -1;
+                    btnCardsExport.Enabled = true;
+                    cboCardsList.SelectedIndex = -1;
+                    return;
                 }
 
                 var printAns = MessageBox.Show(
@@ -623,17 +651,29 @@ namespace BingoCreator
                             {
                                 ExportingService.ExportDataBase(creation.Id);
                                 lblCardsMessage.Text = "Banco de dados exportado com sucesso";
+                                EditPageLoad();
+                                CreatePageLoad();
                             }
                             catch (Exception ex)
                             {
                                 lblCardsMessage.Text = "Erro inesperado ao exportar o banco de dados: " + ex.Message;
                             }
                         }
+                        else
+                        {
+                            EditPageLoad();
+                            CreatePageLoad();
+                        }
                     }
                     catch (Exception ex)
                     {
                         lblCardsMessage.Text = "Erro inesperado ao gerar PDFs: " + ex.Message;
                     }
+                }
+                else
+                {
+                    EditPageLoad();
+                    CreatePageLoad();
                 }
             }
             catch (Exception ex)
@@ -670,121 +710,30 @@ namespace BingoCreator
                 return;
             }
 
-            // 1.1) Localiza a capa (filename sem extensão == ".Capa")
-            string coverFile = imageFiles
-                .FirstOrDefault(f =>
-                    Path.GetFileNameWithoutExtension(f)
-                        .Equals(".Capa", StringComparison.OrdinalIgnoreCase)
-                );
-
-            // 2) Cria a lista no banco
-            string coverImageName = coverFile != null
-                ? Path.GetFileName(coverFile)
-                : null;
-
-            int listId;
             try
             {
-                listId = DataService.CreateList(listName, description: "", imagename: coverImageName);
+                ErrorModel creation = ImportingService.ImportImages(imageFiles, listName);
+
+                if (creation.Success)
+                {
+                    boxListName.Text = "";
+                    boxListDescription.Text = "";
+
+                    MessageBox.Show("Sucesso ao importar a Lista", "Importar Pasta de Imagens", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    EditPageLoad();
+                    CreatePageLoad();
+                }
+                else
+                {
+                    MessageBox.Show($"Erro ao importar a Lista: {creation.Message}", "Importar Pasta de Imagens", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Falha ao criar a lista \"{listName}\": {ex.Message}",
-                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show("Erro desconhecido ao importar a Lista", "Importar Pasta de Imagens", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
-            // 3) Importa cada arquivo de elemento (todos exceto a capa),
-            // registrando não importados e motivos
-            var notImported = new List<(string Name, string Reason)>();
-            var seenBaseNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            int importedCount = 0;
-
-            foreach (var file in imageFiles)
-            {
-                string fileNameNoExt = Path.GetFileNameWithoutExtension(file);
-                if (fileNameNoExt.Equals(".Capa", StringComparison.OrdinalIgnoreCase))
-                    continue; // pula a capa
-
-                string baseName = fileNameNoExt?.Trim() ?? "";
-
-                // Nome vazio ou só espaços
-                if (string.IsNullOrWhiteSpace(baseName))
-                {
-                    notImported.Add((Path.GetFileName(file), "Nome vazio (arquivo com nome inválido)."));
-                    continue;
-                }
-
-                // Duplicata dentro da própria pasta (mesmo baseName em png/jpg, etc.)
-                if (!seenBaseNames.Add(baseName))
-                {
-                    notImported.Add((baseName, "Duplicado na pasta (mesmo nome-base)."));
-                    continue;
-                }
-
-                // Tenta criar o elemento
-                int elementId = 0;
-                try
-                {
-                    elementId = DataService.CreateElement(
-                        name: baseName,
-                        cardName: baseName,
-                        note1: "",
-                        note2: "",
-                        imageName: Path.GetFileName(file),
-                        addTime: DateTime.Now.ToString("MMddyyyy - HH:mm:ss")
-                    );
-
-                    if (elementId <= 0)
-                    {
-                        notImported.Add((baseName, "Falha ao criar elemento (ID inválido retornado)."));
-                        continue;
-                    }
-                }
-                catch (Exception exCreate)
-                {
-                    // Se o backend lançar exceção por chave única/duplicata etc., a mensagem vai junto
-                    notImported.Add((baseName, $"Erro ao criar: {exCreate.Message}"));
-                    continue;
-                }
-
-                // Tenta associar na lista
-                try
-                {
-                    DataService.AlocateElements(listId, new List<int> { elementId });
-                    importedCount++;
-                }
-                catch (Exception exLink)
-                {
-                    // Elemento foi criado mas não conseguiu associar
-                    notImported.Add((baseName, $"Criado, mas falha ao associar na lista: {exLink.Message}"));
-                    // (Opcional) você poderia tentar desfazer a criação aqui, se tiver método para isso.
-                }
-            }
-
-            // 4) Monta a mensagem final
-            var sb = new StringBuilder();
-            sb.AppendLine($"Importação concluída para a lista \"{listName}\".");
-            sb.AppendLine($"Itens importados: {importedCount}/{imageFiles.Count - (coverFile != null ? 1 : 0)}");
-
-            if (coverFile == null)
-                sb.AppendLine("Atenção: arquivo de capa \".Capa\" não foi encontrado.");
-
-            if (notImported.Count > 0)
-            {
-                sb.AppendLine();
-                sb.AppendLine("Não importados (nome: motivo):");
-                // Limita a 30 linhas para não estourar MessageBox; ajuste se quiser
-                foreach (var (name, reason) in notImported.Take(30))
-                    sb.AppendLine($"- {name}: {reason}");
-                if (notImported.Count > 30)
-                    sb.AppendLine($"... e mais {notImported.Count - 30} itens.");
-            }
-
-            MessageBox.Show(sb.ToString(), "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            // Recarrega combobox de listas, se for o caso
-            CreatePageLoad();
         }
 
         // Importar Lista por TXT, remove acentos e caracteres não permitidos
@@ -804,80 +753,30 @@ namespace BingoCreator
             string path = ofd.FileName;
             string listName = Path.GetFileNameWithoutExtension(path);
 
-            string text;
             try
             {
-                text = File.ReadAllText(path, Encoding.UTF8);
-            }
-            catch (DecoderFallbackException)
-            {
-                text = File.ReadAllText(path, Encoding.GetEncoding(1252)); // fallback pt-BR comum
-            }
+                ErrorModel creation = ImportingService.ImportTxt(path, listName);
 
-            // tokeniza: quebra por linha e também aceita vírgula, ponto-e-vírgula e TAB
-            var rawTokens = text
-                .Replace("\r\n", "\n").Replace("\r", "\n")
-                .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .SelectMany(l => l.Split(new[] { ',', ';', '\t' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                .Select(t => t.Trim());
-
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase); // dedup após limpeza
-            var aprovados = new List<string>();
-            var rejeitados = new List<string>();
-
-            foreach (var raw in rawTokens)
-            {
-                var name = raw.Trim(); // sem limpeza de acentos/especiais
-
-                if (string.IsNullOrWhiteSpace(name))
-                    continue;
-
-                if (name.Length > 50)
+                if (creation.Success)
                 {
-                    rejeitados.Add($"{raw}  — > 50 caracteres");
-                    continue;
+                    boxListName.Text = "";
+                    boxListDescription.Text = "";
+
+                    MessageBox.Show("Sucesso ao importar a Lista", "Importar Arquivo TXT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    EditPageLoad();
+                    CreatePageLoad();
+                }
+                else
+                {
+                    MessageBox.Show($"Erro ao importar a Lista: {creation.Message}", "Importar Arquivo TXT", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
-                if (!seen.Add(name)) // dedup case-insensitive do texto original
-                    continue;
-
-                aprovados.Add(name);
             }
-
-            // cria a lista sem imagem de capa
-            int listId = DataService.CreateList(listName, description: "", imagename: null);
-
-            foreach (var name in aprovados)
+            catch (Exception ex)
             {
-                int elementId = DataService.CreateElement(
-                    name: name,               // igual ao cardName
-                    cardName: name,
-                    note1: "",
-                    note2: "",
-                    imageName: null,          // sem imagem
-                    addTime: DateTime.Now.ToString("MMddyyyy - HH:mm:ss")
-                );
-
-                DataService.AlocateElements(listId, new List<int> { elementId });
+                MessageBox.Show("Erro desconhecido ao importar a Lista", "Importar Arquivo TXT", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
-            // feedback
-            var msg = $"Lista \"{listName}\": {aprovados.Count} itens importados";
-            if (rejeitados.Count > 0)
-            {
-                msg += $"\n{rejeitados.Count} rejeitados por regra.";
-                // Mostra até 20 exemplos
-                var exemplos = string.Join("\n", rejeitados.Take(20));
-                MessageBox.Show($"{msg}\n\nExemplos de rejeitados:\n{exemplos}",
-                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else
-            {
-                MessageBox.Show(msg, "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
-            // recarrega UI se necessário
-            CreatePageLoad();
         }
 
 
@@ -907,6 +806,8 @@ namespace BingoCreator
                         cboEdit2.SelectedIndex = -1;
                         cboEdit3.SelectedIndex = -1;
                         ClearEditFields();
+                        EditPageLoad();
+                        CreatePageLoad();
                     }
                     else
                     {
@@ -932,6 +833,8 @@ namespace BingoCreator
                         cboEdit2.SelectedIndex = -1;
                         cboEdit3.SelectedIndex = -1;
                         ClearEditFields();
+                        EditPageLoad();
+                        CreatePageLoad();
                     }
                     else
                     {
@@ -958,6 +861,8 @@ namespace BingoCreator
                         cboEdit2.SelectedIndex = -1;
                         cboEdit3.SelectedIndex = -1;
                         ClearEditFields();
+                        EditPageLoad();
+                        CreatePageLoad();
                     }
                     else
                     {
@@ -1004,6 +909,8 @@ namespace BingoCreator
                 cboEdit2.SelectedIndex = -1;
                 cboEdit3.SelectedIndex = -1;
                 ClearEditFields();
+                EditPageLoad();
+                CreatePageLoad();
             }
             catch (Exception ex)
             {
@@ -1011,7 +918,6 @@ namespace BingoCreator
                     "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void btnEditEdit_Click(object sender, EventArgs e)
         {
             try
@@ -1052,6 +958,8 @@ namespace BingoCreator
                         cboEdit2.SelectedIndex = -1;
                         cboEdit3.SelectedIndex = -1;
                         ClearEditFields();
+                        EditPageLoad();
+                        CreatePageLoad();
                     }
                     else
                     {
@@ -1084,6 +992,8 @@ namespace BingoCreator
                         cboEdit2.SelectedIndex = -1;
                         cboEdit3.SelectedIndex = -1;
                         ClearEditFields();
+                        EditPageLoad();
+                        CreatePageLoad();
                     }
                 }
                 // Conjunto
@@ -1111,6 +1021,8 @@ namespace BingoCreator
                         cboEdit2.SelectedIndex = -1;
                         cboEdit3.SelectedIndex = -1;
                         ClearEditFields();
+                        EditPageLoad();
+                        CreatePageLoad();
                     }
                 }
                 else
@@ -1123,6 +1035,77 @@ namespace BingoCreator
             {
                 MessageBox.Show("Erro ao editar: " + ex.Message, "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Alocar Elementos
+        private void cboAlocateList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ListModel list = new ListModel();
+
+            list = cboAlocateList.SelectedItem as ListModel;
+
+            RenderAlocateListElements(list.Id);
+            RenderNotAlocatedListElements(list.Id);
+        }
+
+        private void btnAlocateRemove_Click(object sender, EventArgs e)
+        {
+            if (cboAlocateList.SelectedItem is not ListModel list || list.Id <= 0)
+            {
+                MessageBox.Show("Selecione uma lista primeiro.", "Alocação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var ids = GetCheckedElementIds(flwAlocateList);
+            if (ids.Count == 0)
+            {
+                MessageBox.Show("Nenhum elemento marcado para remover.", "Alocação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                var removed = DataService.RemoveElementsFromList(list.Id, ids);
+                // removed pode ser int (linhas afetadas) ou bool, dependendo de como você implementou
+                // aqui só atualizamos a UI.
+                RenderAlocateListElements(list.Id);
+                RenderNotAlocatedListElements(list.Id);
+
+                MessageBox.Show("Elementos removidos da lista.", "Alocação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Falha ao remover elementos: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnAlocateAdd_Click(object sender, EventArgs e)
+        {
+            if (cboAlocateList.SelectedItem is not ListModel list || list.Id <= 0)
+            {
+                MessageBox.Show("Selecione uma lista primeiro.", "Alocação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var ids = GetCheckedElementIds(flwAlocateElements);
+            if (ids.Count == 0)
+            {
+                MessageBox.Show("Nenhum elemento marcado para adicionar.", "Alocação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                DataService.AlocateElements(list.Id, ids);
+                RenderAlocateListElements(list.Id);
+                RenderNotAlocatedListElements(list.Id);
+
+                MessageBox.Show("Elementos adicionados à lista.", "Alocação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Falha ao adicionar elementos: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1189,6 +1172,91 @@ namespace BingoCreator
             {
                 cboCardsHeader.Enabled = true;
             }
+        }
+        private void RenderAlocateListElements(int listId)
+        {
+            flwAlocateList.SuspendLayout();
+            try
+            {
+                flwAlocateList.Controls.Clear();
+
+                // elementos da lista (já alocados)
+                var rows = DataService.GetElementsInList(listId); // Id, Name, CardName, ImageName
+
+                foreach (var r in rows)
+                {
+                    int id = Convert.ToInt32(r["Id"]);
+                    string card = r.Table.Columns.Contains("CardName") ? r["CardName"]?.ToString() : null;
+                    string name = r.Table.Columns.Contains("Name") ? r["Name"]?.ToString() : null;
+                    string text = string.IsNullOrWhiteSpace(card) ? (name ?? "") : card!.Trim();
+
+                    var cb = new CheckBox
+                    {
+                        Text = text,
+                        Tag = id,
+                        AutoSize = true,
+                        Checked = false,
+                        Margin = new Padding(8, 4, 8, 4)
+                    };
+
+                    flwAlocateList.Controls.Add(cb);
+                }
+            }
+            finally
+            {
+                flwAlocateList.ResumeLayout();
+            }
+        }
+        private void RenderNotAlocatedListElements(int listId)
+        {
+            flwAlocateElements.SuspendLayout();
+            try
+            {
+                flwAlocateElements.Controls.Clear();
+
+                var allocatedIds = DataService.GetElementsInList(listId)
+                                              .Select(r => Convert.ToInt32(r["Id"]))
+                                              .ToHashSet();
+
+                var all = DataService.GetAllElements(); 
+
+                foreach (DataRow r in all.Rows)
+                {
+                    int id = Convert.ToInt32(r["Id"]);
+                    if (allocatedIds.Contains(id)) continue; 
+
+                    string card = r.Table.Columns.Contains("CardName") ? r["CardName"]?.ToString() : null;
+                    string name = r.Table.Columns.Contains("Name") ? r["Name"]?.ToString() : null;
+                    string text = string.IsNullOrWhiteSpace(card) ? (name ?? "") : card!.Trim();
+
+                    var cb = new CheckBox
+                    {
+                        Text = text,
+                        Tag = id,           
+                        AutoSize = true,
+                        Checked = false,    
+                        Margin = new Padding(8, 4, 8, 4)
+                    };
+
+                    flwAlocateElements.Controls.Add(cb);
+                }
+            }
+            finally
+            {
+                flwAlocateElements.ResumeLayout();
+            }
+        }
+        private static List<int> GetCheckedElementIds(Control container)
+        {
+            var ids = new List<int>();
+
+            foreach (Control c in container.Controls)
+            {
+                if (c is CheckBox cb && cb.Checked && cb.Tag is int id && id > 0)
+                    ids.Add(id);
+            }
+
+            return ids;
         }
 
     }

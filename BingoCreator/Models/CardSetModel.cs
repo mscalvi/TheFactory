@@ -17,6 +17,7 @@ namespace BingoCreator.Models
         public string Title { get; set; }
         public string End {  get; set; }
         public int Quantity { get; set; }
+        public string ImageName { get; set; }
         public int CardsSize { get; set; }
         public string Theme { get; set; }
         public string Header { get; set; }
