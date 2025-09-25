@@ -328,6 +328,7 @@ namespace BingoCreator
 
             btnEditEdit.Enabled = false;
             btnEditExclude.Enabled = false;
+            btnEditDeleteAll.Enabled = false;
 
             lblEditText1.Text = lblEditText2.Text = lblEditText3.Text = lblEditText4.Text = lblEditText5.Text = "";
             boxEditText1.Text = boxEditText2.Text = boxEditText3.Text = boxEditText4.Text = boxEditText5.Text = "";
@@ -370,18 +371,17 @@ namespace BingoCreator
             lblEditMessage.Text = $"Id do Conjunto selecionado: {set.Id.ToString()}";
 
             lblEditText1.Text = "Nome:";
-            lblEditText2.Text = "Título e Final:";
-            lblEditText3.Text = "Estilo:";
-            lblEditText4.Text = "Cartelas Criadas:";
-            lblEditText5.Text = "Lista:";
+            lblEditText2.Text = "Título:";
+            lblEditText3.Text = "Final:";
+            lblEditText4.Text = "Estilo:";
+            lblEditText5.Text = "Lista e Total de Cartelas:";
 
-            boxEditText1.Text = set.Name ?? "";
-            boxEditText2.Text = $"{set.Title} - {set.End}";
-            boxEditText3.Text = $"{set.Model}, {set.Theme}, Tamanho {set.CardsSize}";
-            boxEditText4.Text = set.Quantity.ToString();
-            boxEditText5.Text = $"{set.ListName}, {set.ListSize} Elementos";
+            boxEditText1.Text = set.Name;
+            boxEditText2.Text = set.Title;
+            boxEditText3.Text = set.End;
+            boxEditText4.Text = $"{set.Model}, {set.Theme}, Tamanho {set.CardsSize}";
+            boxEditText5.Text = $"{set.ListName}, {set.ListSize} Elementos, {set.Quantity.ToString()} Cartelas";
 
-            boxEditText3.Enabled = false;
             boxEditText4.Enabled = false;
             boxEditText5.Enabled = false;
 
@@ -398,6 +398,7 @@ namespace BingoCreator
             ActiveListId = list.Id;
             btnEditEdit.Enabled = true;
             btnEditExclude.Enabled = true;
+            btnEditDeleteAll.Enabled = true;
 
             lblEditMessage.Text = $"Id da Lista selecionada: {list.Id.ToString()}";
 
@@ -886,37 +887,244 @@ namespace BingoCreator
         private int ActiveElementId = -1;
         private void btnEditExclude_Click(object sender, EventArgs e)
         {
-            if (ActiveElementId > 0)
+            try
             {
-                MessageBox.Show($"Elemento {ActiveElementId} selecionado",
-                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (ActiveElementId > 0)
+                {
+                    var confirm = MessageBox.Show(
+                        $"Tem certeza que deseja excluir esse elemento?",
+                        "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+
+                    if (confirm != DialogResult.Yes) return;
+
+                    bool ok = DataService.DeleteElement(ActiveElementId);
+
+                    if (ok)
+                    {
+                        MessageBox.Show("Elemento excluído com sucesso.", "Excluir Elemento",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        cboEdit1.SelectedIndex = -1;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit3.SelectedIndex = -1;
+                        ClearEditFields();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Não é possível excluir o Elemento.",
+                            "Excluir Elemento", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else if (ActiveListId > 0)
+                {
+                    var confirm = MessageBox.Show(
+                        $"Tem certeza que deseja excluir essa lista?",
+                        "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+
+                    if (confirm != DialogResult.Yes) return;
+
+                    bool ok = DataService.DeleteListAndAllocations(ActiveListId);
+
+                    if (ok)
+                    {
+                        MessageBox.Show("Lista excluída com sucesso.", "Excluir Lista",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        cboEdit1.SelectedIndex = -1;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit3.SelectedIndex = -1;
+                        ClearEditFields();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Não é possível excluir a Lista.",
+                            "Excluir Lista", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else if (ActiveSetId > 0)
+                {
+                    var confirm = MessageBox.Show(
+                        $"Tem certeza que deseja excluir esse conjunto?",
+                        "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+
+                    if (confirm != DialogResult.Yes) return;
+
+                    DataService.DeleteCardsBySetId(ActiveSetId);
+                    bool ok = DataService.DeleteCardSet(ActiveSetId);
+
+                    if (ok)
+                    {
+                        MessageBox.Show("Conjunto excluído com sucesso.", "Excluir Conjunto",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        cboEdit1.SelectedIndex = -1;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit3.SelectedIndex = -1;
+                        ClearEditFields();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Não é possível excluir o Conjunto.",
+                            "Excluir Conjunto", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
             }
-            if (ActiveListId > 0)
+            catch (Exception ex)
             {
-                DataService.DeleteListAndAllocations(ActiveListId);
-                MessageBox.Show($"Lista {ActiveListId} apagada.",
-                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Erro ao excluir: " + ex.Message, "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void btnEditDeleteAll_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ActiveListId <= 0)
+                {
+                    MessageBox.Show("Nenhuma lista selecionada.", "Excluir Elementos",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                var confirm = MessageBox.Show(
+                    "Tem certeza que deseja excluir TODOS os elementos desta lista?",
+                    "Confirmar Exclusão",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+
+                if (confirm != DialogResult.Yes) return;
+
+                // Se o método retorna uma tupla (int removedAllocations, int removedElements)
+                var (removedAllocations, removedElements) = DataService.DeleteElementsInList(
+                    ActiveListId, deleteOrphanElements: true);
+
+                MessageBox.Show(
+                    $"Remoções concluídas.\n" +
+                    $"- Alocações removidas: {removedAllocations}\n" +
+                    $"- Elementos removidos: {removedElements}",
+                    "Excluir Elementos", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 cboEdit1.SelectedIndex = -1;
                 cboEdit2.SelectedIndex = -1;
                 cboEdit3.SelectedIndex = -1;
                 ClearEditFields();
             }
-            if (ActiveSetId > 0)
+            catch (Exception ex)
             {
-                DataService.DeleteCardsBySetId(ActiveSetId);
-                DataService.DeleteCardSet(ActiveSetId);
-                MessageBox.Show($"Set {ActiveSetId} apagado.",
-                                "Importar Lista", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                cboEdit1.SelectedIndex = -1;
-                cboEdit2.SelectedIndex = -1;
-                cboEdit3.SelectedIndex = -1;
-                ClearEditFields();
+                MessageBox.Show("Erro ao excluir elementos: " + ex.Message,
+                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        private void btnEditEdit_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Elemento
+                if (ActiveElementId > 0)
+                {
+                    var oldElement = DataService.GetElementModelById(ActiveElementId);
+                    if (oldElement == null)
+                    {
+                        MessageBox.Show("Elemento não encontrado.", "Editar Elemento",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
 
+                    var newElement = new ElementModel
+                    {
+                        Name = boxEditText1.Text?.Trim(),
+                        CardName = boxEditText2.Text?.Trim(),
+                        Note1 = boxEditText3.Text?.Trim(),
+                        Note2 = boxEditText4.Text?.Trim(),
+                        ImageName = $"{boxEditText2.Text?.Trim()}.png"
+                    };
+
+                    int newId = DataService.EditElement(ActiveElementId, newElement);
+                    if (newId > 0)
+                    {
+                        int updList = DataService.EditElementInList(oldElement.Id, newId);
+                        int updCards = DataService.EditElementInCardSet(oldElement.Id, newId);
+
+                        MessageBox.Show(
+                            $"Elemento editado (nova versão criada: ID {newId}).\n" +
+                            $"- Alocações atualizadas: {updList}\n" +
+                            $"- Cartelas/Conjuntos atualizados: {updCards}",
+                            "Editar Elemento", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        cboEdit1.SelectedIndex = -1;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit3.SelectedIndex = -1;
+                        ClearEditFields();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Não foi possível criar a nova versão do elemento.",
+                            "Editar Elemento", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                // Lista
+                else if (ActiveListId > 0)
+                {
+                    var list = DataService.GetListById(ActiveListId);
+                    if (list == null)
+                    {
+                        MessageBox.Show("Lista não encontrada.", "Editar Lista",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    list.Name = boxEditText1.Text?.Trim();
+                    list.Description = boxEditText2.Text?.Trim();
+                    list.ImageName = $"capa.{(list.Name ?? "lista")}.png";
+
+                    bool ok = DataService.EditList(list);
+                    MessageBox.Show(ok ? "Lista atualizada com sucesso." : "Nenhuma alteração aplicada.",
+                        "Editar Lista", MessageBoxButtons.OK, ok ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+                    if (ok)
+                    {
+                        cboEdit1.SelectedIndex = -1;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit3.SelectedIndex = -1;
+                        ClearEditFields();
+                    }
+                }
+                // Conjunto
+                else if (ActiveSetId > 0)
+                {
+                    var set = DataService.GetCardSetById(ActiveSetId);
+                    if (set == null)
+                    {
+                        MessageBox.Show("Conjunto não encontrado.", "Editar Conjunto",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    set.Name = boxEditText1.Text?.Trim();
+                    set.Title = boxEditText2.Text?.Trim();
+                    set.End = boxEditText3.Text?.Trim();
+
+                    bool ok = DataService.EditCardSet(set);
+                    MessageBox.Show(ok ? "Conjunto atualizado com sucesso." : "Nenhuma alteração aplicada.",
+                        "Editar Conjunto", MessageBoxButtons.OK, ok ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+                    if (ok)
+                    {
+                        cboEdit1.SelectedIndex = -1;
+                        cboEdit2.SelectedIndex = -1;
+                        cboEdit3.SelectedIndex = -1;
+                        ClearEditFields();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Nenhum item selecionado para edição.", "Editar",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao editar: " + ex.Message, "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
 
         // Helpers
@@ -971,19 +1179,6 @@ namespace BingoCreator
             public string Name { get; init; }
         }
 
-        private static string RemoveDiacritics(string text)
-        {
-            var normalized = text.Normalize(NormalizationForm.FormD);
-            var sb = new StringBuilder(capacity: text.Length);
-            foreach (var c in normalized)
-            {
-                var uc = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (uc != UnicodeCategory.NonSpacingMark)
-                    sb.Append(c);
-            }
-            return sb.ToString().Normalize(NormalizationForm.FormC);
-        }
-
         private void cboCardsSize_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cboCardsSize.SelectedValue == "4")
@@ -995,5 +1190,6 @@ namespace BingoCreator
                 cboCardsHeader.Enabled = true;
             }
         }
+
     }
 }

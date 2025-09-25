@@ -68,8 +68,8 @@ namespace BingoCreator.Services
             try
             {
                 string relativePath = Path.Combine("images", ".nolist", element.CardName + ".png");
-                element.AddDate = DateTime.Now.ToString("MMddyyyy - HH:mm:ss");
-                element.Id = DataService.CreateElement(element.Name, element.CardName, element.Note1, element.Note2, relativePath, element.AddDate);
+                element.AddTime = DateTime.Now.ToString("MMddyyyy - HH:mm:ss");
+                element.Id = DataService.CreateElement(element.Name, element.CardName, element.Note1, element.Note2, relativePath, element.AddTime);
 
                 if (list.Id > 0)
                 {

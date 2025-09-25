@@ -79,6 +79,7 @@
             lblCardsTitle = new Label();
             lblCardsName = new Label();
             tabEditPage = new TabPage();
+            btnEditDeleteAll = new Button();
             cboEdit3 = new ComboBox();
             cboEdit2 = new ComboBox();
             boxEditText5 = new TextBox();
@@ -693,6 +694,7 @@
             // 
             // tabEditPage
             // 
+            tabEditPage.Controls.Add(btnEditDeleteAll);
             tabEditPage.Controls.Add(cboEdit3);
             tabEditPage.Controls.Add(cboEdit2);
             tabEditPage.Controls.Add(boxEditText5);
@@ -719,11 +721,22 @@
             tabEditPage.Text = "EditPage";
             tabEditPage.UseVisualStyleBackColor = true;
             // 
+            // btnEditDeleteAll
+            // 
+            btnEditDeleteAll.Anchor = AnchorStyles.Top;
+            btnEditDeleteAll.Location = new Point(970, 539);
+            btnEditDeleteAll.Name = "btnEditDeleteAll";
+            btnEditDeleteAll.Size = new Size(167, 57);
+            btnEditDeleteAll.TabIndex = 36;
+            btnEditDeleteAll.Text = "Excluir Lista Completa";
+            btnEditDeleteAll.UseVisualStyleBackColor = true;
+            btnEditDeleteAll.Click += btnEditDeleteAll_Click;
+            // 
             // cboEdit3
             // 
             cboEdit3.Anchor = AnchorStyles.Top;
             cboEdit3.FormattingEnabled = true;
-            cboEdit3.Location = new Point(27, 203);
+            cboEdit3.Location = new Point(27, 168);
             cboEdit3.Name = "cboEdit3";
             cboEdit3.Size = new Size(391, 23);
             cboEdit3.TabIndex = 34;
@@ -733,7 +746,7 @@
             // 
             cboEdit2.Anchor = AnchorStyles.Top;
             cboEdit2.FormattingEnabled = true;
-            cboEdit2.Location = new Point(27, 161);
+            cboEdit2.Location = new Point(27, 139);
             cboEdit2.Name = "cboEdit2";
             cboEdit2.Size = new Size(391, 23);
             cboEdit2.TabIndex = 33;
@@ -763,9 +776,9 @@
             // btnEditExclude
             // 
             btnEditExclude.Anchor = AnchorStyles.Top;
-            btnEditExclude.Location = new Point(970, 502);
+            btnEditExclude.Location = new Point(970, 476);
             btnEditExclude.Name = "btnEditExclude";
-            btnEditExclude.Size = new Size(167, 94);
+            btnEditExclude.Size = new Size(167, 57);
             btnEditExclude.TabIndex = 30;
             btnEditExclude.Text = "Excluir";
             btnEditExclude.UseVisualStyleBackColor = true;
@@ -776,10 +789,11 @@
             btnEditEdit.Anchor = AnchorStyles.Top;
             btnEditEdit.Location = new Point(970, 405);
             btnEditEdit.Name = "btnEditEdit";
-            btnEditEdit.Size = new Size(167, 94);
+            btnEditEdit.Size = new Size(167, 65);
             btnEditEdit.TabIndex = 28;
             btnEditEdit.Text = "Editar";
             btnEditEdit.UseVisualStyleBackColor = true;
+            btnEditEdit.Click += btnEditEdit_Click;
             // 
             // lblEditMessage
             // 
@@ -796,7 +810,7 @@
             // 
             cboEdit1.Anchor = AnchorStyles.Top;
             cboEdit1.FormattingEnabled = true;
-            cboEdit1.Location = new Point(27, 119);
+            cboEdit1.Location = new Point(27, 110);
             cboEdit1.Name = "cboEdit1";
             cboEdit1.Size = new Size(391, 23);
             cboEdit1.TabIndex = 24;
@@ -1017,5 +1031,6 @@
         private ComboBox cboEdit3;
         private Label lblCardsSize;
         private ComboBox cboCardsSize;
+        private Button btnEditDeleteAll;
     }
 }

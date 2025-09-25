@@ -14,6 +14,10 @@ namespace BingoCreator.Models
         public string Note1 { get; set; }
         public string Note2 { get; set; }
         public string ImageName { get; set; }
-        public string AddDate { get; set; }
+        public string AddTime { get; set; }
+
+        public bool Obsolete { get; set; }
+        public int ParentId { get; set; }
+        public int Version { get; set; }
     }
 }
