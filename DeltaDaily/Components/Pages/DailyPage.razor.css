@@ -1,208 +1,258 @@
-﻿/* ===== Layout base da página ===== */
+﻿/* layout da página */
 .daily {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 16px;
-    display: grid;
-    grid-template-columns: 1fr 320px; /* conteúdo + coluna de resumos */
-    gap: 24px;
-}
-
-    /* Coluna de conteúdo (à esquerda) e resumos (à direita) */
-    .daily > .content {
-        display: grid;
-        gap: 24px;
-    }
-
-    .daily > .summaries {
-        position: sticky;
-        top: 12px;
-        height: max-content;
-    }
-
-/* Responsivo: empilha no mobile */
-@media (max-width: 900px) {
-    .daily {
-        grid-template-columns: 1fr;
-    }
-
-        .daily > .summaries {
-            position: static;
-        }
-}
-
-/* ===== Cabeçalho do dia ===== */
-.daily-header {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 8px;
+    justify-content: center;
+}
+
+.content {
+    width: 100%;
+    max-width: 760px;
+    padding: 16px;
+}
+
+/* cabeçalho */
+.daily-header h2 {
+    text-align: center;
+    font-size: clamp(1.5rem, 2.8vw, 2rem);
+    margin: 6px 0 4px;
+}
+
+.daily-header div {
+    text-align: center;
+    color: #4b5563;
     margin-bottom: 12px;
 }
 
-    .daily-header h2 {
-        margin: 0;
-        font-size: 1.6rem;
-    }
-
-/* ===== Seções (cards) ===== */
+/* cartões */
 .card {
+    background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 12px;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 12px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
 }
 
-    .card > h2, .card > h3 {
-        margin: 0 0 8px 0;
-        font-size: 1.2rem;
+    .card h2 {
+        text-align: center;
+        margin: 0 0 12px;
     }
 
-/* Grids simples para formulários */
+/* fieldset */
+.fieldset {
+    border: 1px dashed #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+/* grade padrão (inputs = 100% já vem do app.css) */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
-    gap: 12px 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 18px;
 }
 
-@media (max-width: 600px) {
+@media (max-width:640px) {
     .form-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* Campos */
-label span {
-    display: inline-block;
-    margin-bottom: 4px;
+/* botões */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 10px 16px;
     font-weight: 600;
-}
-
-input[type="text"], input[type="time"], textarea, select {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 6px 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    outline: none;
-}
-
-textarea {
-    resize: vertical;
-}
-
-/* Fieldsets para listas dinâmicas */
-fieldset {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 10px;
-    margin: 8px 0;
-}
-
-legend {
-    padding: 0 6px;
-    font-weight: 600;
-}
-
-/* Botões */
-button {
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    padding: 6px 10px;
-    border-radius: 8px;
     cursor: pointer;
+    min-height: 44px;
 }
 
-    button:hover {
-        background: #f3f4f6;
-    }
-
-    button.primary {
-        background: #111827;
+    .btn.primary {
+        background: #2563eb;
         color: #fff;
-        border-color: #111827;
     }
 
-    button.danger {
-        background: #dc2626;
-        color: #fff;
-        border-color: #dc2626;
+        .btn.primary:hover {
+            background: #1d4ed8;
+        }
+
+    .btn.ghost {
+        background: #f1f5f9;
+        color: #0f172a;
     }
 
-/* ===== Priorizar acesso rápido ===== */
-/* Blocos "fast" (horários + produtividade) ficam sempre visíveis */
-.fast .form-grid {
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
+        .btn.ghost:hover {
+            background: #e2e8f0;
+        }
+
+    .btn.danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+        .btn.danger:hover {
+            background: #fecaca;
+        }
+
+.center {
+    text-align: center;
 }
 
-/* Blocos "extra" (saúde etc.) começam recolhidos */
-.extra.collapsed .card-body {
+/* seções expansíveis */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+    .section-title span {
+        font-size: 1.05rem;
+    }
+
+.expander {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.card.extra.collapsed .card-body {
     display: none;
 }
-/* escondido */
-.extra .toggle {
-    margin-top: 8px;
-}
-/* botão "mostrar" */
-.extra.open .card-body {
+
+.card.extra.open .card-body {
     display: block;
 }
-/* quando abrir */
-.extra.open .toggle {
-    display: none;
-}
-/* esconde o botão */
 
-/* ===== Coluna de resumos ===== */
-.summaries .panel {
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 10px;
+.daily {
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    width: 100%;
+    max-width: 760px;
+    padding: 16px;
+}
+
+.daily-header h2 {
+    text-align: center;
+    font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+    margin: 6px 0 4px;
+}
+
+.daily-header div {
+    text-align: center;
+    color: #4b5563;
     margin-bottom: 12px;
 }
 
-    .summaries .panel h3 {
-        margin: 0 0 6px 0;
-        font-size: 1rem;
+/* cards */
+.card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 12px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+
+    .card h2 {
+        text-align: center;
+        margin: 0 0 12px;
     }
 
-.summaries .row {
-    display: flex;
-    justify-content: space-between;
+/* fieldset */
+.fieldset {
+    border: 1px dashed #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+/* grid desta página – usa o .form-grid global já carregado */
+
+/* botões (escopo desta página) */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
-    font-size: 0.95rem;
-    padding: 4px 0;
-    border-bottom: 1px dashed #eee;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 44px;
 }
 
-    .summaries .row:last-child {
-        border-bottom: 0;
+    .btn.primary {
+        background: #2563eb;
+        color: #fff;
     }
 
-/* ===== Estados visuais úteis ===== */
-.is-closed {
-    background: #065f46;
-    color: #fff;
-}
-/* usar no botão "Fechar o Dia" quando fechado */
-.is-warning {
-    background: #dc2626;
-    color: #fff;
-}
-/* usar para alertas de campos vazios */
+        .btn.primary:hover {
+            background: #1d4ed8;
+        }
 
-/* ===== Tabela/grade interna (se precisar) ===== */
-.inline-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-    .inline-table th, .inline-table td {
-        border: 1px solid #e5e7eb;
-        padding: 6px 8px;
-        text-align: left;
+    .btn.ghost {
+        background: #f1f5f9;
+        color: #0f172a;
     }
 
-    .inline-table th {
-        background: #f9fafb;
+        .btn.ghost:hover {
+            background: #e2e8f0;
+        }
+
+    .btn.danger {
+        background: #fee2e2;
+        color: #991b1b;
     }
+
+        .btn.danger:hover {
+            background: #fecaca;
+        }
+
+.center {
+    text-align: center;
+}
+
+/* seções expansíveis */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+    .section-title span {
+        font-size: 1.05rem;
+    }
+
+.expander {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.card.extra.collapsed .card-body {
+    display: none;
+}
+
+.card.extra.open .card-body {
+    display: block;
+}

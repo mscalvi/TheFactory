@@ -29,7 +29,6 @@ public class DayModel
     public string? NotasSonhos { get; set; }
 
     public HumorData.Humor? HumorMedio { get; set; }
-    public bool VariacaoHumor { get; set; }
     public string? VariacaoHumorNotas { get; set; }
     public ExerciseModel? Exercicio { get; set; }
     public List<ExerciseModel>? Exercicios { get; set; } = new();
