@@ -1,6 +1,6 @@
 ﻿namespace DeltaDaily.Components.Data
 {
-    public class WorkoutData
+    public class ExerciseData
     {
         public enum Workout
         {

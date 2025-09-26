@@ -14,5 +14,14 @@ namespace DeltaDaily.Components.Data
             [Display(Name = "Ótimo")] Otimo,
             [Display(Name = "Normal")] Normal
         }
+        public enum DreamType
+        {
+            [Display(Name = "Agitados")] Agitados,
+            [Display(Name = "Pesadelo com Trabalho")] PesadelosTrabalho,
+            [Display(Name = "Pesadelo com Vi")] PesadelosVi,
+            [Display(Name = "Pesadelo com Família")] PesadelosFamilia,
+            [Display(Name = "Pesadelos Diferentes")] PesadelosDiferentes,
+            [Display(Name = "Sexual")] Sexuais
+        }
     }
 }

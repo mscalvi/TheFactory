@@ -5,10 +5,10 @@ namespace DeltaDaily.Components.Models
     public class WorkModel
         {
         public PlanModel Plano { get; set; }          
-        public TimeOnly? Duracao { get; set; }
-        public WorkTypeData.WorkType? Tipo { get; set; }
-        public FocusData.Focus? Foco { get; set; }
-        public WorkMethodData.WorkMethod? Metodo { get; set; }
+        public string? Duracao { get; set; }
+        public WorkData.WorkType? Tipo { get; set; }
+        public WorkData.Focus? Foco { get; set; }
+        public WorkData.WorkMethod? Metodo { get; set; }
     }
 
 }
