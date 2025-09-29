@@ -1,0 +1,144 @@
+﻿@page "/plans/{ProjectId}/meta/{MetaName}"
+
+@using DeltaDaily.Components.Models
+@inject DeltaDaily.Components.Services.IProjectStoreService Store
+@inject NavigationManager Nav
+
+@code {
+    [Parameter] public string ProjectId { get; set; } = default!;
+    [Parameter] public string MetaName { get; set; } = default!;
+
+    private ProjectModel? Project;
+    private MetaModel? Meta;
+    private bool NotFound;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Carrega o projeto
+        Project = await Store.LoadAsync(ProjectId);
+        if (Project is null || string.IsNullOrWhiteSpace(MetaName))
+        {
+            NotFound = true;
+            return;
+        }
+
+        // Procura a meta pelo Nome (case-insensitive)
+        Meta = Project.Metas?
+            .FirstOrDefault(m => string.Equals(m.Nome, MetaName, StringComparison.OrdinalIgnoreCase));
+
+        NotFound = Meta is null;
+    }
+
+    private void VoltarProjeto() => Nav.NavigateTo($"/plans/{ProjectId}");
+}
+
+<section class="page meta">
+    @if (NotFound)
+    {
+        <div class="card">
+            <h2>Meta não encontrada</h2>
+            <button class="btn" @onclick="VoltarProjeto">Voltar ao Projeto</button>
+        </div>
+    }
+    else if (Meta is null)
+    {
+        <div class="card">
+            <p>Carregando…</p>
+        </div>
+    }
+    else
+    {
+        <!-- Cabeçalho -->
+        <header class="page-header">
+            <h1>@Meta.Nome</h1>
+            <div class="muted">
+                Criada em @Meta.DataCriacao.ToString("dd/MM/yy")
+                @if (Meta.DataFechamento.HasValue)
+                {
+                    <text> · Fechada em @Meta.DataFechamento.Value.ToString("dd/MM/yy")</text>
+                }
+            </div>
+        </header>
+
+        <!-- Dados gerais -->
+        <section class="card">
+            <h2>Dados</h2>
+            <div class="form-grid">
+                <div>
+                    <span class="label">Objetivo</span>
+                    <div class="value">@Meta.Objetivo</div>
+                </div>
+
+                <div>
+                    <span class="label">Ativa</span>
+                    <div class="value">@(Meta.Ativa ? "Sim" : "Não")</div>
+                </div>
+
+                <div>
+                    <span class="label">Completa</span>
+                    <div class="value">@(Meta.Completa ? "Sim" : "Não")</div>
+                </div>
+
+                <div>
+                    <span class="label">Tarefas (criação)</span>
+                    <div class="value">@Meta.TarefasCriacao</div>
+                </div>
+
+                <div>
+                    <span class="label">Tarefas tardias</span>
+                    <div class="value">@Meta.TarefasTardias</div>
+                </div>
+
+                <div>
+                    <span class="label">Tarefas completas</span>
+                    <div class="value">@Meta.TarefasCompletas</div>
+                </div>
+
+                <div>
+                    <span class="label">Tarefas totais</span>
+                    <div class="value">@Meta.TarefasTotais</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tasks -->
+        <section class="card">
+            <h2>Tasks</h2>
+
+            @if (Meta.Tasks is null || Meta.Tasks.Count == 0)
+            {
+                <p class="muted">Nenhuma task nesta meta.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Criada</th>
+                            <th>Finalizada</th>
+                            <th>Completa</th>
+                            <th>Comentário</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Meta.Tasks)
+                        {
+                            <tr>
+                                <td>@t.Nome</td>
+                                <td>@t.Criacao.ToString("dd/MM/yy")</td>
+                                <td>@(t.Finalizada?.ToString("dd/MM/yy") ?? "-")</td>
+                                <td>@(t.Completa == true ? "Sim" : "Não")</td>
+                                <td>@(string.IsNullOrWhiteSpace(t.Comentario) ? "-" : t.Comentario)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </section>
+
+        <section class="card">
+            <button class="btn" @onclick="VoltarProjeto">Voltar ao Projeto</button>
+        </section>
+    }
+</section>

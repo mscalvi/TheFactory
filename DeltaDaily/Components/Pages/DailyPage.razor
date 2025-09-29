@@ -8,6 +8,8 @@
 @using DeltaDaily.Components.Models
 @using DeltaDaily.Components.Data
 @inject DeltaDaily.Components.Services.IDayStoreService Store
+@inject DeltaDaily.Components.Services.IProjectStoreService ProjectStore
+
 @inject NavigationManager Nav
 
 @code {
@@ -16,6 +18,9 @@
 
     private DayModel Day = new();
     private readonly CultureInfo ptBR = new("pt-BR");
+
+    private Dictionary<ProjectData.Phase, List<ProjectModel>> _projetosPorFase =
+    new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -31,7 +36,23 @@
         _edit = new EditContext(Day);
         _edit.OnFieldChanged -= Edit_OnFieldChanged; // evita duplicar
         _edit.OnFieldChanged += Edit_OnFieldChanged;
+
+        var all = await ProjectStore.ListAllAsync();
+        _projetosPorFase = all
+            .GroupBy(p => p.Fase)
+            .OrderBy(g => g.Key) // Feira, Laboratório, Oficina, Loja (na ordem do enum)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
     }
+
+    private static string FaseLabel(ProjectData.Phase f) => f switch
+    {
+        ProjectData.Phase.Feira => "Feira",
+        ProjectData.Phase.Laboratório => "Laboratório",
+        ProjectData.Phase.Oficina => "Oficina",
+        ProjectData.Phase.Loja => "Loja",
+        _ => f.ToString()
+    };
 
     private EditContext? _edit;
     private CancellationTokenSource? _saveCts;
@@ -191,15 +212,25 @@
 
                         <div class="form-grid">
                             <label>
-                                <span>Plano</span>
-                                <InputSelect @bind-Value="item.Plano" TValue="ProjectModel">
-                                    @* opções virão do banco depois *@
-                                </InputSelect>
+                                <span>Projeto</span>
+                                <select @bind="item.ProjetoId">
+                                    <option value="">(selecione)</option>
+
+                                    @foreach (var grupo in _projetosPorFase)
+                                    {
+                                        <optgroup label="@FaseLabel(grupo.Key)">
+                                            @foreach (var p in grupo.Value)
+                                            {
+                                                <option value="@p.Id">@p.Nome</option>
+                                            }
+                                        </optgroup>
+                                    }
+                                </select>
                             </label>
 
                             <label>
                                 <span>Duração</span>
-                                <input type="text" @bind="item.Duracao" />
+                                <input type="time" @bind="item.Duracao" />
                             </label>
 
                             <label>

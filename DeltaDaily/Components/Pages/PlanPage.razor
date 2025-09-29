@@ -1,12 +1,13 @@
 ﻿@page "/plans/{Id}"
 
+@using System.Web
 @using DeltaDaily.Components.Models
 @inject DeltaDaily.Components.Services.IProjectStoreService Store
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 @code {
     [Parameter] public string Id { get; set; } = default!;
-    [Inject] private IJSRuntime JS { get; set; } = default!;
 
     private ProjectModel? Project;
     private bool NotFound;
@@ -49,8 +50,8 @@
         return DeltaDaily.Components.Data.ProjectData.Phase.Feira;
     }
 
-    private void Voltar() => Nav.NavigateTo("/plans"); 
-    
+    private void Voltar() => Nav.NavigateTo("/plans");
+
     private async Task Ativar()
     {
         if (Project is null || string.IsNullOrWhiteSpace(Project.Id))
@@ -61,11 +62,34 @@
         StateHasChanged();
     }
 
+    // --- METAS ---
     private void AddMeta()
     {
-
+        // Abre a NewMetaPage
+        Nav.NavigateTo($"/plans/{Id}/meta/new");
     }
 
+    private void AbrirMeta(MetaModel meta)
+    {
+        if (meta is null) return;
+        var slug = Uri.EscapeDataString(meta.Nome ?? string.Empty);
+        Nav.NavigateTo($"/plans/{Id}/meta/{slug}");
+    }
+
+    private async Task TornarMetaAtiva(MetaModel meta)
+    {
+        if (Project?.Metas is null) return;
+
+        foreach (var m in Project.Metas)
+            m.Ativa = ReferenceEquals(m, meta);
+
+        Project.MetaAtual = meta.Nome;
+        Project.DataAlteracao = DateTime.Now;
+        await Store.SaveAsync(Project);
+        StateHasChanged();
+    }
+
+    // --- IDEIAS ---
     private void ComecarCriarIdeia()
     {
         criandoIdeia = true;
@@ -98,7 +122,7 @@
         novaIdeiaNome = string.Empty;
     }
 
-    // --- estado de edição ---
+    // edição inline de ideias
     private TaskModel? editandoIdeia;
     private string edNome = string.Empty;
     private string? edComentario;
@@ -119,7 +143,6 @@
         editandoIdeia.Nome = edNome.Trim();
         editandoIdeia.Comentario = string.IsNullOrWhiteSpace(edComentario) ? null : edComentario.Trim();
 
-        // Ajusta status de conclusão e data finalizada
         if (edCompleta)
         {
             editandoIdeia.Completa = true;
@@ -134,7 +157,6 @@
         Project.DataAlteracao = DateTime.Now;
         await Store.SaveAsync(Project);
 
-        // sai do modo edição
         editandoIdeia = null;
         edNome = string.Empty;
         edComentario = null;
@@ -197,6 +219,13 @@
                     <span class="label">Resumo</span>
                     <div class="value">@Project.Resumo</div>
                 </div>
+                @if (!string.IsNullOrWhiteSpace(Project.MetaAtual))
+                {
+                    <div>
+                        <span class="label">Meta em andamento</span>
+                        <div class="value">@Project.MetaAtual</div>
+                    </div>
+                }
             </div>
         </section>
 
@@ -206,11 +235,10 @@
         </section>
 
         <section class="card">
-            <h2>Metas</h2>
-
-            <section class="card">
-                <button class="btn" @onclick="AddMeta">+</button>
-            </section>
+            <div class="section-title">
+                <h2>Metas</h2>
+                <button class="btn small" @onclick="AddMeta">+ Nova meta</button>
+            </div>
 
             @if ((Project.Metas?.Count ?? 0) == 0)
             {
@@ -222,11 +250,28 @@
                     @foreach (var m in Project.Metas)
                     {
                         <li class="item">
-                            <div class="name">@m.Nome</div>
+                            <div class="name">
+                                @m.Nome
+                                @if (m.Ativa)
+                                {
+                                    <span class="tag">ATIVA</span>
+                                }
+                                @if (m.Completa)
+                                {
+                                    <span class="tag success">COMPLETA</span>
+                                }
+                            </div>
                             <div class="muted">
-                                Início: @(m.DataCriacao.ToString("dd/MM/yy") ?? "-") ·
+                                Início: @m.DataCriacao.ToString("dd/MM/yy") ·
                                 Conclusão: @(m.DataFechamento?.ToString("dd/MM/yy") ?? "-") ·
-                                Tarefas: @(m.TarefasTotais)
+                                Tarefas: @m.TarefasTotais
+                            </div>
+                            <div class="actions" style="margin-top:8px;">
+                                <button class="btn small" @onclick="@(() => AbrirMeta(m))">Detalhes</button>
+                                @if (!m.Ativa)
+                                {
+                                    <button class="btn small primary" @onclick="@(() => TornarMetaAtiva(m))">Ativar</button>
+                                }
                             </div>
                         </li>
                     }
@@ -237,10 +282,9 @@
         <section class="card">
             <h2>Caixa de Ideias</h2>
 
-            @* Botão + / formulário de criação *@
             @if (!criandoIdeia)
             {
-                <button class="btn" @onclick="ComecarCriarIdeia">+</button>
+                <button class="btn" @onclick="ComecarCriarIdeia">+ Nova ideia</button>
             }
             else
             {
@@ -270,7 +314,6 @@
                         <li class="item">
                             @if (ReferenceEquals(editandoIdeia, idea))
                             {
-                                @* Modo edição inline *@
                                 <div class="form-grid span-row">
                                     <label class="span-row">
                                         <span>Nome</span>
@@ -294,7 +337,6 @@
                             }
                             else
                             {
-                                @* Modo leitura *@
                                 <div class="name">@idea.Nome</div>
                                 <div class="muted">
                                     Criada em: @idea.Criacao.ToString("dd/MM/yy")
@@ -317,7 +359,6 @@
                 </ul>
             }
         </section>
-
 
         <section class="card">
             <button class="btn" @onclick="Ativar">Trabalhar</button>

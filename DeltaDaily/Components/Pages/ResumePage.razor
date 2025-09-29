@@ -1,7 +1,9 @@
 ﻿@page "/resume"
 @using System.Globalization
 @using DeltaDaily.Components.Models
+@using DeltaDaily.Components.Services
 @inject DeltaDaily.Components.Services.IDayStoreService Store
+@inject IProjectStoreService ProjectStore
 @inject NavigationManager Nav
 
 @code {
@@ -17,6 +19,9 @@
     // Dados carregados
     private List<DayModel> WeekDays = new();
     private List<DayModel> MonthDays = new();
+
+    // Id -> Nome do Projeto
+    private IReadOnlyDictionary<string, string> _projetoNomes = new Dictionary<string, string>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,10 +42,17 @@
         var mTasks = Enumerable.Range(0, DateTime.DaysInMonth(Hoje.Year, Hoje.Month))
             .Select(i => Store.LoadAsync(MesIni.AddDays(i)));
         MonthDays = (await Task.WhenAll(mTasks)).ToList();
+
+        // Carrega nomes dos projetos
+        var projetos = await ProjectStore.ListAllAsync();
+        _projetoNomes = projetos
+            .Where(p => !string.IsNullOrWhiteSpace(p.Id))
+            .ToDictionary(p => p.Id!, p => string.IsNullOrWhiteSpace(p.Nome) ? "(sem nome)" : p.Nome);
     }
 
     // --- helpers de tempo ---
-    private static TimeSpan? ToSpan(TimeOnly? t) => t.HasValue ? new TimeSpan(t.Value.Hour, t.Value.Minute, 0) : null;
+    private static TimeSpan? ToSpan(TimeOnly? t)
+        => t.HasValue ? new TimeSpan(t.Value.Hour, t.Value.Minute, 0) : null;
 
     private static TimeSpan? Avg(IEnumerable<TimeSpan?> valores)
     {
@@ -59,12 +71,14 @@
         var xs = valores.Where(v => v.HasValue).Select(v => v!.Value).ToArray();
         return xs.Length == 0 ? null : xs.Max();
     }
-    private static string Fmt(TimeSpan? ts) => ts is null ? "—" : $"{(int)ts.Value.TotalHours:00}:{ts.Value.Minutes:00}";
+
+    private static string Fmt(TimeSpan? ts)
+        => ts is null ? "—" : $"{(int)ts.Value.TotalHours:00}:{ts.Value.Minutes:00}";
 
     // Remédio (usa horário se houver)
     private static TimeSpan? RemedioHora(DayModel d) => ToSpan(d.HorarioRemedio);
 
-    // Soma horas por plano (considera WorkModel.Duracao como TimeOnly? ou string "hh:mm")
+    // Duração do trabalho (aceita TimeOnly? ou string "hh:mm")
     private static TimeSpan ParseDur(object? dur)
     {
         if (dur is null) return TimeSpan.Zero;
@@ -77,13 +91,22 @@
 
         return TimeSpan.Zero;
     }
-    private static IEnumerable<(string nome, TimeSpan horas)> AgruparPlanos(IEnumerable<DayModel> dias)
+
+    // Agrupa horas por Projeto (usando ProjetoId -> nome via dicionário)
+    private static IEnumerable<(string nome, TimeSpan horas)> AgruparPlanos(
+        IEnumerable<DayModel> dias,
+        IReadOnlyDictionary<string, string> projetoNomes)
     {
-        // agrupa por "Plano.Nome" (se vazio, usa "(sem plano)")
         var flat = dias
-            .SelectMany(d => d.Trabalhos)
-            .Select(w => (nome: string.IsNullOrWhiteSpace(w.Plano?.Nome) ? "(sem plano)" : w.Plano!.Nome,
-                          dur: ParseDur(w.Duracao)));
+            .SelectMany(d => d.Trabalhos ?? Enumerable.Empty<WorkModel>())
+            .Select(w =>
+            {
+                var dur = ParseDur(w.Duracao);
+                var nome = "(sem projeto)";
+                if (!string.IsNullOrWhiteSpace(w.ProjetoId))
+                    nome = projetoNomes.TryGetValue(w.ProjetoId, out var n) ? n : "(desconhecido)";
+                return (nome, dur);
+            });
 
         return flat
             .GroupBy(x => x.nome)
@@ -145,9 +168,9 @@
 
         <!-- Planos (semana) -->
         <div class="plans">
-            <h3>Horas por Plano (semana)</h3>
+            <h3>Horas por Projeto (semana)</h3>
             @{
-                var planosW = AgruparPlanos(WeekDays).ToList();
+                var planosW = AgruparPlanos(WeekDays, _projetoNomes).ToList();
             }
             @if (planosW.Count == 0)
             {
@@ -200,9 +223,9 @@
 
         <!-- Planos (mês) -->
         <div class="plans">
-            <h3>Horas por Plano (mês)</h3>
+            <h3>Horas por Projeto (mês)</h3>
             @{
-                var planosM = AgruparPlanos(MonthDays).ToList();
+                var planosM = AgruparPlanos(MonthDays, _projetoNomes).ToList();
             }
             @if (planosM.Count == 0)
             {
