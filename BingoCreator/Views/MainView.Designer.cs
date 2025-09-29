@@ -87,6 +87,13 @@
             boxCardsName = new TextBox();
             lblCardsTitle = new Label();
             lblCardsName = new Label();
+            tabCreateMoreCards = new TabPage();
+            btnAddCards = new Button();
+            boxAddQuant = new NumericUpDown();
+            lblAddQuant = new Label();
+            lblAddSet = new Label();
+            lblAddCards = new Label();
+            cboAddCardsList = new ComboBox();
             tabEditPage = new TabPage();
             btnEditDeleteAll = new Button();
             cboEdit3 = new ComboBox();
@@ -108,13 +115,6 @@
             lblEditText2 = new Label();
             lblEditText1 = new Label();
             lblEditHeader = new Label();
-            tabCreateMoreCards = new TabPage();
-            cboAddCardsList = new ComboBox();
-            lblAddCards = new Label();
-            boxAddQuant = new NumericUpDown();
-            lblAddQuant = new Label();
-            lblAddSet = new Label();
-            btnAddCards = new Button();
             pnlMainView.SuspendLayout();
             tabControlMain.SuspendLayout();
             tabCreatePage.SuspendLayout();
@@ -126,10 +126,10 @@
             pnlAlocateList.SuspendLayout();
             tabCreateCards.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).BeginInit();
-            tabEditPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)picEdit).BeginInit();
             tabCreateMoreCards.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)boxAddQuant).BeginInit();
+            tabEditPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picEdit).BeginInit();
             SuspendLayout();
             // 
             // pnlMainView
@@ -162,7 +162,7 @@
             tabCreatePage.Padding = new Padding(3);
             tabCreatePage.Size = new Size(1182, 680);
             tabCreatePage.TabIndex = 1;
-            tabCreatePage.Text = "CreatePage";
+            tabCreatePage.Text = "Criar";
             tabCreatePage.UseVisualStyleBackColor = true;
             // 
             // tabControlCreate
@@ -199,7 +199,7 @@
             tabCreateElement.Padding = new Padding(3);
             tabCreateElement.Size = new Size(1168, 646);
             tabCreateElement.TabIndex = 0;
-            tabCreateElement.Text = "Element";
+            tabCreateElement.Text = "Elementos";
             tabCreateElement.UseVisualStyleBackColor = true;
             // 
             // btnElementCreate
@@ -355,7 +355,7 @@
             tabCreateList.Padding = new Padding(3);
             tabCreateList.Size = new Size(1168, 646);
             tabCreateList.TabIndex = 1;
-            tabCreateList.Text = "List";
+            tabCreateList.Text = "Listas";
             tabCreateList.UseVisualStyleBackColor = true;
             // 
             // btnListTxt
@@ -467,7 +467,7 @@
             tabCreateAlocation.Name = "tabCreateAlocation";
             tabCreateAlocation.Size = new Size(1168, 646);
             tabCreateAlocation.TabIndex = 3;
-            tabCreateAlocation.Text = "Alocate";
+            tabCreateAlocation.Text = "Alocar";
             tabCreateAlocation.UseVisualStyleBackColor = true;
             // 
             // btnAlocateRemove
@@ -578,7 +578,7 @@
             tabCreateCards.Name = "tabCreateCards";
             tabCreateCards.Size = new Size(1168, 646);
             tabCreateCards.TabIndex = 2;
-            tabCreateCards.Text = "Cards";
+            tabCreateCards.Text = "Cartelas";
             tabCreateCards.UseVisualStyleBackColor = true;
             // 
             // lblCardsSize
@@ -811,6 +811,89 @@
             lblCardsName.Text = "Nome do Conjunto:";
             lblCardsName.TextAlign = ContentAlignment.MiddleLeft;
             // 
+            // tabCreateMoreCards
+            // 
+            tabCreateMoreCards.Controls.Add(btnAddCards);
+            tabCreateMoreCards.Controls.Add(boxAddQuant);
+            tabCreateMoreCards.Controls.Add(lblAddQuant);
+            tabCreateMoreCards.Controls.Add(lblAddSet);
+            tabCreateMoreCards.Controls.Add(lblAddCards);
+            tabCreateMoreCards.Controls.Add(cboAddCardsList);
+            tabCreateMoreCards.Location = new Point(4, 24);
+            tabCreateMoreCards.Name = "tabCreateMoreCards";
+            tabCreateMoreCards.Size = new Size(1168, 646);
+            tabCreateMoreCards.TabIndex = 4;
+            tabCreateMoreCards.Text = "Cartelas Extras";
+            tabCreateMoreCards.UseVisualStyleBackColor = true;
+            // 
+            // btnAddCards
+            // 
+            btnAddCards.Anchor = AnchorStyles.Top;
+            btnAddCards.Font = new Font("Segoe UI", 12F);
+            btnAddCards.Location = new Point(813, 98);
+            btnAddCards.Name = "btnAddCards";
+            btnAddCards.Size = new Size(265, 105);
+            btnAddCards.TabIndex = 47;
+            btnAddCards.Text = "Adicionar Cartelas";
+            btnAddCards.UseVisualStyleBackColor = true;
+            btnAddCards.Click += btnAddCards_Click;
+            // 
+            // boxAddQuant
+            // 
+            boxAddQuant.Anchor = AnchorStyles.Top;
+            boxAddQuant.Font = new Font("Segoe UI", 12F);
+            boxAddQuant.Location = new Point(334, 174);
+            boxAddQuant.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            boxAddQuant.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            boxAddQuant.Name = "boxAddQuant";
+            boxAddQuant.Size = new Size(395, 29);
+            boxAddQuant.TabIndex = 46;
+            boxAddQuant.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            // 
+            // lblAddQuant
+            // 
+            lblAddQuant.Anchor = AnchorStyles.Top;
+            lblAddQuant.Font = new Font("Segoe UI", 12F);
+            lblAddQuant.ImageAlign = ContentAlignment.MiddleLeft;
+            lblAddQuant.Location = new Point(91, 165);
+            lblAddQuant.Name = "lblAddQuant";
+            lblAddQuant.Size = new Size(237, 38);
+            lblAddQuant.TabIndex = 45;
+            lblAddQuant.Text = "Quantidade:";
+            lblAddQuant.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblAddSet
+            // 
+            lblAddSet.Anchor = AnchorStyles.Top;
+            lblAddSet.Font = new Font("Segoe UI", 12F);
+            lblAddSet.ImageAlign = ContentAlignment.MiddleLeft;
+            lblAddSet.Location = new Point(91, 87);
+            lblAddSet.Name = "lblAddSet";
+            lblAddSet.Size = new Size(237, 38);
+            lblAddSet.TabIndex = 44;
+            lblAddSet.Text = "Nome do Conjunto:";
+            lblAddSet.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblAddCards
+            // 
+            lblAddCards.Dock = DockStyle.Top;
+            lblAddCards.Font = new Font("Segoe UI", 16F);
+            lblAddCards.Location = new Point(0, 0);
+            lblAddCards.Name = "lblAddCards";
+            lblAddCards.Size = new Size(1168, 87);
+            lblAddCards.TabIndex = 28;
+            lblAddCards.Text = "Adicionar Cartelas em um Conjunto";
+            lblAddCards.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // cboAddCardsList
+            // 
+            cboAddCardsList.Anchor = AnchorStyles.Top;
+            cboAddCardsList.FormattingEnabled = true;
+            cboAddCardsList.Location = new Point(334, 98);
+            cboAddCardsList.Name = "cboAddCardsList";
+            cboAddCardsList.Size = new Size(395, 23);
+            cboAddCardsList.TabIndex = 0;
+            // 
             // tabEditPage
             // 
             tabEditPage.Controls.Add(btnEditDeleteAll);
@@ -837,7 +920,7 @@
             tabEditPage.Name = "tabEditPage";
             tabEditPage.Size = new Size(1182, 680);
             tabEditPage.TabIndex = 2;
-            tabEditPage.Text = "EditPage";
+            tabEditPage.Text = "Editar";
             tabEditPage.UseVisualStyleBackColor = true;
             // 
             // btnEditDeleteAll
@@ -1051,89 +1134,6 @@
             lblEditHeader.Text = "Editar";
             lblEditHeader.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // tabCreateMoreCards
-            // 
-            tabCreateMoreCards.Controls.Add(btnAddCards);
-            tabCreateMoreCards.Controls.Add(boxAddQuant);
-            tabCreateMoreCards.Controls.Add(lblAddQuant);
-            tabCreateMoreCards.Controls.Add(lblAddSet);
-            tabCreateMoreCards.Controls.Add(lblAddCards);
-            tabCreateMoreCards.Controls.Add(cboAddCardsList);
-            tabCreateMoreCards.Location = new Point(4, 24);
-            tabCreateMoreCards.Name = "tabCreateMoreCards";
-            tabCreateMoreCards.Size = new Size(1168, 646);
-            tabCreateMoreCards.TabIndex = 4;
-            tabCreateMoreCards.Text = "More Cards";
-            tabCreateMoreCards.UseVisualStyleBackColor = true;
-            // 
-            // cboAddCardsList
-            // 
-            cboAddCardsList.Anchor = AnchorStyles.Top;
-            cboAddCardsList.FormattingEnabled = true;
-            cboAddCardsList.Location = new Point(246, 98);
-            cboAddCardsList.Name = "cboAddCardsList";
-            cboAddCardsList.Size = new Size(395, 23);
-            cboAddCardsList.TabIndex = 0;
-            // 
-            // lblAddCards
-            // 
-            lblAddCards.Dock = DockStyle.Top;
-            lblAddCards.Font = new Font("Segoe UI", 16F);
-            lblAddCards.Location = new Point(0, 0);
-            lblAddCards.Name = "lblAddCards";
-            lblAddCards.Size = new Size(1168, 87);
-            lblAddCards.TabIndex = 28;
-            lblAddCards.Text = "Adicionar Cartelas em um Conjunto";
-            lblAddCards.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // boxAddQuant
-            // 
-            boxAddQuant.Anchor = AnchorStyles.Top;
-            boxAddQuant.Font = new Font("Segoe UI", 12F);
-            boxAddQuant.Location = new Point(246, 174);
-            boxAddQuant.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            boxAddQuant.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            boxAddQuant.Name = "boxAddQuant";
-            boxAddQuant.Size = new Size(395, 29);
-            boxAddQuant.TabIndex = 46;
-            boxAddQuant.Value = new decimal(new int[] { 100, 0, 0, 0 });
-            // 
-            // lblAddQuant
-            // 
-            lblAddQuant.Anchor = AnchorStyles.Top;
-            lblAddQuant.Font = new Font("Segoe UI", 12F);
-            lblAddQuant.ImageAlign = ContentAlignment.MiddleLeft;
-            lblAddQuant.Location = new Point(3, 165);
-            lblAddQuant.Name = "lblAddQuant";
-            lblAddQuant.Size = new Size(237, 38);
-            lblAddQuant.TabIndex = 45;
-            lblAddQuant.Text = "Quantidade:";
-            lblAddQuant.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblAddSet
-            // 
-            lblAddSet.Anchor = AnchorStyles.Top;
-            lblAddSet.Font = new Font("Segoe UI", 12F);
-            lblAddSet.ImageAlign = ContentAlignment.MiddleLeft;
-            lblAddSet.Location = new Point(3, 87);
-            lblAddSet.Name = "lblAddSet";
-            lblAddSet.Size = new Size(237, 38);
-            lblAddSet.TabIndex = 44;
-            lblAddSet.Text = "Nome do Conjunto:";
-            lblAddSet.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // btnAddCards
-            // 
-            btnAddCards.Anchor = AnchorStyles.Top;
-            btnAddCards.Font = new Font("Segoe UI", 12F);
-            btnAddCards.Location = new Point(665, 98);
-            btnAddCards.Name = "btnAddCards";
-            btnAddCards.Size = new Size(265, 105);
-            btnAddCards.TabIndex = 47;
-            btnAddCards.Text = "Adicionar Cartelas";
-            btnAddCards.UseVisualStyleBackColor = true;
-            btnAddCards.Click += btnAddCards_Click;
-            // 
             // MainView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1159,11 +1159,11 @@
             tabCreateCards.ResumeLayout(false);
             tabCreateCards.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)boxCardsQuantity).EndInit();
+            tabCreateMoreCards.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)boxAddQuant).EndInit();
             tabEditPage.ResumeLayout(false);
             tabEditPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picEdit).EndInit();
-            tabCreateMoreCards.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)boxAddQuant).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

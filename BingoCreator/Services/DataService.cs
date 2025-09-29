@@ -642,7 +642,34 @@ namespace BingoCreator.Services
                 throw new Exception($"CardsSize inválido ({set.CardsSize}) para SetId={setId}.");
             }
         }
+        public static void ExportGameDatabaseSubsetToPath(int setId, HashSet<int> cardNumbers, string outputPath)
+        {
+            if (File.Exists(outputPath))
+                File.Delete(outputPath);
 
+            SQLiteConnection.CreateFile(outputPath);
+            string connStr = $"Data Source={outputPath};Version=3;";
+
+            using var conn = new SQLiteConnection(connStr);
+            conn.Open();
+
+            var set = GetCardSetById(setId) ?? throw new Exception($"Conjunto {setId} não encontrado.");
+
+            if (set.CardsSize == 5)
+            {
+                CreateGameDB5(conn);
+                ExportGame5Subset(conn, setId, cardNumbers);
+            }
+            else if (set.CardsSize == 4)
+            {
+                CreateGameDB4(conn);
+                ExportGame4Subset(conn, setId, cardNumbers);
+            }
+            else
+            {
+                throw new Exception($"CardsSize inválido ({set.CardsSize}).");
+            }
+        }
         // Criar Banco do Jogo 
         public static void CreateGameDB5(SQLiteConnection conn)
         {
@@ -685,7 +712,6 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
         }
-
         public static void CreateGameDB4(SQLiteConnection conn)
         {
             var commands = new List<string>
@@ -721,7 +747,6 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
         }
-
         // Selecionar informações do Jogo
         public static DataRow GetCardSet5ById(int setId)
         {
@@ -739,7 +764,6 @@ namespace BingoCreator.Services
             adapter.Fill(dt);
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
         }
-
         public static List<DataRow> GetCards5BySetId(int setId)
         {
             using var conn = new SQLiteConnection(_connectionString);
@@ -752,7 +776,6 @@ namespace BingoCreator.Services
             adapter.Fill(dt);
             return dt.AsEnumerable().ToList();
         }
-
         public static DataRow GetCardSet4ById(int setId)
         {
             using var conn = new SQLiteConnection(_connectionString);
@@ -769,7 +792,6 @@ namespace BingoCreator.Services
             adapter.Fill(dt);
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
         }
-
         public static List<DataRow> GetCards4BySetId(int setId)
         {
             using var conn = new SQLiteConnection(_connectionString);
@@ -782,7 +804,6 @@ namespace BingoCreator.Services
             adapter.Fill(dt);
             return dt.AsEnumerable().ToList();
         }
-
         // Preenche Banco do Jogo
         public static void ExportGame5(SQLiteConnection conn, int setId)
         {
@@ -875,7 +896,6 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
         }
-
         public static void ExportGame4(SQLiteConnection conn, int setId)
         {
             DataRow setRow = GetCardSet4ById(setId);
@@ -958,6 +978,178 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
         }
+        private static void ExportGame5Subset(SQLiteConnection conn, int setId, HashSet<int> cardNumbers)
+        {
+            // metadados do set (usa a mesma query que você já tem)
+            var setRow = GetCardSet5ById(setId)
+                ?? throw new Exception($"Conjunto 5×5 SetId={setId} não encontrado.");
+
+            string title = setRow["Title"]?.ToString() ?? "";
+            string groupB = setRow["GroupB"]?.ToString() ?? "";
+            string groupI = setRow["GroupI"]?.ToString() ?? "";
+            string groupN = setRow["GroupN"]?.ToString() ?? "";
+            string groupG = setRow["GroupG"]?.ToString() ?? "";
+            string groupO = setRow["GroupO"]?.ToString() ?? "";
+
+            // filtra as cartelas pelo conjunto de números solicitado
+            var allCards = GetCards5BySetId(setId);
+            var subset = allCards.Where(r => cardNumbers.Contains(Convert.ToInt32(r["CardNumber"])))
+                                   .OrderBy(r => Convert.ToInt32(r["CardNumber"]))
+                                   .ToList();
+
+            int qnt = subset.Count;
+
+            // CardsSets (no DB do jogo, SetId=0). Pode manter os grupos completos.
+            const string insertSet = @"
+        INSERT INTO CardsSets (SetId, Title, Qnt, GroupB, GroupI, GroupN, GroupG, GroupO)
+        VALUES (0, @Title, @Qnt, @GroupB, @GroupI, @GroupN, @GroupG, @GroupO);";
+            using (var cmd = new SQLiteCommand(insertSet, conn))
+            {
+                cmd.Parameters.AddWithValue("@Title", title);
+                cmd.Parameters.AddWithValue("@Qnt", qnt);
+                cmd.Parameters.AddWithValue("@GroupB", groupB);
+                cmd.Parameters.AddWithValue("@GroupI", groupI);
+                cmd.Parameters.AddWithValue("@GroupN", groupN);
+                cmd.Parameters.AddWithValue("@GroupG", groupG);
+                cmd.Parameters.AddWithValue("@GroupO", groupO);
+                cmd.ExecuteNonQuery();
+            }
+
+            // elementos necessários (pelas cartelas do subset)
+            var usedIds = new HashSet<int>();
+            foreach (var card in subset)
+            {
+                for (int i = 1; i <= 5; i++)
+                {
+                    usedIds.Add(Convert.ToInt32(card[$"EleB{i}"]));
+                    usedIds.Add(Convert.ToInt32(card[$"EleI{i}"]));
+                    usedIds.Add(Convert.ToInt32(card[$"EleN{i}"]));
+                    usedIds.Add(Convert.ToInt32(card[$"EleG{i}"]));
+                    usedIds.Add(Convert.ToInt32(card[$"EleO{i}"]));
+                }
+            }
+
+            var elems = GetElementsByIds(usedIds.ToList());
+            foreach (DataRow e in elems)
+            {
+                const string insertElement = @"
+            INSERT INTO ElementsTable (Id, Name, CardName, ImageName)
+            VALUES (@Id, @Name, @CardName, @ImageName);";
+                using var cmd = new SQLiteCommand(insertElement, conn);
+                cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(e["Id"]));
+                cmd.Parameters.AddWithValue("@Name", e["Name"]?.ToString() ?? "");
+                cmd.Parameters.AddWithValue("@CardName", e["CardName"]?.ToString() ?? "");
+                var img = e.Table.Columns.Contains("ImageName") ? e["ImageName"]?.ToString() ?? "" : "";
+                cmd.Parameters.AddWithValue("@ImageName", Path.GetFileName(img));
+                cmd.ExecuteNonQuery();
+            }
+
+            // grava somente as cartelas do subset
+            foreach (var card in subset)
+            {
+                const string insertCard = @"
+            INSERT INTO CardsList (
+                Id, CardNumber, SetId,
+                EleB1, EleB2, EleB3, EleB4, EleB5,
+                EleI1, EleI2, EleI3, EleI4, EleI5,
+                EleN1, EleN2, EleN3, EleN4, EleN5,
+                EleG1, EleG2, EleG3, EleG4, EleG5,
+                EleO1, EleO2, EleO3, EleO4, EleO5)
+            VALUES (
+                @Id, @CardNumber, 0,
+                @B1, @B2, @B3, @B4, @B5,
+                @I1, @I2, @I3, @I4, @I5,
+                @N1, @N2, @N3, @N4, @N5,
+                @G1, @G2, @G3, @G4, @G5,
+                @O1, @O2, @O3, @O4, @O5);";
+
+                using var cmd = new SQLiteCommand(insertCard, conn);
+                cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(card["Id"]));
+                cmd.Parameters.AddWithValue("@CardNumber", Convert.ToInt32(card["CardNumber"]));
+                for (int i = 1; i <= 5; i++)
+                {
+                    cmd.Parameters.AddWithValue($"@B{i}", Convert.ToInt32(card[$"EleB{i}"]));
+                    cmd.Parameters.AddWithValue($"@I{i}", Convert.ToInt32(card[$"EleI{i}"]));
+                    cmd.Parameters.AddWithValue($"@N{i}", Convert.ToInt32(card[$"EleN{i}"]));
+                    cmd.Parameters.AddWithValue($"@G{i}", Convert.ToInt32(card[$"EleG{i}"]));
+                    cmd.Parameters.AddWithValue($"@O{i}", Convert.ToInt32(card[$"EleO{i}"]));
+                }
+                cmd.ExecuteNonQuery();
+            }
+        }
+        private static void ExportGame4Subset(SQLiteConnection conn, int setId, HashSet<int> cardNumbers)
+        {
+            var setRow = GetCardSet4ById(setId)
+                ?? throw new Exception($"Conjunto 4×4 SetId={setId} não encontrado.");
+
+            string title = setRow["Title"]?.ToString() ?? "";
+
+            var allCards = GetCards4BySetId(setId);
+            var subset = allCards.Where(r => cardNumbers.Contains(Convert.ToInt32(r["CardNumber"])))
+                                   .OrderBy(r => Convert.ToInt32(r["CardNumber"]))
+                                   .ToList();
+
+            int qnt = subset.Count;
+
+            // elementos efetivamente usados pelo subset
+            var usedIds = new HashSet<int>();
+            foreach (var card in subset)
+                for (int i = 1; i <= 16; i++)
+                    usedIds.Add(Convert.ToInt32(card[$"Ele{i}"]));
+
+            string elementsCsv = string.Join(",", usedIds.OrderBy(x => x));
+
+            const string insertSet = @"
+        INSERT INTO CardsSets (SetId, Title, Qnt, Elements)
+        VALUES (0, @Title, @Qnt, @Elements);";
+            using (var cmd = new SQLiteCommand(insertSet, conn))
+            {
+                cmd.Parameters.AddWithValue("@Title", title);
+                cmd.Parameters.AddWithValue("@Qnt", qnt);
+                cmd.Parameters.AddWithValue("@Elements", elementsCsv);
+                cmd.ExecuteNonQuery();
+            }
+
+            var elems = GetElementsByIds(usedIds.ToList());
+            foreach (DataRow e in elems)
+            {
+                const string insertElement = @"
+            INSERT INTO ElementsTable (Id, Name, CardName, ImageName)
+            VALUES (@Id, @Name, @CardName, @ImageName);";
+                using var cmd = new SQLiteCommand(insertElement, conn);
+                cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(e["Id"]));
+                cmd.Parameters.AddWithValue("@Name", e["Name"]?.ToString() ?? "");
+                cmd.Parameters.AddWithValue("@CardName", e["CardName"]?.ToString() ?? "");
+                var img = e.Table.Columns.Contains("ImageName") ? e["ImageName"]?.ToString() ?? "" : "";
+                cmd.Parameters.AddWithValue("@ImageName", Path.GetFileName(img));
+                cmd.ExecuteNonQuery();
+            }
+
+            foreach (var card in subset)
+            {
+                const string insertCard = @"
+            INSERT INTO CardsList (
+                Id, CardNumber, SetId,
+                Ele1, Ele2, Ele3, Ele4,
+                Ele5, Ele6, Ele7, Ele8,
+                Ele9, Ele10, Ele11, Ele12,
+                Ele13, Ele14, Ele15, Ele16)
+            VALUES (
+                @Id, @CardNumber, 0,
+                @E1, @E2, @E3, @E4,
+                @E5, @E6, @E7, @E8,
+                @E9, @E10, @E11, @E12,
+                @E13, @E14, @E15, @E16);";
+
+                using var cmd = new SQLiteCommand(insertCard, conn);
+                cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(card["Id"]));
+                cmd.Parameters.AddWithValue("@CardNumber", Convert.ToInt32(card["CardNumber"]));
+                for (int i = 1; i <= 16; i++)
+                    cmd.Parameters.AddWithValue($"@E{i}", Convert.ToInt32(card[$"Ele{i}"]));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
 
 
         // Métodos de Busca
@@ -989,7 +1181,6 @@ namespace BingoCreator.Services
                 }
             }
         }
-
         // Retornar todos os Elementos em uma Lista
         public static List<DataRow> GetElementsByIds(List<int> ids)
         {
@@ -1007,7 +1198,6 @@ namespace BingoCreator.Services
             adapter.Fill(dt);
             return dt.AsEnumerable().ToList();
         }
-
         // Método para retornar o ID de um Elemento pelo CardName
         public static int GetElementByCardName(string cardName)
         {
@@ -1026,14 +1216,12 @@ namespace BingoCreator.Services
 
             return 0;
         }
-
         // Conferir se um Elemento já existe em uma Lista
         public static bool ElementExist(string cardName, string listName)
         {
             // Conferir se já existe um elemento em uma lista com o mesmo cardName
             throw new NotImplementedException();
         }
-
         // Método para retornar todas as Listas
         public static DataTable GetLists()
         {
@@ -1052,8 +1240,7 @@ namespace BingoCreator.Services
                     }
                 }
             }
-        }        
-        
+        }               
         // Método para retornar todos os Elementos de uma Lista
         public static List<DataRow> GetElementsInList(int listId)
         {
@@ -1084,7 +1271,6 @@ namespace BingoCreator.Services
 
             return elementsList;
         }
-
         // Método para retornar uma Lista pelo Id
         public static ListModel? GetListById(int listId)
         {
@@ -1128,7 +1314,6 @@ namespace BingoCreator.Services
                 }
             }
         }
-
         // Método para retornar um Card Set pelo Id
         public static CardSetModel? GetCardSetById(int setId)
         {
@@ -1278,7 +1463,6 @@ namespace BingoCreator.Services
 
             return model;
         }
-
         // Método par retornar todas as Cards de um Set
         public static List<DataRow> GetCardsBySetId(int setId)
         {
@@ -1312,7 +1496,6 @@ namespace BingoCreator.Services
                 return dt.AsEnumerable().ToList();
             }
         }
-
         // Método para retornar todos os Elementos de uma cartela por CardSet
         public static List<List<ElementModel>> GetCardElementsBySet(List<DataRow> setCards)
         {
@@ -1383,7 +1566,6 @@ namespace BingoCreator.Services
                 return value == null || value == DBNull.Value ? 0 : Convert.ToInt32(value);
             }
         }
-
         // Método para retornar todos os Elementos criados
         public static DataTable GetAllElements()
         {
@@ -1401,7 +1583,6 @@ namespace BingoCreator.Services
             adp.Fill(dt);
             return dt;
         }
-
         // Método para retornar todos os Card Sets criados
         public static DataTable GetAllCardSets()
         {
@@ -1417,7 +1598,6 @@ namespace BingoCreator.Services
             adp.Fill(dt);
             return dt;
         }
-
         // Método para retornar todas as Listas que contém determinado Elemento
         public static string GetListsForElement(int elementId)
         {
@@ -1447,7 +1627,6 @@ namespace BingoCreator.Services
             // retorna string vazia se não houver listas
             return string.Join("; ", names);
         }
-
         // Método para retornar todos os CardSets que usam determinada Lista
         public static DataTable GetCardSetsByListId(int listId)
         {
@@ -1470,8 +1649,6 @@ namespace BingoCreator.Services
             adp.Fill(dt);
             return dt;
         }
-
-
 
 
         // Métodos de Edição

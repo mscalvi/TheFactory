@@ -916,5 +916,39 @@ namespace BingoCreator.Services
             return s;
         }
 
+        public static void PrintCardsSubset(int setId, IEnumerable<int> cardNumbers)
+        {
+            var cards = DataService.GetCardSetById(setId);
+            if (cards == null) return;
+
+            // normaliza e filtra as linhas de cartelas
+            var wanted = new HashSet<int>((cardNumbers ?? Enumerable.Empty<int>()).Distinct());
+            if (wanted.Count == 0) return;
+
+            var allRows = DataService.GetCardsBySetId(setId);
+            var rows = allRows
+                .Where(r => wanted.Contains(Convert.ToInt32(r["CardNumber"])))
+                .OrderBy(r => Convert.ToInt32(r["CardNumber"]))
+                .ToList();
+
+            if (rows.Count == 0) return;
+
+            // monta os elementos (na ordem) para cada cartela
+            var cardElements = DataService.GetCardElementsBySet(rows);
+
+            // ⚠️ seus métodos PrintCards4x4/5x5 usam cards.Quantity para iterar.
+            // Ajustamos temporariamente para imprimir só o subset.
+            int originalQty = cards.Quantity;
+            cards.Quantity = cardElements.Count;
+
+            if (cards.CardsSize == 5)
+                PrintCards5x5(cards, cardElements);  // já existente no seu projeto
+            else if (cards.CardsSize == 4)
+                PrintCards4x4(cards, cardElements);  // já existente no seu projeto
+
+            cards.Quantity = originalQty; // restaura
+        }
+
+
     }
 }

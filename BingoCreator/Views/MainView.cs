@@ -687,12 +687,12 @@ namespace BingoCreator
                 lblCardsMessage.Text = "Erro inesperado ao criar cartelas: " + ex.Message;
             }
         }
-        // Criar mais Cartelas
+        // Adicionar Cartelas a um Conjunto Existente
         private void btnAddCards_Click(object sender, EventArgs e)
         {
             try
             {
-                // 1) Qual conjunto?
+                // --- 1) qual conjunto e quantas cartelas? ---
                 if (!TryGetSetIdFromCombo(cboAddCardsList, out int setId, out string setName))
                 {
                     MessageBox.Show("Selecione um conjunto válido.", "Adicionar cartelas",
@@ -700,7 +700,6 @@ namespace BingoCreator
                     return;
                 }
 
-                // 2) Quantas cartelas?
                 int howMany = 0;
                 if (boxAddQuant is NumericUpDown nud)
                     howMany = (int)nud.Value;
@@ -714,49 +713,103 @@ namespace BingoCreator
                     return;
                 }
 
+                // --- 2) captura total antes, gera, lê total depois ---
+                var before = DataService.GetCardSetById(setId);
+                int oldTotal = before?.Quantity ?? 0;
+
                 Cursor.Current = Cursors.WaitCursor;
-
-                // 3) Gera e insere novas cartelas (sem duplicar)
-                int created = GeneratingService.AddCardsToSet(setId, howMany);
-
+                int created = GeneratingService.AddCardsToSet(setId, howMany); // deve evitar duplicatas e atualizar Quantity
                 Cursor.Current = Cursors.Default;
 
-                // 4) Mostra total atualizado (Quantity é atualizado no AddCardsToSet)
-                var updated = DataService.GetCardSetById(setId);
-                int total = updated?.Quantity ?? 0;
+                var after = DataService.GetCardSetById(setId);
+                int newTotal = after?.Quantity ?? oldTotal;   // se falhar leitura, cai pro old
+
+                // Números das novas cartelas
+                var newCardNumbers = Enumerable.Range(oldTotal + 1, Math.Max(0, newTotal - (oldTotal)))
+                                               .ToList();
 
                 MessageBox.Show(
                     $"Adicionadas {created} cartelas ao conjunto \"{setName}\".\n" +
-                    $"Total agora: {total}.",
+                    $"Total agora: {newTotal}.",
                     "Adicionar cartelas",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // --- 3) imprimir? (Completa / Novas / Não) ---
+                var printChoice = AskThreeChoice(
+                    "Imprimir cartelas",
+                    "Deseja imprimir as cartelas?\n\n" +
+                    "Sim = Imprimir todas\nNão = Imprimir apenas as novas\nCancelar = Não imprimir");
+
+                switch (printChoice)
+                {
+                    case ThreeChoice.Full:
+                        PrintingService.PrintCards(setId); // imprime o set completo
+                        break;
+                    case ThreeChoice.New:
+                        if (newCardNumbers.Count > 0)
+                        {
+                            // implemente no seu PrintingService:
+                            // public static void PrintCardsSubset(int setId, IEnumerable<int> cardNumbers)
+                            PrintingService.PrintCardsSubset(setId, newCardNumbers);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Não há cartelas novas para imprimir.", "Imprimir",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        break;
+                    case ThreeChoice.None:
+                        break;
+                }
+
+                // --- 4) exportar DB? (Completa / Novas / Não) ---
+                var exportChoice = AskThreeChoice(
+                    "Exportar banco de dados",
+                    "Deseja exportar o banco de dados do jogo?\n\n" +
+                    "Sim = Exportar todas as cartelas\nNão = Exportar apenas as novas\nCancelar = Não exportar");
+
+                switch (exportChoice)
+                {
+                    case ThreeChoice.Full:
+                        ExportingService.ExportDataBase(setId); // exporta tudo
+                        break;
+                    case ThreeChoice.New:
+                        if (newCardNumbers.Count > 0)
+                        {
+                            // implemente no seu ExportingService (mesma ideia do completo, mas filtrando pelos números):
+                            // public static void ExportDataBaseSubset(int setId, IEnumerable<int> cardNumbers)
+                            ExportingService.ExportDataBaseSubset(setId, newCardNumbers);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Não há cartelas novas para exportar.", "Exportar",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        break;
+                    case ThreeChoice.None:
+                        break;
+                }
             }
             catch (Exception ex)
             {
                 Cursor.Current = Cursors.Default;
-                MessageBox.Show("Falha ao adicionar cartelas: " + ex.Message,
+                MessageBox.Show("Falha ao adicionar/imprimir/exportar: " + ex.Message,
                     "Adicionar cartelas", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        // Helper para extrair o SetId de uma ComboBox populada de formas diferentes
+        // Reaproveite este helper (igual ao que te passei antes)
         private bool TryGetSetIdFromCombo(ComboBox combo, out int id, out string name)
         {
             id = 0; name = "";
-
             if (combo == null || combo.SelectedItem == null) return false;
 
             var it = combo.SelectedItem;
 
-            // Se você colocou objetos CardSetModel na combo
             if (it is CardSetModel m)
             {
-                id = m.Id;
-                name = m.Name ?? "";
+                id = m.Id; name = m.Name ?? "";
                 return id > 0;
             }
-
-            // Se a combo está ligada num DataTable (DataRowView)
             if (it is DataRowView drv)
             {
                 if (drv.DataView?.Table?.Columns.Contains("Id") == true)
@@ -766,26 +819,18 @@ namespace BingoCreator
                      : (combo.Text ?? "");
                 return id > 0;
             }
-
-            // Se você configurou ValueMember = "Id"
             if (combo.SelectedValue is int v && v > 0)
             {
-                id = v;
-                name = combo.Text ?? "";
+                id = v; name = combo.Text ?? "";
                 return true;
             }
-
-            // Fallback: tenta parsear o texto (não ideal, mas evita travar)
             if (int.TryParse(combo.SelectedValue?.ToString(), out var v2) && v2 > 0)
             {
-                id = v2;
-                name = combo.Text ?? "";
+                id = v2; name = combo.Text ?? "";
                 return true;
             }
-
             return false;
         }
-
 
 
         // Métodos de Importação
@@ -840,7 +885,6 @@ namespace BingoCreator
                 MessageBox.Show("Erro desconhecido ao importar a Lista", "Importar Pasta de Imagens", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
         // Importar Lista por TXT, remove acentos e caracteres não permitidos
         private void btnListTxt_Clicked(object sender, EventArgs e)
         {
@@ -1153,7 +1197,6 @@ namespace BingoCreator
             RenderAlocateListElements(list.Id);
             RenderNotAlocatedListElements(list.Id);
         }
-
         private void btnAlocateRemove_Click(object sender, EventArgs e)
         {
             if (cboAlocateList.SelectedItem is not ListModel list || list.Id <= 0)
@@ -1184,7 +1227,6 @@ namespace BingoCreator
                 MessageBox.Show("Falha ao remover elementos: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void btnAlocateAdd_Click(object sender, EventArgs e)
         {
             if (cboAlocateList.SelectedItem is not ListModel list || list.Id <= 0)
@@ -1216,6 +1258,17 @@ namespace BingoCreator
 
 
         // Helpers
+        private sealed class ThemeOption
+        {
+            public string Key { get; init; }
+            public string Name { get; init; }
+        }
+        private enum ThreeChoice
+        {
+            Full,   // Imprimir/Exportar Completa
+            New,    // Imprimir/Exportar Novas
+            None    // Não
+        }
         private void UpdatePicEdit(string imageName)
         {
             // Limpa imagem anterior (evita lock)
@@ -1260,13 +1313,6 @@ namespace BingoCreator
                 picEdit.Image = null;
             }
         }
-
-        private sealed class ThemeOption
-        {
-            public string Key { get; init; }
-            public string Name { get; init; }
-        }
-
         private void cboCardsSize_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cboCardsSize.SelectedValue == "4")
@@ -1362,6 +1408,23 @@ namespace BingoCreator
             }
 
             return ids;
+        }
+        private ThreeChoice AskThreeChoice(string title, string message)
+        {
+            // mapeia: Yes = Completa, No = Novas, Cancel = Não
+            var r = MessageBox.Show(
+                message + "\n\n[Sim = Completa | Não = Novas | Cancelar = Não]",
+                title,
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button3);
+
+            return r switch
+            {
+                DialogResult.Yes => ThreeChoice.Full,
+                DialogResult.No => ThreeChoice.New,
+                _ => ThreeChoice.None
+            };
         }
 
     }

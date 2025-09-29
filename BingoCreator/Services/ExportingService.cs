@@ -27,5 +27,24 @@ namespace BingoCreator.Services
             foreach (var c in Path.GetInvalidFileNameChars()) s = s.Replace(c, '_');
             return s;
         }
+        public static void ExportDataBaseSubset(int setId, IEnumerable<int> cardNumbers)
+        {
+            var cards = DataService.GetCardSetById(setId);
+            if (cards == null) return;
+
+            var wanted = new HashSet<int>((cardNumbers ?? Enumerable.Empty<int>()).Distinct());
+            if (wanted.Count == 0) return;
+
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var folder = Path.Combine(desktop, Sanitize(cards.Name));
+            Directory.CreateDirectory(folder);
+
+            // arquivo diferenciado para subset
+            var fileName = $"{cards.Name}DB_novas.db";
+            var filePath = Path.Combine(folder, fileName);
+
+            DataService.ExportGameDatabaseSubsetToPath(setId, wanted, filePath);
+        }
+
     }
 }
