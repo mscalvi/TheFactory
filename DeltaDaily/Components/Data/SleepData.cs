@@ -6,22 +6,22 @@ namespace DeltaDaily.Components.Data
     {
         public enum SleepQuality
         {
-            [Display(Name = "Muitos sonhos")] MuitosSonhos,
-            [Display(Name = "Muito calor")] MuitoCalor,
-            [Display(Name = "Muito frio")] MuitoFrio,
-            [Display(Name = "Insônia")] Insonia,
-            [Display(Name = "Tranquilo")] Tranquilo,
+            [Display(Name = "Normal")] Normal,
             [Display(Name = "Ótimo")] Otimo,
-            [Display(Name = "Normal")] Normal
+            [Display(Name = "Muitos Sonhos")] MuitosSonhos,
+            [Display(Name = "Muito Calor")] MuitoCalor,
+            [Display(Name = "Muito Frio")] MuitoFrio,
+            [Display(Name = "Insônia")] Insonia
         }
         public enum DreamType
         {
+            [Display(Name = "Normais")] Normais,
             [Display(Name = "Agitados")] Agitados,
-            [Display(Name = "Pesadelo com Trabalho")] PesadelosTrabalho,
-            [Display(Name = "Pesadelo com Vi")] PesadelosVi,
-            [Display(Name = "Pesadelo com Família")] PesadelosFamilia,
+            [Display(Name = "Pesadelos com Trabalho")] PesadelosTrabalho,
+            [Display(Name = "Pesadelos com Vi")] PesadelosVi,
+            [Display(Name = "Pesadelos com Família")] PesadelosFamilia,
             [Display(Name = "Pesadelos Diferentes")] PesadelosDiferentes,
-            [Display(Name = "Sexual")] Sexuais
+            [Display(Name = "Sexuais")] Sexuais
         }
     }
 }

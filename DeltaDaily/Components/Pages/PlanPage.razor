@@ -1,0 +1,329 @@
+﻿@page "/plans/{Id}"
+
+@using DeltaDaily.Components.Models
+@inject DeltaDaily.Components.Services.IProjectStoreService Store
+@inject NavigationManager Nav
+
+@code {
+    [Parameter] public string Id { get; set; } = default!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private ProjectModel? Project;
+    private bool NotFound;
+
+    private bool criandoIdeia = false;
+    private string novaIdeiaNome = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (string.IsNullOrWhiteSpace(Id))
+        {
+            NotFound = true;
+            return;
+        }
+
+        Project = await Store.LoadAsync(Id);
+        NotFound = Project is null;
+        if (Project is null) return;
+
+        var newPhase = ComputePhase(Project);
+        if (Project.Fase != newPhase)
+        {
+            Project.Fase = newPhase;
+            Project.DataAlteracao = DateTime.Now;
+            await Store.SaveAsync(Project);
+        }
+    }
+
+    private static DeltaDaily.Components.Data.ProjectData.Phase ComputePhase(ProjectModel p)
+    {
+        if (p.Metas?.Any(m => m?.Completa == true) == true)
+            return DeltaDaily.Components.Data.ProjectData.Phase.Loja;
+
+        if (p.Metas is { Count: > 0 })
+            return DeltaDaily.Components.Data.ProjectData.Phase.Oficina;
+
+        if (!string.IsNullOrWhiteSpace(p.Descricao))
+            return DeltaDaily.Components.Data.ProjectData.Phase.Laboratório;
+
+        return DeltaDaily.Components.Data.ProjectData.Phase.Feira;
+    }
+
+    private void Voltar() => Nav.NavigateTo("/plans"); 
+    
+    private async Task Ativar()
+    {
+        if (Project is null || string.IsNullOrWhiteSpace(Project.Id))
+            return;
+
+        await Store.SetActiveAsync(Project.Id);
+        Project.Ativo = true;
+        StateHasChanged();
+    }
+
+    private void AddMeta()
+    {
+
+    }
+
+    private void ComecarCriarIdeia()
+    {
+        criandoIdeia = true;
+        novaIdeiaNome = string.Empty;
+    }
+
+    private async Task SalvarNovaIdeia()
+    {
+        if (Project is null) return;
+
+        Project.Ideias ??= new List<TaskModel>();
+        Project.Ideias.Add(new TaskModel
+        {
+            Nome = novaIdeiaNome.Trim(),
+            Criacao = DateOnly.FromDateTime(DateTime.Today),
+            Completa = false,
+            Finalizada = null
+        });
+
+        Project.DataAlteracao = DateTime.Now;
+        await Store.SaveAsync(Project);
+
+        criandoIdeia = false;
+        novaIdeiaNome = string.Empty;
+    }
+
+    private void CancelarCriacaoIdeia()
+    {
+        criandoIdeia = false;
+        novaIdeiaNome = string.Empty;
+    }
+
+    // --- estado de edição ---
+    private TaskModel? editandoIdeia;
+    private string edNome = string.Empty;
+    private string? edComentario;
+    private bool edCompleta;
+
+    private void EditarIdeia(TaskModel idea)
+    {
+        editandoIdeia = idea;
+        edNome = idea.Nome;
+        edComentario = idea.Comentario;
+        edCompleta = idea.Completa == true;
+    }
+
+    private async Task SalvarEdicaoIdeia()
+    {
+        if (Project is null || editandoIdeia is null) return;
+
+        editandoIdeia.Nome = edNome.Trim();
+        editandoIdeia.Comentario = string.IsNullOrWhiteSpace(edComentario) ? null : edComentario.Trim();
+
+        // Ajusta status de conclusão e data finalizada
+        if (edCompleta)
+        {
+            editandoIdeia.Completa = true;
+            editandoIdeia.Finalizada ??= DateOnly.FromDateTime(DateTime.Today);
+        }
+        else
+        {
+            editandoIdeia.Completa = false;
+            editandoIdeia.Finalizada = null;
+        }
+
+        Project.DataAlteracao = DateTime.Now;
+        await Store.SaveAsync(Project);
+
+        // sai do modo edição
+        editandoIdeia = null;
+        edNome = string.Empty;
+        edComentario = null;
+        edCompleta = false;
+    }
+
+    private void CancelarEdicaoIdeia()
+    {
+        editandoIdeia = null;
+        edNome = string.Empty;
+        edComentario = null;
+        edCompleta = false;
+    }
+
+    private async Task ExcluirIdeia(TaskModel idea)
+    {
+        if (Project is null) return;
+
+        var ok = await JS.InvokeAsync<bool>("confirm", $"Excluir a ideia \"{idea.Nome}\"?");
+        if (!ok) return;
+
+        Project.Ideias?.Remove(idea);
+        Project.DataAlteracao = DateTime.Now;
+        await Store.SaveAsync(Project);
+    }
+}
+
+<section class="page plan">
+    @if (NotFound)
+    {
+        <div class="card">
+            <h2>Projeto não encontrado</h2>
+            <button class="btn" @onclick="Voltar">Voltar</button>
+        </div>
+    }
+    else if (Project is null)
+    {
+        <div class="card">
+            <p>Carregando…</p>
+        </div>
+    }
+    else
+    {
+        <header class="page-header">
+            <h1>@Project.Nome</h1>
+            <div class="muted">
+                Criado em @Project.DataCriacao?.ToString("dd/MM/yy") ·
+                Atualizado em @Project.DataAlteracao?.ToString("dd/MM/yy")
+            </div>
+        </header>
+
+        <section class="card">
+            <h2>Visão Geral</h2>
+            <div class="form-grid">
+                <div>
+                    <span class="label">Fase Atual</span>
+                    <div class="value">@Project.Fase</div>
+                </div>
+                <div>
+                    <span class="label">Resumo</span>
+                    <div class="value">@Project.Resumo</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Descrição</h2>
+            <p>@Project.Descricao</p>
+        </section>
+
+        <section class="card">
+            <h2>Metas</h2>
+
+            <section class="card">
+                <button class="btn" @onclick="AddMeta">+</button>
+            </section>
+
+            @if ((Project.Metas?.Count ?? 0) == 0)
+            {
+                <p class="muted">Nenhuma meta.</p>
+            }
+            else
+            {
+                <ul class="list">
+                    @foreach (var m in Project.Metas)
+                    {
+                        <li class="item">
+                            <div class="name">@m.Nome</div>
+                            <div class="muted">
+                                Início: @(m.DataCriacao.ToString("dd/MM/yy") ?? "-") ·
+                                Conclusão: @(m.DataFechamento?.ToString("dd/MM/yy") ?? "-") ·
+                                Tarefas: @(m.TarefasTotais)
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+        <section class="card">
+            <h2>Caixa de Ideias</h2>
+
+            @* Botão + / formulário de criação *@
+            @if (!criandoIdeia)
+            {
+                <button class="btn" @onclick="ComecarCriarIdeia">+</button>
+            }
+            else
+            {
+                <div class="form-grid" style="margin-top:8px;">
+                    <label class="span-row">
+                        <span>Nome da ideia</span>
+                        <InputText @bind-Value="novaIdeiaNome" class="input" />
+                    </label>
+                </div>
+                <div class="actions" style="margin-top:8px;">
+                    <button class="btn primary" @onclick="SalvarNovaIdeia" disabled="@string.IsNullOrWhiteSpace(novaIdeiaNome)">
+                        Salvar
+                    </button>
+                    <button class="btn" @onclick="CancelarCriacaoIdeia">Cancelar</button>
+                </div>
+            }
+
+            @if ((Project.Ideias?.Count ?? 0) == 0)
+            {
+                <p class="muted" style="margin-top:12px;">Sem ideias.</p>
+            }
+            else
+            {
+                <ul class="list" style="margin-top:12px;">
+                    @foreach (var idea in Project.Ideias.ToList())
+                    {
+                        <li class="item">
+                            @if (ReferenceEquals(editandoIdeia, idea))
+                            {
+                                @* Modo edição inline *@
+                                <div class="form-grid span-row">
+                                    <label class="span-row">
+                                        <span>Nome</span>
+                                        <InputText @bind-Value="edNome" class="input" />
+                                    </label>
+
+                                    <label class="span-row">
+                                        <span>Comentário (opcional)</span>
+                                        <InputText @bind-Value="edComentario" class="input" />
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox" @bind="edCompleta" />
+                                        <span>Completa</span>
+                                    </label>
+                                </div>
+                                <div class="actions" style="margin-top:8px;">
+                                    <button class="btn primary" @onclick="SalvarEdicaoIdeia">Salvar</button>
+                                    <button class="btn" @onclick="CancelarEdicaoIdeia">Cancelar</button>
+                                </div>
+                            }
+                            else
+                            {
+                                @* Modo leitura *@
+                                <div class="name">@idea.Nome</div>
+                                <div class="muted">
+                                    Criada em: @idea.Criacao.ToString("dd/MM/yy")
+                                    @if (idea.Completa == true)
+                                    {
+                                        <text> · Concluída: @idea.Finalizada?.ToString("dd/MM/yy")</text>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(idea.Comentario))
+                                    {
+                                        <text> · Comentário: @idea.Comentario</text>
+                                    }
+                                </div>
+                                <div class="actions" style="margin-top:6px;">
+                                    <button class="btn small" @onclick="@(() => EditarIdeia(idea))">Editar</button>
+                                    <button class="btn small danger" @onclick="@(() => ExcluirIdeia(idea))">Excluir</button>
+                                </div>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+
+        <section class="card">
+            <button class="btn" @onclick="Ativar">Trabalhar</button>
+        </section>
+        <section class="card">
+            <button class="btn" @onclick="Voltar">Voltar</button>
+        </section>
+    }
+</section>

@@ -26,6 +26,36 @@
             d = parsed;
 
         Day = await Store.LoadAsync(d);
+
+        // cria/renova o EditContext para o modelo carregado
+        _edit = new EditContext(Day);
+        _edit.OnFieldChanged -= Edit_OnFieldChanged; // evita duplicar
+        _edit.OnFieldChanged += Edit_OnFieldChanged;
+    }
+
+    private EditContext? _edit;
+    private CancellationTokenSource? _saveCts;
+
+    private void Edit_OnFieldChanged(object? sender, FieldChangedEventArgs e)
+        => _ = DebouncedSaveAsync();
+
+    private async Task DebouncedSaveAsync()
+    {
+        _saveCts?.Cancel();
+        _saveCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(800, _saveCts.Token); // debounce
+            await Store.SaveAsync(Day);            // grava no IndexedDB
+        }
+        catch (TaskCanceledException) { /* ignorar */ }
+    }
+
+    public void Dispose()
+    {
+        if (_edit is not null)
+            _edit.OnFieldChanged -= Edit_OnFieldChanged;
+        _saveCts?.Dispose();
     }
 
     private bool IsHoje => Day.Data.Date == DateTime.Today;
@@ -162,7 +192,7 @@
                         <div class="form-grid">
                             <label>
                                 <span>Plano</span>
-                                <InputSelect @bind-Value="item.Plano" TValue="PlanModel">
+                                <InputSelect @bind-Value="item.Plano" TValue="ProjectModel">
                                     @* opções virão do banco depois *@
                                 </InputSelect>
                             </label>
@@ -434,5 +464,5 @@
             </div>
         </section>
 
-    </div>
+        </div>
 </section>

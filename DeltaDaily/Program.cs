@@ -11,6 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddSingleton<IIndexedDbFactory, IndexedDbFactory>();
 builder.Services.AddScoped<IDayStoreService, DayStoreService>();
+builder.Services.AddScoped<IProjectStoreService, ProjectStoreService>();
 
 
 await builder.Build().RunAsync();

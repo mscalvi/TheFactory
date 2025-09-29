@@ -4,7 +4,7 @@ namespace DeltaDaily.Components.Models
 {
     public class WorkModel
         {
-        public PlanModel Plano { get; set; }          
+        public ProjectModel Plano { get; set; }          
         public string? Duracao { get; set; }
         public WorkData.WorkType? Tipo { get; set; }
         public WorkData.Focus? Foco { get; set; }

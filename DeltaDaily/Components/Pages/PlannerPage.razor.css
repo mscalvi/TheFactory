@@ -1,0 +1,103 @@
+﻿/* Layout do cabeçalho: título e botão centralizados */
+.planner-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.brand-title {
+    text-align: center;
+    margin: 0;
+}
+
+/* Botão grande, amigável ao toque */
+.header-create {
+    align-self: center;
+    width: 100%;
+    max-width: 360px;
+}
+
+/* Card da vitrine centralizado e legível em mobile */
+.showcase {
+    text-align: center;
+}
+
+    .showcase .card-title {
+        margin-top: 0;
+        margin-bottom: 8px;
+    }
+
+    .showcase .field {
+        margin: 8px 0;
+    }
+
+    .showcase .label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .showcase .value {
+        font-size: 1rem;
+    }
+
+/* KPIs lado a lado */
+.kpis {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 16px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+    .kpis .field {
+        min-width: 150px;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+    }
+
+/* Lista de projetos */
+.project-list .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.project-list .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+    .project-list .item:last-child {
+        border-bottom: none;
+    }
+
+/* Botões base (coerentes com mobile) */
+.btn {
+    font-size: 16px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    cursor: pointer;
+}
+
+    .btn.primary {
+        background: #2563eb;
+        color: #fff;
+        border-color: #2563eb;
+    }
+
+    .btn.small {
+        font-size: 14px;
+        min-height: 36px;
+        padding: 6px 12px;
+    }

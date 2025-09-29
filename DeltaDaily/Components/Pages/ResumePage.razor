@@ -1,9 +1,222 @@
 ﻿@page "/resume"
-
-<h3>Resumos</h3>
-
-<p>Soon</p>
+@using System.Globalization
+@using DeltaDaily.Components.Models
+@inject DeltaDaily.Components.Services.IDayStoreService Store
+@inject NavigationManager Nav
 
 @code {
+    private readonly CultureInfo ptBR = new("pt-BR");
 
+    // Hoje e faixas
+    private DateTime Hoje = DateTime.Today;
+    private DateTime SemanaIni;
+    private DateTime SemanaFim;
+    private DateTime MesIni;
+    private DateTime MesFim;
+
+    // Dados carregados
+    private List<DayModel> WeekDays = new();
+    private List<DayModel> MonthDays = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Semana começando na segunda
+        int delta = ((int)Hoje.DayOfWeek + 6) % 7; // Mon=0 ... Sun=6
+        SemanaIni = Hoje.Date.AddDays(-delta);
+        SemanaFim = SemanaIni.AddDays(6);
+
+        MesIni = new DateTime(Hoje.Year, Hoje.Month, 1);
+        MesFim = MesIni.AddMonths(1).AddDays(-1);
+
+        // Carrega semana (7 dias)
+        var wTasks = Enumerable.Range(0, 7)
+            .Select(i => Store.LoadAsync(SemanaIni.AddDays(i)));
+        WeekDays = (await Task.WhenAll(wTasks)).ToList();
+
+        // Carrega mês inteiro
+        var mTasks = Enumerable.Range(0, DateTime.DaysInMonth(Hoje.Year, Hoje.Month))
+            .Select(i => Store.LoadAsync(MesIni.AddDays(i)));
+        MonthDays = (await Task.WhenAll(mTasks)).ToList();
+    }
+
+    // --- helpers de tempo ---
+    private static TimeSpan? ToSpan(TimeOnly? t) => t.HasValue ? new TimeSpan(t.Value.Hour, t.Value.Minute, 0) : null;
+
+    private static TimeSpan? Avg(IEnumerable<TimeSpan?> valores)
+    {
+        var xs = valores.Where(v => v.HasValue).Select(v => v!.Value).ToArray();
+        if (xs.Length == 0) return null;
+        var avgMinutes = xs.Average(v => v.TotalMinutes);
+        return TimeSpan.FromMinutes(Math.Round(avgMinutes));
+    }
+    private static TimeSpan? Min(IEnumerable<TimeSpan?> valores)
+    {
+        var xs = valores.Where(v => v.HasValue).Select(v => v!.Value).ToArray();
+        return xs.Length == 0 ? null : xs.Min();
+    }
+    private static TimeSpan? Max(IEnumerable<TimeSpan?> valores)
+    {
+        var xs = valores.Where(v => v.HasValue).Select(v => v!.Value).ToArray();
+        return xs.Length == 0 ? null : xs.Max();
+    }
+    private static string Fmt(TimeSpan? ts) => ts is null ? "—" : $"{(int)ts.Value.TotalHours:00}:{ts.Value.Minutes:00}";
+
+    // Remédio (usa horário se houver)
+    private static TimeSpan? RemedioHora(DayModel d) => ToSpan(d.HorarioRemedio);
+
+    // Soma horas por plano (considera WorkModel.Duracao como TimeOnly? ou string "hh:mm")
+    private static TimeSpan ParseDur(object? dur)
+    {
+        if (dur is null) return TimeSpan.Zero;
+
+        if (dur is TimeOnly t1)
+            return new TimeSpan(t1.Hour, t1.Minute, 0);
+
+        if (dur is string s && TimeSpan.TryParse(s, out var ts))
+            return ts;
+
+        return TimeSpan.Zero;
+    }
+    private static IEnumerable<(string nome, TimeSpan horas)> AgruparPlanos(IEnumerable<DayModel> dias)
+    {
+        // agrupa por "Plano.Nome" (se vazio, usa "(sem plano)")
+        var flat = dias
+            .SelectMany(d => d.Trabalhos)
+            .Select(w => (nome: string.IsNullOrWhiteSpace(w.Plano?.Nome) ? "(sem plano)" : w.Plano!.Nome,
+                          dur: ParseDur(w.Duracao)));
+
+        return flat
+            .GroupBy(x => x.nome)
+            .Select(g => (g.Key, TimeSpan.FromMinutes(g.Sum(v => v.dur.TotalMinutes))))
+            .OrderByDescending(x => x.Item2);
+    }
+
+    private void AbrirDia(DateTime d) => Nav.NavigateTo($"/?date={d:yyyy-MM-dd}");
 }
+
+<section class="resume">
+
+    <!-- ====== Bloco Semanal ====== -->
+    <section class="card">
+        <header class="resume-header">
+            <h2>Resumo Semanal</h2>
+            <div class="sub">@SemanaIni.ToString("dd/MM", ptBR) — @SemanaFim.ToString("dd/MM", ptBR)</div>
+        </header>
+
+        <!-- Caixinhas dos dias da semana (clicáveis) -->
+        <div class="week-grid">
+            @foreach (var d in WeekDays)
+            {
+                var fechado = d.DiaFechado;
+                <button class="daybox @(fechado ? "closed" : "open")"
+                        title="@(fechado ? "Fechado" : "Aberto")"
+                        @onclick="@(() => AbrirDia(d.Data))">
+                    <div class="num">@d.Data.Day</div>
+                    <div class="wday">@d.Data.ToString("ddd", ptBR)</div>
+                </button>
+            }
+        </div>
+
+        <!-- Métricas semanais -->
+        <div class="metrics">
+            @{
+                var levs = WeekDays.Select(d => ToSpan(d.SairDaCama));
+                var dorms = WeekDays.Select(d => ToSpan(d.DeitarHora));
+                var meds = WeekDays.Select(RemedioHora);
+            }
+            <div class="metric">
+                <h4>Levantar</h4>
+                <div>Média: <strong>@Fmt(Avg(levs))</strong></div>
+                <div>Mín: <strong>@Fmt(Min(levs))</strong> · Máx: <strong>@Fmt(Max(levs))</strong></div>
+            </div>
+
+            <div class="metric">
+                <h4>Remédio (hora)</h4>
+                <div>Média: <strong>@Fmt(Avg(meds))</strong></div>
+                <div>Mín: <strong>@Fmt(Min(meds))</strong> · Máx: <strong>@Fmt(Max(meds))</strong></div>
+            </div>
+
+            <div class="metric">
+                <h4>Deitar</h4>
+                <div>Média: <strong>@Fmt(Avg(dorms))</strong></div>
+                <div>Mín: <strong>@Fmt(Min(dorms))</strong> · Máx: <strong>@Fmt(Max(dorms))</strong></div>
+            </div>
+        </div>
+
+        <!-- Planos (semana) -->
+        <div class="plans">
+            <h3>Horas por Plano (semana)</h3>
+            @{
+                var planosW = AgruparPlanos(WeekDays).ToList();
+            }
+            @if (planosW.Count == 0)
+            {
+                <p>Nenhum trabalho registrado.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var p in planosW)
+                    {
+                        <li><span class="plan">@p.nome</span><span class="time">@Fmt(p.horas)</span></li>
+                    }
+                </ul>
+            }
+        </div>
+    </section>
+
+    <!-- ====== Bloco Mensal ====== -->
+    <section class="card">
+        <header class="resume-header">
+            <h2>Resumo Mensal</h2>
+            <div class="sub">@Hoje.ToString("MMMM 'de' yyyy", ptBR)</div>
+        </header>
+
+        <!-- Métricas mês -->
+        <div class="metrics">
+            @{
+                var levsM = MonthDays.Select(d => ToSpan(d.SairDaCama));
+                var dormsM = MonthDays.Select(d => ToSpan(d.DeitarHora));
+                var medsM = MonthDays.Select(RemedioHora);
+            }
+            <div class="metric">
+                <h4>Levantar</h4>
+                <div>Média: <strong>@Fmt(Avg(levsM))</strong></div>
+                <div>Mín: <strong>@Fmt(Min(levsM))</strong> · Máx: <strong>@Fmt(Max(levsM))</strong></div>
+            </div>
+
+            <div class="metric">
+                <h4>Remédio (hora)</h4>
+                <div>Média: <strong>@Fmt(Avg(medsM))</strong></div>
+                <div>Mín: <strong>@Fmt(Min(medsM))</strong> · Máx: <strong>@Fmt(Max(medsM))</strong></div>
+            </div>
+
+            <div class="metric">
+                <h4>Deitar</h4>
+                <div>Média: <strong>@Fmt(Avg(dormsM))</strong></div>
+                <div>Mín: <strong>@Fmt(Min(dormsM))</strong> · Máx: <strong>@Fmt(Max(dormsM))</strong></div>
+            </div>
+        </div>
+
+        <!-- Planos (mês) -->
+        <div class="plans">
+            <h3>Horas por Plano (mês)</h3>
+            @{
+                var planosM = AgruparPlanos(MonthDays).ToList();
+            }
+            @if (planosM.Count == 0)
+            {
+                <p>Nenhum trabalho registrado.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var p in planosM)
+                    {
+                        <li><span class="plan">@p.nome</span><span class="time">@Fmt(p.horas)</span></li>
+                    }
+                </ul>
+            }
+        </div>
+    </section>
+</section>

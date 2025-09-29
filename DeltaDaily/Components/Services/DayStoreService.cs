@@ -30,32 +30,33 @@ namespace DeltaDaily.Components.Services
 
         public async Task<DayModel> LoadAsync(DateTime date)
         {
-            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
 
-            var key = date.ToString("yyyy-MM-dd");
-
-            var rec = db.Days.SingleOrDefault(x => x.Date == key);
+            var key = Key(date);
+            var rec = db.Days.SingleOrDefault(x => x.Id == key);
             if (rec is null)
-                return new DayModel { Data = date };  
+                return new DayModel { Data = date };
 
             var model = JsonSerializer.Deserialize<DayModel>(rec.Payload, JsonOpts)
                         ?? new DayModel { Data = date };
 
-            model.Data = date;                        
+            model.Data = date;
             return model;
         }
 
         public async Task SaveAsync(DayModel day)
         {
             using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+
             var k = Key(day.Data);
-            var rec = db.Days.SingleOrDefault(x => x.Date == k);
+            var rec = db.Days.SingleOrDefault(x => x.Id == k);
 
             if (rec is null)
             {
                 db.Days.Add(new DayRecord
                 {
-                    Date = k,
+                    Id = k,
+                    Date = k, // opcional – pode remover se não for mais usar
                     Closed = day.DiaFechado,
                     UpdatedAtUtc = DateTime.UtcNow,
                     Payload = JsonSerializer.Serialize(day, JsonOpts)
@@ -66,6 +67,7 @@ namespace DeltaDaily.Components.Services
                 rec.Closed = day.DiaFechado;
                 rec.UpdatedAtUtc = DateTime.UtcNow;
                 rec.Payload = JsonSerializer.Serialize(day, JsonOpts);
+                // rec.Date pode ficar como está
             }
 
             await db.SaveChanges();
@@ -73,11 +75,12 @@ namespace DeltaDaily.Components.Services
 
         public async Task<IReadOnlyList<(DateTime date, bool closed)>> ListByMonthAsync(int year, int month)
         {
-            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
+
             var prefix = $"{year:D4}-{month:D2}-"; // "2025-09-"
             return db.Days
-                .Where(r => r.Date.StartsWith(prefix, StringComparison.Ordinal))
-                .Select(r => (DateTime.ParseExact(r.Date, "yyyy-MM-dd", null), r.Closed))
+                .Where(r => r.Id.StartsWith(prefix, StringComparison.Ordinal))
+                .Select(r => (DateTime.ParseExact(r.Id, "yyyy-MM-dd", null), r.Closed))
                 .ToList();
         }
 

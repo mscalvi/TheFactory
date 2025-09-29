@@ -1,0 +1,52 @@
+﻿.page.plan-view {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+    .page.plan-view .page-header {
+        text-align: center;
+        margin: 8px 0 16px;
+    }
+
+        .page.plan-view .page-header h1 {
+            margin: 0;
+        }
+
+    .page.plan-view .muted {
+        color: #6b7280;
+    }
+
+    .page.plan-view .card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 16px;
+        margin: 14px 0;
+        box-shadow: 0 1px 0 rgba(0,0,0,.02);
+    }
+
+    .page.plan-view h2 {
+        text-align: center;
+        margin: 0 0 12px;
+    }
+
+    .page.plan-view .label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 4px;
+    }
+
+    .page.plan-view .value {
+        color: #111827;
+    }
+
+    .page.plan-view .pre-wrap {
+        white-space: pre-wrap;
+    }
+
+    .page.plan-view .bulleted {
+        margin: 0;
+        padding-left: 1.1rem;
+    }

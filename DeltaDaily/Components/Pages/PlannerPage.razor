@@ -1,7 +1,161 @@
 ﻿@page "/plans"
+@inject NavigationManager Nav
+@inject DeltaDaily.Components.Services.IProjectStoreService Store
+@using DeltaDaily.Components.Data
+@using DeltaDaily.Components.Models
 
-<h3>A Sala de Ideias</h3>
-<p>Soon</p>
 @code {
+    private ProjectModel? Active;
+    private Dictionary<ProjectData.Phase, List<ProjectModel>> Groups = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        var all = await Store.ListAllAsync();
+
+        Active = all.FirstOrDefault(p => p.Ativo);
+
+        // inicia grupos vazios nas 4 fases para manter ordem
+        Groups = Enum.GetValues<ProjectData.Phase>()
+                     .ToDictionary(f => f, _ => new List<ProjectModel>());
+
+        foreach (var p in all)
+        {
+            // se quiser esconder o ativo dos grupos, pule aqui
+            if (Active != null && p.Id == Active.Id) continue;
+
+            Groups[p.Fase].Add(p);
+        }
+
+        // ordena cada grupo pelo nome (opcional)
+        foreach (var k in Groups.Keys.ToList())
+            Groups[k] = Groups[k].OrderBy(p => p.Nome).ToList();
+    }
+
+    private static string PhaseTitle(ProjectData.Phase f) => f switch
+    {
+        ProjectData.Phase.Feira => "Feira",
+        ProjectData.Phase.Laboratório => "Laboratório",
+        ProjectData.Phase.Oficina => "Oficina",
+        ProjectData.Phase.Loja => "Loja",
+        _ => f.ToString()
+    };
+
+    private void Open(ProjectModel p) => Nav.NavigateTo($"/plans/{p.Id}");
+    private void NewProject() => Nav.NavigateTo("/plans/new");
 }
+
+<section class="planner">
+
+    <!-- Cabeçalho -->
+    <header class="planner-header">
+        <h1 class="brand-title">A Sala dos Projetos</h1>
+        <button type="button" class="btn primary header-create" @onclick="NewProject">
+            Novo Projeto
+        </button>
+    </header>
+
+    <!-- A Vitrine (projeto ativo) -->
+    <section class="card showcase">
+        <h2 class="card-title">Projeto atual</h2>
+
+        @if (Active is null)
+        {
+            <div class="field span-row">
+                <div class="value placeholder">Nenhum projeto ativo</div>
+            </div>
+
+            <div class="field span-row">
+                <span class="label">Descrição do Plano</span>
+                <div class="value placeholder">—</div>
+            </div>
+
+            <div class="field span-row">
+                <span class="label">Fase Atual</span>
+                <div class="value placeholder">—</div>
+            </div>
+
+            <div class="kpis">
+                <div class="field">
+                    <span class="label">Metas</span>
+                    <div class="value placeholder">—</div>
+                </div>
+                <div class="field">
+                    <span class="label">Concluído</span>
+                    <div class="value placeholder">—</div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="field span-row">
+                <div class="value">@Active.Nome</div>
+            </div>
+
+            <div class="field span-row">
+                <span class="label">Descrição do Plano</span>
+                <div class="value">@Active.Resumo</div>
+            </div>
+
+            <div class="field span-row">
+                <span class="label">Fase Atual</span>
+                <div class="value">@PhaseTitle(Active.Fase)</div>
+            </div>
+
+            <div class="kpis">
+                <div class="field">
+                    <span class="label">Metas</span>
+                    <div class="value">@((Active.Metas?.Count ?? 0))</div>
+                </div>
+                <div class="field">
+                    <span class="label">Concluído</span>
+                    <div class="value">
+                        @{
+                            var total = Active.Metas?.Count ?? 0;
+                            var done = Active.Metas?.Count(m => m.Completa) ?? 0;
+                            var pct = total == 0 ? 0 : (int)Math.Round(done * 100.0 / total);
+                        }
+                        @pct%
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:8px;">
+                <button class="btn small" @onclick="@(() => Open(Active))">Abrir</button>
+            </div>
+        }
+    </section>
+
+    <!-- Listas por fase -->
+    @foreach (var kv in Groups)
+    {
+        var fase = kv.Key;
+        var items = kv.Value;
+
+        <section class="card project-list accordion">
+            <details>
+                <summary>
+                    @PhaseTitle(fase)
+                    <span class="badge">@items.Count</span>
+                </summary>
+
+                @if (items.Count == 0)
+                {
+                    <p class="muted" style="text-align:center;">Nenhum projeto aqui.</p>
+                }
+                else
+                {
+                    <ul class="list">
+                        @foreach (var p in items)
+                        {
+                            <li class="item">
+                                <span class="name">@p.Nome</span>
+                                <button type="button" class="btn small" @onclick="@(() => Open(p))">Abrir</button>
+                            </li>
+                        }
+                    </ul>
+                }
+            </details>
+        </section>
+    }
+
+</section>
