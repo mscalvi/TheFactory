@@ -2,6 +2,7 @@
 
 @inject BingoPlayer.Services.PackageService Package
 @inject BingoPlayer.Services.PlayService Play
+@inject IJSRuntime JS
 
 <div class="control-wrap">
     @if (loading)
@@ -20,16 +21,21 @@
     else
     {
         <!-- Título: Nome do conjunto + Título do jogo -->
-        <header class="app-title">
-            Sala Delta - BingoPlayer
-            @if (!string.IsNullOrWhiteSpace(Package.Game.GameName))
-            {
-                <div style="font-size:0.8em; opacity:.85">@Package.Game.GameName</div>
-            }
-            @if (!string.IsNullOrWhiteSpace(Package.Game.GameTitle))
-            {
-                <div style="font-size:0.6em; opacity:.75">@Package.Game.GameTitle</div>
-            }
+        <header class="app-bar">
+            <div class="app-brand">
+                Sala Delta - <strong>BingoPlayer</strong>
+            </div>
+
+            <div class="app-game">
+                @if (!string.IsNullOrWhiteSpace(Package.Game.GameName))
+                {
+                    <div class="game-name">@Package.Game.GameName</div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Package.Game.GameTitle))
+                {
+                    <div class="game-title">@Package.Game.GameTitle</div>
+                }
+            </div>
         </header>
 
         <!-- Informações do jogo (sem tema e sem capa) -->
@@ -55,15 +61,7 @@
             </div>
             <div class="info-card">
                 <section class="buttons-row">
-                    <button class="btn xl" @onclick="StartGame" disabled="@started">Começar</button>
-                    <button class="btn xl" @onclick="ResetGame" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Reiniciar</button>
-                    <button class="btn xl" @onclick="ShowBingo" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Bingo</button>
-                </section>
-            </div>
-            <div class="info-card">
-                <section class="buttons-row">
-                    <button class="btn" disabled>Ligar projetor</button>
-                    <button class="btn" disabled>Baixar offline</button>
+                    <button class="btn" @onclick="DownloadAndInstall">Baixar Offline</button>
                     <button class="btn" disabled>Manual e FAQ</button>
                 </section>
             </div>
@@ -102,18 +100,26 @@
                 </div>
 
                 <aside class="results">
-                    <h4>Últimos Resultados</h4>
-                    <div class="last-result">@lastResult</div>
-                    <div class="results-list">@resultsList</div>
-                    @if (!string.IsNullOrEmpty(lastImageSrc))
-                    {
-                        <div class="last-image">
-                            <img src="@lastImageSrc" alt="@lastResult"
-                                 style="max-width:100%; max-height:220px; object-fit:contain"
-                                 onerror="this.style.display='none'" />
-                        </div>
-                    }
 
+                    <div class="info-card">
+                        <section class="buttons-row">
+                            <button class="btn" @onclick="StartGame" disabled="@started">Começar</button>
+                            <button class="btn" @onclick="ResetGame" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Reiniciar</button>
+                            <button class="btn" @onclick="ShowBingo" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Bingo</button>
+                            <button class="btn" @onclick="OpenStage">Ligar Projetor</button>
+                        </section>
+                    </div>
+                    <h4>Últimos Resultados</h4>
+                    <div class="last-result">@lastResult
+                        @if (!string.IsNullOrEmpty(lastImageSrc))
+                        {
+                            <div class="last-image">
+                                <img src="@lastImageSrc" alt="preview last"
+                                     style="max-width:260px; max-height:140px; object-fit:contain; background:#f4f4f4" />
+                            </div>
+                        }
+                    </div>
+                    <div class="results-list">@resultsList</div>
                 </aside>
             </section>
         }
@@ -145,18 +151,26 @@
                 </div>
 
                 <aside class="results">
+                    <div class="info-card">
+                        <section class="buttons-row">
+                            <button class="btn" @onclick="StartGame" disabled="@started">Começar</button>
+                            <button class="btn" @onclick="ResetGame" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Reiniciar</button>
+                            <button class="btn" @onclick="ShowBingo" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Bingo</button>
+                            <button class="btn" @onclick="OpenStage">Ligar Projetor</button>
+                        </section>
+                    </div>
                     <h4>Últimos Resultados</h4>
-                    <div class="last-result">@lastResult</div>
+                    <div class="last-result">
+                        @lastResult
+                        @if (!string.IsNullOrEmpty(lastImageSrc))
+                        {
+                            <div class="last-image">
+                                <img src="@lastImageSrc" alt="preview last"
+                                     style="max-width:260px; max-height:140px; object-fit:contain; background:#f4f4f4" />
+                            </div>
+                        }
+                    </div>
                     <div class="results-list">@resultsList</div>
-                    @if (!string.IsNullOrEmpty(lastImageSrc))
-                    {
-                        <div class="last-image">
-                            <img src="@lastImageSrc" alt="@lastResult"
-                                 style="max-width:100%; max-height:220px; object-fit:contain"
-                                 onerror="this.style.display='none'" />
-                        </div>
-                    }
-
                 </aside>
             </section>
         }
@@ -186,7 +200,7 @@
         try
         {
             await Package.LoadAsync();
-            lastImageSrc = Package.GetCoverUrl();
+            lastImageSrc = BingoPlayer.Services.PackageService.ResolveImageUrl(Package.CoverImageName);
             lastResult = "Jogo Pausado";
             BuildHeadersFor5x5();
         }
@@ -226,35 +240,40 @@
     };
 
     // ====== LÓGICA ======
-    private void StartGame()
+    private async Task StartGame()
     {
         started = true;
         lastResult = "Jogo Pausado";
-        lastImageSrc = Package.GetCoverUrl(); 
+        lastImageSrc = BingoPlayer.Services.PackageService.ResolveImageUrl(Package.CoverImageName);
         resultsList = null;
+        await JS.InvokeVoidAsync("stageSync.send", "cover", null);
     }
 
-    private void ResetGame()
+    private async Task ResetGame()
     {
         Play.ResetGame();
         started = false;
         lastResult = "Jogo Pausado";
-        lastImageSrc = Package.GetCoverUrl();   // capa
+        lastImageSrc = BingoPlayer.Services.PackageService.ResolveImageUrl(Package.CoverImageName);
         resultsList = null;
+        await JS.InvokeVoidAsync("stageSync.send", "cover", null);
     }
 
-
-    private void ShowBingo()
+    private async Task ShowBingo()
     {
         Play.RequestShowCover();
-        lastResult = "Jogo Pausado (capa exibida)";
+        lastResult = "Jogo Pausado (Capa exibida)";
+        lastImageSrc = BingoPlayer.Services.PackageService.ResolveImageUrl(Package.CoverImageName);
         resultsList = null;
+        await JS.InvokeVoidAsync("stageSync.send", "cover", null);
     }
 
-    private void OnElementClick(int elementId, int shownNumber)
+    private async Task OnElementClick(int elementId, int shownNumber)
     {
         // Alterna sorteado
         Play.ToggleElement(elementId);
+        Play.ShowElement(elementId);
+        await JS.InvokeVoidAsync("stageSync.send", "element", elementId);
 
         // Quais cartelas contém esse elemento
         var chosenCards = Play.CheckCards(elementId);
@@ -274,6 +293,36 @@
             : "Sem bingo!";
 
         StateHasChanged();
-
     }
+
+    private async Task OpenStage() => await JS.InvokeVoidAsync("open", "/stage", "_blank");
+
+    private async Task DownloadAndInstall()
+    {
+        // monte a lista de arquivos do jogo
+        var urls = new List<string> { "game/game.json", "game/elements.json" };
+
+        if (!string.IsNullOrWhiteSpace(Package.CoverImageName))
+            urls.Add(BingoPlayer.Services.PackageService.ResolveImageUrl(Package.CoverImageName));
+
+        foreach (var el in Package.Game.AllElements)
+        {
+            var u = BingoPlayer.Services.PackageService.ResolveImageUrl(el.ImageName);
+            if (!string.IsNullOrWhiteSpace(u)) urls.Add(u);
+        }
+
+        var outcome = await JS.InvokeAsync<string>("pwa.installAndCache", urls.Distinct().ToArray());
+
+        // feedback simples na UI
+        resultsList = outcome switch
+        {
+            "installed" => $"App instalado e disponível offline ({urls.Count} arquivos).",
+            "ios" => "No iPhone/iPad: toque em Compartilhar → Adicionar à Tela de Início.",
+            "dismissed" => $"Instalação cancelada. Ainda assim, disponível offline ({urls.Count} arquivos).",
+            "unavailable" => $"Instalação não suportada aqui. Disponível offline via favorito/atalho ({urls.Count} arquivos).",
+            _ => $"Disponível offline ({urls.Count} arquivos)."
+        };
+    }
+
+
 }

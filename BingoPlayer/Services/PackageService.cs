@@ -1,5 +1,6 @@
 ﻿using BingoPlayer.Models;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace BingoPlayer.Services
@@ -114,9 +115,18 @@ namespace BingoPlayer.Services
         }
 
         public static string ResolveImageUrl(string? imageName)
-            => string.IsNullOrWhiteSpace(imageName) ? "" : $"images/{imageName}";
+        {
+            if (string.IsNullOrWhiteSpace(imageName)) return "";
+            var name = System.IO.Path.GetFileName(imageName.Trim())
+                       .Normalize(System.Text.NormalizationForm.FormC);
+
+            var encoded = Uri.EscapeDataString(name);
+            return $"images/{encoded}";
+        }
+
         public string? GetCoverUrl()
-            => string.IsNullOrWhiteSpace(CoverImageName) ? null : $"images/{CoverImageName}";
+            => ResolveImageUrl(CoverImageName);
+
 
         // ------------ helpers ------------
         private async Task<T?> GetJsonAsync<T>(string path, CancellationToken ct)

@@ -159,7 +159,7 @@ namespace BingoCreator.Services
 
             try
             {
-                string relativePath = Path.Combine("images", ".Capa.png");
+                string relativePath = Path.Combine("images", "Capa.png");
                 list.Id = DataService.CreateList(list.Name, list.Description, relativePath);
 
                 return new ErrorModel

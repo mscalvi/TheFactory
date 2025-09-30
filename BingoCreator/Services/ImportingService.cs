@@ -33,7 +33,7 @@ namespace BingoCreator.Services
                 foreach (var file in images)
                 {
                     string fileNameNoExt = Path.GetFileNameWithoutExtension(file);
-                    if (fileNameNoExt.Equals(".Capa", StringComparison.OrdinalIgnoreCase))
+                    if (fileNameNoExt.Equals("Capa", StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     string baseName = fileNameNoExt?.Trim() ?? "";

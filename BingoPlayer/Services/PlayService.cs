@@ -149,7 +149,6 @@ namespace BingoPlayer.Services
             OnStageChange?.Invoke();
         }
 
-        // (opcional, para quando você ligar os cliques dos elementos no palco)
         public void ShowElement(int elementId)
         {
             CurrentStage = StageMode.Element;
