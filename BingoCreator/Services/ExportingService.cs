@@ -21,12 +21,6 @@ namespace BingoCreator.Services
 
             DataService.ExportGameDatabaseToPath(cards.Id, filePath);
         }
-        static string Sanitize(string s)
-        {
-            if (string.IsNullOrWhiteSpace(s)) return "Cartelas";
-            foreach (var c in Path.GetInvalidFileNameChars()) s = s.Replace(c, '_');
-            return s;
-        }
         public static void ExportDataBaseSubset(int setId, IEnumerable<int> cardNumbers)
         {
             var cards = DataService.GetCardSetById(setId);
@@ -44,6 +38,12 @@ namespace BingoCreator.Services
             var filePath = Path.Combine(folder, fileName);
 
             DataService.ExportGameDatabaseSubsetToPath(setId, wanted, filePath);
+        }
+        static string Sanitize(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return "Cartelas";
+            foreach (var c in Path.GetInvalidFileNameChars()) s = s.Replace(c, '_');
+            return s;
         }
 
     }

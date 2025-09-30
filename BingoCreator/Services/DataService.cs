@@ -611,7 +611,11 @@ namespace BingoCreator.Services
 
         // Exportação
         // Método de Conexão
-        public static void ExportGameDatabaseToPath(int setId, string outputPath)
+        public static void ExportGameDatabaseToPath(
+            int setId,
+            string outputPath,
+            bool alsoGenerateWasm = true,
+            string? wasmZipOutputPath = null)
         {
             if (File.Exists(outputPath))
                 File.Delete(outputPath);
@@ -622,10 +626,7 @@ namespace BingoCreator.Services
             using var conn = new SQLiteConnection(connStr);
             conn.Open();
 
-            // Descobre o tamanho do set pela CardsSets unificada
-            var set = GetCardSetById(setId);
-            if (set == null)
-                throw new Exception($"Conjunto com SetId={setId} não encontrado.");
+            var set = GetCardSetById(setId) ?? throw new Exception($"Conjunto com SetId={setId} não encontrado.");
 
             if (set.CardsSize == 5)
             {
@@ -641,8 +642,26 @@ namespace BingoCreator.Services
             {
                 throw new Exception($"CardsSize inválido ({set.CardsSize}) para SetId={setId}.");
             }
+
+            // ---> Gera o pacote WASM (opcional)
+            if (alsoGenerateWasm)
+            {
+                var zipPath = wasmZipOutputPath ?? MakeZipPathFromDb(outputPath);
+                BingoCreator.Services.WASMService.ExportWasmPackage(
+                    setId,
+                    zipPath,
+                    isSubset: false,
+                    subsetCardNumbers: null
+                );
+            }
         }
-        public static void ExportGameDatabaseSubsetToPath(int setId, HashSet<int> cardNumbers, string outputPath)
+
+        public static void ExportGameDatabaseSubsetToPath(
+            int setId,
+            HashSet<int> cardNumbers,
+            string outputPath,
+            bool alsoGenerateWasm = true,
+            string? wasmZipOutputPath = null)
         {
             if (File.Exists(outputPath))
                 File.Delete(outputPath);
@@ -669,7 +688,28 @@ namespace BingoCreator.Services
             {
                 throw new Exception($"CardsSize inválido ({set.CardsSize}).");
             }
+
+            // ---> Gera o pacote WASM (opcional), já indicando que é subset
+            if (alsoGenerateWasm)
+            {
+                var zipPath = wasmZipOutputPath ?? MakeZipPathFromDb(outputPath);
+                BingoCreator.Services.WASMService.ExportWasmPackage(
+                    setId,
+                    zipPath,
+                    isSubset: true,
+                    subsetCardNumbers: cardNumbers
+                );
+            }
         }
+
+        // helper simples para nome do ZIP ao lado do .db
+        private static string MakeZipPathFromDb(string dbPath)
+        {
+            var dir = Path.GetDirectoryName(dbPath) ?? "";
+            var name = Path.GetFileNameWithoutExtension(dbPath);
+            return Path.Combine(dir, $"{name}_wasm.zip");
+        }
+
         // Criar Banco do Jogo 
         public static void CreateGameDB5(SQLiteConnection conn)
         {
@@ -684,9 +724,13 @@ namespace BingoCreator.Services
 
         @"CREATE TABLE CardsSets (
             SetId INTEGER PRIMARY KEY,
+            Name TEXT,
             Title TEXT,
             Qnt INTEGER,
             ImageName TEXT,
+            Header TEXT,
+            Theme TEXT,
+            Elements TEXT,
             GroupB TEXT,
             GroupI TEXT,
             GroupN TEXT,
@@ -725,8 +769,11 @@ namespace BingoCreator.Services
 
         @"CREATE TABLE CardsSets (
             SetId INTEGER PRIMARY KEY,
+            Name TEXT,
             Title TEXT,
             Qnt INTEGER,
+            ImageName TEXT,
+            Theme TEXT,
             Elements TEXT
         );",
 
@@ -753,7 +800,7 @@ namespace BingoCreator.Services
             using var conn = new SQLiteConnection(_connectionString);
             conn.Open();
             const string sql = @"
-        SELECT SetId, Title, ImageName, Quantity, GroupB, GroupI, GroupN, GroupG, GroupO
+        SELECT SetId, Name, Title, ImageName, Quantity, Elements, GroupB, GroupI, GroupN, GroupG, GroupO, Theme, Header
         FROM CardsSets
         WHERE SetId = @SetId AND CardsSize = 5
         LIMIT 1;";
@@ -781,7 +828,7 @@ namespace BingoCreator.Services
             using var conn = new SQLiteConnection(_connectionString);
             conn.Open();
             const string sql = @"
-        SELECT SetId, Title, Quantity, Elements
+        SELECT SetId, Name, Title, Quantity, Elements, Theme, ImageName
         FROM CardsSets
         WHERE SetId = @SetId AND CardsSize = 4
         LIMIT 1;";
@@ -807,11 +854,14 @@ namespace BingoCreator.Services
         // Preenche Banco do Jogo
         public static void ExportGame5(SQLiteConnection conn, int setId)
         {
-            DataRow setRow = GetCardSet5ById(setId);
-            if (setRow == null)
-                throw new Exception($"Conjunto 5×5 SetId={setId} não encontrado.");
+            DataRow setRow = GetCardSet5ById(setId)
+                ?? throw new Exception($"Conjunto 5×5 SetId={setId} não encontrado.");
 
             string title = setRow["Title"]?.ToString() ?? "";
+            string name = setRow["Name"]?.ToString() ?? "";
+            string header = setRow.Table.Columns.Contains("Header") ? setRow["Header"]?.ToString() ?? "" : "";
+            string theme = setRow["Theme"]?.ToString() ?? "";
+            string elements = setRow["Elements"]?.ToString() ?? "";
             int quantity = Convert.ToInt32(setRow["Quantity"]);
             string image = setRow["ImageName"]?.ToString() ?? "";
             string groupB = setRow["GroupB"]?.ToString() ?? "";
@@ -820,13 +870,21 @@ namespace BingoCreator.Services
             string groupG = setRow["GroupG"]?.ToString() ?? "";
             string groupO = setRow["GroupO"]?.ToString() ?? "";
 
-            // CardsSets no DB do jogo (SetId=0)
+            // CardsSets (DB de saída; SetId=0)
             const string insertSet = @"
-        INSERT INTO CardsSets (SetId, Title, Qnt, ImageName, GroupB, GroupI, GroupN, GroupG, GroupO)
-        VALUES (0, @Title, @Qnt, @ImageName, @GroupB, @GroupI, @GroupN, @GroupG, @GroupO);";
+        INSERT INTO CardsSets
+            (SetId, Name, Title, Header, Theme, Elements, Qnt, ImageName,
+             GroupB, GroupI, GroupN, GroupG, GroupO)
+        VALUES
+            (0, @Name, @Title, @Header, @Theme, @Elements, @Qnt, @ImageName,
+             @GroupB, @GroupI, @GroupN, @GroupG, @GroupO);";
             using (var cmd = new SQLiteCommand(insertSet, conn))
             {
+                cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Title", title);
+                cmd.Parameters.AddWithValue("@Header", header);
+                cmd.Parameters.AddWithValue("@Theme", theme);
+                cmd.Parameters.AddWithValue("@Elements", elements);
                 cmd.Parameters.AddWithValue("@Qnt", quantity);
                 cmd.Parameters.AddWithValue("@ImageName", image);
                 cmd.Parameters.AddWithValue("@GroupB", groupB);
@@ -837,10 +895,10 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
 
-            // Elementos únicos usados
+            // Elementos únicos usados (pelos grupos)
             var allIds = new[] { groupB, groupI, groupN, groupG, groupO }
                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                .SelectMany(s => s.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                .SelectMany(s => s.Split(',', StringSplitOptions.RemoveEmptyEntries))
                 .Select(s => s.Trim())
                 .Where(s => int.TryParse(s, out _))
                 .Select(int.Parse)
@@ -862,7 +920,7 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
 
-            // Exporta as cartelas
+            // Cartelas (5x5)
             var cards = GetCards5BySetId(setId);
             foreach (var card in cards)
             {
@@ -881,7 +939,6 @@ namespace BingoCreator.Services
                 @N1, @N2, @N3, @N4, @N5,
                 @G1, @G2, @G3, @G4, @G5,
                 @O1, @O2, @O3, @O4, @O5);";
-
                 using var cmd = new SQLiteCommand(insertCard, conn);
                 cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(card["Id"]));
                 cmd.Parameters.AddWithValue("@CardNumber", Convert.ToInt32(card["CardNumber"]));
@@ -898,27 +955,32 @@ namespace BingoCreator.Services
         }
         public static void ExportGame4(SQLiteConnection conn, int setId)
         {
-            DataRow setRow = GetCardSet4ById(setId);
-            if (setRow == null)
-                throw new Exception($"Conjunto 4×4 SetId={setId} não encontrado.");
+            DataRow setRow = GetCardSet4ById(setId)
+                ?? throw new Exception($"Conjunto 4×4 SetId={setId} não encontrado.");
 
             string title = setRow["Title"]?.ToString() ?? "";
+            string name = setRow["Name"]?.ToString() ?? "";
+            string image = setRow["ImageName"]?.ToString() ?? "";
             int quantity = Convert.ToInt32(setRow["Quantity"]);
             string elements = setRow["Elements"]?.ToString() ?? "";
+            string theme = setRow["Theme"]?.ToString() ?? "";
 
-            // CardsSets no DB do jogo (SetId=0)
+            // CardsSets (DB de saída; SetId=0)
             const string insertSet = @"
-        INSERT INTO CardsSets (SetId, Title, Qnt, Elements)
-        VALUES (0, @Title, @Qnt, @Elements);";
+        INSERT INTO CardsSets (SetId, Name, Title, Qnt, ImageName, Theme, Elements)
+        VALUES (0, @Name, @Title, @Qnt, @ImageName, @Theme, @Elements);";
             using (var cmd = new SQLiteCommand(insertSet, conn))
             {
+                cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Title", title);
                 cmd.Parameters.AddWithValue("@Qnt", quantity);
+                cmd.Parameters.AddWithValue("@ImageName", image);
+                cmd.Parameters.AddWithValue("@Theme", theme);
                 cmd.Parameters.AddWithValue("@Elements", elements);
                 cmd.ExecuteNonQuery();
             }
 
-            // Elementos únicos usados
+            // Elementos necessários (garantia: pelos IDs do elements + varredura das cartelas)
             var allIds = (elements ?? "")
                 .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => s.Trim())
@@ -927,16 +989,13 @@ namespace BingoCreator.Services
                 .Distinct()
                 .ToList();
 
-            // (Se preferir robustez extra, também pode coletar IDs varrendo CardsList4Table por SetId)
             var cardsRows = GetCards4BySetId(setId);
             foreach (var card in cardsRows)
-            {
                 for (int i = 1; i <= 16; i++)
                 {
                     int id = Convert.ToInt32(card[$"Ele{i}"]);
                     if (!allIds.Contains(id)) allIds.Add(id);
                 }
-            }
 
             var allElements = GetElementsByIds(allIds);
             foreach (var e in allElements)
@@ -953,7 +1012,7 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
 
-            // Exporta as cartelas
+            // Cartelas (4x4)
             foreach (var card in cardsRows)
             {
                 const string insertCard = @"
@@ -969,7 +1028,6 @@ namespace BingoCreator.Services
                 @E5, @E6, @E7, @E8,
                 @E9, @E10, @E11, @E12,
                 @E13, @E14, @E15, @E16);";
-
                 using var cmd = new SQLiteCommand(insertCard, conn);
                 cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(card["Id"]));
                 cmd.Parameters.AddWithValue("@CardNumber", Convert.ToInt32(card["CardNumber"]));
@@ -980,33 +1038,46 @@ namespace BingoCreator.Services
         }
         private static void ExportGame5Subset(SQLiteConnection conn, int setId, HashSet<int> cardNumbers)
         {
-            // metadados do set (usa a mesma query que você já tem)
             var setRow = GetCardSet5ById(setId)
                 ?? throw new Exception($"Conjunto 5×5 SetId={setId} não encontrado.");
 
             string title = setRow["Title"]?.ToString() ?? "";
+            string name = setRow["Name"]?.ToString() ?? "";
+            string header = setRow.Table.Columns.Contains("Header") ? setRow["Header"]?.ToString() ?? "" : "";
+            string theme = setRow["Theme"]?.ToString() ?? "";
+            string elements = setRow["Elements"]?.ToString() ?? "";
+            string image = setRow["ImageName"]?.ToString() ?? "";
             string groupB = setRow["GroupB"]?.ToString() ?? "";
             string groupI = setRow["GroupI"]?.ToString() ?? "";
             string groupN = setRow["GroupN"]?.ToString() ?? "";
             string groupG = setRow["GroupG"]?.ToString() ?? "";
             string groupO = setRow["GroupO"]?.ToString() ?? "";
 
-            // filtra as cartelas pelo conjunto de números solicitado
             var allCards = GetCards5BySetId(setId);
-            var subset = allCards.Where(r => cardNumbers.Contains(Convert.ToInt32(r["CardNumber"])))
-                                   .OrderBy(r => Convert.ToInt32(r["CardNumber"]))
-                                   .ToList();
+            var subset = allCards
+                .Where(r => cardNumbers.Contains(Convert.ToInt32(r["CardNumber"])))
+                .OrderBy(r => Convert.ToInt32(r["CardNumber"]))
+                .ToList();
 
             int qnt = subset.Count;
 
-            // CardsSets (no DB do jogo, SetId=0). Pode manter os grupos completos.
+            // CardsSets (DB de saída; SetId=0) — mantém metadados completos e Qnt do subset
             const string insertSet = @"
-        INSERT INTO CardsSets (SetId, Title, Qnt, GroupB, GroupI, GroupN, GroupG, GroupO)
-        VALUES (0, @Title, @Qnt, @GroupB, @GroupI, @GroupN, @GroupG, @GroupO);";
+        INSERT INTO CardsSets
+            (SetId, Name, Title, Header, Theme, Elements, Qnt, ImageName,
+             GroupB, GroupI, GroupN, GroupG, GroupO)
+        VALUES
+            (0, @Name, @Title, @Header, @Theme, @Elements, @Qnt, @ImageName,
+             @GroupB, @GroupI, @GroupN, @GroupG, @GroupO);";
             using (var cmd = new SQLiteCommand(insertSet, conn))
             {
+                cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Title", title);
+                cmd.Parameters.AddWithValue("@Header", header);
+                cmd.Parameters.AddWithValue("@Theme", theme);
+                cmd.Parameters.AddWithValue("@Elements", elements);
                 cmd.Parameters.AddWithValue("@Qnt", qnt);
+                cmd.Parameters.AddWithValue("@ImageName", image);
                 cmd.Parameters.AddWithValue("@GroupB", groupB);
                 cmd.Parameters.AddWithValue("@GroupI", groupI);
                 cmd.Parameters.AddWithValue("@GroupN", groupN);
@@ -1015,10 +1086,9 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
 
-            // elementos necessários (pelas cartelas do subset)
+            // elementos efetivamente usados no subset
             var usedIds = new HashSet<int>();
             foreach (var card in subset)
-            {
                 for (int i = 1; i <= 5; i++)
                 {
                     usedIds.Add(Convert.ToInt32(card[$"EleB{i}"]));
@@ -1027,7 +1097,6 @@ namespace BingoCreator.Services
                     usedIds.Add(Convert.ToInt32(card[$"EleG{i}"]));
                     usedIds.Add(Convert.ToInt32(card[$"EleO{i}"]));
                 }
-            }
 
             var elems = GetElementsByIds(usedIds.ToList());
             foreach (DataRow e in elems)
@@ -1062,7 +1131,6 @@ namespace BingoCreator.Services
                 @N1, @N2, @N3, @N4, @N5,
                 @G1, @G2, @G3, @G4, @G5,
                 @O1, @O2, @O3, @O4, @O5);";
-
                 using var cmd = new SQLiteCommand(insertCard, conn);
                 cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(card["Id"]));
                 cmd.Parameters.AddWithValue("@CardNumber", Convert.ToInt32(card["CardNumber"]));
@@ -1082,16 +1150,20 @@ namespace BingoCreator.Services
             var setRow = GetCardSet4ById(setId)
                 ?? throw new Exception($"Conjunto 4×4 SetId={setId} não encontrado.");
 
+            string name = setRow["Name"]?.ToString() ?? "";
             string title = setRow["Title"]?.ToString() ?? "";
+            string theme = setRow["Theme"]?.ToString() ?? "";
+            string image = setRow["ImageName"]?.ToString() ?? "";
 
             var allCards = GetCards4BySetId(setId);
-            var subset = allCards.Where(r => cardNumbers.Contains(Convert.ToInt32(r["CardNumber"])))
-                                   .OrderBy(r => Convert.ToInt32(r["CardNumber"]))
-                                   .ToList();
+            var subset = allCards
+                .Where(r => cardNumbers.Contains(Convert.ToInt32(r["CardNumber"])))
+                .OrderBy(r => Convert.ToInt32(r["CardNumber"]))
+                .ToList();
 
             int qnt = subset.Count;
 
-            // elementos efetivamente usados pelo subset
+            // elementos efetivamente usados no subset
             var usedIds = new HashSet<int>();
             foreach (var card in subset)
                 for (int i = 1; i <= 16; i++)
@@ -1099,13 +1171,17 @@ namespace BingoCreator.Services
 
             string elementsCsv = string.Join(",", usedIds.OrderBy(x => x));
 
+            // CardsSets (DB de saída; SetId=0) — inclui todos campos do schema 4×4
             const string insertSet = @"
-        INSERT INTO CardsSets (SetId, Title, Qnt, Elements)
-        VALUES (0, @Title, @Qnt, @Elements);";
+        INSERT INTO CardsSets (SetId, Name, Title, Qnt, ImageName, Theme, Elements)
+        VALUES (0, @Name, @Title, @Qnt, @ImageName, @Theme, @Elements);";
             using (var cmd = new SQLiteCommand(insertSet, conn))
             {
+                cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Title", title);
                 cmd.Parameters.AddWithValue("@Qnt", qnt);
+                cmd.Parameters.AddWithValue("@ImageName", image);
+                cmd.Parameters.AddWithValue("@Theme", theme);
                 cmd.Parameters.AddWithValue("@Elements", elementsCsv);
                 cmd.ExecuteNonQuery();
             }
@@ -1140,7 +1216,6 @@ namespace BingoCreator.Services
                 @E5, @E6, @E7, @E8,
                 @E9, @E10, @E11, @E12,
                 @E13, @E14, @E15, @E16);";
-
                 using var cmd = new SQLiteCommand(insertCard, conn);
                 cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(card["Id"]));
                 cmd.Parameters.AddWithValue("@CardNumber", Convert.ToInt32(card["CardNumber"]));
@@ -1149,6 +1224,31 @@ namespace BingoCreator.Services
                 cmd.ExecuteNonQuery();
             }
         }
+        // Exporta o WASM
+        // Exemplo: exporta DB e também o pacote WASM (.zip)
+        public static void ExportGameWithWasmPackage(
+            int setId,
+            string dbOutputPath,
+            string wasmZipOutputPath,
+            bool subset = false,
+            HashSet<int>? subsetCardNumbers = null)
+        {
+            // 1) Exporta o .db como você já faz hoje
+            if (!subset)
+                ExportGameDatabaseToPath(setId, dbOutputPath);
+            else
+                ExportGameDatabaseSubsetToPath(setId, subsetCardNumbers ?? new HashSet<int>(), dbOutputPath);
+
+            // 2) Gera o pacote WASM (.zip) – sem imagens (você adiciona a pasta /images manualmente)
+            BingoCreator.Services.WASMService.ExportWasmPackage(
+                setId,
+                wasmZipOutputPath,
+                isSubset: subset,
+                subsetCardNumbers: subsetCardNumbers
+            );
+        }
+
+
 
 
 
