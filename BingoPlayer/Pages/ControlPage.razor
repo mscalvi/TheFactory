@@ -1,69 +1,179 @@
 ﻿@page "/"
 
+@inject BingoPlayer.Services.PackageService Package
+@inject BingoPlayer.Services.PlayService Play
+
 <div class="control-wrap">
-    <header class="app-title">Custom Bingo - Sala Delta</header>
+    @if (loading)
+    {
+        <header class="app-title">Carregando jogo…</header>
+    }
+    else if (!string.IsNullOrEmpty(error))
+    {
+        <header class="app-title">Erro ao carregar</header>
+        <p>@error</p>
+    }
+    else if (Package.Game is null)
+    {
+        <header class="app-title">Nenhum jogo encontrado</header>
+    }
+    else
+    {
+        <!-- Título: Nome do conjunto + Título do jogo -->
+        <header class="app-title">
+            Sala Delta - BingoPlayer
+            @if (!string.IsNullOrWhiteSpace(Package.Game.GameName))
+            {
+                <div style="font-size:0.8em; opacity:.85">@Package.Game.GameName</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Package.Game.GameTitle))
+            {
+                <div style="font-size:0.6em; opacity:.75">@Package.Game.GameTitle</div>
+            }
+        </header>
 
-    <section class="info-grid">
-        <div class="info-card">
-            <h3>Nome do Jogo</h3>
-            <p class="info-value">Nome do Jogo: <strong>(definir)</strong></p>
-        </div>
+        <!-- Informações do jogo (sem tema e sem capa) -->
+        <section class="info-grid">
+            <div class="info-card">
+                <h3>Cartelas</h3>
+                <p class="info-value"><strong>@Package.Game.GameQuant</strong> cartelas - Tamanho: @Package.Game.GameSize×@Package.Game.GameSize</p>
+            </div>
+            <div class="info-card">
+                <h3>Fase</h3>
+                <div class="radio-row">
+                    <label><input type="radio" name="fase" checked disabled /> Quina</label>
+                    <label><input type="radio" name="fase" disabled /> Cartela Cheia</label>
+                </div>
+            </div>
+            <div class="info-card">
+                <section class="buttons-row">
+                    <button class="btn" disabled>Ligar projetor</button>
+                    <button class="btn" disabled>Baixar offline</button>
+                    <button class="btn" disabled>Manual e FAQ</button>
+                </section>
+            </div>
+            <div class="info-card">
+                <section class="buttons-row">
+                    <button class="btn xl" disabled>Começar</button>
+                    <button class="btn xl" disabled>Reiniciar</button>
+                    <button class="btn xl" disabled>Bingo</button>
+                </section>
+            </div>
+        </section>
 
-        <div class="info-card">
-            <h3>Quantidade de Cartelas</h3>
-            <p class="info-value"><strong>(0)</strong> cartelas</p>
-        </div>
+        @if (Package.Game.GameSize == 5)
+        {
+            <!-- 5×5: colunas rotuladas pelo Header; numeração sequencial total -->
+            <section class="play-area">
+                <div class="columns">
+                    @{
+                        int seq = 1; // contador global
+                        for (int col = 0; col < 5; col++)
+                        {
+                            var label = FiveHeaders[col];
+                            var list = ColumnList5(col);
+                                                         <div class="col">
+                                                             <h4>@label</h4>
+                                                             <div class="chips-row">
+                                    @foreach (var el in list)
+                                    {
+                                        <button class="btn id-btn" title="@el.CardName" disabled>@seq</button>
+                                        seq++;
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
 
-        <div class="info-card">
-            <h3>Fase de Jogo</h3>
-            <div class="radio-row">
-                <label><input type="radio" name="fase" checked /> Quina</label>
-                <label><input type="radio" name="fase" /> Cartela Cheia</label>
-            </div>
-        </div>
-    </section>
+                <aside class="results">
+                    <h4>Últimos Resultados</h4>
+                    <div class="last-result">—</div>
+                    <div class="results-list"></div>
+                </aside>
+            </section>
+        }
+        else if (Package.Game.GameSize == 4)
+        {
+            <!-- 4×4: uma única área com todos os elementos numerados em sequência -->
+            <section class="play-area">
+                <div class="columns">
+                    <div class="col">
+                        <h4>@(VisibleHeader4x4())</h4>
+                        <div class="chips-row" style="gap:10px; display:grid; grid-template-columns:repeat(8, minmax(60px,1fr));">
+                            @{
+                                var all = Package.Game.AllElements; // todos elementos do jogo
+                                for (int i = 0; i < all.Count; i++)
+                                {
+                                    var el = all[i];
+                                    var n = i + 1;
+                                    <button class="btn id-btn" title="@el.CardName" disabled>@n</button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
 
-    <section class="buttons-row">
-        <button class="btn xl" disabled>Começar</button>
-        <button class="btn xl" disabled>Reiniciar</button>
-        <button class="btn xl" disabled>Bingo</button>
-        <div class="spacer"></div>
-        <button class="btn" disabled>Ligar Projetor</button>
-        <button class="btn" disabled>Baixar Offline</button>
-        <button class="btn" disabled>Manual e FAQ</button>
-    </section>
-
-    <section class="play-area">
-        <div class="columns">
-            <div class="col">
-                <h4>B</h4>
-                <div class="chips-row"><!-- botões/labels vão aqui no futuro --></div>
-            </div>
-            <div class="col">
-                <h4>I</h4>
-                <div class="chips-row"></div>
-            </div>
-            <div class="col">
-                <h4>N</h4>
-                <div class="chips-row"></div>
-            </div>
-            <div class="col">
-                <h4>G</h4>
-                <div class="chips-row"></div>
-            </div>
-            <div class="col">
-                <h4>O</h4>
-                <div class="chips-row"></div>
-            </div>
-        </div>
-
-        <aside class="results">
-            <h4>Últimos Resultados</h4>
-            <div class="last-result">Último Elemento Sorteado</div>
-            <div class="results-list"><!-- lista dos últimos --></div>
-            <div class="image-box">
-                <img src="runtime-img/image.webp" alt="Imagem" loading="lazy" />
-            </div>
-        </aside>
-    </section>
+                <aside class="results">
+                    <h4>Últimos Resultados</h4>
+                    <div class="last-result">—</div>
+                    <div class="results-list"></div>
+                </aside>
+            </section>
+        }
+    }
 </div>
+
+@code {
+    private bool loading = true;
+    private string? error;
+
+    private string[] FiveHeaders = new[] { "B", "I", "N", "G", "O" }; // fallback
+    private string VisibleHeader4x4()
+        => string.Join("", (Package.Game?.GameHeader ?? "")
+                .Where(char.IsLetter)
+                .Select(c => char.ToUpperInvariant(c))
+                .Take(4));
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await Package.LoadAsync();
+            BuildHeadersFor5x5();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void BuildHeadersFor5x5()
+    {
+        var header = Package.Game?.GameHeader ?? "";
+        var letters = header
+            .Where(char.IsLetter)
+            .Select(c => c.ToString().ToUpperInvariant())
+            .ToList();
+
+        if (Package.Game?.GameSize == 5 && letters.Count >= 5)
+            FiveHeaders = letters.Take(5).ToArray();
+        else
+            FiveHeaders = new[] { "B", "I", "N", "G", "O" };
+    }
+
+    // Fonte de dados das 5 colunas (ordem fixa B, I, N, G, O); só o rótulo visual muda pelo header
+    private List<BingoPlayer.Models.ElementModel> ColumnList5(int index) => index switch
+    {
+        0 => Package.Game!.BElements,
+        1 => Package.Game!.IElements,
+        2 => Package.Game!.NElements,
+        3 => Package.Game!.GElements,
+        4 => Package.Game!.OElements,
+        _ => new List<BingoPlayer.Models.ElementModel>()
+    };
+}

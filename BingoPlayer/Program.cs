@@ -7,5 +7,8 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddScoped<BingoPlayer.Services.PackageService>();
+builder.Services.AddScoped<BingoPlayer.Services.PlayService>();
+
 
 await builder.Build().RunAsync();

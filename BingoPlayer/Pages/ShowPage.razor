@@ -1,24 +1,73 @@
 ﻿@page "/stage"
-
-@* Parâmetros simples para trocar título e imagem futuramente *@
-@code {
-    private string Title => "Sala Delta - BingoPlayer";
-    private string ImageSrc => "runtime-img/image.webp";
-}
+@inject BingoPlayer.Services.PackageService Package
+@inject HttpClient Http
 
 <div class="stage-grid">
     <header class="stage-title" aria-label="Título do evento">
-        @Title
+        @DisplayTitle
     </header>
 
     <section class="stage-image-area" aria-label="image">
-        <img class="stage-image"
-             src="@ImageSrc"
-             alt="Image"
-             loading="lazy"
-             onerror="this.style.display='none'; document.getElementById('image-fallback').style.display='grid';" />
-        <div id="image-fallback" class="image-fallback" style="display:none">
+        @if (!string.IsNullOrWhiteSpace(CoverSrc))
+        {
+            <img class="stage-image"
+                 src="@CoverSrc"
+                 alt="Imagem do jogo"
+                 loading="lazy"
+                 onerror="this.style.display='none'; document.getElementById('image-fallback').style.display='grid';" />
+        }
+        <div id="image-fallback" class="image-fallback" style="display:@(string.IsNullOrWhiteSpace(CoverSrc) ? "grid" : "none")">
             <span>Imagem não disponível</span>
         </div>
     </section>
 </div>
+
+@code {
+    private string DisplayTitle = "Carregando…";
+    private string? CoverSrc; // ex.: "images/capa.webp"
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Carrega o pacote (GameModel + Elements + Cards)
+            await Package.LoadAsync();
+
+            // Título: GameTitle se existir, senão GameName
+            if (Package.Game is not null)
+            {
+                DisplayTitle = !string.IsNullOrWhiteSpace(Package.Game.GameTitle)
+                    ? Package.Game.GameTitle
+                    : Package.Game.GameName;
+            }
+
+            // Capa: lê diretamente o game.json para pegar o ImageName do pacote
+            // (PackageService não expõe a capa; então lemos aqui só esse campo)
+            var meta = await Http.GetFromJsonAsync<GameJson>("game/game.json", new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            var imageName = meta?.ImageName;
+            if (!string.IsNullOrWhiteSpace(imageName))
+            {
+                CoverSrc = $"images/{imageName}";
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            DisplayTitle = "Falha ao carregar";
+            CoverSrc = null;
+        }
+    }
+
+    // Tipo mínimo só para ler ImageName do game.json
+    private sealed class GameJson
+    {
+        public string? ImageName { get; set; }
+        public string? Title { get; set; }
+        public string? Name { get; set; }
+    }
+}
