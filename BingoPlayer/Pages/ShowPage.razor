@@ -1,0 +1,24 @@
+﻿@page "/stage"
+
+@* Parâmetros simples para trocar título e imagem futuramente *@
+@code {
+    private string Title => "Sala Delta - BingoPlayer";
+    private string ImageSrc => "runtime-img/image.webp";
+}
+
+<div class="stage-grid">
+    <header class="stage-title" aria-label="Título do evento">
+        @Title
+    </header>
+
+    <section class="stage-image-area" aria-label="image">
+        <img class="stage-image"
+             src="@ImageSrc"
+             alt="Image"
+             loading="lazy"
+             onerror="this.style.display='none'; document.getElementById('image-fallback').style.display='grid';" />
+        <div id="image-fallback" class="image-fallback" style="display:none">
+            <span>Imagem não disponível</span>
+        </div>
+    </section>
+</div>

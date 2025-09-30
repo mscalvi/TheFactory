@@ -1,0 +1,69 @@
+﻿@page "/"
+
+<div class="control-wrap">
+    <header class="app-title">Custom Bingo - Sala Delta</header>
+
+    <section class="info-grid">
+        <div class="info-card">
+            <h3>Nome do Jogo</h3>
+            <p class="info-value">Nome do Jogo: <strong>(definir)</strong></p>
+        </div>
+
+        <div class="info-card">
+            <h3>Quantidade de Cartelas</h3>
+            <p class="info-value"><strong>(0)</strong> cartelas</p>
+        </div>
+
+        <div class="info-card">
+            <h3>Fase de Jogo</h3>
+            <div class="radio-row">
+                <label><input type="radio" name="fase" checked /> Quina</label>
+                <label><input type="radio" name="fase" /> Cartela Cheia</label>
+            </div>
+        </div>
+    </section>
+
+    <section class="buttons-row">
+        <button class="btn xl" disabled>Começar</button>
+        <button class="btn xl" disabled>Reiniciar</button>
+        <button class="btn xl" disabled>Bingo</button>
+        <div class="spacer"></div>
+        <button class="btn" disabled>Ligar Projetor</button>
+        <button class="btn" disabled>Baixar Offline</button>
+        <button class="btn" disabled>Manual e FAQ</button>
+    </section>
+
+    <section class="play-area">
+        <div class="columns">
+            <div class="col">
+                <h4>B</h4>
+                <div class="chips-row"><!-- botões/labels vão aqui no futuro --></div>
+            </div>
+            <div class="col">
+                <h4>I</h4>
+                <div class="chips-row"></div>
+            </div>
+            <div class="col">
+                <h4>N</h4>
+                <div class="chips-row"></div>
+            </div>
+            <div class="col">
+                <h4>G</h4>
+                <div class="chips-row"></div>
+            </div>
+            <div class="col">
+                <h4>O</h4>
+                <div class="chips-row"></div>
+            </div>
+        </div>
+
+        <aside class="results">
+            <h4>Últimos Resultados</h4>
+            <div class="last-result">Último Elemento Sorteado</div>
+            <div class="results-list"><!-- lista dos últimos --></div>
+            <div class="image-box">
+                <img src="runtime-img/image.webp" alt="Imagem" loading="lazy" />
+            </div>
+        </aside>
+    </section>
+</div>
