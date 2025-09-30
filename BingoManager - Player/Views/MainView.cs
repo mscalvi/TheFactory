@@ -148,7 +148,7 @@ namespace BingoManager
         // Método para mostrar as Elementos durante o jogo
         private void DisplayGamePanels(GameModel game)
         {
-            int buttonSize = 35;
+            int buttonSize = 40;
             int panelWidth = flwPlayB.Width;
             int buttonsPerRow = panelWidth / buttonSize;
 
