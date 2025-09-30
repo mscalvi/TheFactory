@@ -41,22 +41,30 @@
             <div class="info-card">
                 <h3>Fase</h3>
                 <div class="radio-row">
-                    <label><input type="radio" name="fase" checked disabled /> Quina</label>
-                    <label><input type="radio" name="fase" disabled /> Cartela Cheia</label>
+                    <label>
+                        <input type="radio" name="fase" value="1"
+                               checked="@(bingoPhase == 1)"
+                               @onchange="() => bingoPhase = 1" /> Quina
+                    </label>
+                    <label style="margin-left:12px">
+                        <input type="radio" name="fase" value="2"
+                               checked="@(bingoPhase == 2)"
+                               @onchange="() => bingoPhase = 2" /> Cartela Cheia
+                    </label>
                 </div>
+            </div>
+            <div class="info-card">
+                <section class="buttons-row">
+                    <button class="btn xl" @onclick="StartGame" disabled="@started">Começar</button>
+                    <button class="btn xl" @onclick="ResetGame" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Reiniciar</button>
+                    <button class="btn xl" @onclick="ShowBingo" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Bingo</button>
+                </section>
             </div>
             <div class="info-card">
                 <section class="buttons-row">
                     <button class="btn" disabled>Ligar projetor</button>
                     <button class="btn" disabled>Baixar offline</button>
                     <button class="btn" disabled>Manual e FAQ</button>
-                </section>
-            </div>
-            <div class="info-card">
-                <section class="buttons-row">
-                    <button class="btn xl" disabled>Começar</button>
-                    <button class="btn xl" disabled>Reiniciar</button>
-                    <button class="btn xl" disabled>Bingo</button>
                 </section>
             </div>
         </section>
@@ -72,12 +80,19 @@
                         {
                             var label = FiveHeaders[col];
                             var list = ColumnList5(col);
-                                                         <div class="col">
-                                                             <h4>@label</h4>
-                                                             <div class="chips-row">
+                            <div class="col">
+                                <h4>@label</h4>
+                                <div class="chips-row">
                                     @foreach (var el in list)
                                     {
-                                        <button class="btn id-btn" title="@el.CardName" disabled>@seq</button>
+                                        var displayNumber = seq;      // número mostrado no botão
+                                        var elementId = el.Id;        // id real do elemento
+                                                                      <button class="btn id-btn @(Play.DrawnElements.Contains(elementId) ? "on" : null)"
+                                                                              title="@el.CardName"
+                                                                              disabled="@(!started)"
+                                                                              @onclick="() => OnElementClick(elementId, displayNumber)">
+                                                                          @displayNumber
+                                                                      </button>
                                         seq++;
                                     }
                                 </div>
@@ -88,8 +103,17 @@
 
                 <aside class="results">
                     <h4>Últimos Resultados</h4>
-                    <div class="last-result">—</div>
-                    <div class="results-list"></div>
+                    <div class="last-result">@lastResult</div>
+                    <div class="results-list">@resultsList</div>
+                    @if (!string.IsNullOrEmpty(lastImageSrc))
+                    {
+                        <div class="last-image">
+                            <img src="@lastImageSrc" alt="@lastResult"
+                                 style="max-width:100%; max-height:220px; object-fit:contain"
+                                 onerror="this.style.display='none'" />
+                        </div>
+                    }
+
                 </aside>
             </section>
         }
@@ -107,7 +131,13 @@
                                 {
                                     var el = all[i];
                                     var n = i + 1;
-                                    <button class="btn id-btn" title="@el.CardName" disabled>@n</button>
+                                    var elementId = el.Id;
+                                    <button class="btn id-btn @(Play.DrawnElements.Contains(elementId) ? "on" : null)"
+                                            title="@el.CardName"
+                                            disabled="@(!started)"
+                                            @onclick="() => OnElementClick(elementId, n)">
+                                        @n
+                                    </button>
                                 }
                             }
                         </div>
@@ -116,8 +146,17 @@
 
                 <aside class="results">
                     <h4>Últimos Resultados</h4>
-                    <div class="last-result">—</div>
-                    <div class="results-list"></div>
+                    <div class="last-result">@lastResult</div>
+                    <div class="results-list">@resultsList</div>
+                    @if (!string.IsNullOrEmpty(lastImageSrc))
+                    {
+                        <div class="last-image">
+                            <img src="@lastImageSrc" alt="@lastResult"
+                                 style="max-width:100%; max-height:220px; object-fit:contain"
+                                 onerror="this.style.display='none'" />
+                        </div>
+                    }
+
                 </aside>
             </section>
         }
@@ -135,11 +174,20 @@
                 .Select(c => char.ToUpperInvariant(c))
                 .Take(4));
 
+    // estado
+    private bool started = false;
+    private int bingoPhase = 1; // 1=Quina, 2=Cheia
+    private string? lastResult;
+    private string? resultsList;
+    private string? lastImageSrc;
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             await Package.LoadAsync();
+            lastImageSrc = Package.GetCoverUrl();
+            lastResult = "Jogo Pausado";
             BuildHeadersFor5x5();
         }
         catch (Exception ex)
@@ -176,4 +224,56 @@
         4 => Package.Game!.OElements,
         _ => new List<BingoPlayer.Models.ElementModel>()
     };
+
+    // ====== LÓGICA ======
+    private void StartGame()
+    {
+        started = true;
+        lastResult = "Jogo Pausado";
+        lastImageSrc = Package.GetCoverUrl(); 
+        resultsList = null;
+    }
+
+    private void ResetGame()
+    {
+        Play.ResetGame();
+        started = false;
+        lastResult = "Jogo Pausado";
+        lastImageSrc = Package.GetCoverUrl();   // capa
+        resultsList = null;
+    }
+
+
+    private void ShowBingo()
+    {
+        Play.RequestShowCover();
+        lastResult = "Jogo Pausado (capa exibida)";
+        resultsList = null;
+    }
+
+    private void OnElementClick(int elementId, int shownNumber)
+    {
+        // Alterna sorteado
+        Play.ToggleElement(elementId);
+
+        // Quais cartelas contém esse elemento
+        var chosenCards = Play.CheckCards(elementId);
+
+        // Verifica bingo conforme fase selecionada
+        var winners = Play.CheckBingo(chosenCards, bingoPhase, elementId);
+
+        // ùltimo Resultado
+        var el = Package.Game.AllElements.FirstOrDefault(x => x.Id == elementId);
+        lastResult = $"{shownNumber}: {el?.CardName ?? "—"}";
+        lastImageSrc = !string.IsNullOrWhiteSpace(el?.ImageName)
+            ? BingoPlayer.Services.PackageService.ResolveImageUrl(el!.ImageName)
+            : null;
+
+        resultsList = winners.Count > 0
+            ? $"BINGO! Cartelas vencedoras: {string.Join(", ", winners)}"
+            : "Sem bingo!";
+
+        StateHasChanged();
+
+    }
 }

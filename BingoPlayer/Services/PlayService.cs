@@ -136,6 +136,27 @@ namespace BingoPlayer.Services
             _drawnCards.Clear();
         }
 
+        // Mostrar Capa - Bingo
+        public enum StageMode { Cover, Element }
+        public StageMode CurrentStage { get; private set; } = StageMode.Cover;
+        public int? CurrentElementId { get; private set; }
+        public event Action? OnStageChange;
+
+        public void RequestShowCover()
+        {
+            CurrentStage = StageMode.Cover;
+            CurrentElementId = null;
+            OnStageChange?.Invoke();
+        }
+
+        // (opcional, para quando você ligar os cliques dos elementos no palco)
+        public void ShowElement(int elementId)
+        {
+            CurrentStage = StageMode.Element;
+            CurrentElementId = elementId;
+            OnStageChange?.Invoke();
+        }
+
         // ========================= Helpers 5×5 =========================
         private static List<List<int>> GetRows5(CardModel c)
         {

@@ -11,6 +11,7 @@ namespace BingoPlayer.Services
         {
             PropertyNameCaseInsensitive = true
         };
+        public string? CoverImageName { get; private set; }
 
         // jogo único por build: arquivos ficam em wwwroot/game/
         private const string BasePath = "game/";
@@ -25,6 +26,8 @@ namespace BingoPlayer.Services
             // 1) game.json
             var gameRaw = await GetJsonAsync<GameJson>(BasePath + "game.json", ct)
                          ?? throw new InvalidOperationException("game.json não encontrado/ inválido.");
+
+            CoverImageName = gameRaw.ImageName;
 
             // 2) elements.json
             var elements = await GetJsonAsync<List<ElementJson>>(BasePath + "elements.json", ct) ?? new();
@@ -112,6 +115,8 @@ namespace BingoPlayer.Services
 
         public static string ResolveImageUrl(string? imageName)
             => string.IsNullOrWhiteSpace(imageName) ? "" : $"images/{imageName}";
+        public string? GetCoverUrl()
+            => string.IsNullOrWhiteSpace(CoverImageName) ? null : $"images/{CoverImageName}";
 
         // ------------ helpers ------------
         private async Task<T?> GetJsonAsync<T>(string path, CancellationToken ct)
