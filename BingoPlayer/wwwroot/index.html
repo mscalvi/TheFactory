@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BingoPlayer</title>
-    <base href="/" />
+    <base href="./">
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -32,7 +32,13 @@
     </div>
 
     <script src="_framework/blazor.webassembly.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            // sem "/" no começo para respeitar subpastas
+            navigator.serviceWorker.register('service-worker.published.js');
+        }
+    </script>
+
     <script src="js/stageSync.js"></script>
     <script src="js/pwa.js"></script>
 </body>
