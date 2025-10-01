@@ -5,7 +5,14 @@
 @inject IJSRuntime JS
 
 <div class="stage-grid">
-    <header class="stage-title">@displayTitle</header>
+    <header class="stage-title">
+        <div class="title-image">
+            <img src="default_logo.png" alt="logo" class="brand-logo" />
+        </div>
+        <div class="title-name">
+            @displayTitle
+        </div>
+    </header>
 
     <section class="stage-image-area">
         @if (!string.IsNullOrEmpty(imageSrc))
@@ -24,7 +31,7 @@
 </div>
 
 @code {
-    private DotNetObjectReference<ShowPage>? _selfRef; // ajuste o tipo para o nome real da sua classe .razor
+    private DotNetObjectReference<ShowPage>? _selfRef;
 
     protected override async Task OnInitializedAsync()
     {

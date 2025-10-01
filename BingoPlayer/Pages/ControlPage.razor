@@ -23,7 +23,8 @@
         <!-- Título: Nome do conjunto + Título do jogo -->
         <header class="app-bar">
             <div class="app-brand">
-                Sala Delta - <strong>BingoPlayer</strong>
+                <img src="default_logo.png" alt="logo" class="brand-logo" />
+                <span><strong>BingoPlayer</strong></span>
             </div>
 
             <div class="app-game">
@@ -36,36 +37,38 @@
                     <div class="game-title">@Package.Game.GameTitle</div>
                 }
             </div>
-        </header>
 
         <!-- Informações do jogo (sem tema e sem capa) -->
-        <section class="info-grid">
-            <div class="info-card">
-                <h3>Cartelas</h3>
-                <p class="info-value"><strong>@Package.Game.GameQuant</strong> cartelas - Tamanho: @Package.Game.GameSize×@Package.Game.GameSize</p>
-            </div>
-            <div class="info-card">
-                <h3>Fase</h3>
-                <div class="radio-row">
-                    <label>
-                        <input type="radio" name="fase" value="1"
-                               checked="@(bingoPhase == 1)"
-                               @onchange="() => bingoPhase = 1" /> Quina
-                    </label>
-                    <label style="margin-left:12px">
-                        <input type="radio" name="fase" value="2"
-                               checked="@(bingoPhase == 2)"
-                               @onchange="() => bingoPhase = 2" /> Cartela Cheia
-                    </label>
+            <section class="info-grid">
+                <div class="info-card">
+                    <h3>Cartelas</h3>
+                    <p class="info-value"><strong>@Package.Game.GameQuant</strong> cartelas - Tamanho: @Package.Game.GameSize×@Package.Game.GameSize</p>
                 </div>
-            </div>
-            <div class="info-card">
-                <section class="buttons-row">
-                    <button class="btn" @onclick="DownloadAndInstall">Baixar Offline</button>
-                    <button class="btn" disabled>Manual e FAQ</button>
-                </section>
-            </div>
-        </section>
+                <div class="info-card">
+                    <h3>Fase</h3>
+                    <div class="radio-row">
+                        <label>
+                            <input type="radio" name="fase" value="1"
+                                   checked="@(bingoPhase == 1)"
+                                   @onchange="() => bingoPhase = 1" /> Quina
+                        </label>
+                        <label style="margin-left:12px">
+                            <input type="radio" name="fase" value="2"
+                                   checked="@(bingoPhase == 2)"
+                                   @onchange="() => bingoPhase = 2" /> Cartela Cheia
+                        </label>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <section class="buttons-row">
+                        <button class="btn" @onclick="StartGame" disabled="@started">Começar</button>
+                        <button class="btn" @onclick="ResetGame" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Reiniciar</button>
+                        <button class="btn" @onclick="ShowBingo" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Bingo</button>
+                        <button class="btn" @onclick="OpenStage">Ligar Projetor</button>
+                    </section>
+                </div>
+            </section>
+        </header>
 
         @if (Package.Game.GameSize == 5)
         {
@@ -85,12 +88,12 @@
                                     {
                                         var displayNumber = seq;      // número mostrado no botão
                                         var elementId = el.Id;        // id real do elemento
-                                                                      <button class="btn id-btn @(Play.DrawnElements.Contains(elementId) ? "on" : null)"
-                                                                              title="@el.CardName"
-                                                                              disabled="@(!started)"
-                                                                              @onclick="() => OnElementClick(elementId, displayNumber)">
-                                                                          @displayNumber
-                                                                      </button>
+                                            <button class="btn id-btn @(Play.DrawnElements.Contains(elementId) ? "on" : null)"
+                                                    title="@el.CardName"
+                                                    disabled="@(!started)"
+                                                    @onclick="() => OnElementClick(elementId, displayNumber)">
+                                                @displayNumber
+                                            </button>
                                         seq++;
                                     }
                                 </div>
@@ -100,15 +103,6 @@
                 </div>
 
                 <aside class="results">
-
-                    <div class="info-card">
-                        <section class="buttons-row">
-                            <button class="btn" @onclick="StartGame" disabled="@started">Começar</button>
-                            <button class="btn" @onclick="ResetGame" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Reiniciar</button>
-                            <button class="btn" @onclick="ShowBingo" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Bingo</button>
-                            <button class="btn" @onclick="OpenStage">Ligar Projetor</button>
-                        </section>
-                    </div>
                     <h4>Últimos Resultados</h4>
                     <div class="last-result">@lastResult
                         @if (!string.IsNullOrEmpty(lastImageSrc))
@@ -151,14 +145,6 @@
                 </div>
 
                 <aside class="results">
-                    <div class="info-card">
-                        <section class="buttons-row">
-                            <button class="btn" @onclick="StartGame" disabled="@started">Começar</button>
-                            <button class="btn" @onclick="ResetGame" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Reiniciar</button>
-                            <button class="btn" @onclick="ShowBingo" disabled="@(!started && string.IsNullOrEmpty(lastResult))">Bingo</button>
-                            <button class="btn" @onclick="OpenStage">Ligar Projetor</button>
-                        </section>
-                    </div>
                     <h4>Últimos Resultados</h4>
                     <div class="last-result">
                         @lastResult
@@ -175,6 +161,12 @@
             </section>
         }
     }
+    <div class="help-card">
+        <section class="buttons-row">
+            <button class="btn" @onclick="DownloadAndInstall">Baixar Offline</button>
+            <button class="btn" disabled>Manual e FAQ</button>
+        </section>
+    </div>
 </div>
 
 @code {

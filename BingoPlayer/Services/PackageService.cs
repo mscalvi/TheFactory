@@ -12,10 +12,15 @@ namespace BingoPlayer.Services
         {
             PropertyNameCaseInsensitive = true
         };
+
+        // versão atual do pacote (lida de game/version.txt)
+        private string _ver = "dev";
+
         public string? CoverImageName { get; private set; }
 
         // jogo único por build: arquivos ficam em wwwroot/game/
         private const string BasePath = "game/";
+        private const string ImagesPath = "images/";
 
         public PackageService(HttpClient http) => _http = http;
 
@@ -24,6 +29,9 @@ namespace BingoPlayer.Services
         // ------------ API ------------
         public async Task LoadAsync(CancellationToken ct = default)
         {
+            // 0) ler versão do pacote (sem cache)
+            await ReadVersionAsync(ct);
+
             // 1) game.json
             var gameRaw = await GetJsonAsync<GameJson>(BasePath + "game.json", ct)
                          ?? throw new InvalidOperationException("game.json não encontrado/ inválido.");
@@ -114,6 +122,54 @@ namespace BingoPlayer.Services
             };
         }
 
+        // URL da capa já com ?v=
+        public string? GetCoverUrl() => ResolveImageUrlV(CoverImageName);
+
+        // ------------ helpers ------------
+        private async Task ReadVersionAsync(CancellationToken ct)
+        {
+            try
+            {
+                // só o version.txt é buscado com no-cache explícito
+                var verTxt = await _http.GetStringAsync($"{BasePath}version.txt?nc={Guid.NewGuid()}", ct);
+                if (!string.IsNullOrWhiteSpace(verTxt))
+                    _ver = verTxt.Trim();
+            }
+            catch
+            {
+                // ok: fallback em dev/local
+                _ver = _ver is { Length: > 0 } ? _ver : "dev";
+            }
+        }
+
+        // Anexa ?v=... em recursos locais (game/* e images/*)
+        private string AddVersion(string path)
+        {
+            // não duplica se já tiver v=
+            if (path.Contains("?v=")) return path;
+            var sep = path.Contains('?') ? "&" : "?";
+            return $"{path}{sep}v={_ver}";
+        }
+
+        private async Task<T?> GetJsonAsync<T>(string path, CancellationToken ct)
+        {
+            // garante versionamento dos JSONs do pacote
+            var p = AddVersion(path);
+            return await _http.GetFromJsonAsync<T>(p, _json, ct);
+        }
+
+        // Resolve imagem + versão (instância, usa _ver)
+        private string? ResolveImageUrlV(string? imageName)
+        {
+            if (string.IsNullOrWhiteSpace(imageName)) return null;
+
+            var name = System.IO.Path.GetFileName(imageName.Trim())
+                        .Normalize(System.Text.NormalizationForm.FormC);
+            var encoded = Uri.EscapeDataString(name);
+            return AddVersion($"{ImagesPath}{encoded}");
+        }
+
+        // Mantém o estático antigo por compat (sem versão). Evite usar.
         public static string ResolveImageUrl(string? imageName)
         {
             if (string.IsNullOrWhiteSpace(imageName)) return "";
@@ -123,14 +179,6 @@ namespace BingoPlayer.Services
             var encoded = Uri.EscapeDataString(name);
             return $"images/{encoded}";
         }
-
-        public string? GetCoverUrl()
-            => ResolveImageUrl(CoverImageName);
-
-
-        // ------------ helpers ------------
-        private async Task<T?> GetJsonAsync<T>(string path, CancellationToken ct)
-            => await _http.GetFromJsonAsync<T>(path, _json, ct);
 
         private static List<ElementModel> MapGroup(List<ElementJson> all, string? csv)
         {
@@ -176,7 +224,7 @@ namespace BingoPlayer.Services
             return row;
         }
 
-        // -------- tipos privados p/ desserializar os JSONs do pacote (não “vazam” pros seus Models) --------
+        // -------- tipos privados p/ desserializar os JSONs do pacote --------
         private sealed class GameJson
         {
             public int SetId { get; set; }
