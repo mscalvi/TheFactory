@@ -1,9 +1,9 @@
-/* =========================
-   DeltaDaily — app.css (A54-first)
-   Alvo: Samsung A54 (sem scroll horizontal) + desktop Windows
-   ========================= */
+/* ======================================================================
+   DeltaDaily — app.css (estilo clássico + robustez)
+   Mantém o visual anterior; corrige inconsistências e overflow no A54.
+   ====================================================================== */
 
-/* -------- Reset + base -------- */
+/* ----------------------------- Reset básico --------------------------- */
 *,
 *::before,
 *::after {
@@ -12,25 +12,19 @@
 
 html {
     -webkit-text-size-adjust: 100%;
-    /* Evita jitter horizontal causado por 100vw em barras de rolagem */
     overflow-x: hidden;
 }
 
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif;
     line-height: 1.5;
     color: var(--text);
     background: var(--bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Anti-overflow: palavras longas/ids/etc */
-    word-wrap: break-word;
-    overflow-wrap: anywhere;
-    /* Segurança para não ter scroll horizontal global */
     overflow-x: hidden;
-    /* Toque agradável no Android */
-    -webkit-tap-highlight-color: transparent;
+    overflow-wrap: anywhere;
 }
 
 /* Mídia fluida */
@@ -45,17 +39,21 @@ input, button, textarea, select {
     color: inherit;
 }
 
-/* -------- Tokens -------- */
+/* ------------------------------- Tokens -------------------------------- */
 :root {
-    --bg: #f8fafc;
-    --bg-elev: #ffffff;
-    --text: #0f172a;
-    --text-muted: #475569;
-    --border: #e5e7eb;
-    --ring: #93c5fd;
-    --ring-ao: .25;
+    /* Cores base (claro) */
+    --bg: #f8fafc; /* slate-50 */
+    --bg-elev: #ffffff; /* cards */
+    --text: #0f172a; /* slate-900 */
+    --text-muted: #475569; /* slate-600 */
+    --border: #e5e7eb; /* gray-200 */
+    /* Ação primária (MESMO azul que você já usava) */
     --primary: #2563eb;
-    --primary-contrast: #fff;
+    --primary-contrast: #ffffff;
+    /* Realce de foco */
+    --ring: #93c5fd; /* blue-300 */
+    --ring-ao: .28;
+    /* Espaçamento/raio/sombra */
     --space-1: 4px;
     --space-2: 8px;
     --space-3: 12px;
@@ -65,21 +63,19 @@ input, button, textarea, select {
     --radius-1: 8px;
     --radius-2: 12px;
     --radius-3: 16px;
-    --shadow-1: 0 1px 2px rgba(0,0,0,.06), 0 1px 1px rgba(0,0,0,.02);
-    /* Controles — altura/tamanho pensados pro A54 */
+    --shadow-1: 0 6px 20px rgba(0,0,0,.08);
+    /* Controles — A54 first */
     --ctl-font-size: 17px;
     --ctl-height: 48px;
     --ctl-radius: 12px;
     --ctl-padding-x: 14px;
     --ctl-border: 1px solid #d1d5db;
     --ctl-bg: #fff;
-    /* Largura máxima de layout central em desktop */
+    /* Largura máxima dos conteúdos */
     --container-max: 760px;
-    /* Safe Areas (Android/iOS notch) */
+    /* Safe areas (Android/iOS) */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
-    --safe-left: env(safe-area-inset-left, 0px);
-    --safe-right: env(safe-area-inset-right, 0px);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -91,26 +87,27 @@ input, button, textarea, select {
         --border: #1f2937;
         --ctl-bg: #111827;
         --ctl-border: 1px solid #334155;
-        --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+        --shadow-1: 0 6px 20px rgba(0,0,0,.4);
     }
 }
 
-/* -------- Tipografia -------- */
+/* ----------------------------- Tipografia ----------------------------- */
 h1, h2, h3 {
     line-height: 1.2;
     margin: 0 0 var(--space-3);
+    text-align: center;
 }
 
 h1 {
-    font-size: clamp(1.4rem, 4.5vw, 2.1rem);
+    font-size: clamp(1.6rem, 4.8vw, 2.2rem);
 }
 
 h2 {
-    font-size: clamp(1.2rem, 3.8vw, 1.6rem);
+    font-size: clamp(1.3rem, 3.8vw, 1.8rem);
 }
 
 h3 {
-    font-size: clamp(1.05rem, 3.2vw, 1.3rem);
+    font-size: clamp(1.15rem, 3.2vw, 1.4rem);
 }
 
 p {
@@ -122,7 +119,7 @@ p {
     color: var(--text-muted);
 }
 
-/* Links */
+/* Links clássicos */
 a {
     color: var(--primary);
     text-decoration: none;
@@ -132,33 +129,18 @@ a {
         text-decoration: underline;
     }
 
-/* -------- Layout -------- */
-.container {
+/* ------------------------------ Layout -------------------------------- */
+.container,
+.content {
     width: 100%;
     max-width: var(--container-max);
     margin-inline: auto;
     padding: max(var(--space-4), var(--safe-top)) var(--space-4) max(var(--space-4), var(--safe-bottom));
 }
 
-/* Evita que filhos flex/grid “estourem” no mobile */
-.row, .grid, .card, .container, main, section {
-    min-width: 0;
-}
-
-/* Stacks e linhas */
-.stack > * + * {
-    margin-top: var(--space-3);
-}
-
-.row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-}
-
-/* -------- Cards -------- */
-.card {
+/* “Home card” e cartões gerais */
+.card,
+.home-card {
     background: var(--bg-elev);
     border: 1px solid var(--border);
     border-radius: var(--radius-3);
@@ -166,16 +148,148 @@ a {
     box-shadow: var(--shadow-1);
 }
 
-    .card > .card-title {
-        margin: 0 0 var(--space-3);
+.card-title {
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+/* Seções agrupadas com título */
+.section {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-3);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-1);
+    margin: 12px 0;
+}
+
+    .section > .title {
+        font-weight: 700;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+/* “Group” com borda pontilhada */
+.group {
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-2);
+    padding: 14px;
+}
+
+/* Fieldset com a mesma cara da .group */
+.fieldset {
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-2);
+    padding: 14px;
+    margin: 12px 0;
+}
+
+    .fieldset > legend {
+        padding: 0 8px;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+/* Grades de formulário */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 12px 16px;
+}
+
+@media (max-width: 640px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* Garante que controles não “estourem” */
+.form-grid input, .form-grid select, .form-grid textarea {
+    min-width: 0;
+}
+
+/* Linhas label + valor */
+.field {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: start;
+    gap: 8px 14px;
+    margin: 8px 0;
+}
+
+    .field .label {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .field .value {
+        color: var(--text);
+    }
+
+    .field.span-row {
+        grid-template-columns: 1fr;
+    }
+
+@media (max-width: 640px) {
+    .field {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* KPIs “pílula” */
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+    gap: 10px 14px;
+    margin-top: 6px;
+}
+
+    .kpis .field {
+        grid-template-columns: 1fr;
+        margin: 0;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
         text-align: center;
     }
 
-/* -------- Formulários -------- */
+/* Listas básicas com botão à direita */
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--border);
+}
+
+    .item:last-child {
+        border-bottom: 0;
+    }
+
+    .item .name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+/* --------------------------- Controles/Form ---------------------------- */
+/* Fallback universal — garante estilo até se o type vier faltando */
+input:not([type]),
 input[type="text"],
-input[type="time"],
 input[type="number"],
 input[type="date"],
+input[type="time"],
+input[type="search"],
+input[type="email"],
+input[type="tel"],
 select,
 textarea {
     width: 100%;
@@ -187,22 +301,27 @@ textarea {
     color: var(--text);
     padding: 0 var(--ctl-padding-x);
     line-height: 1.2;
+    min-height: var(--ctl-height);
 }
 
-input[type="text"],
-input[type="time"],
-input[type="number"],
-input[type="date"],
-select {
+input[type="date"], input[type="time"], input[type="number"] {
     height: var(--ctl-height);
 }
 
+/* Textarea padrão */
 textarea {
     padding-top: 10px;
     padding-bottom: 10px;
     min-height: calc(var(--ctl-height) * 2.2);
     resize: vertical;
 }
+    /* Textarea de 1 linha (como Calorias/Alimentos/Notas curtas) */
+    textarea[rows="1"] {
+        min-height: var(--ctl-height);
+        height: var(--ctl-height);
+        resize: none; /* fica 1 linha mesmo */
+        overflow-y: auto; /* se passar, cria scroll vertical interno */
+    }
 
 select {
     appearance: none;
@@ -214,35 +333,22 @@ select {
     background-repeat: no-repeat;
     padding-right: 28px;
 }
-
+    /* Foco consistente */
     input:focus, select:focus, textarea:focus {
         outline: none;
         border-color: var(--ring);
         box-shadow: 0 0 0 3px rgba(59,130,246,var(--ring-ao));
     }
 
+/* Label padrão */
 label > span {
     display: block;
     margin-bottom: 4px;
-    font-size: 1rem;
     font-weight: 600;
     color: var(--text);
 }
 
-/* Grid de formulário — mobile-first */
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* A54: 1 coluna por padrão */
-    gap: 12px 16px;
-}
-
-@media (min-width: 640px) {
-    .form-grid {
-        grid-template-columns: repeat(2, minmax(220px, 1fr));
-    }
-}
-
-/* -------- Botões -------- */
+/* ------------------------------ Botões -------------------------------- */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -255,8 +361,6 @@ label > span {
     background: #fff;
     cursor: pointer;
     text-decoration: none;
-    /* Mobile: botões não “esticam” demais e não quebram grid */
-    max-width: 100%;
 }
 
     .btn:focus-visible {
@@ -271,7 +375,7 @@ label > span {
     }
 
         .btn.primary:hover {
-            filter: brightness(.95);
+            filter: brightness(.96);
         }
 
     .btn.small {
@@ -280,7 +384,17 @@ label > span {
         padding: 6px 12px;
     }
 
-/* Em telas estreitas, opções de ação lado a lado podem virar bloco cheio */
+    /* Danger (remover item) */
+    .btn.danger {
+        background: #fee2e2;
+        color: #991b1b;
+        border-color: #fecaca;
+    }
+
+        .btn.danger:hover {
+            filter: brightness(.98);
+        }
+
 @media (max-width: 430px) {
     .btn.block {
         display: flex;
@@ -288,7 +402,136 @@ label > span {
     }
 }
 
-/* -------- Estados/validação (Blazor) -------- */
+/* ------------------------- Acordeões / Abas --------------------------- */
+/* Estrutura: <section class="accordion"><details>...</details></section> */
+.accordion {
+    margin: 10px 0;
+}
+
+    .accordion details {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-elev);
+        box-shadow: var(--shadow-1);
+        overflow: clip;
+    }
+
+    .accordion + .accordion {
+        margin-top: 12px;
+    }
+
+    .accordion details > summary {
+        list-style: none;
+        user-select: none;
+        cursor: pointer;
+        padding: 12px 16px;
+        font-weight: 600;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .accordion details > summary::marker {
+            content: "";
+        }
+        /* Chrome/Edge */
+        .accordion details > summary::-webkit-details-marker {
+            display: none;
+        }
+        /* Safari */
+        .accordion details > summary::before {
+            content: "+";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+    .accordion details[open] > summary::before {
+        content: "–";
+    }
+
+    .accordion details .panel,
+    .accordion details > div {
+        padding: 12px 16px 16px;
+        border-top: 1px solid var(--border);
+    }
+
+/* Badge discreta (Feira 0, etc.) */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 24px;
+    padding: 0 8px;
+    margin-left: 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--bg);
+    border: 1px solid var(--border);
+}
+
+/* -------------------- Expansores manuais (Daily) --------------------- */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.expander {
+    min-width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-elev);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.extra .card-body {
+    display: block;
+}
+
+.extra.collapsed .card-body {
+    display: none;
+}
+
+/* ------------------------ Tabelas responsivas ------------------------- */
+.table-wrap {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-2);
+    border: 1px solid var(--border);
+    background: var(--bg-elev);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+}
+
+    .table th, .table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+    }
+
+/* --------------------- Validação & erro padrão ------------------------ */
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -301,17 +544,17 @@ label > span {
     color: red;
 }
 
-/* Barra de erro Blazor */
+/* Barra de erro padrão Blazor */
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0,0,0,.2);
-    display: none;
     left: 0;
-    padding: .6rem 1.25rem .7rem 1.25rem;
-    position: fixed;
     width: 100%;
+    display: none;
+    position: fixed;
     z-index: 1000;
+    box-shadow: 0 -1px 2px rgba(0,0,0,.2);
+    padding: .6rem 1.25rem .7rem 1.25rem;
 }
 
     #blazor-error-ui .dismiss {
@@ -321,14 +564,7 @@ label > span {
         top: .5rem;
     }
 
-/* Boundary de erro */
-.blazor-error-boundary {
-    background: #b32121;
-    color: #fff;
-    padding: 1rem 1rem 1rem 3.7rem;
-}
-
-/* -------- Loading -------- */
+/* Loading padrão Blazor */
 .loading-progress {
     position: relative;
     display: block;
@@ -353,16 +589,16 @@ label > span {
 
 .loading-progress-text {
     position: absolute;
+    inset: calc(20vh + 3.25rem) 0 auto .2rem;
     text-align: center;
     font-weight: bold;
-    inset: calc(20vh + 3.25rem) 0 auto .2rem;
 }
 
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
 
-/* -------- Acessibilidade -------- */
+/* -------------------------- Acessibilidade ---------------------------- */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: .001ms !important;
@@ -372,36 +608,14 @@ label > span {
     }
 }
 
-/* -------- Tabelas responsivas -------- */
-.table-wrap {
-    display: block;
-    width: 100%;
-    overflow-x: auto; /* scroll só dentro do card, nunca na página */
-    -webkit-overflow-scrolling: touch;
-    border-radius: var(--radius-2);
-    border: 1px solid var(--border);
-    background: var(--bg-elev);
+/* ---------------------------- Utilitários ----------------------------- */
+.center {
+    text-align: center !important;
 }
+/* << adicionado */
 
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 560px;
-}
-    /* se precisar de largura mínima */
-    .table th, .table td {
-        padding: 10px 12px;
-        border-bottom: 1px solid var(--border);
-        text-align: left;
-    }
-
-/* -------- Utilitários -------- */
 .hidden {
     display: none !important;
-}
-
-.inline {
-    display: inline !important;
 }
 
 .block {
@@ -420,6 +634,10 @@ label > span {
     width: 100% !important;
 }
 
+.m-0 {
+    margin: 0 !important;
+}
+/* << adicionado */
 .mt-0 {
     margin-top: 0 !important;
 }
@@ -460,6 +678,13 @@ label > span {
     padding: var(--space-4) !important;
 }
 
-.rounded {
-    border-radius: var(--radius-2) !important;
+/* --------------------- Mobile extra — A54 friendly -------------------- */
+@media (max-width: 430px) {
+    :root {
+        --ctl-height: 56px;
+    }
+
+    .btn.block {
+        width: 100%;
+    }
 }

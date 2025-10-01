@@ -9,7 +9,6 @@
 @using DeltaDaily.Components.Data
 @inject DeltaDaily.Components.Services.IDayStoreService Store
 @inject DeltaDaily.Components.Services.IProjectStoreService ProjectStore
-
 @inject NavigationManager Nav
 
 @code {
@@ -19,8 +18,7 @@
     private DayModel Day = new();
     private readonly CultureInfo ptBR = new("pt-BR");
 
-    private Dictionary<ProjectData.Phase, List<ProjectModel>> _projetosPorFase =
-    new();
+    private Dictionary<ProjectData.Phase, List<ProjectModel>> _projetosPorFase = new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -41,7 +39,6 @@
             .GroupBy(p => p.Fase)
             .OrderBy(g => g.Key)
             .ToDictionary(g => g.Key, g => g.ToList());
-
     }
 
     private static string FaseLabel(ProjectData.Phase f) => f switch
@@ -79,9 +76,7 @@
     }
 
     private bool IsHoje => Day.Data.Date == DateTime.Today;
-
-    private string DiaDaSemana =>
-        ptBR.TextInfo.ToTitleCase(Day.Data.ToString("dddd", ptBR));
+    private string DiaDaSemana => ptBR.TextInfo.ToTitleCase(Day.Data.ToString("dddd", ptBR));
     private string DataCurta => Day.Data.ToString("dd/MM/yy", ptBR);
 
     // listas dinâmicas
@@ -98,7 +93,7 @@
         await Store.SaveAsync(Day);
     }
 
-    // Mostrar/esconder blocos “extra”
+    // Mostrar/esconder blocos “extra” — fechados por padrão
     private bool ShowSleep = false;
     private bool ShowMeals = false;
     private bool ShowExercise = false;
@@ -128,14 +123,14 @@
     <div class="content">
 
         <!-- CABEÇALHO -->
-        <header class="daily-header">
-            <h2>@(IsHoje ? "Hoje" : Day.Data.ToString("dd/MM/yyyy"))</h2>
-            <div><strong>@DiaDaSemana</strong> · <strong>@DataCurta</strong></div>
+        <header class="daily-header center">
+            <h1>@(IsHoje ? "Hoje" : Day.Data.ToString("dd/MM/yyyy"))</h1>
+            <div class="muted"><strong>@DiaDaSemana</strong> · <strong>@DataCurta</strong></div>
         </header>
 
         <!-- BLOCO 1 - OBRIGATÓRIAS -->
         <section class="card">
-            <h2>Informações Obrigatórias</h2>
+            <h2 class="card-title">Informações Obrigatórias</h2>
 
             <div class="form-grid">
                 <label>
@@ -192,7 +187,7 @@
 
         <!-- BLOCO 2 - PRODUTIVIDADE -->
         <section class="card">
-            <h2>Produtividade</h2>
+            <h2 class="card-title">Produtividade</h2>
 
             <div class="center">
                 <button type="button" class="btn primary" @onclick="AdicionarTrabalho">Adicionar entrada</button>
@@ -206,7 +201,7 @@
             {
                 @foreach (var item in Day.Trabalhos.ToList())
                 {
-                    <fieldset class="fieldset">
+                    <fieldset class="fieldset group">
                         <legend>Entrada</legend>
 
                         <div class="form-grid">
@@ -214,7 +209,6 @@
                                 <span>Projeto</span>
                                 <select @bind="item.ProjetoId">
                                     <option value="">(selecione)</option>
-
                                     @foreach (var grupo in _projetosPorFase)
                                     {
                                         <optgroup label="@FaseLabel(grupo.Key)">
@@ -266,7 +260,7 @@
                             </label>
                         </div>
 
-                        <div class="center" style="margin-top:10px;">
+                        <div class="center mt-2">
                             <button type="button" class="btn danger" @onclick="@(() => RemoverTrabalho(item))">Remover</button>
                         </div>
                     </fieldset>
@@ -277,8 +271,8 @@
         <!-- BLOCO 3A - SONO & SONHOS -->
         <section class="card extra @(ShowSleep ? "open" : "collapsed")">
             <div class="section-title">
-                <button type="button" class="expander" @onclick="ToggleSleep">@(ShowSleep ? "−" : "+")</button>
-                <span>Sono</span>
+                <button type="button" class="expander" aria-label="Alternar Sono" @onclick="ToggleSleep">@(ShowSleep ? "−" : "+")</button>
+                <h3 class="m-0">Sono</h3>
             </div>
 
             <div class="card-body">
@@ -309,7 +303,7 @@
                     {
                         <label style="grid-column:1 / -1;">
                             <span>Anotações de Sonhos</span>
-                            <InputTextArea @bind-Value="Day.NotasSonhos" rows="1"/>
+                            <InputTextArea @bind-Value="Day.NotasSonhos" rows="1" />
                         </label>
                     }
                 </div>
@@ -319,13 +313,13 @@
         <!-- BLOCO 3B - ALIMENTAÇÃO -->
         <section class="card extra @(ShowMeals ? "open" : "collapsed")">
             <div class="section-title">
-                <button type="button" class="expander" @onclick="ToggleMeals">@(ShowMeals ? "−" : "+")</button>
-                <span>Alimentação</span>
+                <button type="button" class="expander" aria-label="Alternar Alimentação" @onclick="ToggleMeals">@(ShowMeals ? "−" : "+")</button>
+                <h3 class="m-0">Alimentação</h3>
             </div>
 
             <div class="card-body">
-                <div class="center" style="margin-bottom:10px;">
-                    <button type="button" class="btn ghost" @onclick="AdicionarRefeicao">Adicionar refeição</button>
+                <div class="center mb-2">
+                    <button type="button" class="btn primary" @onclick="AdicionarRefeicao">Adicionar refeição</button>
                 </div>
 
                 @if (Day.Refeicoes.Count == 0)
@@ -336,7 +330,7 @@
                 {
                     @foreach (var rf in Day.Refeicoes.ToList())
                     {
-                        <fieldset class="fieldset">
+                        <fieldset class="fieldset group">
                             <legend>Refeição</legend>
 
                             <div class="form-grid">
@@ -367,7 +361,7 @@
                                 </label>
                             </div>
 
-                            <div class="center" style="margin-top:10px;">
+                            <div class="center mt-2">
                                 <button type="button" class="btn danger" @onclick="@(() => RemoverRefeicao(rf))">Remover</button>
                             </div>
                         </fieldset>
@@ -379,13 +373,13 @@
         <!-- BLOCO 3C - EXERCÍCIOS -->
         <section class="card extra @(ShowExercise ? "open" : "collapsed")">
             <div class="section-title">
-                <button type="button" class="expander" @onclick="ToggleExercise">@(ShowExercise ? "−" : "+")</button>
-                <span>Exercícios</span>
+                <button type="button" class="expander" aria-label="Alternar Exercícios" @onclick="ToggleExercise">@(ShowExercise ? "−" : "+")</button>
+                <h3 class="m-0">Exercícios</h3>
             </div>
 
             <div class="card-body">
-                <div class="center" style="margin-bottom:10px;">
-                    <button type="button" class="btn ghost" @onclick="AdicionarExercicio">Adicionar Exercício</button>
+                <div class="center mb-2">
+                    <button type="button" class="btn primary" @onclick="AdicionarExercicio">Adicionar Exercício</button>
                 </div>
 
                 @if (Day.Exercicios.Count == 0)
@@ -396,7 +390,7 @@
                 {
                     @foreach (var ex in Day.Exercicios.ToList())
                     {
-                        <fieldset class="fieldset">
+                        <fieldset class="fieldset group">
                             <legend>Exercício</legend>
 
                             <div class="form-grid">
@@ -444,7 +438,7 @@
                                 </label>
                             </div>
 
-                            <div class="center" style="margin-top:10px;">
+                            <div class="center mt-2">
                                 <button type="button" class="btn danger" @onclick="@(() => RemoverExercicio(ex))">Remover</button>
                             </div>
                         </fieldset>
@@ -456,8 +450,8 @@
         <!-- BLOCO 3D - HUMOR -->
         <section class="card extra @(ShowMood ? "open" : "collapsed")">
             <div class="section-title">
-                <button type="button" class="expander" @onclick="ToggleMood">@(ShowMood ? "−" : "+")</button>
-                <span>Humor</span>
+                <button type="button" class="expander" aria-label="Alternar Humor" @onclick="ToggleMood">@(ShowMood ? "−" : "+")</button>
+                <h3 class="m-0">Humor</h3>
             </div>
 
             <div class="card-body">
@@ -472,9 +466,10 @@
                             }
                         </InputSelect>
                     </label>
+
                     <label>
                         <span>Anotações de Humor</span>
-                        <InputTextArea @bind-Value="Day.VariacaoHumorNotas" rows="1"/>
+                        <InputTextArea @bind-Value="Day.VariacaoHumorNotas" rows="1" />
                     </label>
                 </div>
             </div>
@@ -494,5 +489,5 @@
             </div>
         </section>
 
-        </div>
+    </div>
 </section>
