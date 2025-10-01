@@ -1,51 +1,11 @@
 ﻿@page "/plans"
+
 @inject NavigationManager Nav
 @inject DeltaDaily.Components.Services.IProjectStoreService Store
 @using DeltaDaily.Components.Data
 @using DeltaDaily.Components.Models
 
-@code {
-    private ProjectModel? Active;
-    private Dictionary<ProjectData.Phase, List<ProjectModel>> Groups = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var all = await Store.ListAllAsync();
-
-        Active = all.FirstOrDefault(p => p.Ativo);
-
-        // inicia grupos vazios nas 4 fases para manter ordem
-        Groups = Enum.GetValues<ProjectData.Phase>()
-                     .ToDictionary(f => f, _ => new List<ProjectModel>());
-
-        foreach (var p in all)
-        {
-            // se quiser esconder o ativo dos grupos, pule aqui
-            if (Active != null && p.Id == Active.Id) continue;
-
-            Groups[p.Fase].Add(p);
-        }
-
-        // ordena cada grupo pelo nome (opcional)
-        foreach (var k in Groups.Keys.ToList())
-            Groups[k] = Groups[k].OrderBy(p => p.Nome).ToList();
-    }
-
-    private static string PhaseTitle(ProjectData.Phase f) => f switch
-    {
-        ProjectData.Phase.Feira => "Feira",
-        ProjectData.Phase.Laboratório => "Laboratório",
-        ProjectData.Phase.Oficina => "Oficina",
-        ProjectData.Phase.Loja => "Loja",
-        _ => f.ToString()
-    };
-
-    private void Open(ProjectModel p) => Nav.NavigateTo($"/plans/{p.Id}");
-    private void NewProject() => Nav.NavigateTo("/plans/new");
-}
-
 <section class="planner">
-
     <!-- Cabeçalho -->
     <header class="planner-header">
         <h1 class="brand-title">A Sala dos Projetos</h1>
@@ -128,7 +88,7 @@
         var fase = kv.Key;
         var items = kv.Value;
 
-        <section class="card project-list accordion">
+        <section class="accordion">
             <details>
                 <summary>
                     @PhaseTitle(fase)
@@ -162,3 +122,43 @@
     </div>
 
 </section>
+
+@code {
+    private ProjectModel? Active;
+    private Dictionary<ProjectData.Phase, List<ProjectModel>> Groups = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var all = await Store.ListAllAsync();
+
+        Active = all.FirstOrDefault(p => p.Ativo);
+
+        // inicia grupos vazios nas 4 fases para manter ordem
+        Groups = Enum.GetValues<ProjectData.Phase>()
+                     .ToDictionary(f => f, _ => new List<ProjectModel>());
+
+        foreach (var p in all)
+        {
+            // se quiser esconder o ativo dos grupos, pule aqui
+            if (Active != null && p.Id == Active.Id) continue;
+
+            Groups[p.Fase].Add(p);
+        }
+
+        // ordena cada grupo pelo nome (opcional)
+        foreach (var k in Groups.Keys.ToList())
+            Groups[k] = Groups[k].OrderBy(p => p.Nome).ToList();
+    }
+
+    private static string PhaseTitle(ProjectData.Phase f) => f switch
+    {
+        ProjectData.Phase.Feira => "Feira",
+        ProjectData.Phase.Laboratório => "Laboratório",
+        ProjectData.Phase.Oficina => "Oficina",
+        ProjectData.Phase.Loja => "Loja",
+        _ => f.ToString()
+    };
+
+    private void Open(ProjectModel p) => Nav.NavigateTo($"/plans/{p.Id}");
+    private void NewProject() => Nav.NavigateTo("/plans/new");
+}

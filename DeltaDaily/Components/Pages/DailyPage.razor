@@ -32,15 +32,14 @@
 
         Day = await Store.LoadAsync(d);
 
-        // cria/renova o EditContext para o modelo carregado
         _edit = new EditContext(Day);
-        _edit.OnFieldChanged -= Edit_OnFieldChanged; // evita duplicar
+        _edit.OnFieldChanged -= Edit_OnFieldChanged;
         _edit.OnFieldChanged += Edit_OnFieldChanged;
 
         var all = await ProjectStore.ListAllAsync();
         _projetosPorFase = all
             .GroupBy(p => p.Fase)
-            .OrderBy(g => g.Key) // Feira, Laboratório, Oficina, Loja (na ordem do enum)
+            .OrderBy(g => g.Key)
             .ToDictionary(g => g.Key, g => g.ToList());
 
     }
@@ -310,7 +309,7 @@
                     {
                         <label style="grid-column:1 / -1;">
                             <span>Anotações de Sonhos</span>
-                            <InputTextArea @bind-Value="Day.NotasSonhos" rows="3"/>
+                            <InputTextArea @bind-Value="Day.NotasSonhos" rows="1"/>
                         </label>
                     }
                 </div>
@@ -354,7 +353,7 @@
 
                                 <label>
                                     <span>Alimentos</span>
-                                    <InputTextArea @bind-Value="rf.Alimentos" rows="2" />
+                                    <InputTextArea @bind-Value="rf.Alimentos" rows="1" />
                                 </label>
 
                                 <label>
@@ -364,7 +363,7 @@
 
                                 <label>
                                     <span>Calorias</span>
-                                    <InputText class="ctl" @bind-Value="rf.Calorias"/>
+                                    <InputTextArea @bind-Value="rf.Calorias" rows="1" />
                                 </label>
                             </div>
 
@@ -475,7 +474,7 @@
                     </label>
                     <label>
                         <span>Anotações de Humor</span>
-                        <InputTextArea @bind-Value="Day.VariacaoHumorNotas" rows="2"/>
+                        <InputTextArea @bind-Value="Day.VariacaoHumorNotas" rows="1"/>
                     </label>
                 </div>
             </div>
