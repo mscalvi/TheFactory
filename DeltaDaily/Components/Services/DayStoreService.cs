@@ -70,7 +70,6 @@ namespace DeltaDaily.Components.Services
                 }
             }
 
-            // ⚠️ Versão unificada = 2 (antes aqui estava 1)
             using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
 
             var k = Key(day.Data);

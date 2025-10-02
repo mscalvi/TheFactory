@@ -55,42 +55,47 @@
 
     private async Task OnFileSelected(ChangeEventArgs e)
     {
-        // Lê o arquivo como texto e importa
-        var files = (Microsoft.AspNetCore.Components.Forms.InputFileChangeEventArgs?)null; // apenas pra clareza: estamos no onChange de <input>
-        // Em input nativo, e.Value não dá o arquivo; usamos JS pra ler:
         var text = await JS.InvokeAsync<string>("readSelectedJsonFile");
         if (string.IsNullOrWhiteSpace(text)) return;
 
         await ImportarAsync(text);
+        await RecarregarAsync();     // recarrega dados
+        StateHasChanged();           // atualiza UI
     }
 
     private async Task ImportarAsync(string json)
     {
-        // Estrutura esperada
-        var doc = JsonDocument.Parse(json);
-        // days
+        using var doc = JsonDocument.Parse(json);
+
         if (doc.RootElement.TryGetProperty("days", out var daysProp) && daysProp.ValueKind == JsonValueKind.Array)
         {
             foreach (var el in daysProp.EnumerateArray())
             {
                 var day = el.Deserialize<DeltaDaily.Components.Models.DayModel>();
                 if (day is null) continue;
-                // recomputa agregados e salva (o SaveAsync já faz a conta dos totais)
-                await RecarregarAsync();
+
+                // segurança: se vier com Data default, tente ler "Data" bruto do JSON
+                if (day.Data == default && el.TryGetProperty("Data", out var dataProp)
+                    && DateTime.TryParse(dataProp.GetString(), out var parsed))
+                {
+                    day.Data = parsed;
+                }
+
                 await Store.SaveAsync(day);
             }
         }
-        // projects
+
         if (doc.RootElement.TryGetProperty("projects", out var prjProp) && prjProp.ValueKind == JsonValueKind.Array)
         {
             foreach (var el in prjProp.EnumerateArray())
             {
                 var p = el.Deserialize<DeltaDaily.Components.Models.ProjectModel>();
                 if (p is null) continue;
-                await RecarregarAsync();
                 await ProjectStore.SaveAsync(p);
             }
         }
+
+        await JS.InvokeVoidAsync("alert", "Importação concluída!");
     }
 
     protected override async Task OnInitializedAsync()

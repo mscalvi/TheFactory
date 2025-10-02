@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#03173d" />
     <title>DeltaDaily</title>
     <base href="/" />
     <link href="css/app.css?v=2" rel="stylesheet" />
@@ -28,7 +29,11 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
     <script src="_content/Blazor.IndexedDB/indexedDb.Blazor.js"></script>
     <script src="js/daily-autosave.js"></script>
     <script>
@@ -38,7 +43,7 @@
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = filename;   
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);

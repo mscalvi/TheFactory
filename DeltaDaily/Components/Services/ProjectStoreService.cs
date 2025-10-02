@@ -29,7 +29,7 @@ namespace DeltaDaily.Components.Services
 
         public async Task<ProjectModel?> LoadAsync(string id)
         {
-            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
             var rec = db.Projects.SingleOrDefault(p => p.Id == id);
             if (rec is null) return null;
 
@@ -39,7 +39,7 @@ namespace DeltaDaily.Components.Services
 
         public async Task SaveAsync(ProjectModel project)
         {
-            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
             var rec = db.Projects.SingleOrDefault(p => p.Id == project.Id);
 
             var nowUtc = DateTime.UtcNow;
@@ -65,7 +65,7 @@ namespace DeltaDaily.Components.Services
         }
         public async Task SetActiveAsync(string id)
         {
-            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
 
             // carrega todos para ajustar ativo/inativo
             var all = db.Projects.ToList();
@@ -88,7 +88,7 @@ namespace DeltaDaily.Components.Services
 
         public async Task<ProjectModel?> LoadActiveAsync()
         {
-            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
 
             foreach (var rec in db.Projects)
             {
@@ -101,7 +101,7 @@ namespace DeltaDaily.Components.Services
 
         public async Task<IReadOnlyList<ProjectModel>> ListAllAsync()
         {
-            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 1);
+            using var db = await _factory.Create<DeltaDailyDB>("deltaDaily", 2);
             var list = new List<ProjectModel>();
             foreach (var rec in db.Projects)
             {
