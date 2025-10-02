@@ -6,7 +6,7 @@
 <section class="calendar-page">
 
     <!-- TOPO: Resumo do dia de hoje -->
-    <section class="summary card">
+    <section class="card showcase">
         <header class="summary-header">
             <h2>Hoje</h2>
             <small>@Hoje.Data.ToString("dddd · dd/MM/yy", ptBR)</small>
@@ -32,7 +32,6 @@
                     }
                     else
                     {
-
                         @("-")
                     }
                 </span>
@@ -41,6 +40,7 @@
             <div><strong>Produtividade</strong><span>@Hoje.Trabalhos.Count entrada(s)</span></div>
             <div><strong>Exercícios</strong><span>@Hoje.Exercicios.Count</span></div>
             <div><strong>Refeições</strong><span>@Hoje.Refeicoes.Count</span></div>
+
             <div class="status">
                 <strong>Status</strong>
                 <span class="@((Hoje.DiaFechado ? "ok" : "pending"))">
@@ -50,12 +50,14 @@
         </div>
 
         <div class="summary-actions">
-            <button type="button" class="primary" @onclick="IrParaHoje">Abrir Daily de Hoje</button>
+            <button type="button" class="btn primary" @onclick="IrParaHoje">
+                Abrir Daily de Hoje
+            </button>
         </div>
     </section>
 
     <!-- BASE: Calendário -->
-    <section class="month card">
+    <section class="card showcase">
         <header class="month-header">
             <div class="selectors">
                 <label>
@@ -78,6 +80,7 @@
                     </select>
                 </label>
             </div>
+
             <div class="legend">
                 <span class="badge closed"></span><small>Fechado</small>
                 <span class="badge open"></span><small>Aberto</small>
@@ -137,9 +140,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // carrega resumo de hoje
         Hoje = await Store.LoadAsync(DateTime.Today);
-        // carrega status do mês atual
         await CarregarStatusMes();
     }
 

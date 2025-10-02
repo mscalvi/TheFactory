@@ -22,6 +22,9 @@ public class DayModel
     // Bloco 2
     public WorkModel? Trabalho { get; set; }
     public List<WorkModel>? Trabalhos { get; set; } = new();
+    public int TotalMinutosDedicados { get; set; }
+    public int TotalMinutosParalelos { get; set; }
+    public int TotalMinutosExtras { get; set; }
 
     // Bloco 3
     public SleepData.SleepQuality? QualidadeSono { get; set; }

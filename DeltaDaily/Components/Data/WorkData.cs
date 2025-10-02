@@ -11,9 +11,9 @@ namespace DeltaDaily.Components.Data
         }
         public enum WorkType
         {
-            [Display(Name = "Home-Office")] HomeOffice,
-            [Display(Name = "Em Paralelo")] Paralelo,
-            [Display(Name = "Hora Extra")] HoraExtra
+            [Display(Name = "Home-Office")] Dedicada,
+            [Display(Name = "Em Paralelo")] Paralela,
+            [Display(Name = "Hora Extra")] Extra
         }
         public enum Focus
         {

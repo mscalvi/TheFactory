@@ -10,6 +10,7 @@
 @inject DeltaDaily.Components.Services.IDayStoreService Store
 @inject DeltaDaily.Components.Services.IProjectStoreService ProjectStore
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 @code {
     [Parameter, SupplyParameterFromQuery(Name = "date")]
@@ -19,6 +20,85 @@
     private readonly CultureInfo ptBR = new("pt-BR");
 
     private Dictionary<ProjectData.Phase, List<ProjectModel>> _projetosPorFase = new();
+
+    // ↓ diminui um pouco o debounce pra capturar digitação mobile
+    const int SaveDebounceMs = 450;
+
+    private bool _eventsRegistered;
+    private IDisposable? _navReg;
+
+    // Salvar agora explicitamente (botão e JS chamam isso)
+    private async Task SaveNow()
+    {
+        try
+        {
+            _saveCts?.Cancel();           // cancela qualquer debounce pendente
+            await Store.SaveAsync(Day);   // grava no IndexedDB
+        }
+        catch { /* ignora */ }
+    }
+
+    // JS chama isso no visibility/pagehide
+    [JSInvokable]
+    public Task SaveFromJs() => SaveNow();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_eventsRegistered)
+        {
+            _eventsRegistered = true;
+
+            // 1) Registra listeners de aba/visibilidade no JS
+            await JS.InvokeVoidAsync("DeltaDaily_AutoSave.register",
+                DotNetObjectReference.Create(this));
+
+            // 2) Salva antes de trocas de rota internas (SPA)
+            _navReg = Nav.RegisterLocationChangingHandler(async args =>
+            {
+                await SaveNow();
+            });
+        }
+    }
+
+    // troca o seu debounce pra usar a constante
+    private async Task DebouncedSaveAsync()
+    {
+        _saveCts?.Cancel();
+        _saveCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(SaveDebounceMs, _saveCts.Token);
+            await Store.SaveAsync(Day);
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    // Fechamento com salvamento final
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_edit is not null)
+                _edit.OnFieldChanged -= Edit_OnFieldChanged;
+            _navReg?.Dispose();
+            _saveCts?.Cancel();
+            _saveCts?.Dispose();
+
+            await SaveNow(); // flush final
+            await JS.InvokeVoidAsync("DeltaDaily_AutoSave.unregister");
+        }
+        catch { }
+    }
+
+    // Se quiser manter também o Dispose síncrono (ok ter os dois):
+    public void Dispose()
+    {
+        if (_edit is not null)
+            _edit.OnFieldChanged -= Edit_OnFieldChanged;
+        _saveCts?.Cancel();
+        _saveCts?.Dispose();
+        // NÃO salve aqui (sincrono) — já salvamos no DisposeAsync
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -55,25 +135,6 @@
 
     private void Edit_OnFieldChanged(object? sender, FieldChangedEventArgs e)
         => _ = DebouncedSaveAsync();
-
-    private async Task DebouncedSaveAsync()
-    {
-        _saveCts?.Cancel();
-        _saveCts = new CancellationTokenSource();
-        try
-        {
-            await Task.Delay(800, _saveCts.Token); // debounce
-            await Store.SaveAsync(Day);            // grava no IndexedDB
-        }
-        catch (TaskCanceledException) { /* ignorar */ }
-    }
-
-    public void Dispose()
-    {
-        if (_edit is not null)
-            _edit.OnFieldChanged -= Edit_OnFieldChanged;
-        _saveCts?.Dispose();
-    }
 
     private bool IsHoje => Day.Data.Date == DateTime.Today;
     private string DiaDaSemana => ptBR.TextInfo.ToTitleCase(Day.Data.ToString("dddd", ptBR));
@@ -122,16 +183,12 @@
 <section class="daily">
     <div class="content">
 
-        <!-- CABEÇALHO -->
-        <header class="daily-header center">
-            <h1>@(IsHoje ? "Hoje" : Day.Data.ToString("dd/MM/yyyy"))</h1>
-            <div class="muted"><strong>@DiaDaSemana</strong> · <strong>@DataCurta</strong></div>
-        </header>
-
         <!-- BLOCO 1 - OBRIGATÓRIAS -->
-        <section class="card">
-            <h2 class="card-title">Informações Obrigatórias</h2>
-
+        <section class="card showcase">
+            <header class="daily-header center">
+                <h1>@(IsHoje ? "Hoje" : Day.Data.ToString("dd/MM/yyyy"))</h1>
+                <div class="muted"><strong>@DiaDaSemana</strong> · <strong>@DataCurta</strong></div>
+            </header>
             <div class="form-grid">
                 <label>
                     <span>1º Despertar</span>
@@ -186,7 +243,7 @@
         </section>
 
         <!-- BLOCO 2 - PRODUTIVIDADE -->
-        <section class="card">
+        <section class="card showcase">
             <h2 class="card-title">Produtividade</h2>
 
             <div class="center">
@@ -268,219 +325,223 @@
             }
         </section>
 
-        <!-- BLOCO 3A - SONO & SONHOS -->
-        <section class="card extra @(ShowSleep ? "open" : "collapsed")">
-            <div class="section-title">
-                <button type="button" class="expander" aria-label="Alternar Sono" @onclick="ToggleSleep">@(ShowSleep ? "−" : "+")</button>
-                <h3 class="m-0">Sono</h3>
-            </div>
+        <section class="card showcase">
+            <!-- BLOCO 3A - SONO & SONHOS -->
+            <section class="card extra @(ShowSleep ? "open" : "collapsed")">
+                <div class="section-title">
+                    <button type="button" class="expander" aria-label="Alternar Sono" @onclick="ToggleSleep">@(ShowSleep ? "−" : "+")</button>
+                    <h3 class="m-0">Sono</h3>
+                </div>
 
-            <div class="card-body">
-                <div class="form-grid">
-                    <label>
-                        <span>Qualidade do Sono</span>
-                        <InputSelect @bind-Value="Day.QualidadeSono" TValue="SleepData.SleepQuality?">
-                            <option value="">(selecione)</option>
-                            @foreach (var q in Enum.GetValues<SleepData.SleepQuality>())
-                            {
-                                <option value="@q">@GetDisplayName(q)</option>
-                            }
-                        </InputSelect>
-                    </label>
-
-                    <label>
-                        <span>Sonhos</span>
-                        <InputSelect @bind-Value="Day.TipoSonhos" TValue="SleepData.DreamType?">
-                            <option value="">(selecione)</option>
-                            @foreach (var s in Enum.GetValues<SleepData.DreamType>())
-                            {
-                                <option value="@s">@GetDisplayName(s)</option>
-                            }
-                        </InputSelect>
-                    </label>
-
-                    @if (Day.QualidadeSono.HasValue && Day.TipoSonhos.HasValue)
-                    {
-                        <label style="grid-column:1 / -1;">
-                            <span>Anotações de Sonhos</span>
-                            <InputTextArea @bind-Value="Day.NotasSonhos" rows="1" />
+                <div class="card-body">
+                    <div class="form-grid">
+                        <label>
+                            <span>Qualidade do Sono</span>
+                            <InputSelect @bind-Value="Day.QualidadeSono" TValue="SleepData.SleepQuality?">
+                                <option value="">(selecione)</option>
+                                @foreach (var q in Enum.GetValues<SleepData.SleepQuality>())
+                                {
+                                    <option value="@q">@GetDisplayName(q)</option>
+                                }
+                            </InputSelect>
                         </label>
-                    }
+
+                        <label>
+                            <span>Sonhos</span>
+                            <InputSelect @bind-Value="Day.TipoSonhos" TValue="SleepData.DreamType?">
+                                <option value="">(selecione)</option>
+                                @foreach (var s in Enum.GetValues<SleepData.DreamType>())
+                                {
+                                    <option value="@s">@GetDisplayName(s)</option>
+                                }
+                            </InputSelect>
+                        </label>
+
+                        @if (Day.QualidadeSono.HasValue && Day.TipoSonhos.HasValue)
+                        {
+                            <label style="grid-column:1 / -1;">
+                                <span>Anotações de Sonhos</span>
+                                <InputTextArea @bind-Value="Day.NotasSonhos" rows="1" />
+                            </label>
+                        }
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- BLOCO 3B - ALIMENTAÇÃO -->
-        <section class="card extra @(ShowMeals ? "open" : "collapsed")">
-            <div class="section-title">
-                <button type="button" class="expander" aria-label="Alternar Alimentação" @onclick="ToggleMeals">@(ShowMeals ? "−" : "+")</button>
-                <h3 class="m-0">Alimentação</h3>
-            </div>
-
-            <div class="card-body">
-                <div class="center mb-2">
-                    <button type="button" class="btn primary" @onclick="AdicionarRefeicao">Adicionar refeição</button>
+            <!-- BLOCO 3B - ALIMENTAÇÃO -->
+            <section class="card extra @(ShowMeals ? "open" : "collapsed")">
+                <div class="section-title">
+                    <button type="button" class="expander" aria-label="Alternar Alimentação" @onclick="ToggleMeals">@(ShowMeals ? "−" : "+")</button>
+                    <h3 class="m-0">Alimentação</h3>
                 </div>
 
-                @if (Day.Refeicoes.Count == 0)
-                {
-                    <p class="center">Nenhuma refeição.</p>
-                }
-                else
-                {
-                    @foreach (var rf in Day.Refeicoes.ToList())
+                <div class="card-body">
+                    <div class="center mb-2">
+                        <button type="button" class="btn primary" @onclick="AdicionarRefeicao">Adicionar refeição</button>
+                    </div>
+
+                    @if (Day.Refeicoes.Count == 0)
                     {
-                        <fieldset class="fieldset group">
-                            <legend>Refeição</legend>
-
-                            <div class="form-grid">
-                                <label>
-                                    <span>Tipo</span>
-                                    <InputSelect @bind-Value="rf.Tipo" TValue="SnackData.Snack?">
-                                        <option value="">(selecione)</option>
-                                        @foreach (var t in Enum.GetValues<SnackData.Snack>())
-                                        {
-                                            <option value="@t">@GetDisplayName(t)</option>
-                                        }
-                                    </InputSelect>
-                                </label>
-
-                                <label>
-                                    <span>Alimentos</span>
-                                    <InputTextArea @bind-Value="rf.Alimentos" rows="1" />
-                                </label>
-
-                                <label>
-                                    <span>Horário</span>
-                                    <input type="time" @bind="rf.Horario" />
-                                </label>
-
-                                <label>
-                                    <span>Calorias</span>
-                                    <InputTextArea @bind-Value="rf.Calorias" rows="1" />
-                                </label>
-                            </div>
-
-                            <div class="center mt-2">
-                                <button type="button" class="btn danger" @onclick="@(() => RemoverRefeicao(rf))">Remover</button>
-                            </div>
-                        </fieldset>
+                        <p class="center">Nenhuma refeição.</p>
                     }
-                }
-            </div>
-        </section>
-
-        <!-- BLOCO 3C - EXERCÍCIOS -->
-        <section class="card extra @(ShowExercise ? "open" : "collapsed")">
-            <div class="section-title">
-                <button type="button" class="expander" aria-label="Alternar Exercícios" @onclick="ToggleExercise">@(ShowExercise ? "−" : "+")</button>
-                <h3 class="m-0">Exercícios</h3>
-            </div>
-
-            <div class="card-body">
-                <div class="center mb-2">
-                    <button type="button" class="btn primary" @onclick="AdicionarExercicio">Adicionar Exercício</button>
-                </div>
-
-                @if (Day.Exercicios.Count == 0)
-                {
-                    <p class="center">Nenhum exercício.</p>
-                }
-                else
-                {
-                    @foreach (var ex in Day.Exercicios.ToList())
+                    else
                     {
-                        <fieldset class="fieldset group">
-                            <legend>Exercício</legend>
+                        @foreach (var rf in Day.Refeicoes.ToList())
+                        {
+                            <fieldset class="fieldset group">
+                                <legend>Refeição</legend>
 
-                            <div class="form-grid">
-                                <label>
-                                    <span>Modalidade</span>
-                                    <InputSelect @bind-Value="ex.Modalidade" TValue="ExerciseData.Workout?">
-                                        <option value="">(selecione)</option>
-                                        @foreach (var m in Enum.GetValues<ExerciseData.Workout>())
-                                        {
-                                            <option value="@m">@GetDisplayName(m)</option>
-                                        }
-                                    </InputSelect>
-                                </label>
+                                <div class="form-grid">
+                                    <label>
+                                        <span>Tipo</span>
+                                        <InputSelect @bind-Value="rf.Tipo" TValue="SnackData.Snack?">
+                                            <option value="">(selecione)</option>
+                                            @foreach (var t in Enum.GetValues<SnackData.Snack>())
+                                            {
+                                                <option value="@t">@GetDisplayName(t)</option>
+                                            }
+                                        </InputSelect>
+                                    </label>
 
-                                <label>
-                                    <span>Cansaço</span>
-                                    <InputSelect @bind-Value="ex.Cansaco" TValue="ExerciseData.Tired?">
-                                        <option value="">(selecione)</option>
-                                        @foreach (var n in Enum.GetValues<ExerciseData.Tired>())
-                                        {
-                                            <option value="@n">@GetDisplayName(n)</option>
-                                        }
-                                    </InputSelect>
-                                </label>
+                                    <label>
+                                        <span>Alimentos</span>
+                                        <InputTextArea @bind-Value="rf.Alimentos" rows="1" />
+                                    </label>
 
-                                <label>
-                                    <span>Hora</span>
-                                    <input type="time" @bind="ex.Hora" />
-                                </label>
+                                    <label>
+                                        <span>Horário</span>
+                                        <input type="time" @bind="rf.Horario" />
+                                    </label>
 
-                                <label>
-                                    <span>Duração</span>
-                                    <input type="text" @bind="ex.Duracao" />
-                                </label>
+                                    <label>
+                                        <span>Calorias</span>
+                                        <InputTextArea @bind-Value="rf.Calorias" rows="1" />
+                                    </label>
+                                </div>
 
-                                <label>
-                                    <span>Ânimo</span>
-                                    <InputSelect @bind-Value="ex.Animo" TValue="ExerciseData.Happy?">
-                                        <option value="">(selecione)</option>
-                                        @foreach (var n in Enum.GetValues<ExerciseData.Happy>())
-                                        {
-                                            <option value="@n">@GetDisplayName(n)</option>
-                                        }
-                                    </InputSelect>
-                                </label>
-                            </div>
-
-                            <div class="center mt-2">
-                                <button type="button" class="btn danger" @onclick="@(() => RemoverExercicio(ex))">Remover</button>
-                            </div>
-                        </fieldset>
+                                <div class="center mt-2">
+                                    <button type="button" class="btn danger" @onclick="@(() => RemoverRefeicao(rf))">Remover</button>
+                                </div>
+                            </fieldset>
+                        }
                     }
-                }
-            </div>
-        </section>
-
-        <!-- BLOCO 3D - HUMOR -->
-        <section class="card extra @(ShowMood ? "open" : "collapsed")">
-            <div class="section-title">
-                <button type="button" class="expander" aria-label="Alternar Humor" @onclick="ToggleMood">@(ShowMood ? "−" : "+")</button>
-                <h3 class="m-0">Humor</h3>
-            </div>
-
-            <div class="card-body">
-                <div class="form-grid">
-                    <label>
-                        <span>Humor Médio</span>
-                        <InputSelect @bind-Value="Day.HumorMedio" TValue="HumorData.Humor?">
-                            <option value="">(selecione)</option>
-                            @foreach (var h in Enum.GetValues<HumorData.Humor>())
-                            {
-                                <option value="@h">@GetDisplayName(h)</option>
-                            }
-                        </InputSelect>
-                    </label>
-
-                    <label>
-                        <span>Anotações de Humor</span>
-                        <InputTextArea @bind-Value="Day.VariacaoHumorNotas" rows="1" />
-                    </label>
                 </div>
-            </div>
+            </section>
+
+            <!-- BLOCO 3C - EXERCÍCIOS -->
+            <section class="card extra @(ShowExercise ? "open" : "collapsed")">
+                <div class="section-title">
+                    <button type="button" class="expander" aria-label="Alternar Exercícios" @onclick="ToggleExercise">@(ShowExercise ? "−" : "+")</button>
+                    <h3 class="m-0">Exercícios</h3>
+                </div>
+
+                <div class="card-body">
+                    <div class="center mb-2">
+                        <button type="button" class="btn primary" @onclick="AdicionarExercicio">Adicionar Exercício</button>
+                    </div>
+
+                    @if (Day.Exercicios.Count == 0)
+                    {
+                        <p class="center">Nenhum exercício.</p>
+                    }
+                    else
+                    {
+                        @foreach (var ex in Day.Exercicios.ToList())
+                        {
+                            <fieldset class="fieldset group">
+                                <legend>Exercício</legend>
+
+                                <div class="form-grid">
+                                    <label>
+                                        <span>Modalidade</span>
+                                        <InputSelect @bind-Value="ex.Modalidade" TValue="ExerciseData.Workout?">
+                                            <option value="">(selecione)</option>
+                                            @foreach (var m in Enum.GetValues<ExerciseData.Workout>())
+                                            {
+                                                <option value="@m">@GetDisplayName(m)</option>
+                                            }
+                                        </InputSelect>
+                                    </label>
+
+                                    <label>
+                                        <span>Cansaço</span>
+                                        <InputSelect @bind-Value="ex.Cansaco" TValue="ExerciseData.Tired?">
+                                            <option value="">(selecione)</option>
+                                            @foreach (var n in Enum.GetValues<ExerciseData.Tired>())
+                                            {
+                                                <option value="@n">@GetDisplayName(n)</option>
+                                            }
+                                        </InputSelect>
+                                    </label>
+
+                                    <label>
+                                        <span>Hora</span>
+                                        <input type="time" @bind="ex.Hora" />
+                                    </label>
+
+                                    <label>
+                                        <span>Duração</span>
+                                        <input type="text" @bind="ex.Duracao" />
+                                    </label>
+
+                                    <label>
+                                        <span>Ânimo</span>
+                                        <InputSelect @bind-Value="ex.Animo" TValue="ExerciseData.Happy?">
+                                            <option value="">(selecione)</option>
+                                            @foreach (var n in Enum.GetValues<ExerciseData.Happy>())
+                                            {
+                                                <option value="@n">@GetDisplayName(n)</option>
+                                            }
+                                        </InputSelect>
+                                    </label>
+                                </div>
+
+                                <div class="center mt-2">
+                                    <button type="button" class="btn danger" @onclick="@(() => RemoverExercicio(ex))">Remover</button>
+                                </div>
+                            </fieldset>
+                        }
+                    }
+                </div>
+            </section>
+
+            <!-- BLOCO 3D - HUMOR -->
+            <section class="card extra @(ShowMood ? "open" : "collapsed")">
+                <div class="section-title">
+                    <button type="button" class="expander" aria-label="Alternar Humor" @onclick="ToggleMood">@(ShowMood ? "−" : "+")</button>
+                    <h3 class="m-0">Humor</h3>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-grid">
+                        <label>
+                            <span>Humor Médio</span>
+                            <InputSelect @bind-Value="Day.HumorMedio" TValue="HumorData.Humor?">
+                                <option value="">(selecione)</option>
+                                @foreach (var h in Enum.GetValues<HumorData.Humor>())
+                                {
+                                    <option value="@h">@GetDisplayName(h)</option>
+                                }
+                            </InputSelect>
+                        </label>
+
+                        <label>
+                            <span>Anotações de Humor</span>
+                            <InputTextArea @bind-Value="Day.VariacaoHumorNotas" rows="1" />
+                        </label>
+                    </div>
+                </div>
+            </section>
         </section>
 
         <!-- FECHAMENTO -->
-        <section class="card">
+        <section class="card showcase">
+
             <div class="center">
                 @if (!Day.DiaFechado)
                 {
-                    <button type="button" class="btn primary" @onclick="FecharDia">Fechar o Dia</button>
+                    <button type="button" class="btn danger" @onclick="FecharDia">Fechar o Dia</button>
+                    <button type="button" class="btn primary" @onclick="SaveNow">Salvar</button>
                 }
                 else
                 {

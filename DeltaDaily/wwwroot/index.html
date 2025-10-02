@@ -30,6 +30,46 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="_content/Blazor.IndexedDB/indexedDb.Blazor.js"></script>
+    <script src="js/daily-autosave.js"></script>
+    <script>
+        window.downloadBytes = (filename, mime, bytes) => {
+            const blob = new Blob([new Uint8Array(bytes)], { type: mime });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = filename;   
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
+        };
+    </script>
+    <script>
+        window.downloadFile = function (fileName, contentType, base64Data) {
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = "data:" + contentType + ";base64," + base64Data;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        window.readSelectedJsonFile = function () {
+            return new Promise((resolve) => {
+                const input = document.querySelector('input[type=file][accept="application/json"]');
+                if (!input || !input.files || input.files.length === 0) {
+                    resolve("");
+                    return;
+                }
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result || "");
+                reader.onerror = () => resolve("");
+                reader.readAsText(file, 'utf-8');
+                input.value = "";
+            });
+        };
+    </script>
 
 </body>
 

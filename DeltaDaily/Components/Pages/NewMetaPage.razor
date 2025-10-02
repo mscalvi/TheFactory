@@ -48,13 +48,15 @@
 
         <!-- Bloco 2 - Tasks (adicionar/editar/excluir) -->
         <section class="card">
-            <h2>Tasks</h2>
+            <div class="section-title">
+                <h2>Tasks</h2>
+                @if (!criandoTask)
+                {
+                    <button class="btn primary small" @onclick="ComecarCriarTask">+ Adicionar Task</button>
+                }
+            </div>
 
-            @if (!criandoTask)
-            {
-                <button class="btn" @onclick="ComecarCriarTask">+ Adicionar Task</button>
-            }
-            else
+            @if (criandoTask)
             {
                 <div class="form-grid" style="margin-top:10px;">
                     <label class="span-row">
@@ -64,7 +66,7 @@
                 </div>
                 <div class="actions" style="margin-top:8px;">
                     <button class="btn primary" @onclick="SalvarNovaTask" disabled="@string.IsNullOrWhiteSpace(novaTaskNome)">Salvar</button>
-                    <button class="btn" @onclick="CancelarCriacaoTask">Cancelar</button>
+                    <button class="btn danger" @onclick="CancelarCriacaoTask">Cancelar</button>
                 </div>
             }
 
@@ -97,28 +99,31 @@
                                         <span>Completa</span>
                                     </label>
                                 </div>
-                                <div class="actions" style="margin-top:8px;">
-                                    <button class="btn primary" @onclick="SalvarEdicaoTask">Salvar</button>
-                                    <button class="btn" @onclick="CancelarEdicaoTask">Cancelar</button>
+                                <div class="actions under" style="margin-top:8px;">
+                                    <button class="btn small primary" @onclick="SalvarEdicaoTask">Salvar</button>
+                                    <button class="btn small danger" @onclick="CancelarEdicaoTask">Cancelar</button>
                                 </div>
                             }
                             else
                             {
-                                <!-- Leitura -->
-                                <div class="name">@t.Nome</div>
-                                <div class="muted">
-                                    Criada: @t.Criacao.ToString("dd/MM/yy")
-                                    @if (t.Completa == true)
-                                    {
-                                        <text> · Concluída: @t.Finalizada?.ToString("dd/MM/yy")</text>
-                                    }
+                                <!-- Leitura: linha 1 = Nome — Criada em · Comentário -->
+                                <div class="task-line">
+                                    <span class="name">@t.Nome</span>
+                                    <span class="sep">—</span>
+                                    <span class="muted">Criada em: @t.Criacao.ToString("dd/MM/yy")</span>
                                     @if (!string.IsNullOrWhiteSpace(t.Comentario))
                                     {
-                                        <text> · Comentário: @t.Comentario</text>
+                                        <span class="muted">· Comentário: @t.Comentario</span>
+                                    }
+                                    @if (t.Completa == true)
+                                    {
+                                        <span class="muted">· Concluída: @t.Finalizada?.ToString("dd/MM/yy")</span>
                                     }
                                 </div>
-                                <div class="actions" style="margin-top:6px;">
-                                    <button class="btn small" @onclick="@(() => EditarTask(t))">Editar</button>
+
+                                <!-- Linha 2 = botões -->
+                                <div class="actions under">
+                                    <button class="btn small primary" @onclick="@(() => EditarTask(t))">Editar</button>
                                     <button class="btn small danger" @onclick="async () => await ExcluirTask(t)">Excluir</button>
                                 </div>
                             }
@@ -128,6 +133,7 @@
             }
         </section>
 
+
         <!-- Ações -->
         <section class="card">
             <div class="actions">
@@ -136,7 +142,7 @@
                         disabled="@string.IsNullOrWhiteSpace(Meta.Nome)">
                     Criar Meta
                 </button>
-                <button class="btn" @onclick="Voltar">Cancelar</button>
+                <button class="btn danger" @onclick="Voltar">Cancelar</button>
             </div>
         </section>
     }

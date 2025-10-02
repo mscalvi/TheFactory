@@ -9,7 +9,7 @@
         public int TarefasTardias { get; set; }
         public int TarefasCompletas { get; set; }
         public int TarefasTotais { get; set; }
-        public DateTime? DataFechamento { get; set; }
+        public DateOnly? DataFechamento { get; set; }
         public bool Ativa { get; set; }
         public bool Completa { get; set; }
         public List<TaskModel> Tasks { get; set; }
