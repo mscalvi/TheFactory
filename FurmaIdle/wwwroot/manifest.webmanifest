@@ -1,0 +1,22 @@
+{
+  "name": "Meu Site (Blazor PWA)",
+  "short_name": "MeuSite",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#03173d",
+  "description": "Aplicativo Web Progresso (PWA) feito em Blazor WebAssembly.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
