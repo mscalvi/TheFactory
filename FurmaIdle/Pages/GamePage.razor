@@ -1,4 +1,89 @@
 ﻿@page "/"
 
-<h1>Olá, mundo 👋</h1>
-<p>Site em construção.</p>
+<div class="game-wrap">
+    <!-- Painel esquerdo: Personagens e Especialidades -->
+    <aside class="left-panel card">
+        <h2>Personagens e Especialidades</h2>
+        <div class="vspace"></div>
+        <button class="btn btn-ghost">Adicionar Personagem</button>
+        <button class="btn btn-ghost">Gerenciar Especialidades</button>
+    </aside>
+
+    <!-- Topo: três blocos -->
+    <header class="top-strip">
+        <div class="top-grid">
+            <section class="card block rec">
+                <h3>Recursos e Regen</h3>
+                <div class="placeholder">[valores de recursos aqui]</div>
+            </section>
+
+            <section class="card block know">
+                <h3>Conhecimentos</h3>
+                <div class="placeholder">[níveis / livros / progresso]</div>
+            </section>
+
+            <section class="card block dps">
+                <h3>Moedas e Ganho por Segundo</h3>
+                <div class="placeholder">[moedas | +X/s]</div>
+            </section>
+        </div>
+    </header>
+
+    <!-- Lateral direita: botões, contratos e rodapé lateral -->
+    <aside class="right-rail">
+        <div class="right-rail-top card">
+            <button class="btn btn-primary w100">Botão Tecnologias</button>
+            <button class="btn w100">Botão Base</button>
+            <button class="btn btn-warn w100">Encerrar Expedição (Soft)</button>
+            <button class="btn btn-strong w100">Expandir Guilda (Hard)</button>
+        </div>
+
+        <div class="contracts card">
+            <h4>Contratos</h4>
+            <button class="btn w100">Contrato 1</button>
+            <button class="btn w100">Contrato 2</button>
+            <button class="btn w100">Contrato 3</button>
+            <button class="btn w100">Contrato 4</button>
+            <button class="btn w100">Contrato 5</button>
+            <button class="btn w100">Contrato 6</button>
+            <button class="btn w100">Contrato 7</button>
+        </div>
+
+        <div class="right-rail-bottom card">
+            <button class="btn btn-ghost">Créditos</button>
+            <button class="btn btn-ghost">Btn Config</button>
+        </div>
+    </aside>
+
+    <!-- Linha: Melhorias para Comprar -->
+    <section class="shop card">
+        <h3>Melhorias para Comprar</h3>
+        <div class="shop-list">
+            <button class="btn">Melhoria A</button>
+            <button class="btn">Melhoria B</button>
+            <button class="btn">Melhoria C</button>
+            <button class="btn">Melhoria D</button>
+            <button class="btn">Melhoria E</button>
+        </div>
+    </section>
+
+    <!-- Centro: Arte / Local Atual -->
+    <main class="main-area card">
+        <h2>Arte do Local Atual e Ícones dos Destinos</h2>
+        <div class="big-placeholder">[canvas / mapa / imagem]</div>
+    </main>
+
+    <!-- Rodapé: Lucros / Escolhas -->
+    <footer class="bottom-panel card">
+        <h3>Lucros da Expedição</h3>
+        <p class="placeholder">
+            [lucro total | duração | eficiência]
+        </p>
+
+        <div class="options">
+            <button class="chip">Contratos</button>
+            <button class="chip">Base</button>
+            <button class="chip">Tecnologias</button>
+        </div>
+    </footer>
+</div>
