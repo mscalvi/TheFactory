@@ -11,7 +11,8 @@ builder.RootComponents.Add<App>("#app");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.AddSingleton<IStartService, StartService>();
-builder.Services.AddSingleton<IGameService, GameService>();
+builder.Services.AddSingleton<IGameService, GameService>(); 
+builder.Services.AddSingleton<ITooltipService, TooltipService>();
 
 builder.Services.AddSingleton<IGameStore, IndexedDbGameStore>();
 

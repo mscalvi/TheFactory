@@ -7,12 +7,15 @@
 
 @inject FurmaIdle.Services.IStartService Start
 @inject FurmaIdle.Services.IGameService Game
+@inject FurmaIdle.Services.ITooltipService Tooltip
 
 <div class="page">
     <div class="layout">
         <!-- FAIXA SUPERIOR -->
         <header class="band band-top">
             <div class="top-grid">
+
+                <!-- Informações de Moedas e Ganhos -->
                 <div class="top-column span2">
                     @if (_coins.Count == 0)
                     {
@@ -35,27 +38,107 @@
                         </div>
                     }
                 </div>
+
+                <!-- Botões do Menu Superior -->
                 <div class="top-column">
                     <div class="top-actions">
-                        <button class="tab-btn @(IsActive(TopPanel.Tecnologias) ? "active" : "")" @onclick="() => TogglePanel(TopPanel.Tecnologias)">Tecnologias</button>
-                        <button class="tab-btn @(IsActive(TopPanel.Destinos) ? "active" : "")"     @onclick="() => TogglePanel(TopPanel.Destinos)">Destinos</button>
-                        <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"    @onclick="() => TogglePanel(TopPanel.Melhorias)">Melhorias</button>
-                        <button class="tab-btn @(IsActive(TopPanel.Base) ? "active" : "")"         @onclick="() => TogglePanel(TopPanel.Base)">Base</button>
+                      <button class="tab-btn @(IsActive(TopPanel.Tecnologias) ? "active" : "")"
+                              @onclick="() => TogglePanel(TopPanel.Tecnologias)">
+                        <span class="icon-wrap">
+                          <img src="@IconSrc(TopPanel.Tecnologias)" alt="Tecnologias"
+                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                          <span class="icon-fallback">@IconFallback(TopPanel.Tecnologias)</span>
+                        </span>
+                      </button>
+
+                      <button class="tab-btn @(IsActive(TopPanel.Destinos) ? "active" : "")"
+                              @onclick="() => TogglePanel(TopPanel.Destinos)">
+                        <span class="icon-wrap">
+                          <img src="@IconSrc(TopPanel.Destinos)" alt="Destinos"
+                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                          <span class="icon-fallback">@IconFallback(TopPanel.Destinos)</span>
+                        </span>
+                      </button>
+
+                      <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"
+                              @onclick="() => TogglePanel(TopPanel.Melhorias)">
+                        <span class="icon-wrap">
+                          <img src="@IconSrc(TopPanel.Melhorias)" alt="Melhorias"
+                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                          <span class="icon-fallback">@IconFallback(TopPanel.Melhorias)</span>
+                        </span>
+                      </button>
+
+                      <button class="tab-btn @(IsActive(TopPanel.Base) ? "active" : "")"
+                              @onclick="() => TogglePanel(TopPanel.Base)">
+                        <span class="icon-wrap">
+                          <img src="@IconSrc(TopPanel.Base)" alt="Base"
+                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                          <span class="icon-fallback">@IconFallback(TopPanel.Base)</span>
+                        </span>
+                      </button>
                     </div>
                 </div>
 
+                <!-- Menu Superior -->
                 <div class="top-column span3">
-                    <div class="panel-host">
+                    <div class="panel-host @( _topPanel == TopPanel.None ? null : "panel-host--content" )">
                         @if (_topPanel == TopPanel.None)
                         {
                             <span>Mensagens</span>
                         }
+                        else if (_topPanel == TopPanel.Base)
+                        {
+                            @if (_baseChars.Count == 0)
+                            {
+                                <em>Ninguém na base.</em>
+                            }
+                            else
+                            {
+                            <div class="options-grid">
+                              @foreach (var ch in _baseChars)
+                              {
+                                <button class="option-btn @(CharSelected(ch.Id) ? "selected" : null)"
+                                        @onclick="() => ToggleCharSelect(ch.Id)"
+                                        aria-pressed="@(CharSelected(ch.Id) ? "true" : "false")"
+                                        aria-label="@ch.Id">
+                                  <span class="icon-wrap">
+                                    <img src="@CharMiniSrc(ch.Id)"
+                                         alt="@ch.Id"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                    <span class="icon-fallback">@ch.Id</span>
+                                  </span>
+
+                                  <!-- Tooltip -->
+                                  @{
+                                        var tip = Tooltip.GetCharacterTooltip(ch.Id);
+                                    }
+                                    <span class="option-tooltip">
+                                      <div class="tt-name">@tip.Name</div>
+                                      <div class="tt-row"><b>Conhecimentos:</b> @tip.Conhecimentos</div>
+                                      <div class="tt-row"><b>Contratos Disponíveis:</b> @tip.ContratosDisponiveis</div>
+                                      <div class="tt-row"><b>Traço:</b> @tip.Traco</div>
+                                      <div class="tt-row"><b>Especialidade:</b> @tip.Especialidade</div>
+                                    </span>
+                                </button>
+                              }
+                            </div>
+                            }
+                        }
                         else
                         {
-                            <span>@_topPanelText</span>
+                            <!-- por enquanto, apenas um card com o nome do painel;
+                                 depois aqui entram as listas reais de Tec/Upgr/Dest -->
+                            <div class="options-grid">
+                                <div class="option-card">
+                                    <div class="option-title">@_topPanelText</div>
+                                </div>
+                            </div>
                         }
                     </div>
                 </div>
+
+                <!-- Expedição -->
                 <div class="top-column span2">Bloco 4</div>
             </div>
         </header>
@@ -63,7 +146,11 @@
         <!-- FAIXA CENTRAL -->
         <main class="band band-mid">
             <div class="mid-grid">
+
+                <!-- Contratos -->
                 <div class="mid-column">Bloco 1</div>
+
+                <!-- Imagem e Clicks -->
                 <div class="mid-column span2">
                     <img class="stage-image"
                          src="@(_stage?.Image ?? "images/d00.jpg")"
@@ -71,8 +158,14 @@
                          draggable="false"
                          @onclick="OnStageClick" />
                 </div>
+
+                <!-- Recursos, Personagens e Especialidades -->
                 <div class="mid-column resources">
+
+                    <!-- Recursos e Regeneração -->
                     <div class="resources-top">Bloco 3</div>
+
+                    <!-- Personagens e Especialidades -->
                     <div class="resources-bot">
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;">
                             <div>
@@ -141,6 +234,24 @@
         StateHasChanged();
     }
 
+    string IconSrc(TopPanel p) => p switch
+    {
+        TopPanel.Tecnologias => "images/icons/tech.png",
+        TopPanel.Destinos    => "images/icons/dest.png",
+        TopPanel.Melhorias   => "images/icons/upgr.png",
+        TopPanel.Base        => "images/icons/base.png",
+        _ => ""
+    };
+
+    string IconFallback(TopPanel p) => p switch
+    {
+        TopPanel.Tecnologias => "T",
+        TopPanel.Destinos    => "D",
+        TopPanel.Melhorias   => "M",
+        TopPanel.Base        => "B",
+        _ => "?"
+    };
+
     // Moedas
     List<ResourceModel> _coins = new();
 
@@ -156,6 +267,7 @@
     // Personagens
     List<CharacterModel> _activeChars = new();
     List<CharacterModel> _baseChars = new();
+    HashSet<string> _selectedCharsIds = new();
 
     void RefreshChars()
     {
@@ -167,6 +279,18 @@
         _baseChars = all
             .Where(c => c.CharState == CharStateEnum.CharState.InBase)
             .ToList();
+    }
+
+    string CharMiniSrc(string charId)
+        => $"images/characters/minis/{charId}.png";
+
+    bool CharSelected(string id) => _selectedCharsIds.Contains(id);
+
+    void ToggleCharSelect(string id)
+    {
+        if (!_selectedCharsIds.Add(id))
+            _selectedCharsIds.Remove(id);
+        StateHasChanged();
     }
 
     // Stage
