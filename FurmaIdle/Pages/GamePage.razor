@@ -99,28 +99,18 @@
                               @foreach (var ch in _baseChars)
                               {
                                 <button class="option-btn @(CharSelected(ch.Id) ? "selected" : null)"
-                                        @onclick="() => ToggleCharSelect(ch.Id)"
-                                        aria-pressed="@(CharSelected(ch.Id) ? "true" : "false")"
-                                        aria-label="@ch.Id">
-                                  <span class="icon-wrap">
-                                    <img src="@CharMiniSrc(ch.Id)"
-                                         alt="@ch.Id"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                                    <span class="icon-fallback">@ch.Id</span>
-                                  </span>
-
-                                  <!-- Tooltip -->
-                                  @{
-                                        var tip = Tooltip.GetCharacterTooltip(ch.Id);
-                                    }
-                                    <span class="option-tooltip">
-                                      <div class="tt-name">@tip.Name</div>
-                                      <div class="tt-row"><b>Conhecimentos:</b> @tip.Conhecimentos</div>
-                                      <div class="tt-row"><b>Contratos Disponíveis:</b> @tip.ContratosDisponiveis</div>
-                                      <div class="tt-row"><b>Traço:</b> @tip.Traco</div>
-                                      <div class="tt-row"><b>Especialidade:</b> @tip.Especialidade</div>
-                                    </span>
-                                </button>
+                                            @onclick="() => ToggleCharSelect(ch.Id)"
+                                            aria-pressed="@(CharSelected(ch.Id) ? "true" : "false")"
+                                            aria-label="@ch.Id"
+                                            @onmouseover="() => ShowHoverTip(ch.Id)"
+                                            @onmouseout="HideHoverTip">
+                                      <span class="icon-wrap">
+                                        <img src="@CharMiniSrc(ch.Id)"
+                                             alt="@ch.Id"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                        <span class="icon-fallback">@ch.Id</span>
+                                      </span>
+                                    </button>
                               }
                             </div>
                             }
@@ -148,7 +138,27 @@
             <div class="mid-grid">
 
                 <!-- Contratos -->
-                <div class="mid-column">Bloco 1</div>
+                <div class="mid-column">
+                  <div class="hover-wrap @( _hoverVisible ? "show" : null)">
+                    <div class="hover-base">
+                      Bloco 1
+                    </div>
+                    <div class="hover-panel">
+                      @if (_hoverTip is null)
+                      {
+                        <em>Passe o mouse sobre um personagem para ver detalhes.</em>
+                      }
+                      else
+                      {
+                        <div class="hover-title">@_hoverTip.Name (@_hoverTip.Id)</div>
+                        <div class="hover-row"><b>Conhecimentos:</b> @_hoverTip.Conhecimentos</div>
+                        <div class="hover-row"><b>Contratos Disponíveis:</b> @_hoverTip.ContratosDisponiveis</div>
+                        <div class="hover-row"><b>Traço:</b> @_hoverTip.Traco</div>
+                        <div class="hover-row"><b>Especialidade:</b> @_hoverTip.Especialidade</div>
+                      }
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Imagem e Clicks -->
                 <div class="mid-column span2">
@@ -251,6 +261,22 @@
         TopPanel.Base        => "B",
         _ => "?"
     };
+
+    // Painel de hover (Bloco 1)
+    FurmaIdle.Models.TooltipModel _hoverTip;
+    bool _hoverVisible;
+
+    void ShowHoverTip(string charId)
+    {
+        _hoverTip = Tooltip.GetCharacterTooltip(charId);
+        _hoverVisible = true;
+    }
+
+    void HideHoverTip()
+    {
+        _hoverVisible = false;
+        StateHasChanged();
+    }
 
     // Moedas
     List<ResourceModel> _coins = new();

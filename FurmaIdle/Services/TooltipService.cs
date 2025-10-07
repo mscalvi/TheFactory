@@ -6,19 +6,9 @@ using FurmaIdle.Models;
 
 namespace FurmaIdle.Services
 {
-    // DTO da tooltip (um “pacote” só)
-    public sealed record CharTooltip(
-        string Id,
-        string Name,
-        string Conhecimentos,
-        string ContratosDisponiveis,
-        string Traco,
-        string Especialidade
-    );
-
     public interface ITooltipService
     {
-        CharTooltip GetCharacterTooltip(string charId);
+        TooltipModel GetCharacterTooltip(string charId);
     }
 
     public sealed class TooltipService : ITooltipService
@@ -27,7 +17,7 @@ namespace FurmaIdle.Services
 
         public TooltipService(IGameService game) => _game = game;
 
-        public CharTooltip GetCharacterTooltip(string charId)
+        public TooltipModel GetCharacterTooltip(string charId)
         {
             // estado vivo (save)
             _game.Current.Characters.TryGetValue(charId, out var live);
@@ -44,7 +34,7 @@ namespace FurmaIdle.Services
             var traco = ResolveTraco(live ?? def);
             var especialidade = ResolveEspecialidade(live ?? def);
 
-            return new CharTooltip(
+            return new TooltipModel(
                 Id: charId,
                 Name: name,
                 Conhecimentos: conhecimentos,
