@@ -6,66 +6,69 @@ using FurmaIdle.Models;
 
 namespace FurmaIdle.Services
 {
+    // Tipos suportados (pode expandir depois: Tecnologia, Destino, Melhoria…)
+    public enum HoverType { Personagem, Especialidade }
+
+    // Payload genérico pro painel
+    public sealed record HoverTip(string Title, string Body);
+
     public interface ITooltipService
     {
-        TooltipModel GetCharacterTooltip(string charId);
+        HoverTip GetHover(HoverType type, string id);
     }
 
     public sealed class TooltipService : ITooltipService
     {
         private readonly IGameService _game;
-
         public TooltipService(IGameService game) => _game = game;
 
-        public TooltipModel GetCharacterTooltip(string charId)
+        public HoverTip GetHover(HoverType type, string id)
         {
-            // estado vivo (save)
-            _game.Current.Characters.TryGetValue(charId, out var live);
-
-            // catálogo base (imutável)
-            var def = CharacterData.GetDef(charId);
-
-            // Nome (prioriza catálogo; se algum dia permitir rename in-game, ajuste)
-            var name = !string.IsNullOrWhiteSpace(def.Name) ? def.Name : (live?.Name ?? charId);
-
-            // Montagem dos campos (IDs por enquanto; depois mapeia p/ nomes nos Resolve*)
-            var conhecimentos = ResolveConhecimentos(live ?? def);
-            var contratos = ResolveContratos(live ?? def);
-            var traco = ResolveTraco(live ?? def);
-            var especialidade = ResolveEspecialidade(live ?? def);
-
-            return new TooltipModel(
-                Id: charId,
-                Name: name,
-                Conhecimentos: conhecimentos,
-                ContratosDisponiveis: contratos,
-                Traco: traco,
-                Especialidade: especialidade
-            );
+            switch (type)
+            {
+                case HoverType.Personagem:
+                    return BuildPersonHover(id);
+                case HoverType.Especialidade:
+                    return BuildEspecialidadeHover(id);
+                default:
+                    return new HoverTip("—", "—");
+            }
         }
 
-        private static string ResolveConhecimentos(CharacterModel c)
+        // ====== Implementações atuais ======
+        private HoverTip BuildPersonHover(string id)
         {
-            var parts = new[] { c.MainKnowId, c.SecondKnowId }
-                        .Where(s => !string.IsNullOrWhiteSpace(s));
-            return parts.Any() ? string.Join(", ", parts) : "—";
+            // estado vivo
+            _game.Current.Characters.TryGetValue(id, out var live);
+            // catálogo imutável
+            var def = CharacterData.All.TryGetValue(id, out var d) ? d : null;
+
+            var name = (!string.IsNullOrWhiteSpace(def?.Name)) ? def!.Name
+                      : (!string.IsNullOrWhiteSpace(live?.Name)) ? live!.Name
+                      : id;
+
+            // Mostra algo útil já: conhecimentos e specialty id (ids por enquanto)
+            var knows = (live ?? def) is CharacterModel ch
+                ? string.Join(", ", new[] { ch.MainKnowId, ch.SecondKnowId }.Where(s => !string.IsNullOrWhiteSpace(s)))
+                : "—";
+
+            var contracts = (live ?? def)?.KnowContractsIds;
+            var contractsStr = (contracts != null && contracts.Count > 0) ? string.Join(", ", contracts) : "—";
+
+            var spec = (live ?? def)?.SpecialtyId ?? "—";
+
+            var body =
+                $"Conhecimentos: {knows}\n" +
+                $"Contratos Disponíveis: {contractsStr}\n" +
+                $"Especialidade: {spec}";
+
+            return new HoverTip($"{name} ({id})", body);
         }
 
-        private static string ResolveContratos(CharacterModel c)
+        private static HoverTip BuildEspecialidadeHover(string id)
         {
-            var list = c.KnowContractsIds ?? new List<string>();
-            return list.Count > 0 ? string.Join(", ", list) : "—";
-        }
-
-        private static string ResolveTraco(CharacterModel c)
-        {
-            // Usa Name do Trait se houver; senão Id; senão "—"
-            return c.Trait?.Name ?? c.Trait?.Id ?? "—";
-        }
-
-        private static string ResolveEspecialidade(CharacterModel c)
-        {
-            return string.IsNullOrWhiteSpace(c.SpecialtyId) ? "—" : c.SpecialtyId;
+            // por enquanto é placeholder, mas já recebe o id do personagem
+            return new HoverTip($"Especialidade de {id}", "especialidade vai ficar aqui");
         }
     }
 }
