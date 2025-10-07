@@ -33,7 +33,7 @@ body {
 .band {
     border: 2px dashed #888;
     border-radius: 12px;
-    padding: 8px;
+    padding: 1px;
 }
 
 /* FAIXA SUPERIOR */
@@ -42,7 +42,6 @@ body {
 }
 
 .band-top {
-    padding: 0;
     align-items: center;
     justify-content: center;
     min-height: 0;
@@ -82,8 +81,10 @@ body {
 .mid-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    gap: 2px;
     height: 100%;
+    width: 100%;
+    align-items: stretch;
 }
 
 .mid-column {
@@ -93,6 +94,8 @@ body {
     border: 2px solid #6aa0ff;
     border-radius: 10px;
     padding: 4px 6px;
+    min-width: 0;
+    min-height: 0;
 }
 
 .mid-column.span2{
@@ -100,5 +103,26 @@ body {
 }
 
     .mid-column.resources {
+        display: grid;
         grid-template-rows: 160px 1fr;
+        gap: 8px;
+        padding: 0;
+        border: none;
+        align-items: stretch;
+        justify-items: stretch;
+        min-width: 0;
+        min-height: 0;
     }
+
+        .mid-column.resources > .resources-top,
+        .mid-column.resources > .resources-bot {
+            height: 100%; 
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #6aa0ff;
+            border-radius: 10px;
+            padding: 6px 8px;
+            box-sizing: border-box;
+        }
