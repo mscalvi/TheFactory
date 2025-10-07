@@ -1,8 +1,9 @@
-﻿// Services/StartService.cs
-using System.Threading.Tasks;
-using System.Linq;
-using FurmaIdle.Data;
+﻿using FurmaIdle.Data;
 using FurmaIdle.Models;
+using FurmaIdle.Storage;
+using System.Linq;
+using System.Threading.Tasks;
+using static FurmaIdle.Storage.GameStorage;
 
 namespace FurmaIdle.Services
 {
@@ -14,15 +15,27 @@ namespace FurmaIdle.Services
 
     public sealed class StartService : IStartService
     {
+        private readonly IGameStore _store;
+        public StartService(IGameStore store) { _store = store; }
+
         public GameModel Current { get; private set; } = new();
 
-        public Task<GameModel> InitAsync()
+        public async Task<GameModel> InitAsync()
         {
+            var loaded = await _store.LoadAsync("main");
+            if (loaded is not null)
+            {
+                Current = loaded;
+                return Current;
+            }
+
             Current = new GameModel
             {
                 Resources = ResourceData.CreateInitialResources(),
                 Stages = StageData.CreateInitialStages(),
-                SchemaVersion = ResourceData.SchemaVersion
+                SchemaVersion = Math.Max(ResourceData.SchemaVersion, StageData.SchemaVersion),
+                Clicks = new(),
+                Characters = CharacterData.CreateInitialStates()
             };
 
             foreach (var (sid, stage) in Current.Stages)
@@ -37,8 +50,8 @@ namespace FurmaIdle.Services
                 };
             }
 
-
-            return Task.FromResult(Current);
+            await _store.SaveAsync(Current, "main");
+            return Current;
         }
     }
 }

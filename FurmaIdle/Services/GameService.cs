@@ -1,6 +1,8 @@
 ﻿using FurmaIdle.Data;
 using FurmaIdle.Models;
+using FurmaIdle.Enums;
 using System;
+using static FurmaIdle.Models.CharacterModel;
 
 namespace FurmaIdle.Services
 {
@@ -55,5 +57,39 @@ namespace FurmaIdle.Services
             Add(resId, gain);
             click.TotalGain += gain;
         }
+
+        public bool UnlockCharacter(string charId)
+        {
+            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
+            if (character.CharState != CharStateEnum.CharState.Locked) return false;
+
+            character.CharState = CharStateEnum.CharState.InBase;
+            character.CharStageId = null;
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool SendToStage(string charId, string stageId)
+        {
+            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
+            if (character.CharState == CharStateEnum.CharState.Locked) return false;
+
+            character.CharState = CharStateEnum.CharState.OnStage;
+            character.CharStageId = stageId;
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool ReturnToBase(string charId)
+        {
+            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
+            if (character.CharState == CharStateEnum.CharState.Locked) return false;
+
+            character.CharState = CharStateEnum.CharState.InBase;
+            character.CharStageId = null;
+            Changed?.Invoke();
+            return true;
+        }
+
     }
 }

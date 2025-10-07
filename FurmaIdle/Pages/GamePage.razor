@@ -1,7 +1,10 @@
 ﻿@page "/"
 
+@using System.Linq
 @using FurmaIdle.Models;
 @using FurmaIdle.Data
+@using FurmaIdle.Enums;
+
 @inject FurmaIdle.Services.IStartService Start
 @inject FurmaIdle.Services.IGameService Game
 
@@ -32,8 +35,27 @@
                         </div>
                     }
                 </div>
-                <div class="top-column">Bloco 2</div>
-                <div class="top-column span3">Bloco 3</div>
+                <div class="top-column">
+                    <div class="top-actions">
+                        <button class="tab-btn @(IsActive(TopPanel.Tecnologias) ? "active" : "")" @onclick="() => TogglePanel(TopPanel.Tecnologias)">Tecnologias</button>
+                        <button class="tab-btn @(IsActive(TopPanel.Destinos) ? "active" : "")"     @onclick="() => TogglePanel(TopPanel.Destinos)">Destinos</button>
+                        <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"    @onclick="() => TogglePanel(TopPanel.Melhorias)">Melhorias</button>
+                        <button class="tab-btn @(IsActive(TopPanel.Base) ? "active" : "")"         @onclick="() => TogglePanel(TopPanel.Base)">Base</button>
+                    </div>
+                </div>
+
+                <div class="top-column span3">
+                    <div class="panel-host">
+                        @if (_topPanel == TopPanel.None)
+                        {
+                            <span>Mensagens</span>
+                        }
+                        else
+                        {
+                            <span>@_topPanelText</span>
+                        }
+                    </div>
+                </div>
                 <div class="top-column span2">Bloco 4</div>
             </div>
         </header>
@@ -51,7 +73,32 @@
                 </div>
                 <div class="mid-column resources">
                     <div class="resources-top">Bloco 3</div>
-                    <div class="resources-bot">Bloco 4</div>
+                    <div class="resources-bot">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;">
+                            <div>
+                                <div style="font-weight:600;margin-bottom:4px;">Ativos (@_activeChars.Count)</div>
+                                <ul style="margin:0;padding-left:18px;">
+                                    @foreach (var c in _activeChars)
+                                    {
+                                        <li>@c.Id</li>  <!-- se quiser nome, a gente resolve via catálogo depois -->
+                                    }
+                                </ul>
+                            </div>
+                            <div>
+                                <div style="font-weight:600;margin-bottom:4px;">Na base (@_baseChars.Count)</div>
+                                <ul style="margin:0;padding-left:18px;">
+                                    @foreach (var c in _baseChars)
+                                    {
+                                        <li>@c.Id</li>
+                                    }
+                                </ul>
+                            </div>
+                            <div style="font-size:.85rem;opacity:.7;">
+                              total chars: @Game.Current.Characters.Count |
+                              ids: @string.Join(", ", Game.Current.Characters.Keys)
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -59,12 +106,7 @@
 </div>
 
 @code {
-    List<ResourceModel> _coins = new();
-    string _stageId = "s00";
-    StageModel? _stage;
-
-    void OnStageClick() => Game.Click(_stageId);
-
+    // Inicialização
     protected override async Task OnInitializedAsync()
     {
         var model = await Start.InitAsync();
@@ -74,8 +116,33 @@
         _stage = model.Stages.TryGetValue(_stageId, out var s) ? s : null;
 
         RefreshCoins();
+        RefreshChars(); 
         Game.Changed += OnGameChanged;
     }
+
+    // Botões do TOPO //
+    enum TopPanel { None, Tecnologias, Destinos, Melhorias, Base }
+    TopPanel _topPanel = TopPanel.None;
+    
+    string _topPanelText => _topPanel switch
+    {
+        TopPanel.Tecnologias => "Tecnologias",
+        TopPanel.Destinos    => "Destinos",
+        TopPanel.Melhorias   => "Melhorias",
+        TopPanel.Base        => "Base",
+        _ => "Mensagens"
+    };
+
+    bool IsActive(TopPanel p) => _topPanel == p;
+
+    void TogglePanel(TopPanel p)
+    {
+        _topPanel = (_topPanel == p) ? TopPanel.None : p;
+        StateHasChanged();
+    }
+
+    // Moedas
+    List<ResourceModel> _coins = new();
 
     void RefreshCoins()
     {
@@ -86,11 +153,27 @@
             .ToList();
     }
 
-    void OnGameChanged()
+    // Personagens
+    List<CharacterModel> _activeChars = new();
+    List<CharacterModel> _baseChars = new();
+
+    void RefreshChars()
     {
-        RefreshCoins();
-        InvokeAsync(StateHasChanged);
+        var all = Game.Current.Characters.Values;
+        _activeChars = all
+            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharStageId.ToString() == _stageId)
+            .ToList();
+
+        _baseChars = all
+            .Where(c => c.CharState == CharStateEnum.CharState.InBase)
+            .ToList();
     }
+
+    // Stage
+    string _stageId = "s00";
+    StageModel? _stage;
+
+    void OnStageClick() => Game.Click(_stageId);
 
     static string GetFirstUnlockedStageId(GameModel model)
     {
@@ -99,6 +182,14 @@
 
         // fallback: primeiro qualquer do dicionário
         return model.Stages.Keys.FirstOrDefault() ?? "s00";
+    }
+    
+    // Helpers
+    void OnGameChanged()
+    {
+        RefreshCoins();
+        RefreshChars();
+        InvokeAsync(StateHasChanged);
     }
 
     public void Dispose() => Game.Changed -= OnGameChanged;

@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using static FurmaIdle.Models.CharacterModel;
+
+namespace FurmaIdle.Models
 {
     public class GameModel
     {
@@ -7,6 +9,7 @@
         public Dictionary<string, ResourceModel> Resources { get; set; } = new();
         public Dictionary<string, StageModel> Stages { get; set; } = new();
         public Dictionary<string, ClickModel> Clicks { get; set; } = new();
+        public Dictionary<string, CharacterModel> Characters { get; set; } = new();
 
     }
 }
