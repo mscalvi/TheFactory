@@ -1,11 +1,37 @@
 ﻿@page "/"
 
+@using FurmaIdle.Models;
+@using FurmaIdle.Data
+@inject FurmaIdle.Services.IStartService Start
+@inject FurmaIdle.Services.IGameService Game
+
 <div class="page">
     <div class="layout">
         <!-- FAIXA SUPERIOR -->
         <header class="band band-top">
             <div class="top-grid">
-                <div class="top-column span2">Bloco 1</div>
+                <div class="top-column span2">
+                    @if (_coins.Count == 0)
+                    {
+                        <span>Carregando…</span>
+                    }
+                    else
+                    {
+                        <div class="currency-grid">
+                            @foreach (var r in _coins)
+                            {
+                                <div class="currency-card">
+                                    <img class="currency-icon" src="@r.Icon" alt="@r.Name" />
+                                    <div class="currency-info">
+                                        <div class="currency-name">@r.Name</div>
+                                        <div>Atual: @r.Actual.ToString("N0")</div>
+                                        <div>Total: @r.Total.ToString("N0")</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
                 <div class="top-column">Bloco 2</div>
                 <div class="top-column span3">Bloco 3</div>
                 <div class="top-column span2">Bloco 4</div>
@@ -16,16 +42,64 @@
         <main class="band band-mid">
             <div class="mid-grid">
                 <div class="mid-column">Bloco 1</div>
-                <div class="mid-column span2">Bloco 2</div>
+                <div class="mid-column span2">
+                    <img class="stage-image"
+                         src="@(_stage?.Image ?? "images/d00.jpg")"
+                         alt="@(_stage?.Name ?? "Cenário")"
+                         draggable="false"
+                         @onclick="OnStageClick" />
+                </div>
                 <div class="mid-column resources">
-                    <div class="resources-top">
-                        Bloco 3
-                    </div>
-                    <div class="resources-bot">
-                        Bloco 4
-                    </div>
+                    <div class="resources-top">Bloco 3</div>
+                    <div class="resources-bot">Bloco 4</div>
                 </div>
             </div>
         </main>
     </div>
 </div>
+
+@code {
+    List<ResourceModel> _coins = new();
+    string _stageId = "s00";
+    StageModel? _stage;
+
+    void OnStageClick() => Game.Click(_stageId);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var model = await Start.InitAsync();
+        Game.Attach(model);
+
+        _stageId = GetFirstUnlockedStageId(model);
+        _stage = model.Stages.TryGetValue(_stageId, out var s) ? s : null;
+
+        RefreshCoins();
+        Game.Changed += OnGameChanged;
+    }
+
+    void RefreshCoins()
+    {
+        _coins = ResourceData.CoinsOrder
+            .Select(id => Game.Get(id))
+            .Where(r => r is not null && r.Unlocked)
+            .Cast<ResourceModel>()
+            .ToList();
+    }
+
+    void OnGameChanged()
+    {
+        RefreshCoins();
+        InvokeAsync(StateHasChanged);
+    }
+
+    static string GetFirstUnlockedStageId(GameModel model)
+    {
+        foreach (var id in StageData.Order)
+            if (model.Stages.TryGetValue(id, out var s) && s.Unlocked) return id;
+
+        // fallback: primeiro qualquer do dicionário
+        return model.Stages.Keys.FirstOrDefault() ?? "s00";
+    }
+
+    public void Dispose() => Game.Changed -= OnGameChanged;
+}

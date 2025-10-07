@@ -1,128 +1,188 @@
-﻿
-/* Grid Geral em Duas Linhas */
-:root {
-    --top-min: 50px; /* nunca menor que isso (clicável) */
-    --top-ideal: 12dvh; /* alvo ~20–25% da altura da tela */
-    --top-max: 72px; /* não passa disso em telas altas */
+﻿/* ==========================================================================
+   GamePage — CSS com layers (mesmas configs do seu arquivo)
+   Layers: reset, tokens, layout, top, mid, images
+   ========================================================================== */
+@layer reset, tokens, layout, top, mid, images;
 
-    --gap: 12px;
+/* [reset] --------------------------------------------------------------- */
+@layer reset {
+    * {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        height: 100%;
+    }
+
+    body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+    }
 }
 
-* {
-    box-sizing: border-box;
+/* [tokens] -------------------------------------------------------------- */
+@layer tokens {
+    /* Main Grid Layout */
+    :root {
+        /* Grid Geral em Duas Linhas */
+        --top-min: 50px; /* nunca menor que isso (clicável) */
+        --top-ideal: 12dvh; /* alvo ~20–25% da altura da tela */
+        --top-max: 72px; /* não passa disso em telas altas */
+
+        --gap: 12px;
+        /* FAIXA SUPERIOR */
+        --topcell-min: 180px; /* ajuste aqui o mínimo */
+    }
 }
 
-html, body {
-    height: 100%;
-}
-
-body {
-    margin: 0;
-    font-family: system-ui, sans-serif;
-}
-
-.layout {
-    min-height: 100dvh;
-    display: grid;
-    grid-template-rows: 160px 1fr;
-    gap: var(--gap);
-    padding: var(--gap);
-}
-
-/* só pra visualização */
-.band {
-    border: 2px dashed #888;
-    border-radius: 12px;
-    padding: 1px;
-}
-
-/* FAIXA SUPERIOR */
-:root {
-    --topcell-min: 180px; /* ajuste aqui o mínimo */
-}
-
-.band-top {
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-}
-
-.top-grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 2px;
-    height: 100%;
-}
-
-.top-column {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #6aa0ff;
-    border-radius: 10px;
-    padding: 4px 6px;
-}
-
-.top-column.span2{
-    grid-column: span 2;
-}
-
-.top-column.span3{
-    grid-column: span 3;
-}
-
-/* FAIXA CENTRAL */
-
-.band-mid {
-    height: 100%;
-    overflow: auto;
-}
-
-.mid-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2px;
-    height: 100%;
-    width: 100%;
-    align-items: stretch;
-}
-
-.mid-column {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #6aa0ff;
-    border-radius: 10px;
-    padding: 4px 6px;
-    min-width: 0;
-    min-height: 0;
-}
-
-.mid-column.span2{
-    grid-column: span 2;
-}
-
-    .mid-column.resources {
+/* [layout] -------------------------------------------------------------- */
+@layer layout {
+    .layout {
+        min-height: 100dvh;
         display: grid;
         grid-template-rows: 160px 1fr;
-        gap: 8px;
-        padding: 0;
-        border: none;
+        gap: var(--gap);
+        padding: var(--gap);
+    }
+
+    /* só pra visualização */
+    .band {
+        border: 2px dashed #888;
+        border-radius: 12px;
+        padding: 1px;
+    }
+
+    /* FAIXA CENTRAL */
+    .band-mid {
+        height: 100%;
+        overflow: auto;
+    }
+
+    .mid-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        height: 100%;
+        width: 100%;
         align-items: stretch;
         justify-items: stretch;
-        min-width: 0;
+        overflow: hidden;
+    }
+
+    .mid-column {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .mid-column.span2 {
+            grid-column: span 2;
+        }
+
+        .mid-column.resources {
+            display: grid;
+            grid-template-rows: 160px 1fr;
+            grid-template-columns: 1fr;
+            gap: 1px;
+            padding: 0;
+            width: 100%;
+            align-items: stretch;
+            justify-items: stretch;
+        }
+
+            .mid-column.resources > .resources-top,
+            .mid-column.resources > .resources-bot {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 10px;
+                padding: 6px 8px;
+                width: 100%;
+                height: 100%;
+                min-width: 0;
+            }
+}
+
+/* [top] ----------------------------------------------------------------- */
+@layer top {
+    .band-top {
+        align-items: center;
+        justify-content: center;
         min-height: 0;
     }
 
-        .mid-column.resources > .resources-top,
-        .mid-column.resources > .resources-bot {
-            height: 100%; 
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #6aa0ff;
-            border-radius: 10px;
-            padding: 6px 8px;
-            box-sizing: border-box;
+    .top-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 2px;
+        height: 100%;
+    }
+
+    .top-column {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        padding: 4px 6px;
+    }
+
+        .top-column.span2 {
+            grid-column: span 2;
         }
+
+        .top-column.span3 {
+            grid-column: span 3;
+        }
+
+    .currency-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+        gap: 6px;
+    }
+
+    .currency-card {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border: 2px solid var(--stroke);
+        border-radius: 10px;
+    }
+
+    .currency-icon {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+    }
+}
+
+/* [images] -------------------------------------------------------------- */
+@layer images {
+    /* Imagem Central */
+    .stage-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+}
+
+/* ==========================================================================
+   Regras fora de layer — garantem as bordas azuis sempre visíveis
+   (não muda sua config; só assegura visualização dos limites)
+   ========================================================================== */
+.top-column {
+    border: 2px solid #6aa0ff;
+}
+
+.mid-column {
+    border: 2px solid #6aa0ff;
+}
+
+    .mid-column.resources > .resources-top,
+    .mid-column.resources > .resources-bot {
+        border: 2px solid #6aa0ff;
+    }
