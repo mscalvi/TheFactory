@@ -18,8 +18,9 @@ namespace FurmaIdle.Data
             ["s00"] = new StageModel
             {
                 Id = "s00",
-                Name = "Stage Inicial",
-                Image = "images/d00.jpg",
+                Name = "Ilha de Vera",
+                Image = "images/icons/stages/d00.jpg",
+                ClickImage = "images/stages/d00.jpg",
                 ResourceId = "r01",
                 Unlocked = true,
                 Sort = 1
@@ -34,6 +35,7 @@ namespace FurmaIdle.Data
                 Id = stage.Id,
                 Name = stage.Name,
                 Image = stage.Image,
+                ClickImage = stage.ClickImage,
                 ResourceId = stage.ResourceId,
                 Unlocked = stage.Unlocked,
                 Sort = stage.Sort
@@ -52,6 +54,7 @@ namespace FurmaIdle.Data
                     Id = stage.Id,
                     Name = stage.Name,
                     Image = stage.Image,
+                    ClickImage = stage.ClickImage,
                     ResourceId = stage.ResourceId,
                     Unlocked = stage.Unlocked,
                     Sort = stage.Sort

@@ -25,7 +25,10 @@ namespace FurmaIdle.Data
                 Sort = 1,
                 StartUnlocked = true,
                 CharState = CharStateEnum.CharState.InBase,
-                CharStageId = null
+                CharStageId = null,
+                Image = "images/icons/characters/p00.jpg",
+                BigImage = "images/characters/p00.jpg",
+                FullImage = "images/pictures/p00.jpg"
             },
             ["p01"] = new CharacterModel
             {
@@ -39,7 +42,10 @@ namespace FurmaIdle.Data
                 Sort = 2,
                 StartUnlocked = true,
                 CharState = CharStateEnum.CharState.InBase,
-                CharStageId = null
+                CharStageId = null,
+                Image = "images/icons/characters/p01.jpg",
+                BigImage = "images/characters/p01.jpg",
+                FullImage = "images/pictures/p01.jpg"
             },
             ["p02"] = new CharacterModel
             {
@@ -53,7 +59,10 @@ namespace FurmaIdle.Data
                 Sort = 3,
                 StartUnlocked = true,
                 CharState = CharStateEnum.CharState.InBase,
-                CharStageId = null
+                CharStageId = null,
+                Image = "images/icons/characters/p02.jpg",
+                BigImage = "images/characters/p02.jpg",
+                FullImage = "images/pictures/p02.jpg"
             },
             ["p03"] = new CharacterModel
             {
@@ -67,7 +76,10 @@ namespace FurmaIdle.Data
                 Sort = 4,
                 StartUnlocked = false,
                 CharState = CharStateEnum.CharState.Locked,
-                CharStageId = null
+                CharStageId = null,
+                Image = "images/icons/characters/p03.jpg",
+                BigImage = "images/characters/p03.jpg",
+                FullImage = "images/pictures/p03.jpg"
             },
             ["p04"] = new CharacterModel
             {
@@ -81,7 +93,10 @@ namespace FurmaIdle.Data
                 Sort = 5,
                 StartUnlocked = false,
                 CharState = CharStateEnum.CharState.Locked,
-                CharStageId = null
+                CharStageId = null,
+                Image = "images/icons/characters/p04.jpg",
+                BigImage = "images/characters/p04.jpg",
+                FullImage = "images/pictures/p04.jpg"
             },
             ["p05"] = new CharacterModel
             {
@@ -95,7 +110,10 @@ namespace FurmaIdle.Data
                 Sort = 6,
                 StartUnlocked = false,
                 CharState = CharStateEnum.CharState.Locked,
-                CharStageId = null
+                CharStageId = null,
+                Image = "images/icons/characters/p05.jpg",
+                BigImage = "images/characters/p05.jpg",
+                FullImage = "images/pictures/p05.jpg"
             }
         };
 
@@ -114,7 +132,10 @@ namespace FurmaIdle.Data
                 Sort = d.Sort,
                 StartUnlocked = d.StartUnlocked,
                 CharState = d.CharState,
-                CharStageId = d.CharStageId
+                CharStageId = d.CharStageId,
+                Image = d.Image,
+                BigImage = d.BigImage,
+                FullImage = d.FullImage
             };
         }
 
@@ -139,7 +160,10 @@ namespace FurmaIdle.Data
                     CharState = def.StartUnlocked
                         ? CharStateEnum.CharState.InBase
                         : CharStateEnum.CharState.Locked,
-                    CharStageId = def.CharStageId
+                    CharStageId = def.CharStageId,
+                    Image = def.Image,
+                    BigImage = def.BigImage,
+                    FullImage = def.FullImage
                 };
             }
             return dict;

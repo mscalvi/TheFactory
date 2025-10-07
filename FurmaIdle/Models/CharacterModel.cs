@@ -13,6 +13,9 @@ namespace FurmaIdle.Models
         public CharTraitModel Trait { get; set; }
         public string SpecialtyId { get; set; }
         public int Sort { get; init; }
+        public string Image { get; set; }
+        public string BigImage { get; set; }
+        public string FullImage { get; set; }
 
         // Stats
         public CharStateEnum.CharState CharState { get; set; }
