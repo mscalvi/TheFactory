@@ -7,6 +7,8 @@
 
 @inject IJSRuntime JS;
 
+@implements IDisposable
+
 @inject FurmaIdle.Services.IStartService Start
 @inject FurmaIdle.Services.IGameService Game
 @inject FurmaIdle.Services.ITooltipService Tooltip
@@ -340,15 +342,18 @@
 
 @code {
     #region Inicialização
+    protected override void OnInitialized()
+    {
+        Game.Changed += OnGameChanged;
+        Game.Logged += OnLogged;
+    }
+
+    bool _busy;
+
     protected override async Task OnInitializedAsync()
     {
         var model = await Start.InitAsync();
         Game.Attach(model);
-        Console.WriteLine($"[GamePage] Resources Count: {Game.Current.Resources?.Count}");
-        Console.WriteLine($"[GamePage] Resources IDs: {string.Join(",", ResourceData.Order)}");
-
-        Log("Jogo Iniciado.", MsgKind.Success);
-        Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
 
         RefreshCoins();
         RefreshResources();
@@ -356,7 +361,9 @@
         RefreshTechs();
         RefreshDestinations();
         RefreshUpgrades();
-        Game.Changed += OnGameChanged;
+
+        Log("Jogo Iniciado.", MsgKind.Success);
+        Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
     }
     #endregion
 
@@ -399,7 +406,8 @@
         if (_msgs.Count != _lastMsgCount)
         {
             _lastMsgCount = _msgs.Count;
-            await JS.InvokeVoidAsync("ui.scrollToBottomIfNearEnd", _msgBodyRef);
+            await JS.InvokeVoidAsync("ui.scrollToBottom", _msgBodyRef);
+            // await JS.InvokeVoidAsync("ui.scrollToBottomIfNearEnd", _msgBodyRef);
         }
     }
 
@@ -446,46 +454,38 @@
         return $"{perSec:0.###}/s • {perMin:0.##}/min";
     }
 
-    void ToggleExpedition()
+    async Task ToggleExpedition()
     {
-        var sid = Game.SelectedStageId;
-
-        if (Game.GetExpedition(sid)?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
+        if (_busy) return;
+        _busy = true; StateHasChanged();
+        try
         {
-            Game.EndExpedition(sid);
+            var sid = Game.SelectedStageId;
+
+            if (Game.GetExpedition(sid)?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
+            {
+                Game.EndExpedition(sid);
+                GoToMessages();
+                return;
+            }
+
+            var cap = Game.GetEffectivePartyCap(sid);
+            var sel = _selectedCharsIds.Count;
+
+            if (sel == 0) { Log("Selecione pelo menos 1 personagem...", MsgKind.Error); GoToMessages(); return; }
+            if (sel > cap) { Log($"Seleção excede o limite ({cap}).", MsgKind.Error); GoToMessages(); return; }
+
+            if (!Game.StartExpedition(sid, _selectedCharsIds.ToList(), out var reason))
+            { Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error); GoToMessages(); return; }
+
+            _selectedCharsIds.Clear();
+            RefreshChars();
             GoToMessages();
-            StateHasChanged();
-            return;
         }
-
-        var cap = Game.GetEffectivePartyCap(sid);
-        var sel = _selectedCharsIds.Count;
-
-        if (sel == 0)
+        finally
         {
-            Log("Selecione pelo menos 1 personagem para iniciar a expedição.", MsgKind.Error);
-            GoToMessages();
-            return;
+            _busy = false; StateHasChanged();
         }
-        if (sel > cap)
-        {
-            Log($"Seleção excede o limite da expedição ({cap}).", MsgKind.Error);
-            GoToMessages();
-            return;
-        }
-
-        if (!Game.StartExpedition(sid, _selectedCharsIds.ToList(), out var reason))
-        {
-            Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
-            GoToMessages();
-            return;
-        }
-
-        _selectedCharsIds.Clear();
-        RefreshChars();
-
-        GoToMessages();
-        StateHasChanged();
     }
 
     #endregion
@@ -597,7 +597,7 @@
     {
         var all = Game.Current.Characters.Values;
         _activeChars = all
-            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharDestId.ToString() == stageId)
+            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharDestId == stageId)
             .ToList();
 
         _baseChars = all
@@ -727,16 +727,34 @@
     #region Helpers
     void OnGameChanged()
     {
-        RefreshCoins();
-        RefreshResources();
-        RefreshChars();
-        RefreshTechs();
-        RefreshDestinations();
-        RefreshUpgrades();
+        Console.WriteLine($"[UI] OnGameChanged fired — {DateTime.Now:HH:mm:ss.fff}");
+        try
+        {
+            RefreshCoins();
+            RefreshResources();
+            RefreshChars();
+            RefreshTechs();
+            RefreshDestinations();
+            RefreshUpgrades();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[UI] OnGameChanged EXCEPTION: {ex}");
+        }
         InvokeAsync(StateHasChanged);
     }
 
-    public void Dispose() => Game.Changed -= OnGameChanged;
+    public void Dispose()
+    {
+        Game.Changed -= OnGameChanged;
+        Game.Logged -= OnLogged;
+    }
+
+    private void OnLogged(string msg)
+    {
+        _msgs.Add(new UiMessage { Text = msg, Kind = MsgKind.Info, Time = DateTime.Now });
+        InvokeAsync(StateHasChanged);
+    }
     #endregion
 
     #region

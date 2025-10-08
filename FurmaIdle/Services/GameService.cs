@@ -28,11 +28,6 @@ namespace FurmaIdle.Services
         int GetRosterCount();
         IReadOnlyCollection<string> GetRoster();
 
-        // Personagens (APIs gerais)
-        bool UnlockCharacter(string charId);
-        bool SendToStage(string charId, string stageId);
-        bool ReturnToBase(string charId);
-
         // Expedition (por stage)
         ExpeditionModel? GetExpedition(string stageId);
         bool HasAnyExpeditionActive { get; }
@@ -165,7 +160,43 @@ namespace FurmaIdle.Services
         }
 
         public int GetRosterCount() => Current.Guild?.Roster.Count ?? 0;
-        public IReadOnlyCollection<string> GetRoster() => Current.Guild?.Roster ?? Array.Empty<string>();
+        public IReadOnlyCollection<string> GetRoster()
+            => (IReadOnlyCollection<string>?)Current.Guild?.Roster ?? Array.Empty<string>();
+
+        public bool UnlockCharacter(string charId)
+        {
+            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
+            if (character.CharState == CharStateEnum.CharState.Locked)
+            {
+                character.CharState = CharStateEnum.CharState.InBase;
+                character.CharDestId = null;
+                Changed?.Invoke();
+                return true;
+            }
+            return false;
+        }
+
+        public bool SendToStage(string charId, string stageId)
+        {
+            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
+            if (character.CharState == CharStateEnum.CharState.Locked) return false;
+
+            character.CharState = CharStateEnum.CharState.OnStage;
+            character.CharDestId = stageId;
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool ReturnToBase(string charId)
+        {
+            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
+            if (character.CharState == CharStateEnum.CharState.Locked) return false;
+
+            character.CharState = CharStateEnum.CharState.InBase;
+            character.CharDestId = null;
+            Changed?.Invoke();
+            return true;
+        }
 
         // ===== Expedition =====
         public ExpeditionModel? GetExpedition(string stageId)
@@ -198,48 +229,65 @@ namespace FurmaIdle.Services
         public bool StartExpedition(string stageId, IReadOnlyCollection<string> roster, out string? reason)
         {
             reason = null;
-
             if (string.IsNullOrWhiteSpace(stageId)) { reason = "Stage inválido."; return false; }
             if (!Current.Stages.TryGetValue(stageId, out var st)) { reason = "Stage inexistente."; return false; }
             if (!st.Unlocked) { reason = "Stage bloqueado."; return false; }
 
+            // cria/garante o modelo de expedição
             var ex = st.Expedition ??= new ExpeditionModel { StageId = stageId };
+            ex.PartyId ??= new List<string>();
             if (ex.ExpeditionStatus == ExpeditionStatus.Active) { reason = "Expedição já está ativa."; return false; }
 
             var cap = GetEffectivePartyCap(stageId);
             if (roster is null || roster.Count == 0) { reason = "Selecione pelo menos 1 membro."; return false; }
             if (roster.Count > cap) { reason = $"Seleção excede o limite ({cap})."; return false; }
 
+            // Validação usando modelo robusto (sem NRE)
+            var party = new List<CharacterModel>(roster.Count);
             foreach (var id in roster)
             {
-                if (!Current.Characters.TryGetValue(id, out var c))
-                { reason = $"Personagem inválido: {id}"; return false; }
-
-                if (c.CharState != CharStateEnum.CharState.InBase)
-                { reason = $"{c.Name} não está na Base."; return false; }
-
-                if (IsCharacterEngagedInAnyExpedition(id))
-                { reason = $"{c.Name} já está em outra expedição."; return false; }
+                if (string.IsNullOrWhiteSpace(id)) { reason = "Id vazio."; return false; }
+                if (!Current.Characters.TryGetValue(id, out var c)) { reason = $"Personagem inválido: {id}"; return false; }
+                if (c.CharState != CharStateEnum.CharState.InBase) { reason = $"{c.Name} não está na Base."; return false; }
+                if (IsCharacterEngagedInAnyExpeditionSafe(id)) { reason = $"{c.Name} já está em outra expedição."; return false; }
+                party.Add(c);
             }
 
+            // Commit
             ex.PartyId.Clear();
-            foreach (var id in roster)
+            foreach (var c in party)
             {
-                var c = Current.Characters[id];
                 c.CharState = CharStateEnum.CharState.OnStage;
                 c.CharDestId = stageId;
-                ex.PartyId.Add(id);
+                ex.PartyId.Add(c.Id);
             }
-
             ex.ExpeditionStatus = ExpeditionStatus.Active;
             ex.Start = DateTimeOffset.UtcNow;
 
-            // (opcional) limpar seleção global após o commit
-            Current.Guild.Roster.Clear();
+            // limpar seleção global sem NRE
+            Current.Guild?.Roster?.Clear();
 
-            Logged?.Invoke($"Expedição iniciada em {stageId} com {ex.PartyId.Count}/{cap} membros.");
+            string stageName = LookupData.Stage(Current, _stages, stageId).Name;
+
+            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {cap- ex.PartyId.Count} vagas. Boa aventura!");
             Changed?.Invoke();
             return true;
+        }
+
+        private bool IsCharacterEngagedInAnyExpeditionSafe(string charId)
+        {
+            foreach (var st in Current.Stages.Values)
+            {
+                var ex = st.Expedition;
+                if (ex is null) continue;
+                if (ex.ExpeditionStatus != ExpeditionStatus.Active) continue;
+
+                var list = ex.PartyId;
+                if (list is null || list.Count == 0) continue;
+
+                if (list.Contains(charId)) return true;
+            }
+            return false;
         }
 
         public bool EndExpedition(string stageId, string? reason = null)
@@ -250,14 +298,15 @@ namespace FurmaIdle.Services
             var ex = st.Expedition;
             if (ex is null || ex.ExpeditionStatus == ExpeditionStatus.Idle) return false;
 
-            foreach (var id in ex.PartyId.ToList())
+            var ids = ex.PartyId ??= new List<string>();
+            foreach (var id in ids.ToList())
             {
                 if (!Current.Characters.TryGetValue(id, out var c)) continue;
                 c.CharState = CharStateEnum.CharState.InBase;
                 c.CharDestId = null;
             }
 
-            ex.PartyId.Clear();
+            ids.Clear();
             ex.ExpeditionStatus = ExpeditionStatus.Idle;
             ex.Start = null;
 
@@ -266,16 +315,5 @@ namespace FurmaIdle.Services
             return true;
         }
 
-        private bool IsCharacterEngagedInAnyExpedition(string charId)
-        {
-            foreach (var st in Current.Stages.Values)
-            {
-                var ex = st.Expedition;
-                if (ex is null) continue;
-                if (ex.ExpeditionStatus == ExpeditionStatus.Active && ex.PartyId.Contains(charId))
-                    return true;
-            }
-            return false;
-        }
     }
 }
