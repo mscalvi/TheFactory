@@ -5,6 +5,8 @@
 @using FurmaIdle.Data
 @using FurmaIdle.Enums;
 
+@inject IJSRuntime JS;
+
 @inject FurmaIdle.Services.IStartService Start
 @inject FurmaIdle.Services.IGameService Game
 @inject FurmaIdle.Services.ITooltipService Tooltip
@@ -42,44 +44,44 @@
                 <!-- Botões do Menu Superior -->
                 <div class="top-column">
                     <div class="top-actions">
+                        <button class="tab-btn @(IsActive(TopPanel.Base) ? "active" : "")"
+                                @onclick="() => TogglePanel(TopPanel.Base)">
+                            <span class="icon-wrap">
+                                <img src="@IconSrc(TopPanel.Base)" alt="Base"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                <span class="icon-fallback">@IconFallback(TopPanel.Base)</span>
+                            </span>
+                        </button>
+
                         <button class="tab-btn @(IsActive(TopPanel.Tecnologias) ? "active" : "")"
                                 disabled="@(!CanInteract)"
                               @onclick="() => TogglePanel(TopPanel.Tecnologias)">
-                        <span class="icon-wrap">
-                          <img src="@IconSrc(TopPanel.Tecnologias)" alt="Tecnologias"
-                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                          <span class="icon-fallback">@IconFallback(TopPanel.Tecnologias)</span>
-                        </span>
-                      </button>
+                                <span class="icon-wrap">
+                                  <img src="@IconSrc(TopPanel.Tecnologias)" alt="Tecnologias"
+                                       onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                  <span class="icon-fallback">@IconFallback(TopPanel.Tecnologias)</span>
+                                </span>
+                        </button>
 
                         <button class="tab-btn @(IsActive(TopPanel.Destinos) ? "active" : "")"
                                 disabled="@(!CanInteract)"
                               @onclick="() => TogglePanel(TopPanel.Destinos)">
-                        <span class="icon-wrap">
-                          <img src="@IconSrc(TopPanel.Destinos)" alt="Destinos"
-                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                          <span class="icon-fallback">@IconFallback(TopPanel.Destinos)</span>
-                        </span>
-                      </button>
+                            <span class="icon-wrap">
+                              <img src="@IconSrc(TopPanel.Destinos)" alt="Destinos"
+                                   onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                              <span class="icon-fallback">@IconFallback(TopPanel.Destinos)</span>
+                            </span>
+                        </button>
 
                         <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"
                                 disabled="@(!CanInteract)"
                               @onclick="() => TogglePanel(TopPanel.Melhorias)">
-                        <span class="icon-wrap">
-                          <img src="@IconSrc(TopPanel.Melhorias)" alt="Melhorias"
-                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                          <span class="icon-fallback">@IconFallback(TopPanel.Melhorias)</span>
-                        </span>
-                      </button>
-
-                        <button class="tab-btn @(IsActive(TopPanel.Base) ? "active" : "")"
-                              @onclick="() => TogglePanel(TopPanel.Base)">
-                        <span class="icon-wrap">
-                          <img src="@IconSrc(TopPanel.Base)" alt="Base"
-                               onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                          <span class="icon-fallback">@IconFallback(TopPanel.Base)</span>
-                        </span>
-                      </button>
+                            <span class="icon-wrap">
+                              <img src="@IconSrc(TopPanel.Melhorias)" alt="Melhorias"
+                                   onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                              <span class="icon-fallback">@IconFallback(TopPanel.Melhorias)</span>
+                            </span>
+                        </button>
                     </div>
                 </div>
 
@@ -89,7 +91,7 @@
                         @if (_topPanel == TopPanel.None)
                         {
                             <div class="msg-panel">
-                              <div class="msg-body">
+                                <div class="msg-body" @ref="_msgBodyRef">
                                   <div class="msg-list">
                                     @if (_msgs.Count == 0)
                                     {
@@ -120,12 +122,13 @@
                             <div class="options-grid">
                               @foreach (var ch in _baseChars)
                               {
-                                <button class="option-btn @(CharSelected(ch.Id) ? "selected" : null)"
-                                            @onclick="() => ToggleCharSelect(ch.Id)"
-                                            aria-pressed="@(CharSelected(ch.Id) ? "true" : "false")"
-                                            aria-label="@ch.Id"
-                                            @onmouseover="() => ShowHover(FurmaIdle.Services.HoverType.Personagem, 
-                                            ch.Id)" @onmouseout="ClearHover">
+                                    <button class="option-btn @(CharSelected(ch.Id) ? "selected" : null)"
+                                                disabled="@(!_canToggleChar(ch.Id))"
+                                                @onclick="() => ToggleCharSelect(ch.Id)"
+                                                aria-pressed="@(CharSelected(ch.Id) ? "true" : "false")"
+                                                aria-label="@ch.Id"
+                                                @onmouseover="() => ShowHover(FurmaIdle.Services.HoverType.Personagem, ch.Id)"
+                                                @onmouseout="ClearHover">
                                       <span class="icon-wrap">
                                         <img src="@CharMiniSrc(ch.Id)"
                                              alt="@ch.Id"
@@ -215,23 +218,30 @@
                                 }
                             </div>
                         }
-
                     </div>
                 </div>
 
                 <!-- Expedição -->
                 <div class="top-column span2">
-                    @if (!CanInteract)
-                    {
-                        <button class="primary-btn" @onclick="StartExpedition">
-                            Iniciar expedição
+                    <div class="exp-box">
+                        <h4>Expedição</h4>
+                        <button class="primary-btn"
+                                disabled="@(!_CanStartExpedition())"
+                                @onclick="ToggleExpedition">
+                            @(ExpeditionActive ? "Terminar expedição" : "Iniciar expedição")
                         </button>
-                    }
-                    else
-                    {
-                        <div>Bloco 4</div> <!-- ou o que quiser depois de iniciar -->
-                    }
+
+                        <div class="exp-meta">
+                            <div><strong>Selecionados:</strong> @_selectedCharsIds.Count / @EffectivePartyCap()</div>
+                            <div><strong>Stage:</strong> @stage?.Name (@stageId)</div>
+                            <div><strong>PartyCap do Stage:</strong> @(stage?.PartyCap ?? 0)</div>
+                            <div><strong>PartyCap Máx (Guilda):</strong> @Game.Current.Guild.PartyCapMax</div>
+                            <div><strong>PartyCap Efetivo:</strong> @EffectivePartyCap()</div>
+                            <div><strong>Ganho de Conhecimento:</strong> @KnowledgeRateText()</div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </header>
 
@@ -257,11 +267,11 @@
                   </div>
                 </div>
 
-                <!-- Imagem e Clicks -->
+                <!-- Stage e Clicks -->
                 <div class="mid-column span2">
                     <img class="stage-image"
-                         src="@(_stage?.Image ?? "images/d00.jpg")"
-                         alt="@(_stage?.Name ?? "Cenário")"
+                         src="@(stage?.Image ?? "images/d00.jpg")"
+                         alt="@(stage?.Name ?? "Cenário")"
                          draggable="false"
                          @onclick="OnStageClick"/>
                 </div>
@@ -297,7 +307,7 @@
                     <div class="resources-bot">
                         <div class="char-list-host">
                             <div class="char-rows">
-                                @foreach (var c in _baseChars)
+                                @foreach (var c in _activeChars)
                                 {
                                     <div class="char-row">
                                         <!-- Coluna 1: ícone -->
@@ -337,9 +347,6 @@
         Console.WriteLine($"[GamePage] Resources Count: {Game.Current.Resources?.Count}");
         Console.WriteLine($"[GamePage] Resources IDs: {string.Join(",", ResourceData.Order)}");
 
-        _stageId = GetFirstUnlockedStageId(model);
-        _stage = model.Stages.TryGetValue(_stageId, out var s) ? s : null;
-
         Log("Jogo Iniciado.", MsgKind.Success);
         Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
 
@@ -354,6 +361,10 @@
     #endregion
 
     #region Mensagens
+    void GoToMessages() => _topPanel = TopPanel.None;
+    ElementReference _msgBodyRef;
+    int _lastMsgCount;
+
     // Tipos de mensagem
     enum MsgKind { Info, Warn, Error, Success }
 
@@ -376,6 +387,22 @@
         _              => "is-info"
     };
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _lastMsgCount = _msgs.Count;
+            await JS.InvokeVoidAsync("ui.scrollToBottomIfNearEnd", _msgBodyRef);
+            return;
+        }
+
+        if (_msgs.Count != _lastMsgCount)
+        {
+            _lastMsgCount = _msgs.Count;
+            await JS.InvokeVoidAsync("ui.scrollToBottomIfNearEnd", _msgBodyRef);
+        }
+    }
+
     // atalho para publicar mensagens no log
     void Log(string text, MsgKind kind = MsgKind.Info)
     {
@@ -385,16 +412,82 @@
     #endregion
 
     #region Expedition
-    bool _expeditionStarted = false;
-    bool CanInteract => _expeditionStarted;
+    ExpeditionModel? Ex => Game.GetExpedition(stageId);
+    bool ExpeditionActive => Ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active;
+    bool CanInteract => Game.HasAnyExpeditionActive;
 
-    void StartExpedition()
+    int EffectivePartyCap()
     {
-        Log("Expedição iniciada. Boa sorte, aventureiro!", MsgKind.Info);
+        var stageCap = Game.GetEffectivePartyCap(Game.SelectedStageId);
+        return Math.Min(stageCap, Game.Current.Guild.PartyCapMax);
+    }
 
-        _expeditionStarted = true;
+    bool _CanStartExpedition()
+    {
+        if (ExpeditionActive) return true;
+        int cap = EffectivePartyCap();
+        int sel = _selectedCharsIds.Count;
+        return sel >= 1 && sel <= cap;
+    }
+
+    double KnowledgeRatePerSecond()
+    {
+        int cap = EffectivePartyCap();
+        int selected = _selectedCharsIds.Count;
+        double basePerSlot = 0.2;
+        double perChar = 0.05;
+        return cap * basePerSlot + selected * perChar;
+    }
+
+    string KnowledgeRateText()
+    {
+        double perSec = KnowledgeRatePerSecond();
+        double perMin = perSec * 60;
+        return $"{perSec:0.###}/s • {perMin:0.##}/min";
+    }
+
+    void ToggleExpedition()
+    {
+        var sid = Game.SelectedStageId;
+
+        if (Game.GetExpedition(sid)?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
+        {
+            Game.EndExpedition(sid);
+            GoToMessages();
+            StateHasChanged();
+            return;
+        }
+
+        var cap = Game.GetEffectivePartyCap(sid);
+        var sel = _selectedCharsIds.Count;
+
+        if (sel == 0)
+        {
+            Log("Selecione pelo menos 1 personagem para iniciar a expedição.", MsgKind.Error);
+            GoToMessages();
+            return;
+        }
+        if (sel > cap)
+        {
+            Log($"Seleção excede o limite da expedição ({cap}).", MsgKind.Error);
+            GoToMessages();
+            return;
+        }
+
+        if (!Game.StartExpedition(sid, _selectedCharsIds.ToList(), out var reason))
+        {
+            Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
+            GoToMessages();
+            return;
+        }
+
+        _selectedCharsIds.Clear();
+        RefreshChars();
+
+        GoToMessages();
         StateHasChanged();
     }
+
     #endregion
 
     #region Botões do TOPO
@@ -504,7 +597,7 @@
     {
         var all = Game.Current.Characters.Values;
         _activeChars = all
-            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharDestId.ToString() == _stageId)
+            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharDestId.ToString() == stageId)
             .ToList();
 
         _baseChars = all
@@ -517,11 +610,38 @@
 
     bool CharSelected(string id) => _selectedCharsIds.Contains(id);
 
+
     void ToggleCharSelect(string id)
     {
-        if (!_selectedCharsIds.Add(id))
+        if (ExpeditionActive)
+        {
+            Log("Não é possível alterar a seleção durante a expedição.", MsgKind.Warn);
+            return;
+        }
+
+        if (_selectedCharsIds.Contains(id))
+        {
             _selectedCharsIds.Remove(id);
+            StateHasChanged();
+            return;
+        }
+
+        int cap = EffectivePartyCap();
+        if (_selectedCharsIds.Count >= cap)
+        {
+            Log($"Limite da expedição atingido ({cap}).", MsgKind.Warn);
+            return;
+        }
+
+        _selectedCharsIds.Add(id);
         StateHasChanged();
+    }
+
+    bool _canToggleChar(string id)
+    {
+        if (ExpeditionActive) return false;
+        if (CharSelected(id)) return true;
+        return _selectedCharsIds.Count < EffectivePartyCap();
     }
     #endregion
 
@@ -584,15 +704,14 @@
     #endregion
 
     #region Stage
-    string _stageId = "s00";
-    StageModel? _stage;
+    string stageId => Game.SelectedStageId;
+    StageModel? stage => Game.GetSelectedStage();
 
     void OnStageClick()
     {
-        Log("Trabalho arduo!", MsgKind.Info);
-
         if (!CanInteract) return;
-        Game.Click(_stageId);
+        Log("Trabalho arduo!", MsgKind.Info);
+        Game.Click(stageId);
     }
 
     static string GetFirstUnlockedStageId(GameModel model)

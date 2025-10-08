@@ -26,7 +26,8 @@ namespace FurmaIdle.Data
                 Unlocked = true,
                 Avaliable = false,
                 DestinationId = "d00",
-                Sort = 1
+                Sort = 1,
+                PartyCap = 4
             },
 
             ["s01"] = new StageModel
@@ -39,7 +40,8 @@ namespace FurmaIdle.Data
                 Unlocked = true,
                 Avaliable = false,
                 DestinationId = "d10",
-                Sort = 2
+                Sort = 2,
+                PartyCap = 2
             }
         };
 
@@ -54,7 +56,8 @@ namespace FurmaIdle.Data
                 ClickImage = stage.ClickImage,
                 ResourceId = stage.ResourceId,
                 Unlocked = stage.Unlocked,
-                Sort = stage.Sort
+                Sort = stage.Sort,
+                PartyCap = stage.PartyCap
             };
         }
 
@@ -73,7 +76,8 @@ namespace FurmaIdle.Data
                     ClickImage = stage.ClickImage,
                     ResourceId = stage.ResourceId,
                     Unlocked = stage.Unlocked,
-                    Sort = stage.Sort
+                    Sort = stage.Sort,
+                    PartyCap = stage.PartyCap
                 };
             }
             return dictionary;

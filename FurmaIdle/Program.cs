@@ -14,7 +14,7 @@ builder.Services.AddSingleton<IStartService, StartService>();
 builder.Services.AddSingleton<IGameService, GameService>(); 
 builder.Services.AddSingleton<ITooltipService, TooltipService>();
 builder.Services.AddSingleton<IUpgradeService, UpgradeService>();
-
+builder.Services.AddSingleton<IStageService, StageService>();
 builder.Services.AddSingleton<IGameStore, IndexedDbGameStore>();
 
 await builder.Build().RunAsync();

@@ -19,6 +19,7 @@ namespace FurmaIdle.Models
         public CharStateEnum.CharState CharState { get; set; }
         public bool Avaliable { get; set; }
         public string? CharDestId { get; set; }
+        public string CharStageId { get; set; }
         public bool Unlocked { get; set; }
 
         // Contracts

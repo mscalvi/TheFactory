@@ -40,13 +40,11 @@ async function setItem(key, value) {
 }
 
 export async function load(key) {
-    // salva JSON string; aqui devolvemos string (ou null)
     const raw = await getItem(key);
     return raw ?? null;
 }
 
 export async function save(key, json) {
-    // espera string JSON
     await setItem(key, json);
     return true;
 }
