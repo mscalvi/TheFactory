@@ -89,22 +89,24 @@
                         @if (_topPanel == TopPanel.None)
                         {
                             <div class="msg-panel">
-                                  <div class="msg-body">
-                                        @if (_msgs.Count == 0)
-                                        {
-                                            <em>Nenhuma mensagem ainda.</em>
-                                        }
-                                        else
-                                        {
-                                              @foreach (var m in _msgs)
-                                              {
-                                                    <div class="msg-row @Css(m.Kind)">
-                                                          <span class="msg-time">@m.Time.ToString("HH:mm:ss - ")</span>
-                                                          <span class="msg-text">@m.Text</span>
-                                                    </div>
-                                              }
-                                        }
+                              <div class="msg-body">
+                                  <div class="msg-list">
+                                    @if (_msgs.Count == 0)
+                                    {
+                                      <em>Sem mensagens.</em>
+                                    }
+                                    else
+                                    {
+                                      @foreach (var m in _msgs)
+                                      {
+                                        <div class="msg-row @Css(m.Kind)">
+                                          <span class="msg-time">@m.Time.ToString("HH:mm:ss: ")</span>
+                                          <span class="msg-text">@m.Text</span>
+                                        </div>
+                                      }
+                                    }
                                   </div>
+                              </div>
                             </div>
                         }
                         else if (_topPanel == TopPanel.Base)
@@ -338,8 +340,8 @@
         _stageId = GetFirstUnlockedStageId(model);
         _stage = model.Stages.TryGetValue(_stageId, out var s) ? s : null;
 
-        Log("Jogo iniciado.", MsgKind.Success);
-        Log("Clique em Iniciar expedição para liberar os painéis.", MsgKind.Info);
+        Log("Jogo Iniciado.", MsgKind.Success);
+        Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
 
         RefreshCoins();
         RefreshResources();
@@ -388,6 +390,8 @@
 
     void StartExpedition()
     {
+        Log("Expedição iniciada. Boa sorte, aventureiro!", MsgKind.Info);
+
         _expeditionStarted = true;
         StateHasChanged();
     }
@@ -585,6 +589,8 @@
 
     void OnStageClick()
     {
+        Log("Trabalho arduo!", MsgKind.Info);
+
         if (!CanInteract) return;
         Game.Click(_stageId);
     }
