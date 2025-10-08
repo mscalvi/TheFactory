@@ -1,7 +1,7 @@
 ﻿using FurmaIdle.Models;
 using FurmaIdle.Services;
 
-namespace FurmaIdle.Data
+namespace FurmaIdle.Helpers
 {
     public class LookupData
     {

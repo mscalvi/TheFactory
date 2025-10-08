@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using FurmaIdle.Data;
-using FurmaIdle.Enums;
+using FurmaIdle.Helpers;
 using FurmaIdle.Models;
-using static FurmaIdle.Data.ExpeditionEnum;
+using static FurmaIdle.Helpers.ExpeditionEnum;
 using static FurmaIdle.Models.CharacterModel;
 
 namespace FurmaIdle.Services
@@ -35,17 +35,21 @@ namespace FurmaIdle.Services
         double GetKnowledgeRate(string stageId);
         bool StartExpedition(string stageId, IReadOnlyCollection<string> roster, out string? reason);
         bool EndExpedition(string stageId, string? reason = null);
+        PartyInfo GetPartyInfo(string stageId);
 
         // Gerais
         void Attach(GameModel model);
         event Action? Changed;
-        event Action<string>? Logged;
+        event Action<string, LogKind>? Logged;
     }
 
     public sealed class GameService : IGameService
     {
         private readonly IUpgradeService _effects;
         private readonly IStageService _stages;
+        public GameModel Current { get; private set; } = new();
+        public event Action? Changed;
+        public event Action<string, LogKind>? Logged;
 
         public GameService(IUpgradeService effects, IStageService stages)
         {
@@ -53,14 +57,13 @@ namespace FurmaIdle.Services
             _stages = stages ?? throw new ArgumentNullException(nameof(stages));
         }
 
-        public GameModel Current { get; private set; } = new();
-
-        public event Action? Changed;
-        public event Action<string>? Logged;
-
         public void Attach(GameModel model)
         {
             Current = model ?? throw new ArgumentNullException(nameof(model));
+
+            Current.Guild ??= new GuildModel();
+            Current.Guild.Roster ??= new HashSet<string>();
+
             _selectedStageId = _stages.GetFirstUnlocked(Current);
             Changed?.Invoke();
         }
@@ -74,7 +77,7 @@ namespace FurmaIdle.Services
             if (string.IsNullOrWhiteSpace(stageId)) return false;
             if (!_stages.CanSelect(Current, stageId, out var reason))
             {
-                Logged?.Invoke(reason ?? "Stage indisponível.");
+                Logged?.Invoke(reason ?? "Stage indisponível.", LogKind.Error);
                 return false;
             }
             if (_selectedStageId == stageId) return false;
@@ -161,41 +164,8 @@ namespace FurmaIdle.Services
 
         public int GetRosterCount() => Current.Guild?.Roster.Count ?? 0;
         public IReadOnlyCollection<string> GetRoster()
-            => (IReadOnlyCollection<string>?)Current.Guild?.Roster ?? Array.Empty<string>();
-
-        public bool UnlockCharacter(string charId)
         {
-            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
-            if (character.CharState == CharStateEnum.CharState.Locked)
-            {
-                character.CharState = CharStateEnum.CharState.InBase;
-                character.CharDestId = null;
-                Changed?.Invoke();
-                return true;
-            }
-            return false;
-        }
-
-        public bool SendToStage(string charId, string stageId)
-        {
-            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
-            if (character.CharState == CharStateEnum.CharState.Locked) return false;
-
-            character.CharState = CharStateEnum.CharState.OnStage;
-            character.CharDestId = stageId;
-            Changed?.Invoke();
-            return true;
-        }
-
-        public bool ReturnToBase(string charId)
-        {
-            if (!Current.Characters.TryGetValue(charId, out var character)) return false;
-            if (character.CharState == CharStateEnum.CharState.Locked) return false;
-
-            character.CharState = CharStateEnum.CharState.InBase;
-            character.CharDestId = null;
-            Changed?.Invoke();
-            return true;
+            return (IReadOnlyCollection<string>?)Current?.Guild?.Roster ?? Array.Empty<string>();
         }
 
         // ===== Expedition =====
@@ -209,7 +179,30 @@ namespace FurmaIdle.Services
             => Current.Stages.Values.Any(s => s.Expedition?.ExpeditionStatus == ExpeditionStatus.Active);
 
         public int GetEffectivePartyCap(string stageId)
-            => _stages.GetEffectivePartyCap(Current, stageId);
+        {
+            var stageCap = _stages.GetEffectivePartyCap(Current, stageId); // cap "do stage"
+            var guildCap = Current.Guild?.PartyCapMax ?? 0;
+            return Math.Min(stageCap, guildCap);
+        }
+        public PartyInfo GetPartyInfo(string stageId)
+        {
+            var usedRoster = Current?.Guild?.Roster?.Count ?? 0;
+            var capRoster = Current?.Guild?.PartyCapMax ?? 0;
+
+            var ex = GetExpedition(stageId);
+            var active = ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active;
+            var usedStage = active ? (ex?.PartyId?.Count ?? 0) : 0;
+
+            var capStage = GetEffectivePartyCap(stageId);
+
+            return new PartyInfo(
+                UsedRoster: usedRoster,
+                CapRoster: capRoster,
+                UsedStage: usedStage,
+                CapStage: capStage,
+                ExpeditionActive: active
+            );
+        }
 
         public double GetKnowledgeRate(string stageId)
         {
@@ -269,7 +262,7 @@ namespace FurmaIdle.Services
 
             string stageName = LookupData.Stage(Current, _stages, stageId).Name;
 
-            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {cap- ex.PartyId.Count} vagas. Boa aventura!");
+            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {cap- ex.PartyId.Count} vagas. Boa aventura!", LogKind.Success);
             Changed?.Invoke();
             return true;
         }
@@ -310,7 +303,7 @@ namespace FurmaIdle.Services
             ex.ExpeditionStatus = ExpeditionStatus.Idle;
             ex.Start = null;
 
-            Logged?.Invoke($"Expedição encerrada em {stageId}" + (string.IsNullOrWhiteSpace(reason) ? "." : $": {reason}"));
+            Logged?.Invoke($"Expedição encerrada em {stageId}" + (string.IsNullOrWhiteSpace(reason) ? "." : $": {reason}"), LogKind.Success);
             Changed?.Invoke();
             return true;
         }

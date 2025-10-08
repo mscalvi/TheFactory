@@ -3,7 +3,8 @@
 @using System.Linq
 @using FurmaIdle.Models;
 @using FurmaIdle.Data
-@using FurmaIdle.Enums;
+@using FurmaIdle.Helpers;
+@using FurmaIdle.Services;
 
 @inject IJSRuntime JS;
 
@@ -234,16 +235,14 @@
                         </button>
 
                         <div class="exp-meta">
-                            <div><strong>Selecionados:</strong> @_selectedCharsIds.Count / @EffectivePartyCap()</div>
+                            <div><strong>Selecionados (roster):</strong> @Party.UsedRoster / @Party.CapRoster</div>
                             <div><strong>Stage:</strong> @stage?.Name (@stageId)</div>
-                            <div><strong>PartyCap do Stage:</strong> @(stage?.PartyCap ?? 0)</div>
-                            <div><strong>PartyCap Máx (Guilda):</strong> @Game.Current.Guild.PartyCapMax</div>
-                            <div><strong>PartyCap Efetivo:</strong> @EffectivePartyCap()</div>
+                            <div><strong>PartyCap Efetivo (Stage):</strong> @Party.CapStage</div>
+                            <div><strong>Na expedição atual:</strong> @Party.UsedStage / @Party.CapStage</div>
                             <div><strong>Ganho de Conhecimento:</strong> @KnowledgeRateText()</div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </header>
 
@@ -394,6 +393,14 @@
         _              => "is-info"
     };
 
+    private static MsgKind Map(LogKind k) => k switch
+    {
+        LogKind.Warn => MsgKind.Warn,
+        LogKind.Error => MsgKind.Error,
+        LogKind.Success => MsgKind.Success,
+        _ => MsgKind.Info
+    };
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -420,31 +427,39 @@
     #endregion
 
     #region Expedition
+    PartyInfo Party => Game.GetPartyInfo(stageId);
     ExpeditionModel? Ex => Game.GetExpedition(stageId);
-    bool ExpeditionActive => Ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active;
+    bool ExpeditionActive => Party.ExpeditionActive;
     bool CanInteract => Game.HasAnyExpeditionActive;
+    int SelectedCount => Party.UsedRoster;
 
     int EffectivePartyCap()
     {
         var stageCap = Game.GetEffectivePartyCap(Game.SelectedStageId);
-        return Math.Min(stageCap, Game.Current.Guild.PartyCapMax);
+        var guildCap = Game.Current.Guild?.PartyCapMax ?? 0;
+        return Math.Min(stageCap, guildCap);
     }
 
     bool _CanStartExpedition()
     {
         if (ExpeditionActive) return true;
-        int cap = EffectivePartyCap();
-        int sel = _selectedCharsIds.Count;
-        return sel >= 1 && sel <= cap;
+        return SelectedCount >= 1 && SelectedCount <= Party.CapStage;
+    }
+
+    bool _canToggleChar(string id)
+    {
+        if (ExpeditionActive) return false;
+        if (CharSelected(id)) return true;
+        return SelectedCount < Party.CapStage;
     }
 
     double KnowledgeRatePerSecond()
     {
-        int cap = EffectivePartyCap();
-        int selected = _selectedCharsIds.Count;
-        double basePerSlot = 0.2;
-        double perChar = 0.05;
-        return cap * basePerSlot + selected * perChar;
+        const double basePerSlot = 0.2;
+        const double perChar = 0.05;
+
+        var members = Party.ExpeditionActive ? Party.UsedStage : Party.UsedRoster;
+        return Party.CapStage * basePerSlot + members * perChar;
     }
 
     string KnowledgeRateText()
@@ -454,7 +469,7 @@
         return $"{perSec:0.###}/s • {perMin:0.##}/min";
     }
 
-    async Task ToggleExpedition()
+    private async Task ToggleExpedition()
     {
         if (_busy) return;
         _busy = true; StateHasChanged();
@@ -464,27 +479,27 @@
 
             if (Game.GetExpedition(sid)?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
             {
-                Game.EndExpedition(sid);
+                Game.EndExpedition(sid);      
                 GoToMessages();
                 return;
             }
 
-            var cap = Game.GetEffectivePartyCap(sid);
-            var sel = _selectedCharsIds.Count;
+            var roster = Game.GetRoster();     
+            if (!Game.StartExpedition(sid, roster, out var reason))
+            {
+                Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
+                GoToMessages();
+                return;
+            }
 
-            if (sel == 0) { Log("Selecione pelo menos 1 personagem...", MsgKind.Error); GoToMessages(); return; }
-            if (sel > cap) { Log($"Seleção excede o limite ({cap}).", MsgKind.Error); GoToMessages(); return; }
-
-            if (!Game.StartExpedition(sid, _selectedCharsIds.ToList(), out var reason))
-            { Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error); GoToMessages(); return; }
-
-            _selectedCharsIds.Clear();
-            RefreshChars();
+            RefreshChars();                    
             GoToMessages();
+            await InvokeAsync(StateHasChanged);
         }
         finally
         {
-            _busy = false; StateHasChanged();
+            _busy = false;
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -591,13 +606,17 @@
     #region Personagens
     List<CharacterModel> _activeChars = new();
     List<CharacterModel> _baseChars = new();
-    HashSet<string> _selectedCharsIds = new();
+    IReadOnlyCollection<string> Roster => Game.GetRoster();
+
+    bool CharSelected(string id) => Roster.Contains(id);
 
     void RefreshChars()
     {
         var all = Game.Current.Characters.Values;
+
         _activeChars = all
-            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharDestId == stageId)
+            .Where(c => c.CharState == CharStateEnum.CharState.OnStage
+                     && c.CharDestId == stageId)
             .ToList();
 
         _baseChars = all
@@ -608,40 +627,17 @@
     string CharMiniSrc(string charId)
         => $"images/characters/minis/{charId}.png";
 
-    bool CharSelected(string id) => _selectedCharsIds.Contains(id);
-
 
     void ToggleCharSelect(string id)
     {
-        if (ExpeditionActive)
+        if (ExpeditionActive) { Log("Não é possível alterar a seleção durante a expedição.", MsgKind.Warn); return; }
+
+        if (!Game.ToggleRoster(id, out var reason))
         {
-            Log("Não é possível alterar a seleção durante a expedição.", MsgKind.Warn);
+            Log(reason ?? "Não foi possível alterar a seleção.", MsgKind.Error);
             return;
         }
-
-        if (_selectedCharsIds.Contains(id))
-        {
-            _selectedCharsIds.Remove(id);
-            StateHasChanged();
-            return;
-        }
-
-        int cap = EffectivePartyCap();
-        if (_selectedCharsIds.Count >= cap)
-        {
-            Log($"Limite da expedição atingido ({cap}).", MsgKind.Warn);
-            return;
-        }
-
-        _selectedCharsIds.Add(id);
         StateHasChanged();
-    }
-
-    bool _canToggleChar(string id)
-    {
-        if (ExpeditionActive) return false;
-        if (CharSelected(id)) return true;
-        return _selectedCharsIds.Count < EffectivePartyCap();
     }
     #endregion
 
@@ -750,9 +746,9 @@
         Game.Logged -= OnLogged;
     }
 
-    private void OnLogged(string msg)
+    private void OnLogged(string msg, LogKind kind)
     {
-        _msgs.Add(new UiMessage { Text = msg, Kind = MsgKind.Info, Time = DateTime.Now });
+        _msgs.Add(new UiMessage { Text = msg, Kind = Map(kind), Time = DateTime.Now });
         InvokeAsync(StateHasChanged);
     }
     #endregion

@@ -1,5 +1,4 @@
-﻿using FurmaIdle.Enums;
-using FurmaIdle.Models;
+﻿using FurmaIdle.Models;
 
 namespace FurmaIdle.Data
 {

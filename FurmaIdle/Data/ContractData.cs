@@ -1,6 +1,6 @@
 ﻿using FurmaIdle.Models;
 using System.Linq;
-using static FurmaIdle.Data.UpgradeCostEnum;
+using static FurmaIdle.Helpers.UpgradeCostEnum;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace FurmaIdle.Data

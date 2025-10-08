@@ -1,7 +1,7 @@
 ﻿using FurmaIdle.Models;
 using System.Linq;
 using System.Reflection.Emit;
-using static FurmaIdle.Data.UpgradeCostEnum;
+using static FurmaIdle.Helpers.UpgradeCostEnum;
 
 namespace FurmaIdle.Data
 {

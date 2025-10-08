@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 
 namespace FurmaIdle.Data

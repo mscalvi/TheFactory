@@ -1,4 +1,4 @@
-﻿namespace FurmaIdle.Data
+﻿namespace FurmaIdle.Helpers
 {
     public class ResourceEnum
     {

@@ -1,4 +1,4 @@
-﻿using FurmaIdle.Data;
+﻿using FurmaIdle.Helpers;
 
 namespace FurmaIdle.Models
 {

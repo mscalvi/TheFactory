@@ -1,5 +1,4 @@
-﻿using FurmaIdle.Data;
-using static FurmaIdle.Data.UpgradeCostEnum;
+﻿using static FurmaIdle.Helpers.UpgradeCostEnum;
 
 namespace FurmaIdle.Models
 {

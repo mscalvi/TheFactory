@@ -1,4 +1,4 @@
-﻿namespace FurmaIdle.Enums
+﻿namespace FurmaIdle.Helpers
 {
     public class CharStateEnum
     {
