@@ -21,6 +21,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k10",
                 Image = "images/icons/techonology/t10.jpg",
                 Unlocked = false,
+                Avaliable = true,
                 DestinationId = "d00"
             },
             ["t11"] = new TechModel
@@ -31,6 +32,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k11",
                 Image = "images/icons/techonology/t11.jpg",
                 Unlocked = false,
+                Avaliable = true,
                 DestinationId = "d00"
             },
             ["t12"] = new TechModel
@@ -41,6 +43,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k12",
                 Image = "images/icons/techonology/t12.jpg",
                 Unlocked = false,
+                Avaliable = true,
                 DestinationId = "d00"
             },
             ["t13"] = new TechModel
@@ -51,6 +54,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k11",
                 Image = "images/icons/techonology/t13.jpg",
                 Unlocked = false,
+                Avaliable = true,
                 DestinationId = "d01"
             },
             ["t14"] = new TechModel
@@ -61,6 +65,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k12",
                 Image = "images/icons/techonology/t14.jpg",
                 Unlocked = false,
+                Avaliable = true,
                 DestinationId = "d02"
             },
             ["t20"] = new TechModel
@@ -71,6 +76,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k20",
                 Image = "images/icons/techonology/t20.jpg",
                 Unlocked = false,
+                Avaliable = true,
                 DestinationId = "d03"
             },
             ["t30"] = new TechModel
@@ -81,6 +87,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k30",
                 Image = "images/icons/techonology/t30.jpg",
                 Unlocked = false,
+                Avaliable = true,
                 DestinationId = "d01"
             }
         };
@@ -96,6 +103,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = tech.CostKnowledgeId,
                 Image = tech.Image,
                 Unlocked = tech.Unlocked,
+                Avaliable = tech.Avaliable,
                 DestinationId = tech.DestinationId
             };
         }
@@ -115,6 +123,7 @@ namespace FurmaIdle.Data
                     CostKnowledgeId = tech.CostKnowledgeId,
                     Image = tech.Image,
                     Unlocked = tech.Unlocked,
+                    Avaliable = tech.Avaliable,
                     DestinationId = tech.DestinationId
                 };
             }

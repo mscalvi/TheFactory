@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Data;
+
+namespace FurmaIdle.Models
 {
     public class ResourceModel
     {
@@ -10,6 +12,6 @@
         public bool Unlocked { get; set; } = false;
         public string Image { get; set; }
         public int Sort { get; set; }
-        public string Type { get; set; }
+        public ResourceEnum.ResourceType ResourceType { get; set; }
     }
 }

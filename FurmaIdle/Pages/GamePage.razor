@@ -91,7 +91,7 @@
                         {
                             @if (_baseChars.Count == 0)
                             {
-                                <em>Ninguém na base.</em>
+                                <em>Nenhum personagem na base.</em>
                             }
                             else
                             {
@@ -115,16 +115,85 @@
                             </div>
                             }
                         }
-                        else
+                        else if (_topPanel == TopPanel.Tecnologias)
                         {
-                            <!-- por enquanto, apenas um card com o nome do painel;
-                                 depois aqui entram as listas reais de Tec/Upgr/Dest -->
                             <div class="options-grid">
-                                <div class="option-card">
-                                    <div class="option-title">@_topPanelText</div>
-                                </div>
+                                @if (_techs.Count == 0)
+                                {
+                                    <em>Nenhuma tecnologia desbloqueada.</em>
+                                }
+                                else
+                                {
+                                    @foreach (var t in _techs)
+                                    {
+                                        <button class="option-btn"
+                                                @onclick="() => OnTechClick(t.Id)"
+                                                @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Tecnologia, t.Id)"
+                                                @onmouseleave="ClearHover"
+                                                aria-label="@t.Name">
+                                            <span class="icon-wrap">
+                                                <img src="@t.Image" alt="@t.Name"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                                <span class="icon-fallback">@t.Id</span>
+                                            </span>
+                                        </button>
+                                    }
+                                }
                             </div>
                         }
+                        else if (_topPanel == TopPanel.Destinos)
+                        {
+                            <div class="options-grid">
+                                @if (_dests.Count == 0)
+                                {
+                                    <em>Nenhum destino desbloqueado.</em>
+                                }
+                                else
+                                {
+                                    @foreach (var d in _dests)
+                                    {
+                                        <button class="option-btn"
+                                                @onclick="() => OnDestClick(d.Id)"
+                                                @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Destino, d.Id)"
+                                                @onmouseleave="ClearHover"
+                                                aria-label="@d.Name">
+                                            <span class="icon-wrap">
+                                                <img src="@d.Image" alt="@d.Name"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                                <span class="icon-fallback">@d.Id</span>
+                                            </span>
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        }
+                        else if (_topPanel == TopPanel.Melhorias)
+                        {
+                            <div class="options-grid">
+                                @if (_upgr.Count == 0)
+                                {
+                                    <em>Nenhuma melhoria disponível.</em>
+                                }
+                                else
+                                {
+                                    @foreach (var u in _upgr)
+                                    {
+                                        <button class="option-btn"
+                                                @onclick="() => OnUpgrClick(u.Id)"
+                                                @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Melhoria, u.Id)"
+                                                @onmouseleave="ClearHover"
+                                                aria-label="@u.Name">
+                                            <span class="icon-wrap">
+                                                <img src="@u.Image" alt="@u.Name"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                                <span class="icon-fallback">@u.Id</span>
+                                            </span>
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        }
+
                     </div>
                 </div>
 
@@ -168,7 +237,28 @@
                 <div class="mid-column resources">
 
                     <!-- Recursos e Regeneração -->
-                    <div class="resources-top">Bloco 3</div>
+                    <div class="resources-top">
+                        @if (_resources.Count == 0)
+                        {
+                            <span>Carregando…</span>
+                        }
+                        else
+                        {
+                            <div class="currency-grid">
+                                @foreach (var r in _resources)
+                                {
+                                    <div class="currency-card">
+                                        <img class="currency-icon" src="@r.Image" alt="@r.Name" />
+                                        <div class="currency-info">
+                                            <div class="currency-name">@r.Name</div>
+                                            <div>Atual: @r.Actual.ToString("N0")</div>
+                                            <div>Total: @r.Total.ToString("N0")</div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
                     <!-- Personagens e Especialidades -->
                     <div class="resources-bot">
@@ -206,24 +296,31 @@
 </div>
 
 @code {
-    // Inicialização
+    #region Inicialização
     protected override async Task OnInitializedAsync()
     {
         var model = await Start.InitAsync();
         Game.Attach(model);
+        Console.WriteLine($"[GamePage] Resources Count: {Game.Current.Resources?.Count}");
+        Console.WriteLine($"[GamePage] Resources IDs: {string.Join(",", ResourceData.Order)}");
 
         _stageId = GetFirstUnlockedStageId(model);
         _stage = model.Stages.TryGetValue(_stageId, out var s) ? s : null;
 
         RefreshCoins();
-        RefreshChars(); 
+        RefreshResources();
+        RefreshChars();
+        RefreshTechs();
+        RefreshDestinations();
+        RefreshUpgrades();
         Game.Changed += OnGameChanged;
     }
+    #endregion
 
-    // Botões do TOPO //
+    #region Botões do TOPO
     enum TopPanel { None, Tecnologias, Destinos, Melhorias, Base }
     TopPanel _topPanel = TopPanel.None;
-    
+
     string _topPanelText => _topPanel switch
     {
         TopPanel.Tecnologias => "Tecnologias",
@@ -258,8 +355,9 @@
         TopPanel.Base        => "B",
         _ => "?"
     };
+    #endregion
 
-    // Painel de Descrição
+    #region Painel de Descrição
     bool _midHoverVisible;
     string _midHoverTitle = "";
     string _midHoverBody  = "";
@@ -283,20 +381,35 @@
         _hoverKey = null;
         StateHasChanged();
     }
+    #endregion
 
-    // Moedas
+    #region Moedas
     List<ResourceModel> _coins = new();
 
     void RefreshCoins()
     {
         _coins = ResourceData.Order
             .Select(id => Game.Get(id))
-            .Where(r => r is not null && r.Unlocked)
-            .Cast<ResourceModel>()
+            .OfType<ResourceModel>()
+            .Where(r => r.Unlocked && r.ResourceType == ResourceEnum.ResourceType.Coin)
             .ToList();
     }
+    #endregion
 
-    // Personagens
+    #region Recursos
+    List<ResourceModel> _resources = new();
+
+    void RefreshResources()
+    {
+        _resources = ResourceData.Order
+            .Select(id => Game.Get(id))
+            .OfType<ResourceModel>()
+            .Where(r => r.Unlocked && r.ResourceType == ResourceEnum.ResourceType.Resource)
+            .ToList();
+    }
+    #endregion
+
+    #region Personagens
     List<CharacterModel> _activeChars = new();
     List<CharacterModel> _baseChars = new();
     HashSet<string> _selectedCharsIds = new();
@@ -305,7 +418,7 @@
     {
         var all = Game.Current.Characters.Values;
         _activeChars = all
-            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharStageId.ToString() == _stageId)
+            .Where(c => c.CharState == CharStateEnum.CharState.OnStage && c.CharDestId.ToString() == _stageId)
             .ToList();
 
         _baseChars = all
@@ -324,8 +437,67 @@
             _selectedCharsIds.Remove(id);
         StateHasChanged();
     }
+    #endregion
 
-    // Stage
+    #region Tecnologias
+    List<TechModel> _techs = new();
+
+    void OnTechClick(string techId)
+    {
+        // TODO: abrir detalhes/comprar/etc.
+        Console.WriteLine($"Tech click: {techId}");
+    }
+
+    void RefreshTechs()
+    {
+        // Tecnologias
+        _techs = TechData.Order
+            .Select(id => Game.Current.Technologies.TryGetValue(id, out var t) ? t : null)
+            .Where(t => t is not null && t.Avaliable)
+            .Cast<TechModel>()
+            .ToList();
+    }
+    #endregion
+
+    #region Destions
+    List<DestinationModel> _dests = new();
+
+    void OnDestClick(string destId)
+    {
+        // TODO: viajar/abrir detalhes
+        Console.WriteLine($"Dest click: {destId}");
+    }
+
+    void RefreshDestinations()
+    {
+        _dests = DestinationData.Order
+            .Select(id => Game.Current.Destinations.TryGetValue(id, out var d) ? d : null)
+            .Where(d => d is not null && d.Avaliable)
+            .Cast<DestinationModel>()
+            .ToList();
+    }
+    #endregion
+
+    #region Melhorias
+    List<UpgradeModel> _upgr = new();
+
+    void OnUpgrClick(string upgrId)
+    {
+        // TODO: abrir painel de compra/aplicar upgrade
+        Console.WriteLine($"Upgr click: {upgrId}");
+    }
+
+    void RefreshUpgrades()
+    {
+        _upgr = UpgradeData.Order
+            .Select(id => Game.Current.Upgrades.TryGetValue(id, out var u) ? u : null)
+            .Where(u => u is not null && u.Avaliable)
+            .Cast<UpgradeModel>()
+            .ToList();
+    }
+    #endregion
+
+    #region Stage
     string _stageId = "s00";
     StageModel? _stage;
 
@@ -339,14 +511,23 @@
         // fallback: primeiro qualquer do dicionário
         return model.Stages.Keys.FirstOrDefault() ?? "s00";
     }
-    
-    // Helpers
+    #endregion
+
+    #region Helpers
     void OnGameChanged()
     {
         RefreshCoins();
+        RefreshResources();
         RefreshChars();
+        RefreshTechs();
+        RefreshDestinations();
+        RefreshUpgrades();
         InvokeAsync(StateHasChanged);
     }
 
     public void Dispose() => Game.Changed -= OnGameChanged;
+    #endregion
+
+    #region
+    #endregion
 }

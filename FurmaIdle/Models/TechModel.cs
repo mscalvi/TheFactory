@@ -8,6 +8,7 @@
         public string CostKnowledgeId { get; set; }
         public string Image { get; set; }
         public bool Unlocked { get; set; }
+        public bool Avaliable { get; set; }
         public string DestinationId { get; set; }
     }
 }

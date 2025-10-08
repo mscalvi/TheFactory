@@ -1,6 +1,7 @@
 ﻿// Data/StageData.cs
-using System.Collections.Generic;
 using FurmaIdle.Models;
+using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FurmaIdle.Data
 {
@@ -10,7 +11,7 @@ namespace FurmaIdle.Data
 
         public static readonly List<string> Order = new()
         {
-            "s00"
+            "s00", "s001"
         };
 
         internal static readonly Dictionary<string, StageModel> All = new()
@@ -19,11 +20,26 @@ namespace FurmaIdle.Data
             {
                 Id = "s00",
                 Name = "Ilha de Vera",
-                Image = "images/icons/stages/d00.jpg",
-                ClickImage = "images/stages/d00.jpg",
-                ResourceId = "r01",
+                Image = "images/icons/stages/s00.jpg",
+                ClickImage = "images/stages/s00.jpg",
+                ResourceId = "r001",
                 Unlocked = true,
+                Avaliable = false,
+                DestinationId = "d00",
                 Sort = 1
+            },
+
+            ["s01"] = new StageModel
+            {
+                Id = "s01",
+                Name = "As Correntezas",
+                Image = "images/icons/stages/s01.jpg",
+                ClickImage = "images/stages/s01.jpg",
+                ResourceId = "r001",
+                Unlocked = true,
+                Avaliable = false,
+                DestinationId = "d10",
+                Sort = 2
             }
         };
 
@@ -47,7 +63,7 @@ namespace FurmaIdle.Data
             var dictionary = new Dictionary<string, StageModel>(All.Count);
             foreach (var id in Order)
             {
-                if (!All.TryGetValue(id, out var stage) || !stage.Unlocked) continue;
+                if (!All.TryGetValue(id, out var stage)) continue;
 
                 dictionary[id] = new StageModel
                 {
@@ -64,6 +80,6 @@ namespace FurmaIdle.Data
         }
 
         public static string GetResourceId(string stageId)
-            => All.TryGetValue(stageId, out var s) ? s.ResourceId : "r01";
+            => All.TryGetValue(stageId, out var s) ? s.ResourceId : "r001";
     }
 }

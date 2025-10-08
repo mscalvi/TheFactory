@@ -14,6 +14,6 @@ namespace FurmaIdle.Models
         public Dictionary<string, UpgradeModel> Upgrades { get; set; } = new();
         public Dictionary<string, ResourceModel> Resources { get; set; } = new();
         public Dictionary<string, CharacterModel> Characters { get; set; } = new();
-
+        public Dictionary<string, ContractModel> Contracts { get; set; } = new();
     }
 }

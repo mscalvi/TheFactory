@@ -9,5 +9,6 @@
         public string Image { get; set; }
         public bool Unlocked { get; set; }
         public string StageId { get; set; }
+        public bool Avaliable { get; set; }
     }
 }

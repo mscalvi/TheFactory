@@ -6,10 +6,8 @@ using FurmaIdle.Models;
 
 namespace FurmaIdle.Services
 {
-    // Tipos suportados (pode expandir depois: Tecnologia, Destino, Melhoria…)
-    public enum HoverType { Personagem, Especialidade }
+    public enum HoverType { Personagem, Especialidade, Tecnologia, Destino, Melhoria }
 
-    // Payload genérico pro painel
     public sealed record HoverTip(string Title, string Body);
 
     public interface ITooltipService

@@ -32,12 +32,15 @@ namespace FurmaIdle.Services
             Current = new GameModel
             {
                 Clicks = new(),
-                Stages = StageData.CreateInitialStages(),
-                Destinations = DestinationData.CreateInitialDestinations(),
-                Technologies = TechData.CreateInitialTechs(),
-                Upgrades = UpgradeData.CreateInitialUpgrades(),
-                Resources = ResourceData.CreateInitialResources(),
-                Characters = CharacterData.CreateInitialStates(),
+                SchemaVersion = 1,
+
+                Stages = Seed("Stages", () => StageData.CreateInitialStages()),
+                Destinations = Seed("Destinations", () => DestinationData.CreateInitialDestinations()),
+                Technologies = Seed("Technologies", () => TechData.CreateInitialTechs()),
+                Upgrades = Seed("Upgrades", () => UpgradeData.CreateInitialUpgrades()),
+                Resources = Seed("Resources", () => ResourceData.CreateInitialResources()),
+                Characters = Seed("Characters", () => CharacterData.CreateInitialStates()),
+                Contracts = Seed("Contracts", () => ContractData.CreateInitialContracts()),
             };
 
             foreach (var (sid, stage) in Current.Stages)
@@ -54,6 +57,23 @@ namespace FurmaIdle.Services
 
             await _store.SaveAsync(Current, "main");
             return Current;
+        }
+
+        private static T Seed<T>(string name, Func<T> factory)
+        {
+            try
+            {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                var result = factory();
+                sw.Stop();
+                Console.WriteLine($"[StartService] {name} ok ({sw.ElapsedMilliseconds} ms)");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"[StartService] ERRO em {name}: {ex.Message}\n{ex}");
+                throw; // re-lança com o contexto original
+            }
         }
     }
 }

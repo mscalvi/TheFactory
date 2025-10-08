@@ -14,6 +14,7 @@ namespace FurmaIdle.Data
         // catálogo IMUTÁVEL (não use em runtime diretamente)
         internal static readonly Dictionary<string, CharacterModel> All = new()
         {
+            #region s00
             ["p00"] = new CharacterModel
             {
                 Id = "p00",
@@ -24,12 +25,15 @@ namespace FurmaIdle.Data
                 UnknowContractsIds = new() { "c40" },
                 SpecialtyId = "e01",
                 Sort = 1,
-                StartUnlocked = true,
+                Unlocked = true,
                 CharState = CharStateEnum.CharState.InBase,
-                CharStageId = null,
+                CharDestId = "d00",
+                Avaliable = false,
+                Trait = null,
                 Image = "images/icons/characters/p00.jpg",
                 BigImage = "images/characters/p00.jpg",
-                FullImage = "images/pictures/p00.jpg"
+                FullImage = "images/pictures/p00.jpg",
+                MaxContracts = 3
             },
             ["p01"] = new CharacterModel
             {
@@ -41,12 +45,15 @@ namespace FurmaIdle.Data
                 UnknowContractsIds = new() { "c41" },
                 SpecialtyId = "e02",
                 Sort = 2,
-                StartUnlocked = true,
+                Unlocked = true,
                 CharState = CharStateEnum.CharState.InBase,
-                CharStageId = null,
+                CharDestId = "d00",
+                Avaliable = false,
+                Trait = null,
                 Image = "images/icons/characters/p01.jpg",
                 BigImage = "images/characters/p01.jpg",
-                FullImage = "images/pictures/p01.jpg"
+                FullImage = "images/pictures/p01.jpg",
+                MaxContracts = 3
             },
             ["p02"] = new CharacterModel
             {
@@ -58,12 +65,15 @@ namespace FurmaIdle.Data
                 UnknowContractsIds = new() { "c42" },
                 SpecialtyId = "e00",
                 Sort = 3,
-                StartUnlocked = true,
+                Unlocked = true,
                 CharState = CharStateEnum.CharState.InBase,
-                CharStageId = null,
+                CharDestId = "d00",
+                Avaliable = false,
+                Trait = null,
                 Image = "images/icons/characters/p02.jpg",
                 BigImage = "images/characters/p02.jpg",
-                FullImage = "images/pictures/p02.jpg"
+                FullImage = "images/pictures/p02.jpg",
+                MaxContracts = 3
             },
             ["p03"] = new CharacterModel
             {
@@ -75,12 +85,15 @@ namespace FurmaIdle.Data
                 UnknowContractsIds = new() { "c43" },
                 SpecialtyId = "e02",
                 Sort = 4,
-                StartUnlocked = false,
+                Unlocked = false,
                 CharState = CharStateEnum.CharState.Locked,
-                CharStageId = null,
+                CharDestId = "d00",
+                Avaliable = true,
+                Trait = null,
                 Image = "images/icons/characters/p03.jpg",
                 BigImage = "images/characters/p03.jpg",
-                FullImage = "images/pictures/p03.jpg"
+                FullImage = "images/pictures/p03.jpg",
+                MaxContracts = 3
             },
             ["p04"] = new CharacterModel
             {
@@ -92,12 +105,15 @@ namespace FurmaIdle.Data
                 UnknowContractsIds = new() { "c44" },
                 SpecialtyId = "e03",
                 Sort = 5,
-                StartUnlocked = false,
+                Unlocked = false,
                 CharState = CharStateEnum.CharState.Locked,
-                CharStageId = null,
+                CharDestId = "d01",
+                Avaliable = false,
+                Trait = null,
                 Image = "images/icons/characters/p04.jpg",
                 BigImage = "images/characters/p04.jpg",
-                FullImage = "images/pictures/p04.jpg"
+                FullImage = "images/pictures/p04.jpg",
+                MaxContracts = 3
             },
             ["p05"] = new CharacterModel
             {
@@ -109,34 +125,41 @@ namespace FurmaIdle.Data
                 UnknowContractsIds = new() { "c44" },
                 SpecialtyId = "e00",
                 Sort = 6,
-                StartUnlocked = false,
+                Unlocked = false,
                 CharState = CharStateEnum.CharState.Locked,
-                CharStageId = null,
+                CharDestId = "d02",
+                Avaliable = false,
+                Trait = null,
                 Image = "images/icons/characters/p05.jpg",
                 BigImage = "images/characters/p05.jpg",
-                FullImage = "images/pictures/p05.jpg"
+                FullImage = "images/pictures/p05.jpg",
+                MaxContracts = 3
             }
+            #endregion
         };
 
         public static CharacterModel GetDef(string id)
         {
-            var d = All[id];
+            var chara = All[id];
             return new CharacterModel
             {
-                Id = d.Id,
-                Name = d.Name,
-                MainKnowId = d.MainKnowId,
-                SecondKnowId = d.SecondKnowId,
-                KnowContractsIds = new List<string>(d.KnowContractsIds),
-                UnknowContractsIds = new List<string>(d.UnknowContractsIds),
-                SpecialtyId = d.SpecialtyId,
-                Sort = d.Sort,
-                StartUnlocked = d.StartUnlocked,
-                CharState = d.CharState,
-                CharStageId = d.CharStageId,
-                Image = d.Image,
-                BigImage = d.BigImage,
-                FullImage = d.FullImage
+                Id = chara.Id,
+                Name = chara.Name,
+                MainKnowId = chara.MainKnowId,
+                SecondKnowId = chara.SecondKnowId,
+                KnowContractsIds = new List<string>(chara.KnowContractsIds),
+                UnknowContractsIds = new List<string>(chara.UnknowContractsIds),
+                SpecialtyId = chara.SpecialtyId,
+                Sort = chara.Sort,
+                Unlocked = chara.Unlocked,
+                CharState = chara.CharState,
+                CharDestId = chara.CharDestId,
+                Avaliable = chara.Avaliable,
+                Trait = chara.Trait,
+                Image = chara.Image,
+                BigImage = chara.BigImage,
+                FullImage = chara.FullImage,
+                MaxContracts = chara.MaxContracts
             };
         }
 
@@ -145,26 +168,29 @@ namespace FurmaIdle.Data
             var dict = new Dictionary<string, CharacterModel>(All.Count);
             foreach (var id in Order)
             {
-                if (!All.TryGetValue(id, out var def)) continue;
+                if (!All.TryGetValue(id, out var chara)) continue;
 
                 dict[id] = new CharacterModel
                 {
-                    Id = def.Id,
-                    Name = def.Name,
-                    MainKnowId = def.MainKnowId,
-                    SecondKnowId = def.SecondKnowId,
-                    KnowContractsIds = new List<string>(def.KnowContractsIds),
-                    UnknowContractsIds = new List<string>(def.UnknowContractsIds),
-                    SpecialtyId = def.SpecialtyId,
-                    Sort = def.Sort,
-                    StartUnlocked = def.StartUnlocked,
-                    CharState = def.StartUnlocked
+                    Id = chara.Id,
+                    Name = chara.Name,
+                    MainKnowId = chara.MainKnowId,
+                    SecondKnowId = chara.SecondKnowId,
+                    KnowContractsIds = new List<string>(chara.KnowContractsIds),
+                    UnknowContractsIds = new List<string>(chara.UnknowContractsIds),
+                    SpecialtyId = chara.SpecialtyId,
+                    Sort = chara.Sort,
+                    Unlocked = chara.Unlocked,
+                    CharState = chara.Unlocked
                         ? CharStateEnum.CharState.InBase
                         : CharStateEnum.CharState.Locked,
-                    CharStageId = def.CharStageId,
-                    Image = def.Image,
-                    BigImage = def.BigImage,
-                    FullImage = def.FullImage
+                    CharDestId = chara.CharDestId,
+                    Avaliable = chara.Avaliable,
+                    Trait = chara.Trait,
+                    Image = chara.Image,
+                    BigImage = chara.BigImage,
+                    FullImage = chara.FullImage,
+                    MaxContracts = chara.MaxContracts
                 };
             }
             return dict;

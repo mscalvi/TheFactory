@@ -13,6 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddSingleton<IStartService, StartService>();
 builder.Services.AddSingleton<IGameService, GameService>(); 
 builder.Services.AddSingleton<ITooltipService, TooltipService>();
+builder.Services.AddSingleton<IUpgradeService, UpgradeService>();
 
 builder.Services.AddSingleton<IGameStore, IndexedDbGameStore>();
 

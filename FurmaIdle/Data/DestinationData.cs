@@ -21,9 +21,10 @@ namespace FurmaIdle.Data
                  Id = "d00",
                  Name = "Murada de Cairu",
                  Cost = 0,
-                 CostResourceId = "r01",
+                 CostResourceId = "r001",
                  Image = "images/icons/destinations/d00.png",
                  Unlocked = true,
+                 Avaliable = false,
                  StageId = "s00"
             },
 
@@ -32,9 +33,10 @@ namespace FurmaIdle.Data
                 Id = "d01",
                 Name = "Pontas Cantarolantes",
                 Cost = 5000,
-                CostResourceId = "r01",
+                CostResourceId = "r001",
                 Image = "images/icons/destinations/d01.png",
                 Unlocked = false,
+                Avaliable = true,
                 StageId = "s00"
             },
 
@@ -43,9 +45,10 @@ namespace FurmaIdle.Data
                 Id = "d02",
                 Name = "Coração da Ilha",
                 Cost = 20000,
-                CostResourceId = "r01",
+                CostResourceId = "r001",
                 Image = "images/icons/destinations/d02.png",
                 Unlocked = false,
+                Avaliable = true,
                 StageId = "s00"
             },
 
@@ -54,9 +57,10 @@ namespace FurmaIdle.Data
                 Id = "d03",
                 Name = "Bosque da Raposa",
                 Cost = 70000,
-                CostResourceId = "r01",
+                CostResourceId = "r001",
                 Image = "images/icons/destinations/d03.png",
                 Unlocked = false,
+                Avaliable = true,
                 StageId = "s00"
             }
         };
@@ -73,6 +77,7 @@ namespace FurmaIdle.Data
                 CostResourceId = d.CostResourceId,
                 Image = d.Image,
                 Unlocked = d.Unlocked,
+                Avaliable = d.Avaliable,
                 StageId = d.StageId
             };
         }
@@ -83,7 +88,7 @@ namespace FurmaIdle.Data
             var dict = new Dictionary<string, DestinationModel>(All.Count);
             foreach (var id in Order)
             {
-                if (!All.TryGetValue(id, out var d) || !d.Unlocked) continue;
+                if (!All.TryGetValue(id, out var d)) continue;
 
                 dict[id] = new DestinationModel
                 {
@@ -93,58 +98,18 @@ namespace FurmaIdle.Data
                     CostResourceId = d.CostResourceId,
                     Image = d.Image,
                     Unlocked = d.Unlocked,
+                    Avaliable = d.Avaliable,
                     StageId = d.StageId
                 };
             }
             return dict;
         }
 
-        public static IEnumerable<DestinationModel> GetForStage(string stageId, bool onlyUnlocked = true)
-        {
-            foreach (var id in OrderedIds())
-            {
-                if (!All.TryGetValue(id, out var d)) continue;
-                if (d.StageId != stageId) continue;
-                if (onlyUnlocked && !d.Unlocked) continue;
-                yield return Clone(d);
-            }
-        }
-
-        public static IEnumerable<DestinationModel> GetAvailable()
-        {
-            foreach (var id in OrderedIds())
-            {
-                if (!All.TryGetValue(id, out var d)) continue;
-                if (!d.Unlocked) continue;
-                yield return Clone(d);
-            }
-        }
-        private static IEnumerable<string> OrderedIds()
-        {
-            foreach (var id in Order)
-                if (All.ContainsKey(id)) yield return id;
-
-            foreach (var id in All.Keys)
-                if (!Order.Contains(id)) yield return id;
-        }
-
         // Helpers análogos ao GetResourceId do StageData
         public static string GetCostResourceId(string destinationId)
-            => All.TryGetValue(destinationId, out var d) ? d.CostResourceId : "r01";
+            => All.TryGetValue(destinationId, out var d) ? d.CostResourceId : "r001";
 
         public static string GetStageId(string destinationId)
             => All.TryGetValue(destinationId, out var d) ? d.StageId : "s00";
-
-        private static DestinationModel Clone(DestinationModel d) => new()
-        {
-            Id = d.Id,
-            Name = d.Name,
-            Cost = d.Cost,
-            CostResourceId = d.CostResourceId,
-            Image = d.Image,
-            Unlocked = d.Unlocked,
-            StageId = d.StageId
-        };
-
     }
 }
