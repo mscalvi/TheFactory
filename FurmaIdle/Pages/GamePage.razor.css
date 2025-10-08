@@ -246,6 +246,57 @@
     .option-btn.selected .icon-fallback {
         color: #0b3d91;
     }
+
+    .msg-panel {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        height: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .msg-body {
+        padding: .5rem .75rem;
+        overflow: auto;
+        display: grid;
+        gap: .35rem;
+    }
+
+    .msg-row {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: .5rem;
+        font-size: .9rem;
+    }
+
+    .msg-time {
+        color: #64748b;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .msg-text {
+        white-space: pre-wrap;
+    }
+
+    /* cores por tipo */
+    .msg-row.is-info .msg-text {
+        color: #0f172a;
+    }
+
+    .msg-row.is-warn .msg-text {
+        color: #92400e;
+    }
+
+    .msg-row.is-error .msg-text {
+        color: #991b1b;
+    }
+
+    .msg-row.is-success .msg-text {
+        color: #166534;
+    }
+
 }
 
 /* [mid] ----------------------------------------------------------------- */

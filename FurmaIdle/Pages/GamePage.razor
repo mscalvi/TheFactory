@@ -42,7 +42,8 @@
                 <!-- Botões do Menu Superior -->
                 <div class="top-column">
                     <div class="top-actions">
-                      <button class="tab-btn @(IsActive(TopPanel.Tecnologias) ? "active" : "")"
+                        <button class="tab-btn @(IsActive(TopPanel.Tecnologias) ? "active" : "")"
+                                disabled="@(!CanInteract)"
                               @onclick="() => TogglePanel(TopPanel.Tecnologias)">
                         <span class="icon-wrap">
                           <img src="@IconSrc(TopPanel.Tecnologias)" alt="Tecnologias"
@@ -51,7 +52,8 @@
                         </span>
                       </button>
 
-                      <button class="tab-btn @(IsActive(TopPanel.Destinos) ? "active" : "")"
+                        <button class="tab-btn @(IsActive(TopPanel.Destinos) ? "active" : "")"
+                                disabled="@(!CanInteract)"
                               @onclick="() => TogglePanel(TopPanel.Destinos)">
                         <span class="icon-wrap">
                           <img src="@IconSrc(TopPanel.Destinos)" alt="Destinos"
@@ -60,7 +62,8 @@
                         </span>
                       </button>
 
-                      <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"
+                        <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"
+                                disabled="@(!CanInteract)"
                               @onclick="() => TogglePanel(TopPanel.Melhorias)">
                         <span class="icon-wrap">
                           <img src="@IconSrc(TopPanel.Melhorias)" alt="Melhorias"
@@ -69,7 +72,7 @@
                         </span>
                       </button>
 
-                      <button class="tab-btn @(IsActive(TopPanel.Base) ? "active" : "")"
+                        <button class="tab-btn @(IsActive(TopPanel.Base) ? "active" : "")"
                               @onclick="() => TogglePanel(TopPanel.Base)">
                         <span class="icon-wrap">
                           <img src="@IconSrc(TopPanel.Base)" alt="Base"
@@ -85,7 +88,24 @@
                     <div class="panel-host @( _topPanel == TopPanel.None ? null : "panel-host--content" )">
                         @if (_topPanel == TopPanel.None)
                         {
-                            <span>Mensagens</span>
+                            <div class="msg-panel">
+                                  <div class="msg-body">
+                                        @if (_msgs.Count == 0)
+                                        {
+                                            <em>Nenhuma mensagem ainda.</em>
+                                        }
+                                        else
+                                        {
+                                              @foreach (var m in _msgs)
+                                              {
+                                                    <div class="msg-row @Css(m.Kind)">
+                                                          <span class="msg-time">@m.Time.ToString("HH:mm:ss - ")</span>
+                                                          <span class="msg-text">@m.Text</span>
+                                                    </div>
+                                              }
+                                        }
+                                  </div>
+                            </div>
                         }
                         else if (_topPanel == TopPanel.Base)
                         {
@@ -198,7 +218,18 @@
                 </div>
 
                 <!-- Expedição -->
-                <div class="top-column span2">Bloco 4</div>
+                <div class="top-column span2">
+                    @if (!CanInteract)
+                    {
+                        <button class="primary-btn" @onclick="StartExpedition">
+                            Iniciar expedição
+                        </button>
+                    }
+                    else
+                    {
+                        <div>Bloco 4</div> <!-- ou o que quiser depois de iniciar -->
+                    }
+                </div>
             </div>
         </header>
 
@@ -230,7 +261,7 @@
                          src="@(_stage?.Image ?? "images/d00.jpg")"
                          alt="@(_stage?.Name ?? "Cenário")"
                          draggable="false"
-                         @onclick="OnStageClick" />
+                         @onclick="OnStageClick"/>
                 </div>
 
                 <!-- Recursos, Personagens e Especialidades -->
@@ -307,6 +338,9 @@
         _stageId = GetFirstUnlockedStageId(model);
         _stage = model.Stages.TryGetValue(_stageId, out var s) ? s : null;
 
+        Log("Jogo iniciado.", MsgKind.Success);
+        Log("Clique em Iniciar expedição para liberar os painéis.", MsgKind.Info);
+
         RefreshCoins();
         RefreshResources();
         RefreshChars();
@@ -314,6 +348,48 @@
         RefreshDestinations();
         RefreshUpgrades();
         Game.Changed += OnGameChanged;
+    }
+    #endregion
+
+    #region Mensagens
+    // Tipos de mensagem
+    enum MsgKind { Info, Warn, Error, Success }
+
+    // Modelo de mensagem
+    sealed class UiMessage
+    {
+        public DateTime Time { get; init; } = DateTime.Now;
+        public string Text { get; init; } = "";
+        public MsgKind Kind { get; init; } = MsgKind.Info;
+    }
+
+    List<UiMessage> _msgs = new();
+
+    // helper para CSS por tipo
+    string Css(MsgKind k) => k switch
+    {
+        MsgKind.Warn   => "is-warn",
+        MsgKind.Error  => "is-error",
+        MsgKind.Success=> "is-success",
+        _              => "is-info"
+    };
+
+    // atalho para publicar mensagens no log
+    void Log(string text, MsgKind kind = MsgKind.Info)
+    {
+        _msgs.Add(new UiMessage { Text = text, Kind = kind, Time = DateTime.Now });
+        StateHasChanged();
+    }
+    #endregion
+
+    #region Expedition
+    bool _expeditionStarted = false;
+    bool CanInteract => _expeditionStarted;
+
+    void StartExpedition()
+    {
+        _expeditionStarted = true;
+        StateHasChanged();
     }
     #endregion
 
@@ -334,6 +410,12 @@
 
     void TogglePanel(TopPanel p)
     {
+        if (!CanInteract)
+        {
+            _topPanel = TopPanel.Base;   // travado em Base
+            StateHasChanged();
+            return;
+        }
         _topPanel = (_topPanel == p) ? TopPanel.None : p;
         StateHasChanged();
     }
@@ -501,7 +583,11 @@
     string _stageId = "s00";
     StageModel? _stage;
 
-    void OnStageClick() => Game.Click(_stageId);
+    void OnStageClick()
+    {
+        if (!CanInteract) return;
+        Game.Click(_stageId);
+    }
 
     static string GetFirstUnlockedStageId(GameModel model)
     {

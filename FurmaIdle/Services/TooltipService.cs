@@ -28,6 +28,12 @@ namespace FurmaIdle.Services
                     return BuildPersonHover(id);
                 case HoverType.Especialidade:
                     return BuildEspecialidadeHover(id);
+                case HoverType.Tecnologia:
+                    return BuildTecnologiaHover(id);
+                case HoverType.Destino:
+                    return BuildDestinoHover(id);
+                case HoverType.Melhoria:
+                    return BuildMelhoriaHover(id);
                 default:
                     return new HoverTip("—", "—");
             }
@@ -63,10 +69,28 @@ namespace FurmaIdle.Services
             return new HoverTip($"{name} ({id})", body);
         }
 
-        private static HoverTip BuildEspecialidadeHover(string id)
+        private HoverTip BuildEspecialidadeHover(string id)
         {
             // por enquanto é placeholder, mas já recebe o id do personagem
             return new HoverTip($"Especialidade de {id}", "especialidade vai ficar aqui");
+        }
+
+        private HoverTip BuildTecnologiaHover(string id)
+        {
+            // por enquanto é placeholder, mas já recebe o id do personagem
+            return new HoverTip($"Tecnologia {id}", "");
+        }
+
+        private HoverTip BuildDestinoHover(string id)
+        {
+            // por enquanto é placeholder, mas já recebe o id do personagem
+            return new HoverTip($"Destino {id}", "");
+        }
+
+        private HoverTip BuildMelhoriaHover(string id)
+        {
+            // por enquanto é placeholder, mas já recebe o id do personagem
+            return new HoverTip($"Melhoria {id}", "");
         }
     }
 }
