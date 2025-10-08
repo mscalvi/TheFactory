@@ -31,11 +31,13 @@ namespace FurmaIdle.Services
 
             Current = new GameModel
             {
-                Resources = ResourceData.CreateInitialResources(),
-                Stages = StageData.CreateInitialStages(),
-                SchemaVersion = Math.Max(ResourceData.SchemaVersion, StageData.SchemaVersion),
                 Clicks = new(),
-                Characters = CharacterData.CreateInitialStates()
+                Stages = StageData.CreateInitialStages(),
+                Destinations = DestinationData.CreateInitialDestinations(),
+                Technologies = TechData.CreateInitialTechs(),
+                Upgrades = UpgradeData.CreateInitialUpgrades(),
+                Resources = ResourceData.CreateInitialResources(),
+                Characters = CharacterData.CreateInitialStates(),
             };
 
             foreach (var (sid, stage) in Current.Stages)

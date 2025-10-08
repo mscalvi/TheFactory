@@ -8,7 +8,8 @@
         public double Actual { get; set; }
         public double PerSecond { get; set; }
         public bool Unlocked { get; set; } = false;
-        public string? Icon { get; set; }
+        public string Image { get; set; }
         public int Sort { get; set; }
+        public string Type { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿// Data/CharacterData.cs
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FurmaIdle.Enums;
 using FurmaIdle.Models;
 
@@ -7,6 +6,8 @@ namespace FurmaIdle.Data
 {
     public static class CharacterData
     {
+        public static int SchemaVersion => 1;
+
         // ordem de exibição/seed
         public static readonly List<string> Order = new() { "p00", "p01", "p02", "p03", "p04", "p05" };
 

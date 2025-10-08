@@ -99,11 +99,52 @@ namespace FurmaIdle.Data
             return dict;
         }
 
+        public static IEnumerable<DestinationModel> GetForStage(string stageId, bool onlyUnlocked = true)
+        {
+            foreach (var id in OrderedIds())
+            {
+                if (!All.TryGetValue(id, out var d)) continue;
+                if (d.StageId != stageId) continue;
+                if (onlyUnlocked && !d.Unlocked) continue;
+                yield return Clone(d);
+            }
+        }
+
+        public static IEnumerable<DestinationModel> GetAvailable()
+        {
+            foreach (var id in OrderedIds())
+            {
+                if (!All.TryGetValue(id, out var d)) continue;
+                if (!d.Unlocked) continue;
+                yield return Clone(d);
+            }
+        }
+        private static IEnumerable<string> OrderedIds()
+        {
+            foreach (var id in Order)
+                if (All.ContainsKey(id)) yield return id;
+
+            foreach (var id in All.Keys)
+                if (!Order.Contains(id)) yield return id;
+        }
+
         // Helpers análogos ao GetResourceId do StageData
         public static string GetCostResourceId(string destinationId)
             => All.TryGetValue(destinationId, out var d) ? d.CostResourceId : "r01";
 
         public static string GetStageId(string destinationId)
             => All.TryGetValue(destinationId, out var d) ? d.StageId : "s00";
+
+        private static DestinationModel Clone(DestinationModel d) => new()
+        {
+            Id = d.Id,
+            Name = d.Name,
+            Cost = d.Cost,
+            CostResourceId = d.CostResourceId,
+            Image = d.Image,
+            Unlocked = d.Unlocked,
+            StageId = d.StageId
+        };
+
     }
 }

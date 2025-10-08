@@ -4,6 +4,10 @@
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public double Cost { get; set; }
+        public string CostKnowledgeId { get; set; }
         public string Image { get; set; }
+        public bool Unlocked { get; set; }
+        public string DestinationId { get; set; }
     }
 }

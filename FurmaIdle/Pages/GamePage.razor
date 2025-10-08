@@ -27,7 +27,7 @@
                             @foreach (var r in _coins)
                             {
                                 <div class="currency-card">
-                                    <img class="currency-icon" src="@r.Icon" alt="@r.Name" />
+                                    <img class="currency-icon" src="@r.Image" alt="@r.Name" />
                                     <div class="currency-info">
                                         <div class="currency-name">@r.Name</div>
                                         <div>Atual: @r.Actual.ToString("N0")</div>
@@ -289,7 +289,7 @@
 
     void RefreshCoins()
     {
-        _coins = ResourceData.CoinsOrder
+        _coins = ResourceData.Order
             .Select(id => Game.Get(id))
             .Where(r => r is not null && r.Unlocked)
             .Cast<ResourceModel>()
