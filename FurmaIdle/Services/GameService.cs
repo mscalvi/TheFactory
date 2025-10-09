@@ -21,8 +21,9 @@ namespace FurmaIdle.Services
 
         // Resources
         ResourceModel? Get(string id);
-        void Add(string id, double amount = 1);
+        void Add(string id, double amount = 1, bool notify = true);
         void Click(string stageId);
+        public double GetIncomePerSecondForStage(string stageId);
 
         // Roster (seleção pré-start)
         bool ToggleRoster(string charId, out string? reason);
@@ -46,6 +47,8 @@ namespace FurmaIdle.Services
         bool StopContract(string stageId, string contractId);
         bool BuyOrActivateContract(string stageId, string contractId, out string? reason);
         int GetContractsCap(string stageId);
+        double GetContractProgress01(string stageId, string contractId);
+
 
         // Melhorias
         bool BuyUpgrade(string upgradeId, out string? reason);
@@ -124,13 +127,13 @@ namespace FurmaIdle.Services
             return r;
         }
 
-        public void Add(string id, double amount = 1)
+        public void Add(string id, double amount = 1, bool notify = true)
         {
             if (string.IsNullOrWhiteSpace(id) || amount == 0) return;
             var r = EnsureResource(id);
             r.Actual += amount;
             if (amount > 0) r.Total += amount;
-            Changed?.Invoke();
+            if (notify) Changed?.Invoke();
         }
 
         private bool TrySpend(string resourceId, double amount)
@@ -142,6 +145,29 @@ namespace FurmaIdle.Services
             Changed?.Invoke();
             return true;
         }
+
+        public double GetIncomePerSecondForStage(string stageId)
+        {
+            if (!Current.Stages.TryGetValue(stageId, out var st) || st.Expedition is null) return 0;
+            var ex = st.Expedition;
+            double total = 0;
+
+            foreach (var run in ex.ActiveContracts)
+            {
+                // TROCAR Current.Contracts -> ex.Contracts
+                if (!ex.Contracts.TryGetValue(run.ContractId, out var c)) continue;
+
+                var (_, cps, spc) = ContractsPricingHelper.ProdParams(c);
+                if (!(c.Quant > 0 && cps > 0 && spc > 0)) continue;
+
+                var g = _effects.ContractGainMult(c.Id);
+                var t = _effects.ContractTimeMult(c.Id);
+                total += (cps * g) / (spc * t) * c.Quant;
+            }
+            return total;
+        }
+
+
         #endregion
 
         #region Clicks
@@ -400,7 +426,7 @@ namespace FurmaIdle.Services
                                 double amount = cycles * coinsPerCycle * c.Quant; // Quant pilha linear
                                 if (amount > 0)
                                 {
-                                    Add(bal.ResourceId, amount);
+                                    Add(bal.ResourceId, amount, notify: false);
                                     anyChange = true;
                                 }
                                 run.ProgressSec -= cycles * secondsPerCycle;
@@ -417,18 +443,59 @@ namespace FurmaIdle.Services
                         double addPerSec = _effects.ResourceGenAddPerSecond(r.Id); // soma “all” + específico
                         if (addPerSec > 0)
                         {
-                            Add(r.Id, addPerSec * step);
+                            Add(r.Id, addPerSec * step, notify: false);
                             anyChange = true;
                         }
                     }
                 }
             }
 
-            Current.LastTickUtc = DateTimeOffset.UtcNow;
 
-            // Evita re-render em todo tick se nada mudou
+            Current.LastTickUtc = DateTimeOffset.UtcNow;
+            RecomputePerSecond();
             if (anyChange) Changed?.Invoke();
         }
+
+        private void RecomputePerSecond()
+        {
+            // zera
+            if (Current.Resources != null)
+                foreach (var r in Current.Resources.Values)
+                    r.PerSecond = 0;
+
+            // contratos ativos por expedição
+            foreach (var st in Current.Stages.Values)
+            {
+                var ex = st.Expedition;
+                if (ex?.ExpeditionStatus != ExpeditionStatus.Active) continue;
+
+                foreach (var run in ex.ActiveContracts)
+                {
+                    // TROCAR Current.Contracts -> ex.Contracts
+                    if (!ex.Contracts.TryGetValue(run.ContractId, out var c)) continue;
+                    if (!ContractsPricingHelper.TryGetBalance(c, out var bal)) continue;
+
+                    var gain = _effects.ContractGainMult(c.Id);
+                    var time = _effects.ContractTimeMult(c.Id);
+
+                    var cps = bal.CoinsPerCycle * gain;
+                    var spc = Math.Max(0.02, bal.SecondsPerCycle * time);
+                    if (c.Quant <= 0 || cps <= 0 || spc <= 0) continue;
+
+                    var rate = (cps / spc) * c.Quant; // /s
+
+                    var r = EnsureResource(bal.ResourceId);
+                    r.PerSecond += rate;
+                }
+            }
+
+            // geração passiva (se houver)
+            if (Current.Resources != null)
+                foreach (var r in Current.Resources.Values)
+                    r.PerSecond += Math.Max(0, _effects.ResourceGenAddPerSecond(r.Id));
+        }
+
+
         #endregion
 
         #region Contratos
@@ -539,11 +606,7 @@ namespace FurmaIdle.Services
 
                 // vamos comprar +1: precisa caber
                 if (usedUnits + 1 > cap)
-                {
-                    Logged?.Invoke($"[DBG] cap={cap}, used={usedUnits}, buying={contractId}", LogKind.Info);
-
-                    reason = $"Limite de contratos atingido ({usedUnits}/{cap}).";
-                    return false;
+                {   return false;
                 }
 
                 // ======= Preço/Produção por Level =======
@@ -566,14 +629,12 @@ namespace FurmaIdle.Services
                     expd.ActiveContracts.Add(new ContractRun { ContractId = c.Id });
 
                 var pps = ContractsPricingHelper.ProdPerSecond(c);
-                Logged?.Invoke($"Contrato {c.Name} (nível {c.Level}) agora Quant={c.Quant} · {pps:N2}/s. Cap {usedUnits + 1}/{cap}", LogKind.Success);
                 Changed?.Invoke();
                 return true;
             }
             catch (Exception e)
             {
                 reason = "Falha inesperada ao comprar contrato.";
-                Logged?.Invoke($"[ERROR] BuyOrActivateContract: {e}", LogKind.Error);
                 return false;
             }
         }
@@ -592,6 +653,31 @@ namespace FurmaIdle.Services
             }
             return cap;
         }
+
+        public double GetContractProgress01(string stageId, string contractId)
+        {
+            if (!Current.Stages.TryGetValue(stageId, out var st)) return 0;
+            var ex = st.Expedition;
+            if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) return 0;
+
+            // precisa do run (tem o ProgressSec)
+            var run = ex.ActiveContracts?.FirstOrDefault(r => r.ContractId == contractId);
+            if (run is null) return 0;
+
+            // precisa do contrato e do balance para calcular o secondsPerCycle efetivo
+            if (!ex.Contracts.TryGetValue(contractId, out var c)) return 0;
+            if (!ContractsPricingHelper.TryGetBalance(c, out var bal)) return 0;
+
+            var gainMult = _effects.ContractGainMult(c.Id);
+            var timeMult = _effects.ContractTimeMult(c.Id);
+            var secondsPerCycle = Math.Max(0.02, bal.SecondsPerCycle * timeMult);
+
+            var ratio = secondsPerCycle <= 0 ? 0 : run.ProgressSec / secondsPerCycle;
+            if (ratio < 0) ratio = 0;
+            if (ratio > 1) ratio = 1;
+            return ratio;
+        }
+
         #endregion
 
         #region Melhorias
@@ -635,8 +721,6 @@ namespace FurmaIdle.Services
 
             // recalc dos efeitos para tick/click/caps etc.
             _effects.Recompute(Current);
-
-            Logged?.Invoke($"Upgrade {u.Name}: {u.Buys}/{u.MaxBuys}. Próx custo: {UpgradePricingHelper.NextPrice(u):N0} {resId}.", LogKind.Success);
             Changed?.Invoke();
             return true;
         }

@@ -36,8 +36,8 @@
                                     <img class="currency-icon" src="@r.Image" alt="@r.Name" />
                                     <div class="currency-info">
                                         <div class="currency-name">@r.Name</div>
-                                        <div>Atual: @r.Actual.ToString("N2")</div>
-                                        <div>Total: @r.Total.ToString("N2")</div>
+                                        <div>Atual: @r.Actual.ToString("N0")</div>
+                                        <div>Total: @r.Total.ToString("N0")</div>
                                         <div>Por Segundo: @r.PerSecond.ToString("N2")</div>
                                     </div>
                                 </div>
@@ -290,16 +290,22 @@
                                             var (resId, cps, spc) = ContractsPricingHelper.ProdParams(chosen);
                                             var pps = ContractsPricingHelper.ProdPerSecond(chosen);
 
-                                            <div class="contract-selected">
-                                                <img class="mini-contract-icon" src="@chosen.Image" alt="@chosen.Name" />
+                                            var p = Game.GetContractProgress01(stageId, chosen.Id);
+                                            var pct = (p * 100).ToString("0.##") + "%";
+
+                                            <div class="contract-selected" style="--pct:@pct">
+                                                <div class="contract-progress" aria-hidden="true"></div>
+
+                                                <span class="icon-wrap"><img src="@chosen.Image" alt="@chosen.Id" /></span>
+
                                                 <div class="contract-selected-info">
-                                                    <div class="name">@chosen.Name</div>
+                                                    <div class="name">@chosen.Id</div>
                                                     <div class="sub">
-                                                        Nível @chosen.Level · Quant ×@chosen.Quant
-                                                        · @pps.ToString("N2")/s
+                                                        Nível @chosen.Level · Quant ×@chosen.Quant · @pps.ToString("N2")
                                                         · Próx: @price.ToString("N0") @resId
                                                     </div>
                                                 </div>
+
                                                 <button class="mini-btn buy-more"
                                                         disabled="@capReached"
                                                         @onclick="() => OnContractBuyMore(chosen.Id)">
@@ -342,7 +348,7 @@
                                                                         title="@ct.Name"
                                                                         disabled="@capReached"
                                                                         @onclick="() => OnContractClick(ct.Id)">
-                                                                    <img class="mini-contract-icon" src="@ct.Image" alt="@ct.Name" />
+                                                                    <span class="icon-wrap"><img src="@ct.Image" alt="@ct.Name" /></span>
                                                                     <span class="mini-contract-name">@ct.Name</span>
                                                                 </button>
                                                             }
@@ -377,7 +383,7 @@
                 <!-- Stage e Clicks -->
                 <div class="mid-column span2">
                     <img class="stage-image"
-                         src="@(stage?.Image ?? "images/d00.jpg")"
+                         src="@(stage?.ClickImage ?? "images/stages/s00.jpg")"
                          alt="@(stage?.Name ?? "Cenário")"
                          draggable="false"
                          @onclick="OnStageClick"/>
@@ -498,14 +504,17 @@
 
         Log("Jogo Iniciado.", MsgKind.Success);
         Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
-
+        
+        double uiAccum = 0;
         Ticks.Start(async dt =>
         {
-            // calcula dt baseado no LastTick para robustez extra
-            var now = DateTimeOffset.UtcNow;
-            var dtReal = Math.Clamp((now - Game.Current.LastTickUtc).TotalSeconds, 0, 1.0);
-            Game.Tick(dtReal);
-            await InvokeAsync(StateHasChanged); // atualiza UI quando necessário
+            Game.Tick(dt);                
+            uiAccum += dt;
+            if (uiAccum >= 1.0 / 6.0)     
+            {
+                uiAccum = 0;
+                await InvokeAsync(StateHasChanged);
+            }
         }, targetHz: 10);
     }
     #endregion
