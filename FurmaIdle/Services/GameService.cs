@@ -38,6 +38,14 @@ namespace FurmaIdle.Services
         bool EndExpedition(string stageId, string? reason = null);
         PartyInfo GetPartyInfo(string stageId);
 
+        // Tick
+        void Tick(double dtSeconds);
+
+        // Contratos
+        bool StartContract(string stageId, string contractId, out string? reason);
+        bool StopContract(string stageId, string contractId);
+        bool BuyOrActivateContract(string stageId, string contractId, out string? reason);
+
         // Gerais
         void Attach(GameModel model);
         event Action? Changed;
@@ -69,7 +77,7 @@ namespace FurmaIdle.Services
             Changed?.Invoke();
         }
 
-        // ===== Stage foco de UI =====
+        #region Stage foco de UI
         private string _selectedStageId = "s00";
         public string SelectedStageId => _selectedStageId;
 
@@ -89,8 +97,9 @@ namespace FurmaIdle.Services
         }
 
         public StageModel? GetSelectedStage() => _stages.Get(Current, _selectedStageId);
+        #endregion
 
-        // ===== Resources =====
+        #region Resources
         public ResourceModel? Get(string id)
         {
             if (string.IsNullOrWhiteSpace(id) || Current.Resources is null) return null;
@@ -117,6 +126,16 @@ namespace FurmaIdle.Services
             Changed?.Invoke();
         }
 
+        private bool TrySpend(string resourceId, double amount)
+        {
+            if (string.IsNullOrWhiteSpace(resourceId) || !(amount > 0)) return false;
+            var r = Get(resourceId);
+            if (r is null || r.Actual < amount) return false;
+            r.Actual -= amount;
+            Changed?.Invoke();
+            return true;
+        }
+
         public void Click(string stageId)
         {
             if (string.IsNullOrWhiteSpace(stageId) || Current.Clicks is null) return;
@@ -130,8 +149,9 @@ namespace FurmaIdle.Services
             click.TotalGain += gain;
             Changed?.Invoke();
         }
+        #endregion
 
-        // ===== Roster (seleção pré-start) =====
+        #region Roster
         public bool ToggleRoster(string charId, out string? reason)
         {
             reason = null;
@@ -168,8 +188,9 @@ namespace FurmaIdle.Services
         {
             return (IReadOnlyCollection<string>?)Current?.Guild?.Roster ?? Array.Empty<string>();
         }
+        #endregion
 
-        // ===== Expedition =====
+        #region Expedition
         public ExpeditionModel? GetExpedition(string stageId)
         {
             if (string.IsNullOrWhiteSpace(stageId)) return null;
@@ -235,6 +256,10 @@ namespace FurmaIdle.Services
             var cap = GetEffectivePartyCap(stageId);
             if (roster is null || roster.Count == 0) { reason = "Selecione pelo menos 1 membro."; return false; }
             if (roster.Count > cap) { reason = $"Seleção excede o limite ({cap})."; return false; }
+
+            // Contratos
+            ex.ActiveContracts ??= new List<ContractRun>();
+            ex.Contracts = ContractData.CreateInitialContracts();
 
             // Validação usando modelo robusto (sem NRE)
             var party = new List<CharacterModel>(roster.Count);
@@ -302,6 +327,12 @@ namespace FurmaIdle.Services
                 c.CharDestId = null;
             }
 
+            if (st.Expedition is { } ex2)
+            {
+                foreach (var kv in ex2.Contracts) kv.Value.Quant = 0;
+                ex2.ActiveContracts.Clear();
+            }
+
             ids.Clear();
             ex.ExpeditionStatus = ExpeditionStatus.Idle;
             ex.Start = null;
@@ -310,6 +341,161 @@ namespace FurmaIdle.Services
             Changed?.Invoke();
             return true;
         }
+        #endregion
 
+        #region Ticks
+        public void Tick(double dtSeconds)
+        {
+            if (dtSeconds <= 0 || double.IsNaN(dtSeconds) || double.IsInfinity(dtSeconds)) return;
+
+            foreach (var (stageId, st) in Current.Stages)
+            {
+                var ex = st.Expedition;
+                if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+
+                foreach (var run in ex.ActiveContracts)
+                {
+                    if (!ex.Contracts.TryGetValue(run.ContractId, out var c)) continue;
+                    if (c.Quant <= 0) continue;
+
+                    if (!ContractsPricingHelper.TryGetBalance(c, out var bal)) continue; // por Level
+
+                    run.ProgressSec += dtSeconds;
+
+                    if (run.ProgressSec >= bal.SecondsPerCycle)
+                    {
+                        var cycles = Math.Floor(run.ProgressSec / bal.SecondsPerCycle);
+                        if (cycles >= 1)
+                        {
+                            var amount = cycles * bal.CoinsPerCycle * c.Quant;
+                            Add(bal.ResourceId, amount);
+                            run.ProgressSec -= cycles * bal.SecondsPerCycle;
+                        }
+                    }
+                }
+            }
+
+            Current.LastTickUtc = DateTimeOffset.UtcNow;
+        }
+        #endregion
+
+        #region Contratos
+        public bool StartContract(string stageId, string contractId, out string? reason)
+        {
+            reason = null;
+            if (string.IsNullOrWhiteSpace(stageId) || string.IsNullOrWhiteSpace(contractId))
+            { reason = "Parâmetros inválidos."; return false; }
+
+            if (!Current.Stages.TryGetValue(stageId, out var st) || st.Expedition is null)
+            { reason = "Stage/expedição indisponível."; return false; }
+
+            var ex = st.Expedition;
+            if (ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
+            { reason = "Expedição não está ativa."; return false; }
+
+            // já existe?
+            if (ex.ActiveContracts.Any(r => r.ContractId == contractId))
+            { reason = "Contrato já está em execução."; return false; }
+
+            // valida o contrato e pega o nível
+            if (!ContractData.All.TryGetValue(contractId, out var def))
+            { reason = "Contrato inválido."; return false; }
+
+            // slots: usa a regra que você já tem na UI (stage.ContractsSlots)
+            var slots = st.ContractsSlots > 0 ? st.ContractsSlots : 3;
+            if (ex.ActiveContracts.Count >= slots)
+            { reason = "Sem slots de contrato disponíveis."; return false; }
+
+            // pega o balanço pelo nível
+            if (!ContractBalanceData.ByLevel.TryGetValue(def.Level, out var bal))
+            { reason = $"Sem tabela de balanço para nível {def.Level}."; return false; }
+
+            ex.ActiveContracts.Add(new ContractRun
+            {
+                ContractId = def.Id,
+                ProgressSec = 0
+            });
+
+            Logged?.Invoke($"Contrato {def.Name} iniciado (nível {def.Level}).", LogKind.Success);
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool StopContract(string stageId, string contractId)
+        {
+            if (!Current.Stages.TryGetValue(stageId, out var st) || st.Expedition is null) return false;
+            var ex = st.Expedition;
+            var removed = ex.ActiveContracts.RemoveAll(r => r.ContractId == contractId) > 0;
+            if (removed)
+            {
+                Logged?.Invoke($"Contrato {contractId} encerrado.", LogKind.Info);
+                Changed?.Invoke();
+            }
+            return removed;
+        }
+
+        public bool BuyOrActivateContract(string stageId, string contractId, out string? reason)
+        {
+            reason = null;
+
+            if (!Current.Stages.TryGetValue(stageId, out var st) || st.Expedition is null)
+            { reason = "Stage/expedição indisponível."; return false; }
+
+            var ex = st.Expedition;
+            if (ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
+            { reason = "Expedição não está ativa."; return false; }
+
+            if (!ex.Contracts.TryGetValue(contractId, out var c))
+            {
+                if (!ContractData.All.TryGetValue(contractId, out var def))
+                { reason = "Contrato inválido."; return false; }
+
+                c = new ContractModel
+                {
+                    Id = def.Id,
+                    Name = def.Name,
+                    Level = def.Level,
+                    Image = def.Image,
+                    FirstKnowId = def.FirstKnowId,
+                    SecondKnowId = def.SecondKnowId,
+                    ThirdKnowId = def.ThirdKnowId,
+                    FirstDiferential = def.FirstDiferential,
+                    SecondDiferential = def.SecondDiferential,
+                    Unlocked = def.Unlocked,
+                    Avaliable = def.Avaliable,
+                    ConDestId = def.ConDestId,
+                    Quant = 0
+                };
+                ex.Contracts[contractId] = c;
+            }
+
+            // slots: cada contrato distinto com Quant>0 ocupa 1 slot
+            var slots = st.ContractsSlots > 0 ? st.ContractsSlots : 3;
+            var usedSlots = ex.Contracts.Values.Count(k => k.Quant > 0);
+            if (c.Quant == 0 && usedSlots >= slots)
+            { reason = "Sem slots de contrato disponíveis."; return false; }
+
+            // preço da próxima unidade (para primeira ativação: Cost0)
+            var price = ContractsPricingHelper.NextPrice(c);
+            var (resId, cps, spc) = ContractsPricingHelper.ProdParams(c);
+            if (string.IsNullOrWhiteSpace(resId) || !(cps > 0) || !(spc > 0))
+            { reason = "Tabela de balanço ausente."; return false; }
+
+            if (!TrySpend(resId, price))
+            { reason = $"Custa {price:N0} {resId}, saldo insuficiente."; return false; }
+
+            // ativa/compra
+            c.Quant += 1;
+
+            if (!ex.ActiveContracts.Any(r => r.ContractId == c.Id))
+                ex.ActiveContracts.Add(new ContractRun { ContractId = c.Id });
+
+            Logged?.Invoke($"Contrato {c.Name} ativado (Quant={c.Quant}).", LogKind.Success);
+            Changed?.Invoke();
+            return true;
+        }
+
+
+        #endregion
     }
 }

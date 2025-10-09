@@ -10,9 +10,10 @@
 
 @implements IDisposable
 
-@inject FurmaIdle.Services.IStartService Start
-@inject FurmaIdle.Services.IGameService Game
-@inject FurmaIdle.Services.ITooltipService Tooltip
+@inject IStartService Start
+@inject IGameService Game
+@inject ITooltipService Tooltip
+@inject ITickService Ticks
 
 <div class="page">
     <div class="layout">
@@ -451,6 +452,15 @@
 
         Log("Jogo Iniciado.", MsgKind.Success);
         Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
+
+        Ticks.Start(async dt =>
+        {
+            // calcula dt baseado no LastTick para robustez extra
+            var now = DateTimeOffset.UtcNow;
+            var dtReal = Math.Clamp((now - Game.Current.LastTickUtc).TotalSeconds, 0, 1.0);
+            Game.Tick(dtReal);
+            await InvokeAsync(StateHasChanged); // atualiza UI quando necessário
+        }, targetHz: 10);
     }
     #endregion
 
@@ -793,8 +803,10 @@
 
     void OnContractClick(string contractId)
     {
-        // placeholder por enquanto
-        Log($"Contrato {contractId} clicado (placeholder).", MsgKind.Info);
+        if (!Game.BuyOrActivateContract(stageId, contractId, out var reason))
+            Log(reason ?? "Não foi possível ativar o contrato.", MsgKind.Error);
+        else
+            Log($"Contrato {contractId} ativado.", MsgKind.Success);
     }
 
     void RefreshContracts()

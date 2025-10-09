@@ -6,6 +6,7 @@ namespace FurmaIdle.Models
     {
         public int SchemaVersion { get; set; }
         public DateTime LastTick { get; set; }
+        public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
         public string SelectedStageId { get; set; }
         public List<string> ActiveStagesIds { get; set; }
         public ExpansionModel Expansion { get; set; } = new();

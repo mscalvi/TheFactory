@@ -259,7 +259,8 @@ namespace FurmaIdle.Data
                 SecondDiferential = cont.SecondDiferential,
                 Unlocked = cont.Unlocked,
                 Avaliable = cont.Avaliable,
-                ConDestId = cont.ConDestId
+                ConDestId = cont.ConDestId,
+                Quant = 0
             };
         }
 
@@ -272,7 +273,6 @@ namespace FurmaIdle.Data
             foreach (var id in Order)
             {
                 if (!All.TryGetValue(id, out var cont)) continue;
-                if (!cont.Unlocked) continue;
 
                 CoinsCollection[id] = new ContractModel
                 {
@@ -287,7 +287,8 @@ namespace FurmaIdle.Data
                     SecondDiferential = cont.SecondDiferential,
                     Unlocked = cont.Unlocked,
                     Avaliable = cont.Avaliable,
-                    ConDestId = cont.ConDestId
+                    ConDestId = cont.ConDestId,
+                    Quant = 0
                 };
             }
 

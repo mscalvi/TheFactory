@@ -5,6 +5,7 @@
         public string Id { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
+        public int Quant { get; set; } = 0;
         public string Image { get; set; }
         public string FirstKnowId { get; set; }
         public string SecondKnowId { get; set; }
