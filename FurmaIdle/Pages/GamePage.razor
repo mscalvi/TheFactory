@@ -264,11 +264,49 @@
                                     if (i < levels.Count)
                                     {
                                         var lvl = levels[i];
-                                        <button class="mini-btn contract-btn">Contrato Nível @lvl</button>
+                                        var isOpen = _openContractLevel == lvl;
+
+                                        if (!isOpen)
+                                        {
+                                            <button class="mini-btn contract-btn"
+                                                    @onclick="() => ToggleContractLevel(lvl)">
+                                                Contrato Nível @lvl
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            var items = ContractsHelper.GetContractsForLevel(Game, stageId, lvl);
+
+                                            <div class="contract-subrow">
+                                                <button class="mini-btn back-btn"
+                                                        title="Voltar"
+                                                        @onclick="() => ToggleContractLevel(lvl)">
+                                                    ← Voltar
+                                                </button>
+
+                                                <div class="contract-scroll" role="list" aria-label="@($"Contratos do nível {lvl}")">
+                                                    @if (items.Count == 0)
+                                                    {
+                                                        <div class="mini-empty" role="note">Nenhum contrato disponível.</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        @foreach (var ct in items)
+                                                        {
+                                                            <button class="mini-contract" role="listitem"
+                                                                    title="@ct.Name"
+                                                                    @onclick="() => OnContractClick(ct.Id)">
+                                                                <img class="mini-contract-icon" src="@ct.Image" alt="@ct.Name" />
+                                                                <span class="mini-contract-name">@ct.Name</span>
+                                                            </button>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
                                     }
                                     else
                                     {
-                                        <!-- slot vazio só pra manter a divisão igual -->
                                         <div class="contract-slot-empty"></div>
                                     }
                                 }
@@ -326,33 +364,61 @@
                     </div>
 
                     <!-- Personagens e Especialidades -->
-                    <div class="resources-bot">
+                    @{
+                        var specRows = Math.Max(6, stage?.PartyCap ?? 0);
+                    }
+                    <div class="resources-mid">
                         <div class="char-list-host">
-                            <div class="char-rows">
-                                @foreach (var c in _activeChars)
+                            <div class="char-rows char-rows--grid" style="--spec-rows:@specRows">
+                                @for (int i = 0; i < specRows; i++)
                                 {
-                                    <div class="char-row">
-                                        <!-- Coluna 1: ícone -->
-                                        <div class="char-cell-icon">
-                                            <img class="char-mini" src="@CharMiniSrc(c.Id)" alt="@c.Id"
-                                                 onerror="this.style.display='none'">
-                                        </div>
+                                    if (i < _activeChars.Count)
+                                    {
+                                        var c = _activeChars[i];
+                                        <div class="char-row">
+                                            <!-- Coluna 1: ícone -->
+                                            <div class="char-cell-icon">
+                                                <img class="char-mini" src="@CharMiniSrc(c.Id)" alt="@c.Id"
+                                                     onerror="this.style.display='none'">
+                                            </div>
 
-                                        <!-- Coluna 2: custo (placeholder “x”) -->
-                                        <div class="char-cell-cost">x</div>
+                                            <!-- Coluna 2: custo (placeholder “x”) -->
+                                            <div class="char-cell-cost">x</div>
 
-                                        <!-- Coluna 3: botão ocupa o resto -->
-                                        <div class="char-cell-actions">
-                                            <button class="mini-btn"
-                                                    @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Especialidade, c.Id)"
-                                                    @onmouseleave="ClearHover">
-                                                Especialidade
-                                            </button>
+                                            <!-- Coluna 3: Especialidade (preenche a linha) -->
+                                            <div class="char-cell-actions">
+                                                <button class="mini-btn"
+                                                        @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Especialidade, c.Id)"
+                                                        @onmouseleave="ClearHover">
+                                                    Especialidade
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
+                                    else
+                                    {
+                                        <!-- slot vazio só pra manter a divisão igual -->
+                                        <div class="char-row char-row--empty">
+                                            <div class="char-cell-icon"></div>
+                                            <div class="char-cell-cost"></div>
+                                            <div class="char-cell-actions"></div>
+                                        </div>
+                                    }
                                 }
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Archievements e Configurações -->
+                    <div class="resources-top">
+                        @if (_resources.Count == 999)
+                        {
+                            <span>Carregando…</span>
+                        }
+                        else
+                        {
+                            <span>Carregando…</span>
+                        }
                     </div>
                 </div>
             </div>
@@ -734,6 +800,11 @@
     void RefreshContracts()
     {
         _contractButtons = ContractsHelper.BuildButtons(Game.Current, stageId);
+
+        // fecha o nível aberto caso ele não exista mais na lista
+        if (_openContractLevel is int lvl &&
+            !_contractButtons.Any(b => b.Level == lvl))
+            _openContractLevel = null;
     }
     #endregion
 
