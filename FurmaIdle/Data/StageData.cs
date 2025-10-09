@@ -27,7 +27,8 @@ namespace FurmaIdle.Data
                 Avaliable = false,
                 DestinationId = "d00",
                 Sort = 1,
-                PartyCap = 4
+                PartyCap = 4,
+                ContractsSlots = 6
             },
 
             ["s01"] = new StageModel
@@ -41,7 +42,8 @@ namespace FurmaIdle.Data
                 Avaliable = false,
                 DestinationId = "d10",
                 Sort = 2,
-                PartyCap = 2
+                PartyCap = 2,
+                ContractsSlots = 6
             }
         };
 
@@ -57,7 +59,8 @@ namespace FurmaIdle.Data
                 ResourceId = stage.ResourceId,
                 Unlocked = stage.Unlocked,
                 Sort = stage.Sort,
-                PartyCap = stage.PartyCap
+                PartyCap = stage.PartyCap,
+                ContractsSlots = stage.ContractsSlots
             };
         }
 
@@ -77,7 +80,8 @@ namespace FurmaIdle.Data
                     ResourceId = stage.ResourceId,
                     Unlocked = stage.Unlocked,
                     Sort = stage.Sort,
-                    PartyCap = stage.PartyCap
+                    PartyCap = stage.PartyCap,
+                    ContractsSlots = stage.ContractsSlots
                 };
             }
             return dictionary;

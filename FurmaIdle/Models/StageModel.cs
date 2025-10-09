@@ -13,5 +13,6 @@
         public int Sort { get; set; } = 0;
         public int PartyCap { get; set; }
         public ExpeditionModel Expedition { get; set; } = new();
+        public int ContractsSlots { get; set; }
     }
 }

@@ -239,7 +239,6 @@
                             <div><strong>Stage:</strong> @stage?.Name (@stageId)</div>
                             <div><strong>PartyCap Efetivo (Stage):</strong> @Party.CapStage</div>
                             <div><strong>Na expedição atual:</strong> @Party.UsedStage / @Party.CapStage</div>
-                            <div><strong>Ganho de Conhecimento:</strong> @KnowledgeRateText()</div>
                         </div>
                     </div>
                 </div>
@@ -250,22 +249,44 @@
         <main class="band band-mid">
             <div class="mid-grid">
 
-                <!-- Contratos -->
-                <div class="mid-column">
-                  <div class="hover-wrap @( _midHoverVisible ? "show" : null)">
-                    <div class="hover-base">Bloco 1</div>
-                    <div class="hover-panel">
-                      @if (!_midHoverVisible)
-                      {
-                        <em>Passe o mouse em um item para ver detalhes aqui.</em>
-                      }
-                      else
-                      {
-                        <div class="hover-title">@((MarkupString)_midHoverTitle)</div>
-                        <div class="hover-row">@((MarkupString)_midHoverBody)</div>
-                      }
+                <!-- Contratos e Descrições -->
+                @{
+                    var slots = stage?.ContractsSlots > 0 ? stage.ContractsSlots : 3;
+                    var levels = ContractsHelper.GetContractLevelsForStage(Game, stageId);
+                }
+                <div class="mid-column contracts">
+                    <div class="hover-wrap @( _midHoverVisible ? "show" : null)">
+                        <div class="hover-base">
+                            <!-- grid com N linhas iguais; passamos --slots via style -->
+                            <div class="contracts-grid" style="--slots:@slots">
+                                @for (int i = 0; i < slots; i++)
+                                {
+                                    if (i < levels.Count)
+                                    {
+                                        var lvl = levels[i];
+                                        <button class="mini-btn contract-btn">Contrato Nível @lvl</button>
+                                    }
+                                    else
+                                    {
+                                        <!-- slot vazio só pra manter a divisão igual -->
+                                        <div class="contract-slot-empty"></div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="hover-panel">
+                            @if (!_midHoverVisible)
+                            {
+                                <em>Passe o mouse em um item para ver detalhes aqui.</em>
+                            }
+                            else
+                            {
+                                <div class="hover-title">@((MarkupString)_midHoverTitle)</div>
+                                <div class="hover-row">@((MarkupString)_midHoverBody)</div>
+                            }
+                        </div>
                     </div>
-                  </div>
                 </div>
 
                 <!-- Stage e Clicks -->
@@ -360,6 +381,7 @@
         RefreshTechs();
         RefreshDestinations();
         RefreshUpgrades();
+        RefreshContracts();
 
         Log("Jogo Iniciado.", MsgKind.Success);
         Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
@@ -433,13 +455,6 @@
     bool CanInteract => Game.HasAnyExpeditionActive;
     int SelectedCount => Party.UsedRoster;
 
-    int EffectivePartyCap()
-    {
-        var stageCap = Game.GetEffectivePartyCap(Game.SelectedStageId);
-        var guildCap = Game.Current.Guild?.PartyCapMax ?? 0;
-        return Math.Min(stageCap, guildCap);
-    }
-
     bool _CanStartExpedition()
     {
         if (ExpeditionActive) return true;
@@ -453,22 +468,6 @@
         return SelectedCount < Party.CapStage;
     }
 
-    double KnowledgeRatePerSecond()
-    {
-        const double basePerSlot = 0.2;
-        const double perChar = 0.05;
-
-        var members = Party.ExpeditionActive ? Party.UsedStage : Party.UsedRoster;
-        return Party.CapStage * basePerSlot + members * perChar;
-    }
-
-    string KnowledgeRateText()
-    {
-        double perSec = KnowledgeRatePerSecond();
-        double perMin = perSec * 60;
-        return $"{perSec:0.###}/s • {perMin:0.##}/min";
-    }
-
     private async Task ToggleExpedition()
     {
         if (_busy) return;
@@ -479,7 +478,9 @@
 
             if (Game.GetExpedition(sid)?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
             {
-                Game.EndExpedition(sid);      
+                Game.EndExpedition(sid);
+                RefreshChars();
+                RefreshContracts();
                 GoToMessages();
                 return;
             }
@@ -492,7 +493,8 @@
                 return;
             }
 
-            RefreshChars();                    
+            RefreshChars();
+            RefreshContracts();
             GoToMessages();
             await InvokeAsync(StateHasChanged);
         }
@@ -631,13 +633,8 @@
     void ToggleCharSelect(string id)
     {
         if (ExpeditionActive) { Log("Não é possível alterar a seleção durante a expedição.", MsgKind.Warn); return; }
-
         if (!Game.ToggleRoster(id, out var reason))
-        {
             Log(reason ?? "Não foi possível alterar a seleção.", MsgKind.Error);
-            return;
-        }
-        StateHasChanged();
     }
     #endregion
 
@@ -705,7 +702,7 @@
 
     void OnStageClick()
     {
-        if (!CanInteract) return;
+        if (!Party.ExpeditionActive) return;
         Log("Trabalho arduo!", MsgKind.Info);
         Game.Click(stageId);
     }
@@ -717,6 +714,26 @@
 
         // fallback: primeiro qualquer do dicionário
         return model.Stages.Keys.FirstOrDefault() ?? "s00";
+    }
+    #endregion
+
+    #region Contracts
+    List<ContractsHelper.ContractButton> _contractButtons = new();
+
+    int? _openContractLevel = null;
+
+    void ToggleContractLevel(int level)
+        => _openContractLevel = _openContractLevel == level ? null : level;
+
+    void OnContractClick(string contractId)
+    {
+        // placeholder por enquanto
+        Log($"Contrato {contractId} clicado (placeholder).", MsgKind.Info);
+    }
+
+    void RefreshContracts()
+    {
+        _contractButtons = ContractsHelper.BuildButtons(Game.Current, stageId);
     }
     #endregion
 
@@ -732,6 +749,7 @@
             RefreshTechs();
             RefreshDestinations();
             RefreshUpgrades();
+            RefreshContracts();
         }
         catch (Exception ex)
         {
@@ -753,6 +771,4 @@
     }
     #endregion
 
-    #region
-    #endregion
 }

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FurmaIdle.Data;
+﻿using FurmaIdle.Data;
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using static FurmaIdle.Helpers.ExpeditionEnum;
 using static FurmaIdle.Models.CharacterModel;
 
@@ -285,6 +286,8 @@ namespace FurmaIdle.Services
 
         public bool EndExpedition(string stageId, string? reason = null)
         {
+            string stageName = LookupData.Stage(Current, _stages, stageId).Name;
+
             if (string.IsNullOrWhiteSpace(stageId)) return false;
             if (!Current.Stages.TryGetValue(stageId, out var st)) return false;
 
@@ -303,7 +306,7 @@ namespace FurmaIdle.Services
             ex.ExpeditionStatus = ExpeditionStatus.Idle;
             ex.Start = null;
 
-            Logged?.Invoke($"Expedição encerrada em {stageId}" + (string.IsNullOrWhiteSpace(reason) ? "." : $": {reason}"), LogKind.Success);
+            Logged?.Invoke($"Expedição encerrada em {stageName}" + (string.IsNullOrWhiteSpace(reason) ? "." : $": {reason}"), LogKind.Success);
             Changed?.Invoke();
             return true;
         }
