@@ -36,8 +36,9 @@
                                     <img class="currency-icon" src="@r.Image" alt="@r.Name" />
                                     <div class="currency-info">
                                         <div class="currency-name">@r.Name</div>
-                                        <div>Atual: @r.Actual.ToString("N0")</div>
-                                        <div>Total: @r.Total.ToString("N0")</div>
+                                        <div>Atual: @r.Actual.ToString("N2")</div>
+                                        <div>Total: @r.Total.ToString("N2")</div>
+                                        <div>Por Segundo: @r.PerSecond.ToString("N2")</div>
                                     </div>
                                 </div>
                             }
@@ -54,6 +55,16 @@
                                 <img src="@IconSrc(TopPanel.Base)" alt="Base"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
                                 <span class="icon-fallback">@IconFallback(TopPanel.Base)</span>
+                            </span>
+                        </button>
+
+                        <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"
+                                disabled="@(!CanInteract)"
+                                @onclick="() => TogglePanel(TopPanel.Melhorias)">
+                            <span class="icon-wrap">
+                                <img src="@IconSrc(TopPanel.Melhorias)" alt="Melhorias"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                <span class="icon-fallback">@IconFallback(TopPanel.Melhorias)</span>
                             </span>
                         </button>
 
@@ -74,16 +85,6 @@
                               <img src="@IconSrc(TopPanel.Destinos)" alt="Destinos"
                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
                               <span class="icon-fallback">@IconFallback(TopPanel.Destinos)</span>
-                            </span>
-                        </button>
-
-                        <button class="tab-btn @(IsActive(TopPanel.Melhorias) ? "active" : "")"
-                                disabled="@(!CanInteract)"
-                              @onclick="() => TogglePanel(TopPanel.Melhorias)">
-                            <span class="icon-wrap">
-                              <img src="@IconSrc(TopPanel.Melhorias)" alt="Melhorias"
-                                   onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                              <span class="icon-fallback">@IconFallback(TopPanel.Melhorias)</span>
                             </span>
                         </button>
                     </div>
@@ -208,6 +209,7 @@
                                     @foreach (var u in _upgr)
                                     {
                                         <button class="option-btn"
+                                                disabled="@(u.IsMaxed)"
                                                 @onclick="() => OnUpgrClick(u.Id)"
                                                 @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Melhoria, u.Id)"
                                                 @onmouseleave="ClearHover"
@@ -258,52 +260,96 @@
                 <div class="mid-column contracts">
                     <div class="hover-wrap @( _midHoverVisible ? "show" : null)">
                         <div class="hover-base">
-                            <!-- grid com N linhas iguais; passamos --slots via style -->
+                            @{
+                                var expd = Game.GetExpedition(stageId);
+                                var capTotal = Game.GetContractsCap(stageId);
+                                var usedUnits = expd?.Contracts?.Values?.Sum(c => c.Quant) ?? 0;
+                                var capReached = usedUnits >= capTotal;
+                            }
+                            <div class="contracts-capbar">
+                                <strong>Contratos:</strong> @usedUnits / @capTotal
+                            </div>
                             <div class="contracts-grid" style="--slots:@slots">
                                 @for (int i = 0; i < slots; i++)
                                 {
                                     if (i < levels.Count)
                                     {
                                         var lvl = levels[i];
-                                        var isOpen = _openContractLevel == lvl;
 
-                                        if (!isOpen)
+                                        string? chosenId = null;
+                                        if (expd?.LockedContractByLevel != null && expd.LockedContractByLevel.TryGetValue(lvl, out var cid))
+                                            chosenId = cid;
+
+                                        ContractModel? chosen = null;
+                                        if (chosenId is not null && expd?.Contracts != null)
+                                            expd.Contracts.TryGetValue(chosenId, out chosen);
+
+                                        @if (chosen is not null && chosen.Quant > 0)
                                         {
-                                            <button class="mini-btn contract-btn"
-                                                    @onclick="() => ToggleContractLevel(lvl)">
-                                                Contrato Nível @lvl
-                                            </button>
+                                            var price = ContractsPricingHelper.NextPrice(chosen);
+                                            var (resId, cps, spc) = ContractsPricingHelper.ProdParams(chosen);
+                                            var pps = ContractsPricingHelper.ProdPerSecond(chosen);
+
+                                            <div class="contract-selected">
+                                                <img class="mini-contract-icon" src="@chosen.Image" alt="@chosen.Name" />
+                                                <div class="contract-selected-info">
+                                                    <div class="name">@chosen.Name</div>
+                                                    <div class="sub">
+                                                        Nível @chosen.Level · Quant ×@chosen.Quant
+                                                        · @pps.ToString("N2")/s
+                                                        · Próx: @price.ToString("N0") @resId
+                                                    </div>
+                                                </div>
+                                                <button class="mini-btn buy-more"
+                                                        disabled="@capReached"
+                                                        @onclick="() => OnContractBuyMore(chosen.Id)">
+                                                    +1
+                                                </button>
+                                            </div>
                                         }
                                         else
                                         {
-                                            var items = ContractsHelper.GetContractsForLevel(Game, stageId, lvl);
+                                            var isOpen = _openContractLevel == lvl;
 
-                                            <div class="contract-subrow">
-                                                <button class="mini-btn back-btn"
-                                                        title="Voltar"
-                                                        @onclick="() => ToggleContractLevel(lvl)">
-                                                    ← Voltar
+                                            if (!isOpen)
+                                            {
+                                                <button class="mini-btn contract-btn"
+                                                        disabled="@capReached" @onclick="() => ToggleContractLevel(lvl)">
+                                                    Contrato Nível @lvl
                                                 </button>
+                                            }
+                                            else
+                                            {
+                                                var items = ContractsHelper.GetContractsForLevel(Game, stageId, lvl);
+                                                <div class="contract-subrow">
+                                                    <button class="mini-btn back-btn"
+                                                            title="Voltar"
+                                                            @onclick="() => ToggleContractLevel(lvl)">
+                                                        ← Voltar
+                                                    </button>
 
-                                                <div class="contract-scroll" role="list" aria-label="@($"Contratos do nível {lvl}")">
-                                                    @if (items.Count == 0)
-                                                    {
-                                                        <div class="mini-empty" role="note">Nenhum contrato disponível.</div>
-                                                    }
-                                                    else
-                                                    {
-                                                        @foreach (var ct in items)
+                                                    <div class="contract-scroll" role="list" aria-label="@($"Contratos do nível {lvl}")">
+                                                        @if (items.Count == 0)
                                                         {
-                                                            <button class="mini-contract" role="listitem"
-                                                                    title="@ct.Name"
-                                                                    @onclick="() => OnContractClick(ct.Id)">
-                                                                <img class="mini-contract-icon" src="@ct.Image" alt="@ct.Name" />
-                                                                <span class="mini-contract-name">@ct.Name</span>
-                                                            </button>
+                                                            <div class="mini-empty" role="note">Nenhum contrato disponível.</div>
                                                         }
-                                                    }
+                                                        else
+                                                        {
+                                                            @foreach (var ct in items)
+                                                            {
+                                                                <button class="mini-contract"
+                                                                        role="listitem"
+                                                                        title="@ct.Name"
+                                                                        disabled="@capReached"
+                                                                        @onclick="() => OnContractClick(ct.Id)">
+                                                                    <img class="mini-contract-icon" src="@ct.Image" alt="@ct.Name" />
+                                                                    <span class="mini-contract-name">@ct.Name</span>
+                                                                </button>
+                                                            }
+                                                        }
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
                                         }
                                     }
                                     else
@@ -655,8 +701,17 @@
     }
     #endregion
 
+    #region Clicks
+    void OnStageClick()
+    {
+        if (!Party.ExpeditionActive) return;
+        Game.Click(stageId);
+    }
+    #endregion
+
     #region Moedas
     List<ResourceModel> _coins = new();
+
 
     void RefreshCoins()
     {
@@ -758,16 +813,20 @@
 
     void OnUpgrClick(string upgrId)
     {
-        // TODO: abrir painel de compra/aplicar upgrade
-        Console.WriteLine($"Upgr click: {upgrId}");
+        if (!Game.BuyUpgrade(upgrId, out var reason))
+            Log(reason ?? "Não foi possível comprar a melhoria.", MsgKind.Warn);
+        else
+            Log($"+1 em {upgrId}.", MsgKind.Success);
     }
 
     void RefreshUpgrades()
     {
-        _upgr = UpgradeData.Order
-            .Select(id => Game.Current.Upgrades.TryGetValue(id, out var u) ? u : null)
-            .Where(u => u is not null && u.Avaliable)
-            .Cast<UpgradeModel>()
+        var all = Game.Current.Upgrades?.Count ?? 0;
+        var avail = Game.Current.Upgrades?.Values.Count(u => u.Avaliable) ?? 0;
+        Console.WriteLine($"[UPGR] total={all}, avail={avail}");
+        _upgr = Game.Current.Upgrades.Values
+            .Where(u => u?.Avaliable == true)
+            .OrderBy(u => u.Id, StringComparer.Ordinal)
             .ToList();
     }
     #endregion
@@ -775,13 +834,6 @@
     #region Stage
     string stageId => Game.SelectedStageId;
     StageModel? stage => Game.GetSelectedStage();
-
-    void OnStageClick()
-    {
-        if (!Party.ExpeditionActive) return;
-        Log("Trabalho arduo!", MsgKind.Info);
-        Game.Click(stageId);
-    }
 
     static string GetFirstUnlockedStageId(GameModel model)
     {
@@ -795,7 +847,7 @@
 
     #region Contracts
     List<ContractsHelper.ContractButton> _contractButtons = new();
-
+    bool _capNotified;
     int? _openContractLevel = null;
 
     void ToggleContractLevel(int level)
@@ -808,6 +860,61 @@
         else
             Log($"Contrato {contractId} ativado.", MsgKind.Success);
     }
+
+    int SumUsedContracts(ExpeditionModel? expd)
+    => expd?.Contracts?.Values?.Sum(c => c.Quant) ?? 0;
+
+    void OnContractBuyMore(string contractId)
+    {
+        var expd = Game.GetExpedition(stageId);
+        int usedBefore = SumUsedContracts(expd);
+        int cap = Game.GetContractsCap(stageId);
+
+        // já cheio? só avisa e sai
+        if (usedBefore >= cap)
+        {
+            if (!_capNotified)
+            {
+                Log($"Cap de contratos atingido ({usedBefore}/{cap}).", MsgKind.Info);
+                _capNotified = true;
+            }
+            return;
+        }
+
+        // tenta comprar
+        if (Game.BuyOrActivateContract(stageId, contractId, out var reason))
+        {
+            Log($"+1 em {contractId}.", MsgKind.Success);
+
+            // recalcule depois da compra
+            var expdAfter = Game.GetExpedition(stageId);
+            int usedAfter = SumUsedContracts(expdAfter);
+
+            if (usedAfter >= cap)   // chegou no limite
+            {
+                Log($"Já fizemos todos os {usedAfter} Contratos possíveis. Será que conseguimos mais? Apenas {cap} parece tão pouco...", MsgKind.Info);
+                _capNotified = true;
+            }
+            else
+            {
+                _capNotified = false; // ainda não encheu
+            }
+        }
+        else
+        {
+            Log(reason ?? "Compra não realizada.", MsgKind.Warn);
+        }
+    }
+
+    bool IsContractsCapReached()
+    {
+        var expd = Game.GetExpedition(stageId);
+        int used = expd?.Contracts?.Values?.Sum(c => c.Quant) ?? 0;
+        int cap = Game.GetContractsCap(stageId);
+
+        return used >= cap;
+    }
+
 
     void RefreshContracts()
     {
@@ -823,7 +930,6 @@
     #region Helpers
     void OnGameChanged()
     {
-        Console.WriteLine($"[UI] OnGameChanged fired — {DateTime.Now:HH:mm:ss.fff}");
         try
         {
             RefreshCoins();

@@ -1,7 +1,7 @@
 ﻿namespace FurmaIdle.Models
 {
     public enum EffectOp { Additive, Multiplicative, Override }
-    public enum EffectTarget { ContractGain, ContractTime, ResourceGen, ContractCap }
+    public enum EffectTarget { ContractGain, ContractTime, ResourceGen, ContractCap, ClicksGain }
 
     public sealed class UpgradeEffectModel
     {

@@ -7,6 +7,11 @@ namespace FurmaIdle.Data
 {
     public static partial class UpgradeData
     {
+        static UpgradeData()
+        {
+            PopulateOrderFromAll();
+        }
+
         public static int SchemaVersion => 1;
 
         public static readonly List<string> Order = new();
@@ -75,24 +80,24 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Geracao1R1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ResourceGen, ScopeId="r100", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ResourceGen, ScopeId="r100", Value=1.10, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m104"] = Build(new UpgradeModel
             {
                 Id = "m104",
-                Name = "Escritório da Guilda",
+                Name = "Recepção da Guilda",
                 Image = "images/icons/upgrades/m104.png",
-                Description = "Aumenta o Limite de Contratos por Personagem",
+                Description = "Aumenta o Ganho do Contrato em x1.1",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t10",
                 Avaliable = false,
                 Range = 1,
-                CostCode = UpgradeCostCode.LimiteContrato1T1,
+                CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractCap, ScopeId="all", Value=1, Op=EffectOp.Additive }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractCap, ScopeId="c20", Value=1, Op=EffectOp.Additive }
+                }
             }),
             #endregion
             #region t11
@@ -360,7 +365,7 @@ namespace FurmaIdle.Data
             }),
             ["m141"] = Build(new UpgradeModel
             {
-                Id = "m121",
+                Id = "m141",
                 Name = "Caça de Cerdos",
                 Image = "images/icons/upgrades/m141.png",
                 Description = "Aumenta o Ganho do Contrato em x1.1",
@@ -382,7 +387,7 @@ namespace FurmaIdle.Data
                 Description = "Aumenta o Ganho do Contrato em x1.1",
                 Lore = "",
                 Unlocked = false,
-                TechId = "t141",
+                TechId = "t14",
                 Avaliable = false,
                 Range = 3,
                 CostCode = UpgradeCostCode.Quantidade1C3,
@@ -421,6 +426,42 @@ namespace FurmaIdle.Data
                 Effects = new(){
         new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c44", Value=0.90, Op=EffectOp.Multiplicative }
     }
+            }),
+            #endregion
+            #region x00
+            ["mx00"] = Build(new UpgradeModel
+            {
+                Id = "mx00",
+                Name = "Encontrar Trabalho",
+                Image = "images/icons/upgrades/mx00.png",
+                Description = "Aumenta o limite de Contratos por Personagem em 1",
+                Lore = "",
+                Unlocked = false,
+                TechId = null,
+                Avaliable = true,
+                Range = 1,
+                CostCode = UpgradeCostCode.LimiteContrato1T1,
+                Effects = new(){
+                    new UpgradeEffectModel { Target=EffectTarget.ContractCap, ScopeId="all", Value=1, Op=EffectOp.Additive }
+                },
+                MaxBuys = 47
+            }),
+            ["mx01"] = Build(new UpgradeModel
+            {
+                Id = "mx01",
+                Name = "Trabalho Árduo",
+                Image = "images/icons/upgrades/mx01.png",
+                Description = "Aumenta o Ganho do Click em x2.00",
+                Lore = "",
+                Unlocked = false,
+                TechId = null,
+                Avaliable = true,
+                Range = 1,
+                CostCode = UpgradeCostCode.Clicks1T1,
+                Effects = new(){
+                    new UpgradeEffectModel { Target=EffectTarget.ClicksGain, ScopeId="all", Value=2.00, Op=EffectOp.Multiplicative }
+                },
+                MaxBuys = 10
             }),
             #endregion
             #region x01
@@ -544,6 +585,15 @@ namespace FurmaIdle.Data
             Order.AddRange(keys.OrderBy(k => k, StringComparer.Ordinal));
         }
 
+        static List<UpgradeEffectModel> CloneEffects(List<UpgradeEffectModel> effects)
+            => effects?.Select(e => new UpgradeEffectModel
+            {
+                Target = e.Target,
+                ScopeId = e.ScopeId,
+                Value = e.Value,
+                Op = e.Op
+            }).ToList() ?? new();
+
         public static UpgradeModel GetDef(string id)
         {
             var up = All[id];
@@ -562,7 +612,9 @@ namespace FurmaIdle.Data
                 CostGrowth = up.CostGrowth,
                 Description = up.Description,
                 Lore = up.Lore,
-                Effects = up.Effects
+                Effects = CloneEffects(up.Effects),
+                MaxBuys = up.MaxBuys,
+                Buys = 0,
             };
         }
 
@@ -575,7 +627,6 @@ namespace FurmaIdle.Data
             foreach (var id in Order)
             {
                 if (!All.TryGetValue(id, out var up)) continue;
-                if (!up.Unlocked) continue;
 
                 CoinsCollection[id] = new UpgradeModel
                 {
@@ -592,10 +643,71 @@ namespace FurmaIdle.Data
                     CostGrowth = up.CostGrowth,
                     Description = up.Description,
                     Lore = up.Lore,
-                    Effects = up.Effects
+                    Effects = CloneEffects(up.Effects),
+                    MaxBuys = up.MaxBuys,
+                    Buys = 0,
                 };
             }
             return CoinsCollection;
+        }
+
+        // Data/UpgradeData.cs (mesma classe)
+        public static void EnsureUpgradesCatalog(GameModel model)
+        {
+            model.Upgrades ??= new Dictionary<string, UpgradeModel>();
+
+            // 1) Adiciona/atualiza todas as entradas do catálogo,
+            //    preservando estado de runtime (Buys, Unlocked, Avaliable)
+            foreach (var id in All.Keys)
+            {
+                if (!model.Upgrades.TryGetValue(id, out var cur))
+                {
+                    model.Upgrades[id] = GetDef(id); // já vem com Effects clonados, Buys=0
+                    continue;
+                }
+
+                var def = All[id];
+
+                // Recria o objeto (resolve CS8852 em Effects=init)
+                model.Upgrades[id] = new UpgradeModel
+                {
+                    // Catálogo
+                    Id = def.Id,
+                    Name = def.Name,
+                    Image = def.Image,
+                    TechId = def.TechId,
+                    Range = def.Range,
+                    CostCode = def.CostCode,
+                    CostResourceId = def.CostResourceId,
+                    CostBase = def.CostBase,
+                    CostGrowth = def.CostGrowth,
+                    Description = def.Description,
+                    Lore = def.Lore,
+                    MaxBuys = def.MaxBuys,
+                    Effects = CloneEffects(def.Effects),
+
+                    // Runtime preservado
+                    Buys = cur.Buys,
+                    Unlocked = cur.Unlocked,
+                    Avaliable = cur.Avaliable
+                };
+            }
+
+            // 2) Política de disponibilidade inicial:
+            //    - Sem TechId (mx00/mx01): sempre visíveis ENQUANTO não estiverem esgotadas
+            //    - Com TechId: continuam dependendo da sua lógica de tech (não alteramos aqui)
+            foreach (var u in model.Upgrades.Values)
+            {
+                if (u.TechId is null && (u.Id == "mx00" || u.Id == "mx01"))
+                    u.Avaliable = !u.IsMaxed; // visíveis enquanto não esgotar
+            }
+
+            // 3) (Opcional) Remover upgrades órfãos do save que não existem mais no catálogo
+            // var unknown = model.Upgrades.Keys.Where(k => !All.ContainsKey(k)).ToList();
+            // foreach (var k in unknown) model.Upgrades.Remove(k);
+
+            // 4) Segurança: garanta Order populado (se em algum lugar ainda usam Order)
+            if (Order.Count == 0) PopulateOrderFromAll();
         }
     }
 }

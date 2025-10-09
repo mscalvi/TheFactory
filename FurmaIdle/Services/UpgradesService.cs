@@ -1,64 +1,138 @@
 ﻿using FurmaIdle.Models;
+using System.Runtime.InteropServices;
 
 namespace FurmaIdle.Services
 {
     public interface IUpgradeService
     {
-        void Recalculate(IEnumerable<UpgradeModel> purchased);
-        double GainMult(string contractId);    
-        double TimeMult(string contractId);    
-        double GenAdd(string resourceId);
-        int CapAdd(string teamIdOrTechId);
+        // Recalcula cache (chamar em Attach, BuyUpgrade, unlock de tech etc.)
+        void Recompute(GameModel model);
+
+        // Ganho/tempo de contrato
+        double ContractGainMult(string contractId);   // multiplicativo (empilha * )
+        double ContractTimeMult(string contractId);   // multiplicativo (empilha * )
+
+        // Bônus globais
+        double ClicksGainMult();                      // multiplicativo (empilha * )
+        double ResourceGenAddPerSecond(string resId); // aditivo (/s), pode somar por “all” e por res específico
+
+        // Capacidade
+        int ExtraContractsPerChar();                  // +N por personagem (ex.: mx00)
     }
+
 
     public sealed class UpgradeService : IUpgradeService
     {
-        private readonly Dictionary<string, double> _gainMult = new();
-        private readonly Dictionary<string, double> _timeMult = new();
-        private readonly Dictionary<string, double> _genAdd = new();
-        private readonly Dictionary<string, int> _capAdd = new();
+        private readonly Dictionary<string, double> _gainMultByContract = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, double> _timeMultByContract = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, double> _resGenAddPerSec = new(StringComparer.Ordinal);
 
-        public void Recalculate(IEnumerable<UpgradeModel> purchased)
+        private double _gainMultAll = 1.0;
+        private double _timeMultAll = 1.0;
+        private double _clicksGainMult = 1.0;
+        private int _extraContractsPerChar = 0;
+
+        public void Recompute(GameModel m)
         {
-            _gainMult.Clear(); _timeMult.Clear(); _genAdd.Clear(); _capAdd.Clear();
+            _gainMultByContract.Clear();
+            _timeMultByContract.Clear();
+            _resGenAddPerSec.Clear();
+            _gainMultAll = 1.0;
+            _timeMultAll = 1.0;
+            _clicksGainMult = 1.0;
+            _extraContractsPerChar = 0;
 
-            // defaults
-            double GetGain(string id) => _gainMult.TryGetValue(id, out var v) ? v : 1.0;
-            double GetTime(string id) => _timeMult.TryGetValue(id, out var v) ? v : 1.0;
+            if (m?.Upgrades is null) return;
 
-            foreach (var up in purchased)
-                foreach (var ef in up.Effects)
+            foreach (var u in m.Upgrades.Values)
+            {
+                if (u is null || u.Buys <= 0) continue;
+
+                foreach (var eff in u.Effects ?? Enumerable.Empty<UpgradeEffectModel>())
                 {
-                    switch (ef.Target)
+                    int qty = u.Buys;
+                    string scope = eff.ScopeId ?? "all";
+
+                    switch (eff.Target)
                     {
                         case EffectTarget.ContractGain:
-                            _gainMult[ef.ScopeId] = Apply(GetGain(ef.ScopeId), ef);
+                            if (scope == "all")
+                                _gainMultAll = ApplyMult(_gainMultAll, eff.Value, eff.Op, qty);
+                            else
+                            {
+                                var cur = _gainMultByContract.TryGetValue(scope, out var v) ? v : 1.0;
+                                _gainMultByContract[scope] = ApplyMult(cur, eff.Value, eff.Op, qty);
+                            }
                             break;
+
                         case EffectTarget.ContractTime:
-                            _timeMult[ef.ScopeId] = Apply(GetTime(ef.ScopeId), ef);
+                            if (scope == "all")
+                                _timeMultAll = ApplyMult(_timeMultAll, eff.Value, eff.Op, qty);
+                            else
+                            {
+                                var cur = _timeMultByContract.TryGetValue(scope, out var v) ? v : 1.0;
+                                _timeMultByContract[scope] = ApplyMult(cur, eff.Value, eff.Op, qty);
+                            }
                             break;
+
+                        case EffectTarget.ClicksGain:
+                            _clicksGainMult = ApplyMult(_clicksGainMult, eff.Value, eff.Op, qty);
+                            break;
+
                         case EffectTarget.ResourceGen:
-                            _genAdd[ef.ScopeId] = (_genAdd.TryGetValue(ef.ScopeId, out var g) ? g : 0) + ef.Value;
+                            {
+                                var key = scope == "all" ? "__all__" : scope;
+                                var cur = _resGenAddPerSec.TryGetValue(key, out var v) ? v : 0.0;
+                                _resGenAddPerSec[key] = cur + eff.Value * qty; // aditivo
+                            }
                             break;
+
                         case EffectTarget.ContractCap:
-                            _capAdd[ef.ScopeId] = (_capAdd.TryGetValue(ef.ScopeId, out var c) ? c : 0) + (int)ef.Value;
+                            if (scope == "all")
+                                _extraContractsPerChar += (int)(eff.Value * qty);
                             break;
                     }
                 }
+            }
         }
 
-        public double GainMult(string contractId) => _gainMult.TryGetValue(contractId, out var m) ? m : 1.0;
-        public double TimeMult(string contractId) => _timeMult.TryGetValue(contractId, out var m) ? m : 1.0;
-        public double GenAdd(string resourceId) => _genAdd.TryGetValue(resourceId, out var a) ? a : 0.0;
-        public int CapAdd(string scopeId) => _capAdd.TryGetValue(scopeId, out var a) ? a : 0;
-
-        private static double Apply(double current, UpgradeEffectModel ef) => ef.Op switch
+        // multiplicador helper sem ref
+        private static double ApplyMult(double current, double val, EffectOp op, int times)
         {
-            EffectOp.Multiplicative => current * ef.Value,     // 1.10, 0.90, etc.
-            EffectOp.Additive => current + ef.Value,     // cuidado: aqui current parte de 1.0
-            EffectOp.Override => ef.Value,
-            _ => current
-        };
-    }
+            double r = current;
+            if (op == EffectOp.Multiplicative)
+            {
+                for (int i = 0; i < times; i++) r *= val;
+            }
+            else
+            {
+                // aditivo: some ao fator (se estiver usando como “+x”)
+                r += val * times;
+            }
+            return r;
+        }
 
+        public double ContractGainMult(string contractId)
+        {
+            var byId = _gainMultByContract.TryGetValue(contractId, out var v) ? v : 1.0;
+            return _gainMultAll * byId;
+        }
+
+        public double ContractTimeMult(string contractId)
+        {
+            var byId = _timeMultByContract.TryGetValue(contractId, out var v) ? v : 1.0;
+            return _timeMultAll * byId;
+        }
+
+        public double ClicksGainMult() => _clicksGainMult;
+
+        public double ResourceGenAddPerSecond(string resId)
+        {
+            var all = _resGenAddPerSec.TryGetValue("__all__", out var a) ? a : 0.0;
+            var spc = _resGenAddPerSec.TryGetValue(resId, out var b) ? b : 0.0;
+            return all + spc;
+        }
+
+        public int ExtraContractsPerChar() => _extraContractsPerChar;
+    }
 }

@@ -16,7 +16,8 @@
             Tempo1C1,
             Tempo1C2,
             Tempo1C3,
-            Tempo1C4
+            Tempo1C4,
+            Clicks1T1
         }
 
         public static class UpgradeCostMap
@@ -36,7 +37,8 @@
                 [UpgradeCostCode.Tempo1C4] = ("r001", 220000, 2.5),
                 [UpgradeCostCode.Geracao1T1] = ("r001", 25000, 2.2),
                 [UpgradeCostCode.Geracao1R1] = ("r001", 8000, 1.5),
-                [UpgradeCostCode.LimiteContrato1T1] = ("r001", 10000, 2.2)
+                [UpgradeCostCode.LimiteContrato1T1] = ("r001", 600, 2.2),
+                [UpgradeCostCode.Clicks1T1] = ("r001", 200, 2.2)
             };
 
             public static (string res, double @base, double growth) Get(UpgradeCostCode code) => _map[code];

@@ -53,7 +53,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k11",
                 Image = "images/icons/techonology/t13.jpg",
                 Unlocked = false,
-                Avaliable = true,
+                Avaliable = false,
                 DestinationId = "d01"
             },
             ["t14"] = new TechModel
@@ -64,7 +64,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k12",
                 Image = "images/icons/techonology/t14.jpg",
                 Unlocked = false,
-                Avaliable = true,
+                Avaliable = false,
                 DestinationId = "d02"
             },
             ["t20"] = new TechModel
@@ -75,7 +75,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k20",
                 Image = "images/icons/techonology/t20.jpg",
                 Unlocked = false,
-                Avaliable = true,
+                Avaliable = false,
                 DestinationId = "d03"
             },
             ["t30"] = new TechModel
@@ -86,7 +86,7 @@ namespace FurmaIdle.Data
                 CostKnowledgeId = "k30",
                 Image = "images/icons/techonology/t30.jpg",
                 Unlocked = false,
-                Avaliable = true,
+                Avaliable = false,
                 DestinationId = "d01"
             }
         };

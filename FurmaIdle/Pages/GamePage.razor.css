@@ -680,6 +680,40 @@
         opacity: .75;
         padding: 0 6px;
     }
+
+    .contracts-capbar {
+        margin: 0 0 6px 0;
+        font-size: .9rem;
+        opacity: .9;
+        text-align: right;
+    }
+
+    .contract-selected {
+        display: grid;
+        grid-template-columns: 36px 1fr 72px;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        height: 100%;
+        border: 1px solid #6aa0ff;
+        border-radius: 10px;
+        background: #fff;
+        padding: 4px 6px;
+    }
+
+        .contract-selected .name {
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .contract-selected .sub {
+            font-size: .85rem;
+            opacity: .85;
+        }
+
+        .contract-selected .buy-more {
+            height: 100%;
+        }
 }
 
 /* [images] -------------------------------------------------------------- */

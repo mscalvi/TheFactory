@@ -45,6 +45,10 @@ namespace FurmaIdle.Services
         bool StartContract(string stageId, string contractId, out string? reason);
         bool StopContract(string stageId, string contractId);
         bool BuyOrActivateContract(string stageId, string contractId, out string? reason);
+        int GetContractsCap(string stageId);
+
+        // Melhorias
+        bool BuyUpgrade(string upgradeId, out string? reason);
 
         // Gerais
         void Attach(GameModel model);
@@ -72,6 +76,9 @@ namespace FurmaIdle.Services
 
             Current.Guild ??= new GuildModel();
             Current.Guild.Roster ??= new HashSet<string>();
+
+            UpgradeData.EnsureUpgradesCatalog(Current); 
+            _effects.Recompute(Current);
 
             _selectedStageId = _stages.GetFirstUnlocked(Current);
             Changed?.Invoke();
@@ -135,17 +142,15 @@ namespace FurmaIdle.Services
             Changed?.Invoke();
             return true;
         }
+        #endregion
 
+        #region Clicks
         public void Click(string stageId)
         {
-            if (string.IsNullOrWhiteSpace(stageId) || Current.Clicks is null) return;
             if (!Current.Clicks.TryGetValue(stageId, out var click)) return;
-
-            var gain = click.BaseGain * click.Modifier;
-            if (!(gain > 0) || double.IsNaN(gain) || double.IsInfinity(gain)) return;
-
-            var resId = StageData.GetResourceId(stageId);
-            Add(resId, gain);
+            var mult = _effects.ClicksGainMult();
+            var gain = click.BaseGain * click.Modifier * mult;
+            Add(StageData.GetResourceId(stageId), gain);
             click.TotalGain += gain;
             Changed?.Invoke();
         }
@@ -258,8 +263,9 @@ namespace FurmaIdle.Services
             if (roster.Count > cap) { reason = $"Seleção excede o limite ({cap})."; return false; }
 
             // Contratos
-            ex.ActiveContracts ??= new List<ContractRun>();
-            ex.Contracts = ContractData.CreateInitialContracts();
+            ex.Contracts = ContractData.CreateInitialContracts(); 
+            ex.ActiveContracts = new List<ContractRun>();
+            ex.LockedContractByLevel = new Dictionary<int, string>();
 
             // Validação usando modelo robusto (sem NRE)
             var party = new List<CharacterModel>(roster.Count);
@@ -331,6 +337,7 @@ namespace FurmaIdle.Services
             {
                 foreach (var kv in ex2.Contracts) kv.Value.Quant = 0;
                 ex2.ActiveContracts.Clear();
+                ex2.LockedContractByLevel.Clear();
             }
 
             ids.Clear();
@@ -346,36 +353,81 @@ namespace FurmaIdle.Services
         #region Ticks
         public void Tick(double dtSeconds)
         {
-            if (dtSeconds <= 0 || double.IsNaN(dtSeconds) || double.IsInfinity(dtSeconds)) return;
+            // saneamento do delta
+            if (!(dtSeconds > 0) || double.IsNaN(dtSeconds) || double.IsInfinity(dtSeconds)) return;
 
-            foreach (var (stageId, st) in Current.Stages)
+            // (opcional) limitar "catch-up" para não estourar ciclos após longas pausas
+            const double MaxStep = 0.25; // 250 ms por subpasso para estabilizar barras de progresso
+            int steps = (int)Math.Ceiling(dtSeconds / MaxStep);
+            double step = dtSeconds / steps;
+
+            bool anyChange = false;
+
+            for (int s = 0; s < steps; s++)
             {
-                var ex = st.Expedition;
-                if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
-
-                foreach (var run in ex.ActiveContracts)
+                foreach (var st in Current.Stages.Values)
                 {
-                    if (!ex.Contracts.TryGetValue(run.ContractId, out var c)) continue;
-                    if (c.Quant <= 0) continue;
+                    var ex = st.Expedition;
+                    if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+                    if (ex.ActiveContracts is null || ex.Contracts is null) continue;
 
-                    if (!ContractsPricingHelper.TryGetBalance(c, out var bal)) continue; // por Level
-
-                    run.ProgressSec += dtSeconds;
-
-                    if (run.ProgressSec >= bal.SecondsPerCycle)
+                    foreach (var run in ex.ActiveContracts)
                     {
-                        var cycles = Math.Floor(run.ProgressSec / bal.SecondsPerCycle);
-                        if (cycles >= 1)
+                        if (!ex.Contracts.TryGetValue(run.ContractId, out var c)) continue;
+                        if (c.Quant <= 0) continue;
+
+                        // Tabela base por nível
+                        if (!ContractsPricingHelper.TryGetBalance(c, out var bal)) continue;
+
+                        // ---- APLICA MELHORIAS ----
+                        // ganho multiplicativo
+                        var gainMult = _effects.ContractGainMult(c.Id);   // ex.: x1.10, x1.15…
+                                                                          // tempo multiplicativo (0.9 = 10% mais rápido)
+                        var timeMult = _effects.ContractTimeMult(c.Id);
+
+                        // parâmetros efetivos do contrato
+                        double coinsPerCycle = bal.CoinsPerCycle * gainMult;
+                        double secondsPerCycle = Math.Max(0.02, bal.SecondsPerCycle * timeMult); // clamp mínimo
+
+                        // avança progresso
+                        run.ProgressSec += step;
+
+                        if (run.ProgressSec >= secondsPerCycle)
                         {
-                            var amount = cycles * bal.CoinsPerCycle * c.Quant;
-                            Add(bal.ResourceId, amount);
-                            run.ProgressSec -= cycles * bal.SecondsPerCycle;
+                            double cycles = Math.Floor(run.ProgressSec / secondsPerCycle);
+                            if (cycles >= 1.0)
+                            {
+                                double amount = cycles * coinsPerCycle * c.Quant; // Quant pilha linear
+                                if (amount > 0)
+                                {
+                                    Add(bal.ResourceId, amount);
+                                    anyChange = true;
+                                }
+                                run.ProgressSec -= cycles * secondsPerCycle;
+                            }
+                        }
+                    }
+                }
+
+                // ---- GERAÇÃO PASSIVA POR RECURSO (opcional, se você usa) ----
+                if (Current.Resources is not null)
+                {
+                    foreach (var r in Current.Resources.Values)
+                    {
+                        double addPerSec = _effects.ResourceGenAddPerSecond(r.Id); // soma “all” + específico
+                        if (addPerSec > 0)
+                        {
+                            Add(r.Id, addPerSec * step);
+                            anyChange = true;
                         }
                     }
                 }
             }
 
             Current.LastTickUtc = DateTimeOffset.UtcNow;
+
+            // Evita re-render em todo tick se nada mudou
+            if (anyChange) Changed?.Invoke();
         }
         #endregion
 
@@ -438,64 +490,162 @@ namespace FurmaIdle.Services
         {
             reason = null;
 
-            if (!Current.Stages.TryGetValue(stageId, out var st) || st.Expedition is null)
-            { reason = "Stage/expedição indisponível."; return false; }
-
-            var ex = st.Expedition;
-            if (ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
-            { reason = "Expedição não está ativa."; return false; }
-
-            if (!ex.Contracts.TryGetValue(contractId, out var c))
+            try
             {
-                if (!ContractData.All.TryGetValue(contractId, out var def))
-                { reason = "Contrato inválido."; return false; }
+                if (!Current.Stages.TryGetValue(stageId, out var st) || st.Expedition is null)
+                { reason = "Stage/expedição indisponível."; return false; }
 
-                c = new ContractModel
+                var expd = st.Expedition;
+                if (expd.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
+                { reason = "Expedição não está ativa."; return false; }
+
+                // ======= GARANTIAS (evita NRE em saves antigos) =======
+                expd.Contracts ??= new Dictionary<string, ContractModel>();
+                expd.ActiveContracts ??= new List<ContractRun>();
+                expd.LockedContractByLevel ??= new Dictionary<int, string>();
+
+                // ======= Resolve contrato runtime =======
+                if (!expd.Contracts.TryGetValue(contractId, out var c))
                 {
-                    Id = def.Id,
-                    Name = def.Name,
-                    Level = def.Level,
-                    Image = def.Image,
-                    FirstKnowId = def.FirstKnowId,
-                    SecondKnowId = def.SecondKnowId,
-                    ThirdKnowId = def.ThirdKnowId,
-                    FirstDiferential = def.FirstDiferential,
-                    SecondDiferential = def.SecondDiferential,
-                    Unlocked = def.Unlocked,
-                    Avaliable = def.Avaliable,
-                    ConDestId = def.ConDestId,
-                    Quant = 0
-                };
-                ex.Contracts[contractId] = c;
+                    if (!ContractData.All.TryGetValue(contractId, out var def))
+                    { reason = "Contrato inválido."; return false; }
+
+                    c = new ContractModel
+                    {
+                        Id = def.Id,
+                        Name = def.Name,
+                        Level = def.Level,
+                        Image = def.Image,
+                        FirstKnowId = def.FirstKnowId,
+                        SecondKnowId = def.SecondKnowId,
+                        ThirdKnowId = def.ThirdKnowId,
+                        FirstDiferential = def.FirstDiferential,
+                        SecondDiferential = def.SecondDiferential,
+                        Unlocked = def.Unlocked,
+                        Avaliable = def.Avaliable,
+                        ConDestId = def.ConDestId,
+                        Quant = 0
+                    };
+                    expd.Contracts[contractId] = c;
+                }
+
+                // ======= 1 contrato por NÍVEL =======
+                if (expd.LockedContractByLevel.TryGetValue(c.Level, out var chosenId) && chosenId != c.Id)
+                { reason = "Já existe um contrato ativo para este nível nesta expedição."; return false; }
+
+                // ======= CAP: soma de TODAS as Quant =======
+                var cap = GetContractsCap(stageId);  // soma dos MaxContracts da party
+                var usedUnits = expd.Contracts.Values.Sum(k => k.Quant);
+
+                // vamos comprar +1: precisa caber
+                if (usedUnits + 1 > cap)
+                {
+                    Logged?.Invoke($"[DBG] cap={cap}, used={usedUnits}, buying={contractId}", LogKind.Info);
+
+                    reason = $"Limite de contratos atingido ({usedUnits}/{cap}).";
+                    return false;
+                }
+
+                // ======= Preço/Produção por Level =======
+                var price = ContractsPricingHelper.NextPrice(c);
+                var (resId, cps, spc) = ContractsPricingHelper.ProdParams(c);
+                if (string.IsNullOrWhiteSpace(resId) || !(cps > 0) || !(spc > 0))
+                { reason = "Tabela de balanço ausente."; return false; }
+
+                if (!TrySpend(resId, price))
+                { reason = $"Custa {price:N0} {resId}, saldo insuficiente."; return false; }
+
+                // ======= Compra/ativação =======
+                c.Quant += 1;
+
+                // trava o nível na primeira compra deste nível
+                if (!expd.LockedContractByLevel.ContainsKey(c.Level))
+                    expd.LockedContractByLevel[c.Level] = c.Id;
+
+                if (!expd.ActiveContracts.Any(r => r.ContractId == c.Id))
+                    expd.ActiveContracts.Add(new ContractRun { ContractId = c.Id });
+
+                var pps = ContractsPricingHelper.ProdPerSecond(c);
+                Logged?.Invoke($"Contrato {c.Name} (nível {c.Level}) agora Quant={c.Quant} · {pps:N2}/s. Cap {usedUnits + 1}/{cap}", LogKind.Success);
+                Changed?.Invoke();
+                return true;
             }
+            catch (Exception e)
+            {
+                reason = "Falha inesperada ao comprar contrato.";
+                Logged?.Invoke($"[ERROR] BuyOrActivateContract: {e}", LogKind.Error);
+                return false;
+            }
+        }
 
-            // slots: cada contrato distinto com Quant>0 ocupa 1 slot
-            var slots = st.ContractsSlots > 0 ? st.ContractsSlots : 3;
-            var usedSlots = ex.Contracts.Values.Count(k => k.Quant > 0);
-            if (c.Quant == 0 && usedSlots >= slots)
-            { reason = "Sem slots de contrato disponíveis."; return false; }
+        public int GetContractsCap(string stageId)
+        {
+            var ex = GetExpedition(stageId);
+            if (ex?.PartyId is null || ex.PartyId.Count == 0) return 0;
 
-            // preço da próxima unidade (para primeira ativação: Cost0)
-            var price = ContractsPricingHelper.NextPrice(c);
-            var (resId, cps, spc) = ContractsPricingHelper.ProdParams(c);
-            if (string.IsNullOrWhiteSpace(resId) || !(cps > 0) || !(spc > 0))
-            { reason = "Tabela de balanço ausente."; return false; }
+            int extra = _effects.ExtraContractsPerChar(); // mx00
+            int cap = 0;
+            foreach (var charId in ex.PartyId)
+            {
+                if (Current.Characters.TryGetValue(charId, out var c))
+                    cap += Math.Max(0, c.MaxContracts + extra);
+            }
+            return cap;
+        }
+        #endregion
+
+        #region Melhorias
+        public bool BuyUpgrade(string upgradeId, out string? reason)
+        {
+            reason = null;
+
+            if (string.IsNullOrWhiteSpace(upgradeId))
+            { reason = "Upgrade inválida."; return false; }
+
+            if (!Current.Upgrades.TryGetValue(upgradeId, out var u))
+            { reason = "Upgrade inexistente."; return false; }
+
+            if (!u.Avaliable)
+            { reason = "Upgrade indisponível."; return false; }
+
+            if (u.IsMaxed)
+            { reason = $"Limite atingido ({u.Buys}/{u.MaxBuys})."; return false; }
+
+            // ----- preço e moeda -----
+            double price = UpgradePricingHelper.NextPrice(u);
+            string resId = string.IsNullOrWhiteSpace(u.CostResourceId) ? "r001" : u.CostResourceId;
 
             if (!TrySpend(resId, price))
-            { reason = $"Custa {price:N0} {resId}, saldo insuficiente."; return false; }
+            { reason = $"Custa {price:N0} {resId}."; return false; }
 
-            // ativa/compra
-            c.Quant += 1;
+            // ----- aplica compra -----
+            u.Buys += 1;
 
-            if (!ex.ActiveContracts.Any(r => r.ContractId == c.Id))
-                ex.ActiveContracts.Add(new ContractRun { ContractId = c.Id });
+            // disponibilidade pós-compra
+            if (u.MaxBuys <= 1)
+            {
+                // upgrades one-shot
+                u.Avaliable = false;
+            }
+            else
+            {
+                // multi-buy (ex.: mx00/mx01) continuam visíveis até esgotar
+                u.Avaliable = !u.IsMaxed;
+            }
 
-            Logged?.Invoke($"Contrato {c.Name} ativado (Quant={c.Quant}).", LogKind.Success);
+            // recalc dos efeitos para tick/click/caps etc.
+            _effects.Recompute(Current);
+
+            Logged?.Invoke($"Upgrade {u.Name}: {u.Buys}/{u.MaxBuys}. Próx custo: {UpgradePricingHelper.NextPrice(u):N0} {resId}.", LogKind.Success);
             Changed?.Invoke();
             return true;
         }
 
-
+        static bool IsUpgradeAvailable(GameModel m, UpgradeModel u)
+        {
+            if (u.TechId == null) return true; // sempre visível (mx00/mx01)
+            return m.Technologies.TryGetValue(u.TechId, out var t) && t.Unlocked;
+        }
         #endregion
     }
 }

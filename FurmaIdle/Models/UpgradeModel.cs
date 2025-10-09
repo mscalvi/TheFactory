@@ -10,6 +10,10 @@ namespace FurmaIdle.Models
         public string Description { get; set; }
         public string Lore { get; set; }
 
+        public int Buys { get; set; } = 0;  
+        public int MaxBuys { get; set; } = 1;
+        public bool IsMaxed => Buys >= MaxBuys;
+
         // State
         public bool Unlocked { get; set; }
         public string TechId { get; set; }
