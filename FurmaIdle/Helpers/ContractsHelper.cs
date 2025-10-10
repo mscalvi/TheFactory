@@ -17,7 +17,7 @@ namespace FurmaIdle.Helpers
         public static IEnumerable<CharacterModel> GetActiveCharacters(GameModel current, string stageId)
             => current?.Characters?.Values?
                    .Where(c => c.CharState == CharStateEnum.CharState.OnStage
-                            && c.CharDestId == stageId)
+                            && c.CharStageId == stageId)
                ?? Enumerable.Empty<CharacterModel>();
 
         public static IReadOnlyList<int> GetKnownLevelsFor(CharacterModel ch)
@@ -64,7 +64,7 @@ namespace FurmaIdle.Helpers
 
             var activeChars = allChars
                 .Where(c => c.CharState == CharStateEnum.CharState.OnStage &&
-                            string.Equals(c.CharDestId, stageId, StringComparison.Ordinal));
+                            string.Equals(c.CharStageId, stageId, StringComparison.Ordinal));
 
             var levels = new SortedSet<int>();
 
@@ -92,7 +92,7 @@ namespace FurmaIdle.Helpers
 
             var active = (game.Current?.Characters?.Values ?? Enumerable.Empty<CharacterModel>())
                 .Where(c => c.CharState == CharStateEnum.CharState.OnStage
-                         && string.Equals(c.CharDestId, stageId, StringComparison.Ordinal));
+                         && string.Equals(c.CharStageId, stageId, StringComparison.Ordinal));
 
             var ids = new HashSet<string>(StringComparer.Ordinal);
 

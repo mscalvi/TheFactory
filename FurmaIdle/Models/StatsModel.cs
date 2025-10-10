@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Helpers;
+
+namespace FurmaIdle.Models
 {
     public class StatsModel
     {
@@ -9,5 +11,6 @@
         
         public int ClicksExpansion { get; set; }
         public int ClicksTotal { get; set; }
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.Permanent;
     }
 }

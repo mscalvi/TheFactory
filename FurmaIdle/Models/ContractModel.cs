@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Helpers;
+
+namespace FurmaIdle.Models
 {
     public class ContractModel
     {
@@ -15,5 +17,6 @@
         public bool Unlocked {  get; set; }
         public string ConDestId { get; set; }
         public bool Avaliable { get; set; }
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Helpers;
+
+namespace FurmaIdle.Models
 {
     public class StageModel
     {
@@ -14,5 +16,6 @@
         public int PartyCap { get; set; }
         public ExpeditionModel Expedition { get; set; } = new();
         public int ContractsSlots { get; set; }
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.ExpansionOnly;
     }
 }

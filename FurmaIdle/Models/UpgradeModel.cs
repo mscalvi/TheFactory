@@ -1,4 +1,5 @@
-﻿using static FurmaIdle.Helpers.UpgradeCostEnum;
+﻿using FurmaIdle.Helpers;
+using static FurmaIdle.Helpers.UpgradeCostEnum;
 
 namespace FurmaIdle.Models
 {
@@ -13,6 +14,8 @@ namespace FurmaIdle.Models
         public int Buys { get; set; } = 0;  
         public int MaxBuys { get; set; } = 1;
         public bool IsMaxed => Buys >= MaxBuys;
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly;
+
 
         // State
         public bool Unlocked { get; set; }

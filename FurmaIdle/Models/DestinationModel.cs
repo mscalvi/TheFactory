@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Helpers;
+
+namespace FurmaIdle.Models
 {
     public class DestinationModel
     {
@@ -10,5 +12,6 @@
         public bool Unlocked { get; set; }
         public string StageId { get; set; }
         public bool Avaliable { get; set; }
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.ExpansionOnly;
     }
 }

@@ -167,7 +167,6 @@ namespace FurmaIdle.Services
             return total;
         }
 
-
         #endregion
 
         #region Clicks
@@ -309,7 +308,7 @@ namespace FurmaIdle.Services
             foreach (var c in party)
             {
                 c.CharState = CharStateEnum.CharState.OnStage;
-                c.CharDestId = stageId;
+                c.CharStageId = stageId;
                 ex.PartyId.Add(c.Id);
             }
             ex.ExpeditionStatus = ExpeditionStatus.Active;
@@ -351,29 +350,83 @@ namespace FurmaIdle.Services
             var ex = st.Expedition;
             if (ex is null || ex.ExpeditionStatus == ExpeditionStatus.Idle) return false;
 
-            var ids = ex.PartyId ??= new List<string>();
-            foreach (var id in ids.ToList())
+            // Liberar personagens da expedição (sempre)
+            var ids = (ex.PartyId ??= new List<string>()).ToList();
+            foreach (var id in ids)
             {
                 if (!Current.Characters.TryGetValue(id, out var c)) continue;
                 c.CharState = CharStateEnum.CharState.InBase;
-                c.CharDestId = null;
+                c.CharStageId = null;
             }
 
-            if (st.Expedition is { } ex2)
+            // Contratos e progresso
+            ex.ActiveContracts?.Clear();
+            ex.LockedContractByLevel?.Clear();
+            if (ex.Contracts is not null)
             {
-                foreach (var kv in ex2.Contracts) kv.Value.Quant = 0;
-                ex2.ActiveContracts.Clear();
-                ex2.LockedContractByLevel.Clear();
+                foreach (var c in ex.Contracts.Values.Where(k => k.Quant > 0).ToList())
+                {
+                    if (c.Persistence == ResetPersistenceEnum.ResetPersistence.ExpeditionOnly)
+                        c.Quant = 0;
+                }
+            }
+
+            // Recursos – zera apenas o saldo atual
+            if (Current.Resources is not null)
+            {
+                foreach (var r in Current.Resources.Values)
+                {
+                    if (r.Persistence == ResetPersistenceEnum.ResetPersistence.ExpeditionOnly)
+                    {
+                        r.Actual = 0;
+                    }
+                }
+            }
+
+            foreach (var u in Current.Upgrades.Values)
+            {
+                if (u.Persistence == ResetPersistenceEnum.ResetPersistence.ExpansionOnly)
+                {
+                    u.Buys = 0;
+                }
             }
 
             ids.Clear();
             ex.ExpeditionStatus = ExpeditionStatus.Idle;
             ex.Start = null;
 
-            Logged?.Invoke($"Expedição encerrada em {stageName}" + (string.IsNullOrWhiteSpace(reason) ? "." : $": {reason}"), LogKind.Success);
+            Current.Guild?.Roster?.Clear();
+
+            _effects.Recompute(Current);
+            RecomputeUpgradesUnlockedAndAvailability();
+
             Changed?.Invoke();
             return true;
         }
+
+        private static bool ComputeUpgradeUnlocked(GameModel m, UpgradeModel u)
+        {
+            if (u is null) return false;
+
+            // Gate por tecnologia (exemplo)
+            if (!string.IsNullOrWhiteSpace(u.TechId))
+                if (!m.Technologies.TryGetValue(u.TechId, out var t) || !t.Unlocked)
+                    return false;
+
+            // (Se tiver gates por destino/stage, adicione aqui)
+
+            return true;
+        }
+
+        private void RecomputeUpgradesUnlockedAndAvailability()
+        {
+            foreach (var u in Current.Upgrades.Values)
+            {
+                u.Unlocked = ComputeUpgradeUnlocked(Current, u);
+                u.Avaliable = u.Unlocked && !u.IsMaxed;
+            }
+        }
+
         #endregion
 
         #region Ticks
@@ -732,4 +785,5 @@ namespace FurmaIdle.Services
         }
         #endregion
     }
+
 }

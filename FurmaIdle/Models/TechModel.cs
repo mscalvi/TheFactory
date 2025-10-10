@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Helpers;
+
+namespace FurmaIdle.Models
 {
     public class TechModel
     {
@@ -10,5 +12,6 @@
         public bool Unlocked { get; set; }
         public bool Avaliable { get; set; }
         public string DestinationId { get; set; }
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.ExpansionOnly;
     }
 }

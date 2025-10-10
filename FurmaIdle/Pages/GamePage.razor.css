@@ -237,7 +237,7 @@
         display: none;
         font-weight: 200;
         text-align: center;
-        padding: 6px;
+        padding: 2px;
         line-height: 1.2;
         font-size: clamp(4px, 1.1vw, 6px);
         word-break: break-word;
@@ -673,16 +673,26 @@
         padding: 2px;
         position: relative;
         overflow: hidden;
+        --progress-bg: rgba(106,160,255,.10);
+        --progress-fill: rgba(106,160,255,.35);
     }
 
         .contract-selected .contract-progress {
             position: absolute;
             inset: 0;
             z-index: 0;
-            background: linear-gradient(to right, rgba(106,160,255,.20) 0, rgba(106,160,255,.20) var(--pct,0%), transparent var(--pct,0%));
+            background: var(--progress-bg);
             pointer-events: none;
             border-radius: inherit;
+            overflow: hidden;
         }
+
+            .contract-selected .contract-progress .progress-fill {
+                height: 100%;
+                width: 0%;
+                background: var(--progress-fill);
+                transition: width .12s linear; 
+            }
 
         .contract-selected > :not(.contract-progress) {
             position: relative;
@@ -703,12 +713,44 @@
             height: 100%;
         }
 
+        /* faixa de 10 segmentos na base do card */
+        .contract-selected .contract-steps {
+            position: absolute;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            height: 8px; /* altura da faixinha */
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px; /* espacinho entre segmentos */
+            z-index: 1; /* acima do fundo, abaixo do conteúdo */
+            pointer-events: none;
+            opacity: .95;
+        }
+
+            /* estilo de cada segmento */
+            .contract-selected .contract-steps .step {
+                background: rgba(106,160,255,.12); /* azul bem clarinho (apagado) */
+                border-radius: 2px;
+                transition: background-color .12s linear, transform .08s linear;
+            }
+
+                /* segmento “ligado” (atingidos) */
+                .contract-selected .contract-steps .step.is-on {
+                    background: rgba(106,160,255,.55); /* azul mais forte (ativo) */
+                }
+
+                    /* (opcional) micro feedback: o mais recente dá uma leve “pulsada” */
+                    .contract-selected .contract-steps .step.is-on:last-of-type {
+                        transform: translateY(-1px);
+                    }
+
     .contract-selected-info {
         display: grid;
         gap: 2px;
     }
 
-    .contract-slot-empty { /* apenas mantém a linha ocupada */
+    .contract-slot-empty { 
     }
 }
 

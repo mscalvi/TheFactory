@@ -1,4 +1,5 @@
 ﻿using FurmaIdle.Models;
+using FurmaIdle.Helpers;
 using System.Linq;
 using System.Reflection.Emit;
 using static FurmaIdle.Helpers.UpgradeCostEnum;
@@ -444,7 +445,8 @@ namespace FurmaIdle.Data
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ContractCap, ScopeId="all", Value=1, Op=EffectOp.Additive }
                 },
-                MaxBuys = 47
+                MaxBuys = 47,
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             ["mx01"] = Build(new UpgradeModel
             {
@@ -461,7 +463,8 @@ namespace FurmaIdle.Data
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ClicksGain, ScopeId="all", Value=2.00, Op=EffectOp.Multiplicative }
                 },
-                MaxBuys = 10
+                MaxBuys = 10,
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             #endregion
             #region x01
@@ -479,7 +482,8 @@ namespace FurmaIdle.Data
                 CostCode = UpgradeCostCode.Quantidade1T1,
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="all", Value=1.15, Op=EffectOp.Multiplicative }
-                }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             ["mx11"] = Build(new UpgradeModel
             {
@@ -495,7 +499,8 @@ namespace FurmaIdle.Data
                 CostCode = UpgradeCostCode.Quantidade1T1,
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="all", Value=1.15, Op=EffectOp.Multiplicative }
-                }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             ["mx12"] = Build(new UpgradeModel
             {
@@ -511,7 +516,8 @@ namespace FurmaIdle.Data
                 CostCode = UpgradeCostCode.Geracao1T1,
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="all", Value=1.15, Op=EffectOp.Multiplicative }
-                }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             #endregion
             #region x02
@@ -529,7 +535,8 @@ namespace FurmaIdle.Data
                 CostCode = UpgradeCostCode.Quantidade1T1,
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="all", Value=1.15, Op=EffectOp.Multiplicative }
-                }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             ["mx21"] = Build(new UpgradeModel
             {
@@ -545,7 +552,8 @@ namespace FurmaIdle.Data
                 CostCode = UpgradeCostCode.Quantidade1T1,
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="all", Value=1.15, Op=EffectOp.Multiplicative }
-                }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             ["mx22"] = Build(new UpgradeModel
             {
@@ -561,7 +569,8 @@ namespace FurmaIdle.Data
                 CostCode = UpgradeCostCode.Geracao1T1,
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ResourceGen, ScopeId="all", Value=0.10, Op=EffectOp.Additive }
-                }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             #endregion
         };
@@ -615,6 +624,7 @@ namespace FurmaIdle.Data
                 Effects = CloneEffects(up.Effects),
                 MaxBuys = up.MaxBuys,
                 Buys = 0,
+                Persistence = up.Persistence
             };
         }
 
@@ -646,6 +656,7 @@ namespace FurmaIdle.Data
                     Effects = CloneEffects(up.Effects),
                     MaxBuys = up.MaxBuys,
                     Buys = 0,
+                    Persistence = up.Persistence
                 };
             }
             return CoinsCollection;
@@ -685,6 +696,7 @@ namespace FurmaIdle.Data
                     Lore = def.Lore,
                     MaxBuys = def.MaxBuys,
                     Effects = CloneEffects(def.Effects),
+                    Persistence = def.Persistence,
 
                     // Runtime preservado
                     Buys = cur.Buys,

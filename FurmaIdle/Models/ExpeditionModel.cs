@@ -13,7 +13,7 @@ namespace FurmaIdle.Models
         public string StageId { get; set; }
         public string ExpansionId { get; set; }
         public List<string> PartyId { get; set; } = new();
-        public ExpeditionEnum.ExpeditionStatus ExpeditionStatus { get; set; }
+        public ExpeditionEnum.ExpeditionStatus ExpeditionStatus { get; set; } = ExpeditionEnum.ExpeditionStatus.Idle;
 
         public Dictionary<string, ContractModel> Contracts { get; set; } = new();
         public List<ContractRun> ActiveContracts { get; set; } = new();

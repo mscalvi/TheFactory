@@ -14,6 +14,7 @@ namespace FurmaIdle.Models
         public string Image { get; set; }
         public string BigImage { get; set; }
         public string FullImage { get; set; }
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.Permanent;
 
         // Stats
         public CharStateEnum.CharState CharState { get; set; }

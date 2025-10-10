@@ -37,8 +37,8 @@
                 [UpgradeCostCode.Tempo1C4] = ("r001", 220000, 2.5),
                 [UpgradeCostCode.Geracao1T1] = ("r001", 25000, 2.2),
                 [UpgradeCostCode.Geracao1R1] = ("r001", 8000, 1.5),
-                [UpgradeCostCode.LimiteContrato1T1] = ("r001", 600, 2.2),
-                [UpgradeCostCode.Clicks1T1] = ("r001", 200, 2.2)
+                [UpgradeCostCode.LimiteContrato1T1] = ("r001", 600, 3.1),
+                [UpgradeCostCode.Clicks1T1] = ("r001", 200, 3.1)
             };
 
             public static (string res, double @base, double growth) Get(UpgradeCostCode code) => _map[code];
