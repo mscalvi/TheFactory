@@ -763,6 +763,20 @@
         object-fit: cover;
         display: block;
     }
+
+        .stage-image.is-idle {
+            opacity: .35;
+            filter: saturate(.75);
+            transition: opacity .2s ease, filter .2s ease;
+        }
+
+    /* Expedição: meta enxuta */
+    .exp-meta--compact {
+        display: grid;
+        gap: 2px;
+        font-size: .9rem;
+        line-height: 1.25;
+    }
 }
 
 /* ==========================================================================

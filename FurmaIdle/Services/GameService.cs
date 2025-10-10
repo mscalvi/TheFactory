@@ -284,17 +284,40 @@ namespace FurmaIdle.Services
             if (ex.ExpeditionStatus == ExpeditionStatus.Active) { reason = "Expedição já está ativa."; return false; }
 
             var cap = GetEffectivePartyCap(stageId);
-            if (roster is null || roster.Count == 0) { reason = "Selecione pelo menos 1 membro."; return false; }
-            if (roster.Count > cap) { reason = $"Seleção excede o limite ({cap})."; return false; }
 
-            // Contratos
-            ex.Contracts = ContractData.CreateInitialContracts(); 
+            // se não vier roster, tenta auto-preencher com todos da Base que couberem
+            var requested = (roster ?? Array.Empty<string>()).ToList();
+            if (requested.Count == 0)
+            {
+                var baseCandidates = GetBaseCandidates();
+                if (baseCandidates.Count == 0)
+                {
+                    reason = "Ninguém na Base.";
+                    return false;
+                }
+
+                if (baseCandidates.Count <= cap)
+                {
+                    requested = baseCandidates; // cabe todo mundo → auto
+                }
+                else
+                {
+                    reason = $"Selecione até {cap} membros dentre {baseCandidates.Count} disponíveis na Base.";
+                    return false;
+                }
+            }
+
+            if (requested.Count > cap) { reason = $"Seleção excede o limite ({cap})."; return false; }
+            if (requested.Count < 1) { reason = "Selecione pelo menos 1 membro."; return false; }
+
+            // Contratos (zera para nova run)
+            ex.Contracts = ContractData.CreateInitialContracts();
             ex.ActiveContracts = new List<ContractRun>();
             ex.LockedContractByLevel = new Dictionary<int, string>();
 
             // Validação usando modelo robusto (sem NRE)
-            var party = new List<CharacterModel>(roster.Count);
-            foreach (var id in roster)
+            var party = new List<CharacterModel>(requested.Count);
+            foreach (var id in requested)
             {
                 if (string.IsNullOrWhiteSpace(id)) { reason = "Id vazio."; return false; }
                 if (!Current.Characters.TryGetValue(id, out var c)) { reason = $"Personagem inválido: {id}"; return false; }
@@ -318,8 +341,7 @@ namespace FurmaIdle.Services
             Current.Guild?.Roster?.Clear();
 
             string stageName = LookupData.Stage(Current, _stages, stageId).Name;
-
-            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {cap- ex.PartyId.Count} vagas. Boa aventura!", LogKind.Success);
+            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {Math.Max(0, cap - ex.PartyId.Count)} vagas. Boa aventura!", LogKind.Success);
             Changed?.Invoke();
             return true;
         }
@@ -426,6 +448,21 @@ namespace FurmaIdle.Services
                 u.Avaliable = u.Unlocked && !u.IsMaxed;
             }
         }
+
+        private List<string> GetBaseCandidates()
+        {
+            var ids = new List<string>();
+            foreach (var c in Current.Characters.Values)
+            {
+                if (c.CharState == CharStateEnum.CharState.InBase
+                    && !IsCharacterEngagedInAnyExpeditionSafe(c.Id))
+                {
+                    ids.Add(c.Id);
+                }
+            }
+            return ids;
+        }
+
 
         #endregion
 
@@ -783,6 +820,10 @@ namespace FurmaIdle.Services
             if (u.TechId == null) return true; // sempre visível (mx00/mx01)
             return m.Technologies.TryGetValue(u.TechId, out var t) && t.Unlocked;
         }
+        #endregion
+
+        #region Unlocks
+
         #endregion
     }
 

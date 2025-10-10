@@ -231,17 +231,16 @@
                 <div class="top-column span2">
                     <div class="exp-box">
                         <h4>Expedição</h4>
+
                         <button class="primary-btn"
                                 disabled="@(!_CanStartExpedition())"
                                 @onclick="ToggleExpedition">
                             @(ExpeditionActive ? "Terminar expedição" : "Iniciar expedição")
                         </button>
 
-                        <div class="exp-meta">
-                            <div><strong>Selecionados (roster):</strong> @Party.UsedRoster / @Party.CapRoster</div>
-                            <div><strong>Stage:</strong> @stage?.Name (@stageId)</div>
-                            <div><strong>PartyCap Efetivo (Stage):</strong> @Party.CapStage</div>
-                            <div><strong>Na expedição atual:</strong> @Party.UsedStage / @Party.CapStage</div>
+                        <div class="exp-meta exp-meta--compact">
+                            <div><strong>Membros ativos:</strong> @Party.UsedStage / @Party.CapStage</div>
+                            <div><strong>Conhecimento ao encerrar:</strong> —</div> @* placeholder *@
                         </div>
                     </div>
                 </div>
@@ -340,11 +339,11 @@
 
                 <!-- Stage e Clicks -->
                 <div class="mid-column span2">
-                    <img class="stage-image"
+                    <img class="stage-image @(ExpeditionActive ? null : "is-idle")"
                          src="@(stage?.ClickImage ?? "images/stages/s00.jpg")"
                          alt="@(stage?.Name ?? "Cenário")"
                          draggable="false"
-                         @onclick="OnStageClick"/>
+                         @onclick="OnStageClick" />
                 </div>
 
                 <!-- Contratos e Descrições -->
@@ -520,7 +519,9 @@
         RefreshContracts();
 
         Log("Jogo Iniciado.", MsgKind.Success);
-        Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
+
+        var sid = Game.SelectedStageId;
+        var roster = Game.GetRoster();
 
         double uiAccum = 0;
         Ticks.Start(async dt =>
@@ -533,6 +534,17 @@
                 await InvokeAsync(StateHasChanged);
             }
         }, targetHz: 10);
+
+        if (!Game.StartExpedition(sid, roster, out var reason))
+        {
+            Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
+            GoToMessages();
+            return;
+        }
+        ;
+
+        Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
+
     }
     #endregion
 
@@ -623,6 +635,7 @@
         try
         {
             var sid = Game.SelectedStageId;
+            var roster = Game.GetRoster();
 
             if (Game.GetExpedition(sid)?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
             {
@@ -634,20 +647,27 @@
                 Game.EndExpedition(sid);
                 RefreshChars();
                 RefreshContracts();
+                if (!Game.StartExpedition(sid, roster, out var reason))
+                {
+                    Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
+                    GoToMessages();
+                    return;
+                }
+                if (!ExpeditionActive) _topPanel = TopPanel.Base;
                 GoToMessages();
                 return;
-            }
+            }  
 
-            var roster = Game.GetRoster();     
-            if (!Game.StartExpedition(sid, roster, out var reason))
+            if (!Game.StartExpedition(sid, roster, out var reason2))
             {
-                Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
+                Log(reason2 ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
                 GoToMessages();
                 return;
             }
 
             RefreshChars();
             RefreshContracts();
+            if (!ExpeditionActive) _topPanel = TopPanel.Base;
             GoToMessages();
             await InvokeAsync(StateHasChanged);
         }
@@ -980,6 +1000,7 @@
             RefreshDestinations();
             RefreshUpgrades();
             RefreshContracts();
+            if (!ExpeditionActive) _topPanel = TopPanel.Base;
         }
         catch (Exception ex)
         {

@@ -3,7 +3,7 @@ using FurmaIdle.Services;
 
 namespace FurmaIdle.Helpers
 {
-    public class LookupData
+    public static class LookupData
     {
         public static StageModel? Stage(GameModel gm, IStageService stages, string id)
             => stages.Get(gm, id);
