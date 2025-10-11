@@ -23,7 +23,8 @@ namespace FurmaIdle.Data
                 Actual = 0,
                 PerSecond = 0,
                 ResourceType = ResourceEnum.ResourceType.Coin,
-                Sort = 1
+                Persistence = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly,
+                UpgUnlockId = null
             },
 
             ["r100"] = new ResourceModel
@@ -37,7 +38,8 @@ namespace FurmaIdle.Data
                 Actual = 0,
                 PerSecond = 0,
                 ResourceType = ResourceEnum.ResourceType.Resource,
-                Sort = 2
+                Persistence = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly,
+                UpgUnlockId = "mx02"
             }
         };
 
@@ -55,7 +57,8 @@ namespace FurmaIdle.Data
                 Actual = coin.Actual,
                 PerSecond = coin.PerSecond,
                 ResourceType = coin.ResourceType,
-                Sort = coin.Sort
+                Persistence = coin.Persistence,
+                UpgUnlockId = coin.UpgUnlockId
             };
         }
 
@@ -77,7 +80,8 @@ namespace FurmaIdle.Data
                     Actual = coin.Actual,
                     PerSecond = coin.PerSecond,
                     ResourceType = coin.ResourceType,
-                    Sort = coin.Sort
+                    Persistence = coin.Persistence,
+                    UpgUnlockId = coin.UpgUnlockId
                 };
             }
             return CoinsCollection;

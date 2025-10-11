@@ -286,6 +286,7 @@
                                             <div class="currency-name">@r.Name</div>
                                             <div>Atual: @r.Actual.ToString("N0")</div>
                                             <div>Total: @r.Total.ToString("N0")</div>
+                                            <div>Por Segundo: @r.PerSecond.ToString("N2")</div>
                                         </div>
                                     </div>
                                 }
@@ -299,26 +300,52 @@
                     }
                     <div class="resources-mid">
                         <div class="char-list-host">
-                            <div class="char-rows char-rows--grid" style="--spec-rows:@specRows">
+                            <div class="char-rows char-rows--grid" style="@($"--spec-rows:{specRows}")">
                                 @for (int i = 0; i < specRows; i++)
                                 {
                                     if (i < _activeChars.Count)
                                     {
                                         var c = _activeChars[i];
+
+                                        SpecialtyModel? spec = null;
+                                        if (!string.IsNullOrWhiteSpace(c.SpecialtyId))
+                                        {
+                                            try { spec = SpecialtyData.GetDef(c.SpecialtyId); } catch { spec = null; }
+                                        }
+
+                                        var resId = spec?.CostResourceId ?? "r100";
+                                        var cost = Math.Max(0, spec?.Cost ?? 0);
+                                        var have = Game.Get(resId)?.Actual ?? 0;
+                                        var canUse = spec is not null && have >= cost;
+
                                         <div class="char-row">
-                                            <!-- Coluna 1: ícone -->
-                                            <div class="char-cell-icon">
-                                                <img class="char-mini" src="@CharMiniSrc(c.Id)" alt="@c.Id"
-                                                     onerror="this.style.display='none'">
+
+                                            <!-- Coluna 1: ícone (grande, com hover Personagem) -->
+                                            <div class="char-cell-icon"
+                                                 @onmouseover="() => ShowHover(HoverType.Personagem, c.Id)"
+                                                 @onmouseout="ClearHover">
+                                                <span class="icon-wrap">
+                                                    <img class="char-mini"
+                                                         src="@BigCharSrc(c.Id)"
+                                                         alt="@c.Id"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                                    <span class="icon-fallback">@c.Id</span>
+                                                </span>
                                             </div>
 
-                                            <!-- Coluna 2: custo (placeholder “x”) -->
-                                            <div class="char-cell-cost">x</div>
+                                            <!-- Coluna 2: custo -->
+                                            <div class="char-cell-cost"
+                                                 title="@(spec is null ? "Sem especialidade" : $"{cost:N0} {resId} · Você tem {have:N0}")">
+                                                @(spec is null ? "—" : $"{cost:N0} {resId}")
+                                            </div>
 
                                             <!-- Coluna 3: Especialidade (preenche a linha) -->
                                             <div class="char-cell-actions">
                                                 <button class="mini-btn"
-                                                        @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Especialidade, c.Id)"
+                                                        disabled="@(spec is null || !canUse)"
+                                                        title="@(spec is null ? "Sem especialidade" : (canUse ? $"Ativar ({cost:N0} {resId})" : $"Precisa de {cost:N0} {resId} · Você tem {have:N0}"))"
+                                                        @onclick="() => OnSpecialtyClick(c.Id)"
+                                                        @onmouseenter="() => ShowHover(HoverType.Especialidade, c.Id)"
                                                         @onmouseleave="ClearHover">
                                                     Especialidade
                                                 </button>
@@ -338,6 +365,8 @@
                             </div>
                         </div>
                     </div>
+
+
 
                     <!-- Archievements e Configurações -->
                     <div class="resources-top">
@@ -868,6 +897,9 @@
 
     bool CharSelected(string id) => Roster.Contains(id);
 
+    string BigCharSrc(string charId)
+        => $"images/characters/bigimage/{charId}.jpg";
+
     void RefreshChars()
     {
         var all = Game.Current.Characters.Values;
@@ -1080,6 +1112,17 @@
             !_contractButtons.Any(b => b.Level == lvl))
             _openContractLevel = null;
     }
+    #endregion
+
+    #region Especialidades
+    void OnSpecialtyClick(string charId)
+    {
+        if (!Game.ActivateSpecialty(charId, out var reason))
+            Log(reason ?? "Não foi possível ativar a especialidade.", MsgKind.Warn);
+        else
+            Log($"Especialidade ativada por {charId}.", MsgKind.Success);
+    }
+
     #endregion
 
     #region Helpers

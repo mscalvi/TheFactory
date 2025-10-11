@@ -93,7 +93,9 @@ namespace FurmaIdle.Data
                 Image = "images/icons/characters/p03.jpg",
                 BigImage = "images/characters/p03.jpg",
                 FullImage = "images/pictures/p03.jpg",
-                MaxContracts = 3
+                MaxContracts = 3,
+                Cost = 5000,
+                CostResourceId = "r001"
             },
             ["p04"] = new CharacterModel
             {
@@ -113,7 +115,9 @@ namespace FurmaIdle.Data
                 Image = "images/icons/characters/p04.jpg",
                 BigImage = "images/characters/p04.jpg",
                 FullImage = "images/pictures/p04.jpg",
-                MaxContracts = 3
+                MaxContracts = 3,
+                Cost = 8000,
+                CostResourceId = "r001"
             },
             ["p05"] = new CharacterModel
             {
@@ -133,7 +137,9 @@ namespace FurmaIdle.Data
                 Image = "images/icons/characters/p05.jpg",
                 BigImage = "images/characters/p05.jpg",
                 FullImage = "images/pictures/p05.jpg",
-                MaxContracts = 3
+                MaxContracts = 3,
+                Cost = 20000,
+                CostResourceId = "r001"
             }
             #endregion
         };
@@ -159,7 +165,9 @@ namespace FurmaIdle.Data
                 Image = chara.Image,
                 BigImage = chara.BigImage,
                 FullImage = chara.FullImage,
-                MaxContracts = chara.MaxContracts
+                MaxContracts = chara.MaxContracts,
+                Cost = chara.Cost,
+                CostResourceId = chara.CostResourceId,
             };
         }
 
@@ -190,7 +198,9 @@ namespace FurmaIdle.Data
                     Image = chara.Image,
                     BigImage = chara.BigImage,
                     FullImage = chara.FullImage,
-                    MaxContracts = chara.MaxContracts
+                    MaxContracts = chara.MaxContracts,
+                    Cost = chara.Cost,
+                    CostResourceId = chara.CostResourceId,
                 };
             }
             return dict;

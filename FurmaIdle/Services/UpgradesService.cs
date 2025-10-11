@@ -17,6 +17,7 @@ namespace FurmaIdle.Services
         // Bônus globais
         double ClicksGainMult();                      // multiplicativo (empilha * )
         double ResourceGenAddPerSecond(string resId); // aditivo (/s), pode somar por “all” e por res específico
+        double ResourceGenMult(string resId);
 
         // Capacidade
         int ExtraContractsPerChar();                  // +N por personagem (ex.: mx00)
@@ -28,11 +29,13 @@ namespace FurmaIdle.Services
         private readonly Dictionary<string, double> _gainMultByContract = new(StringComparer.Ordinal);
         private readonly Dictionary<string, double> _timeMultByContract = new(StringComparer.Ordinal);
         private readonly Dictionary<string, double> _resGenAddPerSec = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, double> _resGenMultById = new(StringComparer.Ordinal);
 
         private double _gainMultAll = 1.0;
         private double _timeMultAll = 1.0;
         private double _clicksGainMult = 1.0;
         private int _extraContractsPerChar = 0;
+        private double _resGenMultAll = 1.0;
 
         public void Recompute(GameModel m)
         {
@@ -43,7 +46,10 @@ namespace FurmaIdle.Services
             _timeMultAll = 1.0;
             _clicksGainMult = 1.0;
             _extraContractsPerChar = 0;
+            _resGenMultById.Clear();
+            _resGenMultAll = 1.0;
 
+            if (m?.Runtime != null) m.Runtime.CharacterHireCostMult = 1.0;
             if (m?.Upgrades is null) return;
 
             foreach (var u in m.Upgrades.Values)
@@ -98,6 +104,7 @@ namespace FurmaIdle.Services
             }
 
             ApplyTraits(m);
+            ApplyActiveSpecialties(m);
         }
 
         // multiplicador helper sem ref
@@ -139,9 +146,15 @@ namespace FurmaIdle.Services
 
         public int ExtraContractsPerChar() => _extraContractsPerChar;
 
+        private static bool IsUpgradeUnlocked(GameModel m, string upgradeId)
+        {
+            return m?.Upgrades != null
+                && m.Upgrades.TryGetValue(upgradeId, out var u)
+                && (u.Unlocked || u.Buys > 0);
+        }
+
         private void ApplyTraits(GameModel m)
         {
-            // Personagens na expedição selecionada (ou todas expedições ativas, se houver múltiplas)
             foreach (var st in m.Stages.Values)
             {
                 var ex = st.Expedition;
@@ -152,29 +165,77 @@ namespace FurmaIdle.Services
                     if (!m.Characters.TryGetValue(charId, out var c)) continue;
                     if (string.IsNullOrWhiteSpace(c.TraitId)) continue;
 
-                    var trait = TraitData.GetDef(c.TraitId);
+                    var tr = TraitData.GetDef(c.TraitId);
 
-                    // 1) Add passivo por segundo (recurso ou conhecimento)
-                    if (trait.AddPerSecond != 0)
+                    // t04: só gerar se r100 estiver UNLOCKED OU se mx02 estiver comprada
+                    if (tr.AddPerSecond != 0 && !string.IsNullOrWhiteSpace(tr.ResourceId))
                     {
-                        var resId = trait.ResourceId ?? trait.KnowledgeId;
-                        if (!string.IsNullOrWhiteSpace(resId) && m.Resources.TryGetValue(resId, out var r))
+                        var canGenerate =
+                            (m.Resources.TryGetValue(tr.ResourceId, out var res) && res.Unlocked)
+                            || IsUpgradeUnlocked(m, "mx02");
+
+                        if (canGenerate)
                         {
-                            r.PerSecond += trait.AddPerSecond; // usa o mesmo campo que contr./upgrades já somam
+                            var key = tr.ResourceId;
+                            var cur = _resGenAddPerSec.TryGetValue(key, out var v) ? v : 0.0;
+                            _resGenAddPerSec[key] = cur + tr.AddPerSecond;
                         }
                     }
 
-                    // 2) Multiplicador de ganho de um resource/knowledge específico
-                    if (trait.GainMult != 1.0)
+                    // t03 – custo de contratação
+                    if (tr.CharacterCostMult != 1.0 && m.Runtime != null)
+                        m.Runtime.CharacterHireCostMult *= tr.CharacterCostMult;
+                }
+            }
+        }
+
+        public double ResourceGenMult(string resId)
+        {
+            var spc = _resGenMultById.TryGetValue(resId, out var v) ? v : 1.0;
+            return _resGenMultAll * spc;
+        }
+
+        private static bool IsAlive(ActiveSpecialtyModel a, DateTimeOffset now) => a.EndsAtUtc > now;
+
+        private void ApplyActiveSpecialties(GameModel m)
+        {
+            var now = DateTimeOffset.UtcNow;
+
+            foreach (var st in m.Stages.Values)
+            {
+                var ex = st.Expedition;
+                if (ex is null || ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+                if (ex.ActiveSpecialties is null || ex.ActiveSpecialties.Count == 0) continue;
+
+                // limpe vencidos (qualquer limpeza aqui ou no Tick também serve)
+                ex.ActiveSpecialties.RemoveAll(a => !IsAlive(a, now));
+                if (ex.ActiveSpecialties.Count == 0) continue;
+
+                foreach (var a in ex.ActiveSpecialties)
+                {
+                    var spec = SpecialtyData.GetDef(a.SpecialtyId);
+
+                    switch (spec.Target)
                     {
-                        var resId = trait.ResourceId ?? trait.KnowledgeId;
-                        if (!string.IsNullOrWhiteSpace(resId) && m.Resources.TryGetValue(resId, out var r))
-                        {
-                            r.PerSecond *= trait.GainMult;
-                        }
+                        case SpecialtyTarget.Coins:
+                            // e02: dobra coins (ganho de contratos) como multiplicador global
+                            if (spec.Op == SpecialtyOp.Multiplicative)
+                                _gainMultAll *= spec.Value;
+                            break;
+
+                        case SpecialtyTarget.Resources:
+                            // e01, e03: multiplicar geração de um recurso específico
+                            var rid = string.IsNullOrWhiteSpace(spec.ResourceIdScope) ? "__all__" : spec.ResourceIdScope;
+                            if (spec.Op == SpecialtyOp.Multiplicative)
+                            {
+                                if (rid == "__all__") _resGenMultAll *= spec.Value;
+                                else _resGenMultById[rid] = (_resGenMultById.TryGetValue(rid, out var cur) ? cur : 1.0) * spec.Value;
+                            }
+                            break;
                     }
                 }
             }
         }
+
     }
 }

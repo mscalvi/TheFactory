@@ -28,18 +28,18 @@ namespace FurmaIdle.Data
                 KnowledgeId = "k11",
                 GainMult = 1.05
             },
+            ["tr03"] = new TraitModel
+            {
+                Id = "tr03",
+                Name = "Reduz Custo de Contratação",
+                CharacterCostMult = 0.95
+            },
             ["tr04"] = new TraitModel
             {
                 Id = "tr04",
                 Name = "Gera Mantimentos",
                 ResourceId = "r100",
                 AddPerSecond = 0.2
-            },
-            ["tr03"] = new TraitModel
-            {
-                Id = "tr03",
-                Name = "Reduz Custo de Contratação",
-                CharacterCostMult = 0.95
             },
         };
 

@@ -137,12 +137,27 @@ namespace FurmaIdle.Services
         }
 
         // ===================== Especialidade =====================
-        private HoverTip BuildEspecialidadeHover(string id)
+        private HoverTip BuildEspecialidadeHover(string charId)
         {
-            // Ainda não temos SpecialtyData — exibe id e dica
-            return new HoverTip($"Especialidade ({id})",
-                "Efeitos detalhados virão quando SpecialtyData estiver disponível.");
+            if (!_game.Current.Characters.TryGetValue(charId, out var ch) || string.IsNullOrWhiteSpace(ch.SpecialtyId))
+                return new HoverTip("Especialidade", "—");
+
+            var spec = SpecialtyData.GetDef(ch.SpecialtyId);
+            var cost = $"{spec.Cost:N0} {spec.CostResourceId}";
+            var dur = TimeSpan.FromSeconds(spec.DurationSec);
+
+            string desc = spec.Id switch
+            {
+                "e00" => $"Produção Instantânea\n• Completa 1 ciclo de todos os contratos ativos.\n• Recarga: {dur:mm\\:ss}\n• Custo: {cost}",
+                "e01" => $"Geração de {spec.ResourceIdScope}: x{spec.Value:0.##}\nDuração: {dur:mm\\:ss}\nCusto: {cost}",
+                "e02" => $"Ganho de contratos (coins): x{spec.Value:0.##}\nDuração: {dur:mm\\:ss}\nCusto: {cost}",
+                "e03" => $"Consumo de {spec.ResourceIdScope}: x{spec.Value:0.##}\nDuração: {dur:mm\\:ss}\nCusto: {cost}",
+                _ => $"Duração: {dur:mm\\:ss}\nCusto: {cost}"
+            };
+
+            return new HoverTip($"Especialidade ({spec.Id})", desc);
         }
+
 
         // ===================== Tecnologia =====================
         private HoverTip BuildTecnologiaHover(string id)

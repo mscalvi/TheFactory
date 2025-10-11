@@ -18,6 +18,8 @@ namespace FurmaIdle.Models
         public Dictionary<string, ContractModel> Contracts { get; set; } = new();
         public List<ContractRun> ActiveContracts { get; set; } = new();
         public Dictionary<int, string> LockedContractByLevel { get; set; } = new();
+        public List<ActiveSpecialtyModel> ActiveSpecialties { get; set; } = new();
+
 
         public DateTimeOffset? Start { get; set; }
     }

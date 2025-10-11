@@ -466,18 +466,34 @@ namespace FurmaIdle.Data
                 MaxBuys = 10,
                 Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
+            ["mx02"] = Build(new UpgradeModel
+            {
+                Id = "mx02",
+                Name = "Queimar Energias",
+                Image = "images/icons/upgrades/mx02.png",
+                Description = "Libera o ganho do recurso: Mantimentos",
+                Lore = "",
+                Unlocked = false,
+                TechId = null,
+                Avaliable = true,
+                Range = 1,
+                CostCode = UpgradeCostCode.UnlockResource,
+                Effects = new List<UpgradeEffectModel>(),
+                MaxBuys = 1,
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
+            }),
             ["mx99"] = Build(new UpgradeModel
             {
                 Id = "mx99",
                 Name = "Bolsa de Ouro",
                 Image = "images/upgrades/mx99.png",
-                TechId = null,               // sem pré-requisito
-                Avaliable = true,            // sempre visível
-                Unlocked = false,            // só vira true após 1ª compra (normal)
+                TechId = null,              
+                Avaliable = true,           
+                Unlocked = false,          
                 Buys = 0,
-                MaxBuys = 999999,                 // 0 = infinito (IsMaxed == false sempre)
+                MaxBuys = 999999,             
                 Persistence = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly,
-                Effects = new List<UpgradeEffectModel>(), // sem efeito passivo; recompensa é on-buy
+                Effects = new List<UpgradeEffectModel>(), 
                 CostCode = UpgradeCostCode.Teste,
             }),
             #endregion

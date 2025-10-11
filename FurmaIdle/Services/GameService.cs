@@ -61,6 +61,9 @@ namespace FurmaIdle.Services
         // Characters
         bool BuyCharacter(string charId, out string? reason);
 
+        // Especialidades
+        bool ActivateSpecialty(string charId, out string? reason);
+
         // Gerais
         void Attach(GameModel model);
         event Action? Changed;
@@ -351,7 +354,7 @@ namespace FurmaIdle.Services
             Current.Guild?.Roster?.Clear();
 
             string stageName = LookupData.Stage(Current, _stages, stageId).Name;
-            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {Math.Max(0, cap - ex.PartyId.Count)} vagas. Boa aventura!", LogKind.Success);
+            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros: {roster.ToString}. Sobraram {Math.Max(0, cap - ex.PartyId.Count)} vagas. Boa aventura!", LogKind.Success);
             _unlock.ApplyStageEntry(Current, stageId);
             Changed?.Invoke();
             _effects.Recompute(Current);
@@ -484,8 +487,7 @@ namespace FurmaIdle.Services
             // saneamento do delta
             if (!(dtSeconds > 0) || double.IsNaN(dtSeconds) || double.IsInfinity(dtSeconds)) return;
 
-            // (opcional) limitar "catch-up" para não estourar ciclos após longas pausas
-            const double MaxStep = 0.25; // 250 ms por subpasso para estabilizar barras de progresso
+            const double MaxStep = 0.25;
             int steps = (int)Math.Ceiling(dtSeconds / MaxStep);
             double step = dtSeconds / steps;
 
@@ -537,12 +539,13 @@ namespace FurmaIdle.Services
                     }
                 }
 
-                // ---- GERAÇÃO PASSIVA POR RECURSO (opcional, se você usa) ----
+                // ---- GERAÇÃO PASSIVA POR RECURSO
                 if (Current.Resources is not null)
                 {
                     foreach (var r in Current.Resources.Values)
                     {
-                        double addPerSec = _effects.ResourceGenAddPerSecond(r.Id); // soma “all” + específico
+                        if (!r.Unlocked) continue;
+                        double addPerSec = _effects.ResourceGenAddPerSecond(r.Id) * _effects.ResourceGenMult(r.Id);
                         if (addPerSec > 0)
                         {
                             Add(r.Id, addPerSec * step, notify: false);
@@ -558,22 +561,23 @@ namespace FurmaIdle.Services
             if (anyChange) Changed?.Invoke();
         }
 
+        // GameService.cs
         private void RecomputePerSecond()
         {
             // zera
             if (Current.Resources != null)
-                foreach (var r in Current.Resources.Values)
-                    r.PerSecond = 0;
+                foreach (var r in Current.Resources.Values) r.PerSecond = 0;
 
-            // contratos ativos por expedição
             foreach (var st in Current.Stages.Values)
             {
                 var ex = st.Expedition;
-                if (ex?.ExpeditionStatus != ExpeditionStatus.Active) continue;
+                // ✅ use o enum qualificado que você realmente tem
+                if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+
+                if (ex.ActiveContracts is null || ex.Contracts is null) continue;
 
                 foreach (var run in ex.ActiveContracts)
                 {
-                    // TROCAR Current.Contracts -> ex.Contracts
                     if (!ex.Contracts.TryGetValue(run.ContractId, out var c)) continue;
                     if (!ContractsPricingHelper.TryGetBalance(c, out var bal)) continue;
 
@@ -585,18 +589,21 @@ namespace FurmaIdle.Services
                     if (c.Quant <= 0 || cps <= 0 || spc <= 0) continue;
 
                     var rate = (cps / spc) * c.Quant; // /s
-
                     var r = EnsureResource(bal.ResourceId);
                     r.PerSecond += rate;
                 }
             }
 
-            // geração passiva (se houver)
+            // geração passiva (somente recursos desbloqueados)
             if (Current.Resources != null)
                 foreach (var r in Current.Resources.Values)
-                    r.PerSecond += Math.Max(0, _effects.ResourceGenAddPerSecond(r.Id));
+                {
+                    if (!r.Unlocked) continue;
+                    // se você adicionou multiplicador de recurso, aplique aqui; senão, deixe só o add:
+                    var add = _effects.ResourceGenAddPerSecond(r.Id);
+                    r.PerSecond += Math.Max(0, add);
+                }
         }
-
 
         #endregion
 
@@ -854,6 +861,33 @@ namespace FurmaIdle.Services
 
                 Logged?.Invoke($"+{reward:N0} {goldId} via {upgradeId}.", LogKind.Success);
             }
+            if (upgradeId == "mx02")
+            {
+                const string rId = "r100";
+
+                // pega definição
+                var def = ResourceData.GetDef(rId);
+
+                // cria se não existir no estado
+                if (!Current.Resources.TryGetValue(rId, out var r))
+                {
+                    r = new ResourceModel { Id = def.Id };
+                    Current.Resources[rId] = r;
+                }
+
+                // sincroniza estáticos
+                r.Name = def.Name;
+                r.Image = def.Image;
+                r.Sort = def.Sort;
+                r.ResourceType = def.ResourceType;
+                r.Persistence = def.Persistence;
+
+                // libera para uso
+                r.Avaliable = true;
+                r.Unlocked = true;
+
+                Logged?.Invoke($"Recurso {r.Name} habilitado.", LogKind.Success);
+            }
 
             _effects.Recompute(Current);
             Changed?.Invoke();
@@ -945,37 +979,124 @@ namespace FurmaIdle.Services
         #endregion
 
         #region Personagens
-        // GameService.cs
         public bool BuyCharacter(string charId, out string? reason)
         {
             reason = null;
 
-            if (!Current.Characters.TryGetValue(charId, out var c))
+            if (!Current.Characters.TryGetValue(charId, out var live))
             { reason = "Personagem inexistente."; return false; }
 
-            if (!c.Avaliable) { reason = "Personagem indisponível."; return false; }
-            if (c.Unlocked) { reason = "Personagem já contratado."; return false; }
+            if (!live.Avaliable) { reason = "Indisponível para contratação."; return false; }
+            if (live.Unlocked) { reason = "Já contratado."; return false; }
 
-            // preço base do catálogo
+            // custo do catálogo (fonte da verdade)
             var def = CharacterData.GetDef(charId);
-            var price = Math.Max(0, def.Cost);
-            var resId = def.CostResourceId;
+            var resId = string.IsNullOrWhiteSpace(def.CostResourceId) ? "r001" : def.CostResourceId;
+            var baseCost = Math.Max(0, def.Cost);
 
-            // aplica o desconto dos traits ATUAIS (party)
+            // multiplicador de traço (tr03). Se você não usa runtime, deixe = 1.0
             var mult = Current.Runtime?.CharacterHireCostMult ?? 1.0;
-            var effective = Math.Ceiling(price * mult);
+            var effective = Math.Ceiling(baseCost * mult);
 
             if (effective > 0 && !TrySpend(resId, effective))
-            { reason = $"Custa {effective:N0} {resId}."; return false; }
+            {
+                reason = $"Custa {effective:N0} {resId}.";
+                return false;
+            }
 
-            c.Unlocked = true;
-            c.Avaliable = false;
-            c.CharState = CharStateEnum.CharState.InBase;
+            live.Unlocked = true;
+            live.Avaliable = false;
+            live.CharState = CharStateEnum.CharState.InBase;
+            live.CharStageId = null;
 
+            _effects.Recompute(Current);  
+            Logged?.Invoke($"{charId} contratado por {effective:N0} {resId}.", LogKind.Success);
+            Changed?.Invoke();
+            return true;
+        }
+
+
+        #endregion
+
+        #region Especialidades
+        // GameService.cs
+        public bool ActivateSpecialty(string charId, out string? reason)
+        {
+            reason = null;
+
+            var st = GetSelectedStage();
+            if (st?.Expedition is null || st.Expedition.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
+            { reason = "Precisa estar em expedição."; return false; }
+
+            if (!Current.Characters.TryGetValue(charId, out var ch))
+            { reason = "Personagem inexistente."; return false; }
+
+            if (ch.CharState != CharStateEnum.CharState.OnStage || ch.CharStageId != st.Id || !st.Expedition.PartyId.Contains(charId))
+            { reason = "Personagem não está na expedição."; return false; }
+
+            if (string.IsNullOrWhiteSpace(ch.SpecialtyId))
+            { reason = "Personagem não possui especialidade."; return false; }
+
+            var spec = SpecialtyData.GetDef(ch.SpecialtyId);
+
+            var now = DateTimeOffset.UtcNow;
+            st.Expedition.ActiveSpecialties ??= new List<ActiveSpecialtyModel>();
+            st.Expedition.ActiveSpecialties.RemoveAll(a => a.EndsAtUtc <= now);
+
+            // cooldown da e00
+            if (spec.Id == "e00" && st.Expedition.ActiveSpecialties.Any(a => a.SpecialtyId == "e00" && a.EndsAtUtc > now))
+            { reason = "Em recarga."; return false; }
+
+            // pagar custo
+            var costRes = spec.CostResourceId ?? "r100";
+            var cost = Math.Max(0, spec.Cost);
+            if (cost > 0 && !TrySpend(costRes, cost))
+            { reason = $"Custa {cost:N0} {costRes}."; return false; }
+
+            if (spec.Id == "e00")
+            {
+                // 🔹 Recalcula as taxas atuais (sem a e00) e paga 20s de produção instantânea
+                RecomputePerSecond(); // garante r.PerSecond atualizado
+
+                const double burstSec = 20;
+                if (Current.Resources != null)
+                {
+                    foreach (var r in Current.Resources.Values)
+                    {
+                        if (!r.Unlocked) continue;
+                        var amount = r.PerSecond * burstSec;
+                        if (amount > 0) Add(r.Id, amount, notify: false);
+                    }
+                }
+
+                // aplica cooldown (usa DurationSec)
+                st.Expedition.ActiveSpecialties.Add(new ActiveSpecialtyModel
+                {
+                    SpecialtyId = "e00",
+                    CharId = charId,
+                    EndsAtUtc = now.AddSeconds(spec.DurationSec)
+                });
+
+                Logged?.Invoke($"Produção instantânea: +{burstSec:0}s de produção aplicados.", LogKind.Success);
+                _effects.Recompute(Current);
+                Changed?.Invoke();
+                return true;
+            }
+
+            // Demais especialidades: buff temporário
+            st.Expedition.ActiveSpecialties.Add(new ActiveSpecialtyModel
+            {
+                SpecialtyId = spec.Id,
+                CharId = charId,
+                EndsAtUtc = now.AddSeconds(spec.DurationSec)
+            });
+
+            Logged?.Invoke($"Especialidade {spec.Id} ativada por {ch.Id}.", LogKind.Success);
             _effects.Recompute(Current);
             Changed?.Invoke();
             return true;
         }
+
 
         #endregion
     }
