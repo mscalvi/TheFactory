@@ -39,7 +39,7 @@ namespace FurmaIdle.Data
                 Id = "tr04",
                 Name = "Gera Mantimentos",
                 ResourceId = "r100",
-                AddPerSecond = 0.2
+                AddPerSecond = 0.5
             },
         };
 

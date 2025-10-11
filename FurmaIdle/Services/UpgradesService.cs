@@ -21,6 +21,8 @@ namespace FurmaIdle.Services
 
         // Capacidade
         int ExtraContractsPerChar();                  // +N por personagem (ex.: mx00)
+        double ResourceCapPerChar(string resId, double baseCap);
+
     }
 
 
@@ -30,7 +32,11 @@ namespace FurmaIdle.Services
         private readonly Dictionary<string, double> _timeMultByContract = new(StringComparer.Ordinal);
         private readonly Dictionary<string, double> _resGenAddPerSec = new(StringComparer.Ordinal);
         private readonly Dictionary<string, double> _resGenMultById = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, double> _capMultByRes = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, double> _capAddByRes = new(StringComparer.Ordinal);
 
+        private double _capMultAll = 1.0;
+        private double _capAddAll = 0.0;
         private double _gainMultAll = 1.0;
         private double _timeMultAll = 1.0;
         private double _clicksGainMult = 1.0;
@@ -39,15 +45,20 @@ namespace FurmaIdle.Services
 
         public void Recompute(GameModel m)
         {
+            _capMultByRes.Clear();
+            _capAddByRes.Clear();
+            _resGenMultById.Clear();
             _gainMultByContract.Clear();
             _timeMultByContract.Clear();
             _resGenAddPerSec.Clear();
+
             _gainMultAll = 1.0;
             _timeMultAll = 1.0;
             _clicksGainMult = 1.0;
             _extraContractsPerChar = 0;
-            _resGenMultById.Clear();
             _resGenMultAll = 1.0;
+            _capMultAll = 1.0; 
+            _capAddAll = 0.0;
 
             if (m?.Runtime != null) m.Runtime.CharacterHireCostMult = 1.0;
             if (m?.Upgrades is null) return;
@@ -99,9 +110,50 @@ namespace FurmaIdle.Services
                             if (scope == "all")
                                 _extraContractsPerChar += (int)(eff.Value * qty);
                             break;
+
+                        case EffectTarget.ResourceCapPerChar:
+                            {
+                                if (eff.Op == EffectOp.Multiplicative)
+                                {
+                                    if (scope == "all") for (int i = 0; i < qty; i++) _capMultAll *= eff.Value;
+                                    else
+                                    {
+                                        var cur = _capMultByRes.TryGetValue(scope, out var v) ? v : 1.0;
+                                        for (int i = 0; i < qty; i++) cur *= eff.Value;
+                                        _capMultByRes[scope] = cur;
+                                    }
+                                }
+                                else 
+                                {
+                                    if (scope == "all") _capAddAll += eff.Value * qty;
+                                    else
+                                    {
+                                        var cur = _capAddByRes.TryGetValue(scope, out var v) ? v : 0.0;
+                                        _capAddByRes[scope] = cur + eff.Value * qty;
+                                    }
+                                }
+                                break;
+                            }
                     }
                 }
             }
+
+            // UpgradeService.cs — dentro de Recompute(m), AO FINAL
+            if (m?.Knowledges is not null)
+            {
+                foreach (var k in m.Knowledges.Values)
+                {
+                    if (k.Points <= 0) continue;
+
+                    double n = k.Points;
+                    double g = k.KnowCoinGain;
+                    double p = k.KnowCoinGainPenaltie;
+                    double mult = 1.0 + g * (1.0 - Math.Pow(p, n)) / (1.0 - p);
+
+                    _gainMultAll *= mult;   // aplica como bônus global de produção
+                }
+            }
+
 
             ApplyTraits(m);
             ApplyActiveSpecialties(m);
@@ -146,6 +198,13 @@ namespace FurmaIdle.Services
 
         public int ExtraContractsPerChar() => _extraContractsPerChar;
 
+        public double ResourceCapPerChar(string resId, double baseCap)
+        {
+            if (baseCap <= 0) return 0; // 0 = sem limite
+            var mult = _capMultAll * (_capMultByRes.TryGetValue(resId, out var m) ? m : 1.0);
+            var add = _capAddAll + (_capAddByRes.TryGetValue(resId, out var a) ? a : 0.0);
+            return Math.Max(0, (baseCap + add) * mult);
+        }
         private static bool IsUpgradeUnlocked(GameModel m, string upgradeId)
         {
             return m?.Upgrades != null
@@ -158,7 +217,29 @@ namespace FurmaIdle.Services
             foreach (var st in m.Stages.Values)
             {
                 var ex = st.Expedition;
-                if (ex is null || ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+                var now = DateTimeOffset.UtcNow;
+
+                if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+                if (ex.ActiveSpecialties is null) continue;
+
+                foreach (var a in ex.ActiveSpecialties)
+                {
+                    if (a.EndsAtUtc <= now) continue;
+                    var sp = SpecialtyData.GetDef(a.SpecialtyId);
+
+                    switch (sp.Id)
+                    {
+                        case "e01":
+                            _resGenMultAll *= 1.2;
+                            break;
+                        case "e02":
+                            _gainMultAll *= 2.0;
+                            break;
+                        case "e03":
+                            _resGenMultAll *= 0.8;
+                            break;
+                    }
+                }
 
                 foreach (var charId in ex.PartyId)
                 {

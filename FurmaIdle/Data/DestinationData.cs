@@ -32,7 +32,7 @@ namespace FurmaIdle.Data
             {
                 Id = "d01",
                 Name = "Pontas Cantarolantes",
-                Cost = 5000,
+                Cost = 80000,
                 CostResourceId = "r001",
                 Image = "images/icons/destinations/d01.png",
                 Unlocked = false,
@@ -44,7 +44,7 @@ namespace FurmaIdle.Data
             {
                 Id = "d02",
                 Name = "Coração da Ilha",
-                Cost = 20000,
+                Cost = 160000,
                 CostResourceId = "r001",
                 Image = "images/icons/destinations/d02.png",
                 Unlocked = false,
@@ -56,7 +56,7 @@ namespace FurmaIdle.Data
             {
                 Id = "d03",
                 Name = "Bosque da Raposa",
-                Cost = 70000,
+                Cost = 400000,
                 CostResourceId = "r001",
                 Image = "images/icons/destinations/d03.png",
                 Unlocked = false,

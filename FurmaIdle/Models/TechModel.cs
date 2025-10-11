@@ -6,7 +6,7 @@ namespace FurmaIdle.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public double Cost { get; set; }
+        public int Cost { get; set; }
         public string CostKnowledgeId { get; set; }
         public string Image { get; set; }
         public bool Unlocked { get; set; }

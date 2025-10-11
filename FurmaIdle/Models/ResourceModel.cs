@@ -14,6 +14,7 @@ namespace FurmaIdle.Models
         public bool Avaliable { get; set; } = false;
         public string Image { get; set; }
         public int Sort { get; set; }
+        public int CharacterCap { get; set; }
         public ResourceEnum.ResourceType ResourceType { get; set; }
         public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly;
     }

@@ -20,5 +20,6 @@ namespace FurmaIdle.Models
         public Dictionary<string, ResourceModel> Resources { get; set; } = new();
         public Dictionary<string, CharacterModel> Characters { get; set; } = new();
         public Dictionary<string, ContractModel> Contracts { get; set; } = new();
+        public Dictionary<string, KnowledgeModel> Knowledges { get; set; } = new();
     }
 }

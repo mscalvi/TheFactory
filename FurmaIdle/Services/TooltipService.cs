@@ -162,16 +162,74 @@ namespace FurmaIdle.Services
         // ===================== Tecnologia =====================
         private HoverTip BuildTecnologiaHover(string id)
         {
-            // Se existir em Current.Technologies, usa; senão, placeholder
-            if (_game.Current.Technologies != null &&
-                _game.Current.Technologies.TryGetValue(id, out var tech))
-            {
-                string state = tech.Unlocked ? "Desbloqueada" : "Bloqueada";
-                return new HoverTip($"Tecnologia {tech.Name ?? id}", $"{state}\n{id}");
-            }
+            // tenta pegar o "live" sem usar ?. em if
+            TechModel? live = null;
+            var techs = _game.Current.Technologies;
+            if (techs != null) techs.TryGetValue(id, out live);
 
-            return new HoverTip($"Tecnologia {id}", "Dados de catálogo/descrição não carregados.");
+            // catálogo (pode falhar)
+            TechModel? def = null;
+            try { def = TechData.GetDef(id); } catch { /* safe */ }
+
+            // se não houver nem live nem def, retorna placeholder
+            if (live is null && def is null)
+                return new HoverTip($"Tecnologia {id}", "Dados indisponíveis.");
+
+            var name = NameOrId(live?.Name ?? def?.Name, id);
+
+            // destino
+            var destId = def?.DestinationId ?? live?.DestinationId ?? "";
+            var destName = string.IsNullOrWhiteSpace(destId)
+                ? "—"
+                : TryName(() => DestinationData.GetDef(destId).Name, destId);
+
+            // custo (knowledge)
+            var kId = def?.CostKnowledgeId ?? live?.CostKnowledgeId ?? "k??";
+            var cost = Math.Max(0, def?.Cost ?? live?.Cost ?? 0);
+
+            // saldo do conhecimento
+            string haveStr = "";
+            try
+            {
+                int have = 0;
+                if (_game.Current.Knowledges != null &&
+                    _game.Current.Knowledges.TryGetValue(kId, out var k) && k is not null)
+                    have = k.Points;
+                haveStr = $" (você tem {have:N0})";
+            }
+            catch { /* safe */ }
+
+            // estado
+            bool unlocked = live?.Unlocked == true;
+            bool avaliable = live?.Avaliable == true;
+            string state = unlocked ? "Pesquisada"
+                        : (avaliable ? "Disponível para pesquisa" : "Bloqueada");
+
+            // motivo de bloqueio mais comum
+            string reason = "";
+            try
+            {
+                if (!unlocked && !avaliable && !string.IsNullOrWhiteSpace(destId))
+                {
+                    if (_game.Current.Destinations != null &&
+                        _game.Current.Destinations.TryGetValue(destId, out var d) &&
+                        d is not null && !d.Unlocked)
+                    {
+                        reason = $"\nRequer destino: {destName} ({destId}).";
+                    }
+                }
+            }
+            catch { /* safe */ }
+
+            var title = $"{name} ({id})";
+            var body =
+                $"Destino: {destName} ({destId})\n" +
+                $"Custo: {cost:N0} {kId}{haveStr}\n" +
+                $"Status: {state}{reason}";
+
+            return new HoverTip(title, body);
         }
+
 
         // ===================== Destino =====================
         private HoverTip BuildDestinoHover(string id)

@@ -252,10 +252,32 @@
                                 @onclick="ToggleExpedition">
                             @(ExpeditionActive ? "Terminar expedição" : "Iniciar expedição")
                         </button>
-
                         <div class="exp-meta exp-meta--compact">
                             <div><strong>Membros ativos:</strong> @Party.UsedStage / @Party.CapStage</div>
-                            <div><strong>Conhecimento ao encerrar:</strong> —</div> @* placeholder *@
+                            @{
+                                var kprev = Game.GetKnowledgePreview(stageId);
+                                string KName(string kid)
+                                {
+                                    if (Game.Current.Knowledges.TryGetValue(kid, out var k) && !string.IsNullOrWhiteSpace(k.Name))
+                                        return k.Name!;
+                                    try { return KnowledgeData.GetDef(kid).Name ?? kid; } catch { return kid; }
+                                }
+                            }
+                            <div>
+                                <strong>Conhecimento ao encerrar:</strong>
+                                @if (kprev.Count == 0)
+                                {
+                                    <text> —</text>
+                                }
+                                else
+                                {
+                                    <text> </text>
+                                    @foreach (var kv in kprev.OrderByDescending(x => x.Value))
+                                    {
+                                        <span>+@kv.Value @KName(kv.Key) </span>
+                                    }
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -280,17 +302,22 @@
                             <div class="currency-grid">
                                 @foreach (var r in _resources)
                                 {
+                                    var capPerChar = Game.GetResourceCapPerChar(r.Id);
+                                    var members = Party.UsedStage;
+                                    var resCapTotal = capPerChar > 0 ? capPerChar * members : 0;
+
                                     <div class="currency-card">
                                         <img class="currency-icon" src="@r.Image" alt="@r.Name" />
                                         <div class="currency-info">
                                             <div class="currency-name">@r.Name</div>
-                                            <div>Atual: @r.Actual.ToString("N0")</div>
+                                            <div>Limite: @r.Actual.ToString("N0") / @resCapTotal.ToString("N0") (por personagem: @capPerChar.ToString("N0"))</div>
                                             <div>Total: @r.Total.ToString("N0")</div>
                                             <div>Por Segundo: @r.PerSecond.ToString("N2")</div>
                                         </div>
                                     </div>
                                 }
                             </div>
+
                         }
                     </div>
 
@@ -340,16 +367,46 @@
                                             </div>
 
                                             <!-- Coluna 3: Especialidade (preenche a linha) -->
+                                            @{
+                                                var timer = Game.GetSpecialtyTimer(c.Id);
+                                                bool isActive = timer.active;
+                                                double ratio = isActive && timer.total > 0 ? (1.0 - (timer.remaining / timer.total)) : 0.0;
+                                                int stepsOn = Math.Clamp((int)Math.Floor(ratio * 10.0), 0, 10);
+                                            }
+
                                             <div class="char-cell-actions">
-                                                <button class="mini-btn"
-                                                        disabled="@(spec is null || !canUse)"
-                                                        title="@(spec is null ? "Sem especialidade" : (canUse ? $"Ativar ({cost:N0} {resId})" : $"Precisa de {cost:N0} {resId} · Você tem {have:N0}"))"
-                                                        @onclick="() => OnSpecialtyClick(c.Id)"
-                                                        @onmouseenter="() => ShowHover(HoverType.Especialidade, c.Id)"
-                                                        @onmouseleave="ClearHover">
-                                                    Especialidade
-                                                </button>
+
+                                                @if (isActive)
+                                                {
+                                                    <div class="contract-selected is-compact" aria-hidden="true">
+                                                        <div class="contract-progress"></div>
+                                                        <div class="contract-steps">
+                                                            @for (int j = 0; j < 10; j++)
+                                                            {
+                                                                var on = j < stepsOn ? "is-on" : null;
+                                                                <span class="step @on"></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <button class="mini-btn"
+                                                            disabled="@(spec is null || !canUse || isActive)"
+                                                            title="@(spec is null
+                                                                 ? "Sem especialidade"
+                                                                 : isActive
+                                                                 ? $"Em uso ({Math.Ceiling(timer.remaining):0}s)"
+                                                                 : (canUse ? $"Ativar ({cost:N0} {resId})"
+                                                                 : $"Precisa de {cost:N0} {resId} · Você tem {have:N0}"))"
+                                                            @onclick="() => OnSpecialtyClick(c.Id)"
+                                                            @onmouseenter="() => ShowHover(HoverType.Especialidade, c.Id)"
+                                                            @onmouseleave="ClearHover">
+                                                        Especialidade
+                                                    </button>
+                                                }
                                             </div>
+
                                         </div>
                                     }
                                     else
@@ -365,8 +422,6 @@
                             </div>
                         </div>
                     </div>
-
-
 
                     <!-- Archievements e Configurações -->
                     <div class="resources-top">
@@ -1008,13 +1063,41 @@
 
     void RefreshUpgrades()
     {
-        var all = Game.Current.Upgrades?.Count ?? 0;
-        var avail = Game.Current.Upgrades?.Values.Count(u => u.Avaliable) ?? 0;
-        Console.WriteLine($"[UPGR] total={all}, avail={avail}");
         _upgr = Game.Current.Upgrades.Values
             .Where(u => u?.Avaliable == true)
+            .Where(ShouldShowUpgradeForCurrentExpedition)   // << filtro novo
             .OrderBy(u => u.Id, StringComparer.Ordinal)
             .ToList();
+    }
+
+    bool ShouldShowUpgradeForCurrentExpedition(UpgradeModel u)
+    {
+        var ex = Game.GetExpedition(stageId);
+        if (ex is null || ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
+            return true; // fora de expedição, não filtramos (mostra normal)
+
+        // pega os "contratos-alvo" desta melhoria
+        var targetedContracts = u.Effects?
+            .Where(e =>
+                (e.Target == EffectTarget.ContractGain || e.Target == EffectTarget.ContractTime) &&
+                !string.IsNullOrWhiteSpace(e.ScopeId) &&
+                !string.Equals(e.ScopeId, "all", StringComparison.OrdinalIgnoreCase))
+            .Select(e => e.ScopeId!)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        // se não afeta contrato específico, deixa aparecer
+        if (targetedContracts is null || targetedContracts.Count == 0)
+            return true;
+
+        // só mostra se pelo menos 1 contrato-alvo estiver ativo na expedição
+        if (ex.Contracts is null) return false;
+
+        foreach (var cid in targetedContracts)
+            if (ex.Contracts.TryGetValue(cid, out var c) && c?.Quant > 0)
+                return true;
+
+        return false;
     }
     #endregion
 

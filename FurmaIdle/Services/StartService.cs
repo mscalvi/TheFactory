@@ -2,6 +2,7 @@
 using FurmaIdle.Models;
 using FurmaIdle.Storage;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using static FurmaIdle.Storage.GameStorage;
 
@@ -41,6 +42,7 @@ namespace FurmaIdle.Services
                 Resources = Seed("Resources", () => ResourceData.CreateInitialResources()),
                 Characters = Seed("Characters", () => CharacterData.CreateInitialStates()),
                 Contracts = Seed("Contracts", () => ContractData.CreateInitialContracts()),
+                Knowledges = Seed("Knowledges", () => KnowledgeData.CreateInitialKnowledges())
             };
 
             foreach (var (sid, stage) in Current.Stages)

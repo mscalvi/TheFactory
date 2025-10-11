@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Channels;
 using static FurmaIdle.Helpers.ExpeditionEnum;
 using static FurmaIdle.Models.CharacterModel;
 
@@ -24,6 +25,9 @@ namespace FurmaIdle.Services
         void Add(string id, double amount = 1, bool notify = true);
         void Click(string stageId);
         public double GetIncomePerSecondForStage(string stageId);
+        double GetResourceCapPerChar(string resId);
+        bool TrySpend(string resId, double amount);
+        bool CanAfford(string resId, double amount);
 
         // Roster (seleção pré-start)
         bool ToggleRoster(string charId, out string? reason);
@@ -34,7 +38,8 @@ namespace FurmaIdle.Services
         ExpeditionModel? GetExpedition(string stageId);
         bool HasAnyExpeditionActive { get; }
         int GetEffectivePartyCap(string stageId);
-        double GetKnowledgeRate(string stageId);
+        bool KnowledgeGain(string knowledgeId, int points, out string? reason);
+        Dictionary<string, int> GetKnowledgePreview(string stageId);
         bool StartExpedition(string stageId, IReadOnlyCollection<string> roster, out string? reason);
         bool EndExpedition(string stageId, string? reason = null);
         PartyInfo GetPartyInfo(string stageId);
@@ -63,6 +68,7 @@ namespace FurmaIdle.Services
 
         // Especialidades
         bool ActivateSpecialty(string charId, out string? reason);
+        (bool active, double remaining, double total) GetSpecialtyTimer(string charId);
 
         // Gerais
         void Attach(GameModel model);
@@ -140,16 +146,48 @@ namespace FurmaIdle.Services
             return r;
         }
 
-        public void Add(string id, double amount = 1, bool notify = true)
+        public void Add(string resId, double amount = 1, bool notify = true)
         {
-            if (string.IsNullOrWhiteSpace(id) || amount == 0) return;
-            var r = EnsureResource(id);
+            if (string.IsNullOrWhiteSpace(resId) || amount == 0) return;
+
+            var r = EnsureResource(resId);
+
+            // aplica
             r.Actual += amount;
-            if (amount > 0) r.Total += amount;
+            r.Total += Math.Max(0, amount);
+
+            // contexto da expedição ativa
+            var st = GetSelectedStage();
+            var ex = st?.Expedition;
+            bool inExpedition = ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active;
+
+            // CAP por personagem (se houver)
+            if (inExpedition)
+            {
+                int members = Math.Max(0, ex!.PartyId?.Count ?? 0);
+                if (members > 0)
+                {
+                    var capPerChar = _effects.ResourceCapPerChar(resId, r.CharacterCap);
+                    if (capPerChar > 0)
+                    {
+                        double capTotal = capPerChar * members;
+                        if (r.Actual > capTotal) r.Actual = capTotal;
+                    }
+                }
+            }
+
+            // acumular ganhos por-run p/ preview/knowledge
+            if (amount > 0 && inExpedition)
+            {
+                ex!.RunGainsByRes ??= new Dictionary<string, double>(StringComparer.Ordinal);
+                ex.RunGainsByRes.TryGetValue(resId, out var cur);
+                ex.RunGainsByRes[resId] = cur + amount;
+            }
+
             if (notify) Changed?.Invoke();
         }
 
-        private bool TrySpend(string resourceId, double amount)
+        public bool TrySpend(string resourceId, double amount)
         {
             if (string.IsNullOrWhiteSpace(resourceId) || !(amount > 0)) return false;
             var r = Get(resourceId);
@@ -157,6 +195,12 @@ namespace FurmaIdle.Services
             r.Actual -= amount;
             Changed?.Invoke();
             return true;
+        }
+
+        public bool CanAfford(string resId, double amount)
+        {
+            if (string.IsNullOrWhiteSpace(resId) || amount <= 0) return true;
+            return Current.Resources.TryGetValue(resId, out var r) && r is not null && r.Actual >= amount;
         }
 
         public double GetIncomePerSecondForStage(string stageId)
@@ -178,6 +222,13 @@ namespace FurmaIdle.Services
                 total += (cps * g) / (spc * t) * c.Quant;
             }
             return total;
+        }
+
+        public double GetResourceCapPerChar(string resId)
+        {
+            if (!Current.Resources.TryGetValue(resId, out var r) || r is null)
+                return 0;
+            return _effects.ResourceCapPerChar(resId, r.CharacterCap);
         }
 
         #endregion
@@ -245,7 +296,7 @@ namespace FurmaIdle.Services
 
         public int GetEffectivePartyCap(string stageId)
         {
-            var stageCap = _stages.GetEffectivePartyCap(Current, stageId); // cap "do stage"
+            var stageCap = _stages.GetEffectivePartyCap(Current, stageId);
             var guildCap = Current.Guild?.PartyCapMax ?? 0;
             return Math.Min(stageCap, guildCap);
         }
@@ -269,19 +320,33 @@ namespace FurmaIdle.Services
             );
         }
 
-        public double GetKnowledgeRate(string stageId)
+        public bool KnowledgeGain(string knowledgeId, int points, out string? reason)
         {
-            if (!Current.Stages.TryGetValue(stageId, out var st)) return 0;
-            var partyCount = st.Expedition?.PartyId.Count ?? 0;
-            var capEff = GetEffectivePartyCap(stageId);
+            reason = null;
 
-            const double basePerSlot = 0.20; // /s por slot de cap
-            const double perMember = 0.05; // /s por membro alocado
-            double rate = capEff * basePerSlot + partyCount * perMember;
+            if (points <= 0) { reason = "Nada a ganhar."; return false; }
+            if (Current.Knowledges is null || !Current.Knowledges.TryGetValue(knowledgeId, out var k))
+            { reason = $"Conhecimento {knowledgeId} indisponível."; return false; }
 
-            // Multiplicadores (se existirem)
-            double mult = 1.0; // _effects.ExpeditionKnowledgeMult(stageId);
-            return rate * mult;
+            // só ganha se o conhecimento estiver “existente” no momento
+            if (!k.Avaliable)
+            { reason = $"{k.Name} está bloqueado."; return false; }
+
+            k.Points += points;
+
+            // opcional: marcar nos ganhos da expedição ativa (para UI/log)
+            var st = GetSelectedStage();
+            var ex = st?.Expedition;
+            if (ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
+            {
+                ex.RunKnowGains.TryGetValue(knowledgeId, out var cur);
+                ex.RunKnowGains[knowledgeId] = cur + points;
+            }
+
+            Logged?.Invoke($"+{points} conhecimento {k.Name} ({knowledgeId}).", LogKind.Success);
+            _effects.Recompute(Current);
+            Changed?.Invoke();
+            return true;
         }
 
         public bool StartExpedition(string stageId, IReadOnlyCollection<string> roster, out string? reason)
@@ -428,7 +493,115 @@ namespace FurmaIdle.Services
                 }
             }
 
-            ids.Clear();
+            if (ex is not null)
+            {
+                ex.RunGainsByRes ??= new();
+                var coinResId = st.ResourceId;
+                ex.RunGainsByRes.TryGetValue(coinResId, out var coins);
+
+                if (coins > 0)
+                {
+                    if (ex is null) goto _after_knowledge;
+
+                    // 1) Coleta PESOS (GainFactor) por Knowledge
+                    var weights = new Dictionary<string, int>(StringComparer.Ordinal);
+
+                    // 1.a) Personagens da party: Main +2, Second +1
+                    foreach (var charId in ex.PartyId)
+                    {
+                        if (!Current.Characters.TryGetValue(charId, out var ch)) continue;
+                        if (!string.IsNullOrWhiteSpace(ch.MainKnowId))
+                            weights[ch.MainKnowId] = (weights.TryGetValue(ch.MainKnowId, out var w) ? w : 0) + 2;
+                        if (!string.IsNullOrWhiteSpace(ch.SecondKnowId))
+                            weights[ch.SecondKnowId] = (weights.TryGetValue(ch.SecondKnowId, out var w) ? w : 0) + 1;
+                    }
+
+                    // 1.b) Contratos ativos: First +1, Second +2, Third +3 — multiplicado por Quant
+                    if (ex.Contracts is not null)
+                    {
+                        foreach (var c in ex.Contracts.Values)
+                        {
+                            if (c.Quant <= 0) continue;
+
+                            void addW(string? kid, int w)
+                            {
+                                if (string.IsNullOrWhiteSpace(kid)) return;
+                                int inc = w * Math.Max(1, c.Quant);
+                                weights[kid] = (weights.TryGetValue(kid, out var cur) ? cur : 0) + inc;
+                            }
+
+                            addW(c.FirstKnowId, 1);
+                            addW(c.SecondKnowId, 2);
+                            addW(c.ThirdKnowId, 3);
+                        }
+                    }
+
+                    // filtra só knowledges existentes e “presentes” no momento
+                    var aliveWeights = new Dictionary<string, int>(StringComparer.Ordinal);
+                    foreach (var kv in weights)
+                    {
+                        if (!Current.Knowledges.TryGetValue(kv.Key, out var k)) continue;
+                        if (!k.Avaliable) continue;
+                        if (kv.Value > 0) aliveWeights[kv.Key] = kv.Value;
+                    }
+
+                    if (aliveWeights.Count == 0)
+                        goto _after_knowledge;
+
+                    // 2) Base por conhecimento
+                    //    base_k = (coins / CoinsBase)^Curve * BaseMult
+                    var baseByK = new Dictionary<string, double>(StringComparer.Ordinal);
+                    foreach (var kid in aliveWeights.Keys)
+                    {
+                        var k = Current.Knowledges[kid];
+                        if (k.GainBase <= 0) { baseByK[kid] = 0; continue; }
+                        var raw = Math.Pow(coins / k.GainBase, k.GainCurve) * k.GainMultiplier;
+                        baseByK[kid] = Math.Max(0, raw);
+                    }
+
+                    // 3) Total de pontos (média ponderada pelos pesos)
+                    double sumW = aliveWeights.Values.Sum();
+                    double blendedBase = baseByK.Sum(x => x.Value * aliveWeights[x.Key]) / Math.Max(1.0, sumW);
+                    int totalPoints = (int)Math.Floor(blendedBase);
+                    if (totalPoints <= 0) goto _after_knowledge;
+
+                    // 4) Divide proporcionalmente pelos pesos, com correção de sobra
+                    var provisional = new Dictionary<string, int>(StringComparer.Ordinal);
+                    var remainders = new List<(string kid, double frac)>(aliveWeights.Count);
+                    int assigned = 0;
+
+                    foreach (var (kid, w) in aliveWeights)
+                    {
+                        double share = totalPoints * (w / sumW);
+                        int pts = (int)Math.Floor(share);
+                        provisional[kid] = pts;
+                        assigned += pts;
+                        remainders.Add((kid, share - pts));
+                    }
+
+                    int leftover = totalPoints - assigned;
+                    if (leftover > 0)
+                    {
+                        foreach (var (kid, _) in remainders.OrderByDescending(r => r.frac))
+                        {
+                            provisional[kid] += 1;
+                            leftover--;
+                            if (leftover == 0) break;
+                        }
+                    }
+
+                    // 5) Concede
+                    foreach (var (kid, pts) in provisional)
+                        if (pts > 0) KnowledgeGain(kid, pts, out _);
+
+                        _after_knowledge:;
+                }
+
+
+                ex.RunGainsByRes?.Clear();
+            }
+
+                ids.Clear();
             ex.ExpeditionStatus = ExpeditionStatus.Idle;
             ex.Start = null;
 
@@ -453,6 +626,114 @@ namespace FurmaIdle.Services
             // (Se tiver gates por destino/stage, adicione aqui)
 
             return true;
+        }
+
+        public Dictionary<string, int> GetKnowledgePreview(string stageId)
+        {
+            var result = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            if (!Current.Stages.TryGetValue(stageId, out var st) || st?.Expedition is null)
+                return result;
+
+            var ex = st.Expedition;
+            if (ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
+                return result;
+
+            // coins acumuladas nesta run para o recurso do stage
+            ex.RunGainsByRes ??= new();
+            var coinResId = st.ResourceId;
+            ex.RunGainsByRes.TryGetValue(coinResId, out var coins);
+            if (coins <= 0) return result;
+
+            // 1) pesos (GainFactor) por knowledge
+            var weights = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            // party: Main +2, Second +1
+            foreach (var charId in ex.PartyId)
+            {
+                if (!Current.Characters.TryGetValue(charId, out var ch)) continue;
+                if (!string.IsNullOrWhiteSpace(ch.MainKnowId))
+                    weights[ch.MainKnowId] = (weights.TryGetValue(ch.MainKnowId, out var w) ? w : 0) + 2;
+                if (!string.IsNullOrWhiteSpace(ch.SecondKnowId))
+                    weights[ch.SecondKnowId] = (weights.TryGetValue(ch.SecondKnowId, out var w) ? w : 0) + 1;
+            }
+
+            // contratos: First +1, Second +2, Third +3, multiplicado por Quant
+            if (ex.Contracts is not null)
+            {
+                foreach (var c in ex.Contracts.Values)
+                {
+                    if (c.Quant <= 0) continue;
+
+                    void addW(string? kid, int w)
+                    {
+                        if (string.IsNullOrWhiteSpace(kid)) return;
+                        int inc = w * Math.Max(1, c.Quant);
+                        weights[kid] = (weights.TryGetValue(kid, out var cur) ? cur : 0) + inc;
+                    }
+
+                    addW(c.FirstKnowId, 1);
+                    addW(c.SecondKnowId, 2);
+                    addW(c.ThirdKnowId, 3);
+                }
+            }
+
+            // filtra knowledges válidos e disponíveis
+            var aliveWeights = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var kv in weights)
+            {
+                if (!Current.Knowledges.TryGetValue(kv.Key, out var k)) continue;
+                if (!k.Avaliable) continue;
+                if (kv.Value > 0) aliveWeights[kv.Key] = kv.Value;
+            }
+            if (aliveWeights.Count == 0) return result;
+
+            // 2) base_k pela fórmula (coins / base)^curve * mult
+            var baseByK = new Dictionary<string, double>(StringComparer.Ordinal);
+            foreach (var kid in aliveWeights.Keys)
+            {
+                var k = Current.Knowledges[kid];
+                if (k.GainBase <= 0) { baseByK[kid] = 0; continue; }
+                var raw = Math.Pow(coins / k.GainBase, k.GainCurve) * k.GainMultiplier;
+                baseByK[kid] = Math.Max(0, raw);
+            }
+
+            // 3) totalPoints = floor(média ponderada pelos pesos)
+            double sumW = aliveWeights.Values.Sum();
+            double blendedBase = baseByK.Sum(x => x.Value * aliveWeights[x.Key]) / Math.Max(1.0, sumW);
+            int totalPoints = (int)Math.Floor(blendedBase);
+            if (totalPoints <= 0) return result;
+
+            // 4) divide proporcionalmente + sobra pelos maiores restos
+            var provisional = new Dictionary<string, int>(StringComparer.Ordinal);
+            var remainders = new List<(string kid, double frac)>(aliveWeights.Count);
+            int assigned = 0;
+
+            foreach (var (kid, w) in aliveWeights)
+            {
+                double share = totalPoints * (w / sumW);
+                int pts = (int)Math.Floor(share);
+                provisional[kid] = pts;
+                assigned += pts;
+                remainders.Add((kid, share - pts));
+            }
+
+            int leftover = totalPoints - assigned;
+            if (leftover > 0)
+            {
+                foreach (var (kid, _) in remainders.OrderByDescending(r => r.frac))
+                {
+                    provisional[kid] += 1;
+                    leftover--;
+                    if (leftover == 0) break;
+                }
+            }
+
+            // 5) devolve
+            foreach (var (kid, pts) in provisional)
+                if (pts > 0) result[kid] = pts;
+
+            return result;
         }
 
         private void RecomputeUpgradesUnlockedAndAvailability()
@@ -492,6 +773,7 @@ namespace FurmaIdle.Services
             double step = dtSeconds / steps;
 
             bool anyChange = false;
+            bool effectsDirty = false;
 
             for (int s = 0; s < steps; s++)
             {
@@ -500,6 +782,11 @@ namespace FurmaIdle.Services
                     var ex = st.Expedition;
                     if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
                     if (ex.ActiveContracts is null || ex.Contracts is null) continue;
+
+                    var before = ex.ActiveSpecialties.Count;
+                    ex.ActiveSpecialties.RemoveAll(a => a.EndsAtUtc <= DateTimeOffset.UtcNow);
+                    if (ex.ActiveSpecialties.Count != before)
+                        effectsDirty = true;
 
                     foreach (var run in ex.ActiveContracts)
                     {
@@ -517,7 +804,7 @@ namespace FurmaIdle.Services
 
                         // parâmetros efetivos do contrato
                         double coinsPerCycle = bal.CoinsPerCycle * gainMult;
-                        double secondsPerCycle = Math.Max(0.02, bal.SecondsPerCycle * timeMult); // clamp mínimo
+                        double secondsPerCycle = Math.Max(0.02, bal.SecondsPerCycle * timeMult);
 
                         // avança progresso
                         run.ProgressSec += step;
@@ -527,7 +814,7 @@ namespace FurmaIdle.Services
                             double cycles = Math.Floor(run.ProgressSec / secondsPerCycle);
                             if (cycles >= 1.0)
                             {
-                                double amount = cycles * coinsPerCycle * c.Quant; // Quant pilha linear
+                                double amount = cycles * coinsPerCycle * c.Quant;
                                 if (amount > 0)
                                 {
                                     Add(bal.ResourceId, amount, notify: false);
@@ -555,6 +842,11 @@ namespace FurmaIdle.Services
                 }
             }
 
+            if (effectsDirty)
+            {
+                _effects.Recompute(Current);
+                anyChange = true;
+            }
 
             Current.LastTickUtc = DateTimeOffset.UtcNow;
             RecomputePerSecond();
@@ -599,9 +891,9 @@ namespace FurmaIdle.Services
                 foreach (var r in Current.Resources.Values)
                 {
                     if (!r.Unlocked) continue;
-                    // se você adicionou multiplicador de recurso, aplique aqui; senão, deixe só o add:
                     var add = _effects.ResourceGenAddPerSecond(r.Id);
-                    r.PerSecond += Math.Max(0, add);
+                    var mult = _effects.ResourceGenMult(r.Id);
+                    r.PerSecond += Math.Max(0, add * mult);
                 }
         }
 
@@ -946,36 +1238,35 @@ namespace FurmaIdle.Services
         {
             reason = null;
 
-            if (string.IsNullOrWhiteSpace(techId))
-            { reason = "Tecnologia inválida."; return false; }
-
-            if (!Current.Technologies.TryGetValue(techId, out var t))
+            if (!Current.Technologies.TryGetValue(techId, out var tech))
             { reason = "Tecnologia inexistente."; return false; }
 
-            if (!t.Avaliable)
-            { reason = "Tecnologia indisponível."; return false; }
+            if (tech.Unlocked) { reason = "Já pesquisada."; return false; }
+            if (!tech.Avaliable) { reason = "Indisponível."; return false; }
 
-            if (t.Unlocked)
-            { reason = "Tecnologia já pesquisada."; return false; }
+            var def = TechData.GetDef(techId);
+            var kId = def.CostKnowledgeId;
+            var cost = def.Cost;
 
-            // Preço e moeda (conhecimento)
-            var price = t.Cost;
-            var resId = t.CostKnowledgeId;
-            if (!(price > 0)) { price = 0; }
+            if (!Current.Knowledges.TryGetValue(kId, out var k))
+            { reason = $"Conhecimento {kId} indisponível."; return false; }
 
-            if (price > 0 && !TrySpend(resId, price))
-            { reason = "Conhecimento insuficiente."; return false; }
+            if (k.Points < cost)
+            { reason = $"Precisa de {cost} {k.Name} (você tem {k.Points})."; return false; }
 
-            // Centraliza no UnlockService: marca Unlocked e recalcula upgrades
+            k.Points -= cost;
+
+            tech.Unlocked = true;
+            tech.Avaliable = false;
+
             _unlock.ApplyTechPurchase(Current, techId);
 
-            // Recalcular efeitos (tick/click/caps etc.)
             _effects.Recompute(Current);
-
-            Logged?.Invoke($"Tecnologia pesquisada: {t.Name}.", LogKind.Success);
+            Logged?.Invoke($"Tecnologia {techId} pesquisada.", LogKind.Success);
             Changed?.Invoke();
             return true;
         }
+
         #endregion
 
         #region Personagens
@@ -1025,13 +1316,15 @@ namespace FurmaIdle.Services
             reason = null;
 
             var st = GetSelectedStage();
-            if (st?.Expedition is null || st.Expedition.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
+            var ex = st?.Expedition;
+            if (ex is null || ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active)
             { reason = "Precisa estar em expedição."; return false; }
 
             if (!Current.Characters.TryGetValue(charId, out var ch))
             { reason = "Personagem inexistente."; return false; }
 
-            if (ch.CharState != CharStateEnum.CharState.OnStage || ch.CharStageId != st.Id || !st.Expedition.PartyId.Contains(charId))
+            if (ch.CharState != CharStateEnum.CharState.OnStage ||
+                ch.CharStageId != st!.Id || !ex.PartyId.Contains(charId))
             { reason = "Personagem não está na expedição."; return false; }
 
             if (string.IsNullOrWhiteSpace(ch.SpecialtyId))
@@ -1039,24 +1332,31 @@ namespace FurmaIdle.Services
 
             var spec = SpecialtyData.GetDef(ch.SpecialtyId);
 
+            // remove efeitos vencidos e checa bloqueios
             var now = DateTimeOffset.UtcNow;
-            st.Expedition.ActiveSpecialties ??= new List<ActiveSpecialtyModel>();
-            st.Expedition.ActiveSpecialties.RemoveAll(a => a.EndsAtUtc <= now);
+            ex.ActiveSpecialties ??= new List<ActiveSpecialtyModel>();
+            ex.ActiveSpecialties.RemoveAll(a => a.EndsAtUtc <= now);
 
-            // cooldown da e00
-            if (spec.Id == "e00" && st.Expedition.ActiveSpecialties.Any(a => a.SpecialtyId == "e00" && a.EndsAtUtc > now))
-            { reason = "Em recarga."; return false; }
+            // outras: impedir reativar mesma especialidade do mesmo personagem enquanto durar
+            if (spec.Id != "e00" &&
+                ex.ActiveSpecialties.Any(a => a.CharId == charId && a.SpecialtyId == spec.Id && a.EndsAtUtc > now))
+            { reason = "Especialidade já ativa."; return false; }
 
-            // pagar custo
+            // pagar custo (NÃO somar em Total nem usar Add; é gasto!)
             var costRes = spec.CostResourceId ?? "r100";
             var cost = Math.Max(0, spec.Cost);
-            if (cost > 0 && !TrySpend(costRes, cost))
-            { reason = $"Custa {cost:N0} {costRes}."; return false; }
+            var coinId = st?.ResourceId;
 
+            if (!TrySpend(costRes, cost))
+            {
+                reason = $"Precisa de {cost:N0} {costRes}.";
+                return false;
+            }
+
+            // e00: produção instantânea = 20s do PerSecond ATUAL
             if (spec.Id == "e00")
             {
-                // 🔹 Recalcula as taxas atuais (sem a e00) e paga 20s de produção instantânea
-                RecomputePerSecond(); // garante r.PerSecond atualizado
+                RecomputePerSecond();
 
                 const double burstSec = 20;
                 if (Current.Resources != null)
@@ -1064,39 +1364,55 @@ namespace FurmaIdle.Services
                     foreach (var r in Current.Resources.Values)
                     {
                         if (!r.Unlocked) continue;
+                        if (r.ResourceType != ResourceEnum.ResourceType.Coin) continue;
+                        if (!string.Equals(r.Id, coinId, StringComparison.Ordinal)) continue;
+
                         var amount = r.PerSecond * burstSec;
                         if (amount > 0) Add(r.Id, amount, notify: false);
                     }
                 }
 
-                // aplica cooldown (usa DurationSec)
-                st.Expedition.ActiveSpecialties.Add(new ActiveSpecialtyModel
-                {
-                    SpecialtyId = "e00",
-                    CharId = charId,
-                    EndsAtUtc = now.AddSeconds(spec.DurationSec)
-                });
-
-                Logged?.Invoke($"Produção instantânea: +{burstSec:0}s de produção aplicados.", LogKind.Success);
+                Logged?.Invoke($"Produção instantânea realizada (+{burstSec:0}s).", LogKind.Success);
                 _effects.Recompute(Current);
                 Changed?.Invoke();
                 return true;
             }
 
-            // Demais especialidades: buff temporário
-            st.Expedition.ActiveSpecialties.Add(new ActiveSpecialtyModel
+            // Demais especialidades (e01/e02/e03…): apenas agenda buff temporário
+            ex.ActiveSpecialties.Add(new ActiveSpecialtyModel
             {
                 SpecialtyId = spec.Id,
                 CharId = charId,
                 EndsAtUtc = now.AddSeconds(spec.DurationSec)
             });
 
-            Logged?.Invoke($"Especialidade {spec.Id} ativada por {ch.Id}.", LogKind.Success);
+            Logged?.Invoke($"Especialidade ativada por {ch.Id}.", LogKind.Success);
             _effects.Recompute(Current);
             Changed?.Invoke();
             return true;
         }
 
+        public (bool active, double remaining, double total) GetSpecialtyTimer(string charId)
+        {
+            var st = GetSelectedStage();
+            var ex = st?.Expedition;
+            if (ex?.ActiveSpecialties is null || ex.ActiveSpecialties.Count == 0)
+                return (false, 0, 0);
+
+            var now = DateTimeOffset.UtcNow;
+            foreach (var a in ex.ActiveSpecialties)
+            {
+                if (a.CharId != charId) continue;
+                var spec = SpecialtyData.GetDef(a.SpecialtyId);
+                if (a.EndsAtUtc <= now) continue;
+
+                var total = Math.Max(0.001, spec.DurationSec);
+                var remaining = (a.EndsAtUtc - now).TotalSeconds;
+                remaining = Math.Max(0, Math.Min(remaining, total));
+                return (true, remaining, total);
+            }
+            return (false, 0, 0);
+        }
 
         #endregion
     }
