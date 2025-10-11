@@ -200,9 +200,9 @@
                         else if (_topPanel == TopPanel.Melhorias)
                         {
                             <div class="options-grid">
-                                @if (_upgr.Count == 0)
+                                @if (_upgr.Count == 0 && _shopChars.Count == 0)
                                 {
-                                    <em>Nenhuma melhoria disponível.</em>
+                                    <em>Nada para comprar no momento.</em>
                                 }
                                 else
                                 {
@@ -218,6 +218,21 @@
                                                 <img src="@u.Image" alt="@u.Name"
                                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
                                                 <span class="icon-fallback">@u.Id</span>
+                                            </span>
+                                        </button>
+                                    }
+                                    @foreach (var ch in _shopChars)
+                                    {
+                                        <button class="option-btn"
+                                                @onclick="() => OnCharBuy(ch.Id)"
+                                                @onmouseenter="() => ShowHover(HoverType.Personagem, ch.Id)"
+                                                @onmouseleave="ClearHover"
+                                                aria-label="@ch.Id">
+                                            <span class="icon-wrap">
+                                                <img src="@CharMiniSrc(ch.Id)"
+                                                     alt="@ch.Id"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                                <span class="icon-fallback">@ch.Id</span>
                                             </span>
                                         </button>
                                     }
@@ -405,7 +420,7 @@
                                                 <span class="icon-wrap"><img src="@chosen.Image" alt="@chosen.Id" /></span>
 
                                                 <div class="contract-selected-info">
-                                                    <div class="name">@chosen.Id</div>
+                                                    <div class="name">@chosen.Name</div>
                                                     <div class="sub">
                                                         Total: @chosen.Quant
                                                         Preço: @price.ToString("N0") @resId
@@ -517,8 +532,9 @@
         RefreshDestinations();
         RefreshUpgrades();
         RefreshContracts();
+        RefreshShopChars();
 
-        Log("Jogo Iniciado.", MsgKind.Success);
+    Log("Jogo Iniciado.", MsgKind.Success);
 
         var sid = Game.SelectedStageId;
         var roster = Game.GetRoster();
@@ -538,20 +554,26 @@
         if (!Game.StartExpedition(sid, roster, out var reason))
         {
             Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
-            GoToMessages();
             return;
+        };
+
+        if (!ExpeditionActive)
+        {
+            _topPanel = TopPanel.Base;
         }
-        ;
+        else
+        {
+            GoToMessages();
+        }
 
-        Log("Três jovens se reunem e resolvem montar uma Guilda. Clique em Personagens, selecione sua equipe e inicie a Expedição.", MsgKind.Info);
-
+        Log("Três jovens se reunem e resolvem montar uma Guilda. Ganhe algum dinheiro, mas cuidado que os Contratos são limitados.", MsgKind.Info);
     }
     #endregion
 
     #region Mensagens
-    void GoToMessages() => _topPanel = TopPanel.None;
     ElementReference _msgBodyRef;
     int _lastMsgCount;
+    bool _scrollMessagesOnOpen;
 
     // Tipos de mensagem
     enum MsgKind { Info, Warn, Error, Success }
@@ -565,6 +587,13 @@
     }
 
     List<UiMessage> _msgs = new();
+
+    void GoToMessages()
+    {
+        _topPanel = TopPanel.None;
+        _scrollMessagesOnOpen = true;
+        StateHasChanged();
+    } 
 
     // helper para CSS por tipo
     string Css(MsgKind k) => k switch
@@ -588,17 +617,27 @@
         if (firstRender)
         {
             _lastMsgCount = _msgs.Count;
-            await JS.InvokeVoidAsync("ui.scrollToBottomIfNearEnd", _msgBodyRef);
+            if (_topPanel == TopPanel.None) // só se Mensagens estiver visível
+                await JS.InvokeVoidAsync("ui.scrollToBottom", _msgBodyRef);
             return;
         }
 
+        // Se abrimos Mensagens nesta renderização, rola para o fim
+        if (_scrollMessagesOnOpen && _topPanel == TopPanel.None)
+        {
+            _scrollMessagesOnOpen = false;
+            await JS.InvokeVoidAsync("ui.scrollToBottom", _msgBodyRef);
+        }
+
+        // Se chegaram novas mensagens, só rola se o usuário estiver perto do fim
         if (_msgs.Count != _lastMsgCount)
         {
             _lastMsgCount = _msgs.Count;
-            await JS.InvokeVoidAsync("ui.scrollToBottom", _msgBodyRef);
-            // await JS.InvokeVoidAsync("ui.scrollToBottomIfNearEnd", _msgBodyRef);
+            if (_topPanel == TopPanel.None)
+                await JS.InvokeVoidAsync("ui.scrollToBottomIfNearEnd", _msgBodyRef, 40);
         }
     }
+
 
     // atalho para publicar mensagens no log
     void Log(string text, MsgKind kind = MsgKind.Info)
@@ -650,25 +689,52 @@
                 if (!Game.StartExpedition(sid, roster, out var reason))
                 {
                     Log(reason ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
-                    GoToMessages();
+
+                    if (!ExpeditionActive)
+                    {
+                        _topPanel = TopPanel.Base;
+                    }
+                    else
+                    {
+                        GoToMessages();
+                    }
                     return;
                 }
-                if (!ExpeditionActive) _topPanel = TopPanel.Base;
-                GoToMessages();
+                if (!ExpeditionActive)
+                {
+                    _topPanel = TopPanel.Base;
+                }
+                else
+                {
+                    GoToMessages();
+                }
                 return;
             }  
 
             if (!Game.StartExpedition(sid, roster, out var reason2))
             {
                 Log(reason2 ?? "Não foi possível iniciar a expedição.", MsgKind.Error);
-                GoToMessages();
+                if (!ExpeditionActive)
+                {
+                    _topPanel = TopPanel.Base;
+                }
+                else
+                {
+                    GoToMessages();
+                }
                 return;
             }
 
             RefreshChars();
             RefreshContracts();
-            if (!ExpeditionActive) _topPanel = TopPanel.Base;
-            GoToMessages();
+            if (!ExpeditionActive)
+            {
+                _topPanel = TopPanel.Base;
+            }
+            else
+            {
+                GoToMessages();
+            }
             await InvokeAsync(StateHasChanged);
         }
         finally
@@ -700,11 +766,17 @@
     {
         if (!CanInteract)
         {
-            _topPanel = TopPanel.Base;   // travado em Base
+            _topPanel = TopPanel.Base;
             StateHasChanged();
             return;
         }
+
+        var prev = _topPanel;
         _topPanel = (_topPanel == p) ? TopPanel.None : p;
+
+        if (_topPanel == TopPanel.None && prev != TopPanel.None)
+            _scrollMessagesOnOpen = true;
+
         StateHasChanged();
     }
 
@@ -791,6 +863,7 @@
     #region Personagens
     List<CharacterModel> _activeChars = new();
     List<CharacterModel> _baseChars = new();
+    List<CharacterModel> _shopChars = new();
     IReadOnlyCollection<string> Roster => Game.GetRoster();
 
     bool CharSelected(string id) => Roster.Contains(id);
@@ -809,6 +882,14 @@
             .ToList();
     }
 
+    void RefreshShopChars()
+    {
+        _shopChars = Game.Current.Characters.Values
+            .Where(c => c.Avaliable && !c.Unlocked)
+            .OrderBy(c => c.Id, StringComparer.Ordinal)
+            .ToList();
+    }
+
     string CharMiniSrc(string charId)
         => $"images/characters/minis/{charId}.png";
 
@@ -819,6 +900,19 @@
         if (!Game.ToggleRoster(id, out var reason))
             Log(reason ?? "Não foi possível alterar a seleção.", MsgKind.Error);
     }
+
+    void OnCharBuy(string charId)
+    {
+        if (!Game.BuyCharacter(charId, out var reason))
+            Log(reason ?? "Não foi possível contratar.", MsgKind.Warn);
+        else
+            Log($"{charId} contratado!", MsgKind.Success);
+
+        RefreshChars();        // atualiza base/ativos
+        RefreshShopChars();    // some da loja
+        ClearHover();
+        ShowHover(HoverType.Personagem, charId);
+    }
     #endregion
 
     #region Tecnologias
@@ -826,10 +920,10 @@
 
     void OnTechClick(string techId)
     {
-        // if (!Game.BuyTech(techId, out var reason))
-        //     Log(reason ?? "Não foi possível comprar a tecnologia.", MsgKind.Warn);
-        // else
-        //     Log($"{techId} desbloqueada.", MsgKind.Success);
+        if (!Game.BuyTech(techId, out var reason))
+            Log(reason ?? "Não foi possível comprar a tecnologia.", MsgKind.Warn);
+        else
+            Log($"{techId} desbloqueada.", MsgKind.Success);
         ClearHover();
         ShowHover(HoverType.Tecnologia, techId);
     }
@@ -849,10 +943,10 @@
 
     void OnDestClick(string destId)
     {
-        // if (!Game.BuyDestination(destId, out var reason))
-        //     Log(reason ?? "Não foi possível desbloquear o destino.", MsgKind.Warn);
-        // else
-        //     Log($"{destId} desbloqueado.", MsgKind.Success);
+        if (!Game.BuyDestination(destId, out var reason))
+            Log(reason ?? "Não foi possível desbloquear o destino.", MsgKind.Warn);
+        else
+            Log($"{destId} desbloqueado.", MsgKind.Success);
         ClearHover();
         ShowHover(HoverType.Destino, destId);
     }
@@ -876,8 +970,8 @@
             Log(reason ?? "Não foi possível comprar a melhoria.", MsgKind.Warn);
         else
             Log($"+1 em {upgrId}.", MsgKind.Success);
-            ClearHover();
-            ShowHover(HoverType.Melhoria, upgrId);
+        ClearHover();
+        ShowHover(HoverType.Melhoria, upgrId);
     }
 
     void RefreshUpgrades()
@@ -1000,7 +1094,11 @@
             RefreshDestinations();
             RefreshUpgrades();
             RefreshContracts();
-            if (!ExpeditionActive) _topPanel = TopPanel.Base;
+            RefreshShopChars();
+            if (!ExpeditionActive)
+            {
+                _topPanel = TopPanel.Base;
+            }
         }
         catch (Exception ex)
         {

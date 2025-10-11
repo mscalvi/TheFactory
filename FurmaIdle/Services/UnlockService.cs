@@ -1,11 +1,18 @@
-﻿using FurmaIdle.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FurmaIdle.Data;
+using FurmaIdle.Models;
 
 namespace FurmaIdle.Services
 {
     public interface IUnlockService
     {
-        // Retorna uma lista de (tipo,id) desbloqueados nesta passada — útil para log
-        List<(string type, string id)> Recompute(GameModel m);
+        void Apply(GameModel m, string type, string id);
+        void ApplyStageEntry(GameModel m, string stageId);
+        void ApplyTechPurchase(GameModel m, string techId);
+        void ApplyDestinationPurchase(GameModel m, string destId);
+        void RecomputeUpgradesAvailability(GameModel m);
     }
 
     public sealed class UnlockService : IUnlockService
@@ -15,62 +22,140 @@ namespace FurmaIdle.Services
 
         public UnlockService(IStageService stages, IUpgradeService effects)
         {
-            _stages = stages; _effects = effects;
+            _stages = stages;
+            _effects = effects;
         }
 
-        public List<(string type, string id)> Recompute(GameModel m)
+        public void Apply(GameModel m, string type, string id)
         {
-            var ctx = new UnlockContext(m, _stages, _effects);
-            var newly = new List<(string, string)>();
-
-            foreach (var rule in UnlockData.Rules)
+            if (m is null || string.IsNullOrWhiteSpace(type)) return;
+            switch (type.Trim().ToLowerInvariant())
             {
-                if (!rule.When(ctx)) continue;
+                case "stage": ApplyStageEntry(m, id); break;
+                case "tech": ApplyTechPurchase(m, id); break;
+                case "upgrade": RecomputeUpgradesAvailability(m); break;
+            }
+        }
 
-                switch (rule.TargetType)
+        public void ApplyStageEntry(GameModel m, string stageId)
+        {
+            if (string.IsNullOrWhiteSpace(stageId)) return;
+            if (!m.Stages.TryGetValue(stageId, out var st)) return;
+
+            var destIds = DestinationData.Order
+                .Select(id => DestinationData.GetDef(id))
+                .Where(d => string.Equals(d.StageId, stageId, StringComparison.OrdinalIgnoreCase))
+                .Select(d => d.Id)
+                .ToList();
+
+            foreach (var did in destIds)
+            {
+                if (m.Destinations.TryGetValue(did, out var live) && live.Unlocked)
                 {
-                    case "dest":
-                        if (m.Destinations.TryGetValue(rule.TargetId, out var d) && !d.Unlocked)
-                        {
-                            d.Unlocked = true;
-                            d.Avaliable = true;
-                            newly.Add(("dest", rule.TargetId));
-                        }
-                        break;
-
-                    case "tech":
-                        if (m.Technologies.TryGetValue(rule.TargetId, out var t) && !t.Unlocked)
-                        {
-                            t.Unlocked = true;
-                            t.Avaliable = true;
-                            newly.Add(("tech", rule.TargetId));
-                        }
-                        break;
-
-                    case "upgrade":
-                        if (m.Upgrades.TryGetValue(rule.TargetId, out var u) && !u.Unlocked)
-                        {
-                            u.Unlocked = true;
-                            // disponibilidade deriva de Unlocked && !IsMaxed
-                            u.Avaliable = !u.IsMaxed;
-                            newly.Add(("upgrade", rule.TargetId));
-                        }
-                        break;
-
-                    case "stage":
-                        if (m.Stages.TryGetValue(rule.TargetId, out var s) && !s.Unlocked)
-                        {
-                            s.Unlocked = true;
-                            newly.Add(("stage", rule.TargetId));
-                        }
-                        break;
+                    ApplyDestinationPurchase(m, did);
                 }
-
-                rule.OnUnlock?.Invoke(m);
             }
 
-            return newly;
+            _effects.Recompute(m);
         }
-    }
 
+
+        public void ApplyTechPurchase(GameModel m, string techId)
+        {
+            if (string.IsNullOrWhiteSpace(techId)) return;
+            if (!m.Technologies.TryGetValue(techId, out var t)) return;
+
+            t.Unlocked = true;
+            t.Avaliable = false;
+
+            RecomputeUpgradesAvailability(m);
+            _effects.Recompute(m);
+        }
+
+        public void ApplyDestinationPurchase(GameModel m, string destId)
+        {
+            if (string.IsNullOrWhiteSpace(destId)) return;
+
+            // 0) Valida destino e estágio
+            DestinationModel dDef;
+            try { dDef = DestinationData.GetDef(destId); } catch { return; }
+
+            if (!m.Destinations.TryGetValue(destId, out var dLive))
+            {
+                dLive = new DestinationModel { Id = destId };
+                m.Destinations[destId] = dLive;
+            }
+
+            // reforça estado do catálogo (sem rebaixar nada)
+            dLive.Name = dDef.Name;
+            dLive.Image = dDef.Image;
+            dLive.StageId = dDef.StageId;
+            dLive.Cost = dDef.Cost;
+            dLive.CostResourceId = dDef.CostResourceId;
+
+            // 1) Personagens com CharDestId == destId → ficam disponíveis para compra
+            foreach (var (cid, ch) in m.Characters)
+            {
+                var cDef = CharacterData.GetDef(cid);
+                if (cDef.CharDestId == destId && !ch.Unlocked)
+                    ch.Avaliable = true;
+            }
+
+            // 2) Tecnologias com DestinationId == destId → ficam disponíveis para compra
+            foreach (var (tid, t) in m.Technologies)
+            {
+                var tDef = TechData.GetDef(tid);
+                if (tDef.DestinationId == destId && !t.Unlocked)
+                    t.Avaliable = true;
+            }
+
+            // 3) Contratos da EXPEDIÇÃO do estágio do destino → ficam disponíveis
+            //    (apenas na expedição ativa daquele stage)
+            var stageId = dDef.StageId;
+            if (!string.IsNullOrWhiteSpace(stageId) &&
+                m.Stages.TryGetValue(stageId, out var st) &&
+                st.Expedition is not null)
+            {
+                var ex = st.Expedition;
+                foreach (var (contId, cont) in ex.Contracts)
+                {
+                    var cDef = ContractData.GetDef(contId);
+                    if (cDef.ConDestId == destId)
+                        cont.Avaliable = true;
+                }
+            }
+
+            // 4) Expansions (se for outro tipo de conteúdo) — hook
+            // TODO: quando “Expansion” virar um dado/model, repetir o padrão acima.
+
+            _effects.Recompute(m);
+        }
+
+        public void RecomputeUpgradesAvailability(GameModel m)
+        {
+            foreach (var u in m.Upgrades.Values)
+            {
+                // Se não há TechId, tratamos como "sem pré-requisito de tech"
+                // → pode ficar disponível (respeitando Data e Max)
+                if (string.IsNullOrWhiteSpace(u.TechId))
+                {
+                    // Mantém o que o Data já marcou e garante visibilidade até esgotar
+                    u.Avaliable = (u.Avaliable || UpgradeData.GetDef(u.Id).Avaliable || true) && !u.IsMaxed;
+                    continue;
+                }
+
+                // Com TechId: só habilita se tech estiver Unlocked
+                if (m.Technologies.TryGetValue(u.TechId, out var t) && t.Unlocked)
+                {
+                    u.Avaliable = !u.IsMaxed;
+                }
+                else
+                {
+                    // NÃO derruba o que o Data trouxe: mantém se já era true
+                    u.Avaliable = u.Avaliable && !u.IsMaxed;
+                }
+            }
+        }
+
+    }
 }

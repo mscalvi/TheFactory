@@ -49,9 +49,17 @@ namespace FurmaIdle.Services
         int GetContractsCap(string stageId);
         double GetContractProgress01(string stageId, string contractId);
 
+        // Destinos
+        bool BuyDestination(string destId, out string? reason);
+
+        // Tecnologias
+        bool BuyTech(string techId, out string? reason);
 
         // Melhorias
         bool BuyUpgrade(string upgradeId, out string? reason);
+
+        // Characters
+        bool BuyCharacter(string charId, out string? reason);
 
         // Gerais
         void Attach(GameModel model);
@@ -63,14 +71,16 @@ namespace FurmaIdle.Services
     {
         private readonly IUpgradeService _effects;
         private readonly IStageService _stages;
+        private readonly IUnlockService _unlock;
         public GameModel Current { get; private set; } = new();
         public event Action? Changed;
         public event Action<string, LogKind>? Logged;
 
-        public GameService(IUpgradeService effects, IStageService stages)
+        public GameService(IUpgradeService effects, IStageService stages, IUnlockService unlock)
         {
             _effects = effects ?? throw new ArgumentNullException(nameof(effects));
             _stages = stages ?? throw new ArgumentNullException(nameof(stages));
+            _unlock = unlock;
         }
 
         public void Attach(GameModel model)
@@ -80,7 +90,7 @@ namespace FurmaIdle.Services
             Current.Guild ??= new GuildModel();
             Current.Guild.Roster ??= new HashSet<string>();
 
-            UpgradeData.EnsureUpgradesCatalog(Current); 
+            _unlock.RecomputeUpgradesAvailability(Current);
             _effects.Recompute(Current);
 
             _selectedStageId = _stages.GetFirstUnlocked(Current);
@@ -298,7 +308,7 @@ namespace FurmaIdle.Services
 
                 if (baseCandidates.Count <= cap)
                 {
-                    requested = baseCandidates; // cabe todo mundo → auto
+                    requested = baseCandidates;
                 }
                 else
                 {
@@ -342,7 +352,9 @@ namespace FurmaIdle.Services
 
             string stageName = LookupData.Stage(Current, _stages, stageId).Name;
             Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {Math.Max(0, cap - ex.PartyId.Count)} vagas. Boa aventura!", LogKind.Success);
+            _unlock.ApplyStageEntry(Current, stageId);
             Changed?.Invoke();
+            _effects.Recompute(Current);
             return true;
         }
 
@@ -810,19 +822,160 @@ namespace FurmaIdle.Services
             }
 
             // recalc dos efeitos para tick/click/caps etc.
+            _unlock.RecomputeUpgradesAvailability(Current);
+            if (upgradeId == "mx99")
+            {
+                const string goldId = "r001";    // sua moeda base
+                const double reward = 5000;
+
+                if (Current.Resources.TryGetValue(goldId, out var gold))
+                {
+                    gold.Actual += reward;
+                    gold.Total += reward;
+                }
+                else
+                {
+                    // se por algum motivo não existir ainda, cria o estado mínimo
+                    var def = ResourceData.GetDef(goldId);
+                    var r = new ResourceModel
+                    {
+                        Id = def.Id,
+                        Name = def.Name,
+                        Image = def.Image,
+                        Sort = def.Sort,
+                        ResourceType = def.ResourceType,
+                        Unlocked = true,
+                        Avaliable = true,
+                        Actual = reward,
+                        Total = reward
+                    };
+                    Current.Resources[goldId] = r;
+                }
+
+                Logged?.Invoke($"+{reward:N0} {goldId} via {upgradeId}.", LogKind.Success);
+            }
+
             _effects.Recompute(Current);
             Changed?.Invoke();
             return true;
         }
 
-        static bool IsUpgradeAvailable(GameModel m, UpgradeModel u)
+        #endregion
+
+        #region Destinos
+        public bool BuyDestination(string destId, out string? reason)
         {
-            if (u.TechId == null) return true; // sempre visível (mx00/mx01)
-            return m.Technologies.TryGetValue(u.TechId, out var t) && t.Unlocked;
+            reason = null;
+
+            if (string.IsNullOrWhiteSpace(destId))
+            { reason = "Destino inválido."; return false; }
+
+            if (!Current.Destinations.TryGetValue(destId, out var d))
+            { reason = "Destino inexistente."; return false; }
+
+            if (!d.Avaliable)
+            { reason = "Destino indisponível."; return false; }
+
+            if (d.Unlocked)
+            { reason = "Destino já adquirido."; return false; }
+
+            var wasUnlocked = d.Unlocked;
+
+            // Preço e moeda
+            var price = d.Cost;
+            var resId = d.CostResourceId;
+            if (!(price > 0)) { price = 0; } // permitir custo 0 (ex.: d00)
+
+            if (price > 0 && !TrySpend(resId, price))
+            { reason = "Saldo insuficiente."; return false; }
+
+            // Marca como comprado (unlocked)
+            d.Unlocked = true;
+            d.Avaliable = false;
+
+            // Caso queira algum efeito imediato pós-compra (opcional no futuro):
+            // _unlock.Apply(Current, "dest", destId);
+
+            if (!wasUnlocked)
+                _unlock.ApplyDestinationPurchase(Current, destId);
+
+            _effects.Recompute(Current);
+            Changed?.Invoke();
+
+            Logged?.Invoke($"Destino adquirido: {d.Name}.", LogKind.Success);
+            return true;
         }
         #endregion
 
-        #region Unlocks
+        #region Tecnologias
+        public bool BuyTech(string techId, out string? reason)
+        {
+            reason = null;
+
+            if (string.IsNullOrWhiteSpace(techId))
+            { reason = "Tecnologia inválida."; return false; }
+
+            if (!Current.Technologies.TryGetValue(techId, out var t))
+            { reason = "Tecnologia inexistente."; return false; }
+
+            if (!t.Avaliable)
+            { reason = "Tecnologia indisponível."; return false; }
+
+            if (t.Unlocked)
+            { reason = "Tecnologia já pesquisada."; return false; }
+
+            // Preço e moeda (conhecimento)
+            var price = t.Cost;
+            var resId = t.CostKnowledgeId;
+            if (!(price > 0)) { price = 0; }
+
+            if (price > 0 && !TrySpend(resId, price))
+            { reason = "Conhecimento insuficiente."; return false; }
+
+            // Centraliza no UnlockService: marca Unlocked e recalcula upgrades
+            _unlock.ApplyTechPurchase(Current, techId);
+
+            // Recalcular efeitos (tick/click/caps etc.)
+            _effects.Recompute(Current);
+
+            Logged?.Invoke($"Tecnologia pesquisada: {t.Name}.", LogKind.Success);
+            Changed?.Invoke();
+            return true;
+        }
+        #endregion
+
+        #region Personagens
+        // GameService.cs
+        public bool BuyCharacter(string charId, out string? reason)
+        {
+            reason = null;
+
+            if (!Current.Characters.TryGetValue(charId, out var c))
+            { reason = "Personagem inexistente."; return false; }
+
+            if (!c.Avaliable) { reason = "Personagem indisponível."; return false; }
+            if (c.Unlocked) { reason = "Personagem já contratado."; return false; }
+
+            // preço base do catálogo
+            var def = CharacterData.GetDef(charId);
+            var price = Math.Max(0, def.Cost);
+            var resId = def.CostResourceId;
+
+            // aplica o desconto dos traits ATUAIS (party)
+            var mult = Current.Runtime?.CharacterHireCostMult ?? 1.0;
+            var effective = Math.Ceiling(price * mult);
+
+            if (effective > 0 && !TrySpend(resId, effective))
+            { reason = $"Custa {effective:N0} {resId}."; return false; }
+
+            c.Unlocked = true;
+            c.Avaliable = false;
+            c.CharState = CharStateEnum.CharState.InBase;
+
+            _effects.Recompute(Current);
+            Changed?.Invoke();
+            return true;
+        }
 
         #endregion
     }

@@ -8,7 +8,7 @@ namespace FurmaIdle.Models
         public string Name { get; set; }
         public string MainKnowId { get; set; }
         public string SecondKnowId { get; set; }
-        public CharTraitModel? Trait { get; set; }
+        public string? TraitId { get; set; }
         public string SpecialtyId { get; set; }
         public int Sort { get; init; }
         public string Image { get; set; }
@@ -22,6 +22,8 @@ namespace FurmaIdle.Models
         public string? CharDestId { get; set; }
         public string CharStageId { get; set; }
         public bool Unlocked { get; set; }
+        public int Cost { get; set; }
+        public string CostResourceId { get; set; }
 
         // Contracts
         public List<string> KnowContractsIds { get; set; }

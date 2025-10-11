@@ -1,4 +1,6 @@
-﻿using FurmaIdle.Models;
+﻿using FurmaIdle.Data;
+using FurmaIdle.Helpers;
+using FurmaIdle.Models;
 using System.Runtime.InteropServices;
 
 namespace FurmaIdle.Services
@@ -54,7 +56,7 @@ namespace FurmaIdle.Services
                     string scope = eff.ScopeId ?? "all";
 
                     switch (eff.Target)
-                    {
+                    {                        
                         case EffectTarget.ContractGain:
                             if (scope == "all")
                                 _gainMultAll = ApplyMult(_gainMultAll, eff.Value, eff.Op, qty);
@@ -94,6 +96,8 @@ namespace FurmaIdle.Services
                     }
                 }
             }
+
+            ApplyTraits(m);
         }
 
         // multiplicador helper sem ref
@@ -134,5 +138,43 @@ namespace FurmaIdle.Services
         }
 
         public int ExtraContractsPerChar() => _extraContractsPerChar;
+
+        private void ApplyTraits(GameModel m)
+        {
+            // Personagens na expedição selecionada (ou todas expedições ativas, se houver múltiplas)
+            foreach (var st in m.Stages.Values)
+            {
+                var ex = st.Expedition;
+                if (ex is null || ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+
+                foreach (var charId in ex.PartyId)
+                {
+                    if (!m.Characters.TryGetValue(charId, out var c)) continue;
+                    if (string.IsNullOrWhiteSpace(c.TraitId)) continue;
+
+                    var trait = TraitData.GetDef(c.TraitId);
+
+                    // 1) Add passivo por segundo (recurso ou conhecimento)
+                    if (trait.AddPerSecond != 0)
+                    {
+                        var resId = trait.ResourceId ?? trait.KnowledgeId;
+                        if (!string.IsNullOrWhiteSpace(resId) && m.Resources.TryGetValue(resId, out var r))
+                        {
+                            r.PerSecond += trait.AddPerSecond; // usa o mesmo campo que contr./upgrades já somam
+                        }
+                    }
+
+                    // 2) Multiplicador de ganho de um resource/knowledge específico
+                    if (trait.GainMult != 1.0)
+                    {
+                        var resId = trait.ResourceId ?? trait.KnowledgeId;
+                        if (!string.IsNullOrWhiteSpace(resId) && m.Resources.TryGetValue(resId, out var r))
+                        {
+                            r.PerSecond *= trait.GainMult;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

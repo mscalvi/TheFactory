@@ -11,6 +11,7 @@ namespace FurmaIdle.Models
         public List<string> ActiveStagesIds { get; set; }
         public ExpansionModel Expansion { get; set; } = new();
         public GuildModel Guild { get; set; } = new();
+        public RuntimeModel Runtime { get; set; } = new RuntimeModel();
         public Dictionary<string, ClickModel> Clicks { get; set; } = new();
         public Dictionary<string, StageModel> Stages { get; set; } = new();
         public Dictionary<string, DestinationModel> Destinations { get; set; } = new();

@@ -93,15 +93,47 @@ namespace FurmaIdle.Services
             int baseCap = Math.Max(0, live?.MaxContracts ?? def?.MaxContracts ?? 0);
             int extra = _effects.ExtraContractsPerChar();
             int capEff = Math.Max(0, baseCap + extra);
+            string traitLine = SummarizeTrait(live?.TraitId ?? def?.TraitId);
 
             var body =
                 $"Status: {status}\n" +
                 $"Conhecimentos: {knows}\n" +
                 $"Especialidade: {ch?.SpecialtyId ?? "—"}\n" +
                 $"Cap. de contratos (por personagem): {capEff}  (base {baseCap} + extra {extra})\n" +
-                $"Contratos: \n{contractsStr}";
+                $"Contratos: {contractsStr}\n" + 
+                $"{traitLine}";
 
             return new HoverTip($"{name} ({id})", body);
+        }
+
+        private string SummarizeTrait(string? traitId)
+        {
+            if (string.IsNullOrWhiteSpace(traitId)) return "Traço: —";
+            TraitModel t;
+            try { t = TraitData.GetDef(traitId); } catch { return $"Traço: {traitId}"; }
+
+            var sb = new StringBuilder();
+            sb.Append($"Traço: {t.Name}");
+            var hasDetail = false;
+
+            if (t.CharacterCostMult != 1.0)
+            {
+                var perc = (1.0 - t.CharacterCostMult) * 100.0;
+                sb.Append($"\n• Contratação de personagem: -{perc:0.#}%");
+                hasDetail = true;
+            }
+            if (t.AddPerSecond != 0 && !string.IsNullOrWhiteSpace(t.ResourceId))
+            {
+                sb.Append($"\n• +{t.AddPerSecond:0.##}/s em {t.ResourceId}");
+                hasDetail = true;
+            }
+            if (t.GainMult != 1.0 && !string.IsNullOrWhiteSpace(t.KnowledgeId))
+            {
+                sb.Append($"\n• Knowledge {t.KnowledgeId}: x{t.GainMult:0.##}");
+                hasDetail = true;
+            }
+
+            return hasDetail ? sb.ToString() : $"Traço: {t.Name}";
         }
 
         // ===================== Especialidade =====================

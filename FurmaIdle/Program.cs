@@ -16,6 +16,7 @@ builder.Services.AddSingleton<ITooltipService, TooltipService>();
 builder.Services.AddSingleton<IUpgradeService, UpgradeService>();
 builder.Services.AddSingleton<IStageService, StageService>();
 builder.Services.AddSingleton<ITickService, TickService>();
+builder.Services.AddSingleton<IUnlockService, UnlockService>();
 
 builder.Services.AddSingleton<IGameStore, IndexedDbGameStore>();
 

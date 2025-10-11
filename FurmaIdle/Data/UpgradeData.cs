@@ -466,6 +466,20 @@ namespace FurmaIdle.Data
                 MaxBuys = 10,
                 Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
+            ["mx99"] = Build(new UpgradeModel
+            {
+                Id = "mx99",
+                Name = "Bolsa de Ouro",
+                Image = "images/upgrades/mx99.png",
+                TechId = null,               // sem pré-requisito
+                Avaliable = true,            // sempre visível
+                Unlocked = false,            // só vira true após 1ª compra (normal)
+                Buys = 0,
+                MaxBuys = 999999,                 // 0 = infinito (IsMaxed == false sempre)
+                Persistence = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly,
+                Effects = new List<UpgradeEffectModel>(), // sem efeito passivo; recompensa é on-buy
+                CostCode = UpgradeCostCode.Teste,
+            }),
             #endregion
             #region x01
             ["mx10"] = Build(new UpgradeModel

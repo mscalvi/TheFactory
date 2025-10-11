@@ -1,7 +1,8 @@
 ﻿window.ui = window.ui || {};
+
 window.ui.scrollToBottom = (el) => {
     if (!el) return;
-    // Usa RAF p/ esperar o layout
+
     requestAnimationFrame(() => {
         el.scrollTop = el.scrollHeight;
     });

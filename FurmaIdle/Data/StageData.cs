@@ -58,6 +58,7 @@ namespace FurmaIdle.Data
                 ClickImage = stage.ClickImage,
                 ResourceId = stage.ResourceId,
                 Unlocked = stage.Unlocked,
+                Avaliable = stage.Avaliable,
                 Sort = stage.Sort,
                 PartyCap = stage.PartyCap,
                 ContractsSlots = stage.ContractsSlots
@@ -79,6 +80,7 @@ namespace FurmaIdle.Data
                     ClickImage = stage.ClickImage,
                     ResourceId = stage.ResourceId,
                     Unlocked = stage.Unlocked,
+                    Avaliable = stage.Avaliable,
                     Sort = stage.Sort,
                     PartyCap = stage.PartyCap,
                     ContractsSlots = stage.ContractsSlots
