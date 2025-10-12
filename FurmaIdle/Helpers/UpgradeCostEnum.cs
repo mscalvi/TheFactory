@@ -19,7 +19,9 @@
             Tempo1C4,
             Clicks1T1,
             Teste,
-            UnlockResource
+            UnlockResource,
+            UnlockStage,
+            PartyCap
         }
 
         public static class UpgradeCostMap
@@ -42,7 +44,9 @@
                 [UpgradeCostCode.LimiteContrato1T1] = ("r001", 20, 3.1),
                 [UpgradeCostCode.Clicks1T1] = ("r001", 150, 3.1),
                 [UpgradeCostCode.Teste] = ("r001", 1, 1),
-                [UpgradeCostCode.UnlockResource] = ("r001", 2000, 1)
+                [UpgradeCostCode.UnlockResource] = ("r001", 2000, 1),
+                [UpgradeCostCode.UnlockStage] = ("r001", 20000000, 1),
+                [UpgradeCostCode.PartyCap] = ("r001", 1, 1)
             };
 
             public static (string res, double @base, double growth) Get(UpgradeCostCode code) => _map[code];

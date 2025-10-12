@@ -56,7 +56,7 @@ namespace FurmaIdle.Data
             {
                 Id = "d03",
                 Name = "Bosque da Raposa",
-                Cost = 400000,
+                Cost = 1000000,
                 CostResourceId = "r001",
                 Image = "images/icons/destinations/d03.png",
                 Unlocked = false,

@@ -60,7 +60,7 @@ namespace FurmaIdle.Data
                 KnowCoinGain = 0.16,
                 KnowCoinGainPenaltie = 0.7,
                 Image = "images/icons/knowledge/k20.png",
-                Avaliable = false
+                Avaliable = true
             },
             ["k30"] = new KnowledgeModel
             {
@@ -72,7 +72,7 @@ namespace FurmaIdle.Data
                 KnowCoinGain = 0.17,
                 KnowCoinGainPenaltie = 0.85,
                 Image = "images/icons/knowledge/k30.png",
-                Avaliable = false
+                Avaliable = true
             },
         };
 

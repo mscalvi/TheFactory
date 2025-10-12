@@ -11,7 +11,7 @@ namespace FurmaIdle.Data
 
         public static readonly List<string> Order = new()
         {
-            "s00", "s001"
+            "s00", "s01"
         };
 
         internal static readonly Dictionary<string, StageModel> All = new()
@@ -27,8 +27,8 @@ namespace FurmaIdle.Data
                 Avaliable = false,
                 DestinationId = "d00",
                 Sort = 1,
-                PartyCap = 4,
-                ContractsSlots = 6
+                PartyCap = 6,
+                ContractsSlots = 3
             },
 
             ["s01"] = new StageModel
@@ -43,7 +43,7 @@ namespace FurmaIdle.Data
                 DestinationId = "d10",
                 Sort = 2,
                 PartyCap = 2,
-                ContractsSlots = 6
+                ContractsSlots = 2
             }
         };
 

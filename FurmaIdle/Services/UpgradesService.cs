@@ -222,25 +222,6 @@ namespace FurmaIdle.Services
                 if (ex?.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
                 if (ex.ActiveSpecialties is null) continue;
 
-                foreach (var a in ex.ActiveSpecialties)
-                {
-                    if (a.EndsAtUtc <= now) continue;
-                    var sp = SpecialtyData.GetDef(a.SpecialtyId);
-
-                    switch (sp.Id)
-                    {
-                        case "e01":
-                            _resGenMultAll *= 1.2;
-                            break;
-                        case "e02":
-                            _gainMultAll *= 2.0;
-                            break;
-                        case "e03":
-                            _resGenMultAll *= 0.8;
-                            break;
-                    }
-                }
-
                 foreach (var charId in ex.PartyId)
                 {
                     if (!m.Characters.TryGetValue(charId, out var c)) continue;

@@ -482,20 +482,6 @@ namespace FurmaIdle.Data
                 MaxBuys = 1,
                 Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
-            ["mx99"] = Build(new UpgradeModel
-            {
-                Id = "mx99",
-                Name = "Bolsa de Ouro",
-                Image = "images/upgrades/mx99.png",
-                TechId = null,              
-                Avaliable = true,           
-                Unlocked = false,          
-                Buys = 0,
-                MaxBuys = 999999,             
-                Persistence = ResetPersistenceEnum.ResetPersistence.ExpeditionOnly,
-                Effects = new List<UpgradeEffectModel>(), 
-                CostCode = UpgradeCostCode.Teste,
-            }),
             #endregion
             #region x01
             ["mx10"] = Build(new UpgradeModel
@@ -549,6 +535,23 @@ namespace FurmaIdle.Data
                 },
                 Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
+            ["mx14"] = Build(new UpgradeModel
+            {
+                Id = "mx14",
+                Name = "Aumentar a Mão de Obra",
+                Image = "images/icons/upgrades/mx14.png",
+                Description = "Aumenta o PartyCap em 1 para o s00",
+                Lore = "",
+                Unlocked = true,
+                TechId = "x01",
+                Avaliable = false,
+                Range = 1,
+                CostCode = UpgradeCostCode.PartyCap,
+                Effects = new(){
+                    new UpgradeEffectModel { Target=EffectTarget.PartyCap, ScopeId="s00", Value=1, Op=EffectOp.Additive }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
+            }),
             #endregion
             #region x02
             ["mx20"] = Build(new UpgradeModel
@@ -571,12 +574,12 @@ namespace FurmaIdle.Data
             ["mx21"] = Build(new UpgradeModel
             {
                 Id = "mx21",
-                Name = "Colaboração da Equipe 1",
-                Image = "images/icons/upgrades/mx11.png",
+                Name = "Colaboração da Equipe 2",
+                Image = "images/icons/upgrades/mx21.png",
                 Description = "Aumenta o Ganho de todos os Contratos em x1.15 por Personagem Contratado",
                 Lore = "",
                 Unlocked = false,
-                TechId = "x01",
+                TechId = "x02",
                 Avaliable = false,
                 Range = 2,
                 CostCode = UpgradeCostCode.Quantidade1T1,
@@ -588,12 +591,12 @@ namespace FurmaIdle.Data
             ["mx22"] = Build(new UpgradeModel
             {
                 Id = "mx22",
-                Name = "Eficiência da Base 1",
-                Image = "images/icons/upgrades/mx12.png",
-                Description = "Aumenta a Geração de Recursos em 0.1/s por Personagem na Base",
+                Name = "Eficiência da Base 2",
+                Image = "images/icons/upgrades/mx22.png",
+                Description = "Aumenta a Geração de Recursos em 0.1/s por Personagem na Base.",
                 Lore = "",
                 Unlocked = false,
-                TechId = "x01",
+                TechId = "x02",
                 Avaliable = false,
                 Range = 2,
                 CostCode = UpgradeCostCode.Geracao1T1,
@@ -602,7 +605,40 @@ namespace FurmaIdle.Data
                 },
                 Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
-            #endregion
+            ["mx23"] = Build(new UpgradeModel
+            {
+                Id = "mx23",
+                Name = "Aumentar a Mão de Obra",
+                Image = "images/icons/upgrades/mx23.png",
+                Description = "Aumenta o PartyCap em 1 para o s00",
+                Lore = "",
+                Unlocked = true,
+                TechId = "x02",
+                Avaliable = false,
+                Range = 1,
+                CostCode = UpgradeCostCode.PartyCap,
+                Effects = new(){
+                    new UpgradeEffectModel { Target=EffectTarget.PartyCap, ScopeId="s00", Value=1, Op=EffectOp.Additive }
+                },
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
+            }),
+            ["mx24"] = Build(new UpgradeModel
+            {
+                Id = "mx24",
+                Name = "Içar Velas",
+                Image = "images/icons/upgrades/mx24.png",
+                Description = "Libera o s01.",
+                Lore = "Fim de Jogo.",
+                Unlocked = false,
+                TechId = "x02",
+                Avaliable = false,
+                Range = 2,
+                CostCode = UpgradeCostCode.UnlockStage,
+                Effects = new List<UpgradeEffectModel>(),
+                MaxBuys = 1,
+                Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
+                #endregion
+            })
         };
 
         private static UpgradeModel Build(UpgradeModel m)

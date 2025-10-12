@@ -1,6 +1,17 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Helpers;
+
+namespace FurmaIdle.Models
 {
     public class ExpansionModel
     {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+        public string DestUnlockId { get; set; }
+        public int Price { get; set; }
+        public string PriceCoinId { get; set; }
+        public bool Avaliable { get; set; }
+        public bool Unlocked { get; set; }
+        public ResetPersistenceEnum.ResetPersistence Persistence { get; set; } = ResetPersistenceEnum.ResetPersistence.Permanent;
     }
 }

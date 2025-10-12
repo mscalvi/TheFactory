@@ -9,7 +9,6 @@ namespace FurmaIdle.Models
         public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
         public string SelectedStageId { get; set; }
         public List<string> ActiveStagesIds { get; set; }
-        public ExpansionModel Expansion { get; set; } = new();
         public GuildModel Guild { get; set; } = new();
         public RuntimeModel Runtime { get; set; } = new RuntimeModel();
         public Dictionary<string, ClickModel> Clicks { get; set; } = new();
@@ -21,5 +20,6 @@ namespace FurmaIdle.Models
         public Dictionary<string, CharacterModel> Characters { get; set; } = new();
         public Dictionary<string, ContractModel> Contracts { get; set; } = new();
         public Dictionary<string, KnowledgeModel> Knowledges { get; set; } = new();
+        public Dictionary<string, ExpansionModel> Expansions { get; set; } = new();
     }
 }

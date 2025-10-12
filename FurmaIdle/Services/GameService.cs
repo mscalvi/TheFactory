@@ -70,6 +70,9 @@ namespace FurmaIdle.Services
         bool ActivateSpecialty(string charId, out string? reason);
         (bool active, double remaining, double total) GetSpecialtyTimer(string charId);
 
+        // Expansões
+        bool BuyExpansion(string expId, out string? reason);
+
         // Gerais
         void Attach(GameModel model);
         event Action? Changed;
@@ -1412,6 +1415,225 @@ namespace FurmaIdle.Services
                 return (true, remaining, total);
             }
             return (false, 0, 0);
+        }
+
+        #endregion
+
+        #region Expansões
+        public bool BuyExpansion(string expId, out string? reason)
+        {
+            reason = null;
+
+            // sanity
+            if (string.IsNullOrWhiteSpace(expId))
+            { reason = "Expansão inválida."; return false; }
+
+            if (Current.Expansions is null || !Current.Expansions.TryGetValue(expId, out var exp) || exp is null)
+            { reason = "Expansão inexistente."; return false; }
+
+            if (!exp.Avaliable)
+            { reason = "Expansão ainda não está disponível."; return false; }
+
+            if (exp.Unlocked)
+            { reason = "Expansão já comprada."; return false; }
+
+            // pagamento
+            var costRes = string.IsNullOrWhiteSpace(exp.PriceCoinId) ? "r001" : exp.PriceCoinId;
+            var cost = Math.Max(0, exp.Price);
+
+            if (!TrySpend(costRes, cost))
+            {
+                reason = $"Precisa de {cost:N0} {costRes}.";
+                return false;
+            }
+
+            // marca comprada antes do reset (para persistir status)
+            exp.Unlocked = true;
+
+            // HARD RESET (sua implementação interna)
+            // encerra expedições, limpa ExpeditionOnly/ExpansionOnly, recria estado base etc.
+            try
+            {
+                HardReset(expId); // <-- método que você já implementou
+            }
+            catch (Exception ex)
+            {
+                // rollback simples no caso de falha inesperada
+                exp.Unlocked = false;
+                // opcional: devolver o custo ao jogador
+                Add(costRes, cost, notify: false);
+                reason = "Falha ao aplicar a Expansão.";
+                Console.WriteLine($"[EXPANSION] HardReset error: {ex}");
+                return false;
+            }
+
+            // efeitos e UI
+            _effects.Recompute(Current);
+            Logged?.Invoke($"Expansão {expId} concluída.", LogKind.Success);
+            Changed?.Invoke();
+            return true;
+        }
+
+        public void HardReset(string sourceExpansionId)
+        {
+            // 1) Finaliza expedições ativas (sem distribuir conhecimento)
+            foreach (var st in Current.Stages.Values)
+            {
+                var ex = st.Expedition;
+                if (ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
+                {
+                    // EndExpedition já faz o "soft", mas aqui queremos impedir knowledge:
+                    // chame uma variante interna que pule a parte de conhecimento, ou
+                    // force o motivo e short-circuite antes do bloco de knowledge.
+                    EndExpedition(st.Id, reason: "expansion-hardreset-skip-knowledge");
+                }
+            }
+
+            // 2) Zera estado por persistência
+            // IMPORTANTE: ajuste os nomes abaixo conforme seus modelos/enum
+
+            // 2.1 Resources
+            if (Current.Resources is not null)
+            {
+                foreach (var r in Current.Resources.Values)
+                {
+                    // sempre zerar o saldo atual numa expansão
+                    r.Actual = 0;
+
+                    switch (r.Persistence)
+                    {
+                        case ResetPersistenceEnum.ResetPersistence.Permanent:
+                            // mantém Total/unlocks
+                            break;
+
+                        case ResetPersistenceEnum.ResetPersistence.ExpeditionOnly:
+                            // no hard reset também limpa o que já é limpo no soft
+                            // (Total normalmente preservado, mas mantenha sua regra)
+                            break;
+
+                        case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
+                            // limpa tudo que só deveria durar até a expansão
+                            r.Total = 0;
+                            r.Unlocked = false;
+                            r.Avaliable = false;
+                            break;
+                    }
+                }
+            }
+
+            // 2.2 Upgrades
+            if (Current.Upgrades is not null)
+            {
+                foreach (var u in Current.Upgrades.Values)
+                {
+                    switch (u.Persistence)
+                    {
+                        case ResetPersistenceEnum.ResetPersistence.Permanent:
+                            // mantém compras
+                            break;
+
+                        case ResetPersistenceEnum.ResetPersistence.ExpeditionOnly:
+                        case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
+                            u.Buys = 0;
+                            u.Unlocked = false;
+                            // Disponibilidade é derivada (tech + !IsMaxed); recalcularemos depois
+                            break;
+                    }
+                }
+            }
+
+            // 2.3 Technologies
+            if (Current.Technologies is not null)
+            {
+                foreach (var t in Current.Technologies.Values)
+                {
+                    switch (t.Persistence)
+                    {
+                        case ResetPersistenceEnum.ResetPersistence.Permanent:
+                            break;
+
+                        case ResetPersistenceEnum.ResetPersistence.ExpeditionOnly:
+                        case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
+                            t.Unlocked = false;
+                            // t.Avaliable será refeito via UnlockService
+                            break;
+                    }
+                }
+            }
+
+            // 2.4 Characters
+            if (Current.Characters is not null)
+            {
+                foreach (var c in Current.Characters.Values)
+                {
+                    // sempre retornar para a base e limpar vínculos de stage
+                    c.CharState = CharStateEnum.CharState.InBase;
+                    c.CharStageId = null;
+
+                    switch (c.Persistence)
+                    {
+                        case ResetPersistenceEnum.ResetPersistence.Permanent:
+                            break;
+
+                        case ResetPersistenceEnum.ResetPersistence.ExpeditionOnly:
+                        case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
+                            // caso use flags de unlock em personagens
+                            c.Unlocked = false;
+                            c.Avaliable = false;
+                            break;
+                    }
+                }
+            }
+
+            // 2.5 Destinos / Stages (limpeza de estado runtime)
+            if (Current.Stages is not null)
+            {
+                foreach (var st in Current.Stages.Values)
+                {
+                    var ex = st.Expedition;
+                    if (ex is null) continue;
+
+                    // limpa SEMPRE os dados voláteis de run
+                    ex.ActiveContracts?.Clear();
+                    ex.LockedContractByLevel?.Clear();
+                    ex.Contracts?.Clear();
+                    ex.PartyId?.Clear();
+                    ex.RunGainsByRes?.Clear();
+                    ex.RunKnowGains?.Clear();
+                    ex.ActiveSpecialties?.Clear();
+
+                    ex.ExpeditionStatus = ExpeditionEnum.ExpeditionStatus.Idle;
+                    ex.StartedAtUtc = null;
+                }
+            }
+
+            if (Current.Destinations is not null)
+            {
+                foreach (var d in Current.Destinations.Values)
+                {
+                    switch (d.Persistence)
+                    {
+                        case ResetPersistenceEnum.ResetPersistence.Permanent:
+                            break;
+
+                        case ResetPersistenceEnum.ResetPersistence.ExpeditionOnly:
+                        case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
+                            d.Unlocked = false;
+                            d.Avaliable = false;
+                            break;
+                    }
+                }
+            }
+
+            // 3) Reaplicar desbloqueios “base” para o stage atual
+            //    (recurso do stage, destinos daquele stage, tecnologias e contratos daquele destino etc.)
+            var stageId = SelectedStageId;
+            _unlock.ApplyStageEntry(Current, stageId);
+
+            // 4) Recomputar efeitos e atualizar UI
+            _effects.Recompute(Current);
+            Changed?.Invoke();
+            Logged?.Invoke($"Hard reset concluído pela expansão {sourceExpansionId}.", LogKind.Success);
         }
 
         #endregion

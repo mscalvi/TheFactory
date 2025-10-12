@@ -13,6 +13,7 @@ namespace FurmaIdle.Services
         void ApplyTechPurchase(GameModel m, string techId);
         void ApplyDestinationPurchase(GameModel m, string destId);
         void RecomputeUpgradesAvailability(GameModel m);
+        void ApplyExpansionPurchase(GameModel m, string expId);
     }
 
     public sealed class UnlockService : IUnlockService
@@ -58,7 +59,6 @@ namespace FurmaIdle.Services
 
             _effects.Recompute(m);
         }
-
 
         public void ApplyTechPurchase(GameModel m, string techId)
         {
@@ -125,10 +125,19 @@ namespace FurmaIdle.Services
                 }
             }
 
-            // 4) Expansions (se for outro tipo de conteúdo) — hook
-            // TODO: quando “Expansion” virar um dado/model, repetir o padrão acima.
+            // 4) Expansões
+            foreach (var (tid, t) in m.Expansions)
+            {
+                var tDef = TechData.GetDef(tid);
+                if (tDef.DestinationId == destId && !t.Unlocked)
+                    t.Avaliable = true;
+            }
 
             _effects.Recompute(m);
+        }
+
+        public void ApplyExpansionPurchase(GameModel m, string expId)
+        {
         }
 
         public void RecomputeUpgradesAvailability(GameModel m)
