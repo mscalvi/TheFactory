@@ -1,0 +1,118 @@
+﻿@* Components/NavMenu.razor *@
+
+@* Components/NavMenu/NavMenu.razor *@
+<div class="nav-menu">
+    <div class="nav-col">
+        <div class="nav-menu">
+            <div class="nav-col">
+                @if (!VisibleNav.Any())
+                {
+                    <div style="padding:8px;border:1px dashed #9aa2b1;border-radius:8px;font-size:12px;opacity:.85">
+                        NavMenu: nenhum item visível. (Unlocked == true)
+                    </div>
+                }
+                else
+                {
+                    @foreach (var it in VisibleNav)
+                    {
+                        var isSelected = it.Id == SelectedId;
+                        <button class="nav-button @(isSelected ? "is-selected" : null)"
+                                title="@it.Label"
+                                aria-label="@it.Label"
+                                aria-pressed="@isSelected"
+                                @onclick="() => Select(it.Id)">
+                            <span class="nav-glyph">@it.Id</span>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    // ==== PARÂMETROS ====
+    /// <summary>Id selecionado (permite usar bind-SelectedId no pai)</summary>
+    [Parameter] public string? SelectedId { get; set; } = "i1";
+    [Parameter] public EventCallback<string?> SelectedIdChanged { get; set; }
+
+    /// <summary>Callback quando um ícone é selecionado</summary>
+    [Parameter] public EventCallback<string> OnSelect { get; set; }
+
+    /// <summary>Pasta base dos ícones (ex.: /icons)</summary>
+    [Parameter] public string IconBasePath { get; set; } = "/icons/nav-menu";
+
+    // ==== MODELO INTERNO ====
+    private sealed class NavItem
+    {
+        public required string Id { get; init; }
+        public required string Label { get; init; }
+        public bool Unlocked { get; set; }
+        public bool Selected { get; set; }
+        public bool Notification { get; set; }
+
+        public int SortKey =>
+            int.TryParse(Id.AsSpan(1), out var position) ? position : int.MaxValue;
+    }
+
+    private readonly List<NavItem> _nav = new()
+    {
+        new() { Id = "i1", Label = "Stages", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i2", Label = "Expansion", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i3", Label = "Expedition", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i4", Label = "Characters", Unlocked = true, Selected = true, Notification = false },
+        new() { Id = "i5", Label = "Upgrades", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i6", Label = "Techs", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i7", Label = "Destinations", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i97", Label = "Statistics", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i98", Label = "Archievments", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i99", Label = "Configurações", Unlocked = true, Selected = false, Notification = false },
+    };
+
+    private IEnumerable<NavItem> VisibleNav =>
+        _nav.Where(item => item.Unlocked).OrderBy(position => position.SortKey);
+
+    // ==== AÇÕES ====
+    private async Task Select(string id)
+    {
+        SelectedId = id;
+        if (SelectedIdChanged.HasDelegate)
+            await SelectedIdChanged.InvokeAsync(SelectedId);
+
+        if (OnSelect.HasDelegate)
+            await OnSelect.InvokeAsync(id);
+    }
+
+    private string GetIconPath(string id)
+        => $"{IconBasePath}/{id}.png";
+
+    // ==== API PÚBLICA (opcional, para usar via @ref no pai) ====
+    /// <summary>Desbloqueia um ícone</summary>
+    public void UnlockMenu(string id)
+    {
+        var it = _nav.FirstOrDefault(n => n.Id == id);
+        if (it is null)
+        {
+            // se não existir, cria
+            _nav.Add(new NavItem { Id = id, Label = id.ToUpperInvariant(), Unlocked = true });
+        }
+        else
+        {
+            it.Unlocked = true;
+        }
+        StateHasChanged();
+    }
+
+    /// <summary>Bloqueia novamente um ícone</summary>
+    public void LockMenu(string id)
+    {
+        var it = _nav.FirstOrDefault(n => n.Id == id);
+        if (it is not null && it.Unlocked)
+        {
+            it.Unlocked = false;
+            if (SelectedId == id) SelectedId = null;
+            StateHasChanged();
+        }
+    }
+}

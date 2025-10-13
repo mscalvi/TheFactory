@@ -1,0 +1,42 @@
+﻿@page "/"
+
+@using FurmaIdle.Components;
+
+<div class="game-grid">
+    <!-- Navegador -->
+    <aside class="nav-menu panel">
+        <NavMenu @bind-SelectedId="_navId" />
+    </aside>
+
+    <!-- Texto -->
+    <section class="text-box panel">text-box</section>
+
+    <!-- Shop -->
+    <section class="shop-menu panel">shop-menu</section>
+
+    <!-- Título -->
+    <header class="title-box panel">title-box</header>
+
+    <!-- Stage/Área -->
+    <section class="stage-box-box panel">stage-box</section>
+
+    <!-- Click -->
+    <main class="click-area panel">click-area</main>
+
+    <!-- Income -->
+    <section class="income-box panel">income-box</section>
+
+    <!-- Contratos -->
+    <section class="contracts-menu panel">contracts-menu</section>
+</div>
+
+
+@code {
+    private NavMenu? navRef;
+    private string? _navId = "i4";
+
+    private void OnNavSelect(string id)
+    {
+        
+    }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "FurmaIdle",
+  "short_name": "FurmaIdle",
+  "id": "./",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#03173d",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/gameicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

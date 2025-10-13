@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #0f0f12;
+    color: #e7e7ea;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+button {
+    font: inherit;
+}
+
+    button:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+
+.game-shell {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: #0f0f12;
+    color: #e7e7ea;
+}
