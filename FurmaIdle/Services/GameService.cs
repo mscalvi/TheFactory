@@ -4,6 +4,7 @@ using FurmaIdle.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Channels;
 using static FurmaIdle.Helpers.ExpeditionEnum;
@@ -152,39 +153,63 @@ namespace FurmaIdle.Services
         public void Add(string resId, double amount = 1, bool notify = true)
         {
             if (string.IsNullOrWhiteSpace(resId) || amount == 0) return;
-
             var r = EnsureResource(resId);
 
-            // aplica
-            r.Actual += amount;
-            r.Total += Math.Max(0, amount);
-
-            // contexto da expedição ativa
-            var st = GetSelectedStage();
-            var ex = st?.Expedition;
-            bool inExpedition = ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active;
-
-            // CAP por personagem (se houver)
-            if (inExpedition)
+            if (amount > 0)
             {
-                int members = Math.Max(0, ex!.PartyId?.Count ?? 0);
-                if (members > 0)
+                // acumula fração e só aplica inteiros
+                r.PendingFrac += amount;
+                int inc = (int)Math.Floor(r.PendingFrac);
+                if (inc > 0)
                 {
-                    var capPerChar = _effects.ResourceCapPerChar(resId, r.CharacterCap);
-                    if (capPerChar > 0)
+                    r.PendingFrac -= inc;
+
+                    // aplica cap por personagem (se expedição ativa)
+                    var st = GetSelectedStage();
+                    var ex = st?.Expedition;
+                    if (ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
                     {
-                        double capTotal = capPerChar * members;
-                        if (r.Actual > capTotal) r.Actual = capTotal;
+                        int members = Math.Max(0, ex.PartyId?.Count ?? 0);
+                        if (members > 0)
+                        {
+                            var capPerChar = _effects.ResourceCapPerChar(resId, r.CharacterCap);
+                            if (capPerChar > 0)
+                            {
+                                double capTotal = capPerChar * members;
+                                // aplica incremento respeitando o cap
+                                var room = (int)Math.Max(0, Math.Floor(capTotal - r.Actual));
+                                if (room <= 0) inc = 0;
+                                else if (inc > room) inc = room;
+                            }
+                        }
+                    }
+
+                    if (inc > 0)
+                    {
+                        r.Actual += inc;
+                        r.Total += inc;
+
+                        // marca ganhos da run (só com expedição ativa)
+                        var ex2 = GetSelectedStage()?.Expedition;
+                        if (ex2?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
+                        {
+                            ex2.RunGainsByRes ??= new Dictionary<string, double>(StringComparer.Ordinal);
+                            ex2.RunGainsByRes.TryGetValue(resId, out var cur);
+                            ex2.RunGainsByRes[resId] = cur + inc;
+                        }
                     }
                 }
             }
-
-            // acumular ganhos por-run p/ preview/knowledge
-            if (amount > 0 && inExpedition)
+            else // amount < 0 (gastos eventuais que usem Add negativo — se você usa TrySpend, pode ignorar)
             {
-                ex!.RunGainsByRes ??= new Dictionary<string, double>(StringComparer.Ordinal);
-                ex.RunGainsByRes.TryGetValue(resId, out var cur);
-                ex.RunGainsByRes[resId] = cur + amount;
+                int dec = (int)Math.Ceiling(amount); // amount é negativo; arredonda para baixo em módulo inteiro
+                if (dec != 0)
+                {
+                    // zera buffer porque vamos mexer no saldo diretamente
+                    r.PendingFrac = 0;
+                    r.Actual = Math.Max(0, r.Actual + dec); // dec é negativo
+                                                            // Total não diminui em gastos
+                }
             }
 
             if (notify) Changed?.Invoke();
@@ -214,7 +239,6 @@ namespace FurmaIdle.Services
 
             foreach (var run in ex.ActiveContracts)
             {
-                // TROCAR Current.Contracts -> ex.Contracts
                 if (!ex.Contracts.TryGetValue(run.ContractId, out var c)) continue;
 
                 var (_, cps, spc) = ContractsPricingHelper.ProdParams(c);
@@ -422,7 +446,7 @@ namespace FurmaIdle.Services
             Current.Guild?.Roster?.Clear();
 
             string stageName = LookupData.Stage(Current, _stages, stageId).Name;
-            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros: {roster.ToString}. Sobraram {Math.Max(0, cap - ex.PartyId.Count)} vagas. Boa aventura!", LogKind.Success);
+            Logged?.Invoke($"Expedição iniciada em {stageName}, com {ex.PartyId.Count} membros. Sobraram {Math.Max(0, cap - ex.PartyId.Count)} vagas. Boa aventura!", LogKind.Success);
             _unlock.ApplyStageEntry(Current, stageId);
             Changed?.Invoke();
             _effects.Recompute(Current);
@@ -761,8 +785,6 @@ namespace FurmaIdle.Services
             }
             return ids;
         }
-
-
         #endregion
 
         #region Ticks
@@ -830,15 +852,19 @@ namespace FurmaIdle.Services
                 }
 
                 // ---- GERAÇÃO PASSIVA POR RECURSO
-                if (Current.Resources is not null)
+                if (Current.Resources is not null && HasAnyExpeditionActive) // <- guard
                 {
                     foreach (var r in Current.Resources.Values)
                     {
                         if (!r.Unlocked) continue;
-                        double addPerSec = _effects.ResourceGenAddPerSecond(r.Id) * _effects.ResourceGenMult(r.Id);
-                        if (addPerSec > 0)
+
+                        double add = _effects.ResourceGenAddPerSecond(r.Id); // aditivo
+                        double mul = _effects.ResourceGenMult(r.Id);         // multiplicativo
+                        double eff = add * mul;
+
+                        if (eff > 0)
                         {
-                            Add(r.Id, addPerSec * step, notify: false);
+                            Add(r.Id, eff * step, notify: false);
                             anyChange = true;
                         }
                     }
@@ -855,8 +881,6 @@ namespace FurmaIdle.Services
             RecomputePerSecond();
             if (anyChange) Changed?.Invoke();
         }
-
-        // GameService.cs
         private void RecomputePerSecond()
         {
             // zera
@@ -889,15 +913,22 @@ namespace FurmaIdle.Services
                 }
             }
 
-            // geração passiva (somente recursos desbloqueados)
+            // geração passiva
             if (Current.Resources != null)
+            {
+                bool anyActive = HasAnyExpeditionActive;
                 foreach (var r in Current.Resources.Values)
                 {
                     if (!r.Unlocked) continue;
-                    var add = _effects.ResourceGenAddPerSecond(r.Id);
-                    var mult = _effects.ResourceGenMult(r.Id);
-                    r.PerSecond += Math.Max(0, add * mult);
+
+                    if (anyActive)
+                    {
+                        double add = _effects.ResourceGenAddPerSecond(r.Id);
+                        double mult = _effects.ResourceGenMult(r.Id);
+                        r.PerSecond += Math.Max(0, add * mult);
+                    }
                 }
+            }
         }
 
         #endregion
@@ -1313,7 +1344,6 @@ namespace FurmaIdle.Services
         #endregion
 
         #region Especialidades
-        // GameService.cs
         public bool ActivateSpecialty(string charId, out string? reason)
         {
             reason = null;
@@ -1345,10 +1375,19 @@ namespace FurmaIdle.Services
                 ex.ActiveSpecialties.Any(a => a.CharId == charId && a.SpecialtyId == spec.Id && a.EndsAtUtc > now))
             { reason = "Especialidade já ativa."; return false; }
 
+            // detecta o tipo do recurso que paga a especialidade
             // pagar custo (NÃO somar em Total nem usar Add; é gasto!)
             var costRes = spec.CostResourceId ?? "r100";
             var cost = Math.Max(0, spec.Cost);
             var coinId = st?.ResourceId;
+            var baseCost = Math.Max(0, spec.Cost);
+
+            var resType = ResourceEnum.ResourceType.Resource;
+            if (Current.Resources.TryGetValue(costRes, out var rpay) && rpay is not null)
+                resType = rpay.ResourceType;
+
+            var mult = _effects.SpecialtyCostMult(resType);
+            var effCost = Math.Floor(baseCost * mult);
 
             if (!TrySpend(costRes, cost))
             {
@@ -1438,8 +1477,8 @@ namespace FurmaIdle.Services
             { reason = "Expansão já comprada."; return false; }
 
             // pagamento
-            var costRes = string.IsNullOrWhiteSpace(exp.PriceCoinId) ? "r001" : exp.PriceCoinId;
-            var cost = Math.Max(0, exp.Price);
+            var costRes = string.IsNullOrWhiteSpace(exp.CoinCostId) ? "r001" : exp.CoinCostId;
+            var cost = Math.Max(0, exp.Cost);
 
             if (!TrySpend(costRes, cost))
             {
@@ -1450,17 +1489,14 @@ namespace FurmaIdle.Services
             // marca comprada antes do reset (para persistir status)
             exp.Unlocked = true;
 
-            // HARD RESET (sua implementação interna)
-            // encerra expedições, limpa ExpeditionOnly/ExpansionOnly, recria estado base etc.
+            // HARD RESET
             try
             {
-                HardReset(expId); // <-- método que você já implementou
+                HardReset(expId);
             }
             catch (Exception ex)
             {
-                // rollback simples no caso de falha inesperada
                 exp.Unlocked = false;
-                // opcional: devolver o custo ao jogador
                 Add(costRes, cost, notify: false);
                 reason = "Falha ao aplicar a Expansão.";
                 Console.WriteLine($"[EXPANSION] HardReset error: {ex}");
@@ -1482,10 +1518,7 @@ namespace FurmaIdle.Services
                 var ex = st.Expedition;
                 if (ex?.ExpeditionStatus == ExpeditionEnum.ExpeditionStatus.Active)
                 {
-                    // EndExpedition já faz o "soft", mas aqui queremos impedir knowledge:
-                    // chame uma variante interna que pule a parte de conhecimento, ou
-                    // force o motivo e short-circuite antes do bloco de knowledge.
-                    EndExpedition(st.Id, reason: "expansion-hardreset-skip-knowledge");
+                    EndExpedition(st.Id);
                 }
             }
 
@@ -1497,7 +1530,6 @@ namespace FurmaIdle.Services
             {
                 foreach (var r in Current.Resources.Values)
                 {
-                    // sempre zerar o saldo atual numa expansão
                     r.Actual = 0;
 
                     switch (r.Persistence)
@@ -1536,7 +1568,6 @@ namespace FurmaIdle.Services
                         case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
                             u.Buys = 0;
                             u.Unlocked = false;
-                            // Disponibilidade é derivada (tech + !IsMaxed); recalcularemos depois
                             break;
                     }
                 }
@@ -1555,7 +1586,6 @@ namespace FurmaIdle.Services
                         case ResetPersistenceEnum.ResetPersistence.ExpeditionOnly:
                         case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
                             t.Unlocked = false;
-                            // t.Avaliable será refeito via UnlockService
                             break;
                     }
                 }
@@ -1566,7 +1596,6 @@ namespace FurmaIdle.Services
             {
                 foreach (var c in Current.Characters.Values)
                 {
-                    // sempre retornar para a base e limpar vínculos de stage
                     c.CharState = CharStateEnum.CharState.InBase;
                     c.CharStageId = null;
 
@@ -1577,7 +1606,6 @@ namespace FurmaIdle.Services
 
                         case ResetPersistenceEnum.ResetPersistence.ExpeditionOnly:
                         case ResetPersistenceEnum.ResetPersistence.ExpansionOnly:
-                            // caso use flags de unlock em personagens
                             c.Unlocked = false;
                             c.Avaliable = false;
                             break;
@@ -1603,7 +1631,7 @@ namespace FurmaIdle.Services
                     ex.ActiveSpecialties?.Clear();
 
                     ex.ExpeditionStatus = ExpeditionEnum.ExpeditionStatus.Idle;
-                    ex.StartedAtUtc = null;
+                    ex.Start = null;
                 }
             }
 

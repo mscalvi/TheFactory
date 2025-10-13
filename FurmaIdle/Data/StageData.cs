@@ -27,8 +27,8 @@ namespace FurmaIdle.Data
                 Avaliable = false,
                 DestinationId = "d00",
                 Sort = 1,
-                PartyCap = 6,
-                ContractsSlots = 3
+                PartyCap = 4,
+                ContractsSlots = 5
             },
 
             ["s01"] = new StageModel

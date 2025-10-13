@@ -25,7 +25,7 @@ namespace FurmaIdle.Data
                 Id = "m100",
                 Name = "Utensílios da Guilda",
                 Image = "images/icons/upgrades/m100.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t10",
@@ -33,7 +33,7 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c10", Value=1.10, Op=EffectOp.Multiplicative }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c10", Value=2.00, Op=EffectOp.Multiplicative }
                 }
             }),
             ["m101"] = Build(new UpgradeModel
@@ -41,7 +41,7 @@ namespace FurmaIdle.Data
                 Id = "m101",
                 Name = "Disciplina da Guilda",
                 Image = "images/icons/upgrades/m101.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t10",
@@ -49,7 +49,7 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=1.10, Op=EffectOp.Multiplicative }
+        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=2.0, Op=EffectOp.Multiplicative }
     }
             }),
             ["m102"] = Build(new UpgradeModel
@@ -57,7 +57,7 @@ namespace FurmaIdle.Data
                 Id = "m102",
                 Name = "Coletividade da Guilda",
                 Image = "images/icons/upgrades/m102.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t10",
@@ -65,7 +65,7 @@ namespace FurmaIdle.Data
                 Range = 2,
                 CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=1.10, Op=EffectOp.Multiplicative }
+        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=2.0, Op=EffectOp.Multiplicative }
     }
             }),
             ["m103"] = Build(new UpgradeModel
@@ -73,7 +73,7 @@ namespace FurmaIdle.Data
                 Id = "m103",
                 Name = "União da Guilda",
                 Image = "images/icons/upgrades/m103.png",
-                Description = "Aumenta a Geração do Recurso em 0.1/s",
+                Description = "Aumenta a Geração do Recurso em 0.5/s",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t10",
@@ -81,7 +81,7 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Geracao1R1,
                 Effects = new(){
-                    new UpgradeEffectModel { Target=EffectTarget.ResourceGen, ScopeId="r100", Value=1.10, Op=EffectOp.Multiplicative }
+                    new UpgradeEffectModel { Target=EffectTarget.ResourceGen, ScopeId="r100", Value=0.50, Op=EffectOp.Additive }
                 }
             }),
             ["m104"] = Build(new UpgradeModel
@@ -89,7 +89,7 @@ namespace FurmaIdle.Data
                 Id = "m104",
                 Name = "Recepção da Guilda",
                 Image = "images/icons/upgrades/m104.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t10",
@@ -97,9 +97,9 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-                    new UpgradeEffectModel { Target=EffectTarget.ContractCap, ScopeId="c20", Value=1, Op=EffectOp.Additive }
-                }
-            }),
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c20", Value=2.0, Op=EffectOp.Multiplicative }
+                    }
+                }),
             #endregion
             #region t11
             ["m110"] = Build(new UpgradeModel
@@ -107,7 +107,7 @@ namespace FurmaIdle.Data
                 Id = "m110",
                 Name = "Facas de Escamar",
                 Image = "images/icons/upgrades/m110.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t11",
@@ -115,15 +115,15 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C2,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c21", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c21", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m111"] = Build(new UpgradeModel
             {
                 Id = "m111",
                 Name = "Reservas de Escambo",
                 Image = "images/icons/upgrades/m111.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t11",
@@ -131,15 +131,15 @@ namespace FurmaIdle.Data
                 Range = 2,
                 CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c10", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c10", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m112"] = Build(new UpgradeModel
             {
                 Id = "m112",
                 Name = "Cordas Grossas",
                 Image = "images/icons/upgrades/m112.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t11",
@@ -147,8 +147,8 @@ namespace FurmaIdle.Data
                 Range = 3,
                 CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m113"] = Build(new UpgradeModel
             {
@@ -163,8 +163,8 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Tempo1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c10", Value=0.90, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c10", Value=0.90, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m114"] = Build(new UpgradeModel
             {
@@ -179,8 +179,8 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Tempo1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c11", Value=0.90, Op=EffectOp.Multiplicative }
-    }
+                new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c11", Value=0.90, Op=EffectOp.Multiplicative }
+            }
             }),
             #endregion
             #region t12
@@ -189,7 +189,7 @@ namespace FurmaIdle.Data
                 Id = "m120",
                 Name = "Manutenção Coletiva",
                 Image = "images/icons/upgrades/m120.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t12",
@@ -197,15 +197,15 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C3,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c31", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c31", Value=2.0, Op=EffectOp.Multiplicative }
+            }
             }),
             ["m121"] = Build(new UpgradeModel
             {
                 Id = "m121",
                 Name = "Rotina Rígida",
                 Image = "images/icons/upgrades/m121.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t12",
@@ -213,15 +213,15 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C3,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c32", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c32", Value=2.0, Op=EffectOp.Multiplicative }
+            }
             }),
             ["m122"] = Build(new UpgradeModel
             {
                 Id = "m122",
                 Name = "Necessidades Ocultas",
                 Image = "images/icons/upgrades/m122.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t12",
@@ -229,8 +229,8 @@ namespace FurmaIdle.Data
                 Range = 2,
                 CostCode = UpgradeCostCode.Quantidade1C2,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c20", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c20", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m123"] = Build(new UpgradeModel
             {
@@ -245,8 +245,8 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Tempo1C3,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c31", Value=0.90, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c31", Value=0.90, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m124"] = Build(new UpgradeModel
             {
@@ -261,8 +261,8 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Tempo1C3,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c32", Value=0.90, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractTime, ScopeId="c32", Value=0.90, Op=EffectOp.Multiplicative }
+                }
             }),
             #endregion
             #region t13
@@ -271,7 +271,7 @@ namespace FurmaIdle.Data
                 Id = "m130",
                 Name = "Lascas Naturais",
                 Image = "images/icons/upgrades/m130.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t13",
@@ -279,15 +279,15 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C4,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c41", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c41", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m131"] = Build(new UpgradeModel
             {
                 Id = "m131",
                 Name = "Piscinas Naturais",
                 Image = "images/icons/upgrades/m131.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t13",
@@ -295,15 +295,15 @@ namespace FurmaIdle.Data
                 Range = 1,
                 CostCode = UpgradeCostCode.Quantidade1C4,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c42", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c42", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m132"] = Build(new UpgradeModel
             {
                 Id = "m132",
                 Name = "Cascas Comestíveis",
                 Image = "images/icons/upgrades/m132.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t13",
@@ -311,15 +311,15 @@ namespace FurmaIdle.Data
                 Range = 3,
                 CostCode = UpgradeCostCode.Quantidade1C2,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c21", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c21", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m133"] = Build(new UpgradeModel
             {
                 Id = "m133",
                 Name = "Água Forte",
                 Image = "images/icons/upgrades/m133.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t13",
@@ -327,15 +327,15 @@ namespace FurmaIdle.Data
                 Range = 4,
                 CostCode = UpgradeCostCode.Quantidade1C2,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c22", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c22", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             ["m134"] = Build(new UpgradeModel
             {
                 Id = "m134",
                 Name = "Boias de Segurança",
                 Image = "images/icons/upgrades/m134.png",
-                Description = "Aumenta o Ganho do Contrato em x1.1",
+                Description = "Aumenta o Ganho do Contrato em x2.0",
                 Lore = "",
                 Unlocked = false,
                 TechId = "t13",
@@ -343,8 +343,8 @@ namespace FurmaIdle.Data
                 Range = 5,
                 CostCode = UpgradeCostCode.Quantidade1C1,
                 Effects = new(){
-        new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=1.10, Op=EffectOp.Multiplicative }
-    }
+                    new UpgradeEffectModel { Target=EffectTarget.ContractGain, ScopeId="c11", Value=2.0, Op=EffectOp.Multiplicative }
+                }
             }),
             #endregion
             #region t14
@@ -445,7 +445,7 @@ namespace FurmaIdle.Data
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ContractCap, ScopeId="all", Value=1, Op=EffectOp.Additive }
                 },
-                MaxBuys = 47,
+                MaxBuys = 17,
                 Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             ["mx01"] = Build(new UpgradeModel
@@ -463,7 +463,7 @@ namespace FurmaIdle.Data
                 Effects = new(){
                     new UpgradeEffectModel { Target=EffectTarget.ClicksGain, ScopeId="all", Value=2.00, Op=EffectOp.Multiplicative }
                 },
-                MaxBuys = 10,
+                MaxBuys = 4,
                 Persistence = ResetPersistenceEnum.ResetPersistence.Permanent
             }),
             ["mx02"] = Build(new UpgradeModel

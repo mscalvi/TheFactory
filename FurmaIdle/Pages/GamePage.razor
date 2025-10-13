@@ -124,25 +124,25 @@
                             }
                             else
                             {
-                            <div class="options-grid">
-                              @foreach (var ch in _baseChars)
-                              {
-                                    <button class="option-btn @(CharSelected(ch.Id) ? "selected" : null)"
+                                <div class="options-grid">
+                                    @foreach (var ch in _baseChars)
+                                    {
+                                        <button class="option-btn @(CharSelected(ch.Id) ? "selected" : null)"
                                                 disabled="@(!_canToggleChar(ch.Id))"
                                                 @onclick="() => ToggleCharSelect(ch.Id)"
                                                 aria-pressed="@(CharSelected(ch.Id) ? "true" : "false")"
                                                 aria-label="@ch.Id"
-                                                @onmouseover="() => ShowHover(FurmaIdle.Services.HoverType.Personagem, ch.Id)"
-                                                @onmouseout="ClearHover">
-                                      <span class="icon-wrap">
-                                        <img src="@CharMiniSrc(ch.Id)"
-                                             alt="@ch.Id"
-                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                                        <span class="icon-fallback">@ch.Id</span>
-                                      </span>
-                                    </button>
-                              }
-                            </div>
+                                                @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Personagem, ch.Id)"
+                                                @onmouseleave="ClearHover">
+                                            <span class="icon-wrap">
+                                                <img src="@CharMiniSrc(ch.Id)"
+                                                     alt="@ch.Id"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                                <span class="icon-fallback">@ch.Id</span>
+                                            </span>
+                                        </button>
+                                    }
+                                </div>
                             }
                         }
                         else if (_topPanel == TopPanel.Tecnologias)
@@ -156,10 +156,25 @@
                                 {
                                     @foreach (var t in _techs)
                                     {
+                                        var kid = t.CostKnowledgeId;
+                                        int have = 0;
+                                        if (!string.IsNullOrWhiteSpace(kid) &&
+                                        Game.Current.Knowledges.TryGetValue(kid, out var k) && k is not null)
+                                            have = k.Points;
+
+                                        bool canAfford = !t.Unlocked && (string.IsNullOrWhiteSpace(kid) || have >= t.Cost);
+
                                         <button class="option-btn"
+                                                disabled="@(!canAfford || t.Unlocked)"
                                                 @onclick="() => OnTechClick(t.Id)"
                                                 @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Tecnologia, t.Id)"
                                                 @onmouseleave="ClearHover"
+                                                title="@(t.Unlocked
+                                                                                                                        ? "Já pesquisada"
+                                                                                                                        : (string.IsNullOrWhiteSpace(kid)
+                                                                                                                              ? "Custo 0"
+                                                                                                                              : (canAfford ? $"Pesquisar por {t.Cost:N0} {kid}"
+                                                                                                                                           : $"Precisa de {t.Cost:N0} {kid} · Você tem {have:N0}")))"
                                                 aria-label="@t.Name">
                                             <span class="icon-wrap">
                                                 <img src="@t.Image" alt="@t.Name"
@@ -182,10 +197,19 @@
                                 {
                                     @foreach (var d in _dests)
                                     {
+                                        var resId = string.IsNullOrWhiteSpace(d.CostResourceId) ? "r001" : d.CostResourceId!;
+                                        var have = Game.Get(resId)?.Actual ?? 0;
+                                        bool canAfford = !d.Unlocked && have >= d.Cost;
+
                                         <button class="option-btn"
+                                                disabled="@(!canAfford || d.Unlocked)"
                                                 @onclick="() => OnDestClick(d.Id)"
                                                 @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Destino, d.Id)"
                                                 @onmouseleave="ClearHover"
+                                                title="@(d.Unlocked
+                                                                        ? "Já desbloqueado"
+                                                                        : (canAfford ? $"Desbloquear por {d.Cost:N0} {resId}"
+                                                                                     : $"Precisa de {d.Cost:N0} {resId} · Você tem {have:N0}"))"
                                                 aria-label="@d.Name">
                                             <span class="icon-wrap">
                                                 <img src="@d.Image" alt="@d.Name"
@@ -194,6 +218,7 @@
                                             </span>
                                         </button>
                                     }
+
                                 }
                             </div>
                         }
@@ -208,11 +233,29 @@
                                 {
                                     @foreach (var u in _upgr)
                                     {
+                                        // resolve ref (live > def) para pegar CostResourceId/MaxBuys/etc.
+                                        var uref = u;
+                                        if (string.IsNullOrWhiteSpace(uref.CostResourceId))
+                                        {
+                                            try { var def = UpgradeData.GetDef(u.Id); if (def is not null) uref = def; } catch { }
+                                        }
+
+                                        var resId = string.IsNullOrWhiteSpace(uref.CostResourceId) ? "r001" : uref.CostResourceId!;
+                                        var price = Helpers.UpgradePricingHelper.NextPrice(uref);
+                                        var have = Game.Get(resId)?.Actual ?? 0;
+
+                                        bool canAfford = have >= price;
+                                        bool isDisabled = u.IsMaxed || !canAfford;
+
                                         <button class="option-btn"
-                                                disabled="@(u.IsMaxed)"
+                                                disabled="@isDisabled"
                                                 @onclick="() => OnUpgrClick(u.Id)"
                                                 @onmouseenter="() => ShowHover(FurmaIdle.Services.HoverType.Melhoria, u.Id)"
                                                 @onmouseleave="ClearHover"
+                                                title="@(u.IsMaxed
+                                                                      ? "Maxeada"
+                                                                      : (canAfford ? $"Comprar por {price:N0} {resId}"
+                                                                                   : $"Precisa de {price:N0} {resId} · Você tem {have:N0}"))"
                                                 aria-label="@u.Name">
                                             <span class="icon-wrap">
                                                 <img src="@u.Image" alt="@u.Name"
@@ -221,6 +264,7 @@
                                             </span>
                                         </button>
                                     }
+
                                     @foreach (var ch in _shopChars)
                                     {
                                         <button class="option-btn"
@@ -245,35 +289,85 @@
                 <!-- Expedição -->
                 <div class="top-column span2">
                     <div class="exp-box">
-                        <h4>Expedição</h4>
-
                         <button class="primary-btn"
                                 disabled="@(!_CanStartExpedition())"
                                 @onclick="ToggleExpedition">
                             @(ExpeditionActive ? "Terminar expedição" : "Iniciar expedição")
                         </button>
-                        <div class="exp-meta exp-meta--compact">
-                            <div><strong>Membros ativos:</strong> @Party.UsedStage / @Party.CapStage</div>
+
+                        @* --- NOVO: botão Expandir (sempre visível) --- *@
+                        @{
+                            // 1) Descobre o destino "ativo" comprado no stage atual (seu critério pode ser outro)
+                            var stageDestUnlocked = Game.Current.Destinations?.Values
+                            .Where(d => d is not null && d.StageId == stageId && d.Unlocked)
+                            .OrderBy(d => d.Id, StringComparer.Ordinal)    // deterministic
+                            .FirstOrDefault();
+
+                            // 2) Seleciona a expansão vinculada a esse destino (se houver)
+                            var exp = Game.Current.Expansions?.Values
+                            .Where(x => x is not null
+                            && (stageDestUnlocked == null || x.DestUnlockId == stageDestUnlocked.Id))
+                            .OrderBy(x => x?.Cost ?? double.MaxValue)
+                            .FirstOrDefault();
+
+                            // 3) Resolve custo/saldo com segurança
+                            string expId = exp?.Id ?? "";
+                            string costResId = !string.IsNullOrWhiteSpace(exp?.CoinCostId) ? exp!.CoinCostId! : "r001"; // fallback
+
+                            double costVal = Math.Max(0, exp?.Cost ?? 0);
+                            double haveMoney = Game.Get(costResId)?.Actual ?? 0;
+
+                            // 4) Regras de bloqueio
+                            bool exists = exp is not null;
+                            bool available = exists && exp!.Avaliable && !exp.Unlocked;
+                            bool hasMoney = exists && haveMoney >= costVal;
+                            bool canExpand = exists && available && hasMoney;
+
+                            // 5) Mensagem de tooltip (motivo do bloqueio)
+                            string expandTitle =
+                            !exists
+                            ? "Nenhuma expansão disponível para este destino."
+                            : !exp!.Avaliable
+                            ? "Expansão ainda não disponível."
+                            : exp.Unlocked
+                            ? $"Expansão {exp.Id} já comprada."
+                            : hasMoney
+                            ? $"Comprar expansão {exp!.Id} por {costVal:N0} {costResId}"
+                            : $"Precisa de {costVal:N0} {costResId} (você tem {haveMoney:N0}).";
+                        }
+
+                        <button class="primary-btn"
+                                disabled="@( !canExpand )"
+                                title="@expandTitle"
+                                @onclick="@(() => { if (canExpand) OnExpandClick(expId); })">
+                                @($"Expandir{(exists ? $" {expId} ({costVal:N0} {costResId})" : "")}")
+                        </button>
+
+
+                        <div class="exp-meta exp-meta--compact"> 
+                            <div><strong>Membros ativos:</strong> @Party.UsedStage / @Party.CapStage</div> 
                             @{
                                 var kprev = Game.GetKnowledgePreview(stageId);
-                                string KName(string kid)
-                                {
-                                    if (Game.Current.Knowledges.TryGetValue(kid, out var k) && !string.IsNullOrWhiteSpace(k.Name))
-                                        return k.Name!;
-                                    try { return KnowledgeData.GetDef(kid).Name ?? kid; } catch { return kid; }
+                                string KName(string kid) { 
+                                if (Game.Current.Knowledges.TryGetValue(kid, out var k) && !string.IsNullOrWhiteSpace(k.Name)) 
+                                    return k.Name!;
+                                    try {
+                                        return KnowledgeData.GetDef(kid).Name ?? kid; 
+                                    } catch 
+                                    { 
+                                        return kid; 
+                                    } 
                                 }
                             }
                             <div>
-                                <strong>Conhecimento ao encerrar:</strong>
-                                @if (kprev.Count == 0)
-                                {
+                                <strong>Conhecimento ao encerrar:</strong> 
+                                @if (kprev.Count == 0) {
                                     <text> —</text>
-                                }
+                                } 
                                 else
                                 {
-                                    <text> </text>
-                                    @foreach (var kv in kprev.OrderByDescending(x => x.Value))
-                                    {
+                                    <text> </text> 
+                                    @foreach (var kv in kprev.OrderByDescending(x => x.Value)) {
                                         <span>+@kv.Value @KName(kv.Key) </span>
                                     }
                                 }
@@ -1204,6 +1298,31 @@
             Log(reason ?? "Não foi possível ativar a especialidade.", MsgKind.Warn);
         else
             Log($"Especialidade ativada por {charId}.", MsgKind.Success);
+    }
+
+    #endregion
+
+    #region Expansion
+    void OnExpandClick(string expId)
+    {
+        if (!Game.BuyExpansion(expId, out var reason))
+        {
+            Log(reason ?? "Não foi possível comprar a expansão.", MsgKind.Warn);
+            return;
+        }
+        Log($"Expansão {expId} concluída.", MsgKind.Success);
+
+        // após o hard reset, refreshe as listas visíveis
+        RefreshCoins();
+        RefreshResources();
+        RefreshChars();
+        RefreshTechs();
+        RefreshDestinations();
+        RefreshUpgrades();
+        RefreshContracts();
+
+        // volta para Mensagens (opcional)
+        GoToMessages();
     }
 
     #endregion

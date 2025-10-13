@@ -18,6 +18,7 @@ namespace FurmaIdle.Services
         double ClicksGainMult();                      // multiplicativo (empilha * )
         double ResourceGenAddPerSecond(string resId); // aditivo (/s), pode somar por “all” e por res específico
         double ResourceGenMult(string resId);
+        double SpecialtyCostMult(ResourceEnum.ResourceType resType);
 
         // Capacidade
         int ExtraContractsPerChar();                  // +N por personagem (ex.: mx00)
@@ -45,6 +46,7 @@ namespace FurmaIdle.Services
 
         public void Recompute(GameModel m)
         {
+            // ---- RESETS DE CACHES ----
             _capMultByRes.Clear();
             _capAddByRes.Clear();
             _resGenMultById.Clear();
@@ -57,107 +59,154 @@ namespace FurmaIdle.Services
             _clicksGainMult = 1.0;
             _extraContractsPerChar = 0;
             _resGenMultAll = 1.0;
-            _capMultAll = 1.0; 
+
+            _capMultAll = 1.0;
             _capAddAll = 0.0;
 
+            // custo de especialidades (novo: e03)
+            _specCostMultResources = 1.0;
+
             if (m?.Runtime != null) m.Runtime.CharacterHireCostMult = 1.0;
-            if (m?.Upgrades is null) return;
 
-            foreach (var u in m.Upgrades.Values)
+            // ---- UPGRADES ----
+            if (m?.Upgrades is not null)
             {
-                if (u is null || u.Buys <= 0) continue;
-
-                foreach (var eff in u.Effects ?? Enumerable.Empty<UpgradeEffectModel>())
+                foreach (var u in m.Upgrades.Values)
                 {
-                    int qty = u.Buys;
-                    string scope = eff.ScopeId ?? "all";
+                    if (u is null || u.Buys <= 0) continue;
 
-                    switch (eff.Target)
-                    {                        
-                        case EffectTarget.ContractGain:
-                            if (scope == "all")
-                                _gainMultAll = ApplyMult(_gainMultAll, eff.Value, eff.Op, qty);
-                            else
-                            {
-                                var cur = _gainMultByContract.TryGetValue(scope, out var v) ? v : 1.0;
-                                _gainMultByContract[scope] = ApplyMult(cur, eff.Value, eff.Op, qty);
-                            }
-                            break;
+                    foreach (var eff in u.Effects ?? Enumerable.Empty<UpgradeEffectModel>())
+                    {
+                        int qty = u.Buys;
+                        string scope = eff.ScopeId ?? "all";
 
-                        case EffectTarget.ContractTime:
-                            if (scope == "all")
-                                _timeMultAll = ApplyMult(_timeMultAll, eff.Value, eff.Op, qty);
-                            else
-                            {
-                                var cur = _timeMultByContract.TryGetValue(scope, out var v) ? v : 1.0;
-                                _timeMultByContract[scope] = ApplyMult(cur, eff.Value, eff.Op, qty);
-                            }
-                            break;
-
-                        case EffectTarget.ClicksGain:
-                            _clicksGainMult = ApplyMult(_clicksGainMult, eff.Value, eff.Op, qty);
-                            break;
-
-                        case EffectTarget.ResourceGen:
-                            {
-                                var key = scope == "all" ? "__all__" : scope;
-                                var cur = _resGenAddPerSec.TryGetValue(key, out var v) ? v : 0.0;
-                                _resGenAddPerSec[key] = cur + eff.Value * qty; // aditivo
-                            }
-                            break;
-
-                        case EffectTarget.ContractCap:
-                            if (scope == "all")
-                                _extraContractsPerChar += (int)(eff.Value * qty);
-                            break;
-
-                        case EffectTarget.ResourceCapPerChar:
-                            {
-                                if (eff.Op == EffectOp.Multiplicative)
+                        switch (eff.Target)
+                        {
+                            case EffectTarget.ContractGain:
+                                if (scope == "all")
+                                    _gainMultAll = ApplyMult(_gainMultAll, eff.Value, eff.Op, qty);
+                                else
                                 {
-                                    if (scope == "all") for (int i = 0; i < qty; i++) _capMultAll *= eff.Value;
-                                    else
-                                    {
-                                        var cur = _capMultByRes.TryGetValue(scope, out var v) ? v : 1.0;
-                                        for (int i = 0; i < qty; i++) cur *= eff.Value;
-                                        _capMultByRes[scope] = cur;
-                                    }
-                                }
-                                else 
-                                {
-                                    if (scope == "all") _capAddAll += eff.Value * qty;
-                                    else
-                                    {
-                                        var cur = _capAddByRes.TryGetValue(scope, out var v) ? v : 0.0;
-                                        _capAddByRes[scope] = cur + eff.Value * qty;
-                                    }
+                                    var cur = _gainMultByContract.TryGetValue(scope, out var v) ? v : 1.0;
+                                    _gainMultByContract[scope] = ApplyMult(cur, eff.Value, eff.Op, qty);
                                 }
                                 break;
-                            }
+
+                            case EffectTarget.ContractTime:
+                                if (scope == "all")
+                                    _timeMultAll = ApplyMult(_timeMultAll, eff.Value, eff.Op, qty);
+                                else
+                                {
+                                    var cur = _timeMultByContract.TryGetValue(scope, out var v) ? v : 1.0;
+                                    _timeMultByContract[scope] = ApplyMult(cur, eff.Value, eff.Op, qty);
+                                }
+                                break;
+
+                            case EffectTarget.ClicksGain:
+                                _clicksGainMult = ApplyMult(_clicksGainMult, eff.Value, eff.Op, qty);
+                                break;
+
+                            case EffectTarget.ResourceGen:
+                                {
+                                    var key = scope == "all" ? "__all__" : scope;
+                                    var cur = _resGenAddPerSec.TryGetValue(key, out var v) ? v : 0.0;
+                                    _resGenAddPerSec[key] = cur + eff.Value * qty; // aditivo (/s)
+                                    break;
+                                }
+
+                            case EffectTarget.ContractCap:
+                                if (scope == "all")
+                                    _extraContractsPerChar += (int)(eff.Value * qty);
+                                break;
+
+                            case EffectTarget.ResourceCapPerChar:
+                                {
+                                    if (eff.Op == EffectOp.Multiplicative)
+                                    {
+                                        if (scope == "all") for (int i = 0; i < qty; i++) _capMultAll *= eff.Value;
+                                        else
+                                        {
+                                            var cur = _capMultByRes.TryGetValue(scope, out var v) ? v : 1.0;
+                                            for (int i = 0; i < qty; i++) cur *= eff.Value;
+                                            _capMultByRes[scope] = cur;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (scope == "all") _capAddAll += eff.Value * qty;
+                                        else
+                                        {
+                                            var cur = _capAddByRes.TryGetValue(scope, out var v) ? v : 0.0;
+                                            _capAddByRes[scope] = cur + eff.Value * qty;
+                                        }
+                                    }
+                                    break;
+                                }
+                        }
                     }
                 }
             }
 
-            // UpgradeService.cs — dentro de Recompute(m), AO FINAL
+            // ---- CONHECIMENTO → bônus global de produção (ganho de contratos) ----
             if (m?.Knowledges is not null)
             {
                 foreach (var k in m.Knowledges.Values)
                 {
-                    if (k.Points <= 0) continue;
+                    if (k is null || k.Points <= 0) continue;
 
                     double n = k.Points;
-                    double g = k.KnowCoinGain;
-                    double p = k.KnowCoinGainPenaltie;
+                    double g = k.KnowCoinGain;         // ganho incremental por ponto
+                    double p = k.KnowCoinGainPenaltie; // fator de penalidade (0< p <1)
+                                                       // soma geométrica dos incrementos: 1 + g + g*p + g*p^2 + ...
                     double mult = 1.0 + g * (1.0 - Math.Pow(p, n)) / (1.0 - p);
 
-                    _gainMultAll *= mult;   // aplica como bônus global de produção
+                    _gainMultAll *= mult; // aplica como bônus global
                 }
             }
 
-
+            // ---- TRAÇOS (não aplique especialidades aqui para evitar duplicidade) ----
             ApplyTraits(m);
-            ApplyActiveSpecialties(m);
+
+            // ---- ESPECIALIDADES ATIVAS (e01/e02/e03) ----
+            // ÚNICO lugar onde aplicamos efeitos temporários de especialidades
+            if (m?.Stages is not null)
+            {
+                var now = DateTimeOffset.UtcNow;
+
+                foreach (var st in m.Stages.Values)
+                {
+                    var ex = st?.Expedition;
+                    if (ex is null || ex.ExpeditionStatus != ExpeditionEnum.ExpeditionStatus.Active) continue;
+
+                    foreach (var a in ex.ActiveSpecialties ?? Enumerable.Empty<ActiveSpecialtyModel>())
+                    {
+                        if (a is null || a.EndsAtUtc <= now) continue;
+
+                        var sp = SpecialtyData.GetDef(a.SpecialtyId);
+                        switch (sp.Id)
+                        {
+                            case "e01":
+                                // Melhora geração passiva de recursos: x1.2
+                                _resGenMultAll *= 1.20;
+                                break;
+
+                            case "e02":
+                                // Melhora produção de contratos (moedas): x2.0 (NÃO mexer tempo)
+                                _gainMultAll *= 2.0;
+                                break;
+
+                            case "e03":
+                                // Diminui consumo de recursos para especialidades (apenas Resource, não Coin): x0.8
+                                _specCostMultResources *= 0.8;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            // pronto — efeitos/caches atualizados
         }
+
 
         // multiplicador helper sem ref
         private static double ApplyMult(double current, double val, EffectOp op, int times)
@@ -298,6 +347,15 @@ namespace FurmaIdle.Services
                 }
             }
         }
+
+        // Services/UpgradeService.cs (campos privados)
+        private double _specCostMultResources = 1.0; // custo de especialidade p/ recursos do tipo Resource
+
+        public double SpecialtyCostMult(ResourceEnum.ResourceType resType)
+        {
+            return resType == ResourceEnum.ResourceType.Resource ? _specCostMultResources : 1.0;
+        }
+
 
     }
 }

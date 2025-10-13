@@ -9,6 +9,7 @@ namespace FurmaIdle.Models
         public double Total { get; set; }
         public double Actual { get; set; }
         public double PerSecond { get; set; }
+        public double PendingFrac { get; set; }
         public bool Unlocked { get; set; } = false;
         public string UpgUnlockId { get; set; }
         public bool Avaliable { get; set; } = false;

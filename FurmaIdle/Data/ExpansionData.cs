@@ -18,8 +18,8 @@ namespace FurmaIdle.Data
                 Id = "x00",
                 Name = "Expansão 1",
                 Image = "images/icons/expansions/x00.jpg",
-                PriceCoinId = "r001",
-                Price = 500000,
+                CoinCostId = "r001",
+                Cost = 500000,
                 Unlocked = true,
                 Avaliable = false,
                 DestUnlockId = "d02"
@@ -30,8 +30,8 @@ namespace FurmaIdle.Data
                 Id = "x01",
                 Name = "Expansão 2",
                 Image = "images/icons/expansions/x01.jpg",
-                PriceCoinId = "r001",
-                Price = 50000000,
+                CoinCostId = "r001",
+                Cost = 50000000,
                 Unlocked = true,
                 Avaliable = false,
                 DestUnlockId = "d03"
@@ -46,8 +46,8 @@ namespace FurmaIdle.Data
                 Id = expansion.Id,
                 Name = expansion.Name,
                 Image = expansion.Image,
-                PriceCoinId = expansion.PriceCoinId,
-                Price = expansion.Price,
+                CoinCostId = expansion.CoinCostId,
+                Cost = expansion.Cost,
                 Unlocked = expansion.Unlocked,
                 Avaliable = expansion.Avaliable,
                 DestUnlockId = expansion.DestUnlockId
@@ -66,8 +66,8 @@ namespace FurmaIdle.Data
                     Id = expansion.Id,
                     Name = expansion.Name,
                     Image = expansion.Image,
-                    PriceCoinId = expansion.PriceCoinId,
-                    Price = expansion.Price,
+                    CoinCostId = expansion.CoinCostId,
+                    Cost = expansion.Cost,
                     Unlocked = expansion.Unlocked,
                     Avaliable = expansion.Avaliable,
                     DestUnlockId = expansion.DestUnlockId
