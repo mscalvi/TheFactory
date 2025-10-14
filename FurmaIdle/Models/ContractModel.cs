@@ -9,16 +9,18 @@ namespace FurmaIdle.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
+        public string Image { get; set; }
 
         // Stats
-        public string UnlockId { get; set; }
-        public EnumHelper.Persistence Persistence { get; set; }
+        public string? UnlockId { get; set; }
+        public UnlockHelper.Persistence Persistence { get; set; }
+        public UnlockHelper.State State { get; set; }
 
         // Info
         public int Level { get; set; }
-        public string KnowledgeFactor1 { get; set; }
-        public string KnowledgeFactor2 { get; set; }
-        public string KnowledgeFactor3 { get; set; }
+        public string? KnowledgeFactor1 { get; set; }
+        public string? KnowledgeFactor2 { get; set; }
+        public string? KnowledgeFactor3 { get; set; }
 
     }
 }

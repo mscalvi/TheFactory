@@ -1,0 +1,68 @@
+﻿using FurmaIdle.Models; // Assumindo que CoinModel está aqui
+using FurmaIdle.Helpers; // Assumindo que UnlockHelper está aqui
+using System.Collections.Generic;
+using System.Linq;
+
+namespace FurmaIdle.Data
+{
+    public class CoinsData
+    {
+        public static int SchemaVersion => 1;
+
+        public static readonly List<string> ShowOrder = new();
+
+        internal static readonly Dictionary<string, CoinModel> All = new()
+        {
+            #region Initial Coins
+            ["m01"] = new CoinModel
+            {
+                Id = "m01",
+                Name = "Talho",
+                Image = "images/coins/m01.png",
+                UnlockId = "s00",
+                State = UnlockHelper.State.Avaliable, 
+                Persistence = UnlockHelper.Persistence.Permanent,
+            },
+            #endregion
+        };
+
+        // --- Métodos Reutilizáveis do Padrão ---
+
+        public static CoinModel GetDef(string id)
+        {
+            if (!All.TryGetValue(id, out var coin))
+            {
+                throw new KeyNotFoundException($"Coin with ID '{id}' not found.");
+            }
+
+            return new CoinModel
+            {
+                Id = coin.Id,
+                Name = coin.Name,
+                Image = coin.Image,
+                UnlockId = coin.UnlockId,
+                State = coin.State,
+                Persistence = coin.Persistence,
+            };
+        }
+
+        public static void PopulateOrder()
+        {
+            ShowOrder.Clear();
+            IEnumerable<string> keys = All?.Keys.AsEnumerable() ?? Enumerable.Empty<string>();
+            ShowOrder.AddRange(keys.OrderBy(k => k, StringComparer.Ordinal));
+        }
+
+        public static Dictionary<string, CoinModel> CreateInitialStates()
+        {
+            var dict = new Dictionary<string, CoinModel>(All.Count);
+            if (ShowOrder.Count == 0) PopulateOrder();
+            foreach (var id in ShowOrder)
+            {
+                if (!All.TryGetValue(id, out var coin)) continue;
+                dict[id] = GetDef(id);
+            }
+            return dict;
+        }
+    }
+}

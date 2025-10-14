@@ -10,11 +10,11 @@ namespace FurmaIdle.Models
         public string Image { get; set; }
 
         // Effect
-        public string TargetId { get; set; }
-        public string EffectValue { get; set; }
-        public EnumHelper.EffectOperation EffectOperation { get; set; }
-        public EnumHelper.EffectType EffectType { get; set; }
-        public int Duration { get; set; }
+        public string? TargetId { get; set; }
+        public double? EffectValue { get; set; }
+        public EffectHelper.EffectOperation? EffectOperation { get; set; }
+        public EffectHelper.EffectType? EffectType { get; set; }
+        public double? Duration { get; set; }
 
         // Custo
         public string CostId { get; set; }
