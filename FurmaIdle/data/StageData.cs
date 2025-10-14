@@ -1,6 +1,7 @@
-﻿using FurmaIdle.Models;
-using FurmaIdle.Helpers;
+﻿using FurmaIdle.Helpers;
+using FurmaIdle.Models;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace FurmaIdle.Data
@@ -38,6 +39,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 PartySizeStart = 3,
                 PartySizeMax = 5,
+                ExpeditionId = 0
             },
             #endregion
 
@@ -66,6 +68,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 PartySizeStart = 2,
                 PartySizeMax = 2,
+                ExpeditionId = 1
             },
             #endregion
         };
@@ -120,6 +123,20 @@ namespace FurmaIdle.Data
                 dict[id] = GetDef(id);
             }
             return dict;
+        }
+
+        public static StageModel LocateStage(string StageId)
+        {
+            All.TryGetValue(StageId, out _);
+
+            return GetDef(StageId);
+        }
+
+        public static ExpeditionModel LocateExpediction(string StageId)
+        {
+            StageModel Stage = LocateStage(StageId);
+
+            return Stage.ExpeditionId; // stage model tem que ter actualexpedition model
         }
     }
 }

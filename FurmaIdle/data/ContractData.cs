@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FurmaIdle.Data
 {
-    public class ContractsData
+    public class ContractData
     {
         public static int SchemaVersion => 1;
 
@@ -236,7 +236,7 @@ namespace FurmaIdle.Data
             #endregion
         };
 
-        // --- Métodos Reutilizáveis do Padrão ---
+        // --- Criação ---
 
         public static ContractModel GetDef(string id)
         {
@@ -286,5 +286,14 @@ namespace FurmaIdle.Data
             }
             return dict;
         }
+
+        // --- Localização ---
+        public static ContractModel LocateContract(string ContractId)
+        {
+            All.TryGetValue(ContractId, out _);
+
+            return GetDef(ContractId);
+        }
+
     }
 }

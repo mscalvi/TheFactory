@@ -15,6 +15,7 @@ namespace FurmaIdle.Models
         // Status
         public string UnlockId { get; set; }
         public UnlockHelper.State State { get; set; }
+        public UnlockHelper.CharState CharState { get; set; }
         public string? InStageId { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; } = UnlockHelper.Persistence.Permanent;
 

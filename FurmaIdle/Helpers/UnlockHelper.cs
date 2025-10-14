@@ -6,9 +6,7 @@
         { 
             Blocked,
             Unlocked,
-            Avaliable,
-            InBase,
-            InStage
+            Avaliable
         }
 
         public enum Persistence
@@ -16,6 +14,12 @@
             Permanent,
             untilExpansion,
             untilExpedition
+        }
+        public enum CharState
+        {
+            Blocked,
+            InBase,
+            OnStage
         }
     }
 }
