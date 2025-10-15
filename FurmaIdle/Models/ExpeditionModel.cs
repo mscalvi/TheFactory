@@ -3,8 +3,7 @@
     public class ExpeditionModel
     {
         public int Id { get; set; }
-        public string StageId { get; set; }
-        public string? PartyId { get; set; }
+        public List<string>? PartyIds { get; set; }
         public List<string> ContractsId { get; set; } = new();
         public Dictionary<string, int>? ContractsActiveId { get; set; }
         public Dictionary<int, string>? ContractsLockedId { get; set; }

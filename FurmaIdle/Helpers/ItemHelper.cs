@@ -8,10 +8,5 @@
             Coin,
             Knowledge
         }
-
-        public static Dictionary<ItemType, List<ItemType>> Unlocks
-        {
-
-        } 
     }
 }

@@ -1,6 +1,18 @@
 ﻿@page "/"
 
+@using System.Linq
 @using FurmaIdle.Components;
+@using FurmaIdle.Models;
+@using FurmaIdle.Data
+@using FurmaIdle.Helpers;
+@using FurmaIdle.Services;
+
+@inject IJSRuntime JS;
+
+@inject ICreateGameService Start
+@inject ICurrentGameService Game
+@inject ITooltipService Tooltip
+@inject ITickService Ticks
 
 <div class="game-grid">
     <!-- Navegador -->
@@ -32,6 +44,43 @@
 
 
 @code {
+    #region GameStart
+    protected override void OnInitialized()
+    {
+        // Game.GameChanged += OnGameChanged;
+        // Game.Logged += OnLogged;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var NewGame = await Start.InitAsync();
+        Game.Attach(NewGame);
+
+        var SelectedStageId = Game.GetSelectedStage();
+
+        // Inicializar Ticks
+
+        // Preencher Tela
+        CreateScreen();
+    }
+
+    void CreateScreen()
+    {
+        // Pegar Moedas
+        List<CoinModel> _coins = new();
+        _coins = ResourceData.ShowOrder
+                .Select(id => Game.GetStageGeneration(id))
+                .OfType<CoinModel>()
+                .Where(coin => coin.State == UnlockHelper.State.Unlocked)
+                .ToList();
+
+        // Gerar Party
+        // Pegar Upgrades
+        // Pegar Contratos
+
+    }
+    #endregion
+
     private NavMenu? navRef;
     private string? _navId = "i4";
 

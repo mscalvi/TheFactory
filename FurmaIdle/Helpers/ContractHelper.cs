@@ -24,13 +24,13 @@ namespace FurmaIdle.Helpers
 
 
         // Cálculos
-        public static bool GetContractBase(ContractModel contact, out ContractHelper value)
-            => ByLevel.TryGetValue(contact.Level, out value);
+        public static bool GetContractBase(ContractModel contract, out ContractHelper value)
+            => ByLevel.TryGetValue(contract.Level, out value);
 
-        public static double GetContractNextPrice(string contractId, int expeditionId)
+        public static double GetContractNextPrice(string contractId, string stageId)
         {
-            ContractModel Contract = ContractData.LocateContract(contractId);
-            ExpeditionModel Expedition = StageData.LocateExpedition(expeditionId);
+            ContractModel Contract = LocateHelper.LocateContract(contractId);
+            ExpeditionModel Expedition = LocateHelper.LocateExpedition(stageId);
             var Quantity = 0;
             double Price = 0;
 
@@ -43,29 +43,90 @@ namespace FurmaIdle.Helpers
             return Math.Ceiling(Price);
         }
 
-        public static (string CoinId, double CoinsPerSeconde, double CoinsPerCycle) GetContractProduction(string contractId, int expeditionId)
+        public static (string, double, double) GetContractProduction(string contractId, string stageId)
         {
-            ContractModel Contract = ContractData.LocateContract(contractId);
-            ExpeditionModel Expedition = StageData.LocateExpedition(expeditionId);
+            ContractModel Contract = LocateHelper.LocateContract(contractId);
+            ExpeditionModel Expedition = LocateHelper.LocateExpedition(stageId);
             var Quantity = 0;
             double Production = 0;
+            double CoinsPerCycle;
+            double CoinsPerSecond;
+            string CoinId;
 
-            if (!GetContractBase(Contract, out var value)) return double.PositiveInfinity;
+            GetContractBase(Contract, out var ammount);
+            CoinId = ammount.ResourceId;
+
             Expedition.ContractsActiveId.TryGetValue(contractId, out Quantity);
 
 
+            if (Quantity <= 0)
+            {
+                return (CoinId, 0.0, 0.0);
+            }
 
-            var (_, cps, spc) = ProdParams(Contract);
-            if (!(cps > 0) || !(spc > 0) || c.Quant <= 0) return 0;
-            return (cps / spc) * c.Quant;
+            CoinsPerCycle = ammount.CoinsPerCycle * Quantity;
 
-            return Production;
+            CoinsPerSecond = ammount.CoinsPerCycle / ammount.SecondsPerCycle;
+            CoinsPerSecond *= Quantity;
+
+            return (CoinId, CoinsPerCycle, CoinsPerSecond);
         }
 
-        public static (string resId, double cps, double spc) ProdParams(ContractModel c)
+        // Montagem UI
+        public sealed class ContractButton
         {
-            if (!TryGetBalance(c, out var bal)) return ("", 0, 1);
-            return (bal.ResourceId, bal.CoinsPerCycle, bal.SecondsPerCycle);
+            public int Level { get; init; }
+            public List<ContractModel> Items { get; init; } = new();
+        }
+
+        public static List<ContractButton> BuildButtons(string StageId)
+        {
+            var result = new List<ContractButton>();
+
+            ExpeditionModel Expedition = LocateHelper.LocateExpedition(StageId);
+            StageModel Stage = LocateHelper.LocateStage(StageId);
+            List<CharacterModel> ActiveCharacters = new List<CharacterModel>();
+
+            ActiveCharacters = ExpeditionHelper.GetActiveCharacters(Expedition);
+            var contractIds = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var Character in ActiveCharacters)
+            {
+                foreach (var ContractId in Character.ContractsIds)
+                    if (!string.IsNullOrWhiteSpace(ContractId))
+                        contractIds.Add(ContractId);
+            }
+
+            var byLevel = new Dictionary<int, List<ContractModel>>();
+            foreach (var ContractId in contractIds)
+            {
+                ContractModel? Contract = null;
+
+                Contract = ContractData.GetDef(ContractId); 
+
+                if (Contract.Level > Stage.MaxContractLevel) continue;
+                if (Contract.State != UnlockHelper.State.Unlocked) continue;
+
+                if (!byLevel.TryGetValue(Contract.Level, out var list))
+                    byLevel[Contract.Level] = list = new List<ContractModel>();
+
+                list.Add(Contract);
+            }
+
+            for (int lvl = 1; lvl <= Stage.MaxContractLevel; lvl++)
+            {
+                byLevel.TryGetValue(lvl, out var list);
+                result.Add(new ContractButton
+                {
+                    Level = lvl,
+                    Items = (list ?? new List<ContractModel>())
+                        .OrderBy(c => c.Name ?? c.Id, StringComparer.Ordinal)
+                        .ToList()
+                });
+
+            }
+
+            return result;
         }
     }
 }

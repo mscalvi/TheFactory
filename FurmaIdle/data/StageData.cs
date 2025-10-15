@@ -39,7 +39,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 PartySizeStart = 3,
                 PartySizeMax = 5,
-                ExpeditionId = 0
+                MaxContractLevel = 6
             },
             #endregion
 
@@ -68,7 +68,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 PartySizeStart = 2,
                 PartySizeMax = 2,
-                ExpeditionId = 1
+                MaxContractLevel = 6
             },
             #endregion
         };
@@ -97,6 +97,8 @@ namespace FurmaIdle.Data
                 Persistence = stage.Persistence,
                 PartySizeStart = stage.PartySizeStart,
                 PartySizeMax = stage.PartySizeMax,
+                MaxContractLevel = stage.MaxContractLevel,
+                ActiveExpedition = new ExpeditionModel(),
             };
         }
 
@@ -119,24 +121,9 @@ namespace FurmaIdle.Data
             {
                 if (!All.TryGetValue(id, out var stage)) continue;
 
-                // Cria o estado inicial do modelo clonado
                 dict[id] = GetDef(id);
             }
             return dict;
-        }
-
-        public static StageModel LocateStage(string StageId)
-        {
-            All.TryGetValue(StageId, out _);
-
-            return GetDef(StageId);
-        }
-
-        public static ExpeditionModel LocateExpediction(string StageId)
-        {
-            StageModel Stage = LocateStage(StageId);
-
-            return Stage.ExpeditionId; // stage model tem que ter actualexpedition model
         }
     }
 }

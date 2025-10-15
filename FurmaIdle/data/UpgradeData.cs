@@ -6,7 +6,7 @@ using System;
 
 namespace FurmaIdle.Data
 {
-    public class UpgradesData
+    public class UpgradeData
     {
         public static int SchemaVersion => 1;
 

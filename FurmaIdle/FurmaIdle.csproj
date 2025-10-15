@@ -16,8 +16,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Services\" />
-		<Folder Include="Services\" />
 		<Folder Include="Components\" />
 		<Folder Include="wwwroot\js\" />
 		<Folder Include="wwwroot\js\" />

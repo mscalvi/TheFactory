@@ -286,14 +286,5 @@ namespace FurmaIdle.Data
             }
             return dict;
         }
-
-        // --- Localização ---
-        public static ContractModel LocateContract(string ContractId)
-        {
-            All.TryGetValue(ContractId, out _);
-
-            return GetDef(ContractId);
-        }
-
     }
 }
