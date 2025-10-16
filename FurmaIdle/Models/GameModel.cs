@@ -3,12 +3,17 @@
     public class GameModel
     {
         public int SchemaVersion { get; set; }
+
+        // Ativo
         public DateTime LastTick { get; set; }
         public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
         public string SelectedStageId { get; set; }
         public List<string> ActiveStagesIds { get; set; }
         // public GuildModel Guild { get; set; } = new();
         // public RuntimeModel Runtime { get; set; } = new RuntimeModel();
+
+        // Total
+        public Dictionary<string, CoinModel> Coins { get; set; } = new();
         public Dictionary<string, ClickModel> Clicks { get; set; } = new();
         public Dictionary<string, StageModel> Stages { get; set; } = new();
         public Dictionary<string, LocalModel> Locals { get; set; } = new();
@@ -19,5 +24,7 @@
         public Dictionary<string, ContractModel> Contracts { get; set; } = new();
         public Dictionary<string, KnowledgeModel> Knowledges { get; set; } = new();
         public Dictionary<string, ExpansionModel> Expansions { get; set; } = new();
+        public Dictionary<string, SpecialtyModel> Specialties { get; set; } = new();
+        public Dictionary<string, TraitModel> Traits { get; set; } = new();
     }
 }

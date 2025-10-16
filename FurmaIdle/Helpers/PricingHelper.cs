@@ -7,6 +7,7 @@ namespace FurmaIdle.Helpers
         public enum PricingId
         {
             CharacterUnlock1m01,
+            CharacterUnlock0m01,
             ClickGain1m01,
             ContractCapUnlock1m01,
             ContractCost1m01,
@@ -22,6 +23,7 @@ namespace FurmaIdle.Helpers
             ContractTime2m01,
             ContractTime3m01,
             ContractTime4m01,
+            ContractUnlock1m01,
             ContractUnlock2m01,
             ContractUnlock3m01,
             ContractUnlock4m01,
@@ -30,7 +32,7 @@ namespace FurmaIdle.Helpers
             ResourceGain2m01,
             ResourceUnlock1m01,
             StageUnlock1m01,
-            UnlockLocal1m01,
+            LocalUnlock1m01,
             TechUnlock1k01,
             TechUnlock1k02,
             TechUnlock1k03,
@@ -79,6 +81,7 @@ namespace FurmaIdle.Helpers
             private static readonly Dictionary<PricingId, Entry> _map = new()
             {
                 // CostCoinId, Base, Curve, Factor?, Operation?, FactorCurve?
+                [PricingId.CharacterUnlock0m01] = new Entry("m01", 0, 1.0),
                 [PricingId.CharacterUnlock1m01] = new Entry("m01", 3000, 1.0, CostFactor.CharactersUnlocked, EffectHelper.EffectOperation.Multiplicative, 1.7),
                 [PricingId.ClickGain1m01] = new Entry("m01", 200, 2.4),
                 [PricingId.ContractCapUnlock1m01] = new Entry("m01", 10, 1.3),
@@ -95,6 +98,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ContractTime2m01] = new Entry("m01", 2000, 2.9),
                 [PricingId.ContractTime3m01] = new Entry("m01", 40000, 2.9),
                 [PricingId.ContractTime4m01] = new Entry("m01", 15000, 2.9),
+                [PricingId.ContractUnlock1m01] = new Entry("m01", 2, 1.0),
                 [PricingId.ContractUnlock2m01] = new Entry("m01", 200, 1.0),
                 [PricingId.ContractUnlock3m01] = new Entry("m01", 4000, 1.0),
                 [PricingId.ContractUnlock4m01] = new Entry("m01", 50000, 1.0),
@@ -103,7 +107,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ResourceGain2m01] = new Entry("m01", 35000, 1.0),
                 [PricingId.ResourceUnlock1m01] = new Entry("m01", 2000, 1.0, CostFactor.ResourcesUnlocked, EffectHelper.EffectOperation.Multiplicative, 1.7),
                 [PricingId.StageUnlock1m01] = new Entry("m01", 50000000, 1.0),
-                [PricingId.UnlockLocal1m01] = new Entry("m01", 100000, 1.0, CostFactor.LocalsUnlocked, EffectHelper.EffectOperation.Multiplicative, 1.7),
+                [PricingId.LocalUnlock1m01] = new Entry("m01", 100000, 1.0, CostFactor.LocalsUnlocked, EffectHelper.EffectOperation.Multiplicative, 1.7),
                 [PricingId.TechUnlock1k01] = new Entry("k01", 1, 10.0),
                 [PricingId.TechUnlock1k02] = new Entry("k02", 1, 10.0),
                 [PricingId.TechUnlock1k03] = new Entry("k03", 1, 10.0),

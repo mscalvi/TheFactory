@@ -13,7 +13,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, TechModel> All = new()
         {
-            #region T01x - Guildas (k01)
+            #region Cultural (k01)
             ["t011"] = new TechModel
             {
                 Id = "t011",
@@ -23,12 +23,12 @@ namespace FurmaIdle.Data
                 UnlockId = "l00",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k01,
-                State = UnlockHelper.State.Avaliable,
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
             },
             #endregion
 
-            #region T02x - Litorais (k02)
+            #region Geográfico (k02)
             ["t021"] = new TechModel
             {
                 Id = "t021",
@@ -38,7 +38,7 @@ namespace FurmaIdle.Data
                 UnlockId = "l00",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k02,
-                State = UnlockHelper.State.Avaliable,
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
             },
             ["t022"] = new TechModel
@@ -65,7 +65,7 @@ namespace FurmaIdle.Data
                 UnlockId = "l00",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k03,
-                State = UnlockHelper.State.Avaliable,
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
             },
             ["t032"] = new TechModel
@@ -102,7 +102,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t051",
                 Name = "Presas",
-                Icon = "icons/techs/t051.png", // CORRIGIDO
+                Icon = "icons/techs/t051.png",
                 Description = "",
                 UnlockId = "l02",
                 Level = 1,
@@ -114,7 +114,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t052",
                 Name = "Predadores",
-                Icon = "icons/techs/t052.png", // CORRIGIDO
+                Icon = "icons/techs/t052.png",
                 Description = "",
                 UnlockId = "l02",
                 Level = 2,

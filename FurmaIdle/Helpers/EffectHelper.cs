@@ -27,7 +27,9 @@
             // Clicks
             ClickGain,
             // Stages
-            StageUnlock
+            StageUnlock,
+            // Locals
+            LocalUnlock
         }
 
         public enum EffectOperation

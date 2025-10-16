@@ -6,7 +6,7 @@
         { 
             Blocked,
             Unlocked,
-            Avaliable
+            Available
         }
 
         public enum Persistence

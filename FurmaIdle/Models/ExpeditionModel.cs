@@ -2,7 +2,7 @@
 {
     public class ExpeditionModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public List<string>? PartyIds { get; set; }
         public List<string> ContractsId { get; set; } = new();
         public Dictionary<string, int>? ContractsActiveId { get; set; }

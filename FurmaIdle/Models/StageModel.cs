@@ -16,6 +16,7 @@ namespace FurmaIdle.Models
         public UnlockHelper.Persistence Persistence { get; set; }
         public int PartySizeStart { get; set; }
         public int PartySizeMax { get; set; }
+        public int StartContractLevel { get; set; }
         public int MaxContractLevel { get; set; }
 
         public ExpeditionModel? ActiveExpedition { get; set; }

@@ -1,5 +1,5 @@
-﻿using FurmaIdle.Models; // Assumindo que CoinModel está aqui
-using FurmaIdle.Helpers; // Assumindo que UnlockHelper está aqui
+﻿using FurmaIdle.Models;
+using FurmaIdle.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +20,7 @@ namespace FurmaIdle.Data
                 Name = "Talho",
                 Image = "images/coins/m01.png",
                 UnlockId = "s00",
-                State = UnlockHelper.State.Avaliable, 
+                State = UnlockHelper.State.Blocked, 
                 Persistence = UnlockHelper.Persistence.Permanent,
             },
             #endregion

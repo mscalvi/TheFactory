@@ -39,6 +39,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 PartySizeStart = 3,
                 PartySizeMax = 5,
+                StartContractLevel = 1,
                 MaxContractLevel = 6
             },
             #endregion
@@ -68,6 +69,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 PartySizeStart = 2,
                 PartySizeMax = 2,
+                StartContractLevel = 4,
                 MaxContractLevel = 6
             },
             #endregion
@@ -97,6 +99,7 @@ namespace FurmaIdle.Data
                 Persistence = stage.Persistence,
                 PartySizeStart = stage.PartySizeStart,
                 PartySizeMax = stage.PartySizeMax,
+                StartContractLevel = stage.StartContractLevel,
                 MaxContractLevel = stage.MaxContractLevel,
                 ActiveExpedition = new ExpeditionModel(),
             };

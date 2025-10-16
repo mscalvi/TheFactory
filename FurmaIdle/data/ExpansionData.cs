@@ -13,13 +13,24 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, ExpansionModel> All = new()
         {
-            #region Expansion Levels (x01 - x03)
+            #region Expansion Levels (x00 - x03)
+            ["x00"] = new ExpansionModel
+            {
+                Id = "x00",
+                UnlockId = null,
+                PricingId = PricingHelper.PricingId.Expansions1,
+                Level = 1,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                State = UnlockHelper.State.Blocked
+            },
             ["x01"] = new ExpansionModel
             {
                 Id = "x01",
                 UnlockId = "l01",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 1,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                State = UnlockHelper.State.Blocked
             },
             ["x02"] = new ExpansionModel
             {
@@ -27,6 +38,8 @@ namespace FurmaIdle.Data
                 UnlockId = "l02",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 2,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                State = UnlockHelper.State.Blocked
             },
             ["x03"] = new ExpansionModel
             {
@@ -34,6 +47,8 @@ namespace FurmaIdle.Data
                 UnlockId = "l03",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 3,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                State = UnlockHelper.State.Blocked
             },
             #endregion
         };
@@ -54,6 +69,8 @@ namespace FurmaIdle.Data
                 UnlockId = expansion.UnlockId,
                 PricingId = expansion.PricingId,
                 Level = expansion.Level,
+                Persistence = expansion.Persistence,
+                State = expansion.State,
             };
         }
 

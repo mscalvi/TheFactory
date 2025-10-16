@@ -17,8 +17,8 @@ namespace FurmaIdle.Data
                 Id = "k01",
                 Name = "Cultural",
                 Image = "image/knowledges/k01.png",
-                UnlockId = null,
-                State = UnlockHelper.State.Unlocked,
+                UnlockId = "uk01",
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
 
                 // Knowledge Gain
@@ -36,8 +36,8 @@ namespace FurmaIdle.Data
                 Id = "k02",
                 Name = "Geográfico",
                 Image = "image/knowledges/k01.png",
-                UnlockId = null,
-                State = UnlockHelper.State.Unlocked,
+                UnlockId = "uk02",
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
 
                 // Knowledge Gain
@@ -55,8 +55,8 @@ namespace FurmaIdle.Data
                 Id = "k03",
                 Name = "Sobrevivência",
                 Image = "image/knowledges/k02.png",
-                UnlockId = null,
-                State = UnlockHelper.State.Unlocked,
+                UnlockId = "uk03",
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
 
                 // Knowledge Gain

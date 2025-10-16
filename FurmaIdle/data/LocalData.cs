@@ -18,12 +18,11 @@ namespace FurmaIdle.Data
             {
                 Id = "l00",
                 Name = "Murada Cairu",
-                Description = "", // Não está na tabela, assumido como vazio
+                Description = "",
                 Icon = "icons/locals/l00.png",
-                Level = 0, // Assumido 0 ou null para o local inicial
-                UnlockId = null,
-                PricingId = null,
-                State = UnlockHelper.State.Unlocked,
+                Level = null,
+                UnlockId = "ul00",
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
             },
             #endregion
@@ -36,9 +35,8 @@ namespace FurmaIdle.Data
                 Description = "",
                 Icon = "icons/locals/l01.png",
                 Level = 1,
-                UnlockId = "s00",
-                PricingId = PricingHelper.PricingId.UnlockLocal1m01,
-                State = UnlockHelper.State.Avaliable,
+                UnlockId = "ul01",
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
             },
             ["l02"] = new LocalModel
@@ -48,9 +46,8 @@ namespace FurmaIdle.Data
                 Description = "",
                 Icon = "icons/locals/l02.png",
                 Level = 1,
-                UnlockId = "s00",
-                PricingId = PricingHelper.PricingId.UnlockLocal1m01,
-                State = UnlockHelper.State.Avaliable,
+                UnlockId = "ul02",
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
             },
             ["l03"] = new LocalModel
@@ -60,9 +57,8 @@ namespace FurmaIdle.Data
                 Description = "",
                 Icon = "icons/locals/l03.png",
                 Level = 1,
-                UnlockId = "s00",
-                PricingId = PricingHelper.PricingId.UnlockLocal1m01,
-                State = UnlockHelper.State.Avaliable,
+                UnlockId = "ul03",
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
             },
             #endregion
@@ -86,7 +82,6 @@ namespace FurmaIdle.Data
                 Icon = local.Icon,
                 Level = local.Level,
                 UnlockId = local.UnlockId,
-                PricingId = local.PricingId,
                 State = local.State,
                 Persistence = local.Persistence,
             };

@@ -10,7 +10,6 @@ namespace FurmaIdle.Models
         public string Description { get; set; }
         public string? UnlockId { get; set; }
         public int? Level { get; set; }
-        public PricingHelper.PricingId? PricingId { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
     }

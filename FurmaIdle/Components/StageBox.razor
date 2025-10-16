@@ -1,0 +1,29 @@
+﻿@using FurmaIdle.Data
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Helpers;
+
+@inject ICurrentGameService Game
+@inject IUnlockService Unlock
+@inject ILocateService Locate
+
+<div class="stage-box">
+    @foreach (var id in StageData.ShowOrder)
+    {
+        StageModel stage = Locate.LocateStage(id);
+        if (Game.CurrentGame.SelectedStageId == stage.Id)
+        {
+            <h3>@stage.Name</h3>
+        }
+    }    
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Game.GameChanged += OnGameChanged;
+    }
+    void OnGameChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Game.GameChanged -= OnGameChanged;
+}

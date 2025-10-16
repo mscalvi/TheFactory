@@ -16,12 +16,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Components\" />
-		<Folder Include="wwwroot\js\" />
-		<Folder Include="wwwroot\js\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Update="wwwroot\**\*">
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>

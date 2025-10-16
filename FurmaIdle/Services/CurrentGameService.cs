@@ -1,5 +1,6 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using FurmaIdle.Storage;
 using System.Threading.Channels;
 using static FurmaIdle.Helpers.LogHelper;
 
@@ -10,7 +11,8 @@ namespace FurmaIdle.Services
         GameModel CurrentGame { get; }
 
         // Geral
-        void Attach(GameModel model);
+        void Attach(GameModel model, bool notify = true);
+        Task Mutate(Action<GameModel> edit, bool save = true);
         event Action? GameChanged;
         event Action<string, LogKind>? Logged;
 
@@ -62,23 +64,43 @@ namespace FurmaIdle.Services
     public sealed class CurrentGameService : ICurrentGameService
     {
         #region Geral
+        private readonly IGameStore _store;
         private readonly IModifierService _modifiers;
         private readonly IStageService _stages;
-        private readonly IUnlockService _unlock;
+        private readonly ILogger<CurrentGameService> _log;
+
         public GameModel CurrentGame { get; private set; } = new();
         public event Action? GameChanged;
         public event Action<string, LogKind>? Logged;
 
-        public CurrentGameService(IModifierService modifiers, IStageService stages, IUnlockService unlock)
+        public CurrentGameService(IModifierService modifiers, IStageService stages, IGameStore store, ILogger<CurrentGameService> log)
         {
             _modifiers = modifiers;
             _stages = stages;
-            _unlock = unlock;
+            _store = store;
+            _log = log;
         }
-
-        public void Attach(GameModel model)
+        public void Attach(GameModel model, bool notify = true)
         {
+            CurrentGame = model ?? throw new ArgumentNullException(nameof(model));
+            _log.LogInformation("Attach: CurrentGame set. Stages={Count}", model.Stages?.Count);
+            if (notify) GameChanged?.Invoke();
+        }
+        public async Task Mutate(Action<GameModel> edit, bool save = true)
+        {
+            if (edit is null) return;
 
+            // aplica mutações no estado vivo
+            edit(CurrentGame);
+
+            _log.LogInformation("Mutate: after edit. Stages={Count}", CurrentGame.Stages?.Count);
+
+            // notifica a UI
+            GameChanged?.Invoke();
+
+            // persiste no storage (IndexedDB via JS)
+            if (save)
+                await _store.SaveAsync(CurrentGame);
         }
         #endregion
 

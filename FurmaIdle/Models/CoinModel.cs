@@ -1,4 +1,6 @@
-﻿using FurmaIdle.Helpers;
+﻿using FurmaIdle.Data;
+using FurmaIdle.Helpers;
+using System.Text.Json.Serialization;
 
 namespace FurmaIdle.Models
 {
