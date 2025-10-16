@@ -1,4 +1,5 @@
-﻿using FurmaIdle.Models;
+﻿using FurmaIdle.Data;
+using FurmaIdle.Models;
 using System.Diagnostics.Contracts;
 
 namespace FurmaIdle.Services
@@ -16,6 +17,9 @@ namespace FurmaIdle.Services
         ExpansionModel LocateExpansion(string expansionId);
         TechModel LocateTech(string techId);
         KnowledgeModel LocateKnowledge(string knowledgeId);
+        ClickModel LocateClick(string clickId);
+        ClickModel LocateStageClick(string clickId);
+        bool TryLocateClickByStage(string stageId, out ClickModel? click);
     }
 
     public sealed class LocateService : ILocateService
@@ -123,12 +127,57 @@ namespace FurmaIdle.Services
         public KnowledgeModel LocateKnowledge(string knowId)
         {
             if (string.IsNullOrWhiteSpace(knowId))
-                throw new ArgumentException("knowId in´valido.", nameof(knowId));
+                throw new ArgumentException("knowId inválido.", nameof(knowId));
 
             if (Game.Knowledges.TryGetValue(knowId, out var know)) return know;
 
             throw new KeyNotFoundException($"Knowledge '{knowId}' não encontrada no jogo atual.");
 
+        }
+        public ClickModel LocateClick(string clickId)
+        {
+            if (string.IsNullOrWhiteSpace(clickId))
+                throw new ArgumentException("clickId inválido.", nameof(clickId));
+
+            if (Game.Clicks.TryGetValue(clickId, out var cm)) return cm;
+
+            throw new KeyNotFoundException($"Click '{clickId}' não encontrado no jogo atual.");
+        }
+        public ClickModel LocateStageClick(string stageId)
+        {
+            if (string.IsNullOrWhiteSpace(stageId))
+                throw new ArgumentException("stageId inválido.", nameof(stageId));
+
+            // 1) catálogo: encontra o click def daquele stage
+            var defId = ClickData.ShowOrder
+                .Select(id => ClickData.GetDef(id))
+                .FirstOrDefault(d => string.Equals(d?.StageId, stageId, StringComparison.OrdinalIgnoreCase))
+                ?.Id;
+
+            if (string.IsNullOrWhiteSpace(defId))
+                throw new KeyNotFoundException($"Nenhum Click definido para o Stage '{stageId}'.");
+
+            // 2) runtime: retorna o modelo vivo
+            if (Game.Clicks.TryGetValue(defId, out var cm)) return cm;
+
+            throw new KeyNotFoundException($"Click '{defId}' (do Stage '{stageId}') não encontrado no jogo atual.");
+        }
+        public bool TryLocateClickByStage(string stageId, out ClickModel? click)
+        {
+            click = null;
+            if (string.IsNullOrWhiteSpace(stageId)) return false;
+
+            // catálogo → acha o clickId do stage
+            var defId = ClickData.ShowOrder
+                ?.Select(id => ClickData.GetDef(id))
+                ?.FirstOrDefault(d => d != null &&
+                                      string.Equals(d.StageId, stageId, StringComparison.OrdinalIgnoreCase))
+                ?.Id;
+
+            if (string.IsNullOrWhiteSpace(defId)) return false;
+
+            // runtime
+            return Game.Clicks.TryGetValue(defId, out click);
         }
     }
 }

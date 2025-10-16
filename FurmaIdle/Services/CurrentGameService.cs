@@ -85,7 +85,6 @@ namespace FurmaIdle.Services
         public void Attach(GameModel model, bool notify = true)
         {
             CurrentGame = model ?? throw new ArgumentNullException(nameof(model));
-            _log.LogInformation("Attach: CurrentGame set. Stages={Count}", model.Stages?.Count);
             if (notify) GameChanged?.Invoke();
         }
         public async Task Mutate(Action<GameModel> edit, bool save = true)
@@ -94,9 +93,6 @@ namespace FurmaIdle.Services
 
             // aplica mutações no estado vivo
             edit(CurrentGame);
-
-            _log.LogInformation("Mutate: after edit. Stages={Count}", CurrentGame.Stages?.Count);
-
             // notifica a UI
             GameChanged?.Invoke();
 
@@ -104,7 +100,6 @@ namespace FurmaIdle.Services
             if (save)
             {
                 await _store.SaveAsync(CurrentGame);
-                _log.LogInformation("[Game] Saved after mutate");
             }
         }
         #endregion

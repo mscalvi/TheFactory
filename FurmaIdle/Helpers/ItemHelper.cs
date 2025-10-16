@@ -10,10 +10,12 @@
             Stage,
             Character,
             Tech,
-            Expansion,
-            Click,
             Local,
             Upgrade,
+            // Others
+            Expedition,
+            Expansion,
+            Click,
         }
     }
 }

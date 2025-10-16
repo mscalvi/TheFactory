@@ -347,6 +347,23 @@ namespace FurmaIdle.Services
                 }
             }
 
+            // Stats
+            g.Stats ??= new StatsModel(); // se vier null
+
+            if (g.Stats.Coins is null) { g.Stats.Coins = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+            if (g.Stats.Resources is null) { g.Stats.Resources = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+            if (g.Stats.Knowledge is null) { g.Stats.Knowledge = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+
+            if (g.Stats.CoinsGain is null) { g.Stats.CoinsGain = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+            if (g.Stats.ResourcesGain is null) { g.Stats.ResourcesGain = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+            if (g.Stats.KnowledgeGain is null) { g.Stats.KnowledgeGain = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+
+            if (g.Stats.CoinsSpent is null) { g.Stats.CoinsSpent = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+            if (g.Stats.ResourcesSpent is null) { g.Stats.ResourcesSpent = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+            if (g.Stats.KnowledgeSpent is null) { g.Stats.KnowledgeSpent = new Dictionary<string, long>(StringComparer.Ordinal); changed = true; }
+
+            return changed;
+
             // ---------- Defaults globais ----------
             if (string.IsNullOrWhiteSpace(g.SelectedStageId) || !g.Stages.ContainsKey(g.SelectedStageId))
             {

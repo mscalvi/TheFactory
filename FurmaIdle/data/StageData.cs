@@ -20,27 +20,28 @@ namespace FurmaIdle.Data
                 Id = "s00",
                 Name = "Ilha de Vera",
                 Description = "", // Vazio na tabela
-                Icon = "icons/stages/s00.png",
+                Icon = "icons/stages/s00.jpg",
                 Images = new List<string> {
-                    "images/stages/s00_0000.png",
-                    "images/stages/s00_1000.png",
-                    "images/stages/s00_1100.png",
-                    "images/stages/s00_1010.png",
-                    "images/stages/s00_1001.png",
-                    "images/stages/s00_1110.png",
-                    "images/stages/s00_1101.png",
-                    "images/stages/s00_1011.png",
-                    "images/stages/s00_1111.png",
+                    "images/stages/s00_0000.jpg",
+                    "images/stages/s00_1000.jpg",
+                    "images/stages/s00_1100.jpg",
+                    "images/stages/s00_1010.jpg",
+                    "images/stages/s00_1001.jpg",
+                    "images/stages/s00_1110.jpg",
+                    "images/stages/s00_1101.jpg",
+                    "images/stages/s00_1011.jpg",
+                    "images/stages/s00_1111.jpg",
                 },
                 Level = null,
                 PricingId = null,
                 UnlockId = null,
-                State = UnlockHelper.State.Unlocked,
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 PartySizeStart = 3,
                 PartySizeMax = 5,
                 StartContractLevel = 1,
-                MaxContractLevel = 6
+                MaxContractLevel = 6,
+                CoinId = "m00",
             },
             #endregion
 
@@ -50,17 +51,17 @@ namespace FurmaIdle.Data
                 Id = "s01",
                 Name = "Correntezas",
                 Description = "", // Vazio na tabela
-                Icon = "icons/stages/s01.png",
+                Icon = "icons/stages/s01.jpg",
                 Images = new List<string> {
-                    "images/stages/s01_0000.png",
-                    "images/stages/s01_1000.png",
-                    "images/stages/s01_1100.png",
-                    "images/stages/s01_1010.png",
-                    "images/stages/s01_1001.png",
-                    "images/stages/s01_1110.png",
-                    "images/stages/s01_1101.png",
-                    "images/stages/s01_1011.png",
-                    "images/stages/s01_1111.png",
+                    "images/stages/s01_0000.jpg",
+                    "images/stages/s01_1000.jpg",
+                    "images/stages/s01_1100.jpg",
+                    "images/stages/s01_1010.jpg",
+                    "images/stages/s01_1001.jpg",
+                    "images/stages/s01_1110.jpg",
+                    "images/stages/s01_1101.jpg",
+                    "images/stages/s01_1011.jpg",
+                    "images/stages/s01_1111.jpg",
                 },
                 Level = 1,
                 PricingId = PricingHelper.PricingId.StageUnlock1m01,
@@ -70,7 +71,8 @@ namespace FurmaIdle.Data
                 PartySizeStart = 2,
                 PartySizeMax = 2,
                 StartContractLevel = 4,
-                MaxContractLevel = 6
+                MaxContractLevel = 6,
+                CoinId = "m00",
             },
             #endregion
         };
@@ -102,6 +104,7 @@ namespace FurmaIdle.Data
                 StartContractLevel = stage.StartContractLevel,
                 MaxContractLevel = stage.MaxContractLevel,
                 ActiveExpedition = new ExpeditionModel(),
+                CoinId = stage.CoinId,
             };
         }
 

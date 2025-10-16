@@ -18,7 +18,7 @@ namespace FurmaIdle.Data
             {
                 Id = "m01",
                 Name = "Talho",
-                Image = "images/coins/m01.png",
+                Image = "images/coins/m01.jpg",
                 UnlockId = "s00",
                 State = UnlockHelper.State.Blocked, 
                 Persistence = UnlockHelper.Persistence.Permanent,

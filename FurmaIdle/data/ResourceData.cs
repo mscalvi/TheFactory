@@ -23,8 +23,8 @@ namespace FurmaIdle.Data
                 RsFraction = 0.0,
                 RsPerSecond = 0.0,
                 RsPerChar = 60.0,
-                Icon = "icon/resources/r01.png",
-                Image = "images/resources/r01.png",
+                Icon = "icon/resources/r01.jpg",
+                Image = "images/resources/r01.jpg",
                 Lore = "", // Vazio na tabela
                 Persistence = UnlockHelper.Persistence.untilExpansion,
                 State = UnlockHelper.State.Blocked,

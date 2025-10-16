@@ -1,0 +1,129 @@
+﻿@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Data
+@using FurmaIdle.Helpers
+
+@inject ICurrentGameService Game
+@inject ILocateService Locate
+@inject IIncomeService Income
+
+<div class="click-area-root"
+     @oncontextmenu:preventDefault
+     @onpointerdown="HandlePointerDown"
+     tabindex="0">
+
+    @* imagem do stage cobrindo 100% *@
+    @{
+        var g = Game.CurrentGame;
+        var sid = g?.SelectedStageId;
+        StageModel? st = null;
+        if (!string.IsNullOrWhiteSpace(sid))
+            g?.Stages?.TryGetValue(sid, out st);
+
+        var stageImg = !string.IsNullOrWhiteSpace(sid)
+        ? $"images/stages/{sid}_0000.jpg"
+        : $"Stage: {st.Name}";
+    }
+
+    <img class="click-stage-img"
+         src="@stageImg"
+         alt="@($"Stage {st?.Name ?? st?.Id ?? "—"}")" />
+
+    @* HUD simples (opcional) *@
+    <div class="click-hud">
+        <h3>@(st?.Name ?? st?.Id ?? "—")</h3>
+        <small>cliques na sessão: @_sessionClicks</small>
+        <small>Click Gain: @GetClickTotalString()</small>
+    </div>
+
+    @* textos flutuantes dos cliques *@
+    @foreach (var fx in _fx)
+    {
+        <span class="click-fx"
+              style="left:@fx.Xpx; top:@fx.Ypx">
+            @fx.Text
+        </span>
+    }
+</div>
+
+@code {
+    // eventos externos
+    [Parameter] public EventCallback<int> OnClick { get; set; }
+    [Parameter] public EventCallback<double> ClickAdd { get; set; } // dispara o valor do clique
+
+    private int _sessionClicks;
+
+    // efeito visual simples
+    private sealed class Fx
+    {
+        public required string Text { get; init; }
+        public required string Xpx { get; init; } // ex: "320px"
+        public required string Ypx { get; init; } // ex: "240px"
+        public required long BornMs { get; init; }
+        public int LifespanMs { get; init; } = 700;
+    }
+    private readonly List<Fx> _fx = new();
+
+    private async Task HandlePointerDown(PointerEventArgs e)
+    {
+        _sessionClicks++;
+
+        var add = GetClickTotal();
+
+        var g = Game.CurrentGame;
+        var sid = g?.SelectedStageId;
+
+        if (!string.IsNullOrWhiteSpace(sid) &&
+            g?.Stages is not null &&
+            g.Stages.TryGetValue(sid, out var stage) &&
+            !string.IsNullOrWhiteSpace(stage.CoinId))
+        {
+            // aplica o ganho (ItemType.Coin, id da moeda do Stage, e o valor total do clique)
+            var gain = await Income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, add);
+
+            // se quiser, dá pra usar 'gain' para HUD/log:
+            // gain.GainEffective (parte inteira aplicada)
+            // gain.GainFraction  (fração acumulada em memória)
+        }
+
+        // cria o texto flutuante junto ao cursor
+        var now = Environment.TickCount64;
+        var fx = new Fx
+        {
+            Text = $"+{add:0.##}",
+            Xpx = $"{e.ClientX + 4}px",
+            Ypx = $"{e.ClientY - 12}px",
+            BornMs = now
+        };
+        _fx.Add(fx);
+
+        StateHasChanged();
+
+        // agenda remoção do FX
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(fx.LifespanMs);
+            _fx.Remove(fx);
+            await InvokeAsync(StateHasChanged);
+        });
+    }
+
+    // ===== Cálculo do ClickTotal =====
+    // ClickTotal = (BaseGain + AddMod) * MultMod
+    private double GetClickTotal()
+    {
+        var g = Game.CurrentGame;
+        var sid = g?.SelectedStageId;
+        if (string.IsNullOrWhiteSpace(sid)) return 0;
+
+        if (!Locate.TryLocateClickByStage(sid, out var cm) || cm is null)
+            return 0; // NÃO lança na UI
+
+        var baseGain = cm.BaseGain;
+        var addMod = cm.AddMod;
+        var multMod = cm.MultMod <= 0 ? 1.0 : cm.MultMod;
+        return (baseGain + addMod) * multMod;
+    }
+
+    private string GetClickTotalString() => GetClickTotal().ToString("0.##");
+}

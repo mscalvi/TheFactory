@@ -9,8 +9,8 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icons/gameicon.png",
-      "type": "image/png",
+      "src": "icons/gameicon.jpg",
+      "type": "image/jpg",
       "sizes": "512x512"
     }
   ]

@@ -89,10 +89,13 @@
     private static ItemHelper.ItemType? MapNavToType(string? navId) => navId switch
     {
         "i1" => ItemHelper.ItemType.Stage,
+        "i2" => ItemHelper.ItemType.Expansion,
+        "i3" => ItemHelper.ItemType.Expedition,
         "i4" => ItemHelper.ItemType.Character,
         "i5" => ItemHelper.ItemType.Tech,
         "i6" => ItemHelper.ItemType.Local,
         "i7" => ItemHelper.ItemType.Upgrade,
+        "i8" => ItemHelper.ItemType.Character,
         _ => null
     };
 

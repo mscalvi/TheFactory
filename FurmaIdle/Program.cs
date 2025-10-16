@@ -15,6 +15,10 @@ builder.Services.AddSingleton<ITickService, TickService>();
 
 builder.Services.AddSingleton<IUiService, UiService>();
 builder.Services.AddSingleton<ITooltipService, TooltipService>();
+builder.Services.AddSingleton<IClickService, ClickService>();
+builder.Services.AddSingleton<IncomeService>(); 
+
+builder.Services.AddScoped<IIncomeService, IncomeService>();
 
 builder.Services.AddSingleton<IModifierService, ModifierService>();
 builder.Services.AddSingleton<IStageService, StageService>();

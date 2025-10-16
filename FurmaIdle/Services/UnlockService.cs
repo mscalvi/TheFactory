@@ -99,7 +99,7 @@ namespace FurmaIdle.Services
                     var up = _locate.LocateUpgrade(upgradeId);
                     if (string.Equals(up.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        up.State = UnlockHelper.State.Unlocked;
+                        up.State = UnlockHelper.State.Available;
                     }
                 }
 

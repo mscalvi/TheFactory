@@ -14,7 +14,7 @@ namespace FurmaIdle.Data
             #region Initial Stage (s00)
             ["cl00"] = new ClickModel
             {
-                Id = "s00",
+                Id = "cl00",
                 StageId = "s00",
                 BaseGain = 1,
                 AddMod = 0,

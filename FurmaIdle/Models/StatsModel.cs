@@ -2,17 +2,28 @@
 {
     public class StatsModel
     {
-        public Dictionary<string, int> CoinsGain { get; set; }
-        public Dictionary<string, int> CoinsSpent { get; set; }
+        // Stats for this Game
 
-        public Dictionary<string, int> ResourcesGain { get; set; }
-        public Dictionary<string, int> ResourcesSpent { get; set; }
+        public Dictionary<string, long> Coins { get; set; }
+        public Dictionary<string, long> Resources { get; set; }
+        public Dictionary<string, long> Knowledge { get; set; }
 
-        public Dictionary<string, int> SpecialtiesUsed { get; set; }
 
-        public Dictionary<string, int> ContractsMade { get; set; }
+        // Stats for Archievement
+        public Dictionary<string, long> CoinsGain { get; set; }
+        public Dictionary<string, long> CoinsSpent { get; set; }
 
-        public Dictionary<string, int> ClicksMade { get; set; }
+        public Dictionary<string, long> ResourcesGain { get; set; }
+        public Dictionary<string, long> ResourcesSpent { get; set; }
+
+        public Dictionary<string, long> KnowledgeGain { get; set; }
+        public Dictionary<string, long> KnowledgeSpent { get; set; }
+
+        public Dictionary<string, long> SpecialtiesUsed { get; set; }
+
+        public Dictionary<string, long> ContractsMade { get; set; }
+
+        public Dictionary<string, long> ClicksMade { get; set; }
 
         public int UpgradesUnlocked { get; set; }
         public int TechUnlocked { get; set; }

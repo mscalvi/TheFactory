@@ -8,6 +8,7 @@
 @using FurmaIdle.Services;
 
 @inject IJSRuntime JS;
+@implements IDisposable
 
 @inject ICreateGameService Start
 @inject ICurrentGameService Game
@@ -23,7 +24,6 @@
     protected override void OnInitialized()
     {
         Game.GameChanged += OnGameChanged;
-        //Game.Logged += OnLogged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -52,18 +52,16 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+
         UI.CreateScreen();
+
+        await Ticks.StartAsync();
     }
     #endregion
 
     #region NavMenu
     private NavMenu? navRef;
     private string? _navId = "i4";
-
-    private void OnNavSelect(string id)
-    {
-
-    }
 
     private IEnumerable<StageModel> GetStagesByState(UnlockHelper.State state)
     {
@@ -84,8 +82,8 @@
     #region Gerais
     public void Dispose()
     {
+        _ = Ticks.StopAsync();
         Game.GameChanged -= OnGameChanged;
-        // Game.Logged -= OnLogged;
     }
     #endregion
 }
@@ -103,7 +101,6 @@
     <section class="shop-menu panel">
         <ShopMenu SelectedId="@_navId" />
     </section>
-
 
     <!-- Título -->
     <header class="title-box panel">
@@ -123,11 +120,14 @@
     </section>
 
     <!-- Click -->
-        <main class="click-area panel">Click-Area
-        </main>
+    <main class="click-area panel">
+        <ClickArea />
+    </main>
 
     <!-- Income -->
-    <section class="income-box panel">income-box</section>
+    <section class="income-box panel">
+        <IncomeBox />
+    </section>
 
     <!-- Contratos -->
     <section class="contracts-menu panel">contracts-menu</section>
