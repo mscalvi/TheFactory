@@ -25,14 +25,13 @@
                 }
             </div>
         </div>
-
     </div>
 </div>
 
 @code {
     // ==== PARÂMETROS ====
     /// <summary>Id selecionado (permite usar bind-SelectedId no pai)</summary>
-    [Parameter] public string? SelectedId { get; set; } = "i1";
+    [Parameter] public string? SelectedId { get; set; } = "i4";
     [Parameter] public EventCallback<string?> SelectedIdChanged { get; set; }
 
     /// <summary>Callback quando um ícone é selecionado</summary>
@@ -60,9 +59,9 @@
         new() { Id = "i2", Label = "Expansion", Unlocked = false, Selected = false, Notification = false },
         new() { Id = "i3", Label = "Expedition", Unlocked = false, Selected = false, Notification = false },
         new() { Id = "i4", Label = "Characters", Unlocked = true, Selected = true, Notification = false },
-        new() { Id = "i5", Label = "Upgrades", Unlocked = false, Selected = false, Notification = false },
-        new() { Id = "i6", Label = "Techs", Unlocked = false, Selected = false, Notification = false },
-        new() { Id = "i7", Label = "Destinations", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i5", Label = "Techs", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i6", Label = "Locals", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i7", Label = "Upgrades", Unlocked = false, Selected = false, Notification = false },
         new() { Id = "i97", Label = "Statistics", Unlocked = false, Selected = false, Notification = false },
         new() { Id = "i98", Label = "Archievments", Unlocked = false, Selected = false, Notification = false },
         new() { Id = "i99", Label = "Configurações", Unlocked = true, Selected = false, Notification = false },

@@ -7,7 +7,7 @@
         // Ativo
         public DateTime LastTick { get; set; }
         public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
-        public string SelectedStageId { get; set; }
+        public string SelectedStageId { get; set; } = "s00";
         public List<string> ActiveStagesIds { get; set; }
         // public GuildModel Guild { get; set; } = new();
         // public RuntimeModel Runtime { get; set; } = new RuntimeModel();

@@ -4,6 +4,8 @@ using FurmaIdle.Storage;
 using System.Threading.Channels;
 using static FurmaIdle.Helpers.LogHelper;
 
+using Microsoft.Extensions.Logging;
+
 namespace FurmaIdle.Services
 {
     public interface ICurrentGameService
@@ -100,7 +102,10 @@ namespace FurmaIdle.Services
 
             // persiste no storage (IndexedDB via JS)
             if (save)
+            {
                 await _store.SaveAsync(CurrentGame);
+                _log.LogInformation("[Game] Saved after mutate");
+            }
         }
         #endregion
 

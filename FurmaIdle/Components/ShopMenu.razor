@@ -1,0 +1,189 @@
+﻿@* Components/ShopMenu.razor *@
+@using System.Linq
+@using FurmaIdle.Data
+@using FurmaIdle.Models
+@using FurmaIdle.Helpers
+@using FurmaIdle.Services
+
+@inject ICurrentGameService Game
+@inject IUiService UI
+@inject IUnlockService Unlock
+
+<section class="shop-menu panel">
+    @if (Game.CurrentGame?.Stages is not { Count: > 0 })
+    {
+        <p>Carregando…</p>
+    }
+    else
+    {
+        var type = MapNavToType(SelectedId);
+
+        if (type is null)
+        {
+            <p>Selecione uma opção no menu.</p>
+        }
+        else
+        {
+            var unlocked = GetByState(type.Value, UnlockHelper.State.Unlocked).ToList();
+            var avaliable = GetByState(type.Value, UnlockHelper.State.Available).ToList();
+
+            <div class="shop-block">
+                <h4>@type.Value</h4>
+
+                <h5>Unlocked</h5>
+                @if (!unlocked.Any())
+                {
+                    <p>Nenhum item desbloqueado</p>
+                }
+                else
+                {
+                    <div class="shop-list">
+                        @foreach (var it in unlocked)
+                        {
+                            @RenderItemButton(it, type.Value, isUnlocked: true)
+                        }
+                    </div>
+                }
+
+                <h5>Avaliable</h5>
+                @if (!avaliable.Any())
+                {
+                    <p>Nenhum item disponível</p>
+                }
+                else
+                {
+                    <div class="shop-list">
+                        @foreach (var it in avaliable)
+                        {
+                            @RenderItemButton(it, type.Value, isUnlocked: false)
+                        }
+                    </div>
+                }
+
+                @* Logs de depuração (remova depois) *@
+                @{
+                    DebugList("Unlocked", unlocked.Select(v => v.Id));
+                    DebugList("Avaliable", avaliable.Select(v => v.Id));
+                }
+            </div>
+        }
+    }
+</section>
+
+@code {
+    [Parameter] public string? SelectedId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Game.GameChanged += OnGameChanged;
+    }
+    void OnGameChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Game.GameChanged -= OnGameChanged;
+
+    // ===== Infra genérica =====
+
+    // DTO comum pra UI
+    private readonly record struct ViewItem(string Id, string? Name, UnlockHelper.State State);
+
+    // Mapear id do NavMenu -> tipo
+    private static ItemHelper.ItemType? MapNavToType(string? navId) => navId switch
+    {
+        "i1" => ItemHelper.ItemType.Stage,
+        "i4" => ItemHelper.ItemType.Character,
+        "i5" => ItemHelper.ItemType.Tech,
+        "i6" => ItemHelper.ItemType.Local,
+        "i7" => ItemHelper.ItemType.Upgrade,
+        _ => null
+    };
+
+    // Ordem de exibição por tipo (catálogo)
+    private static IReadOnlyList<string> GetOrder(ItemHelper.ItemType type) => type switch
+    {
+        ItemHelper.ItemType.Stage => StageData.ShowOrder,
+        ItemHelper.ItemType.Character => CharacterData.ShowOrder,
+        ItemHelper.ItemType.Tech => TechData.ShowOrder,
+        ItemHelper.ItemType.Local => LocalData.ShowOrder,
+        ItemHelper.ItemType.Upgrade => UpgradeData.ShowOrder,
+        _ => Array.Empty<string>()
+    };
+
+    // Projeção: runtime -> ViewItem
+    private static IEnumerable<ViewItem> Project(GameModel g, ItemHelper.ItemType type) => type switch
+    {
+        ItemHelper.ItemType.Stage => g.Stages.Values.Select(s => new ViewItem(s.Id, s.Name, s.State)),
+        ItemHelper.ItemType.Character => g.Characters.Values.Select(c => new ViewItem(c.Id, c.Name, c.State)),
+        ItemHelper.ItemType.Tech => g.Techs.Values.Select(t => new ViewItem(t.Id, t.Name, t.State)),
+        ItemHelper.ItemType.Local => g.Locals.Values.Select(l => new ViewItem(l.Id, l.Name, l.State)),
+        ItemHelper.ItemType.Upgrade => g.Upgrades.Values.Select(u => new ViewItem(u.Id, u.Name, u.State)),
+        _ => Enumerable.Empty<ViewItem>()
+    };
+
+    // Único método: filtra por estado e ordena por ShowOrder
+    private IEnumerable<ViewItem> GetByState(ItemHelper.ItemType type, UnlockHelper.State desired)
+    {
+        var g = Game.CurrentGame;
+        if (g is null) return Enumerable.Empty<ViewItem>();
+
+        var order = GetOrder(type);
+        int OrderIndex(string id)
+        {
+            if (order is null) return int.MaxValue;
+
+            // se for List<string>, usa IndexOf
+            if (order is List<string> list)
+            {
+                var idx = list.IndexOf(id);
+                return idx >= 0 ? idx : int.MaxValue;
+            }
+
+            // fallback para IReadOnlyList: loop
+            for (int i = 0; i < order.Count; i++)
+                if (string.Equals(order[i], id, StringComparison.Ordinal))
+                    return i;
+
+            return int.MaxValue;
+        }
+
+        return Project(g, type)
+            .Where(it => it.State == desired)
+            .OrderBy(it => OrderIndex(it.Id));
+    }
+
+    // Renderiza um botão de item com a ação adequada por tipo
+    private RenderFragment RenderItemButton(ViewItem it, ItemHelper.ItemType type, bool isUnlocked) => builder =>
+    {
+        var seq = 0;
+        builder.OpenElement(seq++, "button");
+        builder.AddAttribute(seq++, "class", $"shop-item {(isUnlocked ? "is-unlocked" : "is-avaliable")}");
+
+        switch (type)
+        {
+            case ItemHelper.ItemType.Stage:
+                if (isUnlocked)
+                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => UI.LoadStage(it.Id)));
+                else
+                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => Unlock.UnlockStage(it.Id)));
+                break;
+
+            // Para os demais tipos, por enquanto os botões não fazem nada (desabilitados)
+            default:
+                builder.AddAttribute(seq++, "disabled", true);
+                break;
+        }
+
+        builder.AddContent(seq++, it.Name ?? it.Id);
+        builder.CloseElement();
+    };
+
+    // ===== Debug =====
+    protected override void OnParametersSet()
+    {
+        var g = Game.CurrentGame;
+        var stCount = g?.Stages?.Count ?? 0;
+        var s00 = (g != null && g.Stages.TryGetValue("s00", out var st)) ? st.State.ToString() : "<miss>";
+        Console.WriteLine($"[Shop] SelectedId={SelectedId}, stages={stCount}, s00={s00}");
+    }
+
+    private void DebugList(string tag, IEnumerable<string> ids)
+        => Console.WriteLine($"[Shop] {tag}: {string.Join(",", ids)}");
+}

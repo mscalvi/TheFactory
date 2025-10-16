@@ -1,6 +1,7 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using FurmaIdle.Data;
+using Microsoft.Extensions.Logging;
 
 namespace FurmaIdle.Services
 {
@@ -20,11 +21,13 @@ namespace FurmaIdle.Services
 
     public sealed class UnlockService : IUnlockService
     {
+        private readonly ILogger<UnlockService> _log;
         private readonly ICurrentGameService _game;
         private readonly ILocateService _locate;
 
-        public UnlockService(ICurrentGameService game, ILocateService locate)
+        public UnlockService(ILogger<UnlockService> log, ICurrentGameService game, ILocateService locate)
         {
+            _log = log;
             _game = game;
             _locate = locate;
         }
@@ -162,6 +165,7 @@ namespace FurmaIdle.Services
             await _game.Mutate(game =>
             {
                 var stage = _locate.LocateStage(stageId);
+                var before = stage.State;
 
                 foreach (var coinId in CoinsData.ShowOrder)
                 {
@@ -186,6 +190,9 @@ namespace FurmaIdle.Services
                         up.State = UnlockHelper.State.Available;
                     }
                 }
+
+                _log.LogInformation("[Unlock] Stage {Id}: {Before} -> {After}",
+                    stageId, before, stage.State);
 
                 stage.State = UnlockHelper.State.Unlocked;
             });

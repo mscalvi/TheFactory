@@ -6,7 +6,14 @@
         {
             Resource,
             Coin,
-            Knowledge
+            Knowledge,
+            Stage,
+            Character,
+            Tech,
+            Expansion,
+            Click,
+            Local,
+            Upgrade,
         }
     }
 }

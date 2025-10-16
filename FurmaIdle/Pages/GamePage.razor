@@ -18,29 +18,45 @@
 
 @code {
     #region GameStart
+    void OnGameChanged() => InvokeAsync(StateHasChanged);
+
     protected override void OnInitialized()
     {
-        //Game.GameChanged += OnGameChanged;
+        Game.GameChanged += OnGameChanged;
         //Game.Logged += OnLogged;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        var NewGame = await Start.InitAsync();
+        await Start.InitAsync();
 
-        // Desbloquear Itens
-        await Unlock.UnlockStage("s00");
-        await Unlock.UnlockExpansion("x00");
+        var game = Game.CurrentGame;
 
-        // Preencher Tela
+        var sid = game?.SelectedStageId;
+        string sName = "<null>";
+        if (sid is not null && game.Stages.TryGetValue(sid, out var st))
+            sName = st?.Name ?? "<null>";
+
+        Console.WriteLine($"[GP] after init: stages={game?.Stages?.Count}, selected={sid}, name='{sName}'");
+
+        if (game != null)
+        {
+            if (game.Stages.TryGetValue("s00", out var s) && s.State != UnlockHelper.State.Unlocked)
+                await Unlock.UnlockStage("s00");
+
+            if (game.Expansions.TryGetValue("x00", out var x) && x.State != UnlockHelper.State.Unlocked)
+                await Unlock.UnlockExpansion("x00");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
         UI.CreateScreen();
-
-        // Inicializar Ticks
-
-        StateHasChanged();
     }
     #endregion
 
+    #region NavMenu
     private NavMenu? navRef;
     private string? _navId = "i4";
 
@@ -49,11 +65,26 @@
 
     }
 
+    private IEnumerable<StageModel> GetStagesByState(UnlockHelper.State state)
+    {
+        var game = Game.CurrentGame;
+        if (game?.Stages is not { Count: > 0 })
+            return Enumerable.Empty<StageModel>();
+
+        var result = new List<StageModel>();
+        foreach (var id in StageData.ShowOrder)
+        {
+            if (game.Stages.TryGetValue(id, out var st) && st.State == state)
+                result.Add(st);
+        }
+        return result;
+    }
+    #endregion
+
     #region Gerais
     public void Dispose()
     {
-        // Desinscreva eventos aqui
-        // Game.GameChanged -= OnGameChanged;
+        Game.GameChanged -= OnGameChanged;
         // Game.Logged -= OnLogged;
     }
     #endregion
@@ -69,7 +100,10 @@
     <section class="text-box panel">text-box</section>
 
     <!-- Shop -->
-    <section class="shop-menu panel">shop-menu</section>
+    <section class="shop-menu panel">
+        <ShopMenu SelectedId="@_navId" />
+    </section>
+
 
     <!-- Título -->
     <header class="title-box panel">
@@ -77,14 +111,14 @@
     </header>
 
     <!-- Stage/Área -->
-    <section class="stage-box-box panel">
+    <section class="stage-box panel">
         @if (Game.CurrentGame?.Stages?.Count > 0)
         {
             <StageBox />
         }
         else
         {
-            <p>Carregando…</p>
+            <p>Stage Desativado</p>
         }
     </section>
 

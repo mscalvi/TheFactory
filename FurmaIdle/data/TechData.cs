@@ -18,8 +18,8 @@ namespace FurmaIdle.Data
             {
                 Id = "t011",
                 Name = "Fundação de Guildas",
-                Icon = "icons/techs/t011.png", // CORRIGIDO
-                Description = "", // Vazio na tabela
+                Icon = "icons/techs/t011.png",
+                Description = "",
                 UnlockId = "l00",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k01,
