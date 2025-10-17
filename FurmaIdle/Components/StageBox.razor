@@ -7,7 +7,7 @@
 @inject IUnlockService Unlock
 @inject ILocateService Locate
 
-@if (LoadGameReady())
+@if (!_ready)
 {
     <p>Carregando…</p>
 }
@@ -52,21 +52,5 @@ else
 
 @code {
 
-    private bool LoadGameReady()
-    {
-        GameModel CurrentGame = Game.CurrentGame;
-        if (CurrentGame.On)
-        {
-            Game.GameChanged += OnGameChanged;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    void OnGameChanged() => InvokeAsync(StateHasChanged);
-
-    public void Dispose() => Game.GameChanged -= OnGameChanged;
+    private bool _ready = false;
 }

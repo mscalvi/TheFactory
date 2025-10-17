@@ -8,7 +8,7 @@
 @inject IUiService UI
 @inject IUnlockService Unlock
 
-@if (LoadGameReady())
+@if (!_ready)
 {
     <p>Carregando…</p>
 }
@@ -64,39 +64,17 @@ else
                             }
                         </div>
                     }
-
-                    @* Logs de depuração (remova depois) *@
-                    @{
-                        DebugList("Unlocked", unlocked.Select(v => v.Id));
-                        DebugList("Avaliable", avaliable.Select(v => v.Id));
-                    }
                 </div>
             }
         }
     </section>
 }
 
-
-
 @code {
-    private bool LoadGameReady()
-    {
-        GameModel CurrentGame = Game.CurrentGame;
-        if (CurrentGame.On)
-        {
-            Game.GameChanged += OnGameChanged;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+
+    private bool _ready = false;
 
     [Parameter] public string? SelectedId { get; set; }
-
-    void OnGameChanged() => InvokeAsync(StateHasChanged);
-    public void Dispose() => Game.GameChanged -= OnGameChanged;
 
     // ===== Infra genérica =====
 
@@ -195,16 +173,4 @@ else
         builder.AddContent(seq++, it.Name ?? it.Id);
         builder.CloseElement();
     };
-
-    // ===== Debug =====
-    protected override void OnParametersSet()
-    {
-        var g = Game.CurrentGame;
-        var stCount = g?.Stages?.Count ?? 0;
-        var s00 = (g != null && g.Stages.TryGetValue("s00", out var st)) ? st.State.ToString() : "<miss>";
-        Console.WriteLine($"[Shop] SelectedId={SelectedId}, stages={stCount}, s00={s00}");
-    }
-
-    private void DebugList(string tag, IEnumerable<string> ids)
-        => Console.WriteLine($"[Shop] {tag}: {string.Join(",", ids)}");
 }

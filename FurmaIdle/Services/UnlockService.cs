@@ -101,7 +101,9 @@ namespace FurmaIdle.Services
                 }
 
                 expansion.State = UnlockHelper.State.Unlocked;
+                Console.WriteLine($"[Unlock] Expansion: {expansion.State}");
             });
+
         }
         #endregion
 
@@ -162,7 +164,6 @@ namespace FurmaIdle.Services
             await _game.Mutate(game =>
             {
                 var stage = _locate.LocateStage(stageId);
-                var before = stage.State;
 
                 foreach (var coinId in CoinsData.ShowOrder)
                 {
@@ -190,8 +191,7 @@ namespace FurmaIdle.Services
 
                 stage.State = UnlockHelper.State.Unlocked;
 
-                Console.WriteLine("[Unlock] Stage {Id}: {Before} -> {After}",
-                    stageId, before, stage.State);
+                Console.WriteLine($"[Unlock] Stage {stage.State}");
             });
         }
         #endregion

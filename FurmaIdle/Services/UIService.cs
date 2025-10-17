@@ -18,7 +18,7 @@
 
         public void CreateScreen()
         {
-
+            Console.WriteLine("[UI] Método Inútil para criar Screen");
         }
 
         public async Task LoadStage(string stageId)

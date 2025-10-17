@@ -9,6 +9,7 @@
         public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
         public string SelectedStageId { get; set; } = "s00";
         public List<string> ActiveStagesIds { get; set; }
+        public bool Started { get; set; } = false;
         public bool On { get; set; } = false;
 
         // public GuildModel Guild { get; set; } = new();

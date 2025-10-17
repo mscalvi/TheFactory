@@ -1,6 +1,7 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using FurmaIdle.Storage;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Channels;
 using static FurmaIdle.Helpers.LogHelper;
 
@@ -9,7 +10,6 @@ namespace FurmaIdle.Services
     public interface ICurrentGameService
     {
         GameModel CurrentGame { get; }
-
         // Geral
         void Attach(GameModel game);
         Task Mutate(Action<GameModel> edit, bool save = true);
@@ -19,9 +19,17 @@ namespace FurmaIdle.Services
 
     public sealed class CurrentGameService : ICurrentGameService
     {
+
         private readonly IGameStore _store;
         private readonly IModifierService _modifiers;
         private readonly IStageService _stages;
+
+        public CurrentGameService(IGameStore store, IModifierService modifiers, IStageService stages)
+        {
+            _store = store ?? throw new ArgumentNullException(nameof(store));
+            _modifiers = modifiers;
+            _stages = stages;
+        }
 
         public GameModel CurrentGame { get; private set; } = new();
         public event Action? GameChanged;

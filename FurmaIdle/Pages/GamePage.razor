@@ -19,63 +19,49 @@
 
 @code {
     #region GameStart
+    private bool _ready;
+
     void OnGameChanged() => InvokeAsync(StateHasChanged);
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine($"Iniciando Criação");
+        Console.WriteLine($"[GP] Iniciando FurmaIdle");
 
         await Start.InitAsync();
+        Console.WriteLine($"[GP] Finalizado Load/Create");
 
-        Console.WriteLine($"Jogo Criado");
-        var game = Game.CurrentGame;
-        var stageId = game?.SelectedStageId;
+        await UnlockInitialStage();
+        Console.WriteLine("[GP] Estágio Inicial Desbloqueado");
 
-        if (!string.IsNullOrEmpty(stageId))
-        {
-            game.Stages.TryGetValue(stageId, out var stage);
-            Console.WriteLine($"[GP] after init: stages={game?.Stages?.Count}, selected={stage.Id}, name='{stage.Name}'");
-            game.On = true;
-        }
-        else
-        {
-            Console.WriteLine($"Jogo Corrompido");
-            await Start.InitAsync();
-            Console.WriteLine($"Nova Tentativa");
-            if (!string.IsNullOrEmpty(stageId))
-            {
-                game.Stages.TryGetValue(stageId, out var stage);
-                Console.WriteLine($"[GP] after init: stages={game?.Stages?.Count}, selected={stage.Id}, name='{stage.Name}'");
-                game.On = true;
-            }
-            else
-            {
-                Console.WriteLine($"Jogo Corrompido");
-            }
-        }
+        await Ticks.StartAsync();
+        Console.WriteLine("[GP] Ticks iniciados");
+
+        StateHasChanged();
+        Console.WriteLine("[GP] Jogo atualizado");
+
+        Console.WriteLine("[GP] Jogo iniciado");
     }
 
-    private bool LoadGameReady()
+    private async Task UnlockInitialStage()
     {
-        GameModel CurrentGame = Game.CurrentGame;
-        if (CurrentGame.On)
-        {
-            Game.GameChanged += OnGameChanged;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        await Unlock.UnlockStage("s00");
+        await Unlock.UnlockExpansion("x00");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
+        if (firstRender)
+        {
+            Game.GameChanged += () => InvokeAsync(StateHasChanged);
+            await Start.InitAsync();
+            _ready = IsGameReady();
+            StateHasChanged();
+        }
+    }
 
-        UI.CreateScreen();
-
-        await Ticks.StartAsync();
+    private bool IsGameReady()
+    {
+        return Game.CurrentGame?.Stages?.Count > 0;
     }
     #endregion
 
@@ -108,7 +94,7 @@
     #endregion
 }
 
-@if (LoadGameReady())
+@if (!_ready)
 {
     <p>Iniciando Jogo</p>
 }

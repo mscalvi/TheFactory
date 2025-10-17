@@ -7,7 +7,7 @@
 @inject ILocateService Locate
 @inject IIncomeService Income
 
-@if (LoadGameReady())
+@if (!_ready)
 {
     <p>Carregando…</p>
 }
@@ -53,19 +53,7 @@ else
 }
 
 @code {
-
-    private bool LoadGameReady()
-    {
-        GameModel CurrentGame = Game.CurrentGame;
-        if (CurrentGame.On)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    private bool _ready = false;
 
     // eventos externos
     [Parameter] public EventCallback<int> OnClick { get; set; }

@@ -6,7 +6,7 @@
 
 @inject ICurrentGameService Game
 
-@if (LoadGameReady())
+@if (!_ready)
 {
     <p>Carregando…</p>
 }
@@ -44,6 +44,9 @@ else
 
 
 @code {
+
+    private bool _ready = false;
+
     // ==== PARÂMETROS ====
     /// <summary>Id selecionado (permite usar bind-SelectedId no pai)</summary>
     [Parameter] public string? SelectedId { get; set; } = "i4";
@@ -54,20 +57,6 @@ else
 
     /// <summary>Pasta base dos ícones (ex.: /icons)</summary>
     [Parameter] public string IconBasePath { get; set; } = "/icons/nav-menu";
-
-
-    private bool LoadGameReady()
-    {
-        GameModel CurrentGame = Game.CurrentGame;
-        if (CurrentGame.On)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
 
     // ==== MODELO INTERNO ====
     private sealed class NavItem

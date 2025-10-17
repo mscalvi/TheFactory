@@ -25,7 +25,6 @@ namespace FurmaIdle.Services
 
     public sealed class TickService : ITickService, IAsyncDisposable
     {
-        private readonly ILogger<TickService> _log;
         private readonly ICurrentGameService _game;
 
         private readonly HashSet<ITickSink> _sinks = new();
@@ -43,9 +42,8 @@ namespace FurmaIdle.Services
         private const double MaxDt = 0.25;     // clamp por tick (seg)
         private const double SaveEvery = 2.0;  // salva a cada ~2s
 
-        public TickService(ILogger<TickService> log, ICurrentGameService game)
+        public TickService(ICurrentGameService game)
         {
-            _log = log;
             _game = game;
         }
 
@@ -141,7 +139,7 @@ namespace FurmaIdle.Services
 
             // salva ao final do catch-up
             await _game.Mutate(_ => { /* já ajustamos LastTick no ProcessTickAsync */ }, save: true);
-            _log.LogInformation("[Tick] Offline catch-up: {Seconds:F2}s", elapsed);
+            Console.WriteLine($"[Tick] Offline catch-up: {elapsed}s");
         }
 
         private async Task ProcessTickAsync(double dtSeconds, bool save)
