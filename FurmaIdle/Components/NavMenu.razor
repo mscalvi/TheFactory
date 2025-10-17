@@ -1,32 +1,47 @@
-﻿@* Components/NavMenu.razor *@
-<div class="nav-menu">
-    <div class="nav-col">
-        <div class="nav-menu">
-            <div class="nav-col">
-                @if (!VisibleNav.Any())
-                {
-                    <div style="padding:8px;border:1px dashed #9aa2b1;border-radius:8px;font-size:12px;opacity:.85">
-                        NavMenu: nenhum item visível. (Unlocked == true)
-                    </div>
-                }
-                else
-                {
-                    @foreach (var it in VisibleNav)
+﻿@using System.Linq
+@using FurmaIdle.Data
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+
+@inject ICurrentGameService Game
+
+@if (LoadGameReady())
+{
+    <p>Carregando…</p>
+}
+else
+{
+    <div class="nav-menu">
+        <div class="nav-col">
+            <div class="nav-menu">
+                <div class="nav-col">
+                    @if (!VisibleNav.Any())
                     {
-                        var isSelected = it.Id == SelectedId;
-                        <button class="nav-button @(isSelected ? "is-selected" : null)"
-                                title="@it.Label"
-                                aria-label="@it.Label"
-                                aria-pressed="@isSelected"
-                                @onclick="() => Select(it.Id)">
-                            <span class="nav-glyph">@it.Id</span>
-                        </button>
+                        <div style="padding:8px;border:1px dashed #9aa2b1;border-radius:8px;font-size:12px;opacity:.85">
+                            NavMenu: nenhum item visível. (Unlocked == true)
+                        </div>
                     }
-                }
+                    else
+                    {
+                        @foreach (var it in VisibleNav)
+                        {
+                            var isSelected = it.Id == SelectedId;
+                            <button class="nav-button @(isSelected ? "is-selected" : null)"
+                                    title="@it.Label"
+                                    aria-label="@it.Label"
+                                    aria-pressed="@isSelected"
+                                    @onclick="() => Select(it.Id)">
+                                <span class="nav-glyph">@it.Id</span>
+                            </button>
+                        }
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
+
 
 @code {
     // ==== PARÂMETROS ====
@@ -39,6 +54,20 @@
 
     /// <summary>Pasta base dos ícones (ex.: /icons)</summary>
     [Parameter] public string IconBasePath { get; set; } = "/icons/nav-menu";
+
+
+    private bool LoadGameReady()
+    {
+        GameModel CurrentGame = Game.CurrentGame;
+        if (CurrentGame.On)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     // ==== MODELO INTERNO ====
     private sealed class NavItem

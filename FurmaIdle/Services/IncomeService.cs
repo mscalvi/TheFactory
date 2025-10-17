@@ -1,30 +1,22 @@
 ﻿using System.Collections.Concurrent;
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
-using Microsoft.Extensions.Logging;
 
 namespace FurmaIdle.Services
 {
     public interface IIncomeService
     {
-        /// <summary>
-        /// Soma amount (pode ter fração) para (type,itemId).
-        /// Aplica apenas a parte inteira no save; fração fica em memória.
-        /// </summary>
         Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount);
     }
 
     public sealed class IncomeService : IIncomeService
     {
-        private readonly ILogger<IncomeService> _log;
         private readonly ICurrentGameService _game;
 
-        // frações por chave (type:id) — só em memória
         private readonly ConcurrentDictionary<string, double> _fractions = new();
 
-        public IncomeService(ILogger<IncomeService> log, ICurrentGameService game)
+        public IncomeService(ICurrentGameService game)
         {
-            _log = log;
             _game = game;
         }
 
@@ -35,29 +27,26 @@ namespace FurmaIdle.Services
             if (double.IsNaN(amount) || double.IsInfinity(amount))
                 throw new ArgumentOutOfRangeException(nameof(amount), "amount inválido");
 
-            var key = Key(type, itemId);
+            var key = StatsKey(type, itemId);
 
-            // 1) acumula fração em memória
             var startFrac = _fractions.GetOrAdd(key, 0.0);
             var total = startFrac + amount;
 
-            var eff = (long)Math.Floor(total);  // parte inteira efetiva (use long p/ evitar overflow cedo)
-            var frac = total - eff;             // resto fracionário
+            var gain = (long)Math.Floor(total);
+            var frac = total - gain;
 
             GainModel? result = null;
 
-            // 2) aplica somente a parte inteira no save (atuais + lifetime)
-            await _game.Mutate(g =>
+            await _game.Mutate(Game =>
             {
-                EnsureStats(g);
+                StatsEnsure(Game);
 
-                if (eff != 0)
+                if (gain != 0)
                 {
-                    if (!TryApplyEffectiveToStats(g, type, itemId, eff))
+                    if (!StatsApply(Game, type, itemId, gain))
                     {
-                        // rollback mental: nada foi aplicado ao save
-                        _log.LogWarning("[Income] Falha ao aplicar ganho: type={Type} id={Id} eff={Eff}", type, itemId, eff);
-                        eff = 0;
+                        Console.WriteLine("[Income] Falha ao aplicar ganho: type={Type} id={Id} eff={Eff}", type, itemId, gain);
+                        gain = 0;
                         frac = startFrac;
                     }
                 }
@@ -68,18 +57,18 @@ namespace FurmaIdle.Services
                 {
                     ItemId = itemId,
                     ItemType = type,
-                    GainEffective = (int)Math.Clamp(eff, int.MinValue, int.MaxValue),
+                    GainEffective = (int)Math.Clamp(gain, int.MinValue, int.MaxValue),
                     GainTotal = amount,
                     GainFraction = frac
                 };
-            }, save: eff != 0);
+            }, save: gain != 0);
 
             return result!;
         }
 
-        private static string Key(ItemHelper.ItemType t, string id) => $"{(int)t}:{id}";
+        private static string StatsKey(ItemHelper.ItemType t, string id) => $"{(int)t}:{id}";
 
-        private static void EnsureStats(GameModel g)
+        private static void StatsEnsure(GameModel g)
         {
             g.Stats ??= new StatsModel();
 
@@ -96,26 +85,23 @@ namespace FurmaIdle.Services
             g.Stats.KnowledgeSpent ??= new Dictionary<string, long>(StringComparer.Ordinal);
         }
 
-        private static bool TryApplyEffectiveToStats(GameModel g, ItemHelper.ItemType type, string id, long eff)
+        private static bool StatsApply(GameModel Game, ItemHelper.ItemType type, string id, long gain)
         {
-            // escolhe os dics corretos por tipo
             (Dictionary<string, long>? current, Dictionary<string, long>? lifetime) = type switch
             {
-                ItemHelper.ItemType.Coin => (g.Stats!.Coins, g.Stats!.CoinsGain),
-                ItemHelper.ItemType.Resource => (g.Stats!.Resources, g.Stats!.ResourcesGain),
-                ItemHelper.ItemType.Knowledge => (g.Stats!.Knowledge, g.Stats!.KnowledgeGain),
+                ItemHelper.ItemType.Coin => (Game.Stats!.Coins, Game.Stats!.CoinsGain),
+                ItemHelper.ItemType.Resource => (Game.Stats!.Resources, Game.Stats!.ResourcesGain),
+                ItemHelper.ItemType.Knowledge => (Game.Stats!.Knowledge, Game.Stats!.KnowledgeGain),
                 _ => (null, null),
             };
 
             if (current is null || lifetime is null) return false;
 
-            // atuais
             current.TryGetValue(id, out var cur);
-            current[id] = cur + eff;
+            current[id] = cur + gain;
 
-            // lifetime (gerados)
             lifetime.TryGetValue(id, out var curGain);
-            lifetime[id] = curGain + eff;
+            lifetime[id] = curGain + gain;
 
             return true;
         }

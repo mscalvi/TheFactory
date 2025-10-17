@@ -19,31 +19,40 @@ namespace FurmaIdle.Services
         KnowledgeModel LocateKnowledge(string knowledgeId);
         ClickModel LocateClick(string clickId);
         ClickModel LocateStageClick(string clickId);
-        bool TryLocateClickByStage(string stageId, out ClickModel? click);
     }
 
     public sealed class LocateService : ILocateService
     {
-        private readonly ICurrentGameService _game;
-        public LocateService(ICurrentGameService game)
+        private readonly ICurrentGameService game;
+        public LocateService(ICurrentGameService _game)
         {
-            _game = game ?? throw new ArgumentNullException(nameof(game));
+            game = _game ?? throw new ArgumentNullException(nameof(game));
         }
-        private GameModel Game
-            => _game.CurrentGame ?? throw new InvalidOperationException("Jogo atual não anexado.");
-
 
         public StageModel LocateStage(string stageId)
         {
-            if (string.IsNullOrWhiteSpace(stageId))
+            StageModel noGame = new StageModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
+
+            if(string.IsNullOrWhiteSpace(stageId))
                 throw new ArgumentException("stageId inválido.", nameof(stageId));
 
-            if (Game.Stages.TryGetValue(stageId, out var stage)) return stage;
+            if(Game.Stages.TryGetValue(stageId, out var stage)) return stage;
 
             throw new KeyNotFoundException($"Stage '{stageId}' não encontrada no jogo atual.");
         }
         public CoinModel LocateCoin(string coinId)
         {
+            CoinModel noGame = new CoinModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(coinId))
                 throw new ArgumentException("coinId inválido.", nameof(coinId));
 
@@ -53,6 +62,12 @@ namespace FurmaIdle.Services
         }
         public UpgradeModel LocateUpgrade(string upgradeId)
         {
+            UpgradeModel noGame = new UpgradeModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(upgradeId))
                 throw new ArgumentException("upgradeId inválido.", nameof(upgradeId));
 
@@ -62,6 +77,12 @@ namespace FurmaIdle.Services
         }
         public CharacterModel LocateCharacter(string characterId)
         {
+            CharacterModel noGame = new CharacterModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(characterId))
                 throw new ArgumentException("characterId inválido.", nameof(characterId));
 
@@ -71,6 +92,12 @@ namespace FurmaIdle.Services
         }
         public LocalModel LocateLocal(string localId)
         {
+            LocalModel noGame = new LocalModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(localId))
                 throw new ArgumentException("localId inválido.", nameof(localId));
 
@@ -80,6 +107,13 @@ namespace FurmaIdle.Services
         }
         public ResourceModel LocateResource(string resourceId)
         {
+            ResourceModel noGame = new ResourceModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
+
             if (string.IsNullOrWhiteSpace(resourceId))
                 throw new ArgumentException("resourceId inválido.", nameof(resourceId));
 
@@ -89,6 +123,13 @@ namespace FurmaIdle.Services
         }
         public ContractModel LocateContract(string contractId)
         {
+            ContractModel noGame = new ContractModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
+
             if (string.IsNullOrWhiteSpace(contractId))
                 throw new ArgumentException("contractId inválido.", nameof(contractId));
 
@@ -98,6 +139,13 @@ namespace FurmaIdle.Services
         }
         public ExpeditionModel LocateExpedition(string stageId)
         {
+            ExpeditionModel noGame = new ExpeditionModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
+
             var stage = LocateStage(stageId);
 
             if (stage.ActiveExpedition is null)
@@ -107,6 +155,12 @@ namespace FurmaIdle.Services
         }
         public ExpansionModel LocateExpansion(string expansionId)
         {
+            ExpansionModel noGame = new ExpansionModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(expansionId))
                 throw new ArgumentException("expansionId inválido.", nameof(expansionId));
 
@@ -116,6 +170,12 @@ namespace FurmaIdle.Services
         }
         public TechModel LocateTech(string techId)
         {
+            TechModel noGame = new TechModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(techId))
                 throw new ArgumentException("techId inválido.", nameof(techId));
 
@@ -126,6 +186,12 @@ namespace FurmaIdle.Services
         }
         public KnowledgeModel LocateKnowledge(string knowId)
         {
+            KnowledgeModel noGame = new KnowledgeModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(knowId))
                 throw new ArgumentException("knowId inválido.", nameof(knowId));
 
@@ -136,48 +202,39 @@ namespace FurmaIdle.Services
         }
         public ClickModel LocateClick(string clickId)
         {
+            ClickModel noGame = new ClickModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(clickId))
                 throw new ArgumentException("clickId inválido.", nameof(clickId));
 
-            if (Game.Clicks.TryGetValue(clickId, out var cm)) return cm;
+            if (Game.Clicks.TryGetValue(clickId, out var click)) return click;
 
             throw new KeyNotFoundException($"Click '{clickId}' não encontrado no jogo atual.");
         }
         public ClickModel LocateStageClick(string stageId)
         {
+            ClickModel noGame = new ClickModel();
+            GameModel Game = game.CurrentGame;
+            if (!Game.On)
+            {
+                return noGame;
+            }
             if (string.IsNullOrWhiteSpace(stageId))
                 throw new ArgumentException("stageId inválido.", nameof(stageId));
 
-            // 1) catálogo: encontra o click def daquele stage
-            var defId = ClickData.ShowOrder
-                .Select(id => ClickData.GetDef(id))
-                .FirstOrDefault(d => string.Equals(d?.StageId, stageId, StringComparison.OrdinalIgnoreCase))
-                ?.Id;
-
-            if (string.IsNullOrWhiteSpace(defId))
-                throw new KeyNotFoundException($"Nenhum Click definido para o Stage '{stageId}'.");
-
-            // 2) runtime: retorna o modelo vivo
-            if (Game.Clicks.TryGetValue(defId, out var cm)) return cm;
-
-            throw new KeyNotFoundException($"Click '{defId}' (do Stage '{stageId}') não encontrado no jogo atual.");
-        }
-        public bool TryLocateClickByStage(string stageId, out ClickModel? click)
-        {
-            click = null;
-            if (string.IsNullOrWhiteSpace(stageId)) return false;
-
-            // catálogo → acha o clickId do stage
-            var defId = ClickData.ShowOrder
-                ?.Select(id => ClickData.GetDef(id))
-                ?.FirstOrDefault(d => d != null &&
-                                      string.Equals(d.StageId, stageId, StringComparison.OrdinalIgnoreCase))
-                ?.Id;
-
-            if (string.IsNullOrWhiteSpace(defId)) return false;
-
-            // runtime
-            return Game.Clicks.TryGetValue(defId, out click);
+            foreach (var clickId in ClickData.ShowOrder)
+            {
+                if (Game.Clicks.TryGetValue(clickId, out var click))
+                {
+                    if(click.StageId == stageId) return click;
+                }
+            }
+            
+            throw new KeyNotFoundException($"Click do Stage '{stageId}' não encontrado no jogo atual.");
         }
     }
 }

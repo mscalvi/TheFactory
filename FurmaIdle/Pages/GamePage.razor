@@ -21,31 +21,51 @@
     #region GameStart
     void OnGameChanged() => InvokeAsync(StateHasChanged);
 
-    protected override void OnInitialized()
-    {
-        Game.GameChanged += OnGameChanged;
-    }
-
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine($"Iniciando Criação");
+
         await Start.InitAsync();
 
+        Console.WriteLine($"Jogo Criado");
         var game = Game.CurrentGame;
+        var stageId = game?.SelectedStageId;
 
-        var sid = game?.SelectedStageId;
-        string sName = "<null>";
-        if (sid is not null && game.Stages.TryGetValue(sid, out var st))
-            sName = st?.Name ?? "<null>";
-
-        Console.WriteLine($"[GP] after init: stages={game?.Stages?.Count}, selected={sid}, name='{sName}'");
-
-        if (game != null)
+        if (!string.IsNullOrEmpty(stageId))
         {
-            if (game.Stages.TryGetValue("s00", out var s) && s.State != UnlockHelper.State.Unlocked)
-                await Unlock.UnlockStage("s00");
+            game.Stages.TryGetValue(stageId, out var stage);
+            Console.WriteLine($"[GP] after init: stages={game?.Stages?.Count}, selected={stage.Id}, name='{stage.Name}'");
+            game.On = true;
+        }
+        else
+        {
+            Console.WriteLine($"Jogo Corrompido");
+            await Start.InitAsync();
+            Console.WriteLine($"Nova Tentativa");
+            if (!string.IsNullOrEmpty(stageId))
+            {
+                game.Stages.TryGetValue(stageId, out var stage);
+                Console.WriteLine($"[GP] after init: stages={game?.Stages?.Count}, selected={stage.Id}, name='{stage.Name}'");
+                game.On = true;
+            }
+            else
+            {
+                Console.WriteLine($"Jogo Corrompido");
+            }
+        }
+    }
 
-            if (game.Expansions.TryGetValue("x00", out var x) && x.State != UnlockHelper.State.Unlocked)
-                await Unlock.UnlockExpansion("x00");
+    private bool LoadGameReady()
+    {
+        GameModel CurrentGame = Game.CurrentGame;
+        if (CurrentGame.On)
+        {
+            Game.GameChanged += OnGameChanged;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -88,48 +108,55 @@
     #endregion
 }
 
-<div class="game-grid">
-    <!-- Navegador -->
-    <aside class="nav-menu panel">
-        <NavMenu @bind-SelectedId="_navId" />
-    </aside>
+@if (LoadGameReady())
+{
+    <p>Iniciando Jogo</p>
+}
+else
+{
+    <div class="game-grid">
+        <!-- Navegador -->
+        <aside class="nav-menu panel">
+            <NavMenu @bind-SelectedId="_navId" />
+        </aside>
 
-    <!-- Texto -->
-    <section class="text-box panel">text-box</section>
+        <!-- Texto -->
+        <section class="text-box panel">text-box</section>
 
-    <!-- Shop -->
-    <section class="shop-menu panel">
-        <ShopMenu SelectedId="@_navId" />
-    </section>
+        <!-- Shop -->
+        <section class="shop-menu panel">
+            <ShopMenu SelectedId="@_navId" />
+        </section>
 
-    <!-- Título -->
-    <header class="title-box panel">
-        <TitleBox />
-    </header>
+        <!-- Título -->
+        <header class="title-box panel">
+            <TitleBox />
+        </header>
 
-    <!-- Stage/Área -->
-    <section class="stage-box panel">
-        @if (Game.CurrentGame?.Stages?.Count > 0)
-        {
-            <StageBox />
-        }
-        else
-        {
-            <p>Stage Desativado</p>
-        }
-    </section>
+        <!-- Stage/Área -->
+        <section class="stage-box panel">
+            @if (Game.CurrentGame?.Stages?.Count > 0)
+            {
+                <StageBox />
+            }
+            else
+            {
+                <p>Stage Desativado</p>
+            }
+        </section>
 
-    <!-- Click -->
-    <main class="click-area panel">
-        <ClickArea />
-    </main>
+        <!-- Click -->
+        <main class="click-area panel">
+            <ClickArea />
+        </main>
 
-    <!-- Income -->
-    <section class="income-box panel">
-        <IncomeBox />
-    </section>
+        <!-- Income -->
+        <section class="income-box panel">
+            <IncomeBox />
+        </section>
 
-    <!-- Contratos -->
-    <section class="contracts-menu panel">contracts-menu</section>
-</div>
+        <!-- Contratos -->
+        <section class="contracts-menu panel">contracts-menu</section>
+    </div>
+}
 

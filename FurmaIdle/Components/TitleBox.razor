@@ -3,15 +3,32 @@
 
 @inject ICurrentGameService Game
 
-<div class="title-box">
-    <h1>FurmaIdle - Exploradores de Furma</h1>
-    <p>Versão: @Game.CurrentGame?.SchemaVersion</p>
-</div>
+@if (LoadGameReady())
+{
+    <p>Carregando…</p>
+}
+else
+{
+    <div class="title-box">
+        <h1>FurmaIdle - Exploradores de Furma</h1>
+        <p>Versão: @Game.CurrentGame?.SchemaVersion</p>
+    </div>
+}
 
 @code {
-    protected override void OnInitialized()
+
+    private bool LoadGameReady()
     {
-        Game.GameChanged += OnGameChanged;
+        GameModel CurrentGame = Game.CurrentGame;
+        if (CurrentGame.On)
+        {
+            Game.GameChanged += OnGameChanged;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void OnGameChanged() => InvokeAsync(StateHasChanged);

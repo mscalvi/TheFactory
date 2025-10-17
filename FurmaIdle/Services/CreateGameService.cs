@@ -3,8 +3,6 @@ using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using FurmaIdle.Storage;
 
-using Microsoft.Extensions.Logging;
-
 namespace FurmaIdle.Services
 {
     public interface ICreateGameService
@@ -17,58 +15,24 @@ namespace FurmaIdle.Services
         // Método para Salvar o Novo Jogo
         private readonly IGameStore Store;
         private readonly ICurrentGameService CurrentGame;
-        private readonly ILogger<CreateGameService> _log;
+        private readonly IUnlockService Unlock;
         public GameModel NewGame { get; private set; } = new();
 
-        public CreateGameService(IGameStore store, ICurrentGameService current, ILogger<CreateGameService> log)
+        public CreateGameService(IGameStore store, ICurrentGameService current, IUnlockService unlock)
         {
             Store = store;
             CurrentGame = current;
-            _log = log;
+            Unlock = unlock;
         }
 
         public async Task<GameModel> InitAsync()
         {
-            _log.LogInformation("[CGS] Init: start");
+            Console.WriteLine("[CGS] Init: start");
 
             var loaded = await Store.LoadAsync("main");
-            _log.LogInformation("[CGS] LoadAsync: loaded? {Loaded}", loaded != null);
 
-            if (loaded is not null)
+            if (loaded == null)
             {
-                _log.LogInformation("[CGS] Loaded counts: stages={S}, locals={L}, selected={Sel}",
-                    loaded.Stages?.Count, loaded.Locals?.Count, loaded.SelectedStageId);
-
-                // LOG: estado do s00 vindo do save
-                if (loaded.Stages.TryGetValue("s00", out var st0))
-                    _log.LogInformation("[CGS] Post-load s00: state={State}", st0.State);
-                else
-                    _log.LogWarning("[CGS] Post-load s00: MISSING");
-
-                var backfilled = BackfillLoad(loaded);
-                _log.LogInformation("[CGS] Backfill: changed={Changed}", backfilled);
-
-                // LOG: título que a UI espera ver
-                if (loaded.SelectedStageId is string sid && loaded.Stages.TryGetValue(sid, out var st))
-                    _log.LogInformation("[CGS] Before attach: selected={Sid} name='{Name}'", sid, st?.Name);
-                else
-                    _log.LogWarning("[CGS] Before attach: selected stage not found");
-
-                CurrentGame.Attach(loaded);
-                _log.LogInformation("[CGS] After attach: ok");
-
-                if (backfilled)
-                {
-                    await Store.SaveAsync(loaded);
-                    _log.LogInformation("[CGS] Saved after backfill");
-                }
-
-                _log.LogInformation("InitAsync: loaded save. Stages={Count}", loaded.Stages?.Count);
-                return loaded;
-            }
-            else
-            {
-                // novo jogo
                 NewGame = new GameModel
                 {
                     SchemaVersion = 1,
@@ -88,17 +52,56 @@ namespace FurmaIdle.Services
                     Upgrades = Seed("Upgrades", () => UpgradeData.CreateInitialStates()),
                 };
 
-                // garante um selecionado válido (caso o default do modelo mude)
-                if (string.IsNullOrWhiteSpace(NewGame.SelectedStageId) || !NewGame.Stages.ContainsKey(NewGame.SelectedStageId))
-                    NewGame.SelectedStageId = StageData.ShowOrder.FirstOrDefault() ?? "s00";
-
                 CurrentGame.Attach(NewGame);
 
                 await Store.SaveAsync(NewGame, "main");
 
-                _log.LogInformation("[CGS] New game counts: stages={S}, locals={L}, selected={Sel}",
-                    NewGame.Stages?.Count, NewGame.Locals?.Count, NewGame.SelectedStageId);
+                Console.WriteLine($"[CGS] New game counts: stages={NewGame.Stages?.Count}, locals={NewGame.Locals?.Count}, selected={NewGame.SelectedStageId}");
+
+                NewGame.On = true;
+
+                await Unlock.UnlockStage("s00");
+                await Unlock.UnlockExpansion("x00");
+
+                Console.WriteLine($"[CGS] Estado inicial carregado");
+
                 return NewGame;
+            }else 
+            {
+                // Try Load
+                if (loaded.Stages.TryGetValue("s00", out var st0))
+                {
+                    if (st0.State == UnlockHelper.State.Blocked)
+                    {
+                        loaded = null;
+                        return loaded;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[CGS] Loaded counts: stages={loaded.Stages?.Count}, locals={loaded.Locals?.Count}, selected={loaded.SelectedStageId}");
+
+                        var backfilled = BackfillLoad(loaded);
+                        Console.WriteLine($"[CGS] Backfill: changed={backfilled}");
+
+                        CurrentGame.Attach(loaded);
+                        Console.WriteLine("[CGS] After attach: ok");
+
+                        if (backfilled)
+                        {
+                            await Store.SaveAsync(loaded);
+                            Console.WriteLine("[CGS] Saved after backfill");
+                        }
+
+                        Console.WriteLine($"InitAsync: loaded save. Stages={loaded.Stages?.Count}");
+
+                        loaded.On = true;
+                        return loaded;
+                    }
+                } else
+                {
+                    loaded = null;
+                    return loaded;
+                }
             }
         }
 

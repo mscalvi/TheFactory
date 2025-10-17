@@ -1,5 +1,4 @@
-﻿@* Components/IncomeBox.razor *@
-@using System.Linq
+﻿@using System.Linq
 @using FurmaIdle.Data
 @using FurmaIdle.Helpers
 @using FurmaIdle.Models
@@ -7,46 +6,64 @@
 
 @inject ICurrentGameService Game
 
-<section class="income-box panel">
-    <h4>Income</h4>
+@if (LoadGameReady())
+{
+    <p>Carregando…</p>
+}
+else
+{
+    <section class="income-box panel">
+        <h4>Income</h4>
 
-    @if (Game.CurrentGame?.Coins is not { Count: > 0 })
-    {
-        <p>Carregando…</p>
-    }
-    else
-    {
-        var list = GetUnlockedCoins().ToList();
-
-        if (list.Count == 0)
+        @if (Game.CurrentGame?.Coins is not { Count: > 0 })
         {
-            <p>Nenhuma moeda desbloqueada</p>
+            <p>Carregando…</p>
         }
         else
         {
-            <ul class="income-list">
-                @foreach (var it in list)
-                {
-                    <li class="income-row">
-                        <span class="income-name">@it.Name</span>
-                        <span class="income-total">@FormatTotal(it.Coin)</span>
-                        <span class="income-ps">(@FormatPerSecond(it.Coin))/s</span>
-                    </li>
-                }
-            </ul>
+            var list = GetUnlockedCoins().ToList();
+
+            if (list.Count == 0)
+            {
+                <p>Nenhuma moeda desbloqueada</p>
+            }
+            else
+            {
+                <ul class="income-list">
+                    @foreach (var it in list)
+                    {
+                        <li class="income-row">
+                            <span class="income-name">@it.Name</span>
+                            <span class="income-total">@FormatTotal(it.Coin)</span>
+                            <span class="income-ps">(@FormatPerSecond(it.Coin))/s</span>
+                        </li>
+                    }
+                </ul>
+            }
         }
-    }
-</section>
+    </section>
+}
+
 
 @code {
-    protected override void OnInitialized()
+    private bool LoadGameReady()
     {
-        Game.GameChanged += OnGameChanged;
+        GameModel CurrentGame = Game.CurrentGame;
+        if (CurrentGame.On)
+        {
+            Game.GameChanged += OnGameChanged;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void OnGameChanged() => InvokeAsync(StateHasChanged);
 
     public void Dispose() => Game.GameChanged -= OnGameChanged;
+
 
     // ---- helpers ----
 

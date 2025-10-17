@@ -1,5 +1,4 @@
-﻿@* Components/ShopMenu.razor *@
-@using System.Linq
+﻿@using System.Linq
 @using FurmaIdle.Data
 @using FurmaIdle.Models
 @using FurmaIdle.Helpers
@@ -9,74 +8,93 @@
 @inject IUiService UI
 @inject IUnlockService Unlock
 
-<section class="shop-menu panel">
-    @if (Game.CurrentGame?.Stages is not { Count: > 0 })
-    {
-        <p>Carregando…</p>
-    }
-    else
-    {
-        var type = MapNavToType(SelectedId);
-
-        if (type is null)
+@if (LoadGameReady())
+{
+    <p>Carregando…</p>
+}
+else
+{
+    <section class="shop-menu panel">
+        @if (Game.CurrentGame?.Stages is not { Count: > 0 })
         {
-            <p>Selecione uma opção no menu.</p>
+            <p>Carregando…</p>
         }
         else
         {
-            var unlocked = GetByState(type.Value, UnlockHelper.State.Unlocked).ToList();
-            var avaliable = GetByState(type.Value, UnlockHelper.State.Available).ToList();
+            var type = MapNavToType(SelectedId);
 
-            <div class="shop-block">
-                <h4>@type.Value</h4>
+            if (type is null)
+            {
+                <p>Selecione uma opção no menu.</p>
+            }
+            else
+            {
+                var unlocked = GetByState(type.Value, UnlockHelper.State.Unlocked).ToList();
+                var avaliable = GetByState(type.Value, UnlockHelper.State.Available).ToList();
 
-                <h5>Unlocked</h5>
-                @if (!unlocked.Any())
-                {
-                    <p>Nenhum item desbloqueado</p>
-                }
-                else
-                {
-                    <div class="shop-list">
-                        @foreach (var it in unlocked)
-                        {
-                            @RenderItemButton(it, type.Value, isUnlocked: true)
-                        }
-                    </div>
-                }
+                <div class="shop-block">
+                    <h4>@type.Value</h4>
 
-                <h5>Avaliable</h5>
-                @if (!avaliable.Any())
-                {
-                    <p>Nenhum item disponível</p>
-                }
-                else
-                {
-                    <div class="shop-list">
-                        @foreach (var it in avaliable)
-                        {
-                            @RenderItemButton(it, type.Value, isUnlocked: false)
-                        }
-                    </div>
-                }
+                    <h5>Unlocked</h5>
+                    @if (!unlocked.Any())
+                    {
+                        <p>Nenhum item desbloqueado</p>
+                    }
+                    else
+                    {
+                        <div class="shop-list">
+                            @foreach (var it in unlocked)
+                            {
+                                @RenderItemButton(it, type.Value, isUnlocked: true)
+                            }
+                        </div>
+                    }
 
-                @* Logs de depuração (remova depois) *@
-                @{
-                    DebugList("Unlocked", unlocked.Select(v => v.Id));
-                    DebugList("Avaliable", avaliable.Select(v => v.Id));
-                }
-            </div>
+                    <h5>Avaliable</h5>
+                    @if (!avaliable.Any())
+                    {
+                        <p>Nenhum item disponível</p>
+                    }
+                    else
+                    {
+                        <div class="shop-list">
+                            @foreach (var it in avaliable)
+                            {
+                                @RenderItemButton(it, type.Value, isUnlocked: false)
+                            }
+                        </div>
+                    }
+
+                    @* Logs de depuração (remova depois) *@
+                    @{
+                        DebugList("Unlocked", unlocked.Select(v => v.Id));
+                        DebugList("Avaliable", avaliable.Select(v => v.Id));
+                    }
+                </div>
+            }
         }
-    }
-</section>
+    </section>
+}
+
+
 
 @code {
+    private bool LoadGameReady()
+    {
+        GameModel CurrentGame = Game.CurrentGame;
+        if (CurrentGame.On)
+        {
+            Game.GameChanged += OnGameChanged;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     [Parameter] public string? SelectedId { get; set; }
 
-    protected override void OnInitialized()
-    {
-        Game.GameChanged += OnGameChanged;
-    }
     void OnGameChanged() => InvokeAsync(StateHasChanged);
     public void Dispose() => Game.GameChanged -= OnGameChanged;
 

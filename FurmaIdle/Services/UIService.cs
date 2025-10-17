@@ -9,12 +9,10 @@
 
     public sealed class UiService : IUiService
     {
-        private readonly ILogger<UiService> _log;
         private readonly ICurrentGameService _game;
 
-        public UiService(ILogger<UiService> log, ICurrentGameService game)
+        public UiService(ICurrentGameService game)
         {
-            _log = log;
             _game = game;
         }
 
@@ -36,7 +34,7 @@
                 var before = g.SelectedStageId;
                 g.SelectedStageId = stageId;
 
-                _log.LogInformation("[UI] LoadStage: {Before} -> {After}", before, stageId);
+                Console.WriteLine($"[UI] LoadStage: {before} -> {stageId}");
             });
         }
     }

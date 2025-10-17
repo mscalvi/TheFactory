@@ -21,6 +21,16 @@ namespace FurmaIdle.Data
                 MultMod = 1,
             },
             #endregion
+            #region NoExistent Stage (s01)
+            ["cl01"] = new ClickModel
+            {
+                Id = "cl01",
+                StageId = "s01",
+                BaseGain = 1,
+                AddMod = 0,
+                MultMod = 1,
+            },
+            #endregion
         };
 
         // --- Métodos Reutilizáveis do Padrão ---
@@ -48,8 +58,8 @@ namespace FurmaIdle.Data
             ShowOrder.Clear();
             IEnumerable<string> keys = All?.Keys.AsEnumerable() ?? Enumerable.Empty<string>();
 
-            // Ordena usando StringComparer.Ordinal (s00, s01, etc.)
             ShowOrder.AddRange(keys.OrderBy(k => k, StringComparer.Ordinal));
+            Console.WriteLine($"[Data] ShowOrder.Count={ShowOrder?.Count ?? -1}");
         }
 
         public static Dictionary<string, ClickModel> CreateInitialStates()
