@@ -6,47 +6,36 @@
 
 @inject ICurrentGameService Game
 
-@if (!_ready)
-{
-    <p>Carregando…</p>
-}
-else
-{
-    <div class="nav-menu">
-        <div class="nav-col">
-            <div class="nav-menu">
-                <div class="nav-col">
-                    @if (!VisibleNav.Any())
+<div class="nav-menu">
+    <div class="nav-col">
+        <div class="nav-menu">
+            <div class="nav-col">
+                @if (!VisibleNav.Any())
+                {
+                    <div style="padding:8px;border:1px dashed #9aa2b1;border-radius:8px;font-size:12px;opacity:.85">
+                        NavMenu: nenhum item visível. (Unlocked == true)
+                    </div>
+                }
+                else
+                {
+                    @foreach (var it in VisibleNav)
                     {
-                        <div style="padding:8px;border:1px dashed #9aa2b1;border-radius:8px;font-size:12px;opacity:.85">
-                            NavMenu: nenhum item visível. (Unlocked == true)
-                        </div>
+                        var isSelected = it.Id == SelectedId;
+                        <button class="nav-button @(isSelected ? "is-selected" : null)"
+                                title="@it.Label"
+                                aria-label="@it.Label"
+                                aria-pressed="@isSelected"
+                                @onclick="() => Select(it.Id)">
+                            <span class="nav-glyph">@it.Id</span>
+                        </button>
                     }
-                    else
-                    {
-                        @foreach (var it in VisibleNav)
-                        {
-                            var isSelected = it.Id == SelectedId;
-                            <button class="nav-button @(isSelected ? "is-selected" : null)"
-                                    title="@it.Label"
-                                    aria-label="@it.Label"
-                                    aria-pressed="@isSelected"
-                                    @onclick="() => Select(it.Id)">
-                                <span class="nav-glyph">@it.Id</span>
-                            </button>
-                        }
-                    }
-                </div>
+                }
             </div>
         </div>
     </div>
-}
-
+</div>
 
 @code {
-
-    private bool _ready = false;
-
     // ==== PARÂMETROS ====
     /// <summary>Id selecionado (permite usar bind-SelectedId no pai)</summary>
     [Parameter] public string? SelectedId { get; set; } = "i4";

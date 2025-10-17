@@ -7,47 +7,40 @@
 @inject IUnlockService Unlock
 @inject ILocateService Locate
 
-@if (!_ready)
-{
-    <p>Carregando…</p>
-}
-else
-{
-    <div class="stage-box">
-        <div class="stage-name">
-            @{
-                var g = Game.CurrentGame;
-                var sid = g?.SelectedStageId;
-                StageModel? st = null;
+<div class="stage-box">
+    <div class="stage-name">
+        @{
+            var g = Game.CurrentGame;
+            var sid = g?.SelectedStageId;
+            StageModel? st = null;
 
-                if (!string.IsNullOrWhiteSpace(sid))
-                    g?.Stages?.TryGetValue(sid, out st);
-            }
-            @if (st is null)
-            {
-                <h3>(carregando…)</h3>
-            }
-            else
-            {
-                <h3>@(string.IsNullOrWhiteSpace(st.Name) ? st.Id : st.Name)</h3>
-            }
-        </div>
-        <div class="stage-locals">
-            @{
-                var unlocked = new List<string>();
-                foreach (var lid in LocalData.ShowOrder)
-                {
-                    if (Game.CurrentGame.Locals.TryGetValue(lid, out var local) &&
-                    local.State == UnlockHelper.State.Unlocked)
-                    {
-                        unlocked.Add(LocalData.GetDef(lid)?.Name ?? lid);
-                    }
-                }
-                <p>@(unlocked.Count > 0 ? string.Join(", ", unlocked) : "Nenhum local desbloqueado")</p>
-            }
-        </div>
+            if (!string.IsNullOrWhiteSpace(sid))
+                g?.Stages?.TryGetValue(sid, out st);
+        }
+        @if (st is null)
+        {
+            <h3>(carregando…)</h3>
+        }
+        else
+        {
+            <h3>@(string.IsNullOrWhiteSpace(st.Name) ? st.Id : st.Name)</h3>
+        }
     </div>
-}
+    <div class="stage-locals">
+        @{
+            var unlocked = new List<string>();
+            foreach (var lid in LocalData.ShowOrder)
+            {
+                if (Game.CurrentGame.Locals.TryGetValue(lid, out var local) &&
+                local.State == UnlockHelper.State.Unlocked)
+                {
+                    unlocked.Add(LocalData.GetDef(lid)?.Name ?? lid);
+                }
+            }
+            <p>@(unlocked.Count > 0 ? string.Join(", ", unlocked) : "Nenhum local desbloqueado")</p>
+        }
+    </div>
+</div>
 
 
 @code {

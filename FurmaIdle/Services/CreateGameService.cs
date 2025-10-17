@@ -29,12 +29,20 @@ namespace FurmaIdle.Services
         {
             Console.WriteLine("[CGS] Iniciando Load/Create");
 
-            var LoadGame = await Store.LoadAsync("main");
+            var loaded = await Store.LoadAsync("main");
 
-            if (LoadGame == null)
+            bool invalid = loaded is null
+            || loaded.SchemaVersion <= 0
+            || loaded.Stages is null
+            || loaded.Stages.Count == 0;
+
+            Console.WriteLine($"[CGS] Carregou alguma coisa? {!invalid}");
+
+            if (invalid)
             {
-                Console.WriteLine("[CGS] Não existe jogo Salvo. Criando novo jogo");
-                NewGame = new GameModel
+                Console.WriteLine("[CGS] Não existe jogo salvo, ou está corrompido. Criando novo jogo");
+
+                var model = new GameModel
                 {
                     SchemaVersion = 1,
                     LastTick = DateTime.UtcNow,
@@ -53,18 +61,29 @@ namespace FurmaIdle.Services
                     Upgrades = Seed("[CGS] Upgrades", () => UpgradeData.CreateInitialStates()),
                 };
 
-                CurrentGame.Attach(NewGame);
+                CurrentGame.Attach(model);
+                Console.WriteLine("[CGS] Jogo criado");
 
-                Console.WriteLine($"[CGS] Jogo criado");
+                await Store.SaveAsync(model, "main");
+                Console.WriteLine("[CGS] Jogo salvo");
 
-                await Store.SaveAsync(NewGame, "main");
-
-                Console.WriteLine("[CGS] Jogo salvo.");
-
-                return NewGame;
-            }else
+                return model;
+            }
+            else
             {
-                return null;
+                // (Opcional) Backfill/normalizações de versões antigas
+                var changed = BackfillLoad(loaded);
+
+                CurrentGame.Attach(loaded);
+                Console.WriteLine("[CGS] Jogo carregado e anexado");
+
+                if (changed)
+                {
+                    await Store.SaveAsync(loaded, "main");
+                    Console.WriteLine("[CGS] Jogo atualizado (backfill) e salvo");
+                }
+
+                return loaded;
             }
         }
 
@@ -87,7 +106,7 @@ namespace FurmaIdle.Services
 
         private static bool BackfillLoad(GameModel g)
         {
-            return true;
+            return false;
         }
     }
 }

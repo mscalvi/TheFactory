@@ -6,10 +6,14 @@
 @using FurmaIdle.Data
 @using FurmaIdle.Helpers;
 @using FurmaIdle.Services;
+@using FurmaIdle.Storage;
 
 @inject IJSRuntime JS;
 @implements IDisposable
 
+@inject NavigationManager Nav
+
+@inject IGameStore Store
 @inject ICreateGameService Start
 @inject ICurrentGameService Game
 @inject ITooltipService Tooltip
@@ -19,50 +23,55 @@
 
 @code {
     #region GameStart
-    private bool _ready;
+
+    private bool _ready = false;
 
     void OnGameChanged() => InvokeAsync(StateHasChanged);
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine($"[GP] Iniciando FurmaIdle");
+        if (!firstRender)
+        {
+            Console.WriteLine($"[GP] FurmaIdle já inicializado"); 
+            return;
+        }
 
+        if (Nav.Uri.Contains("reset=1", StringComparison.OrdinalIgnoreCase))
+        {
+            await Store.ClearAsync("main");
+            Console.WriteLine("[BOOT] Reset solicitado: removido 'main'");
+        }
+
+        // 1) carrega/cria (pode importar módulo JS aqui sem erro)
         await Start.InitAsync();
         Console.WriteLine($"[GP] Finalizado Load/Create");
 
-        await UnlockInitialStage();
+        // 2) aplica unlocks
+        await Unlock.UnlockInitialState();
         Console.WriteLine("[GP] Estágio Inicial Desbloqueado");
 
-        await Ticks.StartAsync();
+        Game.MarkReady();
+        Console.WriteLine("[GP] Estado marcado como pronot");
+
+        // 3) inicia ticks
+        Ticks.Start();
         Console.WriteLine("[GP] Ticks iniciados");
 
+        // 4) marca pronto e re-renderiza
+        _ready = true;
+        RecomputeReady();
         StateHasChanged();
-        Console.WriteLine("[GP] Jogo atualizado");
-
-        Console.WriteLine("[GP] Jogo iniciado");
     }
 
-    private async Task UnlockInitialStage()
+    private void OnSignalsChanged()
     {
-        await Unlock.UnlockStage("s00");
-        await Unlock.UnlockExpansion("x00");
+        RecomputeReady();
+        InvokeAsync(StateHasChanged);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Game.GameChanged += () => InvokeAsync(StateHasChanged);
-            await Start.InitAsync();
-            _ready = IsGameReady();
-            StateHasChanged();
-        }
-    }
-
-    private bool IsGameReady()
-    {
-        return Game.CurrentGame?.Stages?.Count > 0;
-    }
+    private void RecomputeReady()
+        => _ready = Game.IsReady && Ticks.IsRunning;
     #endregion
 
     #region NavMenu
@@ -100,6 +109,7 @@
 }
 else
 {
+    Console.WriteLine("[GP] Jogo iniciado");
     <div class="game-grid">
         <!-- Navegador -->
         <aside class="nav-menu panel">

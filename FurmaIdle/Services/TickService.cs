@@ -17,14 +17,19 @@ namespace FurmaIdle.Services
     // Controla o loop de ticks
     public interface ITickService
     {
-        Task StartAsync();
+        void Start();
         Task StopAsync();
         void Subscribe(ITickSink sink);
         void Unsubscribe(ITickSink sink);
+        bool IsRunning { get; }               
+        event Action? RunningChanged;
     }
 
     public sealed class TickService : ITickService, IAsyncDisposable
     {
+        public bool IsRunning { get; private set; }
+        public event Action? RunningChanged;
+
         private readonly ICurrentGameService _game;
 
         private readonly HashSet<ITickSink> _sinks = new();
@@ -32,8 +37,9 @@ namespace FurmaIdle.Services
         private PeriodicTimer? _timer;
         private CancellationTokenSource? _cts;
 
+        private Task? _loopTask;
+
         // estado do loop
-        private bool _running;
         private DateTime _lastLoopUtc; // para calcular dt entre iterações
         private double _saveAcc;       // acumula tempo p/ salvar
 
@@ -50,28 +56,31 @@ namespace FurmaIdle.Services
         public void Subscribe(ITickSink sink) => _sinks.Add(sink);
         public void Unsubscribe(ITickSink sink) => _sinks.Remove(sink);
 
-        public async Task StartAsync()
+        public void Start()
         {
-            if (_running) return;
-            _running = true;
+            if (IsRunning) return;
+            IsRunning = true;
+            RunningChanged?.Invoke();
 
             _cts = new CancellationTokenSource();
             _timer = new PeriodicTimer(TimeSpan.FromMilliseconds(TickMs));
             _lastLoopUtc = DateTime.UtcNow;
             _saveAcc = 0;
 
-            // catch-up offline antes do loop
+            // Dispara o loop sem bloquear quem chamou:
+            _loopTask = RunLoopAsync(_cts.Token);
+        }
+
+        private async Task RunLoopAsync(CancellationToken ct)
+        {
             await CatchUpOfflineAsync();
 
             try
             {
-                // loop assíncrono (sem bloqueios — compatível com WASM)
-                while (await _timer.WaitForNextTickAsync(_cts.Token))
+                while (await _timer!.WaitForNextTickAsync(ct))
                 {
                     var dt = ComputeDtSeconds();
                     if (dt <= 0) continue;
-
-                    // clamp p/ estabilidade
                     if (dt > MaxDt) dt = MaxDt;
 
                     _saveAcc += dt;
@@ -81,25 +90,31 @@ namespace FurmaIdle.Services
                     await ProcessTickAsync(dt, doSave);
                 }
             }
-            catch (OperationCanceledException)
-            {
-                // normal no StopAsync
-            }
+            catch (OperationCanceledException) { /* normal */ }
             finally
             {
                 _timer?.Dispose();
                 _timer = null;
                 _cts?.Dispose();
                 _cts = null;
-                _running = false;
             }
         }
 
         public async Task StopAsync()
         {
             _cts?.Cancel();
-            // grava o estado atual (opcional, força persistir)
-            await _game.Mutate(g => { /* noop */ }, save: true);
+            if (_loopTask is not null)
+            {
+                try { await _loopTask; } catch { /* ignore */ }
+                _loopTask = null;
+            }
+            await _game.Mutate(_ => { }, save: true);
+            if (IsRunning)
+            {
+                IsRunning = false;
+                RunningChanged?.Invoke();
+            }
+            await Task.CompletedTask;
         }
 
         private double ComputeDtSeconds()

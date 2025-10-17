@@ -8,72 +8,62 @@
 @inject IUiService UI
 @inject IUnlockService Unlock
 
-@if (!_ready)
-{
-    <p>Carregando…</p>
-}
-else
-{
-    <section class="shop-menu panel">
-        @if (Game.CurrentGame?.Stages is not { Count: > 0 })
+<section class="shop-menu panel">
+    @if (Game.CurrentGame?.Stages is not { Count: > 0 })
+    {
+        <p>Carregando…</p>
+    }
+    else
+    {
+        var type = MapNavToType(SelectedId);
+
+        if (type is null)
         {
-            <p>Carregando…</p>
+            <p>Selecione uma opção no menu.</p>
         }
         else
         {
-            var type = MapNavToType(SelectedId);
+            var unlocked = GetByState(type.Value, UnlockHelper.State.Unlocked).ToList();
+            var avaliable = GetByState(type.Value, UnlockHelper.State.Available).ToList();
 
-            if (type is null)
-            {
-                <p>Selecione uma opção no menu.</p>
-            }
-            else
-            {
-                var unlocked = GetByState(type.Value, UnlockHelper.State.Unlocked).ToList();
-                var avaliable = GetByState(type.Value, UnlockHelper.State.Available).ToList();
+            <div class="shop-block">
+                <h4>@type.Value</h4>
 
-                <div class="shop-block">
-                    <h4>@type.Value</h4>
+                <h5>Unlocked</h5>
+                @if (!unlocked.Any())
+                {
+                    <p>Nenhum item desbloqueado</p>
+                }
+                else
+                {
+                    <div class="shop-list">
+                        @foreach (var it in unlocked)
+                        {
+                            @RenderItemButton(it, type.Value, isUnlocked: true)
+                        }
+                    </div>
+                }
 
-                    <h5>Unlocked</h5>
-                    @if (!unlocked.Any())
-                    {
-                        <p>Nenhum item desbloqueado</p>
-                    }
-                    else
-                    {
-                        <div class="shop-list">
-                            @foreach (var it in unlocked)
-                            {
-                                @RenderItemButton(it, type.Value, isUnlocked: true)
-                            }
-                        </div>
-                    }
-
-                    <h5>Avaliable</h5>
-                    @if (!avaliable.Any())
-                    {
-                        <p>Nenhum item disponível</p>
-                    }
-                    else
-                    {
-                        <div class="shop-list">
-                            @foreach (var it in avaliable)
-                            {
-                                @RenderItemButton(it, type.Value, isUnlocked: false)
-                            }
-                        </div>
-                    }
-                </div>
-            }
+                <h5>Avaliable</h5>
+                @if (!avaliable.Any())
+                {
+                    <p>Nenhum item disponível</p>
+                }
+                else
+                {
+                    <div class="shop-list">
+                        @foreach (var it in avaliable)
+                        {
+                            @RenderItemButton(it, type.Value, isUnlocked: false)
+                        }
+                    </div>
+                }
+            </div>
         }
-    </section>
-}
+    }
+</section>
 
 @code {
-
-    private bool _ready = false;
-
     [Parameter] public string? SelectedId { get; set; }
 
     // ===== Infra genérica =====

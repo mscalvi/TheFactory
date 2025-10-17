@@ -6,6 +6,7 @@ namespace FurmaIdle.Services
 {
     public interface IUnlockService
     {
+        Task UnlockInitialState();
         Task UnlockCharacter(string characterId);
         Task UnlockCoin(string coinId);
         Task UnlockContract(string contractId);
@@ -29,6 +30,19 @@ namespace FurmaIdle.Services
             _locate = locate;
         }
 
+        #region Initial State
+        public async Task UnlockInitialState()
+        {
+            await UnlockStage("s00");
+            await UnlockExpansion("x00");
+
+            await _game.Mutate(g =>
+            {
+                g.SelectedStageId ??= "s00";
+            }, save: true);
+        }
+        #endregion
+
         #region Character Unlock
         public async Task UnlockCharacter(string characterId)
         {
@@ -46,7 +60,7 @@ namespace FurmaIdle.Services
                 }
 
                 character.State = UnlockHelper.State.Unlocked;
-            });
+            }, save: true);
         }
         #endregion
 
@@ -58,7 +72,7 @@ namespace FurmaIdle.Services
                 var coin = _locate.LocateCoin(coinId);
 
                 coin.State = UnlockHelper.State.Unlocked;
-            });
+            }, save: true);
         }
         #endregion
 
@@ -79,7 +93,7 @@ namespace FurmaIdle.Services
                 }
 
                 contract.State = UnlockHelper.State.Unlocked;
-            });
+            }, save: true);
         }
 
         #endregion
@@ -102,7 +116,7 @@ namespace FurmaIdle.Services
 
                 expansion.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Expansion: {expansion.State}");
-            });
+            }, save: true);
 
         }
         #endregion
@@ -115,7 +129,7 @@ namespace FurmaIdle.Services
                 var know = _locate.LocateKnowledge(knowledgeId);
 
                 know.State = UnlockHelper.State.Unlocked;
-            });
+            }, save: true);
         }
         #endregion
 
@@ -154,7 +168,7 @@ namespace FurmaIdle.Services
                 }
 
                 local.State = UnlockHelper.State.Unlocked;
-            });
+            }, save: true);
         }
         #endregion
 
@@ -191,8 +205,8 @@ namespace FurmaIdle.Services
 
                 stage.State = UnlockHelper.State.Unlocked;
 
-                Console.WriteLine($"[Unlock] Stage {stage.State}");
-            });
+                Console.WriteLine($"[Unlock] Stage: {stage.State}");
+            }, save: true);
         }
         #endregion
 
@@ -213,7 +227,7 @@ namespace FurmaIdle.Services
                 }
 
                 tech.State = UnlockHelper.State.Unlocked;
-            });
+            }, save: true);
         }
         #endregion
 
@@ -225,63 +239,45 @@ namespace FurmaIdle.Services
                 var resource = _locate.LocateResource(resourceId);
 
                 resource.State = UnlockHelper.State.Unlocked;
-            });
+            }, save: true);
         }
         #endregion
 
         #region Upgrade Unlock
         public async Task UnlockUpgrade(string upgradeId)
         {
-            await _game.Mutate(game =>
+            var up = _locate.LocateUpgrade(upgradeId);
+
+            // 1) marca a própria upgrade como unlocked e salva
+            await _game.Mutate(g => { up.State = UnlockHelper.State.Unlocked; }, save: true);
+
+            // 2) agora, fora do Mutate, encadeia o efeito com await
+            switch (up.EffectType)
             {
-                var up = _locate.LocateUpgrade(upgradeId);
-
-                switch (up.EffectType)
-                {
-                    // Unlocks
-                    case EffectHelper.EffectType.ContractUnlock:
-                        UnlockContract(up.TargetId);
-                        break;
-                    case EffectHelper.EffectType.KnowledgeUnlock:
-                        UnlockKnowledge(up.TargetId);
-                        break;
-                    case EffectHelper.EffectType.LocalUnlock:
-                        UnlockLocal(up.TargetId);
-                        break;
-                    case EffectHelper.EffectType.CharacterUnlock:
-                        UnlockCharacter(up.TargetId);
-                        break;
-                    case EffectHelper.EffectType.ResourceUnlock:
-                        UnlockResource(up.TargetId);
-                        break;
-                    case EffectHelper.EffectType.StageUnlock:
-                        UnlockStage(up.TargetId);
-                        break;
-
-                    // Outros
-                    case EffectHelper.EffectType.ContractGain:
-                        break;
-                    case EffectHelper.EffectType.ContractTime:
-                        break;
-                    case EffectHelper.EffectType.ContractCost:
-                        break;
-                    case EffectHelper.EffectType.ClickGain:
-                        break;
-                    case EffectHelper.EffectType.ContractCapUnlock:
-                        break;
-                    case EffectHelper.EffectType.ContractLevelUnlock:
-                        break;
-                    case EffectHelper.EffectType.ResourceGain:
-                        break;
-
-                    default:
-                        break;
-
-                }
-
-                up.State = UnlockHelper.State.Unlocked;
-            });
+                case EffectHelper.EffectType.ContractUnlock:
+                    await UnlockContract(up.TargetId);
+                    break;
+                case EffectHelper.EffectType.KnowledgeUnlock:
+                    await UnlockKnowledge(up.TargetId);
+                    break;
+                case EffectHelper.EffectType.LocalUnlock:
+                    await UnlockLocal(up.TargetId);
+                    break;
+                case EffectHelper.EffectType.CharacterUnlock:
+                    await UnlockCharacter(up.TargetId);
+                    break;
+                case EffectHelper.EffectType.ResourceUnlock:
+                    await UnlockResource(up.TargetId);
+                    break;
+                case EffectHelper.EffectType.StageUnlock:
+                    await UnlockStage(up.TargetId);
+                    break;
+                default:
+                    break;
+            }
         }
+
         #endregion
+
     }
 }

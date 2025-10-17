@@ -3,19 +3,11 @@
 
 @inject ICurrentGameService Game
 
-@if (!_ready)
-{
-    <p>Carregando…</p>
-}
-else
-{
-    <div class="title-box">
+<div class="title-box">
         <h1>FurmaIdle - Exploradores de Furma</h1>
         <p>Versão: @Game.CurrentGame?.SchemaVersion</p>
-    </div>
-}
+</div>
 
 @code {
-    private bool _ready = false;
 
 }

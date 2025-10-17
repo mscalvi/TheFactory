@@ -7,54 +7,45 @@
 @inject ILocateService Locate
 @inject IIncomeService Income
 
-@if (!_ready)
-{
-    <p>Carregando…</p>
-}
-else
-{
-    <div class="click-area-root"
-         @oncontextmenu:preventDefault
-         @onpointerdown="Click"
-         tabindex="0">
+<div class="click-area-root"
+     @oncontextmenu:preventDefault
+     @onpointerdown="Click"
+     tabindex="0">
 
-        @* imagem do stage cobrindo 100% *@
-        @{
-            var game = Game.CurrentGame;
-            var stageId = game?.SelectedStageId;
-            StageModel? Stage = null;
-            if (!string.IsNullOrWhiteSpace(stageId))
-                game?.Stages?.TryGetValue(stageId, out Stage);
+    @* imagem do stage cobrindo 100% *@
+    @{
+        var game = Game.CurrentGame;
+        var stageId = game?.SelectedStageId;
+        StageModel? Stage = null;
+        if (!string.IsNullOrWhiteSpace(stageId))
+            game?.Stages?.TryGetValue(stageId, out Stage);
 
-            var stageImg = !string.IsNullOrWhiteSpace(stageId)
-            ? $"images/stages/{stageId}_0000.jpg"
-            : $"Stage: {Stage.Name}";
-        }
+        var stageImg = !string.IsNullOrWhiteSpace(stageId)
+        ? $"images/stages/{stageId}_0000.jpg"
+        : $"Stage: {Stage.Name}";
+    }
 
-        <img class="click-stage-img"
-             src="@stageImg"
-             alt="@($"Stage {Stage?.Name ?? Stage?.Id ?? "—"}")" />
+    <img class="click-stage-img"
+         src="@stageImg"
+         alt="@($"Stage {Stage?.Name ?? Stage?.Id ?? "—"}")" />
 
-        @* HUD simples (opcional) *@
-        <div class="click-hud">
-            <h3>@(Stage?.Name ?? Stage?.Id ?? "—")</h3>
-            <small>Click Gain: @GetClickTotalString()</small>
-        </div>
-
-        @* textos flutuantes dos cliques *@
-        @foreach (var clickVisual in _ClickVisual)
-        {
-            <span class="click-fx"
-                  style="left:@clickVisual.Xpx; top:@clickVisual.Ypx">
-                @clickVisual.Text
-            </span>
-        }
+    @* HUD simples (opcional) *@
+    <div class="click-hud">
+        <h3>@(Stage?.Name ?? Stage?.Id ?? "—")</h3>
+        <small>Click Gain: @GetClickTotalString()</small>
     </div>
-}
+
+    @* textos flutuantes dos cliques *@
+    @foreach (var clickVisual in _ClickVisual)
+    {
+        <span class="click-fx"
+              style="left:@clickVisual.Xpx; top:@clickVisual.Ypx">
+            @clickVisual.Text
+        </span>
+    }
+</div>
 
 @code {
-    private bool _ready = false;
-
     // eventos externos
     [Parameter] public EventCallback<int> OnClick { get; set; }
     [Parameter] public EventCallback<double> ClickAdd { get; set; }
