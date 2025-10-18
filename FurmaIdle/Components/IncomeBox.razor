@@ -33,11 +33,8 @@
     Dictionary<string, string> CoinsTotal = new();
     Dictionary<string, double> CoinsPerSecond = new();
 
-    Dictionary<string, string> Broken = new();
-
     protected override void OnInitialized()
     {
-        // Atualiza quando o jogo muda (Init, clicks, etc.)
         Game.GameChanged += OnGameChanged;
         OnGameChanged();
     }
@@ -50,45 +47,43 @@
 
     private Dictionary<string, string> GetCoins()
     {
-        var g = Game.CurrentGame;
         CoinsTotal.Clear();
-        Broken.Clear();
 
-        if (IsReady)
-        {
-            Console.WriteLine($"[Income] Getting Coins");
-
-            var order = g.Coins;
-
-            foreach (string coinId in order.Keys)
-            {
-                CoinModel coin = Locate.LocateCoin(coinId);
-                if (coin.State != UnlockHelper.State.Unlocked)
-                {
-                    continue;
-                }
-
-                g.Stats.Coins.TryGetValue(coinId, out var current);
-                Console.WriteLine($"[Income] Computando {coin.Name} = {current}");
-
-                string formatedValue = FormatTotal(current);
-
-                Console.WriteLine($"[Income] Computando {coinId} = {formatedValue}");
-                CoinsTotal.Add(coin.Name, formatedValue);
-            }
+        if (!IsReady || Game.CurrentGame is null)
             return CoinsTotal;
-        }
-        else
+
+        var g = Game.CurrentGame;
+
+        var order = g.Coins;
+
+        foreach (string coinId in order.Keys)
         {
-            Console.WriteLine($"[Income] Tentaiva Falha");
-            Broken.Add("Moedas", "Quebradas");
-            return Broken;
+            CoinModel coin = Locate.LocateCoin(coinId);
+            if (coin is null)
+                continue;
+
+            if (coin.State != UnlockHelper.State.Unlocked)
+            {
+                continue;
+            }
+
+            long current = 0;
+            var statsCoins = g.Stats?.Coins;
+
+            if (statsCoins is not null && statsCoins.TryGetValue(coinId, out var val))
+                current = val;
+
+            string formatedValue = FormatTotal(current);
+
+            CoinsTotal.Add(coin.Name, formatedValue);
         }
+
+        return CoinsTotal;
     }
 
     private static string FormatTotal(long current)
     {
-        string formatedTotal = current.ToString();
+        string formatedTotal = current.ToString("N0");
         return formatedTotal;
     }
 

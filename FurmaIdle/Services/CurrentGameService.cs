@@ -22,16 +22,11 @@ namespace FurmaIdle.Services
 
     public sealed class CurrentGameService : ICurrentGameService
     {
-
         private readonly IGameStore _store;
-        private readonly IModifierService _modifiers;
-        private readonly IStageService _stages;
 
-        public CurrentGameService(IGameStore store, IModifierService modifiers, IStageService stages)
+        public CurrentGameService(IGameStore store)
         {
             _store = store ?? throw new ArgumentNullException(nameof(store));
-            _modifiers = modifiers;
-            _stages = stages;
         }
 
         public GameModel CurrentGame { get; private set; } = new();

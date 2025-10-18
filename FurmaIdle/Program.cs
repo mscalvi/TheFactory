@@ -11,21 +11,16 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddSingleton<ICreateGameService, CreateGameService>();
 builder.Services.AddSingleton<ICurrentGameService, CurrentGameService>();
+
 builder.Services.AddSingleton<ITickService, TickService>();
 
 builder.Services.AddSingleton<IUiService, UiService>();
 builder.Services.AddSingleton<ITooltipService, TooltipService>();
-builder.Services.AddSingleton<IncomeService>(); 
+builder.Services.AddScoped<IDebugService, DebugService>();
 
-builder.Services.AddScoped<IIncomeService, IncomeService>();
-
-builder.Services.AddSingleton<IModifierService, ModifierService>();
-builder.Services.AddSingleton<IStageService, StageService>();
 builder.Services.AddSingleton<IUnlockService, UnlockService>();
 builder.Services.AddSingleton<ILocateService, LocateService>();
-builder.Services.AddSingleton<IContractService, ContractService>();
-
-builder.Services.AddScoped<IDebugService, DebugService>();
+builder.Services.AddSingleton<IIncomeService, IncomeService>();
 
 builder.Services.AddSingleton<IGameStore, GameStore>();
 

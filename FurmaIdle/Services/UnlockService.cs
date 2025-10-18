@@ -146,6 +146,7 @@ namespace FurmaIdle.Services
         #region Local Unlock
         public async Task UnlockLocal(string localId)
         {
+            Console.WriteLine($"[Unlock] Local {localId}: Starting Unlock");
             await _game.Mutate(game =>
             {
                 var local = _locate.LocateLocal(localId);
@@ -156,6 +157,7 @@ namespace FurmaIdle.Services
                     if (string.Equals(tech.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         tech.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Tech {tech.Id}: vinculado ao {local.Id}, {tech.State}");
                     }
                 }
 
@@ -165,6 +167,7 @@ namespace FurmaIdle.Services
                     if (string.Equals(expansion.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         expansion.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Coin {expansion.Id}: vinculado ao {local.Id}, {expansion.State}");
                     }
                 }
 
@@ -174,6 +177,7 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Coin {up.Id}: vinculado ao {local.Id}, {up.State}");
                     }
                 }
 

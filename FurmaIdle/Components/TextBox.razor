@@ -1,0 +1,74 @@
+﻿@using FurmaIdle.Services
+
+@inject ITooltipService Tooltips
+@inject IJSRuntime JS;
+
+<section class="text-box panel" role="status" aria-live="polite">
+    <div class="msg-body" @ref="_msgBodyRef">
+        <div class="msg-list">
+            @if (Tooltips.Current is null)
+            {
+                if (_msgs.Count == 0)
+                {
+                    <em>Sem mensagens.</em>
+                }
+                else
+                {
+                    @foreach (var m in _msgs)
+                    {
+                        <div class="msg-row @Css(m.Kind)">
+                            <span class="msg-time">@m.Time.ToString("HH:mm:ss: ")</span>
+                            <span class="msg-text">@m.Text</span>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <div class="tip-title">@Tooltips.Current.Title</div>
+                <pre class="tip-body">@Tooltips.Current.Body</pre>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Tooltips.Changed += OnChanged;
+    }
+
+    void OnChanged() => InvokeAsync(StateHasChanged);
+
+    ElementReference _msgBodyRef;
+    int _lastMsgCount;
+    bool _scrollMessagesOnOpen;
+
+    // Tipos de mensagem
+    enum MsgKind { Info, Warn, Error, Success }
+
+    // Modelo de mensagem
+    sealed class UiMessage
+    {
+        public DateTime Time { get; init; } = DateTime.Now;
+        public string Text { get; init; } = "";
+        public MsgKind Kind { get; init; } = MsgKind.Info;
+    }
+
+    List<UiMessage> _msgs = new();
+
+    // helper para CSS por tipo
+    string Css(MsgKind k) => k switch
+    {
+        MsgKind.Warn => "is-warn",
+        MsgKind.Error => "is-error",
+        MsgKind.Success => "is-success",
+        _ => "is-info"
+    };
+
+    void Log(string text, MsgKind kind = MsgKind.Info)
+    {
+        _msgs.Add(new UiMessage { Text = text, Kind = kind, Time = DateTime.Now });
+        StateHasChanged();
+    }
+}
