@@ -14,8 +14,6 @@ namespace FurmaIdle.Services
     {
         private readonly ICurrentGameService _game;
 
-        private readonly ConcurrentDictionary<string, double> _fractions = new();
-
         public long? AddAmount { get; private set; } = 0;
 
         public IncomeService(ICurrentGameService game)
@@ -30,11 +28,8 @@ namespace FurmaIdle.Services
             if (double.IsNaN(amount) || double.IsInfinity(amount))
                 throw new ArgumentOutOfRangeException(nameof(amount), "amount inválido");
 
-            var rest = 0;
-            var total = rest + amount;
-
-            var gain = (long)Math.Floor(total);
-            var frac = total - gain;
+            var gain = (long)Math.Floor(amount);
+            var frac = amount - gain;
 
             GainModel? result = null;
 
@@ -61,7 +56,7 @@ namespace FurmaIdle.Services
                 };
 
                 AddAmount = result.GainEffective;
-            }, save: gain != 0);
+            }, save: gain != 0 || frac > 0);
 
             Console.WriteLine($"[Income] Sucesso ao aplicar ganho: type={type} id={itemId} eff={gain}");
             return result!;
