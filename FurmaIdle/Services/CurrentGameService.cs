@@ -17,6 +17,7 @@ namespace FurmaIdle.Services
         Task Mutate(Action<GameModel> edit, bool save = true);
         event Action<string, LogKind>? Logged;
         void MarkReady();
+        string InstanceId { get; }
     }
 
     public sealed class CurrentGameService : ICurrentGameService
@@ -66,6 +67,8 @@ namespace FurmaIdle.Services
             IsReady = true;
             ReadyChanged?.Invoke();
         }
+
+        public string InstanceId { get; } = Guid.NewGuid().ToString("N").Substring(0, 8);
         #endregion
     }
 }

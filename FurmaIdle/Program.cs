@@ -25,6 +25,8 @@ builder.Services.AddSingleton<IUnlockService, UnlockService>();
 builder.Services.AddSingleton<ILocateService, LocateService>();
 builder.Services.AddSingleton<IContractService, ContractService>();
 
+builder.Services.AddScoped<IDebugService, DebugService>();
+
 builder.Services.AddSingleton<IGameStore, GameStore>();
 
 await builder.Build().RunAsync();

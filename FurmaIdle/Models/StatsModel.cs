@@ -3,10 +3,13 @@
     public class StatsModel
     {
         // Stats for this Game
-
         public Dictionary<string, long> Coins { get; set; }
         public Dictionary<string, long> Resources { get; set; }
         public Dictionary<string, long> Knowledge { get; set; }
+
+        public Dictionary<string, double> CoinsFrac { get; set; }
+        public Dictionary<string, double> ResourcesFrac { get; set; }
+        public Dictionary<string, double> KnowledgeFrac { get; set; }
 
 
         // Stats for Archievement

@@ -41,7 +41,8 @@ namespace FurmaIdle.Data
                 PartySizeMax = 5,
                 StartContractLevel = 1,
                 MaxContractLevel = 6,
-                CoinId = "m00",
+                CoinId = "m01",
+                ClickId = "cl00",
             },
             #endregion
 
@@ -72,7 +73,8 @@ namespace FurmaIdle.Data
                 PartySizeMax = 2,
                 StartContractLevel = 4,
                 MaxContractLevel = 6,
-                CoinId = "m00",
+                CoinId = "m02",
+                ClickId = "cl00",
             },
             #endregion
         };
@@ -105,6 +107,7 @@ namespace FurmaIdle.Data
                 MaxContractLevel = stage.MaxContractLevel,
                 ActiveExpedition = new ExpeditionModel(),
                 CoinId = stage.CoinId,
+                ClickId = stage.ClickId,
             };
         }
 

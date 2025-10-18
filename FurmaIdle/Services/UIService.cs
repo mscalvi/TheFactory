@@ -2,9 +2,12 @@
 {
     public interface IUiService
     {
-        void CreateScreen();
-
         Task LoadStage(string stageId);
+
+        string? OpenMenuId { get; }
+        string? PreviousMenuId { get; }
+        void SetOpenMenu(string? id);
+        event Action? Changed;
     }
 
     public sealed class UiService : IUiService
@@ -14,11 +17,6 @@
         public UiService(ICurrentGameService game)
         {
             _game = game;
-        }
-
-        public void CreateScreen()
-        {
-            Console.WriteLine("[UI] Método Inútil para criar Screen");
         }
 
         public async Task LoadStage(string stageId)
@@ -37,5 +35,19 @@
                 Console.WriteLine($"[UI] LoadStage: {before} -> {stageId}");
             });
         }
+
+        #region Menu Detect
+        public string? OpenMenuId { get; private set; } = "i4";
+        public string? PreviousMenuId { get; private set; } = "i4";
+        public event Action? Changed;
+
+        public void SetOpenMenu(string? id)
+        {
+            if (OpenMenuId == id) return;
+            PreviousMenuId = OpenMenuId;
+            OpenMenuId = id;
+            Changed?.Invoke();
+        }
+        #endregion
     }
 }

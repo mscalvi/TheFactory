@@ -1,90 +1,96 @@
-﻿@using System.Linq
-@using FurmaIdle.Data
+﻿@using FurmaIdle.Services
 @using FurmaIdle.Helpers
 @using FurmaIdle.Models
-@using FurmaIdle.Services
 
 @inject ICurrentGameService Game
+@inject ILocateService Locate
 
 <section class="income-box panel">
-    <h4>Income</h4>
-
-    @if (Game.CurrentGame?.Coins is not { Count: > 0 })
-    {
-        <p>Carregando…</p>
-    }
-    else
-    {
-        var list = GetUnlockedCoins().ToList();
-
-        if (list.Count == 0)
-        {
-            <p>Nenhuma moeda desbloqueada</p>
-        }
-        else
-        {
-            <ul class="income-list">
-                @foreach (var it in list)
+    @{
+        var unlocked = GetCoins().ToList();
+        <ul class="income-list">
+            @if (unlocked == null)
+            {
+                <p>Nenhuma moeda desbloqueada.</p>
+            }
+            else
+            {
+                foreach (var it in unlocked)
                 {
                     <li class="income-row">
-                        <span class="income-name">@it.Name</span>
-                        <span class="income-total">@FormatTotal(it.Coin)</span>
-                        <span class="income-ps">(@FormatPerSecond(it.Coin))/s</span>
+                        <span class="income-name">@it.Key</span>
+                        <span class="income-total">@it.Value</span>
                     </li>
                 }
-            </ul>
-        }
+            }
+        </ul>
     }
 </section>
 
 @code {
-    // ---- helpers ----
+    private bool IsReady = false;
 
-    // Projeta para um DTO de tela com Name resolvido via runtime -> catálogo -> id
-    private IEnumerable<(CoinModel Coin, string Name)> GetUnlockedCoins()
+    Dictionary<string, string> CoinsTotal = new();
+    Dictionary<string, double> CoinsPerSecond = new();
+
+    Dictionary<string, string> Broken = new();
+
+    protected override void OnInitialized()
     {
-        var g = Game.CurrentGame!;
-        var order = CoinsData.ShowOrder ?? new List<string>();
+        // Atualiza quando o jogo muda (Init, clicks, etc.)
+        Game.GameChanged += OnGameChanged;
+        OnGameChanged();
+    }
 
-        foreach (var id in order)
+    private void OnGameChanged()
+    {
+        IsReady = Game.IsReady && Game.CurrentGame is not null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private Dictionary<string, string> GetCoins()
+    {
+        var g = Game.CurrentGame;
+        CoinsTotal.Clear();
+        Broken.Clear();
+
+        if (IsReady)
         {
-            if (!g.Coins.TryGetValue(id, out var coin)) continue;
-            if (coin.State != UnlockHelper.State.Unlocked) continue;
+            Console.WriteLine($"[Income] Getting Coins");
 
-            var name =
-                (!string.IsNullOrWhiteSpace(coin.Name) ? coin.Name :
-                 CoinsData.GetDef(id)?.Name) ?? id;
+            var order = g.Coins;
 
-            yield return (coin, name);
+            foreach (string coinId in order.Keys)
+            {
+                CoinModel coin = Locate.LocateCoin(coinId);
+                if (coin.State != UnlockHelper.State.Unlocked)
+                {
+                    continue;
+                }
+
+                g.Stats.Coins.TryGetValue(coinId, out var current);
+                Console.WriteLine($"[Income] Computando {coin.Name} = {current}");
+
+                string formatedValue = FormatTotal(current);
+
+                Console.WriteLine($"[Income] Computando {coinId} = {formatedValue}");
+                CoinsTotal.Add(coin.Name, formatedValue);
+            }
+            return CoinsTotal;
         }
-
-        // caso falte algum no ShowOrder, cai para os que sobraram
-        var leftovers = g.Coins.Values
-            .Where(c => c.State == UnlockHelper.State.Unlocked &&
-                        (order == null || !order.Contains(c.Id)))
-            .OrderBy(c => c.Id, StringComparer.Ordinal);
-
-        foreach (var c in leftovers)
+        else
         {
-            var name =
-                (!string.IsNullOrWhiteSpace(c.Name) ? c.Name :
-                 CoinsData.GetDef(c.Id)?.Name) ?? c.Id;
-
-            yield return (c, name);
+            Console.WriteLine($"[Income] Tentaiva Falha");
+            Broken.Add("Moedas", "Quebradas");
+            return Broken;
         }
     }
 
-    // Placeholders: ajusta quando o CoinModel tiver os campos reais
-    private static string FormatTotal(CoinModel coin)
+    private static string FormatTotal(long current)
     {
-        // se existir coin.Total ou coin.Amount, use-o. Placeholder por enquanto:
-        // return coin.Amount.ToString("N0", CultureInfo.InvariantCulture);
-        return "0";
+        string formatedTotal = current.ToString();
+        return formatedTotal;
     }
 
-    private static string FormatPerSecond(CoinModel coin)
-    {
-        // se existir coin.PerSecond, use-o. Placeholder por enquanto:
-        return "+0";
-    }
+    public void Dispose() => Game.GameChanged -= OnGameChanged;
 }

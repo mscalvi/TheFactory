@@ -5,6 +5,7 @@
 @using FurmaIdle.Services
 
 @inject ICurrentGameService Game
+@inject IUiService Ui
 
 <div class="nav-menu">
     <div class="nav-col">
@@ -82,6 +83,7 @@
     private async Task Select(string id)
     {
         SelectedId = id;
+        Ui.SetOpenMenu(id);
         if (SelectedIdChanged.HasDelegate)
             await SelectedIdChanged.InvokeAsync(SelectedId);
 

@@ -6,6 +6,7 @@
 @inject ICurrentGameService Game
 @inject ILocateService Locate
 @inject IIncomeService Income
+@inject IDebugService Debug
 
 <div class="click-area-root"
      @oncontextmenu:preventDefault
@@ -68,12 +69,13 @@
         var game = Game.CurrentGame;
         var stageId = game?.SelectedStageId;
 
-        if (!string.IsNullOrWhiteSpace(stageId) &&
-            game?.Stages is not null &&
-            game.Stages.TryGetValue(stageId, out var stage) &&
-            !string.IsNullOrWhiteSpace(stage.CoinId))
+        if(game.Stages.TryGetValue(stageId, out var stage))
         {
             var gain = await Income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal);
+            Debug.BuildDumpSnapshot(2, "Click");
+        } else
+        {
+            Console.WriteLine("[ClickArea] Bug");
         }
 
         var now = Environment.TickCount64;
@@ -97,19 +99,27 @@
         });
     }
 
+    private ClickModel? GetStageClick()
+    {
+        var g = Game.CurrentGame;
+        if (g is null || string.IsNullOrWhiteSpace(g.SelectedStageId)) return null;
+
+        if (!g.Stages.TryGetValue(g.SelectedStageId, out var stage)) return null;
+        if (string.IsNullOrWhiteSpace(stage.ClickId)) return null;
+
+        return g.Clicks.TryGetValue(stage.ClickId, out var click) ? click : null;
+    }
+
     // ===== Cálculo do ClickTotal =====
     // ClickTotal = (BaseGain + AddMod) * MultMod
     private double GetClickTotal()
     {
-        var game = Game.CurrentGame;
-        var stageId = game?.SelectedStageId;
-        if (string.IsNullOrWhiteSpace(stageId)) return 0;
+        var click = GetStageClick();
+        if (click is null) return 0;
 
-        ClickModel Click = Locate.LocateStageClick(stageId);
-
-        var baseGain = Click.BaseGain;
-        var addMod = Click.AddMod;
-        var multMod = Click.MultMod <= 0 ? 1.0 : Click.MultMod;
+        var baseGain = click.BaseGain;
+        var addMod = click.AddMod;
+        var multMod = click.MultMod <= 0 ? 1.0 : click.MultMod;
         return (baseGain + addMod) * multMod;
     }
 

@@ -46,6 +46,7 @@ namespace FurmaIdle.Services
                 {
                     SchemaVersion = 1,
                     LastTick = DateTime.UtcNow,
+                    Stats = new StatsModel(),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),
                     Coins = Seed("[CGS] Coins", () => CoinsData.CreateInitialStates()),

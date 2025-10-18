@@ -59,7 +59,6 @@ namespace FurmaIdle.Data
             IEnumerable<string> keys = All?.Keys.AsEnumerable() ?? Enumerable.Empty<string>();
 
             ShowOrder.AddRange(keys.OrderBy(k => k, StringComparer.Ordinal));
-            Console.WriteLine($"[Data] ShowOrder.Count={ShowOrder?.Count ?? -1}");
         }
 
         public static Dictionary<string, ClickModel> CreateInitialStates()

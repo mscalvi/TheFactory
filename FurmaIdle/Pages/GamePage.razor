@@ -20,22 +20,21 @@
 @inject ITickService Ticks
 @inject IUnlockService Unlock
 @inject IUiService UI
+@inject IDebugService Debug
 
 @code {
     #region GameStart
-
     private bool _ready = false;
 
     void OnGameChanged() => InvokeAsync(StateHasChanged);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Console.WriteLine($"[GP] Iniciando FurmaIdle");
         if (!firstRender)
         {
-            Console.WriteLine($"[GP] FurmaIdle já inicializado"); 
             return;
         }
+        Console.WriteLine($"[GP] Iniciando FurmaIdle");
 
         if (Nav.Uri.Contains("reset=1", StringComparison.OrdinalIgnoreCase))
         {
@@ -50,18 +49,20 @@
         // 2) aplica unlocks
         await Unlock.UnlockInitialState();
         Console.WriteLine("[GP] Estágio Inicial Desbloqueado");
+        Debug.BuildDumpSnapshot(0, "Inicio do Jogo");
 
         Game.MarkReady();
-        Console.WriteLine("[GP] Estado marcado como pronot");
+        Console.WriteLine("[GP] Jogo marcado como Pronto");
 
         // 3) inicia ticks
         Ticks.Start();
         Console.WriteLine("[GP] Ticks iniciados");
 
         // 4) marca pronto e re-renderiza
-        _ready = true;
         RecomputeReady();
         StateHasChanged();
+
+        Console.WriteLine("[GP] Jogo iniciado");
     }
 
     private void OnSignalsChanged()
@@ -77,24 +78,22 @@
     #region NavMenu
     private NavMenu? navRef;
     private string? _navId = "i4";
-
-    private IEnumerable<StageModel> GetStagesByState(UnlockHelper.State state)
-    {
-        var game = Game.CurrentGame;
-        if (game?.Stages is not { Count: > 0 })
-            return Enumerable.Empty<StageModel>();
-
-        var result = new List<StageModel>();
-        foreach (var id in StageData.ShowOrder)
-        {
-            if (game.Stages.TryGetValue(id, out var st) && st.State == state)
-                result.Add(st);
-        }
-        return result;
-    }
     #endregion
 
     #region Gerais
+    public void RecomputeGame()
+    {
+        StateHasChanged();
+        RecomputeReady();
+        if (_ready)
+        {
+            Console.WriteLine("[GP] O jogo está funcionando");
+        } 
+        else
+        {
+            Console.WriteLine("[GP] O jogo não está funcionando");
+        }
+    }
     public void Dispose()
     {
         _ = Ticks.StopAsync();
@@ -109,7 +108,7 @@
 }
 else
 {
-    Console.WriteLine("[GP] Jogo iniciado");
+    Debug.BuildDumpSnapshot(1, "Mudança de Tela");
     <div class="game-grid">
         <!-- Navegador -->
         <aside class="nav-menu panel">

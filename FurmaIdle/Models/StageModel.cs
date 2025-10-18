@@ -19,6 +19,7 @@ namespace FurmaIdle.Models
         public int StartContractLevel { get; set; }
         public int MaxContractLevel { get; set; }
         public string CoinId { get; set; }
+        public string ClickId { get; set; }
 
         public ExpeditionModel? ActiveExpedition { get; set; }
     }
