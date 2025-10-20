@@ -23,8 +23,8 @@ namespace FurmaIdle.Data
                 EffectType = EffectHelper.EffectType.CoinGain,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = null,
-                CostValue = 10,
-                CostId = "r01"
+                Cost = 10,
+                PricingId = "r01"
             },
             ["es02"] = new SpecialtyModel
             {
@@ -37,8 +37,8 @@ namespace FurmaIdle.Data
                 EffectType = EffectHelper.EffectType.ResourceGain,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 20,
-                CostValue = 15,
-                CostId = "r01"
+                Cost = 15,
+                PricingId = "r01"
             },
             ["es03"] = new SpecialtyModel
             {
@@ -51,8 +51,8 @@ namespace FurmaIdle.Data
                 EffectType = EffectHelper.EffectType.CoinGain,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 30,
-                CostValue = 30,
-                CostId = "r01"
+                Cost = 30,
+                PricingId = "r01"
             },
             ["es04"] = new SpecialtyModel
             {
@@ -65,8 +65,8 @@ namespace FurmaIdle.Data
                 EffectType = EffectHelper.EffectType.SpecialtyCost,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 10,
-                CostValue = 10,
-                CostId = "r01"
+                Cost = 10,
+                PricingId = "r01"
             }
             #endregion
         };
@@ -89,8 +89,8 @@ namespace FurmaIdle.Data
                 EffectType = specialty.EffectType,
                 EffectOperation = specialty.EffectOperation,
                 Duration = specialty.Duration,
-                CostValue = specialty.CostValue,
-                CostId = specialty.CostId
+                Cost = specialty.Cost,
+                PricingId = specialty.PricingId
             };
         }
 
@@ -122,8 +122,8 @@ namespace FurmaIdle.Data
                     EffectType = specialty.EffectType,
                     EffectOperation = specialty.EffectOperation,
                     Duration = specialty.Duration,
-                    CostValue = specialty.CostValue,
-                    CostId = specialty.CostId
+                    Cost = specialty.Cost,
+                    PricingId = specialty.PricingId
                 };
             }
             return dict;

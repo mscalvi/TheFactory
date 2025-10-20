@@ -17,7 +17,7 @@ namespace FurmaIdle.Models
         public double? Duration { get; set; }
 
         // Custo
-        public string CostId { get; set; }
-        public int CostValue { get; set; }
+        public string PricingId { get; set; }
+        public int Cost { get; set; }
     }
 }

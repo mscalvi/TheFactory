@@ -21,6 +21,9 @@ builder.Services.AddScoped<IDebugService, DebugService>();
 builder.Services.AddSingleton<IUnlockService, UnlockService>();
 builder.Services.AddSingleton<ILocateService, LocateService>();
 builder.Services.AddSingleton<IIncomeService, IncomeService>();
+builder.Services.AddSingleton<IPurchaseService, PurchaseService>();
+builder.Services.AddSingleton<IContractsService, ContractsService>();
+builder.Services.AddSingleton<IUpgradeService, UpgradeService>();
 
 builder.Services.AddSingleton<IGameStore, GameStore>();
 

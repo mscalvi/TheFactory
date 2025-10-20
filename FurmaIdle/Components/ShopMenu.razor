@@ -6,7 +6,7 @@
 
 @inject ICurrentGameService Game
 @inject IUiService UI
-@inject IUnlockService Unlock
+@inject IPurchaseService Purchase
 @inject ITooltipService Tooltips
 
 <section class="shop-menu panel">
@@ -24,8 +24,8 @@
         }
         else
         {
-            var unlocked = GetByState(type.Value, UnlockHelper.State.Unlocked).ToList();
-            var avaliable = GetByState(type.Value, UnlockHelper.State.Available).ToList();
+            var avaliable = GetUpgrades(type.Value, UnlockHelper.State.Available).ToList(); 
+            var unlocked = GetUnlockeds(Game.CurrentGame!, type.Value).ToList();
 
             <div class="shop-block">
                 <h4>@type.Value</h4>
@@ -68,69 +68,83 @@
     [Parameter] public string? SelectedId { get; set; }
 
     // ===== DTO comum pra UI =====
-    private readonly record struct ViewItem(string Id, string? Name, UnlockHelper.State State);
+    private readonly record struct ViewItem(
+        string Id,
+        string? Name,
+        UnlockHelper.State State,
+        ItemHelper.ItemType Kind
+    );
 
     // ===== Mapeia o item do menu lateral =====
     private static ItemHelper.ItemType? MapNavToType(string? navId) => navId switch
     {
         "i1" => ItemHelper.ItemType.Stage,
-        "i2" => ItemHelper.ItemType.Expansion,   // (sem uso aqui)
+        "i2" => ItemHelper.ItemType.Expansion,
         "i3" => ItemHelper.ItemType.Expedition, // (sem uso aqui)
         "i4" => ItemHelper.ItemType.Character,
         "i5" => ItemHelper.ItemType.Tech,
         "i6" => ItemHelper.ItemType.Local,
         "i7" => ItemHelper.ItemType.Upgrade,
-        "i8" => ItemHelper.ItemType.Character,
+        "i8" => ItemHelper.ItemType.Specialty,
         _ => null
     };
 
-    // Para tooltip: como estamos mostrando UPGRADES em todas as seções,
-    // o hover é de Upgrade em todas (exceto se você quiser tooltip do alvo).
-    private static HoverType? MapHover(ItemHelper.ItemType t) => HoverType.Upgrade;
+    private static HoverType? MapHover(ItemHelper.ItemType t) => t switch
+    {
+        ItemHelper.ItemType.Upgrade => HoverType.Upgrade,
+        ItemHelper.ItemType.Character => HoverType.Character,
+        ItemHelper.ItemType.Tech => HoverType.Tech,
+        ItemHelper.ItemType.Local => HoverType.Local,
+        _ => null
+    };
 
-    // ===== Helpers de filtro por "tipo" de upgrade =====
-    // Ajuste estes métodos para casar com o seu modelo (nome da enum/propriedade)
     private static bool IsUnlockStage(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.StageUnlock;
     private static bool IsUnlockCharacter(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.CharacterUnlock;
     private static bool IsUnlockLocal(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.LocalUnlock;
+    private static bool IsUnlockTech(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.TechUnlock;
+    private static bool IsUnlockExpansion(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.ExpansionUnlock;
 
     private static bool IsUnlockAny(UpgradeModel u) =>
-        IsUnlockStage(u) || IsUnlockCharacter(u) || IsUnlockLocal(u);
+        IsUnlockStage(u) || IsUnlockCharacter(u) || IsUnlockLocal(u) || IsUnlockExpansion(u) || IsUnlockTech(u);
 
-    // ===== Ordem de exibição (opcional para upgrades) =====
     private static IReadOnlyList<string> GetOrder(ItemHelper.ItemType type) => type switch
     {
-        // Como agora todas as seções mostram upgrades, você pode usar uma ordem global de upgrades
-        // Se tiver uma ordem específica, mantenha aqui:
         ItemHelper.ItemType.Upgrade => UpgradeData.ShowOrder,
         ItemHelper.ItemType.Stage => UpgradeData.ShowOrder,
         ItemHelper.ItemType.Character => UpgradeData.ShowOrder,
         ItemHelper.ItemType.Tech => UpgradeData.ShowOrder,
         ItemHelper.ItemType.Local => UpgradeData.ShowOrder,
+        ItemHelper.ItemType.Expansion => UpgradeData.ShowOrder,
         _ => Array.Empty<string>()
     };
 
-    // ===== Projeção: SEMPRE parte dos Upgrades e filtra por "tipo" =====
-    private static IEnumerable<ViewItem> Project(GameModel g, ItemHelper.ItemType type)
+    private static IEnumerable<ViewItem> Project(GameModel g, ItemHelper.ItemType navType)
     {
         IEnumerable<UpgradeModel> src = g.Upgrades?.Values ?? Enumerable.Empty<UpgradeModel>();
 
-        src = type switch
+        src = navType switch
         {
             ItemHelper.ItemType.Stage => src.Where(IsUnlockStage),
             ItemHelper.ItemType.Character => src.Where(IsUnlockCharacter),
             ItemHelper.ItemType.Local => src.Where(IsUnlockLocal),
+            ItemHelper.ItemType.Tech => src.Where(IsUnlockTech),
+            ItemHelper.ItemType.Expansion => src.Where(IsUnlockExpansion),
 
             ItemHelper.ItemType.Upgrade => src.Where(u => !IsUnlockAny(u)),
 
             _ => Enumerable.Empty<UpgradeModel>()
         };
 
-        return src.Select(u => new ViewItem(u.Id, u.Name, u.State));
+        return src.Select(u => new ViewItem(
+            Id: u.Id,
+            Name: u.Name,
+            State: u.State,
+            Kind: ItemHelper.ItemType.Upgrade
+        ));
     }
 
     // ===== Filtro por estado + ordenação =====
-    private IEnumerable<ViewItem> GetByState(ItemHelper.ItemType type, UnlockHelper.State desired)
+    private IEnumerable<ViewItem> GetUpgrades(ItemHelper.ItemType type, UnlockHelper.State desired)
     {
         var g = Game.CurrentGame;
         if (g is null) return Enumerable.Empty<ViewItem>();
@@ -157,30 +171,115 @@
             .Where(it => it.State == desired)
             .OrderBy(it => OrderIndex(it.Id));
     }
+    private static IEnumerable<ViewItem> GetUnlockeds(GameModel g, ItemHelper.ItemType navType)
+    {
+        return navType switch
+        {
+            ItemHelper.ItemType.Character => (g.Characters?.Values ?? Enumerable.Empty<CharacterModel>())
+                .Where(c => c.State == UnlockHelper.State.Unlocked)
+                .Select(c => new ViewItem(c.Id, c.Name, c.State, ItemHelper.ItemType.Character)),
+
+            ItemHelper.ItemType.Tech => (g.Techs?.Values ?? Enumerable.Empty<TechModel>())
+                .Where(t => t.State == UnlockHelper.State.Unlocked)
+                .Select(t => new ViewItem(t.Id, t.Name, t.State, ItemHelper.ItemType.Tech)),
+
+            ItemHelper.ItemType.Local => (g.Locals?.Values ?? Enumerable.Empty<LocalModel>())
+                .Where(l => l.State == UnlockHelper.State.Unlocked)
+                .Select(l => new ViewItem(l.Id, l.Name, l.State, ItemHelper.ItemType.Local)),
+
+            ItemHelper.ItemType.Stage => (g.Stages?.Values ?? Enumerable.Empty<StageModel>())
+                .Where(s => s.State == UnlockHelper.State.Unlocked)
+                .Select(s => new ViewItem(s.Id, s.Name, s.State, ItemHelper.ItemType.Stage)),
+
+            ItemHelper.ItemType.Expansion => (g.Expansions?.Values ?? Enumerable.Empty<ExpansionModel>())
+                .Where(e => e.State == UnlockHelper.State.Unlocked)
+                .Select(e => new ViewItem(e.Id, e.UnlockId, e.State, ItemHelper.ItemType.Expansion)),
+
+            ItemHelper.ItemType.Upgrade => (g.Upgrades?.Values ?? Enumerable.Empty<UpgradeModel>())
+                .Where(u => !IsUnlockAny(u) && u.State == UnlockHelper.State.Unlocked)
+                .Select(u => new ViewItem(u.Id, u.Name, u.State, ItemHelper.ItemType.Upgrade)),
+
+            _ => Enumerable.Empty<ViewItem>()
+        };
+    }
 
     // ===== Botão de item =====
-    private RenderFragment RenderItemButton(ViewItem it, ItemHelper.ItemType type, bool isUnlocked) => builder =>
+    private RenderFragment RenderItemButton(ViewItem it, ItemHelper.ItemType navType, bool isUnlocked) => builder =>
     {
         var seq = 0;
         builder.OpenElement(seq++, "button");
-        builder.AddAttribute(seq++, "class", $"shop-item {(isUnlocked ? "is-unlocked" : "is-avaliable")}");
+        builder.AddAttribute(seq++, "type", "button");
 
-        // Hover/focus -> tooltip (sempre Upgrade aqui)
-        builder.AddAttribute(seq++, "onmouseenter", EventCallback.Factory.Create(this, () => ShowTip(HoverType.Upgrade, it.Id)));
-        builder.AddAttribute(seq++, "onmouseleave", EventCallback.Factory.Create(this, ClearTip));
-        builder.AddAttribute(seq++, "onfocus", EventCallback.Factory.Create(this, () => ShowTip(HoverType.Upgrade, it.Id)));
-        builder.AddAttribute(seq++, "onblur", EventCallback.Factory.Create(this, ClearTip));
+        // tipo real do item (Upgrade = compra; Character/Tech/Local/Stage = alvo desbloqueado)
+        var kind = it.Kind;
 
-        // Clique: nas listas acima, o item é um UPGRADE (mesmo em Stages/Characters/Tech/Local),
-        // então para "Available" chamamos UnlockUpgrade. Para "Unlocked" não faz nada.
-        if (!isUnlocked)
-            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => Unlock.UnlockUpgrade(it.Id)));
-        else
-            builder.AddAttribute(seq++, "aria-disabled", "true");
+        // flags de apresentação
+        var isTarget = isUnlocked && kind != ItemHelper.ItemType.Upgrade; // alvo já desbloqueado (não é upgrade)
+        var isPurchased = isUnlocked && kind == ItemHelper.ItemType.Upgrade; // upgrade já comprado
+
+        // cálculo de afford só faz sentido para upgrade ainda não comprado
+        bool canAffordForBuy = false;
+        string? why = null;
+
+        if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade)
+        {
+            try
+            {
+                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, out why);
+            }
+            catch (NotSupportedException ex) { why = ex.Message; canAffordForBuy = false; }
+            catch (NotImplementedException ex) { why = ex.Message; canAffordForBuy = false; }
+            catch (Exception ex) { why = ex.Message; canAffordForBuy = false; }
+        }
+
+        // classes visuais
+        // - available upgrade: "is-available" (+ "is-locked" se não pode comprar)
+        // - purchased upgrade: "is-purchased"
+        // - unlocked target:   "is-unlocked"
+        var css =
+            !isUnlocked && kind == ItemHelper.ItemType.Upgrade
+                ? $"shop-item is-available {(canAffordForBuy ? "" : "is-locked")}"
+            : isPurchased
+                ? "shop-item is-purchased"
+            : "shop-item is-unlocked";
+
+        builder.AddAttribute(seq++, "class", css);
+
+        // aria/disabled
+        var disabled = isTarget || isPurchased || (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy);
+        builder.AddAttribute(seq++, "aria-disabled", disabled ? "true" : "false");
+        if (disabled) builder.AddAttribute(seq++, "disabled", true);
+
+        // title com motivo se bloqueado por saldo
+        if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy && !string.IsNullOrWhiteSpace(why))
+            builder.AddAttribute(seq++, "title", why);
+
+        // Hover/focus -> tooltip conforme o tipo real
+        var hover = MapHover(kind); // kind = it.Kind real (Upgrade, Local, Tech, Character)
+        if (hover.HasValue)
+        {
+            builder.AddAttribute(seq++, "onmouseenter", EventCallback.Factory.Create(this, () => ShowTip(hover.Value, it.Id)));
+            builder.AddAttribute(seq++, "onmouseleave", EventCallback.Factory.Create(this, ClearTip));
+            builder.AddAttribute(seq++, "onfocus", EventCallback.Factory.Create(this, () => ShowTip(hover.Value, it.Id)));
+            builder.AddAttribute(seq++, "onblur", EventCallback.Factory.Create(this, ClearTip));
+        }
+
+
+        // clique apenas em available upgrade com saldo
+        if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && canAffordForBuy)
+        {
+            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, async () =>
+            {
+                var res = await Purchase.Purchase(ItemHelper.ItemType.Upgrade, it.Id);
+                if (!res.Success && !string.IsNullOrWhiteSpace(res.Reason))
+                    Console.WriteLine(res.Reason); // ou UI/Toast
+            }));
+        }
 
         builder.AddContent(seq++, it.Name ?? it.Id);
         builder.CloseElement();
     };
+
 
     // ===== Tooltip =====
     private void ShowTip(HoverType hoverType, string id)

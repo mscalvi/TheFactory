@@ -20,7 +20,7 @@ namespace FurmaIdle.Data
                 Name = "Fundação de Guildas",
                 Icon = "icons/techs/t011.jpg",
                 Description = "",
-                UnlockId = "l00",
+                UnlockId = "ut0110",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k01,
                 State = UnlockHelper.State.Blocked,
@@ -35,7 +35,7 @@ namespace FurmaIdle.Data
                 Name = "Vilas Litorâneas",
                 Icon = "icons/techs/t021.jpg", // CORRIGIDO
                 Description = "",
-                UnlockId = "l00",
+                UnlockId = "ut0210",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k02,
                 State = UnlockHelper.State.Blocked,
@@ -47,7 +47,7 @@ namespace FurmaIdle.Data
                 Name = "Litorais Rochosos",
                 Icon = "icons/techs/t022.jpg", // CORRIGIDO
                 Description = "",
-                UnlockId = "l01",
+                UnlockId = "ut0220",
                 Level = 2,
                 PricingId = PricingHelper.PricingId.TechUnlock1k02,
                 State = UnlockHelper.State.Blocked,
@@ -62,7 +62,7 @@ namespace FurmaIdle.Data
                 Name = "Vida em Muradas",
                 Icon = "icons/techs/t031.jpg", // CORRIGIDO
                 Description = "",
-                UnlockId = "l00",
+                UnlockId = "ut0310",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k03,
                 State = UnlockHelper.State.Blocked,
@@ -74,7 +74,7 @@ namespace FurmaIdle.Data
                 Name = "Sobrevivência na Selva",
                 Icon = "icons/techs/t032.jpg", // CORRIGIDO
                 Description = "",
-                UnlockId = "l02",
+                UnlockId = "ut0320",
                 Level = 2,
                 PricingId = PricingHelper.PricingId.TechUnlock1k03,
                 State = UnlockHelper.State.Blocked,
@@ -89,7 +89,7 @@ namespace FurmaIdle.Data
                 Name = "Construção de Barcos",
                 Icon = "icons/techs/t041.jpg", // CORRIGIDO
                 Description = "",
-                UnlockId = "l00",
+                UnlockId = "ut0410",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k04,
                 State = UnlockHelper.State.Blocked,
@@ -104,7 +104,7 @@ namespace FurmaIdle.Data
                 Name = "Presas",
                 Icon = "icons/techs/t051.jpg",
                 Description = "",
-                UnlockId = "l02",
+                UnlockId = "ut0510",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k05,
                 State = UnlockHelper.State.Blocked,
@@ -116,7 +116,7 @@ namespace FurmaIdle.Data
                 Name = "Predadores",
                 Icon = "icons/techs/t052.jpg",
                 Description = "",
-                UnlockId = "l02",
+                UnlockId = "ut0520",
                 Level = 2,
                 PricingId = PricingHelper.PricingId.TechUnlock1k05,
                 State = UnlockHelper.State.Blocked,
@@ -126,9 +126,9 @@ namespace FurmaIdle.Data
             {
                 Id = "t053",
                 Name = "Criaturas Insanas",
-                Icon = "icons/techs/t053.jpg", // CORRIGIDO
+                Icon = "icons/techs/t053.jpg",
                 Description = "",
-                UnlockId = "l03",
+                UnlockId = "ut0530",
                 Level = 3,
                 PricingId = PricingHelper.PricingId.TechUnlock1k05,
                 State = UnlockHelper.State.Blocked,

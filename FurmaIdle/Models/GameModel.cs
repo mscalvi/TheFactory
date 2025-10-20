@@ -16,7 +16,9 @@
         // public RuntimeModel Runtime { get; set; } = new RuntimeModel();
 
         // Total
-        public StatsModel Stats { get; set; } = new();
+        public StatsModel ExpeditionStats { get; set; } = new();
+        public StatsModel ExpansionStats { get; set; } = new();
+        public StatsModel GameStats { get; set; } = new();
         public Dictionary<string, CoinModel> Coins { get; set; } = new();
         public Dictionary<string, ClickModel> Clicks { get; set; } = new();
         public Dictionary<string, StageModel> Stages { get; set; } = new();

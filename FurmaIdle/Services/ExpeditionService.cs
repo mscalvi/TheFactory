@@ -26,7 +26,7 @@ namespace FurmaIdle.Services
             foreach (var id in expedition.PartyIds)
             {
                 if (string.IsNullOrWhiteSpace(id)) continue;
-                var c = _locate.LocateCharacter(id);
+                var c = _locate.LocateCharacter(_game.CurrentGame, id);
                 if (c != null) result.Add(c);
             }
             return result;

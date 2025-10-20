@@ -12,7 +12,9 @@
             Tech,
             Local,
             Upgrade,
+            Contract,
             // Others
+            Specialty,
             Expedition,
             Expansion,
             Click,

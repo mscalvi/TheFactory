@@ -46,7 +46,9 @@ namespace FurmaIdle.Services
                 {
                     SchemaVersion = 1,
                     LastTick = DateTime.UtcNow,
-                    Stats = new StatsModel(),
+                    ExpeditionStats = new StatsModel(),
+                    ExpansionStats = new StatsModel(),
+                    GameStats = new StatsModel(),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),
                     Coins = Seed("[CGS] Coins", () => CoinsData.CreateInitialStates()),
@@ -72,7 +74,6 @@ namespace FurmaIdle.Services
             }
             else
             {
-                // (Opcional) Backfill/normalizações de versões antigas
                 var changed = BackfillLoad(loaded);
 
                 CurrentGame.Attach(loaded);

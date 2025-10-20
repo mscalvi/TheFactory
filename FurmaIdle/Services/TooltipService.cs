@@ -10,7 +10,7 @@ using System.Text;
 
 namespace FurmaIdle.Services
 {
-    public enum HoverType { Character, Specialty, Tech, Local, Upgrade }
+    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract }
     public sealed record HoverTip(string Title, string Body);
 
     public interface ITooltipService

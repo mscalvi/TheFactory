@@ -28,8 +28,13 @@
             ClickGain,
             // Stages
             StageUnlock,
+            PartySize,
             // Locals
-            LocalUnlock
+            LocalUnlock,
+            // Tech
+            TechUnlock,
+            // Expansions
+            ExpansionUnlock,
         }
 
         public enum EffectOperation

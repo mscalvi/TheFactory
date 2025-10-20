@@ -16,6 +16,11 @@ namespace FurmaIdle.Models
         public UnlockHelper.Persistence Persistence { get; set; }
         public UnlockHelper.State State { get; set; }
 
+        // Factor
+        public double GainFactor { get; set; }
+        public double TimeFactor { get; set; }
+        public double PriceFactor { get; set; }
+
         // Info
         public int Level { get; set; }
         public string? KnowledgeFactor1 { get; set; }

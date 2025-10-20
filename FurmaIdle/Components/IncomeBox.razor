@@ -30,9 +30,6 @@
 @code {
     private bool IsReady = false;
 
-    Dictionary<string, string> CoinsTotal = new();
-    Dictionary<string, double> CoinsPerSecond = new();
-
     protected override void OnInitialized()
     {
         Game.GameChanged += OnGameChanged;
@@ -44,6 +41,9 @@
         IsReady = Game.IsReady && Game.CurrentGame is not null;
         InvokeAsync(StateHasChanged);
     }
+
+    Dictionary<string, string> CoinsTotal = new();
+    Dictionary<string, double> CoinsPerSecond = new();
 
     private Dictionary<string, string> GetCoins()
     {
@@ -58,7 +58,7 @@
 
         foreach (string coinId in order.Keys)
         {
-            CoinModel coin = Locate.LocateCoin(coinId);
+            CoinModel coin = Locate.LocateCoin(g, coinId);
             if (coin is null)
                 continue;
 
@@ -68,7 +68,7 @@
             }
 
             long current = 0;
-            var statsCoins = g.Stats?.Coins;
+            var statsCoins = g.ExpeditionStats?.Coins;
 
             if (statsCoins is not null && statsCoins.TryGetValue(coinId, out var val))
                 current = val;
