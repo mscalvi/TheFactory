@@ -31,3 +31,18 @@ button {
     background: #0f0f12;
     color: #e7e7ea;
 }
+
+.icon-button {
+    width: 45px;
+    height: 45px;
+    max-height: 45px;
+    max-width: 45px;
+    min-height: 45px;
+    min-width: 45px;
+    display: inline-flex; /* mantém quadrado mesmo com conteúdo */
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* evita o botão “esticar” por causa do padding */
+    overflow: hidden; /* corta texto se sobrar */
+    white-space: nowrap;
+}

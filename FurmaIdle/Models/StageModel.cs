@@ -11,7 +11,10 @@ namespace FurmaIdle.Models
         public string Description { get; set; }
         public string? UnlockId { get; set; }
         public int? Level { get; set; }
+
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);
+        public Dictionary<int, bool>? ActiveContractsLevels { get; set; } = new Dictionary<int, bool>();
+        public Dictionary<string, double> ActiveContractsProgress { get; set; } = new Dictionary<string, double>();
 
         public PricingHelper.PricingId? PricingId { get; set; }
         public UnlockHelper.State State { get; set; }

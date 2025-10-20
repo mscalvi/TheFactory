@@ -13,6 +13,7 @@ builder.Services.AddSingleton<ICreateGameService, CreateGameService>();
 builder.Services.AddSingleton<ICurrentGameService, CurrentGameService>();
 
 builder.Services.AddSingleton<ITickService, TickService>();
+builder.Services.AddSingleton<ContractsTickSink>();
 
 builder.Services.AddSingleton<IUiService, UiService>();
 builder.Services.AddSingleton<ITooltipService, TooltipService>();

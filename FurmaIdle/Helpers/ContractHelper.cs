@@ -34,7 +34,7 @@ namespace FurmaIdle.Helpers
             var price = bal.BaseCost * Math.Pow(bal.Growth, Quant);
             return (long)Math.Ceiling(price);
         }
-        public static (string resId, double cps, double spc) ProdParams(ContractModel c)
+        public static (string CoinId, double CoinsPerCycle, double SecondsPerCycle) ProdParams(ContractModel c)
         {
             if (!GetContractBase(c, out var bal)) return ("", 0, 1);
             return (bal.CoinId, bal.CoinsPerCycle, bal.SecondsPerCycle);

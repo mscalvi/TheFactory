@@ -232,18 +232,14 @@
             catch (Exception ex) { why = ex.Message; canAffordForBuy = false; }
         }
 
-        // classes visuais
-        // - available upgrade: "is-available" (+ "is-locked" se não pode comprar)
-        // - purchased upgrade: "is-purchased"
-        // - unlocked target:   "is-unlocked"
         var css =
             !isUnlocked && kind == ItemHelper.ItemType.Upgrade
-                ? $"shop-item is-available {(canAffordForBuy ? "" : "is-locked")}"
+                ? $"shop-item is-available{(canAffordForBuy ? "" : " is-locked")}"
             : isPurchased
                 ? "shop-item is-purchased"
             : "shop-item is-unlocked";
 
-        builder.AddAttribute(seq++, "class", css);
+        builder.AddAttribute(seq++, "class", $"{css} icon-button");
 
         // aria/disabled
         var disabled = isTarget || isPurchased || (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy);
@@ -276,7 +272,7 @@
             }));
         }
 
-        builder.AddContent(seq++, it.Name ?? it.Id);
+        builder.AddContent(seq++, it.Id ?? it.Name);
         builder.CloseElement();
     };
 

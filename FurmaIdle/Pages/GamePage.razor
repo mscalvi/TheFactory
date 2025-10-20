@@ -153,9 +153,19 @@ else
         </section>
 
         <!-- Contratos -->
-        <section class="contracts-menu panel">
-            <ContractsMenu />
-        </section>
+        @if (Game.IsReady && Game.CurrentGame?.SelectedStageId is not null)
+        {
+            <section class="contracts-menu panel">
+                <ContractsMenu StageId="@Game.CurrentGame.SelectedStageId" />
+            </section>
+        }
+        else
+        {
+            <section class="contracts-menu panel">
+                <div>Carregando…</div>
+            </section>
+        }
+
     </div>
 }
 

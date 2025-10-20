@@ -98,7 +98,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ContractGain2m01] = new Entry("m01", 500, 1.8),
                 [PricingId.ContractGain3m01] = new Entry("m01", 10000, 1.8),
                 [PricingId.ContractGain4m01] = new Entry("m01", 150000, 1.8),
-                [PricingId.ContractLevelUnlock1m01] = new Entry("m01", 50, 10.0),
+                [PricingId.ContractLevelUnlock1m01] = new Entry("m01", 10, 17.0),
                 [PricingId.ContractTime1m01] = new Entry("m01", 200, 2.9),
                 [PricingId.ContractTime2m01] = new Entry("m01", 2000, 2.9),
                 [PricingId.ContractTime3m01] = new Entry("m01", 40000, 2.9),
