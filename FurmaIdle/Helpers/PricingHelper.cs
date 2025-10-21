@@ -6,9 +6,14 @@ namespace FurmaIdle.Helpers
     {
         public enum PricingId
         {
+            // Characteres
             CharacterUnlock0m01,
             CharacterUnlock1m01,
+
+            // Clicks
             ClickGain1m01,
+
+            // Contracts
             ContractCapUnlock1m01,
             ContractCost1m01,
             ContractCost2m01,
@@ -27,20 +32,40 @@ namespace FurmaIdle.Helpers
             ContractUnlock2m01,
             ContractUnlock3m01,
             ContractUnlock4m01,
+            ContractAdd1m01,
+            ContractAdd2m01,
+            ContractAdd3m01,
+            ContractAdd4m01,
+            ContractAdd5m01,
+            ContractAdd6m01,
+
+            // Knowledges
             KnowledgeUnlock1m01,
             KnowledgeGain1m01,
+
+            // Resources
             ResourceGain1m01,
             ResourceGain2m01,
             ResourceUnlock1m01,
+
+            // Stages
             StageUnlock1m01,
+
+            // Locals
             LocalUnlock0m01,
             LocalUnlock1m01,
+
+            // Techs
             TechUnlock1k01,
             TechUnlock1k02,
             TechUnlock1k03,
             TechUnlock1k04,
             TechUnlock1k05,
+
+            // Expansions
             Expansions1,
+
+            // Party
             PartySize
         }
 
@@ -107,6 +132,12 @@ namespace FurmaIdle.Helpers
                 [PricingId.ContractUnlock2m01] = new Entry("m01", 200, 1.0),
                 [PricingId.ContractUnlock3m01] = new Entry("m01", 4000, 1.0),
                 [PricingId.ContractUnlock4m01] = new Entry("m01", 50000, 1.0),
+                [PricingId.ContractAdd1m01] = new Entry("m01", 10, 1.12),
+                [PricingId.ContractAdd2m01] = new Entry("m01", 100, 1.13),
+                [PricingId.ContractAdd3m01] = new Entry("m01", 2000, 1.14),
+                [PricingId.ContractAdd4m01] = new Entry("m01", 50000, 1.19),
+                [PricingId.ContractAdd5m01] = new Entry("m01", 100000, 1.21),
+                [PricingId.ContractAdd6m01] = new Entry("m01", 5000000, 1.23),
                 [PricingId.KnowledgeUnlock1m01] = new Entry("m01", 100000, 1.0, CostFactor.KnowledgesUnlocked, EffectHelper.EffectOperation.Multiplicative, 1.7),
                 [PricingId.KnowledgeGain1m01] = new Entry("m01", 50000, 2.9),
                 [PricingId.ResourceGain1m01] = new Entry("m01", 9000, 1.0),

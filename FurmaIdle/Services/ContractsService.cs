@@ -8,16 +8,19 @@ using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using static FurmaIdle.Helpers.LogHelper;
+using static FurmaIdle.Helpers.UnlockHelper;
 
 namespace FurmaIdle.Services
 {
     public interface IContractsService
     {
         void TickContracts(GameModel game, string stageId, double dtSeconds);
-
+        int GetContractsCap(GameModel game, string stageId);
+        int GetContractsUsed(GameModel game, string stageId);
         bool IsMaxContract(GameModel game, string stageId);
-        bool IsLevelLocked (GameModel game, string stageId, int contractLevel);
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
+        string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
+
         bool BuyContract(GameModel game, string stageId, string contractId);
     }
 
@@ -81,12 +84,67 @@ namespace FurmaIdle.Services
 
         public bool IsMaxContract(GameModel game, string stageId)
         {
+            // 0) Stage válido
+            var stage = _locate.LocateStage(game, stageId);
+            if (stage is null)
+            {
+                return true;
+            }
+
+            // 1) Expedição ativa
+            var ex = stage.ActiveExpedition;
+            if (ex is null || ex.ExpeditionState != UnlockHelper.ExpeditionState.Active)
+            {
+                return true;
+            }
+
+            // 2) Party válida?
+            var party = ex.PartyIds ?? new List<string>();
+            if (party.Count == 0)
+            {
+                return true;
+            }
+
+            // 3) Cap total
+            int contractsMax = 0;
+            foreach (var characterId in party.Distinct(StringComparer.Ordinal))
+            {
+                if (!game.Characters.TryGetValue(characterId, out var character) || character is null)
+                {
+                    continue;
+                }
+
+                var cap = Math.Max(0, character.ContractCap);
+                contractsMax += cap;
+            }
+
+            if (contractsMax <= 0)
+            {
+                return true;
+            }
+
+            // 4) Usados = soma das QUANTIDADES no dicionário ActiveContracts
             int contractsTotal = 0;
+            if (stage.ActiveContracts is not null)
+            {
+                foreach (var kv in stage.ActiveContracts)
+                {
+                    var contractId = kv.Key;
+                    var qty = Math.Max(0, kv.Value);
+                    contractsTotal += qty;
+                }
+            }
+
+            Console.WriteLine($"[Contracts] Usados: {contractsTotal} / Cap: {contractsMax}");
+            return contractsTotal >= contractsMax;
+        }
+        public int GetContractsCap(GameModel game, string stageId)
+        {
             int contractsMax = 0;
 
             var stage = _locate.LocateStage(game, stageId);
 
-            if (stage.ActiveExpedition.PartyIds.Count == 0) return true;
+            if (stage.ActiveExpedition.PartyIds.Count == 0) return 0;
 
             foreach (var characterId in stage.ActiveExpedition.PartyIds)
             {
@@ -94,29 +152,21 @@ namespace FurmaIdle.Services
                 contractsMax += character.ContractCap;
             }
 
-            foreach(var contract in stage.ActiveContracts)
+            return contractsMax;
+        }
+        public int GetContractsUsed(GameModel game, string stageId)
+        {
+            int contractsTotal = 0;
+
+            var stage = _locate.LocateStage(game, stageId);
+
+            foreach (var contract in stage.ActiveContracts)
             {
                 contractsTotal += contract.Value;
             }
 
-            if (contractsTotal >= contractsMax)
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
+            return contractsTotal;
         }
-
-        public bool IsLevelLocked(GameModel game, string stageId, int contractLevel)
-        {
-            game.Stages.TryGetValue(stageId, out var stage);
-
-            if (stage.ActiveContractsLevels is null) return false;
-
-            return stage.ActiveContractsLevels.ContainsKey(contractLevel);
-        }
-
         public IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId)
         {
             if (game is null) return Array.Empty<string>();
@@ -154,6 +204,21 @@ namespace FurmaIdle.Services
             // (Opcional) ordenar
             result.Sort(StringComparer.Ordinal);
             return result;
+        }
+        public string GetChosenContractIdForLevel(GameModel game, string stageId, int level)
+        {
+            var stage = _locate.LocateStage(game, stageId);
+
+            if (stage?.ActiveContracts is null) return null;
+
+            foreach (var kv in stage.ActiveContracts)
+            {
+                if (kv.Value <= 0) continue;
+                var cm = _locate.LocateContract(game, kv.Key);
+                if (cm is not null && cm.Level == level)
+                    return kv.Key;
+            }
+            return null;
         }
 
 

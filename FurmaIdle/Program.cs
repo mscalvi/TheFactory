@@ -25,6 +25,7 @@ builder.Services.AddSingleton<IIncomeService, IncomeService>();
 builder.Services.AddSingleton<IPurchaseService, PurchaseService>();
 builder.Services.AddSingleton<IContractsService, ContractsService>();
 builder.Services.AddSingleton<IUpgradeService, UpgradeService>();
+builder.Services.AddSingleton<IExpeditionService, ExpeditionService>();
 
 builder.Services.AddSingleton<IGameStore, GameStore>();
 

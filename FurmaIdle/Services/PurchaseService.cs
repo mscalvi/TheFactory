@@ -9,7 +9,7 @@ namespace FurmaIdle.Services
     {
         Task<PurchaseResult> Purchase(ItemHelper.ItemType type, string itemId);
 
-        bool CanAfford(ItemHelper.ItemType type, string itemId, out string? reason);
+        bool CanAfford(ItemHelper.ItemType type, string itemId);
         IReadOnlyList<CostLine> PreviewCost(ItemHelper.ItemType kind, string itemId);
     }
 
@@ -124,9 +124,8 @@ namespace FurmaIdle.Services
 
             return result;
         }
-        public bool CanAfford(ItemHelper.ItemType kind, string itemId, out string? reason)
+        public bool CanAfford(ItemHelper.ItemType kind, string itemId)
         {
-            reason = null;
             var m = _game.CurrentGame ?? throw new InvalidOperationException("Jogo não carregado.");
             var s = m.ExpeditionStats ?? throw new InvalidOperationException("ExpeditionStats indisponível.");
 
@@ -135,7 +134,6 @@ namespace FurmaIdle.Services
             {
                 if (!HasEnough(s, c, out var why))
                 {
-                    reason = why;
                     return false;
                 }
             }
@@ -196,63 +194,82 @@ namespace FurmaIdle.Services
         // Helpers Internos
         public IReadOnlyList<CostLine> PreviewCost(ItemHelper.ItemType kind, string itemId)
         {
-            if (string.IsNullOrWhiteSpace(itemId)) throw new ArgumentException("itemId inválido.", nameof(itemId));
+            if (string.IsNullOrWhiteSpace(itemId))
+                throw new ArgumentException("itemId inválido.", nameof(itemId));
 
             switch (kind)
             {
                 case ItemHelper.ItemType.Specialty:
                     {
                         var sp = _locate.LocateSpecialty(_game.CurrentGame, itemId);
-                        if (sp is null) throw new InvalidOperationException($"Specialty '{itemId}' inexistente.");
+                        ThrowIfNull(sp, $"Specialty '{itemId}' inexistente.");
 
-                        return new[]
-                        {
-                        new CostLine("resource", sp.PricingId!, sp.Cost)
-                    };
+                        var coinId = sp!.PricingId;
+                        if (string.IsNullOrWhiteSpace(coinId))
+                            throw new InvalidOperationException($"Specialty '{itemId}' sem PricingId.");
+
+                        var group = InferCurrencyGroup(coinId);
+                        var value = sp.Cost;
+                        return new[] { new CostLine(group, coinId, value) };
                     }
 
                 case ItemHelper.ItemType.Upgrade:
                     {
                         var up = _locate.LocateUpgrade(_game.CurrentGame, itemId);
-                        if (up is null) throw new InvalidOperationException($"Upgrade '{itemId}' inexistente.");
+                        ThrowIfNull(up, $"Upgrade '{itemId}' inexistente.");
 
-                        var entry = PricingHelper.PricingCost.Get(up.PricingId);
+                        var entry = PricingHelper.PricingCost.Get(up!.PricingId);
 
                         var coinId = entry.CostCoinId;
-                        var group =
-                            CoinsData.All.ContainsKey(coinId) ? "coin" :
-                            KnowledgeData.All.ContainsKey(coinId) ? "knowledge" :
-                            ResourceData.All.ContainsKey(coinId) ? "resource" :
-                            "coin";
+                        if (string.IsNullOrWhiteSpace(coinId))
+                            throw new InvalidOperationException($"Pricing '{up.PricingId}' sem CoinId.");
 
+                        var group = InferCurrencyGroup(coinId);
                         var value = entry.CostBase;
-
-                        return new[] { new CostLine(@group, coinId, value) };
+                        return new[] { new CostLine(group, coinId, value) };
                     }
 
                 case ItemHelper.ItemType.Tech:
                     {
                         var tech = _locate.LocateTech(_game.CurrentGame, itemId);
-                        if (tech is null) throw new InvalidOperationException($"Tech '{itemId}' inexistente.");
+                        ThrowIfNull(tech, $"Tech '{itemId}' inexistente.");
 
-                        var entry = PricingHelper.PricingCost.Get(tech.PricingId);
+                        var entry = PricingHelper.PricingCost.Get(tech!.PricingId);
 
                         var coinId = entry.CostCoinId;
-                        var group =
-                            CoinsData.All.ContainsKey(coinId) ? "coin" :
-                            KnowledgeData.All.ContainsKey(coinId) ? "knowledge" :
-                            ResourceData.All.ContainsKey(coinId) ? "resource" :
-                            "coin";
+                        if (string.IsNullOrWhiteSpace(coinId))
+                            throw new InvalidOperationException($"Pricing '{tech.PricingId}' sem CoinId.");
 
+                        var group = InferCurrencyGroup(coinId);
                         var value = entry.CostBase;
+                        return new[] { new CostLine(group, coinId, value) };
+                    }
 
-                        return new[] { new CostLine(@group, coinId, value) };
+                case ItemHelper.ItemType.Contract:
+                    {
+                        var contract = _locate.LocateContract(_game.CurrentGame, itemId);
+                        ThrowIfNull(contract, $"Contract '{itemId}' inexistente.");
+
+                        var entry = PricingHelper.PricingCost.Get(contract!.PricingId);
+
+                        var coinId = entry.CostCoinId;
+                        if (string.IsNullOrWhiteSpace(coinId))
+                            throw new InvalidOperationException($"Pricing '{contract.PricingId}' sem CoinId.");
+
+                        var group = InferCurrencyGroup(coinId);
+                        var value = entry.CostBase;
+                        return new[] { new CostLine(group, coinId, value) };
                     }
 
                 default:
                     throw new NotSupportedException($"PreviewCost não implementado para '{kind}'.");
             }
         }
+        private static void ThrowIfNull<T>(T obj, string message) where T : class
+        {
+            if (obj is null) throw new InvalidOperationException(message);
+        }
+
         private static bool HasEnough(StatsModel s, CostLine c, out string? reason)
         {
             reason = null;
@@ -300,6 +317,26 @@ namespace FurmaIdle.Services
                     return false;
             }
         }
+        private static string InferCurrencyGroup(string coinId)
+        {
+            if (string.IsNullOrWhiteSpace(coinId)) return "coin"; // fallback seguro
+
+            // 1) prefixo (mais barato/estável se você segue convenção)
+            // m01 -> coin, r10 -> resource, k02 -> knowledge
+            var ch = char.ToLowerInvariant(coinId[0]);
+            if (ch == 'm') return "coin";
+            if (ch == 'r') return "resource";
+            if (ch == 'k') return "knowledge";
+
+            // 2) data registries (se existirem com cobertura)
+            if (CoinsData.All.ContainsKey(coinId)) return "coin";
+            if (ResourceData.All.ContainsKey(coinId)) return "resource";
+            if (KnowledgeData.All.ContainsKey(coinId)) return "knowledge";
+
+            // 3) fallback
+            return "coin";
+        }
+
         private static long GetOrZero(Dictionary<string, long> dict, string id)
             => dict is not null && dict.TryGetValue(id, out var v) ? v : 0L;
         private static void AddOrSet(Dictionary<string, long> dict, string id, long delta)

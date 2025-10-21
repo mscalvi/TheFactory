@@ -21,5 +21,10 @@
             InBase,
             OnStage
         }
+        public enum ExpeditionState
+        {
+            Active,
+            Idle,
+        }
     }
 }

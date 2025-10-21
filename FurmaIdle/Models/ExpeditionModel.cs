@@ -1,10 +1,21 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Helpers;
+
+namespace FurmaIdle.Models
 {
     public class ExpeditionModel
     {
-        public string Id { get; set; }
-        public List<string>? PartyIds { get; set; } = new List<string>();
-        public TimeOnly TimeStart { get; set; }
-        public TimeOnly? TimeFinish { get; set; }
+        public string StageId { get; set; } = "";                
+        public List<string> PartyIds { get; set; } = new();
+        public UnlockHelper.ExpeditionState? ExpeditionState { get; set; } = UnlockHelper.ExpeditionState.Idle;
+        public DateTimeOffset? StartedAt { get; set; }
+        public DateTimeOffset? FinishedAt { get; set; }
+
+        public ExpeditionModel() { }
+        public ExpeditionModel(string stageId)
+        {
+            StageId = stageId ?? "";
+            ExpeditionState = UnlockHelper.ExpeditionState.Idle;
+            PartyIds = new();
+        }
     }
 }

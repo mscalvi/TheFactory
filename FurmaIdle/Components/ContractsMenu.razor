@@ -5,17 +5,27 @@
 @inject ICurrentGameService Game
 @inject IContractsService Contracts
 @inject ILocateService Locate
+@inject IPurchaseService Purchase
 
-@if (!Game.IsReady || string.IsNullOrWhiteSpace(StageId) || _stage is null)
+@implements IDisposable
+
+@if (!Game.IsReady || string.IsNullOrWhiteSpace(StageId) || _stage is null || !IsExpeditionActive(_stage))
 {
-    <div class="contracts-placeholder">Carregando contratos…</div>
+    <div class="contracts-placeholder">Sem Expedição Ativa</div>
 }
 else
 {
+    var totalCons = Contracts.GetContractsCap(Game.CurrentGame, StageId);
+    var usedCons = Contracts.GetContractsUsed(Game.CurrentGame, StageId);
+
+    <div class="contracts-capbar">
+        <strong>Contratos:</strong> @usedCons / @totalCons
+    </div>
+
     <div class="contracts-grid">
         @for (int lvl = 1; lvl <= _stage.MaxContractLevel; lvl++)
         {
-            var level = lvl;  // <- captura estável para esta iteração
+            var level = lvl;
 
             <div class="contracts-level">
                 @if (level > _stage.ActualContractLevel)
@@ -24,12 +34,39 @@ else
                 }
                 else
                 {
-                    var isChosen = _stage.ActiveContractsLevels?.ContainsKey(level) == true;
+                    var lvlChosen = _stage.lockedContracts.Contains(level) == true;
                     var expanded = _expandedLevel == level;
 
-                    if (isChosen)
+                    if (lvlChosen)
                     {
-                        <div class="level-chosen">Contrato deste nível já foi escolhido.</div>
+                        var chosenCon = ChosenContract(level);
+                        if (string.IsNullOrWhiteSpace(chosenCon.Id))
+                        {
+                            <div class="level-chosen">Contrato deste nível já foi escolhido.</div>
+                        }
+                        else
+                        {
+                            var chosen = Locate.LocateContract(Game.CurrentGame!, chosenCon.Id);
+                            var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, StageId);
+                            var qty = _stage.ActiveContracts?.TryGetValue(chosenCon.Id, out var q) == true ? q : 0;
+                            var canBuy = chosen is not null && CanPurchase(chosen!, _stage!);
+                            var disabled = noCapacity || !canBuy;
+
+                            <div class="contracts-list">
+                                <button type="button"
+                                        class="contract-button icon-button @(disabled ? "is-locked" : null)"
+                                        disabled="@noCapacity"
+                                        aria-disabled="@(noCapacity ? "true" : "false")"
+                                        title="@(disabled
+                                                        ? (noCapacity
+                                                            ? $"Capacidade atingida ({Contracts.GetContractsUsed(Game.CurrentGame, StageId)}/{Contracts.GetContractsCap(Game.CurrentGame, StageId)})."
+                                                            : "Saldo insuficiente.")
+                                                        : null)"
+                                        @onclick="() => BuyContract(chosen!.Id)">
+                                    @chosen!.Name @(qty > 0 ? $"(x{qty})" : null)
+                                </button>
+                            </div>
+                        }
                     }
                     else
                     {
@@ -49,7 +86,7 @@ else
                             var ids = Contracts.AvaliableContracts(Game.CurrentGame!, StageId);
                             var list = ids
                             .Select(id => Locate.LocateContract(Game.CurrentGame!, id))
-                            .Where(c => c is not null && c.Level == level)   // <- use level aqui também
+                            .Where(c => c is not null && c.Level == level)
                             .ToList();
 
                             @if (list.Count == 0)
@@ -61,8 +98,21 @@ else
                                 <div class="contracts-list">
                                     @foreach (var c in list)
                                     {
-                                        <button type="button" class="contract-button icon-button" @onclick="() => BuyContract(c!.Id)">
-                                            @c!.Name
+                                        var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, StageId);
+                                        var canBuy = CanPurchase(c!, _stage!);
+                                        var disabled = noCapacity || !canBuy;
+
+                                        <button type="button"
+                                                class="contract-button icon-button @(disabled ? "is-locked" : null)"
+                                                disabled="@disabled"
+                                                aria-disabled="@(disabled ? "true" : "false")"
+                                                title="@(disabled
+                                                            ? (noCapacity
+                                                                ? $"Capacidade atingida ({usedCons}/{totalCons})."
+                                                                : "Saldo insuficiente.")
+                                                            : null)"
+                                                @onclick="() => BuyContract(c!.Id)">
+                                                    @c!.Name
                                         </button>
                                     }
                                 </div>
@@ -83,37 +133,96 @@ else
     private StageModel? _stage;
     private int? _expandedLevel;
 
+    private string? _lastStageId;
+    private bool _lastActive;
+
+    protected override void OnInitialized()
+    {
+        Game.GameChanged += OnGameChanged;
+        Game.ReadyChanged += OnGameChanged;
+    }
+
+    private void OnGameChanged()
+    {
+        RefreshStage(maybeCollapse: false);
+        InvokeAsync(StateHasChanged);
+    }
+
     protected override void OnParametersSet()
+    {
+        RefreshStage(maybeCollapse: true);
+    }
+
+    private void RefreshStage(bool maybeCollapse)
     {
         if (!Game.IsReady || string.IsNullOrWhiteSpace(StageId))
         {
             _stage = null;
             _expandedLevel = null;
+            _lastStageId = null;
+            _lastActive = false;
             return;
         }
 
         var g = Game.CurrentGame;
-        if (g is null || g.Stages is null || !g.Stages.TryGetValue(StageId, out _stage))
-        {
-            _stage = null;
+        g.Stages.TryGetValue(StageId, out var st);
+        _stage = st;
+
+        var activeNow = IsExpeditionActive(st);
+        var stageChanged = !string.Equals(_lastStageId, StageId, StringComparison.Ordinal);
+        var activeDropped = _lastActive && !activeNow;
+
+        // Só colapsa quando fizer sentido
+        if (maybeCollapse && (stageChanged || activeDropped))
             _expandedLevel = null;
-        }
+
+        // Atualiza memórias
+        _lastStageId = StageId;
+        _lastActive = activeNow;
+    }
+
+    public void Dispose()
+    {
+        Game.GameChanged -= OnGameChanged;
+        Game.ReadyChanged -= OnGameChanged;
     }
 
     private void ToggleLevel(int lvl)
     {
         Console.WriteLine($"[Contracts] Contratos de Nível {lvl}");
         _expandedLevel = (_expandedLevel == lvl) ? null : lvl;
+        StateHasChanged();
     }
+
+    private static bool IsExpeditionActive(StageModel? st)
+        => st?.ActiveExpedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
 
     private void CloseLevel() => _expandedLevel = null;
 
     private void BuyContract(string contractId)
     {
-        Console.WriteLine($"[Contracts] Comprando Contrato {contractId}");
         if (!Game.IsReady || _stage is null) return;
 
-        Contracts.BuyContract(Game.CurrentGame, _stage.Id, contractId);
+        // capacidade
+        if (Contracts.IsMaxContract(Game.CurrentGame, StageId))
+        {
+            Console.WriteLine("[Contracts] Capacidade atingida — compra bloqueada.");
+            return;
+        }
+
+        var contract = Locate.LocateContract(Game.CurrentGame, contractId);
+
+        // saldo
+        if (contract is null || !CanPurchase(contract, _stage))
+        {
+            Console.WriteLine("[Contracts] Saldo insuficiente — compra bloqueada.");
+            return;
+        }
+
+        Console.WriteLine($"[Contracts] Comprando Contrato {contractId}");
+        Contracts.BuyContract(Game.CurrentGame, _stage.Id, contract.Id);
+
+        _stage.lockedContracts.Add(contract.Level);
 
         _expandedLevel = null;
         StateHasChanged();
@@ -121,9 +230,13 @@ else
 
     private bool CanPurchase(ContractModel contract, StageModel stage)
     {
-        return false;
+        return Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id);
     }
 
-    private bool IsLevelChosen(int lvl)
-        => _stage?.ActiveContractsLevels?.ContainsKey(lvl) == true;
+    private ContractModel? ChosenContract(int level)
+    {
+        string contractId = Contracts.GetChosenContractIdForLevel(Game.CurrentGame, Game.CurrentGame.SelectedStageId, level);
+
+        return Locate.LocateContract(Game.CurrentGame, contractId);
+    }
 }

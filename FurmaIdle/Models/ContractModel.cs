@@ -10,6 +10,7 @@ namespace FurmaIdle.Models
         public string Description { get; set; }
         public string Icon { get; set; }
         public string Image { get; set; }
+        public PricingHelper.PricingId PricingId { get; set; }
 
         // Stats
         public string? UnlockId { get; set; }

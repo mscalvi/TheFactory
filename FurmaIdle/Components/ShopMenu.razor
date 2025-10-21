@@ -8,6 +8,7 @@
 @inject IUiService UI
 @inject IPurchaseService Purchase
 @inject ITooltipService Tooltips
+@inject IExpeditionService Expedition
 
 <section class="shop-menu panel">
     @if (Game.CurrentGame?.Stages is not { Count: > 0 })
@@ -24,42 +25,97 @@
         }
         else
         {
-            var avaliable = GetUpgrades(type.Value, UnlockHelper.State.Available).ToList(); 
-            var unlocked = GetUnlockeds(Game.CurrentGame!, type.Value).ToList();
-
-            <div class="shop-block">
-                <h4>@type.Value</h4>
-
-                <h5>Avaliable</h5>
-                @if (!avaliable.Any())
+            if (string.Equals(SelectedId, "i3", StringComparison.OrdinalIgnoreCase))
+            {
+                if (Expedition.IsExpeditionActive())
                 {
-                    <p>Nenhum item disponível</p>
+                    <p>Expedição já Ativa.</p>
                 }
                 else
                 {
-                    <div class="shop-list">
-                        @foreach (var it in avaliable)
-                        {
-                            @RenderItemButton(it, type.Value, isUnlocked: false)
-                        }
-                    </div>
-                }
+                    <div class="expedition-panel">
+                        <div class="expedition-toolbar">
+                            <button class="primary" type="button" @onclick="OnClickExpedition">
+                                Iniciar Expedição
+                            </button>
+                        </div>
+                        <div class="expedition-body">
+                            @{
+                                var charsInBase = Game.CurrentGame?.Characters?.Values
+                                    ?.Where(c => c.State == UnlockHelper.State.Unlocked && c.CharState == UnlockHelper.CharState.InBase)
+                                    .OrderBy(c => c.Name)
+                                    .ToList() ?? new();
 
-                <h5>Unlocked</h5>
-                @if (!unlocked.Any())
-                {
-                    <p>Nenhum item desbloqueado</p>
-                }
-                else
-                {
-                    <div class="shop-list">
-                        @foreach (var it in unlocked)
-                        {
-                            @RenderItemButton(it, type.Value, isUnlocked: true)
-                        }
+                                if (charsInBase.Count == 0)
+                                {
+                                    <p>Nenhum personagem na base.</p>
+                                }
+                                else
+                                {
+                                    <div class="char-grid">
+                                        @foreach (var ch in charsInBase)
+                                        {
+                                            var id = ch.Id;
+                                            var meta = CharacterData.GetDef(ch.Id);
+
+                                            <button class="option-btn @(Expedition.CharSelected(id) ? "selected" : null)"
+                                                    disabled="@(!Expedition.CanToggleChar(id))"
+                                                    @onclick="() => OnToggleChar(id)"
+                                                    aria-pressed="@(Expedition.CharSelected(id) ? "true" : "false")"
+                                                    aria-label="@id">
+                                                <span class="icon-wrap">
+                                                    <img src="@meta.Icon" alt="@meta.Name"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                                    <span class="icon-fallback">@id</span>
+                                                </span>
+                                            </button>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
                     </div>
                 }
-            </div>
+            }
+            else
+            {
+                var avaliable = GetUpgrades(type.Value, UnlockHelper.State.Available).ToList();
+                var unlocked = GetUnlockeds(Game.CurrentGame!, type.Value).ToList();
+
+                <div class="shop-block">
+                    <h4>@type.Value</h4>
+
+                    <h5>Avaliable</h5>
+                    @if (!avaliable.Any())
+                    {
+                        <p>Nenhum item disponível</p>
+                    }
+                    else
+                    {
+                        <div class="shop-list">
+                            @foreach (var it in avaliable)
+                            {
+                                @RenderItemButton(it, type.Value, isUnlocked: false)
+                            }
+                        </div>
+                    }
+
+                    <h5>Unlocked</h5>
+                    @if (!unlocked.Any())
+                    {
+                        <p>Nenhum item desbloqueado</p>
+                    }
+                    else
+                    {
+                        <div class="shop-list">
+                            @foreach (var it in unlocked)
+                            {
+                                @RenderItemButton(it, type.Value, isUnlocked: true)
+                            }
+                        </div>
+                    }
+                </div>
+            }            
         }
     }
 </section>
@@ -80,7 +136,7 @@
     {
         "i1" => ItemHelper.ItemType.Stage,
         "i2" => ItemHelper.ItemType.Expansion,
-        "i3" => ItemHelper.ItemType.Expedition, // (sem uso aqui)
+        "i3" => ItemHelper.ItemType.Expedition,
         "i4" => ItemHelper.ItemType.Character,
         "i5" => ItemHelper.ItemType.Tech,
         "i6" => ItemHelper.ItemType.Local,
@@ -98,6 +154,7 @@
         _ => null
     };
 
+    #region Menu
     private static bool IsUnlockStage(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.StageUnlock;
     private static bool IsUnlockCharacter(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.CharacterUnlock;
     private static bool IsUnlockLocal(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.LocalUnlock;
@@ -214,22 +271,21 @@
         var kind = it.Kind;
 
         // flags de apresentação
-        var isTarget = isUnlocked && kind != ItemHelper.ItemType.Upgrade; // alvo já desbloqueado (não é upgrade)
-        var isPurchased = isUnlocked && kind == ItemHelper.ItemType.Upgrade; // upgrade já comprado
+        var isTarget = isUnlocked && kind != ItemHelper.ItemType.Upgrade;
+        var isPurchased = isUnlocked && kind == ItemHelper.ItemType.Upgrade;
 
         // cálculo de afford só faz sentido para upgrade ainda não comprado
         bool canAffordForBuy = false;
-        string? why = null;
 
         if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade)
         {
             try
             {
-                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, out why);
+                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id);
             }
-            catch (NotSupportedException ex) { why = ex.Message; canAffordForBuy = false; }
-            catch (NotImplementedException ex) { why = ex.Message; canAffordForBuy = false; }
-            catch (Exception ex) { why = ex.Message; canAffordForBuy = false; }
+            catch (NotSupportedException ex) { canAffordForBuy = false; }
+            catch (NotImplementedException ex) { canAffordForBuy = false; }
+            catch (Exception ex) { canAffordForBuy = false; }
         }
 
         var css =
@@ -247,8 +303,8 @@
         if (disabled) builder.AddAttribute(seq++, "disabled", true);
 
         // title com motivo se bloqueado por saldo
-        if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy && !string.IsNullOrWhiteSpace(why))
-            builder.AddAttribute(seq++, "title", why);
+        if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy)
+            builder.AddAttribute(seq++, "title");
 
         // Hover/focus -> tooltip conforme o tipo real
         var hover = MapHover(kind); // kind = it.Kind real (Upgrade, Local, Tech, Character)
@@ -268,14 +324,56 @@
             {
                 var res = await Purchase.Purchase(ItemHelper.ItemType.Upgrade, it.Id);
                 if (!res.Success && !string.IsNullOrWhiteSpace(res.Reason))
-                    Console.WriteLine(res.Reason); // ou UI/Toast
+                    Console.WriteLine(res.Reason);
             }));
         }
 
         builder.AddContent(seq++, it.Id ?? it.Name);
         builder.CloseElement();
     };
+    #endregion
 
+    #region Expedition
+    private readonly Dictionary<string, HashSet<string>> _partyByStage = new(StringComparer.Ordinal);
+
+    private void OnToggleChar(string id)
+    {
+        var wasSelected = Expedition.CharSelected(id);
+
+        if (Expedition.ToggleChar(id, out var reason))
+        {
+            var nowSelected = Expedition.CharSelected(id);
+
+            if (nowSelected && !wasSelected)
+                Console.WriteLine($"[ShopMenu] {id} adicionado à equipe.");
+            else if (!nowSelected && wasSelected)
+                Console.WriteLine($"[ShopMenu] {id} removido da equipe.");
+            else
+                Console.WriteLine("[ShopMenu] Seleção inalterada.");
+
+            StateHasChanged();
+            return;
+        }
+
+        // falhou
+        if (Expedition.IsExpeditionActive())
+            Console.WriteLine("[ShopMenu] Expedição ativa — não é possível alterar a equipe.");
+        else if (!string.IsNullOrWhiteSpace(reason))
+            Console.WriteLine($"[ShopMenu] {reason}");
+        else
+            Console.WriteLine("[ShopMenu] Não foi possível alterar a seleção.");
+    }
+
+    private async Task OnClickExpedition()
+    {
+        var cap = Expedition.GetPartyCap();
+        var roster = Expedition.GetPartyIds();
+
+        await Expedition.LaunchExpedition(roster);
+
+        Console.WriteLine($"[ShopMenu] Expedição Iniciada. Equipe: [{string.Join(", ", roster)}]  (cap {cap})");
+    }
+    #endregion
 
     // ===== Tooltip =====
     private void ShowTip(HoverType hoverType, string id)

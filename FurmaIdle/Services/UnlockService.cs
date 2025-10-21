@@ -65,6 +65,7 @@ namespace FurmaIdle.Services
                 }
 
                 character.State = UnlockHelper.State.Unlocked;
+                character.CharState = UnlockHelper.CharState.InBase;
                 Console.WriteLine($"[Unlock] Character {character.Id}: {character.State}");
             }, save: true);
         }

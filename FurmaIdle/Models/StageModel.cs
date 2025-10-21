@@ -13,7 +13,7 @@ namespace FurmaIdle.Models
         public int? Level { get; set; }
 
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);
-        public Dictionary<int, bool>? ActiveContractsLevels { get; set; } = new Dictionary<int, bool>();
+        public List<int> lockedContracts { get; set; } = new();
         public Dictionary<string, double> ActiveContractsProgress { get; set; } = new Dictionary<string, double>();
 
         public PricingHelper.PricingId? PricingId { get; set; }
@@ -21,6 +21,7 @@ namespace FurmaIdle.Models
         public UnlockHelper.Persistence Persistence { get; set; }
 
         public int PartySizeStart { get; set; }
+        public int PartySizeActual { get; set; }
         public int PartySizeMax { get; set; }
 
         public int StartContractLevel { get; set; }
@@ -30,6 +31,12 @@ namespace FurmaIdle.Models
         public string CoinId { get; set; }
         public string ClickId { get; set; }
 
-        public ExpeditionModel? ActiveExpedition { get; set; }
+
+        private ExpeditionModel? _activeExpedition;
+        public ExpeditionModel ActiveExpedition
+        {
+            get => _activeExpedition ??= new ExpeditionModel(Id);
+            set => _activeExpedition = value ?? new ExpeditionModel(Id);
+        }
     }
 }
