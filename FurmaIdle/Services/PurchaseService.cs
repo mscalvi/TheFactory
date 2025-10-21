@@ -55,6 +55,7 @@ namespace FurmaIdle.Services
         }
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId, GameModel game)
         {
+            Console.WriteLine($"[Purchase] Checando Preço do {itemId}");
             var stats = game.ExpeditionStats ?? throw new InvalidOperationException("ExpeditionStats indisponível.");
 
             var cost = ComputeCost(type, itemId, stageId, game);

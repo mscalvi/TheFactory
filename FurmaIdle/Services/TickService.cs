@@ -133,6 +133,7 @@ namespace FurmaIdle.Services
 
             var last = g.LastTick == default ? DateTime.UtcNow : g.LastTick;
             var elapsed = (DateTime.UtcNow - last).TotalSeconds;
+            Console.WriteLine($"[Tick] Catch-up START: elapsed={elapsed:F1}s, last={last:O}");
             if (elapsed <= 0) return;
 
             // processa em blocos de MaxDt e faz 1 save no final
