@@ -9,5 +9,9 @@ namespace FurmaIdle.Models
         public int GainEffective { get; set; }
         public double GainTotal { get; set; }
         public double GainFraction { get; set; }
+
+        // Effects
+        public double GainMult { get; set; }
+        public double GainAdd { get; set; }
     }
 }

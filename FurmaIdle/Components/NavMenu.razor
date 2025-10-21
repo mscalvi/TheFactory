@@ -63,17 +63,17 @@
 
     private readonly List<NavItem> _nav = new()
     {
-        new() { Id = "i1", Label = "Stages", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i2", Label = "Expansion", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i1", Label = "Stages", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i2", Label = "Expansion", Unlocked = false, Selected = false, Notification = false },
         new() { Id = "i3", Label = "Expedition", Unlocked = true, Selected = false, Notification = false },
         new() { Id = "i4", Label = "Characters", Unlocked = true, Selected = true, Notification = false },
         new() { Id = "i5", Label = "Techs", Unlocked = true, Selected = false, Notification = false },
         new() { Id = "i6", Label = "Locals", Unlocked = true, Selected = false, Notification = false },
         new() { Id = "i7", Label = "Upgrades", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i8", Label = "Specialties", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i97", Label = "Statistics", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i98", Label = "Archievments", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i99", Label = "Configurações", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i8", Label = "Specialties", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i97", Label = "Statistics", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i98", Label = "Archievments", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i99", Label = "Configurações", Unlocked = false, Selected = false, Notification = false },
     };
 
     private IEnumerable<NavItem> VisibleNav =>

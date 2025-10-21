@@ -67,7 +67,7 @@ namespace FurmaIdle.Services
             game.Stages.TryGetValue(stageId, out var stage);
             ContractModel contract = _locate.LocateContract(game, contractId);
 
-            _purchase.Purchase(ItemHelper.ItemType.Contract, contract.Id);
+            _purchase.Purchase(ItemHelper.ItemType.Contract, contract.Id, game.SelectedStageId, game);
 
             if (!stage.ActiveContracts.ContainsKey(contract.Id))
             {

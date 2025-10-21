@@ -11,6 +11,7 @@ namespace FurmaIdle.Models
         public string Lore { get; set; }
         public string Description { get; set; }
         public string UnlockId { get; set; }
+        public int ActualBuy { get; set; } = 0;
         public int MaxBuy { get; set; }
         public PricingHelper.PricingId PricingId { get; set; }
         public UnlockHelper.State State { get; set; }

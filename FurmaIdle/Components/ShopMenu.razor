@@ -206,6 +206,18 @@
         var g = Game.CurrentGame;
         if (g is null) return Enumerable.Empty<ViewItem>();
 
+        // helper local: checa se Upgrade NÃO está maxeado (defensivo pra nulls)
+        bool NotMaxed(string id)
+        {
+            if (g.Upgrades is null) return true; // se não achar, não bloqueia
+            if (!g.Upgrades.TryGetValue(id, out var u) || u is null) return true;
+            // se MaxBuy <= 0, tratamos como "não limitado"
+            var max = u.MaxBuy;
+            var cur = u.ActualBuy;
+            if (max <= 0) return true;
+            return cur < max;
+        }
+
         var order = GetOrder(type);
         int OrderIndex(string id)
         {
@@ -224,10 +236,25 @@
             return int.MaxValue;
         }
 
-        return Project(g, type)
-            .Where(it => it.State == desired)
-            .OrderBy(it => OrderIndex(it.Id));
+        var query = Project(g, type);
+
+        // ===== filtro por estado + "não maxeado" quando for Upgrade =====
+        if (type == ItemHelper.ItemType.Upgrade)
+        {
+            query = query.Where(it =>
+                it.State == desired         // respeita a aba (Available/Unlocked)
+                && NotMaxed(it.Id)          // e só entra se ainda tiver compras restantes
+            );
+        }
+        else
+        {
+            query = query.Where(it => it.State == desired);
+        }
+
+        return query.OrderBy(it => OrderIndex(it.Id));
     }
+
+
     private static IEnumerable<ViewItem> GetUnlockeds(GameModel g, ItemHelper.ItemType navType)
     {
         return navType switch
@@ -281,7 +308,7 @@
         {
             try
             {
-                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id);
+                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId, Game.CurrentGame);
             }
             catch (NotSupportedException ex) { canAffordForBuy = false; }
             catch (NotImplementedException ex) { canAffordForBuy = false; }
@@ -322,9 +349,7 @@
         {
             builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, async () =>
             {
-                var res = await Purchase.Purchase(ItemHelper.ItemType.Upgrade, it.Id);
-                if (!res.Success && !string.IsNullOrWhiteSpace(res.Reason))
-                    Console.WriteLine(res.Reason);
+                await Purchase.Purchase(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId, Game.CurrentGame);
             }));
         }
 

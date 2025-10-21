@@ -230,7 +230,7 @@ else
 
     private bool CanPurchase(ContractModel contract, StageModel stage)
     {
-        return Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id);
+        return Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id, Game.CurrentGame.SelectedStageId, Game.CurrentGame);
     }
 
     private ContractModel? ChosenContract(int level)
