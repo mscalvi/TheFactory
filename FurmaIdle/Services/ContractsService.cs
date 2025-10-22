@@ -1,14 +1,5 @@
-﻿using FurmaIdle.Data;
-using FurmaIdle.Helpers;
+﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
-using FurmaIdle.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using static FurmaIdle.Helpers.LogHelper;
-using static FurmaIdle.Helpers.UnlockHelper;
 
 namespace FurmaIdle.Services
 {
@@ -20,8 +11,9 @@ namespace FurmaIdle.Services
         bool IsMaxContract(GameModel game, string stageId);
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
-
         Task BuyContract(GameModel game, string stageId, string contractId);
+        public double GetContractsPerSecond(GameModel game, string stageId, string coinId);
+        double GetContractProgress(GameModel game, string stageId, string contractId);
     }
 
     public sealed class ContractsTickSink : ITickSink, IDisposable
@@ -77,7 +69,6 @@ namespace FurmaIdle.Services
                 st.ActiveContracts[contract.Id] = (st.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
             }, save: true);
         }
-
         public bool IsMaxContract(GameModel game, string stageId)
         {
             // 0) Stage válido
@@ -215,7 +206,6 @@ namespace FurmaIdle.Services
             }
             return null;
         }
-
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
@@ -268,8 +258,6 @@ namespace FurmaIdle.Services
                 stage.ActiveContractsProgress[contractId] = prog;
             }
         }
-
-
         public double GetContractProgress(GameModel game, string stageId, string contractId)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || string.IsNullOrWhiteSpace(contractId))
@@ -286,5 +274,26 @@ namespace FurmaIdle.Services
             if (prog > 1) prog = 1;
             return prog;
         }
+        public double GetContractsPerSecond(GameModel game, string stageId, string coinId)
+        {
+            if (game is null || string.IsNullOrWhiteSpace(stageId) || string.IsNullOrWhiteSpace(coinId))
+                return 0;
+
+            var stage = _locate.LocateStage(game, stageId);
+            var act = stage?.ActiveContracts;
+            if (stage is null || act is null || act.Count == 0) return 0;
+
+            double sum = 0;
+            foreach (var (cid, qty) in act)
+            {
+                if (qty <= 0) continue;
+                if (!game.Contracts.TryGetValue(cid, out var c) || c is null) continue;
+
+                if (string.Equals(ContractHelper.CoinIdOf(c), coinId, StringComparison.Ordinal))
+                    sum += ContractHelper.ProdPerSecond(c, stage);
+            }
+            return sum;
+        }
+
     }
 }

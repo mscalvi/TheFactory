@@ -1,13 +1,12 @@
-﻿@using System.Linq
+﻿@inherits UiHelper
+
+@using System.Linq
 @using FurmaIdle.Data
 @using FurmaIdle.Models
 @using FurmaIdle.Helpers
 @using FurmaIdle.Services
 
-@inject ICurrentGameService Game
-@inject IUiService UI
 @inject IPurchaseService Purchase
-@inject ITooltipService Tooltips
 @inject IExpeditionService Expedition
 
 <section class="shop-menu panel">
@@ -58,16 +57,11 @@
                                             var id = ch.Id;
                                             var meta = CharacterData.GetDef(ch.Id);
 
-                                            <button class="option-btn @(Expedition.CharSelected(id) ? "selected" : null)"
+                                            <button type="button" 
+                                                    class="option-btn icon-button @(Expedition.CharSelected(id) ? "selected" : null)"
                                                     disabled="@(!Expedition.CanToggleChar(id))"
-                                                    @onclick="() => OnToggleChar(id)"
-                                                    aria-pressed="@(Expedition.CharSelected(id) ? "true" : "false")"
-                                                    aria-label="@id">
-                                                <span class="icon-wrap">
-                                                    <img src="@meta.Icon" alt="@meta.Name"
-                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                                                    <span class="icon-fallback">@id</span>
-                                                </span>
+                                                    @onclick="() => OnToggleChar(id)">
+                                                @id
                                             </button>
                                         }
                                     </div>
@@ -123,6 +117,19 @@
 @code {
     [Parameter] public string? SelectedId { get; set; }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // se quiser carregar algo só uma vez, faça aqui
+    }
+
+    protected override void OnGameChanged()
+    {
+        // se precisar recalcular alguma cache local, faça aqui
+        // o base já chama StateHasChanged()
+    }
+
+    #region Menu
     // ===== DTO comum pra UI =====
     private readonly record struct ViewItem(
         string Id,
@@ -145,7 +152,6 @@
         _ => null
     };
 
-    #region Menu
     private static bool IsUnlockStage(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.StageUnlock;
     private static bool IsUnlockCharacter(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.CharacterUnlock;
     private static bool IsUnlockLocal(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.LocalUnlock;
@@ -191,93 +197,6 @@
         ));
     }
 
-    // ===== Filtro por estado + ordenação =====
-    private IEnumerable<ViewItem> GetUpgrades(ItemHelper.ItemType type, UnlockHelper.State desired)
-    {
-        var g = Game.CurrentGame;
-        if (g is null) return Enumerable.Empty<ViewItem>();
-
-        // helper local: checa se Upgrade NÃO está maxeado (defensivo pra nulls)
-        bool NotMaxed(string id)
-        {
-            if (g.Upgrades is null) return true; // se não achar, não bloqueia
-            if (!g.Upgrades.TryGetValue(id, out var u) || u is null) return true;
-            // se MaxBuy <= 0, tratamos como "não limitado"
-            var max = u.MaxBuy;
-            var cur = u.ActualBuy;
-            if (max <= 0) return true;
-            return cur < max;
-        }
-
-        var order = GetOrder(type);
-        int OrderIndex(string id)
-        {
-            if (order is null) return int.MaxValue;
-
-            if (order is List<string> list)
-            {
-                var idx = list.IndexOf(id);
-                return idx >= 0 ? idx : int.MaxValue;
-            }
-
-            for (int i = 0; i < order.Count; i++)
-                if (string.Equals(order[i], id, StringComparison.Ordinal))
-                    return i;
-
-            return int.MaxValue;
-        }
-
-        var query = Project(g, type);
-
-        // ===== filtro por estado + "não maxeado" quando for Upgrade =====
-        if (type == ItemHelper.ItemType.Upgrade)
-        {
-            query = query.Where(it =>
-                it.State == desired         // respeita a aba (Available/Unlocked)
-                && NotMaxed(it.Id)          // e só entra se ainda tiver compras restantes
-            );
-        }
-        else
-        {
-            query = query.Where(it => it.State == desired);
-        }
-
-        return query.OrderBy(it => OrderIndex(it.Id));
-    }
-
-
-    private static IEnumerable<ViewItem> GetUnlockeds(GameModel g, ItemHelper.ItemType navType)
-    {
-        return navType switch
-        {
-            ItemHelper.ItemType.Character => (g.Characters?.Values ?? Enumerable.Empty<CharacterModel>())
-                .Where(c => c.State == UnlockHelper.State.Unlocked)
-                .Select(c => new ViewItem(c.Id, c.Name, c.State, ItemHelper.ItemType.Character)),
-
-            ItemHelper.ItemType.Tech => (g.Techs?.Values ?? Enumerable.Empty<TechModel>())
-                .Where(t => t.State == UnlockHelper.State.Unlocked)
-                .Select(t => new ViewItem(t.Id, t.Name, t.State, ItemHelper.ItemType.Tech)),
-
-            ItemHelper.ItemType.Local => (g.Locals?.Values ?? Enumerable.Empty<LocalModel>())
-                .Where(l => l.State == UnlockHelper.State.Unlocked)
-                .Select(l => new ViewItem(l.Id, l.Name, l.State, ItemHelper.ItemType.Local)),
-
-            ItemHelper.ItemType.Stage => (g.Stages?.Values ?? Enumerable.Empty<StageModel>())
-                .Where(s => s.State == UnlockHelper.State.Unlocked)
-                .Select(s => new ViewItem(s.Id, s.Name, s.State, ItemHelper.ItemType.Stage)),
-
-            ItemHelper.ItemType.Expansion => (g.Expansions?.Values ?? Enumerable.Empty<ExpansionModel>())
-                .Where(e => e.State == UnlockHelper.State.Unlocked)
-                .Select(e => new ViewItem(e.Id, e.UnlockId, e.State, ItemHelper.ItemType.Expansion)),
-
-            ItemHelper.ItemType.Upgrade => (g.Upgrades?.Values ?? Enumerable.Empty<UpgradeModel>())
-                .Where(u => !IsUnlockAny(u) && u.State == UnlockHelper.State.Unlocked)
-                .Select(u => new ViewItem(u.Id, u.Name, u.State, ItemHelper.ItemType.Upgrade)),
-
-            _ => Enumerable.Empty<ViewItem>()
-        };
-    }
-
     // ===== Botão de item =====
     private RenderFragment RenderItemButton(ViewItem it, ItemHelper.ItemType navType, bool isUnlocked) => builder =>
     {
@@ -293,18 +212,9 @@
         var isPurchased = isUnlocked && kind == ItemHelper.ItemType.Upgrade;
 
         // cálculo de afford só faz sentido para upgrade ainda não comprado
-        bool canAffordForBuy = false;
-
-        if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade)
-        {
-            try
-            {
-                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId);
-            }
-            catch (NotSupportedException ex) { canAffordForBuy = false; }
-            catch (NotImplementedException ex) { canAffordForBuy = false; }
-            catch (Exception ex) { canAffordForBuy = false; }
-        }
+        var canAffordForBuy = (!isUnlocked && kind == ItemHelper.ItemType.Upgrade)
+            ? Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId)
+            : false;
 
         var css =
             !isUnlocked && kind == ItemHelper.ItemType.Upgrade
@@ -315,16 +225,9 @@
 
         builder.AddAttribute(seq++, "class", $"{css} icon-button");
 
-        // aria/disabled
         var disabled = isTarget || isPurchased || (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy);
-        builder.AddAttribute(seq++, "aria-disabled", disabled ? "true" : "false");
         if (disabled) builder.AddAttribute(seq++, "disabled", true);
 
-        // title com motivo se bloqueado por saldo
-        if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy)
-            builder.AddAttribute(seq++, "title");
-
-        // clique apenas em available upgrade com saldo
         if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && canAffordForBuy)
         {
             builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, async () =>
@@ -380,5 +283,122 @@
     }
     #endregion
 
-    private void ClearTip() => Tooltips.Clear();
+    #region Menu Helpers
+    private IEnumerable<ViewItem> GetUpgrades(ItemHelper.ItemType type, UnlockHelper.State desired)
+    {
+        var g = Game.CurrentGame;
+        if (g is null) return Enumerable.Empty<ViewItem>();
+
+        // helper local: checa se Upgrade NÃO está maxeado (defensivo pra nulls)
+        bool NotMaxed(string id)
+        {
+            if (g.Upgrades is null) return true; // se não achar, não bloqueia
+            if (!g.Upgrades.TryGetValue(id, out var u) || u is null) return true;
+            // se MaxBuy <= 0, tratamos como "não limitado"
+            var max = u.MaxBuy;
+            var cur = u.ActualBuy;
+            if (max <= 0) return true;
+            return cur < max;
+        }
+
+        var order = GetOrder(type);
+        int OrderIndex(string id)
+        {
+            if (order is null) return int.MaxValue;
+
+            if (order is List<string> list)
+            {
+                var idx = list.IndexOf(id);
+                return idx >= 0 ? idx : int.MaxValue;
+            }
+
+            for (int i = 0; i < order.Count; i++)
+                if (string.Equals(order[i], id, StringComparison.Ordinal))
+                    return i;
+
+            return int.MaxValue;
+        }
+
+        var query = Project(g, type);
+
+        if (type == ItemHelper.ItemType.Upgrade)
+        {
+            query = query.Where(it =>
+                (
+                    it.State == UnlockHelper.State.Available ||
+                    it.State == UnlockHelper.State.Unlocked
+                )
+                && NotMaxed(it.Id)
+                && IsContractUpgradeVisible(g, it.Id)
+            );
+        }
+        else
+        {
+            query = query.Where(it => it.State == desired);
+        }
+
+        return query.OrderBy(it => OrderIndex(it.Id));
+    }
+
+
+    private static IEnumerable<ViewItem> GetUnlockeds(GameModel g, ItemHelper.ItemType navType)
+    {
+        return navType switch
+        {
+            ItemHelper.ItemType.Character => (g.Characters?.Values ?? Enumerable.Empty<CharacterModel>())
+                .Where(c => c.State == UnlockHelper.State.Unlocked)
+                .Select(c => new ViewItem(c.Id, c.Name, c.State, ItemHelper.ItemType.Character)),
+
+            ItemHelper.ItemType.Tech => (g.Techs?.Values ?? Enumerable.Empty<TechModel>())
+                .Where(t => t.State == UnlockHelper.State.Unlocked)
+                .Select(t => new ViewItem(t.Id, t.Name, t.State, ItemHelper.ItemType.Tech)),
+
+            ItemHelper.ItemType.Local => (g.Locals?.Values ?? Enumerable.Empty<LocalModel>())
+                .Where(l => l.State == UnlockHelper.State.Unlocked)
+                .Select(l => new ViewItem(l.Id, l.Name, l.State, ItemHelper.ItemType.Local)),
+
+            ItemHelper.ItemType.Stage => (g.Stages?.Values ?? Enumerable.Empty<StageModel>())
+                .Where(s => s.State == UnlockHelper.State.Unlocked)
+                .Select(s => new ViewItem(s.Id, s.Name, s.State, ItemHelper.ItemType.Stage)),
+
+            ItemHelper.ItemType.Expansion => (g.Expansions?.Values ?? Enumerable.Empty<ExpansionModel>())
+                .Where(e => e.State == UnlockHelper.State.Unlocked)
+                .Select(e => new ViewItem(e.Id, e.UnlockId, e.State, ItemHelper.ItemType.Expansion)),
+
+            ItemHelper.ItemType.Upgrade => (g.Upgrades?.Values ?? Enumerable.Empty<UpgradeModel>())
+                .Where(u => !IsUnlockAny(u) && u.State == UnlockHelper.State.Unlocked)
+                .Where(u =>
+                {
+                    var max = u.MaxBuy;
+                    var cur = u.ActualBuy;
+                    return max > 0 && cur >= max;
+                })
+                .Where(u => IsContractUpgradeVisible(g, u.Id))
+                .Select(u => new ViewItem(u.Id, u.Name, u.State, ItemHelper.ItemType.Upgrade)),
+
+            _ => Enumerable.Empty<ViewItem>()
+        };
+    }
+
+    private static bool StartsWithUc(string id) =>
+        id?.StartsWith("uc", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool IsContractUpgradeVisible(GameModel g, string upgradeId)
+    {
+        if (!StartsWithUc(upgradeId)) return true;
+
+        if (g is null || string.IsNullOrWhiteSpace(g.SelectedStageId)) return false;
+        if (g.Upgrades is null || !g.Upgrades.TryGetValue(upgradeId, out var up) || up is null) return false;
+
+        var targetContractId = up.TargetId;
+        if (string.IsNullOrWhiteSpace(targetContractId)) return false;
+
+        if (g.Stages is null || !g.Stages.TryGetValue(g.SelectedStageId, out var stage) || stage is null)
+            return false;
+
+        return stage.ActiveContracts is not null
+            && stage.ActiveContracts.TryGetValue(targetContractId, out var qty)
+            && qty > 0;
+    }
+    #endregion
 }

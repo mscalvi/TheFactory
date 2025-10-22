@@ -33,15 +33,13 @@ namespace FurmaIdle.Services
 
             GainModel? result = null;
 
+            var saveFrac = Math.Round(frac * 100, MidpointRounding.AwayFromZero) != 0;
             await _game.Mutate(Game =>
             {
-                if (gain != 0)
+                if (!StatsApply(Game, type, itemId, gain, frac))
                 {
-                    if (!StatsApply(Game, type, itemId, gain, frac))
-                    {
-                        Console.WriteLine($"[Income] Falha ao aplicar ganho: type={type} id={itemId} eff={gain}");
-                        gain = 0;
-                    }
+                    Console.WriteLine($"[Income] Falha ao aplicar ganho: type={type} id={itemId} eff={gain}");
+                    gain = 0;
                 }
 
                 result = new GainModel
@@ -54,9 +52,8 @@ namespace FurmaIdle.Services
                 };
 
                 AddAmount = result.GainEffective;
-            }, save: gain != 0 || frac > 0);
+            }, save: gain != 0 || saveFrac);
 
-            Console.WriteLine($"[Income] Ganho: Tipo = {type} ID = {itemId} Quantidade = {gain}");
             return result!;
         }
 
@@ -64,27 +61,31 @@ namespace FurmaIdle.Services
         {
             if (type == ItemHelper.ItemType.Coin)
             {
-                var extra = 0L;
+                // ---- trabalhar em centavos (0..99) ----
+                Game.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
+                int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
 
-                Game.ExpeditionStats.CoinsFrac.TryGetValue(id, out var rest);
-                rest = rest + frac;
+                int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
+                int totalCents = restCents + addCents;
 
-                if (rest >= 1)
-                {
-                    rest = rest - 1;
-                    extra = 1;
-                }
+                long extra = totalCents / 100;          // carry em unidades inteiras
+                int newRestCents = totalCents % 100;    // 0..99
 
+                double newRestDouble = newRestCents / 100.0;
+
+                // ---- acumula moedas ----
                 Game.ExpeditionStats.Coins.TryGetValue(id, out var coin);
                 coin = coin + gain + extra;
 
                 Game.ExpeditionStats.CoinsGain.TryGetValue(id, out var coinarch);
-                Console.WriteLine($"[Income] Moeda: {id}. Expedição: {coin}.{rest} - Histórico: {coinarch}");
                 coinarch = coinarch + gain + extra;
 
-                Game.ExpeditionStats.CoinsFrac[id] = rest;
+                // ---- persistir (resto com 2 casas) ----
                 Game.ExpeditionStats.Coins[id] = coin;
                 Game.ExpeditionStats.CoinsGain[id] = coinarch;
+                Game.ExpeditionStats.CoinsFrac[id] = newRestDouble;
+
+                Console.WriteLine($"[Income] Ganho: {gain+frac} {id}. Expedição: {coin + newRestDouble:F2} - Histórico: {coinarch}");
             }
 
             return true;

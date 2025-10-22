@@ -45,19 +45,13 @@ namespace FurmaIdle.Services
 
             await _game.Mutate(game =>
             {
-                Console.WriteLine("[Purchase] Selecionando Custo");
-
                 Console.WriteLine($"[Purchase] Custo: {cost.costValue} {cost.costId}");
-                // Pagar o Custo
                 ApplyDebit(game.ExpeditionStats, cost.costValue, cost.costId);
                 ApplyStats(game.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
 
-                Console.WriteLine($"[Purchase] Aplicando Compra");
-                
             }, save: true);
 
-            // Aplica o Efeito
-            await ApplyEffect(type, itemId, stageId);
+            await ApplyEffect(type, itemId, stageId);            
         }
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId)
         {
@@ -150,13 +144,26 @@ namespace FurmaIdle.Services
         }
         public async Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId)
         {
-            if (type == ItemHelper.ItemType.Upgrade || type == ItemHelper.ItemType.Trait)
+            if (type == ItemHelper.ItemType.Upgrade)
             {
                 Console.WriteLine("[Purchase] Aplicando Efeitos do Update");
                 var upgrade = _locate.LocateUpgrade(_game.CurrentGame, itemId);
                 var game = _game.CurrentGame;
 
-                await _unlock.UnlockUpgrade(upgrade.Id);
+                bool hasStages = true;
+
+                upgrade.ActualBuy++;
+                Console.WriteLine($"[Purhcase] Compra: {upgrade.ActualBuy} - Máximo: {upgrade.MaxBuy}");
+
+                if (upgrade.ActualBuy == upgrade.MaxBuy)
+                {
+                    hasStages = false;
+                }
+
+                if (!hasStages)
+                {
+                    await _unlock.UnlockUpgrade(upgrade.Id);
+                }
 
                 await _game.Mutate(g =>
                 {
@@ -476,8 +483,8 @@ namespace FurmaIdle.Services
             string costId = string.Empty;
             long costBase = 0;
             double costCurve = 0;
-            double? costAddFactor = 0;
-            double? costMultFactor = 1;
+            double costAddFactor = 0;
+            double costMultFactor = 1;
             double costFactorValue = 1;
 
             switch (type)
@@ -501,7 +508,7 @@ namespace FurmaIdle.Services
                         costBase = entry.CostBase;
                         costCurve = entry.CostCurve;
 
-                        if (entry.CostFactor != null)
+                        if (entry.CostFactor != PricingHelper.CostFactor.None)
                         {
                             switch (entry.CostFactor)
                             {
@@ -571,23 +578,23 @@ namespace FurmaIdle.Services
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = entry.CostFactorCurve * costFactorValue;
+                                costAddFactor = Math.Pow(entry.CostFactorCurve, up.ActualBuy) * costFactorValue;
                                 costMultFactor = 1;
                             }
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
                             {
                                 costAddFactor = 0;
-                                costMultFactor = entry.CostFactorCurve * costFactorValue;
+                                costMultFactor = Math.Pow(entry.CostFactorCurve, up.ActualBuy) * costFactorValue;
                             }
                         }
 
                         double baseVal = costBase;
                         double curve = costCurve;
-                        double addF = costAddFactor ?? 0d;
-                        double multF = costMultFactor ?? 1d;
+                        double addF = costAddFactor;
+                        double multF = costMultFactor;
 
-                        double raw = (baseVal + addF) * curve * multF;
+                        double raw = (baseVal + addF) * Math.Pow(curve, up.ActualBuy) * multF;
                         costValue = (long)Math.Ceiling(raw);
 
                         break;
@@ -599,19 +606,36 @@ namespace FurmaIdle.Services
 
                         var entry = PricingCost.Get(contract.PricingId);
 
+                        var stage = _locate.LocateStage(game, stageId);
+
+                        stage.ActiveContracts.TryGetValue(itemId, out var quantity);
+
                         costId = entry.CostCoinId;
 
                         costBase = entry.CostBase;
                         costCurve = entry.CostCurve;
 
+                        if (entry.CostFactor != PricingHelper.CostFactor.None)
+                        {
+                            if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
+                            {
+                                costAddFactor = Math.Pow(entry.CostFactorCurve, quantity) * costFactorValue;
+                                costMultFactor = 1;
+                            }
+
+                            if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
+                            {
+                                costAddFactor = 0;
+                                costMultFactor = Math.Pow(entry.CostFactorCurve, quantity) * costFactorValue;
+                            }
+                        }
+
                         double baseVal = costBase;
                         double curve = costCurve;
+                        double addF = costAddFactor;
+                        double multF = costMultFactor;
 
-                        double raw = baseVal * curve;
-
-                        var priceFactor = contract.PriceFactor;
-                        raw *= priceFactor;
-
+                        double raw = (baseVal + addF) * Math.Pow(curve, quantity) * multF;
                         costValue = (long)Math.Ceiling(raw);
 
                         break;

@@ -1,7 +1,9 @@
-﻿@using FurmaIdle.Services
+﻿@inherits UiHelper
 
-@inject ITooltipService Tooltips
+@using FurmaIdle.Services
+
 @inject IJSRuntime JS;
+@inject ITooltipService Tooltips
 
 <section class="text-box panel" role="status" aria-live="polite">
     <div class="msg-body" @ref="_msgBodyRef">
@@ -33,12 +35,18 @@
 </section>
 
 @code {
+
     protected override void OnInitialized()
     {
-        Tooltips.Changed += OnChanged;
+        base.OnInitialized();
+        // se quiser carregar algo só uma vez, faça aqui
     }
 
-    void OnChanged() => InvokeAsync(StateHasChanged);
+    protected override void OnGameChanged()
+    {
+        // se precisar recalcular alguma cache local, faça aqui
+        // o base já chama StateHasChanged()
+    }
 
     ElementReference _msgBodyRef;
     int _lastMsgCount;

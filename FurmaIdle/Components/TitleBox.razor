@@ -1,13 +1,23 @@
-﻿@using FurmaIdle.Models
+﻿@inherits UiHelper
+
+@using FurmaIdle.Models
 @using FurmaIdle.Services
 
-@inject ICurrentGameService Game
-
 <div class="title-box">
-        <h1>FurmaIdle - Exploradores de Furma</h1>
+        <h2>FurmaIdle - Exploradores de Furma</h2>
         <p>Versão: @Game.CurrentGame?.SchemaVersion</p>
 </div>
 
 @code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // se quiser carregar algo só uma vez, faça aqui
+    }
 
+    protected override void OnGameChanged()
+    {
+        // se precisar recalcular alguma cache local, faça aqui
+        // o base já chama StateHasChanged()
+    }
 }

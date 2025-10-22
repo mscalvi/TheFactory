@@ -53,7 +53,7 @@ namespace FurmaIdle.Services
         private const int TickMs = 200;                 // 5x por segundo
         private const double MaxDt = 0.25;              // clamp por tick (seg)
         private const double SaveEvery = 2.0;           // salva a cada ~2s
-        private const double MaxCatchupSeconds = 600.0; // 10 min
+        private const double MaxCatchupSeconds = 60.0; // 1 min
 
         public TickService(ICurrentGameService game)
         {

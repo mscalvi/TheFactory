@@ -1,12 +1,12 @@
-﻿@using FurmaIdle.Models
+﻿@inherits UiHelper
+
+@using FurmaIdle.Models
 @using FurmaIdle.Services
 @using FurmaIdle.Data
 @using FurmaIdle.Helpers
 
-@inject ICurrentGameService Game
 @inject ILocateService Locate
 @inject IIncomeService Income
-@inject IDebugService Debug
 
 <div class="click-area-root"
      @oncontextmenu:preventDefault
@@ -51,6 +51,18 @@
     [Parameter] public EventCallback<int> OnClick { get; set; }
     [Parameter] public EventCallback<double> ClickAdd { get; set; }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // se quiser carregar algo só uma vez, faça aqui
+    }
+
+    protected override void OnGameChanged()
+    {
+        // se precisar recalcular alguma cache local, faça aqui
+        // o base já chama StateHasChanged()
+    }
+
     // Efeito Visual do Click
     private sealed class ClickVisual
     {
@@ -72,7 +84,7 @@
         if(game.Stages.TryGetValue(stageId, out var stage))
         {
             var gain = await Income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal);
-            Debug.BuildDumpSnapshot(2, "Click");
+            Console.WriteLine($"[ClickArea] Click: {stage.Id} = {ClickTotal} {stage.CoinId}");
         } else
         {
             Console.WriteLine("[ClickArea] Bug");

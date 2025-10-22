@@ -100,7 +100,7 @@ namespace FurmaIdle.Services
                 }
 
                 contract.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Character {contract.Id}: {contract.State}");
+                Console.WriteLine($"[Unlock] Contract {contract.Id}: {contract.State}");
             }, save: true);
         }
 
@@ -145,7 +145,7 @@ namespace FurmaIdle.Services
                 var know = _locate.LocateKnowledge(_game.CurrentGame, knowledgeId);
 
                 know.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Character {know.Id}: {know.State}");
+                Console.WriteLine($"[Unlock] Knowledge {know.Id}: {know.State}");
             }, save: true);
         }
         #endregion
@@ -246,7 +246,7 @@ namespace FurmaIdle.Services
                 }
 
                 tech.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Character {tech.Id}: {tech.State}");
+                Console.WriteLine($"[Unlock] Tech {tech.Id}: {tech.State}");
             }, save: true);
         }
         #endregion
@@ -259,7 +259,7 @@ namespace FurmaIdle.Services
                 var resource = _locate.LocateResource(_game.CurrentGame, resourceId);
 
                 resource.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Character {resource.Id}: {resource.State}");
+                Console.WriteLine($"[Unlock] Resource {resource.Id}: {resource.State}");
             }, save: true);
         }
         #endregion

@@ -1,25 +1,33 @@
-﻿@using FurmaIdle.Services
+﻿@inherits UiHelper
+
+@using FurmaIdle.Services
 @using FurmaIdle.Helpers
 @using FurmaIdle.Models
 
-@inject ICurrentGameService Game
 @inject ILocateService Locate
+@inject IContractsService Contracts
 
 <section class="income-box panel">
     @{
-        var unlocked = GetCoins().ToList();
+        var rows = GetCoins();
         <ul class="income-list">
-            @if (unlocked == null)
+            @if (rows.Count == 0)
             {
                 <p>Nenhuma moeda desbloqueada.</p>
             }
             else
             {
-                foreach (var it in unlocked)
+                foreach (var it in rows)
                 {
                     <li class="income-row">
                         <span class="income-name">@it.Key</span>
-                        <span class="income-total">@it.Value</span>
+                        <span class="income-total">
+                            @it.Value.total.ToString("N0")
+                            @if (it.Value.perSec > 0)
+                            {
+                                <text> +@it.Value.perSec.ToString("N2") /s</text>
+                            }
+                        </span>
                     </li>
                 }
             }
@@ -28,64 +36,71 @@
 </section>
 
 @code {
-    private bool IsReady = false;
+    private readonly Dictionary<string, long> _lastTotals = new(StringComparer.Ordinal);
+    private DateTime _lastSampleUtc = DateTime.UtcNow;
+
+    private readonly Dictionary<string, double> _emaRates = new(StringComparer.Ordinal);
+    private const double EmaAlpha = 0.5;
 
     protected override void OnInitialized()
     {
-        Game.GameChanged += OnGameChanged;
-        OnGameChanged();
+        base.OnInitialized();
     }
 
-    private void OnGameChanged()
+    protected override void OnGameChanged()
     {
-        IsReady = Game.IsReady && Game.CurrentGame is not null;
-        InvokeAsync(StateHasChanged);
-    }
-
-    Dictionary<string, string> CoinsTotal = new();
-    Dictionary<string, double> CoinsPerSecond = new();
-
-    private Dictionary<string, string> GetCoins()
-    {
-        CoinsTotal.Clear();
-
-        if (!IsReady || Game.CurrentGame is null)
-            return CoinsTotal;
-
         var g = Game.CurrentGame;
+        if (g is null) return;
 
-        var order = g.Coins;
+        var now = DateTime.UtcNow;
+        var dt = (now - _lastSampleUtc).TotalSeconds;
+        if (dt <= 0) return;
 
-        foreach (string coinId in order.Keys)
+        var statsCoins = g.ExpeditionStats?.Coins;
+        if (statsCoins is not null)
         {
-            CoinModel coin = Locate.LocateCoin(g, coinId);
-            if (coin is null)
-                continue;
-
-            if (coin.State != UnlockHelper.State.Unlocked)
+            foreach (var kv in statsCoins)
             {
-                continue;
+                var id = kv.Key;
+                var cur = kv.Value;
+
+                _lastTotals.TryGetValue(id, out var prev);
+                var rawRate = Math.Max(0, (cur - prev) / dt);
+
+                if (_emaRates.TryGetValue(id, out var old))
+                    _emaRates[id] = old + EmaAlpha * (rawRate - old);
+                else
+                    _emaRates[id] = rawRate;
+
+                _lastTotals[id] = cur;
             }
-
-            long current = 0;
-            var statsCoins = g.ExpeditionStats?.Coins;
-
-            if (statsCoins is not null && statsCoins.TryGetValue(coinId, out var val))
-                current = val;
-
-            string formatedValue = FormatTotal(current);
-
-            CoinsTotal.Add(coin.Name, formatedValue);
         }
 
-        return CoinsTotal;
+        _lastSampleUtc = now;
+
+        base.OnGameChanged();
     }
 
-    private static string FormatTotal(long current)
+    private static string FormatTotal(long v) => v.ToString("N0");
+    private static string FormatRate(double r)
+        => r >= 1000 ? r.ToString("0,0.##") : r.ToString("0.##");
+    private Dictionary<string, (long total, double perSec)> GetCoins()
     {
-        string formatedTotal = current.ToString("N0");
-        return formatedTotal;
-    }
+        var result = new Dictionary<string, (long, double)>();
+        if (Game.CurrentGame is null) return result;
 
-    public void Dispose() => Game.GameChanged -= OnGameChanged;
+        var g = Game.CurrentGame;
+        foreach (var kv in g.Coins)
+        {
+            var coinId = kv.Key;
+
+            long current = 0;
+            if (g.ExpeditionStats?.Coins?.TryGetValue(coinId, out var v) == true)
+                current = v;
+
+            var perSec = Contracts.GetContractsPerSecond(g, g.SelectedStageId, coinId);
+            result[coinId] = (current, perSec);
+        }
+        return result;
+    }
 }

@@ -32,12 +32,24 @@ namespace FurmaIdle.Helpers
         }
 
         // Produção por segundo considerando quantidade atual no Stage
-        public static double ProdPerSecond(ContractModel c, StageModel s)
+        public static string CoinIdOf(ContractModel c)
         {
-            s.ActiveContracts.TryGetValue(c.Id, out var Quant);
-            var (_, cps, spc) = ProdParams(c);
-            if (!(cps > 0) || !(spc > 0) || Quant <= 0) return 0;
-            return (cps / spc) * Quant;
+            var (coin, _, _) = ProdParams(c);
+            return coin;
+        }
+
+        // Produção efetiva por segundo (com qty e modificadores)
+        public static double ProdPerSecond(ContractModel contract, StageModel stage)
+        {
+            stage.ActiveContracts.TryGetValue(contract.Id, out var qty);
+            if (qty <= 0) return 0;
+
+            var (_, cps, spc) = ProdParams(contract);
+            if (!(cps > 0) || !(spc > 0)) return 0;
+
+            var perCycle = (cps + contract.AddMod) * contract.MultMod * contract.GainFactor;
+
+            return (perCycle / spc) * qty;
         }
         #endregion
     }

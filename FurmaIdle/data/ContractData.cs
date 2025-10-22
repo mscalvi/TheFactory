@@ -305,6 +305,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = contract.KnowledgeFactor1,
                 KnowledgeFactor2 = contract.KnowledgeFactor2,
                 KnowledgeFactor3 = contract.KnowledgeFactor3,
+                AddMod = contract.AddMod,
+                MultMod = contract.MultMod,
             };
         }
 

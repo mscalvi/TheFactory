@@ -1,11 +1,10 @@
-﻿@using System.Linq
+﻿@inherits UiHelper
+
+@using System.Linq
 @using FurmaIdle.Data
 @using FurmaIdle.Helpers
 @using FurmaIdle.Models
 @using FurmaIdle.Services
-
-@inject ICurrentGameService Game
-@inject IUiService Ui
 
 <div class="nav-menu">
     <div class="nav-col">
@@ -48,6 +47,18 @@
     /// <summary>Pasta base dos ícones (ex.: /icons)</summary>
     [Parameter] public string IconBasePath { get; set; } = "/icons/nav-menu";
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // se quiser carregar algo só uma vez, faça aqui
+    }
+
+    protected override void OnGameChanged()
+    {
+        // se precisar recalcular alguma cache local, faça aqui
+        // o base já chama StateHasChanged()
+    }
+
     // ==== MODELO INTERNO ====
     private sealed class NavItem
     {
@@ -79,11 +90,10 @@
     private IEnumerable<NavItem> VisibleNav =>
         _nav.Where(item => item.Unlocked).OrderBy(position => position.SortKey);
 
-    // ==== AÇÕES ====
     private async Task Select(string id)
     {
         SelectedId = id;
-        Ui.SetOpenMenu(id);
+        UI.SetOpenMenu(id);
         if (SelectedIdChanged.HasDelegate)
             await SelectedIdChanged.InvokeAsync(SelectedId);
 
@@ -94,24 +104,13 @@
     private string GetIconPath(string id)
         => $"{IconBasePath}/{id}.jpg";
 
-    // ==== API PÚBLICA (opcional, para usar via @ref no pai) ====
-    /// <summary>Desbloqueia um ícone</summary>
     public void UnlockMenu(string id)
     {
         var it = _nav.FirstOrDefault(n => n.Id == id);
-        if (it is null)
-        {
-            // se não existir, cria
-            _nav.Add(new NavItem { Id = id, Label = id.ToUpperInvariant(), Unlocked = true });
-        }
-        else
-        {
-            it.Unlocked = true;
-        }
+        it.Unlocked = true;
         StateHasChanged();
     }
 
-    /// <summary>Bloqueia novamente um ícone</summary>
     public void LockMenu(string id)
     {
         var it = _nav.FirstOrDefault(n => n.Id == id);

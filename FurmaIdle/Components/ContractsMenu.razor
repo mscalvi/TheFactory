@@ -1,8 +1,9 @@
-﻿@using FurmaIdle.Models
+﻿@inherits UiHelper
+
+@using FurmaIdle.Models
 @using FurmaIdle.Helpers
 @using FurmaIdle.Services
 
-@inject ICurrentGameService Game
 @inject IContractsService Contracts
 @inject ILocateService Locate
 @inject IPurchaseService Purchase
@@ -40,30 +41,24 @@ else
                     if (lvlChosen)
                     {
                         var chosenCon = ChosenContract(level);
-                        if (string.IsNullOrWhiteSpace(chosenCon.Id))
+                        @if (chosenCon is null)
                         {
                             <div class="level-chosen">Contrato deste nível já foi escolhido.</div>
                         }
                         else
                         {
-                            var chosen = Locate.LocateContract(Game.CurrentGame!, chosenCon.Id);
+                            var chosen = chosenCon; // já é o contrato
                             var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, StageId);
-                            var qty = _stage.ActiveContracts?.TryGetValue(chosenCon.Id, out var q) == true ? q : 0;
-                            var canBuy = chosen is not null && CanPurchase(chosen!, _stage!);
+                            var qty = _stage.ActiveContracts?.TryGetValue(chosen.Id, out var q) == true ? q : 0;
+                            var canBuy = CanPurchase(chosen, _stage!);
                             var disabled = noCapacity || !canBuy;
 
                             <div class="contracts-list">
                                 <button type="button"
                                         class="contract-button icon-button @(disabled ? "is-locked" : null)"
-                                        disabled="@noCapacity"
-                                        aria-disabled="@(noCapacity ? "true" : "false")"
-                                        title="@(disabled
-                                                        ? (noCapacity
-                                                            ? $"Capacidade atingida ({Contracts.GetContractsUsed(Game.CurrentGame, StageId)}/{Contracts.GetContractsCap(Game.CurrentGame, StageId)})."
-                                                            : "Saldo insuficiente.")
-                                                        : null)"
-                                        @onclick="() => BuyContract(chosen!.Id)">
-                                    @chosen!.Name @(qty > 0 ? $"(x{qty})" : null)
+                                        disabled="@disabled"
+                                        @onclick="() => BuyContract(chosen.Id)">
+                                    @chosen.Name @(qty > 0 ? $"(x{qty})" : null)
                                 </button>
                             </div>
                         }
@@ -83,11 +78,11 @@ else
                                 <button type="button" class="back-button icon-button" @onclick="CloseLevel">Voltar</button>
                             </div>
 
-                            var ids = Contracts.AvaliableContracts(Game.CurrentGame!, StageId);
+                            var ids = Contracts.AvaliableContracts(Game.CurrentGame, StageId);
                             var list = ids
-                            .Select(id => Locate.LocateContract(Game.CurrentGame!, id))
-                            .Where(c => c is not null && c.Level == level)
-                            .ToList();
+                                .Select(id => Locate.LocateContract(Game.CurrentGame, id))
+                                .Where(c => c is not null && c.Level == level)
+                                .ToList();
 
                             @if (list.Count == 0)
                             {
@@ -99,20 +94,14 @@ else
                                     @foreach (var c in list)
                                     {
                                         var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, StageId);
-                                        var canBuy = CanPurchase(c!, _stage!);
+                                        var canBuy = CanPurchase(c, _stage);
                                         var disabled = noCapacity || !canBuy;
 
                                         <button type="button"
                                                 class="contract-button icon-button @(disabled ? "is-locked" : null)"
                                                 disabled="@disabled"
-                                                aria-disabled="@(disabled ? "true" : "false")"
-                                                title="@(disabled
-                                                            ? (noCapacity
-                                                                ? $"Capacidade atingida ({usedCons}/{totalCons})."
-                                                                : "Saldo insuficiente.")
-                                                            : null)"
-                                                @onclick="() => BuyContract(c!.Id)">
-                                                    @c!.Name
+                                                @onclick="() => BuyContract(c.Id)">
+                                            @c.Id
                                         </button>
                                     }
                                 </div>
@@ -138,19 +127,19 @@ else
 
     protected override void OnInitialized()
     {
-        Game.GameChanged += OnGameChanged;
-        Game.ReadyChanged += OnGameChanged;
+        base.OnInitialized();          
+        RefreshStage(maybeCollapse: true);
     }
 
-    private void OnGameChanged()
+    protected override void OnGameChanged()
     {
         RefreshStage(maybeCollapse: false);
-        InvokeAsync(StateHasChanged);
     }
 
-    protected override void OnParametersSet()
+    protected override void OnUiPulse()
     {
-        RefreshStage(maybeCollapse: true);
+        // Se precisar algo especial a cada save/pulse, faça aqui.
+        // Senão, pode deixar vazio — o base já chama StateHasChanged.
     }
 
     private void RefreshStage(bool maybeCollapse)
@@ -172,20 +161,15 @@ else
         var stageChanged = !string.Equals(_lastStageId, StageId, StringComparison.Ordinal);
         var activeDropped = _lastActive && !activeNow;
 
-        // Só colapsa quando fizer sentido
         if (maybeCollapse && (stageChanged || activeDropped))
             _expandedLevel = null;
 
-        // Atualiza memórias
         _lastStageId = StageId;
         _lastActive = activeNow;
     }
 
-    public void Dispose()
-    {
-        Game.GameChanged -= OnGameChanged;
-        Game.ReadyChanged -= OnGameChanged;
-    }
+    private static bool IsExpeditionActive(StageModel? st)
+        => st?.ActiveExpedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
 
     private void ToggleLevel(int lvl)
     {
@@ -193,17 +177,14 @@ else
         StateHasChanged();
     }
 
-    private static bool IsExpeditionActive(StageModel? st)
-        => st?.ActiveExpedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
-
     private void CloseLevel() => _expandedLevel = null;
 
     private void BuyContract(string contractId)
     {
-        var contract = Locate.LocateContract(Game.CurrentGame, contractId);
-
         Console.WriteLine($"[Contracts] Comprando Contrato {contractId}");
-        Contracts.BuyContract(Game.CurrentGame, _stage.Id, contract.Id);
+        Contracts.BuyContract(Game.CurrentGame, _stage.Id, contractId);
+
+        var contract = Locate.LocateContract(Game.CurrentGame, contractId);
 
         _stage.lockedContracts.Add(contract.Level);
 
@@ -218,8 +199,12 @@ else
 
     private ContractModel? ChosenContract(int level)
     {
-        string contractId = Contracts.GetChosenContractIdForLevel(Game.CurrentGame, Game.CurrentGame.SelectedStageId, level);
+        var stageId = Game.CurrentGame.SelectedStageId;
+        var id = Contracts.GetChosenContractIdForLevel(Game.CurrentGame, stageId, level);
 
-        return Locate.LocateContract(Game.CurrentGame, contractId);
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        return Locate.LocateContract(Game.CurrentGame, id);
     }
 }
