@@ -21,7 +21,7 @@ namespace FurmaIdle.Services
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
 
-        bool BuyContract(GameModel game, string stageId, string contractId);
+        Task BuyContract(GameModel game, string stageId, string contractId);
     }
 
     public sealed class ContractsTickSink : ITickSink, IDisposable
@@ -55,31 +55,27 @@ namespace FurmaIdle.Services
         private readonly IPurchaseService _purchase;
         private readonly ILocateService _locate;
         private readonly IIncomeService _income;
-        public ContractsService(IPurchaseService purchase, ILocateService locate, IIncomeService income)
+        private readonly ICurrentGameService _game;
+        public ContractsService(IPurchaseService purchase, ILocateService locate, IIncomeService income, ICurrentGameService game)
         {
             _purchase = purchase;
             _locate = locate;
             _income = income;
+            _game = game;
         }
 
-        public bool BuyContract(GameModel game, string stageId, string contractId)
+        public async Task BuyContract(GameModel game, string stageId, string contractId)
         {
-            game.Stages.TryGetValue(stageId, out var stage);
-            ContractModel contract = _locate.LocateContract(game, contractId);
+            var contract = _locate.LocateContract(game, contractId);
 
-            _purchase.Purchase(ItemHelper.ItemType.Contract, contract.Id, game.SelectedStageId, game);
+            await _purchase.Purchase(ItemHelper.ItemType.Contract, contract.Id, stageId);
 
-            if (!stage.ActiveContracts.ContainsKey(contract.Id))
+            await _game.Mutate(g =>
             {
-                stage.ActiveContracts.Add(contract.Id, 1);
-            }
-            else
-            {
-                var quant = stage.ActiveContracts[contract.Id];
-                stage.ActiveContracts[contract.Id] = quant + 1;
-            }
-
-            return true;
+                var st = _locate.LocateStage(g, stageId);
+                st.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
+                st.ActiveContracts[contract.Id] = (st.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
+            }, save: true);
         }
 
         public bool IsMaxContract(GameModel game, string stageId)
@@ -135,7 +131,6 @@ namespace FurmaIdle.Services
                 }
             }
 
-            Console.WriteLine($"[Contracts] Usados: {contractsTotal} / Cap: {contractsMax}");
             return contractsTotal >= contractsMax;
         }
         public int GetContractsCap(GameModel game, string stageId)
@@ -221,45 +216,59 @@ namespace FurmaIdle.Services
             return null;
         }
 
-
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
             if (!game.Stages.TryGetValue(stageId, out var stage) || stage is null) return;
-            if (stage.ActiveContracts is null || stage.ActiveContracts.Count == 0) return;
 
-            stage.ActiveContractsProgress ??= new Dictionary<string, double>();
+            var ex = stage.ActiveExpedition;
+            if (ex is null || ex.ExpeditionState != UnlockHelper.ExpeditionState.Active) return;
 
-            foreach (var kv in stage.ActiveContracts)
+            var act = stage.ActiveContracts;
+            if (act is null || act.Count == 0) return;
+
+            stage.ActiveContractsProgress ??= new Dictionary<string, double>(StringComparer.Ordinal);
+
+            foreach (var (contractId, qty) in act)
             {
-                var contractId = kv.Key;
-                var qty = kv.Value;
                 if (qty <= 0) continue;
 
-                game.Contracts.TryGetValue(contractId, out var contract);
-                var contractParams = ContractHelper.ProdParams(contract);
+                if (!game.Contracts.TryGetValue(contractId, out var contract) || contract is null) continue;
 
-                var perSecond = contractParams.CoinsPerCycle / contractParams.SecondsPerCycle;
-                if (perSecond < 0) perSecond = 0;
+                var (coinId, coinsPerCycle, secondsPerCycle) = ContractHelper.ProdParams(contract);
+                if (string.IsNullOrWhiteSpace(coinId) || secondsPerCycle <= 0 || coinsPerCycle <= 0) continue;
 
-                // ===== 1) PROGRESSO VISUAL =====
+                // progresso visual (0..1)
                 var prog = stage.ActiveContractsProgress.TryGetValue(contractId, out var p) ? p : 0.0;
-                prog += dtSeconds / contractParams.SecondsPerCycle;
+                prog += dtSeconds / secondsPerCycle;
 
-                while (prog >= 1.0)
+                // fecha ciclos inteiros
+                var cycles = (long)Math.Floor(prog);
+                if (cycles > 0)
                 {
-                    prog -= 1.0;
+                    prog -= cycles;
 
-                    // recompensa por ciclo (por unidade) = perSecond * cycleSeconds
-                    var rewardPerUnit = perSecond * contractParams.SecondsPerCycle;
-                    var totalReward = rewardPerUnit * qty;
+                    // produção POR CICLO com modificadores do contrato (se existir no seu modelo)
+                    var perCycle = coinsPerCycle;
+                    if (contract is not null)
+                    {
+                        // ajuste só se esses campos existirem no seu ContractModel
+                        perCycle = (coinsPerCycle + contract.AddMod) * contract.MultMod * contract.GainFactor;
+                    }
 
-                    _income.AddAsync(ItemHelper.ItemType.Coin, contractParams.CoinId, totalReward);
+                    var total = perCycle * qty * cycles;
+
+                    // credita usando IncomeService (ele já faz floor e acumula fração de sobra)
+                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, coinId, total);
                 }
 
+                // grava o progresso (clamped p/ UI)
+                if (prog < 0) prog = 0;
+                if (prog > 1) prog = 1;
                 stage.ActiveContractsProgress[contractId] = prog;
             }
         }
+
 
         public double GetContractProgress(GameModel game, string stageId, string contractId)
         {

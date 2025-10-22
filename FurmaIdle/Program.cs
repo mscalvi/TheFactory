@@ -24,9 +24,12 @@ builder.Services.AddSingleton<ILocateService, LocateService>();
 builder.Services.AddSingleton<IIncomeService, IncomeService>();
 builder.Services.AddSingleton<IPurchaseService, PurchaseService>();
 builder.Services.AddSingleton<IContractsService, ContractsService>();
-builder.Services.AddSingleton<IUpgradeService, UpgradeService>();
 builder.Services.AddSingleton<IExpeditionService, ExpeditionService>();
 
 builder.Services.AddSingleton<IGameStore, GameStore>();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+
+_ = host.Services.GetRequiredService<ContractsTickSink>();
+
+await host.RunAsync();

@@ -12,5 +12,7 @@ namespace FurmaIdle.Models
         public string UnlockId { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
+        public double AddMod { get; set; } = 0;
+        public double MultMod { get; set; } = 1;
     }
 }

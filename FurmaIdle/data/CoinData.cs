@@ -20,8 +20,10 @@ namespace FurmaIdle.Data
                 Name = "Talho",
                 Image = "images/coins/m01.jpg",
                 UnlockId = "s00",
-                State = UnlockHelper.State.Blocked, 
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                AddMod = 0,
+                MultMod = 1,
             },
             #endregion
         };
@@ -43,6 +45,8 @@ namespace FurmaIdle.Data
                 UnlockId = coin.UnlockId,
                 State = coin.State,
                 Persistence = coin.Persistence,
+                AddMod = coin.AddMod,
+                MultMod = coin.MultMod,
             };
         }
 

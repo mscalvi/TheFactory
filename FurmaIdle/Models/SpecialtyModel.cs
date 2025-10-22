@@ -19,5 +19,10 @@ namespace FurmaIdle.Models
         // Custo
         public string PricingId { get; set; }
         public int Cost { get; set; }
+
+        // Factor
+        public double GainFactor { get; set; }
+        public double TimeFactor { get; set; }
+        public double PriceFactor { get; set; }
     }
 }

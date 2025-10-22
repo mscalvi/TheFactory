@@ -145,15 +145,6 @@
         _ => null
     };
 
-    private static HoverType? MapHover(ItemHelper.ItemType t) => t switch
-    {
-        ItemHelper.ItemType.Upgrade => HoverType.Upgrade,
-        ItemHelper.ItemType.Character => HoverType.Character,
-        ItemHelper.ItemType.Tech => HoverType.Tech,
-        ItemHelper.ItemType.Local => HoverType.Local,
-        _ => null
-    };
-
     #region Menu
     private static bool IsUnlockStage(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.StageUnlock;
     private static bool IsUnlockCharacter(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.CharacterUnlock;
@@ -308,7 +299,7 @@
         {
             try
             {
-                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId, Game.CurrentGame);
+                canAffordForBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId);
             }
             catch (NotSupportedException ex) { canAffordForBuy = false; }
             catch (NotImplementedException ex) { canAffordForBuy = false; }
@@ -333,23 +324,12 @@
         if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy)
             builder.AddAttribute(seq++, "title");
 
-        // Hover/focus -> tooltip conforme o tipo real
-        var hover = MapHover(kind); // kind = it.Kind real (Upgrade, Local, Tech, Character)
-        if (hover.HasValue)
-        {
-            builder.AddAttribute(seq++, "onmouseenter", EventCallback.Factory.Create(this, () => ShowTip(hover.Value, it.Id)));
-            builder.AddAttribute(seq++, "onmouseleave", EventCallback.Factory.Create(this, ClearTip));
-            builder.AddAttribute(seq++, "onfocus", EventCallback.Factory.Create(this, () => ShowTip(hover.Value, it.Id)));
-            builder.AddAttribute(seq++, "onblur", EventCallback.Factory.Create(this, ClearTip));
-        }
-
-
         // clique apenas em available upgrade com saldo
         if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && canAffordForBuy)
         {
             builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, async () =>
             {
-                await Purchase.Purchase(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId, Game.CurrentGame);
+                await Purchase.Purchase(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId);
             }));
         }
 
@@ -399,13 +379,6 @@
         Console.WriteLine($"[ShopMenu] Expedição Iniciada. Equipe: [{string.Join(", ", roster)}]  (cap {cap})");
     }
     #endregion
-
-    // ===== Tooltip =====
-    private void ShowTip(HoverType hoverType, string id)
-    {
-        var tip = Tooltips.GetHover(hoverType, id, Game.CurrentGame?.SelectedStageId);
-        Tooltips.Show(tip);
-    }
 
     private void ClearTip() => Tooltips.Clear();
 }

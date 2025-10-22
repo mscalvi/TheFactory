@@ -99,22 +99,11 @@
         });
     }
 
-    private ClickModel? GetStageClick()
-    {
-        var g = Game.CurrentGame;
-        if (g is null || string.IsNullOrWhiteSpace(g.SelectedStageId)) return null;
-
-        if (!g.Stages.TryGetValue(g.SelectedStageId, out var stage)) return null;
-        if (string.IsNullOrWhiteSpace(stage.ClickId)) return null;
-
-        return g.Clicks.TryGetValue(stage.ClickId, out var click) ? click : null;
-    }
-
     // ===== Cálculo do ClickTotal =====
     // ClickTotal = (BaseGain + AddMod) * MultMod
     private double GetClickTotal()
     {
-        var click = GetStageClick();
+        var click = Locate.LocateStageClick(Game.CurrentGame, Game.CurrentGame.SelectedStageId);
         if (click is null) return 0;
 
         var baseGain = click.BaseGain;

@@ -24,13 +24,11 @@ namespace FurmaIdle.Services
     {
         private readonly ICurrentGameService _game;
         private readonly ILocateService _locate;
-        private readonly IUpgradeService _upgrades;
 
-        public UnlockService(ICurrentGameService game, ILocateService locate, IUpgradeService upgrades)
+        public UnlockService(ICurrentGameService game, ILocateService locate)
         {
             _game = game;
             _locate = locate;
-            _upgrades = upgrades;
         }
 
         #region Initial State
@@ -303,12 +301,7 @@ namespace FurmaIdle.Services
                     default:
                         break;
                 }
-
-            } else
-            {
-                await _upgrades.ApplyUpgrade(_game.CurrentGame, up.Id);
             }
-
 
             await _game.Mutate(g => { 
                 up.State = UnlockHelper.State.Unlocked;

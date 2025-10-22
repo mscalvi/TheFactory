@@ -9,6 +9,7 @@ namespace FurmaIdle.Models
         public UnlockHelper.ExpeditionState? ExpeditionState { get; set; } = UnlockHelper.ExpeditionState.Idle;
         public DateTimeOffset? StartedAt { get; set; }
         public DateTimeOffset? FinishedAt { get; set; }
+        public Dictionary<string, double> ContractCycleProgSec { get; set; } = new(StringComparer.Ordinal);
 
         public ExpeditionModel() { }
         public ExpeditionModel(string stageId)

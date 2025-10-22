@@ -8,6 +8,9 @@
         string? PreviousMenuId { get; }
         void SetOpenMenu(string? id);
         event Action? Changed;
+
+        event Action? Pulse;          
+        void RaisePulse();
     }
 
     public sealed class UiService : IUiService
@@ -48,6 +51,9 @@
             OpenMenuId = id;
             Changed?.Invoke();
         }
+
+        public event Action? Pulse;
+        public void RaisePulse() => Pulse?.Invoke();
         #endregion
     }
 }

@@ -157,6 +157,9 @@ namespace FurmaIdle.Data
                 ContractsIds = chara.ContractsIds,
                 TraitId = chara.TraitId,
                 SpecialtyId = chara.SpecialtyId,
+                GainFactor = 1,
+                PriceFactor = 1,
+                TimeFactor = 1,
             };
         }
 

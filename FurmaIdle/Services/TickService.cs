@@ -27,10 +27,16 @@ namespace FurmaIdle.Services
 
     public sealed class TickService : ITickService, IAsyncDisposable
     {
+        private readonly ICurrentGameService _game;
+        private readonly IUiService _ui;
+
+        public TickService(ICurrentGameService game, IUiService ui)
+        {
+            _game = game;
+            _ui = ui;
+        }
         public bool IsRunning { get; private set; }
         public event Action? RunningChanged;
-
-        private readonly ICurrentGameService _game;
 
         private readonly HashSet<ITickSink> _sinks = new();
 
@@ -44,9 +50,10 @@ namespace FurmaIdle.Services
         private double _saveAcc;       // acumula tempo p/ salvar
 
         // config
-        private const int TickMs = 200;        // 5x por segundo
-        private const double MaxDt = 0.25;     // clamp por tick (seg)
-        private const double SaveEvery = 2.0;  // salva a cada ~2s
+        private const int TickMs = 200;                 // 5x por segundo
+        private const double MaxDt = 0.25;              // clamp por tick (seg)
+        private const double SaveEvery = 2.0;           // salva a cada ~2s
+        private const double MaxCatchupSeconds = 600.0; // 10 min
 
         public TickService(ICurrentGameService game)
         {
@@ -61,7 +68,6 @@ namespace FurmaIdle.Services
             if (IsRunning) return;
             IsRunning = true;
             RunningChanged?.Invoke();
-
             _cts = new CancellationTokenSource();
             _timer = new PeriodicTimer(TimeSpan.FromMilliseconds(TickMs));
             _lastLoopUtc = DateTime.UtcNow;
@@ -127,14 +133,24 @@ namespace FurmaIdle.Services
 
         private async Task CatchUpOfflineAsync()
         {
-            // calcula tempo desde o último tick salvo e “passa o filme” em passos
             var g = _game.CurrentGame;
             if (g is null) return;
 
-            var last = g.LastTick == default ? DateTime.UtcNow : g.LastTick;
-            var elapsed = (DateTime.UtcNow - last).TotalSeconds;
-            Console.WriteLine($"[Tick] Catch-up START: elapsed={elapsed:F1}s, last={last:O}");
-            if (elapsed <= 0) return;
+            var now = DateTime.UtcNow;
+            var last = g.LastTick == default ? now : g.LastTick;
+
+            var elapsedRaw = (now - last).TotalSeconds;
+            Console.WriteLine($"[Tick] Catch-up START: elapsed={elapsedRaw:F1}s, last={last:O}");
+            if (elapsedRaw <= 0) return;
+
+            var elapsed = Math.Min(elapsedRaw, MaxCatchupSeconds);
+            var skipped = elapsedRaw - elapsed;
+            if (skipped > 0)
+            {
+                Console.WriteLine($"[Tick] Catch-up CLAMPED: processando {elapsed:F1}s e ignorando, por enquanto, {skipped:F1}s (placeholder p/ bulk calc).");
+                // TODO: no futuro, armazenar 'skipped' em algum lugar (ex.: g.PendingOfflineSeconds += skipped)
+                //       e fazer um cálculo agregado de renda/contratos sem simular tick-a-tick.
+            }
 
             // processa em blocos de MaxDt e faz 1 save no final
             var remaining = elapsed;
@@ -144,18 +160,19 @@ namespace FurmaIdle.Services
                 var step = Math.Min(MaxDt, remaining);
                 remaining -= step;
 
-                // no catch-up não precisamos salvar a cada passo
+                // no catch-up não salvamos a cada passo
                 await ProcessTickAsync(step, save: false);
 
-                // evita “pico” de CPU em devices fracos (opcional)
+                // ajuda a não travar em devices fracos
                 if (!first && remaining > 0)
                     await Task.Yield();
                 first = false;
             }
 
             // salva ao final do catch-up
-            await _game.Mutate(_ => { /* já ajustamos LastTick no ProcessTickAsync */ }, save: true);
-            Console.WriteLine($"[Tick] Offline catch-up: {elapsed}s");
+            await _game.Mutate(_ => { /* LastTick já foi atualizado no ProcessTickAsync */ }, save: true);
+            _ui.RaisePulse();
+            Console.WriteLine($"[Tick] Offline catch-up: {elapsed:F1}s (raw {elapsedRaw:F1}s)");
         }
 
         private async Task ProcessTickAsync(double dtSeconds, bool save)
@@ -168,6 +185,8 @@ namespace FurmaIdle.Services
                 foreach (var s in _sinks)
                     s.OnTick(g, dtSeconds);
             }, save: save);
+
+            if (save) _ui.RaisePulse();
         }
 
         public ValueTask DisposeAsync()

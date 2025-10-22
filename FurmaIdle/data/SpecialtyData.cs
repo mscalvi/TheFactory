@@ -90,7 +90,10 @@ namespace FurmaIdle.Data
                 EffectOperation = specialty.EffectOperation,
                 Duration = specialty.Duration,
                 Cost = specialty.Cost,
-                PricingId = specialty.PricingId
+                PricingId = specialty.PricingId,
+                GainFactor = 1,
+                PriceFactor = 1,
+                TimeFactor = 1,
             };
         }
 

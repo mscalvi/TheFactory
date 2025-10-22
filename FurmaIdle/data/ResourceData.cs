@@ -18,16 +18,15 @@ namespace FurmaIdle.Data
             {
                 Id = "r01",
                 Name = "Mantimentos",
-                UnlockId = "ux004", // Possível ID de expansão/tech
-                RsActual = 150, // Usando double
-                RsFraction = 0.0,
-                RsPerSecond = 0.0,
-                RsPerChar = 60.0,
+                UnlockId = "ux004",
+                RsPerChar = 30.0,
                 Icon = "icon/resources/r01.jpg",
                 Image = "images/resources/r01.jpg",
-                Lore = "", // Vazio na tabela
+                Lore = "",
                 Persistence = UnlockHelper.Persistence.untilExpansion,
                 State = UnlockHelper.State.Blocked,
+                AddMod = 0,
+                MultMod = 1,
             },
             #endregion
         };
@@ -46,15 +45,14 @@ namespace FurmaIdle.Data
                 Id = resource.Id,
                 Name = resource.Name,
                 UnlockId = resource.UnlockId,
-                RsActual = resource.RsActual,
-                RsFraction = resource.RsFraction,
-                RsPerSecond = resource.RsPerSecond,
                 RsPerChar = resource.RsPerChar,
                 Icon = resource.Icon,
                 Image = resource.Image,
                 Lore = resource.Lore,
                 Persistence = resource.Persistence,
                 State = resource.State,
+                AddMod = resource.AddMod,
+                MultMod = resource.MultMod,
             };
         }
 

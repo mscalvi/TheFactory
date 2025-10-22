@@ -29,6 +29,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c12"] = new ContractModel
             {
@@ -45,6 +47,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             #endregion
 
@@ -64,6 +68,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c22"] = new ContractModel
             {
@@ -80,6 +86,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c23"] = new ContractModel
             {
@@ -96,6 +104,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             #endregion
 
@@ -115,6 +125,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c32"] = new ContractModel
             {
@@ -131,6 +143,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c33"] = new ContractModel
             {
@@ -147,6 +161,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c34"] = new ContractModel
             {
@@ -163,6 +179,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = "k01",
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             #endregion
 
@@ -182,6 +200,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c42"] = new ContractModel
             {
@@ -198,6 +218,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k01",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c43"] = new ContractModel
             {
@@ -214,6 +236,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 KnowledgeFactor2 = "k03",
                 KnowledgeFactor3 = null,
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c44"] = new ContractModel
             {
@@ -230,6 +254,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = "k01",
+                AddMod = 0,
+                MultMod = 1,
             },
             ["c45"] = new ContractModel
             {
@@ -246,6 +272,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = "k05",
+                AddMod = 0,
+                MultMod = 1,
             },
             #endregion
         };

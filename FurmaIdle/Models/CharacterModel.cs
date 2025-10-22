@@ -12,6 +12,11 @@ namespace FurmaIdle.Models
         public string Icon { get; set; }
         public string Image { get; set; }
 
+        // Factor
+        public double GainFactor { get; set; }
+        public double TimeFactor { get; set; }
+        public double PriceFactor { get; set; }
+
         // Status
         public string UnlockId { get; set; }
         public UnlockHelper.State State { get; set; }

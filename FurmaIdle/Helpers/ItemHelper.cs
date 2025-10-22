@@ -18,6 +18,7 @@
             Expedition,
             Expansion,
             Click,
+            Trait,
         }
     }
 }

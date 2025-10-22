@@ -15,7 +15,7 @@ namespace FurmaIdle.Models
         public int MaxBuy { get; set; }
         public PricingHelper.PricingId PricingId { get; set; }
         public UnlockHelper.State State { get; set; }
-        public UnlockHelper.Persistence StatePersistence { get; set; }
+        public UnlockHelper.Persistence Persistence { get; set; }
 
         // Efeito
         public string TargetId { get; set; }

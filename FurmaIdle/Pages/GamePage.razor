@@ -25,6 +25,7 @@
 @code {
     #region GameStart
     private bool _ready = false;
+    public bool NeedsSave { get; set; }
 
     void OnGameChanged() => InvokeAsync(StateHasChanged);
 

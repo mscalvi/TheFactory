@@ -20,6 +20,8 @@ namespace FurmaIdle.Data
                 UnlockId = "uk01",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                AddMod = 0,
+                MultMod = 1,
 
                 // Knowledge Gain
                 GainCoinId = "c01",
@@ -39,6 +41,8 @@ namespace FurmaIdle.Data
                 UnlockId = "uk02",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                AddMod = 0,
+                MultMod = 1,
 
                 // Knowledge Gain
                 GainCoinId = "c01",
@@ -58,6 +62,8 @@ namespace FurmaIdle.Data
                 UnlockId = "uk03",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                AddMod = 0,
+                MultMod = 1,
 
                 // Knowledge Gain
                 GainCoinId = "c01",
@@ -80,6 +86,8 @@ namespace FurmaIdle.Data
                 UnlockId = "uk04",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                AddMod = 0,
+                MultMod = 1,
 
                 // Knowledge Gain
                 GainCoinId = "c01",
@@ -99,6 +107,8 @@ namespace FurmaIdle.Data
                 UnlockId = "uk05",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                AddMod = 0,
+                MultMod = 1,
 
                 // Knowledge Gain
                 GainCoinId = "c01",
@@ -136,7 +146,9 @@ namespace FurmaIdle.Data
                 GainCoinCurve = knowledge.GainCoinCurve,
                 GainFactorCurve = knowledge.GainFactorCurve,
                 GenerationFactor = knowledge.GenerationFactor,
-                GenerationPenaltie = knowledge.GenerationPenaltie
+                GenerationPenaltie = knowledge.GenerationPenaltie,
+                AddMod = knowledge.AddMod,
+                MultMod = knowledge.MultMod,
             };
         }
 

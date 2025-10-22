@@ -189,7 +189,6 @@ else
 
     private void ToggleLevel(int lvl)
     {
-        Console.WriteLine($"[Contracts] Contratos de Nível {lvl}");
         _expandedLevel = (_expandedLevel == lvl) ? null : lvl;
         StateHasChanged();
     }
@@ -201,23 +200,7 @@ else
 
     private void BuyContract(string contractId)
     {
-        if (!Game.IsReady || _stage is null) return;
-
-        // capacidade
-        if (Contracts.IsMaxContract(Game.CurrentGame, StageId))
-        {
-            Console.WriteLine("[Contracts] Capacidade atingida — compra bloqueada.");
-            return;
-        }
-
         var contract = Locate.LocateContract(Game.CurrentGame, contractId);
-
-        // saldo
-        if (contract is null || !CanPurchase(contract, _stage))
-        {
-            Console.WriteLine("[Contracts] Saldo insuficiente — compra bloqueada.");
-            return;
-        }
 
         Console.WriteLine($"[Contracts] Comprando Contrato {contractId}");
         Contracts.BuyContract(Game.CurrentGame, _stage.Id, contract.Id);
@@ -230,7 +213,7 @@ else
 
     private bool CanPurchase(ContractModel contract, StageModel stage)
     {
-        return Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id, Game.CurrentGame.SelectedStageId, Game.CurrentGame);
+        return Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id, Game.CurrentGame.SelectedStageId);
     }
 
     private ContractModel? ChosenContract(int level)
