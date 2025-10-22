@@ -36,8 +36,6 @@ namespace FurmaIdle.Services
             || loaded.Stages is null
             || loaded.Stages.Count == 0;
 
-            Console.WriteLine($"[CGS] Carregou alguma coisa? {!invalid}");
-
             if (invalid)
             {
                 Console.WriteLine("[CGS] Não existe jogo salvo, ou está corrompido. Criando novo jogo");
@@ -96,12 +94,10 @@ namespace FurmaIdle.Services
                 var sw = System.Diagnostics.Stopwatch.StartNew();
                 var result = factory();
                 sw.Stop();
-                Console.WriteLine($"[CGS] {name} ok ({sw.ElapsedMilliseconds} ms)");
                 return result;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[CGS] ERRO em {name}: {ex.Message}\n{ex}");
                 throw;
             }
         }

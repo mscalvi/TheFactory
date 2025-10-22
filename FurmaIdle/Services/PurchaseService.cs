@@ -1,6 +1,7 @@
 ﻿using FurmaIdle.Data;
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System.Diagnostics.Contracts;
 using System.Resources;
 using static FurmaIdle.Helpers.EffectHelper;
 using static FurmaIdle.Helpers.PricingHelper;
@@ -11,7 +12,6 @@ namespace FurmaIdle.Services
     public interface IPurchaseService
     {
         Task Purchase(ItemHelper.ItemType type, string itemId, string stageId);
-        Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId);
 
         bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId);
     }
@@ -19,20 +19,18 @@ namespace FurmaIdle.Services
     public sealed class PurchaseService : IPurchaseService
     {
         private readonly ICurrentGameService _game;
-        private readonly IIncomeService _income;
-        private readonly IUnlockService _unlock;
         private readonly ILocateService _locate;
-        private readonly IExpeditionService _expedition;
+        private readonly IUiLogService _log;
+        private readonly IEffectService _effect;
 
         public sealed record CostLine(string CurrencyGroup, string CurrencyId, double Amount);
 
-        public PurchaseService(ICurrentGameService Game, IIncomeService Income, IUnlockService Unlock, ILocateService Locate, IExpeditionService expedition)
+        public PurchaseService(ICurrentGameService Game, IUiLogService Log, ILocateService Locate, IExpeditionService expedition, IEffectService effect)
         {
             _game = Game;
-            _income = Income;
-            _unlock = Unlock;
             _locate = Locate;
-            _expedition = expedition;
+            _log = Log;
+            _effect = effect;
         }
 
         // Purchase
@@ -45,13 +43,13 @@ namespace FurmaIdle.Services
 
             await _game.Mutate(game =>
             {
-                Console.WriteLine($"[Purchase] Custo: {cost.costValue} {cost.costId}");
+                Console.WriteLine($"[Purchase] {itemId} Custo: {cost.costValue} {cost.costId}");
                 ApplyDebit(game.ExpeditionStats, cost.costValue, cost.costId);
                 ApplyStats(game.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
 
             }, save: true);
 
-            await ApplyEffect(type, itemId, stageId);            
+            await _effect.ApplyEffect(type, itemId, stageId);            
         }
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId)
         {
@@ -140,338 +138,6 @@ namespace FurmaIdle.Services
 
                 default:
                     break;
-            }
-        }
-        public async Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId)
-        {
-            if (type == ItemHelper.ItemType.Upgrade)
-            {
-                Console.WriteLine("[Purchase] Aplicando Efeitos do Update");
-                var upgrade = _locate.LocateUpgrade(_game.CurrentGame, itemId);
-                var game = _game.CurrentGame;
-
-                bool hasStages = true;
-
-                upgrade.ActualBuy++;
-                Console.WriteLine($"[Purhcase] Compra: {upgrade.ActualBuy} - Máximo: {upgrade.MaxBuy}");
-
-                if (upgrade.ActualBuy == upgrade.MaxBuy)
-                {
-                    hasStages = false;
-                }
-
-                if (!hasStages)
-                {
-                    await _unlock.UnlockUpgrade(upgrade.Id);
-                }
-
-                await _game.Mutate(g =>
-                {
-                    var stage = _locate.LocateStage(g, stageId);
-
-                    switch (upgrade.EffectType)
-                    {
-
-                        case EffectHelper.EffectType.ContractLevelUnlock:
-                            stage.ActualContractLevel += (int)upgrade.EffectValue;
-                            break;
-                        case EffectHelper.EffectType.ContractCapUnlock:
-                            if (upgrade.TargetId == "aCharacters")
-                            {
-                                foreach (var character in g.Characters)
-                                {
-                                    if (upgrade.EffectOp == EffectOperation.Additive)
-                                    {
-                                        character.Value.ContractCap += (int)upgrade.EffectValue;
-                                    }
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    {
-                                        character.Value.ContractCap *= (int)upgrade.EffectValue;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var character = _locate.LocateCharacter(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Additive)
-                                {
-                                    character.ContractCap += (int)upgrade.EffectValue;
-                                }
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                {
-                                    character.ContractCap *= (int)upgrade.EffectValue;
-                                }
-                            }
-                            break;
-                        case EffectHelper.EffectType.PartySize:
-                            stage.PartySizeActual += (int)upgrade.EffectValue;
-                            break;
-
-                        // Gains
-                        case EffectHelper.EffectType.CoinGain:
-                            if (upgrade.TargetId == "aCoins")
-                            {
-                                foreach (var coin in g.Coins)
-                                {
-                                    if (upgrade.EffectOp == EffectOperation.Additive)
-                                    {
-                                        coin.Value.AddMod += (int)upgrade.EffectValue;
-                                    }
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    {
-                                        coin.Value.MultMod *= (int)upgrade.EffectValue;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var coin = _locate.LocateCoin(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Additive)
-                                {
-                                    coin.AddMod += upgrade.EffectValue;
-                                }
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                {
-                                    coin.MultMod *= upgrade.EffectValue;
-                                }
-                            }
-                            break;
-                        case EffectHelper.EffectType.KnowledgeGain:
-                            if (upgrade.TargetId == "aKnowledges")
-                            {
-                                foreach (var know in g.Knowledges)
-                                {
-                                    if (upgrade.EffectOp == EffectOperation.Additive)
-                                    {
-                                        know.Value.AddMod += (int)upgrade.EffectValue;
-                                    }
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    {
-                                        know.Value.MultMod *= (int)upgrade.EffectValue;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var know = _locate.LocateKnowledge(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Additive)
-                                {
-                                    know.AddMod += upgrade.EffectValue;
-                                }
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                {
-                                    know.MultMod *= upgrade.EffectValue;
-                                }
-                            }
-                            break;
-                        case EffectHelper.EffectType.ResourceGain:
-                            if (upgrade.TargetId == "aResources")
-                            {
-                                foreach (var resource in g.Resources)
-                                {
-                                    if (upgrade.EffectOp == EffectOperation.Additive)
-                                    {
-                                        resource.Value.AddMod += (int)upgrade.EffectValue;
-                                    }
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    {
-                                        resource.Value.MultMod *= (int)upgrade.EffectValue;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var resource = _locate.LocateResource(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Additive)
-                                {
-                                    resource.AddMod += upgrade.EffectValue;
-                                }
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                {
-                                    resource.MultMod *= upgrade.EffectValue;
-                                }
-                            }
-                            break;
-                        case EffectHelper.EffectType.ClickGain:
-                            if (upgrade.TargetId == "aClicks")
-                            {
-                                foreach (var click in g.Clicks)
-                                {
-                                    if (upgrade.EffectOp == EffectOperation.Additive)
-                                    {
-                                        click.Value.AddMod += (int)upgrade.EffectValue;
-                                    }
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    {
-                                        click.Value.MultMod *= (int)upgrade.EffectValue;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var click = _locate.LocateStageClick(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Additive)
-                                {
-                                    click.AddMod += upgrade.EffectValue;
-                                }
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                {
-                                    click.MultMod *= upgrade.EffectValue;
-                                }
-                            }
-                            break;
-                        case EffectHelper.EffectType.ContractGain:
-                            if (upgrade.TargetId == "aContracts")
-                            {
-                                foreach (var contract in g.Contracts)
-                                {
-                                    if (upgrade.EffectOp == EffectOperation.Additive)
-                                    {
-                                        contract.Value.AddMod += (int)upgrade.EffectValue;
-                                    }
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    {
-                                        contract.Value.MultMod *= (int)upgrade.EffectValue;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var contract = _locate.LocateContract(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Additive)
-                                {
-                                    contract.AddMod += upgrade.EffectValue;
-                                }
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                {
-                                    contract.MultMod *= upgrade.EffectValue;
-                                }
-                            }
-                            break;
-
-                        // Modifiers
-                        case EffectHelper.EffectType.CharacterCost:
-                            if (upgrade.TargetId == "aCharacters")
-                            {
-                                foreach (var kv in g.Characters)
-                                {
-                                    var c = kv.Value;
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                        c.PriceFactor *= upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Additive)
-                                        c.PriceFactor += upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Override)
-                                        c.PriceFactor = upgrade.EffectValue;
-                                }
-                            }
-                            else
-                            {
-                                var c = _locate.LocateCharacter(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    c.PriceFactor *= upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Additive)
-                                    c.PriceFactor += upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Override)
-                                    c.PriceFactor = upgrade.EffectValue;
-                            }
-                            break;
-                        case EffectHelper.EffectType.SpecialtyCost:
-                            if (upgrade.TargetId == "aSpecialities")
-                            {
-                                foreach (var kv in g.Specialties)
-                                {
-                                    var c = kv.Value;
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                        c.PriceFactor *= upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Additive)
-                                        c.PriceFactor += upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Override)
-                                        c.PriceFactor = upgrade.EffectValue;
-                                }
-                            }
-                            else
-                            {
-                                var c = _locate.LocateSpecialty(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    c.PriceFactor *= upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Additive)
-                                    c.PriceFactor += upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Override)
-                                    c.PriceFactor = upgrade.EffectValue;
-                            }
-                            break;
-                        case EffectHelper.EffectType.ContractCost:
-                            if (upgrade.TargetId == "aContracts")
-                            {
-                                foreach (var kv in g.Contracts)
-                                {
-                                    var c = kv.Value;
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                        c.PriceFactor *= upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Additive)
-                                        c.PriceFactor += upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Override)
-                                        c.PriceFactor = upgrade.EffectValue;
-                                }
-                            }
-                            else
-                            {
-                                var c = _locate.LocateContract(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    c.PriceFactor *= upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Additive)
-                                    c.PriceFactor += upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Override)
-                                    c.PriceFactor = upgrade.EffectValue;
-                            }
-                            break;
-                        case EffectHelper.EffectType.ContractTime:
-                            if (upgrade.TargetId == "aContracts")
-                            {
-                                foreach (var kv in g.Contracts)
-                                {
-                                    var c = kv.Value;
-                                    if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                        c.TimeFactor *= upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Additive)
-                                        c.TimeFactor += upgrade.EffectValue;
-                                    else if (upgrade.EffectOp == EffectOperation.Override)
-                                        c.TimeFactor = upgrade.EffectValue;
-                                }
-                            }
-                            else
-                            {
-                                var c = _locate.LocateContract(g, upgrade.TargetId);
-                                if (upgrade.EffectOp == EffectOperation.Multiplicative)
-                                    c.TimeFactor *= upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Additive)
-                                    c.TimeFactor += upgrade.EffectValue;
-                                else if (upgrade.EffectOp == EffectOperation.Override)
-                                    c.TimeFactor = upgrade.EffectValue;
-                            }
-                            break;
-                    }
-
-                }, save: true);
-            }
-            if (type == ItemHelper.ItemType.Expedition)
-            {
-                Console.WriteLine("[Purchase] Aplicando Reset da Expedição");
-
-                await _game.Mutate(g => { _expedition.EndExpedition(g, stageId); }, save: true);
-
-                // Reaplica permanentes corretamente (via UnlockService + efeitos numéricos)
-                await _expedition.ReapplyAfterResetAsync(stageId);
-            }
-            if (type == ItemHelper.ItemType.Expansion)
-            {
-                // Hard Reset
-                Console.WriteLine("[Purchase] Aplicando Efeitos da Expansão");
-            }
-            if (type == ItemHelper.ItemType.Specialty)
-            {
-                // Uso de Habilidade
-                Console.WriteLine("[Purchase] Aplicando Efeitos da Especialidade");
             }
         }
 

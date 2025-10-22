@@ -20,7 +20,6 @@
 @inject ITickService Ticks
 @inject IUnlockService Unlock
 @inject IUiService UI
-@inject IDebugService Debug
 
 @code {
     #region GameStart
@@ -50,7 +49,6 @@
         // 2) aplica unlocks
         await Unlock.UnlockInitialState();
         Console.WriteLine("[GP] Estágio Inicial Desbloqueado");
-        Debug.BuildDumpSnapshot(0, "Inicio do Jogo");
 
         Game.MarkReady();
         Console.WriteLine("[GP] Jogo marcado como Pronto");
@@ -109,7 +107,6 @@
 }
 else
 {
-    Debug.BuildDumpSnapshot(1, "Mudança de Tela");
     <div class="game-grid">
         <!-- Navegador -->
         <aside class="nav-menu panel">

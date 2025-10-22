@@ -299,6 +299,7 @@ namespace FurmaIdle.Data
                 GainFactor = 1,
                 PriceFactor = 1,
                 TimeFactor = 1,
+                PricingId = contract.PricingId,
                 UnlockId = contract.UnlockId,
                 Persistence = contract.Persistence,
                 State = contract.State,

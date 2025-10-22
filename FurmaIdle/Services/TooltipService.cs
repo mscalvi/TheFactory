@@ -1,5 +1,4 @@
-﻿// Services/TooltipService.cs
-using FurmaIdle.Data;
+﻿using FurmaIdle.Data;
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using FurmaIdle.Services;
@@ -10,7 +9,7 @@ using System.Text;
 
 namespace FurmaIdle.Services
 {
-    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract }
+    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expansion, Expedition }
     public sealed record HoverTip(string Title, string Body);
 
     public interface ITooltipService
@@ -26,12 +25,15 @@ namespace FurmaIdle.Services
     public sealed class TooltipService : ITooltipService
     {
         private readonly ICurrentGameService _game;
+        private readonly ILocateService _locate;
+
         public HoverTip? Current { get; private set; }
         public event Action? Changed;
 
-        public TooltipService(ICurrentGameService game)
+        public TooltipService(ICurrentGameService game, ILocateService locate)
         {
             _game = game;
+            _locate = locate;
         }
 
         public void Show(HoverTip tip)
@@ -53,9 +55,10 @@ namespace FurmaIdle.Services
             return type switch
             {
                 HoverType.Character => BuildCharacterHover(id, g),
+                HoverType.Contract => BuildContractHover(id, g),
                 //HoverType.Specialty => BuildSpecialtyHover(id, g),
-                //HoverType.Tech => BuildTechHover(id, g),
-                //HoverType.Local => BuildLocalHover(id, g),
+                HoverType.Tech => BuildTechHover(id, g),
+                HoverType.Local => BuildLocalHover(id, g),
                 HoverType.Upgrade => BuildUpgradeHover(id, g),
                 _ => new HoverTip("—", "—")
             };
@@ -64,23 +67,41 @@ namespace FurmaIdle.Services
         // Character
         private HoverTip BuildCharacterHover(string id, GameModel game)
         {
-            game.Characters.TryGetValue(id, out var Character);
+            game.Characters.TryGetValue(id, out var character);
 
-            CharacterModel? def = null;
-            try { def = CharacterData.GetDef(id); } catch { /* seguro */ }
-
-            return new HoverTip($"Personagem ({Character.Id})", $"{Character.Name}");
+            return new HoverTip($"Personagem ({character.Name})", $"{character.State}");
         }
 
         // Upgrade
         private HoverTip BuildUpgradeHover(string id, GameModel game)
         {
-            game.Upgrades.TryGetValue(id, out var Upgrade);
+            game.Upgrades.TryGetValue(id, out var upgrade);
 
-            UpgradeModel? def = null;
-            try { def = UpgradeData.GetDef(id); } catch { /* seguro */ }
+            return new HoverTip($"Upgrade ({upgrade.Name})", $"{upgrade.Description}");
+        }
 
-            return new HoverTip($"Upgrade ({Upgrade.Id})", $"{Upgrade.Name}");
+        // Contract
+        private HoverTip BuildContractHover(string id, GameModel game)
+        {
+            game.Contracts.TryGetValue(id, out var contract);
+
+            return new HoverTip($"Upgrade ({contract.Name})", $"{contract.State}");
+        }
+
+        // Local
+        private HoverTip BuildLocalHover(string id, GameModel game)
+        {
+            game.Locals.TryGetValue(id, out var local);
+
+            return new HoverTip($"Upgrade ({local.Name})", $"{local.State}");
+        }
+
+        // Techs
+        private HoverTip BuildTechHover(string id, GameModel game)
+        {
+            game.Techs.TryGetValue(id, out var tech);
+
+            return new HoverTip($"Upgrade ({tech.Name})", $"{tech.State}");
         }
     }
 }

@@ -31,12 +31,14 @@ namespace FurmaIdle.Services
         private readonly ILocateService _locate;
         private readonly ICurrentGameService _game;
         private readonly IUnlockService _unlock;
+        private readonly IEffectService _effect;
 
-        public ExpeditionService(ILocateService locate, ICurrentGameService game, IUnlockService unlock)
+        public ExpeditionService(ILocateService locate, ICurrentGameService game, IUnlockService unlock, IEffectService effect)
         {
             _locate = locate;
             _game = game;
             _unlock = unlock;
+            _effect = effect;
         }
 
         public List<CharacterModel> GetActiveCharacters(ExpeditionModel expedition)
@@ -275,6 +277,7 @@ namespace FurmaIdle.Services
                 ex.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
             }
         }
+
         public async Task ReapplyAfterResetAsync(string stageId)
         {
             var g = _game.CurrentGame;
@@ -414,6 +417,8 @@ namespace FurmaIdle.Services
                     }
                 }
             }, save: true);
+
+            await ApplyPartyTraitsAsync();
         }
 
         // Helpers
@@ -435,6 +440,20 @@ namespace FurmaIdle.Services
             else if (op == EffectHelper.EffectOperation.Multiplicative) target.MultMod *= v;
             else if (op == EffectHelper.EffectOperation.Override) { target.AddMod = 0; target.MultMod = v; }
         }
+        private async Task ApplyPartyTraitsAsync()
+        {
+            var g = _game.CurrentGame;
+            var st = GetCurrentStage();
+            var ex = GetOrCreateCurrentExpedition();
+
+            foreach (var charId in ex.PartyIds)
+            {
+                var ch = _locate.LocateCharacter(g, charId);
+
+                await _effect.ApplyEffect(ItemHelper.ItemType.Trait, ch.TraitId, st.Id);
+            }
+        }
+
 
     }
 }

@@ -2,8 +2,9 @@
 
 @using FurmaIdle.Services
 
-@inject IJSRuntime JS;
+@inject IJSRuntime JS
 @inject ITooltipService Tooltips
+@inject IUiLogService UiLog
 
 <section class="text-box panel" role="status" aria-live="polite">
     <div class="msg-body" @ref="_msgBodyRef">
@@ -35,37 +36,46 @@
 </section>
 
 @code {
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        // se quiser carregar algo só uma vez, faça aqui
-    }
-
-    protected override void OnGameChanged()
-    {
-        // se precisar recalcular alguma cache local, faça aqui
-        // o base já chama StateHasChanged()
-    }
-
     ElementReference _msgBodyRef;
-    int _lastMsgCount;
-    bool _scrollMessagesOnOpen;
 
-    // Tipos de mensagem
     enum MsgKind { Info, Warn, Error, Success }
-
-    // Modelo de mensagem
     sealed class UiMessage
     {
         public DateTime Time { get; init; } = DateTime.Now;
         public string Text { get; init; } = "";
         public MsgKind Kind { get; init; } = MsgKind.Info;
     }
+    readonly List<UiMessage> _msgs = new();
 
-    List<UiMessage> _msgs = new();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        UiLog.OnMessage += HandleUiLogMessage;
+    }
 
-    // helper para CSS por tipo
+    public void Dispose()
+    {
+        UiLog.OnMessage -= HandleUiLogMessage;
+        base.Dispose();
+    }
+
+    void HandleUiLogMessage(UiLogMessage msg)
+    {
+        _msgs.Add(new UiMessage
+        {
+            Text = msg.Text,
+            Time = msg.Time,
+            Kind = msg.Kind switch
+            {
+                UiLogKind.Warn => MsgKind.Warn,
+                UiLogKind.Error => MsgKind.Error,
+                UiLogKind.Success => MsgKind.Success,
+                _ => MsgKind.Info
+            }
+        });
+        InvokeAsync(StateHasChanged);
+    }
+
     string Css(MsgKind k) => k switch
     {
         MsgKind.Warn => "is-warn",
@@ -73,10 +83,4 @@
         MsgKind.Success => "is-success",
         _ => "is-info"
     };
-
-    void Log(string text, MsgKind kind = MsgKind.Info)
-    {
-        _msgs.Add(new UiMessage { Text = text, Kind = kind, Time = DateTime.Now });
-        StateHasChanged();
-    }
 }

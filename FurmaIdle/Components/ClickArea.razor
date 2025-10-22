@@ -84,7 +84,6 @@
         if(game.Stages.TryGetValue(stageId, out var stage))
         {
             var gain = await Income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal);
-            Console.WriteLine($"[ClickArea] Click: {stage.Id} = {ClickTotal} {stage.CoinId}");
         } else
         {
             Console.WriteLine("[ClickArea] Bug");

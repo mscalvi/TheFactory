@@ -60,9 +60,7 @@ namespace FurmaIdle.Data
             {
                 Id = "tr05",
                 Description = "Reduz o custo de novos Personagens",
-                // TargetId é uma string que referencia a tabela de preços.
-                // A lógica de runtime irá interpretar 'PricingId.CharacterUnlock1m01'
-                TargetId = "PricingId.CharacterUnlock1m01",
+                TargetId = "aCharacters",
                 EffectValue = 0.95,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.CharacterCost,

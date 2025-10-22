@@ -7,6 +7,8 @@
 @inject IContractsService Contracts
 @inject ILocateService Locate
 @inject IPurchaseService Purchase
+@inject ITooltipService Tooltips
+@inject IUiLogService _log
 
 @implements IDisposable
 
@@ -47,7 +49,7 @@ else
                         }
                         else
                         {
-                            var chosen = chosenCon; // já é o contrato
+                            var chosen = chosenCon;
                             var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, StageId);
                             var qty = _stage.ActiveContracts?.TryGetValue(chosen.Id, out var q) == true ? q : 0;
                             var canBuy = CanPurchase(chosen, _stage!);
@@ -57,8 +59,12 @@ else
                                 <button type="button"
                                         class="contract-button icon-button @(disabled ? "is-locked" : null)"
                                         disabled="@disabled"
-                                        @onclick="() => BuyContract(chosen.Id)">
-                                    @chosen.Name @(qty > 0 ? $"(x{qty})" : null)
+                                        @onclick="() => BuyContract(chosen.Id)"
+                                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, StageId))"
+                                        @onmouseleave="Tooltips.Clear"
+                                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, StageId))"
+                                        @onblur="Tooltips.Clear">
+                                    @chosen.Id @(qty > 0 ? $"(x{qty})" : null)
                                 </button>
                             </div>
                         }
@@ -100,7 +106,11 @@ else
                                         <button type="button"
                                                 class="contract-button icon-button @(disabled ? "is-locked" : null)"
                                                 disabled="@disabled"
-                                                @onclick="() => BuyContract(c.Id)">
+                                                @onclick="() => BuyContract(c.Id)"
+                                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, StageId))"
+                                                @onmouseleave="Tooltips.Clear"
+                                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, StageId))"
+                                                @onblur="Tooltips.Clear">
                                             @c.Id
                                         </button>
                                     }
@@ -181,7 +191,6 @@ else
 
     private void BuyContract(string contractId)
     {
-        Console.WriteLine($"[Contracts] Comprando Contrato {contractId}");
         Contracts.BuyContract(Game.CurrentGame, _stage.Id, contractId);
 
         var contract = Locate.LocateContract(Game.CurrentGame, contractId);
@@ -189,6 +198,7 @@ else
         _stage.lockedContracts.Add(contract.Level);
 
         _expandedLevel = null;
+        _log.Info($"Outro contrato para {contract.Name}, ótimo!");
         StateHasChanged();
     }
 

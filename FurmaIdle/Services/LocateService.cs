@@ -18,6 +18,7 @@ namespace FurmaIdle.Services
         KnowledgeModel LocateKnowledge(GameModel game, string knowledgeId);
         SpecialtyModel LocateSpecialty(GameModel game, string specialtyId);
         ClickModel LocateStageClick(GameModel game, string stageId);
+        TraitModel LocateTrait(GameModel game, string traitId);
     }
 
     public sealed class LocateService : ILocateService
@@ -127,6 +128,15 @@ namespace FurmaIdle.Services
 
             if (game.Specialties.TryGetValue(specialtyId, out var s)) return s;
             throw new KeyNotFoundException($"Specialty '{specialtyId}' não encontrada no jogo atual.");
+        }
+
+        public TraitModel LocateTrait(GameModel game, string traitId)
+        {
+            if (string.IsNullOrWhiteSpace(traitId))
+                throw new ArgumentException("traitId inválido.", nameof(traitId));
+
+            if (game.Traits.TryGetValue(traitId, out var trait)) return trait;
+            throw new KeyNotFoundException($"Trait '{traitId}' não encontrada no jogo atual.");
         }
 
         public ClickModel LocateStageClick(GameModel game, string stageId)

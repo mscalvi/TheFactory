@@ -38,7 +38,6 @@ namespace FurmaIdle.Services
             {
                 if (!StatsApply(Game, type, itemId, gain, frac))
                 {
-                    Console.WriteLine($"[Income] Falha ao aplicar ganho: type={type} id={itemId} eff={gain}");
                     gain = 0;
                 }
 
@@ -84,8 +83,6 @@ namespace FurmaIdle.Services
                 Game.ExpeditionStats.Coins[id] = coin;
                 Game.ExpeditionStats.CoinsGain[id] = coinarch;
                 Game.ExpeditionStats.CoinsFrac[id] = newRestDouble;
-
-                Console.WriteLine($"[Income] Ganho: {gain+frac} {id}. Expedição: {coin + newRestDouble:F2} - Histórico: {coinarch}");
             }
 
             return true;

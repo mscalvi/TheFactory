@@ -19,7 +19,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu110",
                 Name = "Contrato para Varrer o Chão",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uu110.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -37,7 +37,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu120",
                 Name = "Contrato para Carregar o Barco",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uu120.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -55,7 +55,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu210",
                 Name = "Contrato para Servir Bebidas",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uu210.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -73,7 +73,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu220",
                 Name = "Contrato para Limpar Peixes",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uu220.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -91,7 +91,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc230",
                 Name = "Contrato para Lavar Figurinos",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc230.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -109,7 +109,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu310",
                 Name = "Contrato para Ajudar na Cozinha",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uu310.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -127,7 +127,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu320",
                 Name = "Contrato para Organizar Ferramentas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uu320.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -145,7 +145,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu330",
                 Name = "Contrato para Preparar Armas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uu330.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -163,7 +163,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu340",
                 Name = "Contrato para Ajudar no Ensaio",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uu340.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -181,7 +181,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu410",
                 Name = "Contrato para Cozinhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uu410.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -199,7 +199,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu420",
                 Name = "Contrato para Entalhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uu420.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -217,7 +217,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu430",
                 Name = "Contrato para Pescar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uu430.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -235,7 +235,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu440",
                 Name = "Contrato para Apresentar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uu440.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -253,7 +253,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uu450",
                 Name = "Contrato para Caçar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uu450.jpg",
                 Lore = "",
                 Description = "Libera o Contrato",
@@ -274,7 +274,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc111",
                 Name = "Qualidade ao Varrer o Chão",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uc111.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -292,7 +292,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc112",
                 Name = "Experiência em Varrer o Chão",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uc112.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -310,7 +310,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc113",
                 Name = "Habilidade ao Varrer o Chão",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uc113.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -328,7 +328,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc121",
                 Name = "Qualidade ao Carregar o Barco",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uc121.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -346,7 +346,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc122",
                 Name = "Experiência em Carregar o Barco",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uc122.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -364,7 +364,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc123",
                 Name = "Habilidade ao Carregar o Barco",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uc123.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -385,7 +385,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc211",
                 Name = "Qualidade ao Servir Bebidas",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc211.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -403,7 +403,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc212",
                 Name = "Experiência em Servir Bebidas",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc212.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -421,7 +421,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc213",
                 Name = "Habilidade ao Servir Bebidas",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc213.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -439,7 +439,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc221",
                 Name = "Qualidade ao Limpar Peixes",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc221.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -457,7 +457,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc222",
                 Name = "Experiência em Limpar Peixes",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc222.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -475,7 +475,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc223",
                 Name = "Habilidade ao Limpar Peixes",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc223.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -493,7 +493,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc231",
                 Name = "Qualidade ao Lavar Figurino",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc231.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -511,7 +511,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc232",
                 Name = "Experiência em Lavar Figurino",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc232.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -529,7 +529,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc233",
                 Name = "Habilidade ao Lavar Figurino",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/uc233.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -550,7 +550,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc311",
                 Name = "Qualidade ao Ajudar na Cozinha",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc311.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -568,7 +568,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc312",
                 Name = "Experiência em Ajudar na Cozinha",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc312.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -586,7 +586,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc313",
                 Name = "Habilidade ao Ajudar na Cozinha",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc313.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -604,7 +604,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc321",
                 Name = "Qualidade ao Organizar Ferramentas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc321.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -622,7 +622,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc322",
                 Name = "Experiência em Organizar Ferramentas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc322.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -640,7 +640,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc323",
                 Name = "Habilidade ao Organizar Ferramentas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc323.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -658,7 +658,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc331",
                 Name = "Qualidade ao Preparar Armas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc331.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -676,7 +676,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc332",
                 Name = "Experiência em Preparar Armas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc332.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -694,7 +694,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc333",
                 Name = "Habilidade ao Preparar Armas",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc333.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -712,7 +712,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc341",
                 Name = "Qualidade ao Ajudar no Ensaio",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc341.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -730,7 +730,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc342",
                 Name = "Experiência em Ajudar no Ensaio",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc342.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -748,7 +748,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc343",
                 Name = "Habilidade ao Ajudar no Ensaio",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/uc343.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -769,7 +769,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc411",
                 Name = "Qualidade ao Cozinhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc411.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -787,7 +787,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc412",
                 Name = "Experiência em Cozinhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc412.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -805,7 +805,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc413",
                 Name = "Habilidade ao Cozinhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc413.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -823,7 +823,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc421",
                 Name = "Qualidade ao Entalhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc421.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -841,7 +841,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc422",
                 Name = "Experiência em Entalhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc422.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -859,7 +859,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc423",
                 Name = "Habilidade ao Entalhar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc423.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -877,7 +877,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc431",
                 Name = "Qualidade ao Pescar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc431.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -895,7 +895,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc432",
                 Name = "Experiência em Pescar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc432.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -913,7 +913,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc433",
                 Name = "Habilidade ao Pescar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc433.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -931,7 +931,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc441",
                 Name = "Qualidade ao Apresentar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc441.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -949,7 +949,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc442",
                 Name = "Experiência em Apresentar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc442.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -967,7 +967,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc443",
                 Name = "Habilidade ao Apresentar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc443.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -985,7 +985,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc451",
                 Name = "Qualidade ao Caçar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc451.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1003,7 +1003,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc452",
                 Name = "Experiência em Caçar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc452.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -1021,7 +1021,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uc453",
                 Name = "Habilidade ao Caçar",
-                Level = "4",
+                Level = 4,
                 Icon = "images/upgrades/uc453.jpg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
@@ -1042,7 +1042,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uk01",
                 Name = "Aprender sobre Cultura",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uk01.jpg",
                 Lore = "",
                 Description = "Libera o Conhecimento",
@@ -1060,7 +1060,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uk02",
                 Name = "Aprender sobre Geografia",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uk02.jpg",
                 Lore = "",
                 Description = "Libera o Conhecimento",
@@ -1078,7 +1078,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uk03",
                 Name = "Aprender sobre Sobrevivência",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uk03.jpg",
                 Lore = "",
                 Description = "Libera o Conhecimento",
@@ -1096,7 +1096,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uk04",
                 Name = "Aprender sobre Navegação",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uk04.jpg",
                 Lore = "",
                 Description = "Libera o Conhecimento",
@@ -1114,7 +1114,7 @@ namespace FurmaIdle.Data
             {
                 Id = "uk05",
                 Name = "Aprender sobre Caça",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/uk05.jpg",
                 Lore = "",
                 Description = "Libera o Conhecimento",
@@ -1135,7 +1135,7 @@ namespace FurmaIdle.Data
             {
                 Id = "up001",
                 Name = "Contratar Ferri Karu",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/up001.jpg",
                 Lore = "",
                 Description = "Contrata o Personagem e o envia para a Base",
@@ -1153,7 +1153,7 @@ namespace FurmaIdle.Data
             {
                 Id = "up002",
                 Name = "Contratar Maik Monhang",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/up002.jpg",
                 Lore = "",
                 Description = "Contrata o Personagem e o envia para a Base",
@@ -1171,7 +1171,7 @@ namespace FurmaIdle.Data
             {
                 Id = "up003",
                 Name = "Contratar Claimi Eky",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/up003.jpg",
                 Lore = "",
                 Description = "Contrata o Personagem e o envia para a Base",
@@ -1189,7 +1189,7 @@ namespace FurmaIdle.Data
             {
                 Id = "up004",
                 Name = "Contratar Alan Nhengar",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/up011.jpg",
                 Lore = "",
                 Description = "Contrata o Personagem e o envia para a Base",
@@ -1207,7 +1207,7 @@ namespace FurmaIdle.Data
             {
                 Id = "up011",
                 Name = "Contratar Jaime Boor",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/up011.jpg",
                 Lore = "",
                 Description = "Contrata o Personagem e o envia para a Base",
@@ -1225,7 +1225,7 @@ namespace FurmaIdle.Data
             {
                 Id = "up021",
                 Name = "Contratar Yg Iepora",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/up021.jpg",
                 Lore = "",
                 Description = "Contrata o Personagem e o envia para a Base",
@@ -1246,7 +1246,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ul00",
                 Name = "Explorar a Murada Cairu",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ul00.jpg",
                 Lore = "",
                 Description = "Libera Local",
@@ -1264,7 +1264,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ul01",
                 Name = "Explorar as Pontas Cantarolantes",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ul01.jpg",
                 Lore = "",
                 Description = "Libera Local",
@@ -1282,7 +1282,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ul02",
                 Name = "Explorar o Coração da Ilha",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ul02.jpg",
                 Lore = "",
                 Description = "Libera Local",
@@ -1300,7 +1300,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ul03",
                 Name = "Explorar o Bosque da Raposa",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ul03.jpg",
                 Lore = "",
                 Description = "Libera Local",
@@ -1321,7 +1321,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0110",
                 Name = "Pesquisar Fundação de Guildas",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0110.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1342,7 +1342,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0210",
                 Name = "Pesquisar as Vilas Litorâneas",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0210.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1360,7 +1360,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0220",
                 Name = "Pesquisar os Litorais Rochosos",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0220.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1381,7 +1381,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0310",
                 Name = "Pesquisar a Vida em Muradas",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0310.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1399,7 +1399,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0320",
                 Name = "Pesquisar a Sobrevivência na Selva",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0320.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1420,7 +1420,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0410",
                 Name = "Pesquisar a Construção de Barcos",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0410.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1441,7 +1441,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0510",
                 Name = "Pesquisar a Caça de Animais Pequenos",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0510.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1459,7 +1459,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0520",
                 Name = "Pesquisar a Caça de Animais Predadores",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0520.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1477,7 +1477,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0530",
                 Name = "Pesquisar a Caça de Animais Insanos",
-                Level = "3",
+                Level = 3,
                 Icon = "images/upgrades/ut0530.png",
                 Lore = "",
                 Description = "Libera Tech",
@@ -1498,7 +1498,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux010",
                 Name = "Reestruturar a Guilda: Pesquisas",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux010.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
@@ -1516,7 +1516,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux010",
                 Name = "Reestruturar a Guilda: Territórios",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux020.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
@@ -1534,7 +1534,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux030",
                 Name = "Reestruturar a Guilda: Alcance",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux030.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
@@ -1555,7 +1555,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0111",
                 Name = "Utensílios da Guilda",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0111.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1573,7 +1573,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0112",
                 Name = "Códigos da Guilda",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0112.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1591,7 +1591,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0113",
                 Name = "Brasão da Guilda",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0113.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1609,7 +1609,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0114",
                 Name = "Disciplina da Guilda",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0114.jpg",
                 Lore = "",
                 Description = "Aumenta a geração do Recurso",
@@ -1627,7 +1627,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0115",
                 Name = "Recepção da Guilda",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0115.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1648,7 +1648,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0211",
                 Name = "Facas de Escamar",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0211.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1666,7 +1666,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0212",
                 Name = "Reservas de Escambo",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0212.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1684,7 +1684,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0213",
                 Name = "Cordas Grossas",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0213.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1702,7 +1702,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0214",
                 Name = "Água Aproveitada",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0214.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato", // Tabela diz ContractGain, mas a descrição diz Diminui o tempo. Vou usar EffectType de ContratTime e o valor de 2 como Multiplicative, o que me parece um erro de digitação na tabela original. Vou usar o valor de 2, mas vou mudar o EffectType para o que faz sentido com a descrição: ContractTime, 0.75 (assumindo a próxima linha como referência). CORREÇÃO de DADOS: Usando o EffectType da linha ut0224/ut0225 (ContractTime, 0.75)
@@ -1720,7 +1720,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0215",
                 Name = "Armazéns Salinos",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0215.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -1741,7 +1741,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0221",
                 Name = "Lascas Naturais",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0221.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1759,7 +1759,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0222",
                 Name = "Piscinas Naturais",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0222.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1777,7 +1777,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0223",
                 Name = "Cascas Comestíveis",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0223.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1795,7 +1795,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0224",
                 Name = "Água Forte",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0224.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -1813,7 +1813,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0225",
                 Name = "Boias de Segurança",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0225.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -1834,7 +1834,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0311",
                 Name = "Manutenção Coletiva",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0311.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1852,7 +1852,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0312",
                 Name = "Rotina Rígida",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0312.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1870,7 +1870,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0313",
                 Name = "Necessidades Ocultas",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0313.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1888,7 +1888,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0314",
                 Name = "União de Moradores",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0314.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1906,7 +1906,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0315",
                 Name = "Vigilância Constante",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0315.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1927,7 +1927,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0321",
                 Name = "Ingredientes Frescos",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ut0321.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1945,7 +1945,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0322",
                 Name = "Caça de Cerdos",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0322.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1963,7 +1963,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0323",
                 Name = "Cintos Utilitários",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0323.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1981,7 +1981,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0324",
                 Name = "Armadilhas para Grandes Presas",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0324.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
@@ -1999,7 +1999,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ut0325",
                 Name = "Rotina de Caça",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ut0325.jpg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
@@ -2020,7 +2020,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux001",
                 Name = "Prestação de Serviços",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux001.jpg",
                 Lore = "",
                 Description = "Libera começar o próximo nível de Contratos na Ilha de Vera",
@@ -2038,7 +2038,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux002",
                 Name = "Encontrar Trabalho",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux002.jpg",
                 Lore = "",
                 Description = "Aumenta o limite de Contratos de todos os Personagens",
@@ -2056,7 +2056,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux003",
                 Name = "Trabalho Árduo",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux003.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click",
@@ -2074,7 +2074,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux004",
                 Name = "Queimar Energias",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux004.jpg",
                 Lore = "",
                 Description = "Libera Recursos",
@@ -2095,7 +2095,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux011",
                 Name = "Disseminar Conhecimento",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux011.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Contratos por Tech desbloqueada",
@@ -2113,7 +2113,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux012",
                 Name = "Estudo Coletivo",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux012.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Conhecimentos por Tech desbloqueada",
@@ -2131,7 +2131,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux013",
                 Name = "Eficiência da Base",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux013.jpg",
                 Lore = "",
                 Description = "Aumenta a geração de Recursos por Tech desbloqueada",
@@ -2152,7 +2152,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux021",
                 Name = "Conhecer os Métodos Locais",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ux021.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Contratos por Local desbloqueado",
@@ -2170,7 +2170,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux022",
                 Name = "Conhecer a Área",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ux022.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Conhecimentos por Local desbloqueado",
@@ -2188,7 +2188,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux023",
                 Name = "Conexão com a Base",
-                Level = "2",
+                Level = 2,
                 Icon = "images/upgrades/ux023.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Conhecimentos por Local desbloqueado",
@@ -2206,7 +2206,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux024",
                 Name = "Aumentar a Equipe",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux024.jpg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região ",
@@ -2227,7 +2227,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux031",
                 Name = "Içar Velas",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux031.jpg",
                 Lore = "",
                 Description = "Libera Stage",
@@ -2245,7 +2245,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux032",
                 Name = "Aumentar a Equipe",
-                Level = "1",
+                Level = 1,
                 Icon = "images/upgrades/ux032.jpg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região ",
