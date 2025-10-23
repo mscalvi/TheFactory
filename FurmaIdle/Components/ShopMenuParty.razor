@@ -2,25 +2,197 @@
 @inherits UiHelper
 
 @using System.Linq
+@using FurmaIdle.Helpers
 @using FurmaIdle.Models
 @using FurmaIdle.Data
-@using FurmaIdle.Helpers
 @using FurmaIdle.Services
 
-@* ===== Injeções ===== *@
-@inject IPurchaseService Purchase
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
+@inject IIncomeService Income
+@inject ILocateService Locate
 
 @{
-    var game = Game.CurrentGame;
-    if (game is null)
+    var g = Game.CurrentGame;
+    if (g is null)
     {
         <div>Carregando…</div>
         return;
     }
+
+    // Stage selecionada
+    var sid = !string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId) ? Game?.CurrentGame.SelectedStageId : g.SelectedStageId;
+    var stage = (!string.IsNullOrWhiteSpace(sid) && g.Stages.TryGetValue(sid!, out var st)) ? st : null;
+
+    // ---------- (TOP) RESOURCES como lista ----------
+    long TotalOf(string resId) => g.ExpeditionStats?.Resources.TryGetValue(resId, out var v) == true ? v : 0L;
+    double RsPerSecond(string resId) => 0.0; // placeholder; ligamos depois
+
+    // membros ativos no stage (para o cálculo do máximo)
+    var activeCharsForCap = g.Characters.Values
+        .Where(c => c.State == UnlockHelper.State.Unlocked
+                && c.CharState == UnlockHelper.CharState.InStage
+                && c.InStageId == Game?.CurrentGame.SelectedStageId)
+        .ToList();
+    var members = activeCharsForCap.Count;
+
+    // recursos desbloqueados (ordem simples por Id; troque para ShowOrder se tiver)
+    var unlockedResources = g.Resources.Values
+        .Where(r => r.State == UnlockHelper.State.Unlocked)
+        .OrderBy(r => r.Id)
+        .ToList();
+
+    long MaxTotal(string resId)
+    {
+        var resource = Locate.LocateResource(Game.CurrentGame, resId);
+        var perChar = resource.RsPerChar;
+        return perChar > 0 ? perChar * members : 0L;
+    }
+
+    // ---------- (BOTTOM) PARTY grid por PartySizeMax ----------
+    var partySlots = stage?.PartySizeMax ?? 0;
+
+    var activeChars = g.Characters.Values
+        .Where(c => c.State == UnlockHelper.State.Unlocked
+                 && c.CharState == UnlockHelper.CharState.InStage
+                 && c.InStageId == g.SelectedStageId)
+        .OrderBy(c => c.Id)
+        .ToList();
+
+    bool IsSpecActive(CharacterModel c)
+    {
+        return false;
+    }
+
+    bool CanUseSpec(CharacterModel c, out string? reason)
+    {
+        reason = null;
+        var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
+        if (spec is null) { reason = "Sem especialidade."; return false; }
+
+        var resId = spec.PricingId;
+        var cost = Math.Max(0, spec.Cost);
+        var have = g.ExpeditionStats?.Resources.TryGetValue(resId, out var v) == true ? v : 0L;
+
+        if (have < cost) { reason = $"Precisa de {cost:N0} {resId}. Você tem {have:N0}."; return false; }
+        if (IsSpecActive(c)) { reason = "Especialidade em uso."; return false; }
+
+        return true;
+    }
 }
 
-@code {
+<!-- ========= TOPO (~25%): Resources (lista estilo incomeBox) ========= -->
+<section class="income-box panel">
+    <ul class="income-list">
+        @if (unlockedResources.Count == 0)
+        {
+            <p>Nenhum recurso desbloqueado.</p>
+        }
+        else
+        {
+            @foreach (var r in unlockedResources)
+            {
+                var id = r.Id;
+                var total = TotalOf(id);
+                var max = MaxTotal(id);
+                var perS = RsPerSecond(id);
 
+                <li class="income-row">
+                    <span class="income-name"
+                          @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Resources, id, Game.CurrentGame?.SelectedStageId))"
+                          @onmouseleave="Tooltips.Clear"
+                          @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Resources, id, Game.CurrentGame?.SelectedStageId))"
+                          @onblur="Tooltips.Clear">
+                        @id
+                    </span>
+
+                    <span class="income-total">
+                        @total.ToString("N0") / @max.ToString("N0")
+                        @if (perS > 0)
+                        {
+                            <text> +@perS.ToString("0.##") /s</text>
+                        }
+                    </span>
+                </li>
+
+            }
+        }
+    </ul>
+</section>
+
+<!-- ========= BAIXO (~75%): Party grid (PartySizeMax slots) ========= -->
+<section class="party-grid panel">
+    @if (stage is null)
+    {
+        <div>Selecione uma Stage.</div>
+    }
+    else
+    {
+        @for (var i = 0; i < partySlots; i++)
+        {
+            if (i < activeChars.Count)
+            {
+                var c = activeChars[i];
+                var id = c.Id;
+
+                var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
+                var canUse = CanUseSpec(c, out var why);
+                var isActive = IsSpecActive(c);
+
+                <div class="party-slot">
+                    <!-- Ícone do personagem (imagem) -->
+                    @{
+                        var broken = _broken.Contains(id);
+                    }
+
+                    <div class="char-thumb">
+                        @if (!broken)
+                        {
+                            <img src="@CharImg(id)" alt="@id"
+                                 @onerror="() => MarkBroken(id)"
+                                 @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, g.SelectedStageId))"
+                                 @onmouseleave="Tooltips.Clear"
+                                 @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, g.SelectedStageId))"
+                                 @onblur="Tooltips.Clear" />
+                        }
+                        else
+                        {
+                            <div class="thumb-fallback">@id</div>
+                        }
+                    </div>
+
+                    <!-- Botão da Specialty (sem função por enquanto) -->
+                    <button type="button"
+                            class="icon-button"
+                            disabled="@( isActive || !canUse )"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, c.SpecialtyId, g.SelectedStageId))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, c.SpecialtyId, g.SelectedStageId))"
+                            @onblur="Tooltips.Clear">
+                        Specialty
+                    </button>
+                </div>
+            }
+            else
+            {
+                <!-- slot vazio -->
+                <div class="party-slot">
+                    <div class="party-slot-empty icon-button">—</div>
+                    <button type="button" class="icon-button" disabled>Specialty</button>
+                </div>
+            }
+        }
+    }
+</section>
+
+@code {
+    private readonly HashSet<string> _broken = new(StringComparer.Ordinal);
+
+    private void MarkBroken(string id)
+    {
+        _broken.Add(id);
+        StateHasChanged(); // geralmente nem precisa, o onerror já re-renderiza
+    }
+
+    private static string CharImg(string id) => $"images/characters/{id}.png";
 }

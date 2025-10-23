@@ -39,10 +39,46 @@ button {
     max-width: 45px;
     min-height: 45px;
     min-width: 45px;
-    display: inline-flex; /* mantém quadrado mesmo com conteúdo */
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0; /* evita o botão “esticar” por causa do padding */
-    overflow: hidden; /* corta texto se sobrar */
+    padding: 1px;
+    overflow: hidden; 
     white-space: nowrap;
+}
+
+/* Tamanho da Tela */
+:root {
+    --ui-scale: 1;
+}
+
+/* ajuste como preferir; estes são exemplos */
+@media (max-width: 1440px) {
+    :root {
+        --ui-scale: 0.95;
+    }
+}
+
+@media (max-width: 1280px) {
+    :root {
+        --ui-scale: 0.90;
+    }
+}
+
+@media (max-width: 1120px) {
+    :root {
+        --ui-scale: 0.85;
+    }
+}
+
+@media (max-width: 992px) {
+    :root {
+        --ui-scale: 0.80;
+    }
+}
+
+@media (max-width: 860px) {
+    :root {
+        --ui-scale: 0.75;
+    }
 }

@@ -24,6 +24,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 AddMod = 0,
                 MultMod = 1,
+                Lore = "",
             },
             #endregion
         };
@@ -47,6 +48,7 @@ namespace FurmaIdle.Data
                 Persistence = coin.Persistence,
                 AddMod = coin.AddMod,
                 MultMod = coin.MultMod,
+                Lore = coin.Lore
             };
         }
 

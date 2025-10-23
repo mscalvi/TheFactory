@@ -16,12 +16,7 @@ namespace FurmaIdle.Models
         public double AddMod {  get; set; } = 0;
         public double MultMod { get; set; } = 1;
 
-        public int RsActual { get; set;}
-        public double RsFraction { get; set;} 
         public double RsPerSecond { get; set;}
-        public double RsPerChar { get; set;}
-
-
-
+        public int RsPerChar { get; set;}
     }
 }

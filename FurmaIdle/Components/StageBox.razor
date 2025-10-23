@@ -8,7 +8,7 @@
 @inject IUnlockService Unlock
 @inject ILocateService Locate
 
-<div class="stage-box">
+<div class="stage-box title">
     @{
         var stage = Locate.LocateStage(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
     }
@@ -22,7 +22,7 @@
             <h3>@stage.Name</h3>
         }
     </div>
-    <div class="stage-locals">
+    <div class="stage-locals text">
         @{
             var unlocked = new List<string>();
             foreach (var lid in Game.CurrentGame.Locals)

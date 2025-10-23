@@ -65,7 +65,7 @@ namespace FurmaIdle.Services
 
         private bool ApplyStats(GameModel Game, ItemHelper.ItemType type, string id, long gain, double frac)
         {
-            if (type == ItemHelper.ItemType.Coin)
+            if (type == ItemType.Coin)
             {
                 // ---- trabalhar em centavos (0..99) ----
                 Game.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
@@ -83,19 +83,79 @@ namespace FurmaIdle.Services
                 Game.ExpeditionStats.Coins.TryGetValue(id, out var coin);
                 coin = coin + gain + extra;
 
-                Game.ExpeditionStats.CoinsGain.TryGetValue(id, out var coinarch);
-                coinarch = coinarch + gain + extra;
+                Game.ExpeditionStats.CoinsGain.TryGetValue(id, out var coinExpe);
+                coinExpe = coinExpe + gain + extra;
 
-                // ---- persistir (resto com 2 casas) ----
+                // ---- persistir ----
                 Game.ExpeditionStats.Coins[id] = coin;
-                Game.ExpeditionStats.CoinsGain[id] = coinarch;
+                Game.ExpeditionStats.CoinsGain[id] = coinExpe;
                 Game.ExpeditionStats.CoinsFrac[id] = newRestDouble;
 
-                Game.ExpansionStats.CoinsGain[id] = coin;
-                Game.GameStats.CoinsGain[id] = coinarch;
+                Game.ExpansionStats.CoinsGain.TryGetValue(id, out var coinExpa);
+                coinExpa = coinExpa + gain;
+                Game.ExpansionStats.CoinsGain[id] = coinExpa;
+
+                Game.GameStats.CoinsGain.TryGetValue(id, out var coinGame);
+                coinGame = coinGame + gain;
+                Game.GameStats.CoinsGain[id] = coinGame;
+            }
+            if (type == ItemType.Resource)
+            {
+                // ---- trabalhar em centavos (0..99) ----
+                Game.ExpeditionStats.ResourcesFrac.TryGetValue(id, out var restDouble);
+                int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
+
+                int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
+                int totalCents = restCents + addCents;
+
+                long extra = totalCents / 100;          // carry em unidades inteiras
+                int newRestCents = totalCents % 100;    // 0..99
+
+                double newRestDouble = newRestCents / 100.0;
+
+                // ---- acumula moedas ----
+                Game.ExpeditionStats.Resources.TryGetValue(id, out var coin);
+                coin = coin + gain + extra;
+
+                Game.ExpeditionStats.ResourcesGain.TryGetValue(id, out var coinExpe);
+                coinExpe = coinExpe + gain + extra;
+
+                // ---- persistir ----
+                Game.ExpeditionStats.Resources[id] = coin;
+                Game.ExpeditionStats.ResourcesGain[id] = coinExpe;
+                Game.ExpeditionStats.ResourcesFrac[id] = newRestDouble;
+
+                Game.ExpansionStats.ResourcesGain.TryGetValue(id, out var coinExpa);
+                coinExpa = coinExpa + gain;
+                Game.ExpansionStats.ResourcesGain[id] = coinExpa;
+
+                Game.GameStats.ResourcesGain.TryGetValue(id, out var coinGame);
+                coinGame = coinGame + gain;
+                Game.GameStats.ResourcesGain[id] = coinGame;
+            }
+            if (type == ItemType.Knowledge)
+            {
+                // ---- acumula moedas ----
+                Game.ExpeditionStats.Knowledge.TryGetValue(id, out var coin);
+                coin = coin + gain;
+
+                Game.ExpeditionStats.KnowledgeGain.TryGetValue(id, out var coinExpe);
+                coinExpe = coinExpe + gain;
+
+                // ---- persistir ----
+                Game.ExpeditionStats.Knowledge[id] = coin;
+                Game.ExpeditionStats.KnowledgeGain[id] = coinExpe;
+
+                Game.ExpansionStats.KnowledgeGain.TryGetValue(id, out var coinExpa);
+                coinExpa = coinExpa + gain;
+                Game.ExpansionStats.KnowledgeGain[id] = coinExpa;
+
+                Game.GameStats.KnowledgeGain.TryGetValue(id, out var coinGame);
+                coinGame = coinGame + gain;
+                Game.GameStats.KnowledgeGain[id] = coinGame;
             }
 
-           return true;
+            return true;
         }
     }
 }

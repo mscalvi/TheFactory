@@ -9,7 +9,7 @@ using System.Text;
 
 namespace FurmaIdle.Services
 {
-    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expansion, Expedition, Knowledge }
+    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expansion, Expedition, Knowledge, Coins, Resources }
     public sealed record HoverTip(string Title, string Body);
 
     public interface ITooltipService
@@ -61,6 +61,8 @@ namespace FurmaIdle.Services
                 HoverType.Local => BuildLocalHover(id, g),
                 HoverType.Upgrade => BuildUpgradeHover(id, g),
                 HoverType.Knowledge => BuildKnowledgeHover(id, g),
+                HoverType.Resources => BuildResourcesHover(id, g),
+                HoverType.Coins => BuildCoinsHover(id, g),
                 _ => new HoverTip("—", "—")
             };
         }
@@ -119,6 +121,22 @@ namespace FurmaIdle.Services
             game.Specialties.TryGetValue(id, out var specialty);
 
             return new HoverTip($"Specialty ({specialty.Name})", $"{specialty.Description}");
+        }
+
+        // Resources
+        private HoverTip BuildResourcesHover(string id, GameModel game)
+        {
+            game.Resources.TryGetValue(id, out var resource);
+
+            return new HoverTip($"Resource ({resource.Name})", $"{resource.Lore}");
+        }
+
+        // Coins
+        private HoverTip BuildCoinsHover(string id, GameModel game)
+        {
+            game.Coins.TryGetValue(id, out var coin);
+
+            return new HoverTip($"Coin ({coin.Name})", $"{coin.Lore}");
         }
     }
 }

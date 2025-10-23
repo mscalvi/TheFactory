@@ -1,8 +1,9 @@
 ﻿.game-grid {
-    height: 100dvh;
     display: grid;
-    grid-template-columns: 76px 1fr 2fr 1fr;
-    grid-template-rows: 76px 76px 1fr;
+    grid-template-columns: 76px minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-rows: 76px 76px minmax(0, 1fr);
+    /* grid-template-columns: 76px 1fr 2fr 1fr;
+    grid-template-rows: 76px 76px 1fr; */
     grid-template-areas:
         "nav text title income"
         "nav text stage income"
@@ -11,8 +12,32 @@
     padding: 2px;
     background: #0f0f12;
     color: #e7e7ea;
+    transform: scale(var(--ui-scale));
+    transform-origin: top left;
+    /* compensa o scale para manter o layout clicável em toda a tela */
+    width: calc(100% / var(--ui-scale));
+    height: calc(100dvh / var(--ui-scale));
 }
 
+    .game-grid > * {
+        min-width: 0;
+        min-height: 0;
+        overflow: auto; /* fica scrollável dentro da área */
+    }
+
+    /* 3) Em cabeçalhos/áreas que você quer SEM scroll (título, topbar), esconda overflow */
+    .game-grid .title,
+    .game-grid .text {
+        overflow: hidden; /* corta em vez de criar scroll aqui */
+    }
+
+    /* 4) Evita elementos “teimosos” estourarem (imagens/canvas/svg) */
+    .game-grid img,
+    .game-grid canvas,
+    .game-grid svg {
+        max-width: 100%;
+        height: auto;
+    }
 
 .nav-menu {
     grid-area: nav;
