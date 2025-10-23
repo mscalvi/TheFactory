@@ -184,7 +184,7 @@ namespace FurmaIdle.Services
                     if (c.CharState != UnlockHelper.CharState.InBase) continue;
 
                     // Marca no personagem
-                    c.CharState = UnlockHelper.CharState.OnStage;
+                    c.CharState = UnlockHelper.CharState.InStage;
                     c.InStageId = st.Id;
 
                     finalIds.Add(id);

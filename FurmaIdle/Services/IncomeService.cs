@@ -1,27 +1,25 @@
-﻿using System.Collections.Concurrent;
-using FurmaIdle.Helpers;
+﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System.Collections.Concurrent;
+using static FurmaIdle.Helpers.ItemHelper;
 
 namespace FurmaIdle.Services
 {
     public interface IIncomeService
     {
-        Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount);
-        long? AddAmount { get; }
+        Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount, ItemHelper.ItemType? sourceType, string sourceId);
     }
 
     public sealed class IncomeService : IIncomeService
     {
         private readonly ICurrentGameService _game;
 
-        public long? AddAmount { get; private set; } = 0;
-
         public IncomeService(ICurrentGameService game)
         {
             _game = game;
         }
 
-        public async Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount)
+        public async Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount, ItemHelper.ItemType? sourceType, string? sourceId)
         {
             if (string.IsNullOrWhiteSpace(itemId))
                 throw new ArgumentException("itemId inválido.", nameof(itemId));
@@ -36,9 +34,20 @@ namespace FurmaIdle.Services
             var saveFrac = Math.Round(frac * 100, MidpointRounding.AwayFromZero) != 0;
             await _game.Mutate(Game =>
             {
-                if (!StatsApply(Game, type, itemId, gain, frac))
+                if (!ApplyStats(Game, type, itemId, gain, frac))
                 {
                     gain = 0;
+                }
+
+                if(sourceType == ItemHelper.ItemType.Click)
+                {
+                    Game.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var previous);
+
+                    long clickCount = 1 + previous;
+
+                    Game.ExpeditionStats.ClicksMade[sourceId] = clickCount;
+                    Game.ExpansionStats.ClicksMade[sourceId] = clickCount;
+                    Game.GameStats.ClicksMade[sourceId] = clickCount;
                 }
 
                 result = new GainModel
@@ -49,14 +58,12 @@ namespace FurmaIdle.Services
                     GainTotal = amount,
                     GainFraction = frac
                 };
-
-                AddAmount = result.GainEffective;
             }, save: gain != 0 || saveFrac);
 
             return result!;
         }
 
-        private static bool StatsApply(GameModel Game, ItemHelper.ItemType type, string id, long gain, double frac)
+        private bool ApplyStats(GameModel Game, ItemHelper.ItemType type, string id, long gain, double frac)
         {
             if (type == ItemHelper.ItemType.Coin)
             {
@@ -83,9 +90,12 @@ namespace FurmaIdle.Services
                 Game.ExpeditionStats.Coins[id] = coin;
                 Game.ExpeditionStats.CoinsGain[id] = coinarch;
                 Game.ExpeditionStats.CoinsFrac[id] = newRestDouble;
+
+                Game.ExpansionStats.CoinsGain[id] = coin;
+                Game.GameStats.CoinsGain[id] = coinarch;
             }
 
-            return true;
+           return true;
         }
     }
 }

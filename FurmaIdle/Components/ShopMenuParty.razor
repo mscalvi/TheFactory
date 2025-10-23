@@ -1,0 +1,26 @@
+﻿@* Components/ShopMenuParty.razor *@
+@inherits UiHelper
+
+@using System.Linq
+@using FurmaIdle.Models
+@using FurmaIdle.Data
+@using FurmaIdle.Helpers
+@using FurmaIdle.Services
+
+@* ===== Injeções ===== *@
+@inject IPurchaseService Purchase
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+
+@{
+    var game = Game.CurrentGame;
+    if (game is null)
+    {
+        <div>Carregando…</div>
+        return;
+    }
+}
+
+@code {
+
+}

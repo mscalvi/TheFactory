@@ -32,11 +32,10 @@
         public int TechUnlocked { get; set; }
         public int UniqueTechUnlocked { get; set; }
 
-        public int DestinationUnlocked { get; set; }
-        public int UniqueDestinationUnlocked { get; set; }
+        public int LocalsUnlocked { get; set; }
+        public int UniqueLocalsUnlocked { get; set; }
 
         public int CharactersUnlocked { get; set; }
-        public int UniqueCharactersUnlocked { get; set; }
 
         public TimeOnly TimeSpent { get; set; }
     }

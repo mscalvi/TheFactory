@@ -8,38 +8,35 @@
 
 <div class="nav-menu">
     <div class="nav-col">
-        <div class="nav-menu">
-            <div class="nav-col">
-                @if (!VisibleNav.Any())
-                {
-                    <div style="padding:8px;border:1px dashed #9aa2b1;border-radius:8px;font-size:12px;opacity:.85">
-                        NavMenu: nenhum item visível. (Unlocked == true)
-                    </div>
-                }
-                else
-                {
-                    @foreach (var it in VisibleNav)
-                    {
-                        var isSelected = it.Id == SelectedId;
-                        <button class="nav-button @(isSelected ? "is-selected" : null)"
-                                title="@it.Label"
-                                aria-label="@it.Label"
-                                aria-pressed="@isSelected"
-                                @onclick="() => Select(it.Id)">
-                            <span class="nav-glyph">@it.Id</span>
-                        </button>
-                    }
-                }
+        @if (!VisibleNav.Any())
+        {
+            <div style="padding:8px;border:1px dashed #9aa2b1;border-radius:8px;font-size:12px;opacity:.85">
+                NavMenu: nenhum item visível. (Unlocked == true)
             </div>
-        </div>
+        }
+        else
+        {
+            @foreach (var it in VisibleNav)
+            {
+                var isSelected = it.Id == SelectedMenuId;
+                <button class="nav-button @(isSelected ? "is-selected" : null)"
+                        title="@it.Label"
+                        aria-label="@it.Label"
+                        aria-pressed="@isSelected"
+                        @onclick="() => Select(it.Id)">
+                    <span class="nav-glyph">@it.Label</span>
+                </button>
+            }
+        }
     </div>
 </div>
 
+
 @code {
     // ==== PARÂMETROS ====
-    /// <summary>Id selecionado (permite usar bind-SelectedId no pai)</summary>
-    [Parameter] public string? SelectedId { get; set; } = "i4";
-    [Parameter] public EventCallback<string?> SelectedIdChanged { get; set; }
+    /// <summary>Id selecionado (permite usar bind-SelectedMenuId no pai)</summary>
+    [Parameter] public string? SelectedMenuId { get; set; } = "i1";
+    [Parameter] public EventCallback<string?> SelectedMenuIdChanged { get; set; }
 
     /// <summary>Callback quando um ícone é selecionado</summary>
     [Parameter] public EventCallback<string> OnSelect { get; set; }
@@ -74,17 +71,15 @@
 
     private readonly List<NavItem> _nav = new()
     {
-        new() { Id = "i1", Label = "Stages", Unlocked = false, Selected = false, Notification = false },
-        new() { Id = "i2", Label = "Expansion", Unlocked = false, Selected = false, Notification = false },
-        new() { Id = "i3", Label = "Expedition", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i4", Label = "Characters", Unlocked = true, Selected = true, Notification = false },
-        new() { Id = "i5", Label = "Techs", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i6", Label = "Locals", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i7", Label = "Upgrades", Unlocked = true, Selected = false, Notification = false },
-        new() { Id = "i8", Label = "Specialties", Unlocked = false, Selected = false, Notification = false },
-        new() { Id = "i97", Label = "Statistics", Unlocked = false, Selected = false, Notification = false },
-        new() { Id = "i98", Label = "Archievments", Unlocked = false, Selected = false, Notification = false },
-        new() { Id = "i99", Label = "Configurações", Unlocked = false, Selected = false, Notification = false },
+        new() { Id = "i1", Label = "Stage", Unlocked = true, Selected = true, Notification = false },
+        new() { Id = "i2", Label = "Tech", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i3", Label = "Party", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i4", Label = "Exped", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i5", Label = "Expan", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i6", Label = "Up", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i97", Label = "Achiev", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i98", Label = "Out", Unlocked = true, Selected = false, Notification = false },
+        new() { Id = "i99", Label = "Sett", Unlocked = true, Selected = false, Notification = false },
     };
 
     private IEnumerable<NavItem> VisibleNav =>
@@ -92,10 +87,10 @@
 
     private async Task Select(string id)
     {
-        SelectedId = id;
+        SelectedMenuId = id;
         UI.SetOpenMenu(id);
-        if (SelectedIdChanged.HasDelegate)
-            await SelectedIdChanged.InvokeAsync(SelectedId);
+        if (SelectedMenuIdChanged.HasDelegate)
+            await SelectedMenuIdChanged.InvokeAsync(SelectedMenuId);
 
         if (OnSelect.HasDelegate)
             await OnSelect.InvokeAsync(id);
@@ -117,7 +112,7 @@
         if (it is not null && it.Unlocked)
         {
             it.Unlocked = false;
-            if (SelectedId == id) SelectedId = null;
+            if (SelectedMenuId == id) SelectedMenuId = null;
             StateHasChanged();
         }
     }

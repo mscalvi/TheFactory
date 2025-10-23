@@ -1,0 +1,234 @@
+﻿@* Components/ShopMenuExpansion.razor *@
+@inherits UiHelper
+
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Data
+
+@inject IExpeditionService Expedition
+@inject IPurchaseService Purchase
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+
+@{
+    var game = Game.CurrentGame;
+    if (game is null)
+    {
+        <div>Carregando…</div>
+        ; return;
+    }
+
+    var expansionStats = Game.CurrentGame?.ExpansionStats;
+    var currExpId = Game.CurrentGame?.LastExpansionId;
+
+    ExpansionModel? currExpansion = null;
+
+    if (!string.IsNullOrWhiteSpace(currExpId) &&
+    game?.Expansions.TryGetValue(currExpId!, out currExpansion) == true)
+    {
+        // Expansão Ativa
+    }
+
+    var chars = Game.CurrentGame?.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
+
+    TimeSpan? expDuration = null;
+    if (currExpansion?.StartedAt is DateTimeOffset startedAt)
+        expDuration = DateTimeOffset.UtcNow - startedAt;
+
+    var availableExpansionUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
+        game.Upgrades.Values
+            .Where(u => u?.Id != null
+                     && u.Id.StartsWith("ue", StringComparison.OrdinalIgnoreCase)
+                     && u.State == UnlockHelper.State.Available)
+            .OrderBy(u =>
+            {
+                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.Ordinal));
+                return idx < 0 ? int.MaxValue : idx;
+            })
+            .ThenBy(u => u.Id);
+
+    var inBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+                               && c.CharState == UnlockHelper.CharState.InBase)
+                      .OrderBy(c => c.Name)
+                      .ToList();
+
+    var inStage = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+                                && c.CharState == UnlockHelper.CharState.InStage)
+                       .OrderBy(c => c.Name)
+                       .ToList();
+
+    var availableCharacterUpgrades = Game.CurrentGame is null ? Enumerable.Empty<UpgradeModel>() :
+        Game.CurrentGame.Upgrades.Values
+            .Where(u => u?.Id != null
+                     && u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
+                     && u.State == UnlockHelper.State.Available)
+            .OrderBy(u =>
+            {
+                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.Ordinal));
+                return idx < 0 ? int.MaxValue : idx;
+            })
+            .ThenBy(u => u.Id);
+}
+
+
+<div>
+    <h3>Expansion Status</h3>
+    <div>@currExpansion.Name</div>
+    <div>Duração: @(expDuration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</div>
+    <div>Ganhos</div>
+    @foreach (var coin in expansionStats.CoinsGain)
+    {
+        <div>@coin.Key @coin.Value</div>
+    }
+    @foreach (var resource in expansionStats.ResourcesGain)
+    {
+        <div>@resource.Key @resource.Value</div>
+    }
+    @foreach (var know in expansionStats.KnowledgeGain)
+    {
+        <div>@know.Key @know.Value</div>
+    }
+    @foreach (var click in expansionStats.ClicksMade)
+    {
+        <div>@click.Key @click.Value</div>
+    }
+</div>
+
+<!-- Available Characters -->
+<div>
+    <h3>Characters for Hire</h3>
+    @if (!availableCharacterUpgrades.Any())
+    {
+        <div>Nenhum upgrade de personagem disponível.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var u in availableCharacterUpgrades)
+            {
+                var id = u.Id;
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game.CurrentGame?.SelectedStageId);
+
+                <button type="button"
+                        class="icon-button"
+                        disabled="@( !canBuy )"
+                        @onclick="() => OnClickBuyCharacterUpgrade(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
+                        @onblur="Tooltips.Clear">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<div>
+    <h3>Characters In Base</h3>
+    @if (inBase.Count == 0)
+    {
+        <div>Ninguém na base.</div>
+    }
+    else
+    {
+        foreach (var ch in inBase)
+        {
+            var id = ch.Id;
+            <button type="button"
+                    class="icon-button"
+                    disabled
+                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onmouseleave="Tooltips.Clear"
+                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onblur="Tooltips.Clear">
+                @id
+            </button>
+        }
+    }
+</div>
+
+<div>
+    <h3>Characters In Stage</h3>
+    @if (inStage.Count == 0)
+    {
+        <div>Ninguém no stage.</div>
+    }
+    else
+    {
+        foreach (var ch in inStage)
+        {
+            var id = ch.Id;
+            <button type="button"
+                    class="icon-button"
+                    disabled
+                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onmouseleave="Tooltips.Clear"
+                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onblur="Tooltips.Clear">
+                @id
+            </button>
+        }
+    }
+</div>
+
+<div>
+    <h3>Next Expansion</h3>
+    @if (!availableExpansionUpgrades.Any())
+    {
+        <div>Nenhum upgrade de expansão disponível.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var u in availableExpansionUpgrades)
+            {
+                var id = u.Id;
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId);
+
+                <button type="button"
+                        class="icon-button"
+                        disabled="@( !canBuy )"
+                        @onclick="() => OnClickBuyExpansionUpgrade(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onblur="Tooltips.Clear">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private async Task OnClickBuyExpansionUpgrade(string upgradeId)
+    {
+        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId))
+        { Log.Error($"Sem recursos para comprar upgrade {upgradeId}."); return; }
+
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId);
+    }
+
+    private static IEnumerable<UpgradeModel> OrderedCharacterUnlockUpgrades(GameModel m)
+    => m.Upgrades.Values
+        .Where(u => u?.Id != null && u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase))
+        .OrderBy(u =>
+        {
+            var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.OrdinalIgnoreCase));
+            return idx < 0 ? int.MaxValue : idx;
+        })
+        .ThenBy(u => u.Id);
+
+    private async Task OnClickBuyCharacterUpgrade(string upgradeId)
+    {
+        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId))
+        {
+            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            return;
+        }
+
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId);
+    }
+}

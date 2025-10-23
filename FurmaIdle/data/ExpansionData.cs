@@ -17,6 +17,7 @@ namespace FurmaIdle.Data
             ["x00"] = new ExpansionModel
             {
                 Id = "x00",
+                Name = "Início da História",
                 UnlockId = null,
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 1,
@@ -26,6 +27,7 @@ namespace FurmaIdle.Data
             ["x01"] = new ExpansionModel
             {
                 Id = "x01",
+                Name = "Apoiando a Murada Cairu",
                 UnlockId = "l01",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 1,
@@ -35,6 +37,7 @@ namespace FurmaIdle.Data
             ["x02"] = new ExpansionModel
             {
                 Id = "x02",
+                Name = "Mestres da Ilha de Vera",
                 UnlockId = "l02",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 2,
@@ -44,6 +47,7 @@ namespace FurmaIdle.Data
             ["x03"] = new ExpansionModel
             {
                 Id = "x03",
+                Name = "Correntezas de Vera",
                 UnlockId = "l03",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 3,
@@ -66,6 +70,7 @@ namespace FurmaIdle.Data
             return new ExpansionModel
             {
                 Id = expansion.Id,
+                Name = expansion.Name,
                 UnlockId = expansion.UnlockId,
                 PricingId = expansion.PricingId,
                 Level = expansion.Level,

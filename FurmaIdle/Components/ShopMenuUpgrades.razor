@@ -1,0 +1,205 @@
+﻿@* Components/ShopMenuUpgrades.razor *@
+@inherits UiHelper
+
+@using System.Linq
+@using FurmaIdle.Models
+@using FurmaIdle.Data
+@using FurmaIdle.Helpers
+@using FurmaIdle.Services
+
+@inject IPurchaseService Purchase
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+
+@{
+    var g = Game.CurrentGame;
+    if (g is null)
+    {
+        <div>Carregando…</div>
+        ; return;
+    }
+
+    // ===== Available Expedition Upgrades* (uc...) =====
+    var availableExpeditionUpgrades = OrderedUpgrades(g)
+        .Where(u => StartsWithUc(u.Id)
+                 && u.State == UnlockHelper.State.Available
+                 && IsContractUpgradeVisible(g, u.Id));
+
+    // ===== Available Expansion Upgrades (ut... / ux...) =====
+    var availableExpansionUpgrades = OrderedUpgrades(g)
+        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id))
+                 && u.State == UnlockHelper.State.Available);
+
+    // ===== Unlocked Upgrades (uc + ut + ux) =====
+    var unlockedUpgrades = OrderedUpgrades(g)
+        .Where(u => (StartsWithUc(u.Id) || StartsWithUt(u.Id) || StartsWithUx(u.Id)))
+        .Where(u => !IsUnlockAny(u)) // não listar desbloqueios (ul/us/uh/ue/up...)
+        .Where(u => u.State == UnlockHelper.State.Unlocked)
+        .Where(u =>
+        {
+            var max = u.MaxBuy;
+            var cur = u.ActualBuy;
+            return max > 0 && cur >= max;
+        })
+        .Where(u => IsContractUpgradeVisible(g, u.Id));
+}
+
+<!-- (1) Available Expedition Upgrades* (uc...) -->
+<div>
+    <h3>Available Expedition Upgrades</h3>
+    @if (!availableExpeditionUpgrades.Any())
+    {
+        <div>Nenhum upgrade de expedição disponível.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var u in availableExpeditionUpgrades)
+            {
+                var id = u.Id;
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId);
+                <button type="button"
+                        class="icon-button"
+                        disabled="@( !canBuy )"
+                        @onclick="() => OnClickBuyUpgrade(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
+                        @onblur="Tooltips.Clear">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<!-- (2) Available Expansion Upgrades (ut/ux) -->
+<div>
+    <h3>Available Expansion Upgrades</h3>
+    @if (!availableExpansionUpgrades.Any())
+    {
+        <div>Nenhum upgrade de expansão disponível.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var u in availableExpansionUpgrades)
+            {
+                var id = u.Id;
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId);
+                <button type="button"
+                        class="icon-button"
+                        disabled="@( !canBuy )"
+                        @onclick="() => OnClickBuyUpgrade(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
+                        @onblur="Tooltips.Clear">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<!-- (3) Unlocked Upgrades (uc+ut+ux) -->
+<div>
+    <h3>Unlocked Upgrades</h3>
+    @if (!unlockedUpgrades.Any())
+    {
+        <div>Nenhum upgrade concluído.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var u in unlockedUpgrades)
+            {
+                var id = u.Id;
+                <button type="button"
+                        class="icon-button"
+                        disabled
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
+                        @onblur="Tooltips.Clear">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    // ===== Helpers de ordenação/filtragem =====
+    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
+        => g.Upgrades.Values
+            .OrderBy(u =>
+            {
+                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.OrdinalIgnoreCase));
+                return idx < 0 ? int.MaxValue : idx;
+            })
+            .ThenBy(u => u.Id);
+
+    private static bool StartsWithUc(string id)
+        => id?.StartsWith("uc", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool StartsWithUt(string id)
+        => id?.StartsWith("ut", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool StartsWithUx(string id)
+        => id?.StartsWith("ux", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool StartsWithUu(string id)
+        => id?.StartsWith("uu", StringComparison.OrdinalIgnoreCase) == true;
+
+    // “Unlock-any” = upgrades de desbloqueio que não queremos listar em “Unlocked Upgrades”
+    private static bool IsUnlockAny(UpgradeModel u)
+    {
+        var id = u.Id ?? string.Empty;
+        return id.StartsWith("ul", StringComparison.OrdinalIgnoreCase) // unlock local
+            || id.StartsWith("us", StringComparison.OrdinalIgnoreCase) // unlock stage
+            || id.StartsWith("uh", StringComparison.OrdinalIgnoreCase) // unlock tech
+            || id.StartsWith("ue", StringComparison.OrdinalIgnoreCase) // unlock expansion
+            || id.StartsWith("up", StringComparison.OrdinalIgnoreCase) // unlock character
+            || id.StartsWith("uk", StringComparison.OrdinalIgnoreCase) // unlock knowledge
+            || id.StartsWith("uu", StringComparison.OrdinalIgnoreCase); // (se você usa “uu” p/ algo especial)
+    }
+
+    // Mesma regra que você já usava
+    private static bool IsContractUpgradeVisible(GameModel g, string upgradeId)
+    {
+        // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
+        if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId)) return true;
+
+        g.Upgrades.TryGetValue(upgradeId, out var up);
+        var targetContractId = up?.TargetId;
+
+        g.Stages.TryGetValue(g.SelectedStageId, out var stage);
+        if (stage is null || string.IsNullOrWhiteSpace(targetContractId)) return false;
+
+        if (StartsWithUc(upgradeId))
+        {
+            // visível se houver ao menos 1 contrato ativo do target
+            return stage.ActiveContracts.TryGetValue(targetContractId, out var qty) && qty > 0;
+        }
+        else
+        {
+            // “uu”: visível se o nível atual de contrato for >= nível do upgrade
+            return stage.ActualContractLevel >= (up?.Level ?? 0);
+        }
+    }
+
+    // ===== Ações =====
+    private async Task OnClickBuyUpgrade(string upgradeId)
+    {
+        var stageCtx = Game?.CurrentGame.SelectedStageId ?? Game.CurrentGame?.SelectedStageId;
+
+        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, stageCtx))
+        {
+            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            return;
+        }
+
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, stageCtx);
+    }
+}

@@ -8,18 +8,18 @@
 @inject ILocateService Locate
 @inject IPurchaseService Purchase
 @inject ITooltipService Tooltips
-@inject IUiLogService _log
+@inject IUiLogService Log
 
 @implements IDisposable
 
-@if (!Game.IsReady || string.IsNullOrWhiteSpace(StageId) || _stage is null || !IsExpeditionActive(_stage))
+@if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId) || _stage is null || !IsExpeditionActive(_stage))
 {
     <div class="contracts-placeholder">Sem Expedição Ativa</div>
 }
 else
 {
-    var totalCons = Contracts.GetContractsCap(Game.CurrentGame, StageId);
-    var usedCons = Contracts.GetContractsUsed(Game.CurrentGame, StageId);
+    var totalCons = Contracts.GetContractsCap(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
+    var usedCons = Contracts.GetContractsUsed(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
 
     <div class="contracts-capbar">
         <strong>Contratos:</strong> @usedCons / @totalCons
@@ -50,7 +50,7 @@ else
                         else
                         {
                             var chosen = chosenCon;
-                            var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, StageId);
+                            var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
                             var qty = _stage.ActiveContracts?.TryGetValue(chosen.Id, out var q) == true ? q : 0;
                             var canBuy = CanPurchase(chosen, _stage!);
                             var disabled = noCapacity || !canBuy;
@@ -60,9 +60,9 @@ else
                                         class="contract-button icon-button @(disabled ? "is-locked" : null)"
                                         disabled="@disabled"
                                         @onclick="() => BuyContract(chosen.Id)"
-                                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, StageId))"
+                                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, Game?.CurrentGame.SelectedStageId))"
                                         @onmouseleave="Tooltips.Clear"
-                                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, StageId))"
+                                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, Game?.CurrentGame.SelectedStageId))"
                                         @onblur="Tooltips.Clear">
                                     @chosen.Id @(qty > 0 ? $"(x{qty})" : null)
                                 </button>
@@ -84,7 +84,7 @@ else
                                 <button type="button" class="back-button icon-button" @onclick="CloseLevel">Voltar</button>
                             </div>
 
-                            var ids = Contracts.AvaliableContracts(Game.CurrentGame, StageId);
+                            var ids = Contracts.AvaliableContracts(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
                             var list = ids
                                 .Select(id => Locate.LocateContract(Game.CurrentGame, id))
                                 .Where(c => c is not null && c.Level == level)
@@ -99,7 +99,7 @@ else
                                 <div class="contracts-list">
                                     @foreach (var c in list)
                                     {
-                                        var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, StageId);
+                                        var noCapacity = Contracts.IsMaxContract(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
                                         var canBuy = CanPurchase(c, _stage);
                                         var disabled = noCapacity || !canBuy;
 
@@ -107,9 +107,9 @@ else
                                                 class="contract-button icon-button @(disabled ? "is-locked" : null)"
                                                 disabled="@disabled"
                                                 @onclick="() => BuyContract(c.Id)"
-                                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, StageId))"
+                                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, Game?.CurrentGame.SelectedStageId))"
                                                 @onmouseleave="Tooltips.Clear"
-                                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, StageId))"
+                                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, Game?.CurrentGame.SelectedStageId))"
                                                 @onblur="Tooltips.Clear">
                                             @c.Id
                                         </button>
@@ -127,8 +127,6 @@ else
 
 
 @code {
-    [Parameter] public string StageId { get; set; } = default!;
-
     private StageModel? _stage;
     private int? _expandedLevel;
 
@@ -154,7 +152,7 @@ else
 
     private void RefreshStage(bool maybeCollapse)
     {
-        if (!Game.IsReady || string.IsNullOrWhiteSpace(StageId))
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
             _expandedLevel = null;
@@ -164,17 +162,17 @@ else
         }
 
         var g = Game.CurrentGame;
-        g.Stages.TryGetValue(StageId, out var st);
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
         _stage = st;
 
         var activeNow = IsExpeditionActive(st);
-        var stageChanged = !string.Equals(_lastStageId, StageId, StringComparison.Ordinal);
+        var stageChanged = !string.Equals(_lastStageId, Game?.CurrentGame.SelectedStageId, StringComparison.Ordinal);
         var activeDropped = _lastActive && !activeNow;
 
         if (maybeCollapse && (stageChanged || activeDropped))
             _expandedLevel = null;
 
-        _lastStageId = StageId;
+        _lastStageId = Game?.CurrentGame.SelectedStageId;
         _lastActive = activeNow;
     }
 
@@ -198,7 +196,7 @@ else
         _stage.lockedContracts.Add(contract.Level);
 
         _expandedLevel = null;
-        _log.Info($"Outro contrato para {contract.Name}, ótimo!");
+        Log.Info($"Outro contrato para {contract.Name}, ótimo!");
         StateHasChanged();
     }
 

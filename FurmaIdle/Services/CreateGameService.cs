@@ -47,6 +47,7 @@ namespace FurmaIdle.Services
                     ExpeditionStats = new StatsModel(),
                     ExpansionStats = new StatsModel(),
                     GameStats = new StatsModel(),
+                    LastExpansionId = "x00",
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),
                     Coins = Seed("[CGS] Coins", () => CoinsData.CreateInitialStates()),

@@ -1,429 +1,79 @@
-﻿@inherits UiHelper
+﻿@* ShopMenu.razor *@
+@inherits UiHelper
 
-@using System.Linq
-@using FurmaIdle.Data
 @using FurmaIdle.Models
-@using FurmaIdle.Helpers
-@using FurmaIdle.Services
 
-@inject IPurchaseService Purchase
-@inject IExpeditionService Expedition
-@inject ITooltipService Tooltips
-@inject IUiLogService Log
+@* ===== Corpo ===== *@
+@{
+    var panelId = NormalizePanelId(SelectedMenuId);
+}
 
-<section class="shop-menu panel">
-    @if (Game.CurrentGame?.Stages is not { Count: > 0 })
-    {
-        <p>Carregando…</p>
-    }
-    else
-    {
-        var type = MapNavToType(SelectedId);
+@switch (panelId)
+{
+    case "i1":
+        @* (1) Stage — Avaliable Stages / SelectedStage* / Unlocked Locals* / Avaliable Locals* *@
+        <ShopMenuStage/>
+        break;
 
-        if (type is null)
-        {
-            <p>Selecione uma opção no menu.</p>
-        }
-        else
-        {
-            if (string.Equals(SelectedId, "i3", StringComparison.OrdinalIgnoreCase))
-            {
-                if (Expedition.IsExpeditionActive())
-                {
-                    <p>Expedição já Ativa.</p>
-                }
-                else
-                {
-                    <div class="expedition-panel">
-                        <div class="expedition-toolbar">
-                            <button class="primary" type="button" @onclick="OnClickExpedition">
-                                Iniciar Expedição
-                            </button>
-                        </div>
-                        <div class="expedition-body">
-                            @{
-                                var charsInBase = Game.CurrentGame?.Characters?.Values
-                                    ?.Where(c => c.State == UnlockHelper.State.Unlocked && c.CharState == UnlockHelper.CharState.InBase)
-                                    .OrderBy(c => c.Name)
-                                    .ToList() ?? new();
+    case "i2":
+        @* (2) Tech — Knowledge / Avaliable Techs / Unlocked Techs *@
+        <ShopMenuTech/>
+        break;
 
-                                if (charsInBase.Count == 0)
-                                {
-                                    <p>Nenhum personagem na base.</p>
-                                }
-                                else
-                                {
-                                    <div class="char-grid">
-                                        @foreach (var ch in charsInBase)
-                                        {
-                                            var id = ch.Id;
-                                            var meta = CharacterData.GetDef(ch.Id);
+    case "i3":
+        @* (3) Party — Active Characters in Stage* / Resources / Specialties* *@
+        <div>Party panel (placeholder)</div>
+        break;
 
-                                            <button type="button"
-                                                    class="option-btn icon-button @(Expedition.CharSelected(id) ? "selected" : null)"
-                                                    disabled="@(!Expedition.CanToggleChar(id))"
-                                                    @onclick="() => OnToggleChar(id)"
-                                                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game.CurrentGame?.SelectedStageId))"
-                                                    @onmouseleave="Tooltips.Clear"
-                                                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game.CurrentGame?.SelectedStageId))"
-                                                    @onblur="Tooltips.Clear"
-                                                    tabindex="0">
-                                                @id
-                                            </button>
-                                        }
-                                    </div>
-                                }
-                            }
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                var avaliable = GetUpgrades(type.Value, UnlockHelper.State.Available).ToList();
-                var unlocked = GetUnlockeds(Game.CurrentGame!, type.Value).ToList();
+    case "i4":
+        @* (4) Expedition — Expedition Toggle* / Current Expedition Stats* / End Expedition Gains* *@
+        <ShopMenuExpedition/>
+        break;
 
-                <div class="shop-block">
-                    <h4>@type.Value</h4>
+    case "i5":
+        @* (5) Expansion — Next Expansion Button / Current Expansion Stats / inBase Characters *@
+        <ShopMenuExpansion/>
+        break;
 
-                    <h5>Avaliable</h5>
-                    @if (!avaliable.Any())
-                    {
-                        <p>Nenhum item disponível</p>
-                    }
-                    else
-                    {
-                        <div class="shop-list">
-                            @foreach (var it in avaliable)
-                            {
-                                @RenderItemButton(it, type.Value, isUnlocked: false)
-                            }
-                        </div>
-                    }
+    case "i6":
+        @* (6) Upgrades — Avaliable Expedition Upgrades* / Avaliable Expansion Upgrades / Unlocked Upgrades *@
+        <ShopMenuUpgrades />
+        break;
 
-                    <h5>Unlocked</h5>
-                    @if (!unlocked.Any())
-                    {
-                        <p>Nenhum item desbloqueado</p>
-                    }
-                    else
-                    {
-                        <div class="shop-list">
-                            @foreach (var it in unlocked)
-                            {
-                                @RenderItemButton(it, type.Value, isUnlocked: true)
-                            }
-                        </div>
-                    }
-                </div>
-            }            
-        }
-    }
-</section>
+    case "i7":
+        @* (7) Achievements — Game Statistics / Unlocked / Locked *@
+        <div>Achievements panel (placeholder)</div>
+        break;
+
+    case "i8":
+        @* (8) Outside — Real Money Shop? *@
+        <div>Outside panel (placeholder)</div>
+        break;
+
+    case "i9":
+        @* (9) Settings *@
+        <div>Settings panel (placeholder)</div>
+        break;
+
+    default:
+        <div>Selecione um painel do menu.</div>
+        break;
+}
 
 @code {
-    [Parameter] public string? SelectedId { get; set; }
+    // Id selecionado vindo do NavMenu (ex.: i1…i9 ou i97/i98/i99)
+    [Parameter] public string? SelectedMenuId { get; set; }
 
-    protected override void OnInitialized()
+    // Mapeia i97/98/99 para i7/8/9 e retorna o id original para os demais.
+    private static string NormalizePanelId(string? id)
     {
-        base.OnInitialized();
-        // se quiser carregar algo só uma vez, faça aqui
-    }
-
-    protected override void OnGameChanged()
-    {
-        // se precisar recalcular alguma cache local, faça aqui
-        // o base já chama StateHasChanged()
-    }
-
-    #region Tooltip
-    private static HoverType MapHover(ItemHelper.ItemType kind) => kind switch
-    {
-        ItemHelper.ItemType.Character => HoverType.Character,
-        ItemHelper.ItemType.Tech => HoverType.Tech,
-        ItemHelper.ItemType.Local => HoverType.Local,
-        ItemHelper.ItemType.Stage => HoverType.Stage,
-        ItemHelper.ItemType.Expansion => HoverType.Expansion,
-        ItemHelper.ItemType.Upgrade => HoverType.Upgrade,
-        ItemHelper.ItemType.Contract => HoverType.Contract,
-        _ => HoverType.Upgrade
-    };
-    #endregion
-
-    #region Menu
-    // ===== DTO comum pra UI =====
-    private readonly record struct ViewItem(
-        string Id,
-        string? Name,
-        UnlockHelper.State State,
-        ItemHelper.ItemType Kind
-    );
-
-    // ===== Mapeia o item do menu lateral =====
-    private static ItemHelper.ItemType? MapNavToType(string? navId) => navId switch
-    {
-        "i1" => ItemHelper.ItemType.Stage,
-        "i2" => ItemHelper.ItemType.Expansion,
-        "i3" => ItemHelper.ItemType.Expedition,
-        "i4" => ItemHelper.ItemType.Character,
-        "i5" => ItemHelper.ItemType.Tech,
-        "i6" => ItemHelper.ItemType.Local,
-        "i7" => ItemHelper.ItemType.Upgrade,
-        "i8" => ItemHelper.ItemType.Specialty,
-        _ => null
-    };
-
-    private static bool IsUnlockStage(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.StageUnlock;
-    private static bool IsUnlockCharacter(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.CharacterUnlock;
-    private static bool IsUnlockLocal(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.LocalUnlock;
-    private static bool IsUnlockTech(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.TechUnlock;
-    private static bool IsUnlockExpansion(UpgradeModel u) => u.EffectType == EffectHelper.EffectType.ExpansionUnlock;
-
-    private static bool IsUnlockAny(UpgradeModel u) =>
-        IsUnlockStage(u) || IsUnlockCharacter(u) || IsUnlockLocal(u) || IsUnlockExpansion(u) || IsUnlockTech(u);
-
-    private static IReadOnlyList<string> GetOrder(ItemHelper.ItemType type) => type switch
-    {
-        ItemHelper.ItemType.Upgrade => UpgradeData.ShowOrder,
-        ItemHelper.ItemType.Stage => UpgradeData.ShowOrder,
-        ItemHelper.ItemType.Character => UpgradeData.ShowOrder,
-        ItemHelper.ItemType.Tech => UpgradeData.ShowOrder,
-        ItemHelper.ItemType.Local => UpgradeData.ShowOrder,
-        ItemHelper.ItemType.Expansion => UpgradeData.ShowOrder,
-        _ => Array.Empty<string>()
-    };
-
-    private static IEnumerable<ViewItem> Project(GameModel g, ItemHelper.ItemType navType)
-    {
-        IEnumerable<UpgradeModel> src = g.Upgrades?.Values ?? Enumerable.Empty<UpgradeModel>();
-
-        src = navType switch
+        if (string.IsNullOrWhiteSpace(id)) return "i1";
+        return id switch
         {
-            ItemHelper.ItemType.Stage => src.Where(IsUnlockStage),
-            ItemHelper.ItemType.Character => src.Where(IsUnlockCharacter),
-            ItemHelper.ItemType.Local => src.Where(IsUnlockLocal),
-            ItemHelper.ItemType.Tech => src.Where(IsUnlockTech),
-            ItemHelper.ItemType.Expansion => src.Where(IsUnlockExpansion),
-
-            ItemHelper.ItemType.Upgrade => src.Where(u => !IsUnlockAny(u)),
-
-            _ => Enumerable.Empty<UpgradeModel>()
-        };
-
-        return src.Select(u => new ViewItem(
-            Id: u.Id,
-            Name: u.Name,
-            State: u.State,
-            Kind: ItemHelper.ItemType.Upgrade
-        ));
-    }
-
-    private RenderFragment RenderItemButton(ViewItem it, ItemHelper.ItemType navType, bool isUnlocked) => builder =>
-   {
-       var seq = 0;
-       builder.OpenElement(seq++, "button");
-       builder.AddAttribute(seq++, "type", "button");
-
-       var kind = it.Kind;
-       var isTarget = isUnlocked && kind != ItemHelper.ItemType.Upgrade;
-       var isPurchased = isUnlocked && kind == ItemHelper.ItemType.Upgrade;
-
-       var canAffordForBuy = (!isUnlocked && kind == ItemHelper.ItemType.Upgrade)
-           ? Purchase.CanAfford(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId)
-           : false;
-
-       var css =
-           !isUnlocked && kind == ItemHelper.ItemType.Upgrade
-               ? $"shop-item is-available{(canAffordForBuy ? "" : " is-locked")}"
-           : isPurchased
-               ? "shop-item is-purchased"
-           : "shop-item is-unlocked";
-
-       builder.AddAttribute(seq++, "class", $"{css} icon-button");
-
-       var disabled = isTarget || isPurchased || (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && !canAffordForBuy);
-       if (disabled) builder.AddAttribute(seq++, "disabled", true);
-
-       // HOVER / FOCUS -> tooltip
-       var ht = MapHover(kind);
-       builder.AddAttribute(seq++, "onmouseenter", EventCallback.Factory.Create(this,
-           () => Tooltips.Show(Tooltips.GetHover(ht, it.Id, Game.CurrentGame?.SelectedStageId))));
-       builder.AddAttribute(seq++, "onmouseleave", EventCallback.Factory.Create(this, Tooltips.Clear));
-       builder.AddAttribute(seq++, "onfocus", EventCallback.Factory.Create(this,
-           () => Tooltips.Show(Tooltips.GetHover(ht, it.Id, Game.CurrentGame?.SelectedStageId))));
-       builder.AddAttribute(seq++, "onblur", EventCallback.Factory.Create(this, Tooltips.Clear));
-       builder.AddAttribute(seq++, "tabindex", 0);
-
-       // Click (apenas quando aplicável)
-       if (!isUnlocked && kind == ItemHelper.ItemType.Upgrade && canAffordForBuy)
-       {
-           builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, async () =>
-           {
-               await Purchase.Purchase(ItemHelper.ItemType.Upgrade, it.Id, Game.CurrentGame.SelectedStageId);
-           }));
-       }
-
-       builder.AddContent(seq++, it.Id ?? it.Name);
-       builder.CloseElement();
-   };
-    #endregion
-
-    #region Expedition
-    private readonly Dictionary<string, HashSet<string>> _partyByStage = new(StringComparer.Ordinal);
-
-    private void OnToggleChar(string id)
-    {
-        var wasSelected = Expedition.CharSelected(id);
-
-        if (Expedition.ToggleChar(id, out var reason))
-        {
-            var nowSelected = Expedition.CharSelected(id);
-
-            if (nowSelected && !wasSelected)
-                Log.Info($"{id} adicionado à equipe.");
-            else if (!nowSelected && wasSelected)
-                Log.Info($"{id} removido da equipe.");
-            else
-                Log.Error($"Exploração com problemas.");
-
-            StateHasChanged();
-            return;
-        }
-    }
-
-    private async Task OnClickExpedition()
-    {
-        var cap = Expedition.GetPartyCap();
-        var roster = Expedition.GetPartyIds();
-
-        await Expedition.LaunchExpedition(roster);
-        Log.Success($"Expedição iniciada. Equipe: [{string.Join(", ", roster)}]  (cap {cap})");
-    }
-    #endregion
-
-    #region Menu Helpers
-    private IEnumerable<ViewItem> GetUpgrades(ItemHelper.ItemType type, UnlockHelper.State desired)
-    {
-        var g = Game.CurrentGame;
-        if (g is null) return Enumerable.Empty<ViewItem>();
-
-        bool NotMaxed(string id)
-        {
-            if (g.Upgrades is null) return true;
-            if (!g.Upgrades.TryGetValue(id, out var u) || u is null) return true;
-            var max = u.MaxBuy;
-            var cur = u.ActualBuy;
-            if (max <= 0) return true;
-            return cur < max;
-        }
-
-        var order = GetOrder(type);
-        int OrderIndex(string id)
-        {
-            if (order is null) return int.MaxValue;
-            if (order is List<string> list)
-            {
-                var idx = list.IndexOf(id);
-                return idx >= 0 ? idx : int.MaxValue;
-            }
-            for (int i = 0; i < order.Count; i++)
-                if (string.Equals(order[i], id, StringComparison.Ordinal))
-                    return i;
-            return int.MaxValue;
-        }
-
-        var query = Project(g, type);
-
-        if (type == ItemHelper.ItemType.Upgrade)
-        {
-            query = query.Where(it =>
-                it.State == desired                // <- só o estado pedido
-                && NotMaxed(it.Id)
-                && IsContractUpgradeVisible(g, it.Id)
-            );
-        }
-        else
-        {
-            query = query.Where(it => it.State == desired);
-        }
-
-        return query.OrderBy(it => OrderIndex(it.Id));
-    }
-
-    private static IEnumerable<ViewItem> GetUnlockeds(GameModel g, ItemHelper.ItemType navType)
-    {
-        return navType switch
-        {
-            ItemHelper.ItemType.Character => (g.Characters?.Values ?? Enumerable.Empty<CharacterModel>())
-                .Where(c => c.State == UnlockHelper.State.Unlocked)
-                .Select(c => new ViewItem(c.Id, c.Name, c.State, ItemHelper.ItemType.Character)),
-
-            ItemHelper.ItemType.Tech => (g.Techs?.Values ?? Enumerable.Empty<TechModel>())
-                .Where(t => t.State == UnlockHelper.State.Unlocked)
-                .Select(t => new ViewItem(t.Id, t.Name, t.State, ItemHelper.ItemType.Tech)),
-
-            ItemHelper.ItemType.Local => (g.Locals?.Values ?? Enumerable.Empty<LocalModel>())
-                .Where(l => l.State == UnlockHelper.State.Unlocked)
-                .Select(l => new ViewItem(l.Id, l.Name, l.State, ItemHelper.ItemType.Local)),
-
-            ItemHelper.ItemType.Stage => (g.Stages?.Values ?? Enumerable.Empty<StageModel>())
-                .Where(s => s.State == UnlockHelper.State.Unlocked)
-                .Select(s => new ViewItem(s.Id, s.Name, s.State, ItemHelper.ItemType.Stage)),
-
-            ItemHelper.ItemType.Expansion => (g.Expansions?.Values ?? Enumerable.Empty<ExpansionModel>())
-                .Where(e => e.State == UnlockHelper.State.Unlocked)
-                .Select(e => new ViewItem(e.Id, e.UnlockId, e.State, ItemHelper.ItemType.Expansion)),
-
-            ItemHelper.ItemType.Upgrade => (g.Upgrades?.Values ?? Enumerable.Empty<UpgradeModel>())
-                .Where(u => !IsUnlockAny(u) && u.State == UnlockHelper.State.Unlocked)
-                .Where(u =>
-                {
-                    var max = u.MaxBuy;
-                    var cur = u.ActualBuy;
-                    return max > 0 && cur >= max;
-                })
-                .Where(u => IsContractUpgradeVisible(g, u.Id))
-                .Select(u => new ViewItem(u.Id, u.Name, u.State, ItemHelper.ItemType.Upgrade)),
-
-            _ => Enumerable.Empty<ViewItem>()
+            "i97" => "i7",
+            "i98" => "i8",
+            "i99" => "i9",
+            _ => id
         };
     }
-
-    private static bool StartsWithUc(string id) =>
-        id?.StartsWith("uc", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUu(string id) =>
-        id?.StartsWith("uu", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool IsContractUpgradeVisible(GameModel g, string upgradeId)
-    {
-        if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId)) return true;
-
-        g.Upgrades.TryGetValue(upgradeId, out var up);
-
-        var targetContractId = up.TargetId;
-
-        g.Stages.TryGetValue(g.SelectedStageId, out var stage);
-
-        if (StartsWithUc(upgradeId))
-        {
-            if (stage.ActiveContracts.TryGetValue(targetContractId, out var qty) && qty > 0)
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
-        } else
-        {
-            if (stage.ActualContractLevel >= up.Level)
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
-        }
-    }
-    #endregion
 }

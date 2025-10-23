@@ -1316,13 +1316,34 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Desbloqueio de Techs Cultural (Tech Unlock)
-            ["ut0110"] = new UpgradeModel
+            #region Desbloqueio de Stages (Stage Unlock)
+            ["us01"] = new UpgradeModel
             {
-                Id = "ut0110",
+                Id = "us01",
+                Name = "Içar Velas",
+                Level = 1,
+                Icon = "images/upgrades/us01.jpg",
+                Lore = "",
+                Description = "Libera Stage",
+                UnlockId = "x03",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.StageUnlock1m01,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "s01",
+                EffectType = EffectHelper.EffectType.StageUnlock,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectValue = 1,
+            },
+            #endregion  
+
+            #region Desbloqueio de Techs Cultural (Tech Unlock)
+            ["uh0110"] = new UpgradeModel
+            {
+                Id = "uh0110",
                 Name = "Pesquisar Fundação de Guildas",
                 Level = 1,
-                Icon = "images/upgrades/ut0110.png",
+                Icon = "images/upgrades/uh0110.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l00",
@@ -1338,12 +1359,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Desbloqueio de Techs Geográfico (Tech Unlock)
-            ["ut0210"] = new UpgradeModel
+            ["uh0210"] = new UpgradeModel
             {
-                Id = "ut0210",
+                Id = "uh0210",
                 Name = "Pesquisar as Vilas Litorâneas",
                 Level = 1,
-                Icon = "images/upgrades/ut0210.png",
+                Icon = "images/upgrades/uh0210.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l00",
@@ -1356,12 +1377,12 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectValue = 0,
             },
-            ["ut0220"] = new UpgradeModel
+            ["uh0220"] = new UpgradeModel
             {
-                Id = "ut0220",
+                Id = "uh0220",
                 Name = "Pesquisar os Litorais Rochosos",
                 Level = 2,
-                Icon = "images/upgrades/ut0220.png",
+                Icon = "images/upgrades/uh0220.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l01",
@@ -1377,12 +1398,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Desbloqueio de Techs Sobrevivência (Tech Unlock)
-            ["ut0310"] = new UpgradeModel
+            ["uh0310"] = new UpgradeModel
             {
-                Id = "ut0310",
+                Id = "uh0310",
                 Name = "Pesquisar a Vida em Muradas",
                 Level = 1,
-                Icon = "images/upgrades/ut0310.png",
+                Icon = "images/upgrades/uh0310.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l00",
@@ -1395,12 +1416,12 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectValue = 0,
             },
-            ["ut0320"] = new UpgradeModel
+            ["uh0320"] = new UpgradeModel
             {
-                Id = "ut0320",
+                Id = "uh0320",
                 Name = "Pesquisar a Sobrevivência na Selva",
                 Level = 2,
-                Icon = "images/upgrades/ut0320.png",
+                Icon = "images/upgrades/uh0320.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l02",
@@ -1416,12 +1437,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Desbloqueio de Techs Navegação (Tech Unlock)
-            ["ut0410"] = new UpgradeModel
+            ["uh0410"] = new UpgradeModel
             {
-                Id = "ut0410",
+                Id = "uh0410",
                 Name = "Pesquisar a Construção de Barcos",
                 Level = 1,
-                Icon = "images/upgrades/ut0410.png",
+                Icon = "images/upgrades/uh0410.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l00",
@@ -1437,12 +1458,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Desbloqueio de Techs Caça (Tech Unlock)
-            ["ut0510"] = new UpgradeModel
+            ["uh0510"] = new UpgradeModel
             {
-                Id = "ut0510",
+                Id = "uh0510",
                 Name = "Pesquisar a Caça de Animais Pequenos",
                 Level = 1,
-                Icon = "images/upgrades/ut0510.png",
+                Icon = "images/upgrades/uh0510.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l02",
@@ -1455,12 +1476,12 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectValue = 0,
             },
-            ["ut0520"] = new UpgradeModel
+            ["uh0520"] = new UpgradeModel
             {
-                Id = "ut0520",
+                Id = "uh0520",
                 Name = "Pesquisar a Caça de Animais Predadores",
                 Level = 2,
-                Icon = "images/upgrades/ut0520.png",
+                Icon = "images/upgrades/uh0520.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l02",
@@ -1473,12 +1494,12 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectValue = 0,
             },
-            ["ut0530"] = new UpgradeModel
+            ["uh0530"] = new UpgradeModel
             {
-                Id = "ut0530",
+                Id = "uh0530",
                 Name = "Pesquisar a Caça de Animais Insanos",
                 Level = 3,
-                Icon = "images/upgrades/ut0530.png",
+                Icon = "images/upgrades/uh0530.png",
                 Lore = "",
                 Description = "Libera Tech",
                 UnlockId = "l03",
@@ -1494,12 +1515,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Upgrades de Expansão (Expansion Unlock)
-            ["ux010"] = new UpgradeModel
+            ["ue01"] = new UpgradeModel
             {
-                Id = "ux010",
+                Id = "ue01",
                 Name = "Reestruturar a Guilda: Pesquisas",
                 Level = 1,
-                Icon = "images/upgrades/ux010.jpg",
+                Icon = "images/upgrades/ue01.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
                 UnlockId = "l01",
@@ -1512,12 +1533,12 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectValue = 0,
             },
-            ["ux010"] = new UpgradeModel
+            ["ue01"] = new UpgradeModel
             {
-                Id = "ux010",
+                Id = "ue010",
                 Name = "Reestruturar a Guilda: Territórios",
                 Level = 1,
-                Icon = "images/upgrades/ux020.jpg",
+                Icon = "images/upgrades/ue02.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
                 UnlockId = "l02",
@@ -1530,12 +1551,12 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectValue = 0,
             },
-            ["ux030"] = new UpgradeModel
+            ["ue03"] = new UpgradeModel
             {
-                Id = "ux030",
+                Id = "ue030",
                 Name = "Reestruturar a Guilda: Alcance",
                 Level = 1,
-                Icon = "images/upgrades/ux030.jpg",
+                Icon = "images/upgrades/ue03.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
                 UnlockId = "l03",
@@ -2226,29 +2247,11 @@ namespace FurmaIdle.Data
             ["ux031"] = new UpgradeModel
             {
                 Id = "ux031",
-                Name = "Içar Velas",
+                Name = "Aumentar a Equipe",
                 Level = 1,
                 Icon = "images/upgrades/ux031.jpg",
                 Lore = "",
-                Description = "Libera Stage",
-                UnlockId = "x03",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.StageUnlock1m01,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "s01",
-                EffectType = EffectHelper.EffectType.StageUnlock,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectValue = 1,
-            },
-            ["ux032"] = new UpgradeModel
-            {
-                Id = "ux032",
-                Name = "Aumentar a Equipe",
-                Level = 1,
-                Icon = "images/upgrades/ux032.jpg",
-                Lore = "",
-                Description = "Aumenta o número de personagens trabalhando na Região ",
+                Description = "Aumenta o número de personagens trabalhando na Região",
                 UnlockId = "x03",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize,

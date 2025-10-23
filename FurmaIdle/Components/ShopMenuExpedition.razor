@@ -1,0 +1,171 @@
+﻿@* Components/ShopMenuExpedition.razor *@
+@inherits UiHelper
+
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+
+@inject IExpeditionService Expedition
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+
+
+@{
+    var game = Game.CurrentGame;
+    if (game is null)
+    {
+        <div>Carregando…</div>
+        ; return;
+    }
+
+    var isActive = Expedition.IsExpeditionActive();
+
+    var selectedStage = (Game?.CurrentGame.SelectedStageId is { } sid && game.Stages.TryGetValue(sid, out var st)) ? st : null;
+    var partySize = selectedStage?.PartySizeActual ?? 0;
+
+    var partyIds = Expedition.GetPartyIds();
+    var selectedCount = partyIds.Count;
+
+    // só pode iniciar se estiver Idle e a seleção bater exatamente com PartySizeActual
+    var canLaunch = !isActive && selectedStage is not null && selectedCount == partySize;
+}
+
+<!-- TOPO: toggle iniciar/encerrar -->
+<div>
+    <button type="button"
+            class="icon-button"
+            disabled="@( !isActive && !canLaunch )"
+            @onclick="OnClickToggleExpedition">
+        @(isActive ? "Encerrar Expedição" : "Iniciar Expedição")
+    </button>
+</div>
+
+@if (isActive)
+{
+    <!-- Status da expedição -->
+    var ex = Expedition.GetOrCreateCurrentExpedition();
+    var started = ex.StartedAt;
+    var duration = started.HasValue ? (DateTimeOffset.UtcNow - started.Value) : (TimeSpan?)null;
+
+    <div>
+        <h3>Status</h3>
+        <div>Duração: @(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</div>
+    </div>
+
+    <!-- Ganhos da Expedição -->
+    <div>
+        <h3>Gains (placeholder)</h3>
+        <div>Conhecimentos ao final da expedição…</div>
+    </div>
+}
+else
+{
+    <!-- Characters inBase -->
+    var charsInBase = Expedition.GetCharactersInBase()
+            .OrderBy(c => c.Name)
+            .ToList();
+
+
+    <div>
+        <h3>Characters (In Base)</h3>
+        @if (charsInBase.Count == 0)
+        {
+            <div>Nenhum personagem na base.</div>
+        }
+        else
+        {
+            @foreach (var ch in charsInBase)
+            {
+                var id = ch.Id;
+                var selected = Expedition.CharSelected(id);
+                var canToggle = Expedition.CanToggleChar(id);
+
+                <button type="button"
+                        class="icon-button @(selected ? "selected" : null)"
+                        disabled="@( !canToggle )"
+                        @onclick="() => OnToggleChar(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game.CurrentGame?.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game.CurrentGame?.SelectedStageId))"
+                        @onblur="Tooltips.Clear">
+                    @id
+                </button>
+            }
+        }
+    </div>
+
+    <!-- Character Details -->
+    var selectedIds = Expedition.GetPartyIds();
+    var selectedChars = selectedIds
+        .Select(id => Game.CurrentGame?.Characters.TryGetValue(id, out var c) == true ? c : null)
+        .Where(c => c is not null)!;
+
+    <div>
+        <h3>Traits & Specialties</h3>
+        @if (!selectedChars.Any())
+        {
+            <div>Nenhum personagem selecionado.</div>
+        }
+        else
+        {
+            @foreach (var c in selectedChars)
+            {
+                <div>@c!.Id — Trait: @c.TraitId — Specialty: @c.SpecialtyId - Knowledges: @c.KnowledgeFactor1 e @c.KnowledgeFactor2</div>
+            }
+        }
+    </div>
+}
+
+@code {
+    private async Task OnClickToggleExpedition()
+    {
+        var g = Game.CurrentGame;
+        if (g is null) return;
+
+        var isActive = Expedition.IsExpeditionActive();
+        if (!isActive)
+        {
+            var selectedStage = (g.SelectedStageId is { } sid && g.Stages.TryGetValue(sid, out var st)) ? st : null;
+            var partySize = selectedStage?.PartySizeActual ?? 0;
+            var selectedCount = Expedition.GetPartyIds().Count;
+
+            if (selectedStage is null)
+            { Log.Error("Nenhuma Stage selecionada."); return; }
+
+            if (selectedCount != partySize)
+            {
+                Log.Error($"Selecione exatamente {partySize} personagem(ns). Atual: {selectedCount}.");
+                return;
+            }
+
+            await Expedition.LaunchExpedition(Expedition.GetPartyIds());
+            Log.Success($"Expedição iniciada. Equipe: [{string.Join(", ", Expedition.GetPartyIds())}]");
+            return;
+        }
+
+        var st2 = Expedition.GetCurrentStage();
+        if (st2 is null) { Log.Error("Nenhum Stage selecionado."); return; }
+        Expedition.EndExpedition(g, st2.Id);
+        await Game.Mutate(_ => { }, save: true);
+        Log.Success("Expedição encerrada.");
+    }
+
+    private void OnToggleChar(string id)
+    {
+        var wasSelected = Expedition.CharSelected(id);
+
+        if (Expedition.ToggleChar(id, out var reason))
+        {
+            var nowSelected = Expedition.CharSelected(id);
+            if (nowSelected && !wasSelected) Log.Info($"{id} adicionado à equipe.");
+            else if (!nowSelected && wasSelected) Log.Info($"{id} removido da equipe.");
+            else Log.Error("Exploração com problemas.");
+
+            StateHasChanged();
+        }
+        else if (!string.IsNullOrWhiteSpace(reason))
+        {
+            Log.Error(reason);
+        }
+    }
+}

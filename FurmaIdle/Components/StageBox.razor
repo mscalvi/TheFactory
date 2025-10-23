@@ -10,8 +10,7 @@
 
 <div class="stage-box">
     @{
-        var stageId = Game.CurrentGame.SelectedStageId;
-        var stage = Locate.LocateStage(Game.CurrentGame, stageId);
+        var stage = Locate.LocateStage(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
     }
     <div class="stage-name">
         @if (stage is null)

@@ -8,12 +8,10 @@
         public DateTime LastTick { get; set; }
         public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
         public string SelectedStageId { get; set; } = "s00";
+        public string LastExpansionId { get; set; } = "x00";
         public List<string> ActiveStagesIds { get; set; }
         public bool Started { get; set; } = false;
         public bool On { get; set; } = false;
-
-        // public GuildModel Guild { get; set; } = new();
-        // public RuntimeModel Runtime { get; set; } = new RuntimeModel();
 
         // Total
         public StatsModel ExpeditionStats { get; set; } = new();

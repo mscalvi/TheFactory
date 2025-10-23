@@ -76,7 +76,7 @@
 
     #region NavMenu
     private NavMenu? navRef;
-    private string? _navId = "i4";
+    private string? _navId = "i1";
     #endregion
 
     #region Gerais
@@ -110,7 +110,7 @@ else
     <div class="game-grid">
         <!-- Navegador -->
         <aside class="nav-menu panel">
-            <NavMenu @bind-SelectedId="_navId" />
+            <NavMenu @bind-SelectedMenuId="_navId" />
         </aside>
 
         <!-- Texto -->
@@ -120,7 +120,7 @@ else
 
         <!-- Shop -->
         <section class="shop-menu panel">
-            <ShopMenu SelectedId="@_navId" />
+            <ShopMenu SelectedMenuId="@_navId" />
         </section>
 
         <!-- Título -->
@@ -130,14 +130,7 @@ else
 
         <!-- Stage/Área -->
         <section class="stage-box panel">
-            @if (Game.CurrentGame?.Stages?.Count > 0)
-            {
-                <StageBox />
-            }
-            else
-            {
-                <p>Stage Desativado</p>
-            }
+            <StageBox />
         </section>
 
         <!-- Click -->
@@ -151,18 +144,9 @@ else
         </section>
 
         <!-- Contratos -->
-        @if (Game.IsReady && Game.CurrentGame?.SelectedStageId is not null)
-        {
-            <section class="contracts-menu panel">
-                <ContractsMenu StageId="@Game.CurrentGame.SelectedStageId" />
-            </section>
-        }
-        else
-        {
-            <section class="contracts-menu panel">
-                <div>Carregando…</div>
-            </section>
-        }
+        <section class="contracts-menu panel">
+            <ContractsMenu />
+        </section>
 
     </div>
 }

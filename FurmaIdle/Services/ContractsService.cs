@@ -249,7 +249,7 @@ namespace FurmaIdle.Services
                     var total = perCycle * qty * cycles;
 
                     // credita usando IncomeService (ele já faz floor e acumula fração de sobra)
-                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, coinId, total);
+                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, coinId, total, ItemHelper.ItemType.Contract, contractId);
                 }
 
                 // grava o progresso (clamped p/ UI)

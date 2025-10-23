@@ -40,8 +40,8 @@
         }
 
         #region Menu Detect
-        public string? OpenMenuId { get; private set; } = "i4";
-        public string? PreviousMenuId { get; private set; } = "i4";
+        public string? OpenMenuId { get; private set; } = "i1";
+        public string? PreviousMenuId { get; private set; } = "i1";
         public event Action? Changed;
 
         public void SetOpenMenu(string? id)

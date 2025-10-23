@@ -16,13 +16,13 @@
     @* imagem do stage cobrindo 100% *@
     @{
         var game = Game.CurrentGame;
-        var stageId = game?.SelectedStageId;
         StageModel? Stage = null;
-        if (!string.IsNullOrWhiteSpace(stageId))
-            game?.Stages?.TryGetValue(stageId, out Stage);
+        if (!string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+            game?.Stages?.TryGetValue(Game?.CurrentGame.SelectedStageId, out Stage);
+        ClickModel stageClick = Locate.LocateStageClick(Game.CurrentGame, Game.CurrentGame.SelectedStageId);
 
-        var stageImg = !string.IsNullOrWhiteSpace(stageId)
-        ? $"images/stages/{stageId}_0000.jpg"
+        var stageImg = !string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId)
+        ? $"images/stages/{Game?.CurrentGame.SelectedStageId}_0000.jpg"
         : $"Stage: {Stage.Name}";
     }
 
@@ -76,38 +76,20 @@
 
     private async Task Click(PointerEventArgs e)
     {
-        var ClickTotal = GetClickTotal();
-
         var game = Game.CurrentGame;
         var stageId = game?.SelectedStageId;
 
+        var ClickTotal = GetClickTotal();
+
         if(game.Stages.TryGetValue(stageId, out var stage))
         {
-            var gain = await Income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal);
+            var clickGain = await Income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal, ItemHelper.ItemType.Click, stage.ClickId);
         } else
         {
             Console.WriteLine("[ClickArea] Bug");
         }
 
-        var now = Environment.TickCount64;
-        var clickVisual = new ClickVisual
-        {
-            Text = $"+{ClickTotal:0.##}",
-            Xpx = $"{e.ClientX + 4}px",
-            Ypx = $"{e.ClientY - 12}px",
-            BornMs = now
-        };
-        _ClickVisual.Add(clickVisual);
-
-        StateHasChanged();
-
-        // Remove o Efeito Visual
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(clickVisual.LifespanMs);
-            _ClickVisual.Remove(clickVisual);
-            await InvokeAsync(StateHasChanged);
-        });
+        //StateHasChanged();
     }
 
     // ===== Cálculo do ClickTotal =====
@@ -115,11 +97,11 @@
     private double GetClickTotal()
     {
         var click = Locate.LocateStageClick(Game.CurrentGame, Game.CurrentGame.SelectedStageId);
-        if (click is null) return 0;
 
         var baseGain = click.BaseGain;
         var addMod = click.AddMod;
         var multMod = click.MultMod <= 0 ? 1.0 : click.MultMod;
+
         return (baseGain + addMod) * multMod;
     }
 

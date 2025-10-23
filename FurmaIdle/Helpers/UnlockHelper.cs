@@ -19,7 +19,7 @@
         {
             Blocked,
             InBase,
-            OnStage
+            InStage
         }
         public enum ExpeditionState
         {

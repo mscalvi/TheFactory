@@ -9,7 +9,7 @@ using System.Text;
 
 namespace FurmaIdle.Services
 {
-    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expansion, Expedition }
+    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expansion, Expedition, Knowledge }
     public sealed record HoverTip(string Title, string Body);
 
     public interface ITooltipService
@@ -56,10 +56,11 @@ namespace FurmaIdle.Services
             {
                 HoverType.Character => BuildCharacterHover(id, g),
                 HoverType.Contract => BuildContractHover(id, g),
-                //HoverType.Specialty => BuildSpecialtyHover(id, g),
+                HoverType.Specialty => BuildSpecialtyHover(id, g),
                 HoverType.Tech => BuildTechHover(id, g),
                 HoverType.Local => BuildLocalHover(id, g),
                 HoverType.Upgrade => BuildUpgradeHover(id, g),
+                HoverType.Knowledge => BuildKnowledgeHover(id, g),
                 _ => new HoverTip("—", "—")
             };
         }
@@ -69,7 +70,7 @@ namespace FurmaIdle.Services
         {
             game.Characters.TryGetValue(id, out var character);
 
-            return new HoverTip($"Personagem ({character.Name})", $"{character.State}");
+            return new HoverTip($"Character ({character.Name})", $"{character.State}");
         }
 
         // Upgrade
@@ -85,7 +86,7 @@ namespace FurmaIdle.Services
         {
             game.Contracts.TryGetValue(id, out var contract);
 
-            return new HoverTip($"Upgrade ({contract.Name})", $"{contract.State}");
+            return new HoverTip($"Contract ({contract.Name})", $"{contract.State}");
         }
 
         // Local
@@ -93,7 +94,7 @@ namespace FurmaIdle.Services
         {
             game.Locals.TryGetValue(id, out var local);
 
-            return new HoverTip($"Upgrade ({local.Name})", $"{local.State}");
+            return new HoverTip($"Local ({local.Name})", $"{local.State}");
         }
 
         // Techs
@@ -101,7 +102,23 @@ namespace FurmaIdle.Services
         {
             game.Techs.TryGetValue(id, out var tech);
 
-            return new HoverTip($"Upgrade ({tech.Name})", $"{tech.State}");
+            return new HoverTip($"Tech ({tech.Name})", $"{tech.State}");
+        }
+
+        // Techs
+        private HoverTip BuildKnowledgeHover(string id, GameModel game)
+        {
+            game.Knowledges.TryGetValue(id, out var know);
+
+            return new HoverTip($"Knowledge ({know.Name})", $"{know.State}");
+        }
+
+        // Techs
+        private HoverTip BuildSpecialtyHover(string id, GameModel game)
+        {
+            game.Specialties.TryGetValue(id, out var specialty);
+
+            return new HoverTip($"Specialty ({specialty.Name})", $"{specialty.Description}");
         }
     }
 }

@@ -1,0 +1,271 @@
+﻿@* Components/ShopMenuStage.razor *@
+@inherits UiHelper
+
+@using System.Linq
+@using FurmaIdle.Models
+@using FurmaIdle.Data
+@using FurmaIdle.Helpers
+@using FurmaIdle.Services
+
+@* ===== Injeções ===== *@
+@inject IPurchaseService Purchase
+@inject ILocateService Locate
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+
+
+@* ===== Corpo ===== *@
+@{
+    var game = Game.CurrentGame;
+    if (game is null)
+    {
+        <div>Carregando…</div>
+        return;
+    }
+
+    // Stages "selecionáveis": Unlocked
+    var unlockedStages = OrderedStages(game)
+        .Where(s => s.State == UnlockHelper.State.Unlocked)
+        .ToList();
+
+    // Stage selecionada
+    var selectedStage = (!string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId) && game.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId!, out var ss))
+        ? ss
+        : null;
+
+    // Available Stage-Unlock Upgrades (ids "us", estado Available, UnlockId == SelectedStageId)
+    var availableStageUpgrades = OrderedStageUnlockUpgrades(game)
+        .Where(u => u.State == UnlockHelper.State.Available)
+        .ToList();
+
+    // Unlocked Locals in Stage*
+    var unlockedLocalsInStage = selectedStage is null ? Enumerable.Empty<LocalModel>() :
+        OrderedLocals(game)
+            .Where(l => string.Equals(l.StageId, selectedStage.Id, StringComparison.OrdinalIgnoreCase)
+                     && l.State == UnlockHelper.State.Unlocked);
+
+    // Available Local-Unlock Upgrades in Stage* (ids "ul", estado Available, UnlockId == SelectedStageId)
+    var availableLocalUpgradesInStage = selectedStage is null ? Enumerable.Empty<UpgradeModel>() :
+        OrderedLocalUnlockUpgrades(game)
+            .Where(u =>
+                u.State == UnlockHelper.State.Available &&
+                string.Equals(u.UnlockId, selectedStage.Id, StringComparison.OrdinalIgnoreCase));
+}
+
+<!-- Unlocked Stages -->
+<div>
+    <h3>Unlocked Stages</h3>
+    @if (!unlockedStages.Any())
+    {
+        <div>Nenhuma Stage desbloqueada.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var s in unlockedStages)
+            {
+                var id = s.Id;
+                var isSelected = string.Equals(Game?.CurrentGame.SelectedStageId, id, StringComparison.OrdinalIgnoreCase);
+
+                <button type="button"
+                        class="icon-button"
+                        disabled="@(isSelected)"
+                        aria-pressed="@(isSelected)"
+                        @onclick="() => SelectStage(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, id, Game.CurrentGame?.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, id, Game.CurrentGame?.SelectedStageId))"
+                        @onblur="Tooltips.Clear"
+                        tabindex="0">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<!-- Available Stage Upgrades (us...) -->
+<div>
+    <h3>Available Stage Upgrades</h3>
+    @if (!availableStageUpgrades.Any())
+    {
+        <div>Nenhum Upgrade de Stage disponível.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var u in availableStageUpgrades)
+            {
+                var id = u.Id;
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game.CurrentGame?.SelectedStageId);
+
+                <button type="button"
+                        class="icon-button"
+                        disabled="@( !canBuy )"
+                        @onclick="() => OnClickBuyStageUpgrade(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
+                        @onblur="Tooltips.Clear"
+                        tabindex="0">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<!-- SelectedStage -->
+<div>
+    <h3>Selected Stage</h3>
+    @if (selectedStage is null)
+    {
+        <div>Nenhuma Stage selecionada.</div>
+    }
+    else
+    {
+        var def = StageData.All.TryGetValue(selectedStage.Id, out var d) ? d : null;
+        <div>
+            <div><b>Id:</b> @selectedStage.Id</div>
+            @if (def is not null)
+            {
+                <div><b>Name:</b> @def.Name</div>
+            }
+            <div><b>State:</b> @selectedStage.State</div>
+            <div><b>PartySize:</b> @selectedStage.PartySizeActual / @selectedStage.PartySizeMax</div>
+            <div><b>MaxContractLevel:</b> @selectedStage.MaxContractLevel</div>
+        </div>
+    }
+</div>
+
+<!-- Unlocked Locals in Stage -->
+<div>
+    <h3>Unlocked Locals in Stage</h3>
+    @if (selectedStage is null)
+    {
+        <div>Selecione uma Stage.</div>
+    }
+    else if (!unlockedLocalsInStage.Any())
+    {
+        <div>Nenhum Local desbloqueado nessa Stage.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var l in unlockedLocalsInStage)
+            {
+                var id = l.Id;
+                <button type="button"
+                        class="icon-button"
+                        disabled
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Local, id, Game.CurrentGame?.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Local, id, Game.CurrentGame?.SelectedStageId))"
+                        @onblur="Tooltips.Clear"
+                        tabindex="0">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<!-- Available Local Upgrades in SelectedStage (ul...) -->
+<div>
+    <h3>Available Locals in Stage</h3>
+    @if (selectedStage is null)
+    {
+        <div>Selecione uma Stage.</div>
+    }
+    else if (!availableLocalUpgradesInStage.Any())
+    {
+        <div>Nenhum Local disponível para esta Stage.</div>
+    }
+    else
+    {
+        <div>
+            @foreach (var u in availableLocalUpgradesInStage)
+            {
+                var id = u.Id;
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game.CurrentGame?.SelectedStageId);
+                <button type="button"
+                        class="icon-button"
+                        disabled="@( !canBuy )"
+                        @onclick="() => OnClickBuyLocalUpgrade(id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
+                        @onblur="Tooltips.Clear"
+                        tabindex="0">
+                    @id
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    // ===== Ordenações =====
+    private static IEnumerable<StageModel> OrderedStages(GameModel m)
+        => m.Stages.Values.OrderBy(s =>
+            {
+                var idx = StageData.ShowOrder.FindIndex(id => string.Equals(id, s.Id, StringComparison.OrdinalIgnoreCase));
+                return idx < 0 ? int.MaxValue : idx;
+            }).ThenBy(s => s.Id);
+
+    private static IEnumerable<UpgradeModel> OrderedStageUnlockUpgrades(GameModel m)
+        => m.Upgrades.Values
+            .Where(u => u?.Id != null && u.Id.StartsWith("us", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(u =>
+            {
+                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.OrdinalIgnoreCase));
+                return idx < 0 ? int.MaxValue : idx;
+            })
+            .ThenBy(u => u.Id);
+
+    private static IEnumerable<LocalModel> OrderedLocals(GameModel m)
+        => m.Locals.Values.OrderBy(l =>
+            {
+                var idx = LocalData.ShowOrder.FindIndex(id => string.Equals(id, l.Id, StringComparison.OrdinalIgnoreCase));
+                return idx < 0 ? int.MaxValue : idx;
+            }).ThenBy(l => l.Id);
+
+    private static IEnumerable<UpgradeModel> OrderedLocalUnlockUpgrades(GameModel m)
+        => m.Upgrades.Values
+            .Where(u => u?.Id != null && u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(u =>
+            {
+                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.OrdinalIgnoreCase));
+                return idx < 0 ? int.MaxValue : idx;
+            })
+            .ThenBy(u => u.Id);
+
+    // ===== Ações =====
+    private async Task SelectStage(string stageId)
+    {
+        await Game.Mutate(g => g.SelectedStageId = stageId, save: true);
+    }
+
+    private async Task OnClickBuyLocalUpgrade(string upgradeId)
+    {
+        var canAfford = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId);
+        if (!canAfford)
+        {
+            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            return;
+        }
+
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId);
+    }
+
+    private async Task OnClickBuyStageUpgrade(string upgradeId)
+    {
+        var canAfford = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId);
+        if (!canAfford)
+        {
+            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            return;
+        }
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId);
+    }
+}

@@ -58,7 +58,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, character.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Update {up.Id}: vinculado ao {character.Id}, {up.State}");
                     }
                 }
 
@@ -95,7 +94,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, contract.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] {up.Id}: vinculado ao {contract.Id}, {up.State}");
                     }
                 }
 
@@ -109,7 +107,6 @@ namespace FurmaIdle.Services
         #region Expansion Unlock
         public async Task UnlockExpansion(string expansionId)
         {
-            Console.WriteLine($"[Unlock] Expansion {expansionId}: Starting Unlock");
             await _game.Mutate(game =>
             {
                 var expansion = _locate.LocateExpansion(_game.CurrentGame, expansionId);
@@ -119,7 +116,7 @@ namespace FurmaIdle.Services
                      ? ex
                      : null;
 
-                Console.WriteLine($"[DBG] LocateExpansion id='{expansion.Id}', same instance? {ReferenceEquals(expansion, fromDict)}");
+                Console.WriteLine($"[Unlock] LocateExpansion id='{expansion.Id}', same instance? {ReferenceEquals(expansion, fromDict)}");
 
                 foreach (var upgradeId in UpgradeData.ShowOrder)
                 {
@@ -127,12 +124,15 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] {up.Id}: vinculado ao {expansion.Id}, {up.State}");
                     }
+                }
+                if (expansion.State == UnlockHelper.State.Blocked)
+                {
+                    expansion.StartedAt = DateTime.Now;
                 }
 
                 expansion.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Expansion {expansion.Id}: {expansion.State}");
+                Console.WriteLine($"[Unlock] Expansion {expansion.Id}: {expansion.State} -> {expansion.StartedAt}");
             }, save: true);
         }
         #endregion
@@ -163,7 +163,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(tech.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         tech.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Tech {tech.Id}: vinculado ao {local.Id}, {tech.State}");
                     }
                 }
 
@@ -173,7 +172,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(expansion.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         expansion.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Expansion {expansion.Id}: vinculado ao {local.Id}, {expansion.State}");
                     }
                 }
 
@@ -183,7 +181,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Update {up.Id}: vinculado ao {local.Id}, {up.State}");
                     }
                 }
 
@@ -196,7 +193,6 @@ namespace FurmaIdle.Services
         #region Stage Unlock
         public async Task UnlockStage(string stageId)
         {
-            Console.WriteLine($"[Unlock] Stage {stageId}: Starting Unlock");
             await _game.Mutate(game =>
             {
                 var stage = _locate.LocateStage(_game.CurrentGame, stageId);
@@ -207,7 +203,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(coin.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         coin.State = UnlockHelper.State.Unlocked;
-                        Console.WriteLine($"[Unlock] Coin {coin.Id}: vinculado ao {stage.Id}, {coin.State}");
                     }
                 }
 
@@ -217,7 +212,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Id}: vinculado ao {stage.Id}, {up.State}");
                     }
                 }
 
@@ -241,7 +235,6 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, tech.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Update {up.Id}: vinculado ao {tech.Id}, {up.State}");
                     }
                 }
 
