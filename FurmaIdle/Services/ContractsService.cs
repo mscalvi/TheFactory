@@ -12,7 +12,6 @@ namespace FurmaIdle.Services
         bool IsMaxContract(GameModel game, string stageId);
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
-        Task BuyContract(GameModel game, string stageId, string contractId);
         public double GetContractsPerSecond(GameModel game, string stageId, string coinId);
         double GetContractProgress(GameModel game, string stageId, string contractId);
         Task BurstProduction(double BurstTime, string stageId, string specId);
@@ -46,31 +45,16 @@ namespace FurmaIdle.Services
 
     public sealed class ContractsService : IContractsService
     {
-        private readonly IPurchaseService _purchase;
         private readonly ILocateService _locate;
         private readonly IIncomeService _income;
         private readonly ICurrentGameService _game;
-        public ContractsService(IPurchaseService purchase, ILocateService locate, IIncomeService income, ICurrentGameService game)
+        public ContractsService(ILocateService locate, IIncomeService income, ICurrentGameService game)
         {
-            _purchase = purchase;
             _locate = locate;
             _income = income;
             _game = game;
         }
 
-        public async Task BuyContract(GameModel game, string stageId, string contractId)
-        {
-            var contract = _locate.LocateContract(game, contractId);
-
-            await _purchase.Purchase(ItemHelper.ItemType.Contract, contract.Id, stageId);
-
-            await _game.Mutate(g =>
-            {
-                var st = _locate.LocateStage(g, stageId);
-                st.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
-                st.ActiveContracts[contract.Id] = (st.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
-            }, save: true);
-        }
         public bool IsMaxContract(GameModel game, string stageId)
         {
             // 0) Stage válido
@@ -305,7 +289,7 @@ namespace FurmaIdle.Services
             var amount = perSec * BurstTime;
 
             if (amount > 0)
-                await _income.AddAsync(ItemHelper.ItemType.Resource, stage.CoinId, amount,
+                await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, amount,
                                        ItemHelper.ItemType.Specialty, specId);
         }
     }

@@ -86,9 +86,9 @@ else
 
                             var ids = Contracts.AvaliableContracts(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
                             var list = ids
-                                .Select(id => Locate.LocateContract(Game.CurrentGame, id))
-                                .Where(c => c is not null && c.Level == level)
-                                .ToList();
+                            .Select(id => Locate.LocateContract(Game.CurrentGame, id))
+                            .Where(c => c is not null && c.Level == level)
+                            .ToList();
 
                             @if (list.Count == 0)
                             {
@@ -135,7 +135,7 @@ else
 
     protected override void OnInitialized()
     {
-        base.OnInitialized();          
+        base.OnInitialized();
         RefreshStage(maybeCollapse: true);
     }
 
@@ -189,11 +189,9 @@ else
 
     private void BuyContract(string contractId)
     {
-        Contracts.BuyContract(Game.CurrentGame, _stage.Id, contractId);
+        Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, Game.CurrentGame.SelectedStageId);
 
         var contract = Locate.LocateContract(Game.CurrentGame, contractId);
-
-        _stage.lockedContracts.Add(contract.Level);
 
         _expandedLevel = null;
         Log.Info($"Outro contrato para {contract.Name}, ótimo!");

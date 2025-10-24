@@ -111,11 +111,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Additive)
                                     {
-                                        coin.Value.AddMod += (int)upgrade.EffectValue;
+                                        coin.Value.AddMod += upgrade.EffectValue;
                                     }
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        coin.Value.MultMod *= (int)upgrade.EffectValue;
+                                        coin.Value.MultMod *= upgrade.EffectValue;
                                     }
                                 }
                             }
@@ -139,11 +139,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Additive)
                                     {
-                                        know.Value.AddMod += (int)upgrade.EffectValue;
+                                        know.Value.AddMod += upgrade.EffectValue;
                                     }
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        know.Value.MultMod *= (int)upgrade.EffectValue;
+                                        know.Value.MultMod *= upgrade.EffectValue;
                                     }
                                 }
                             }
@@ -167,11 +167,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Additive)
                                     {
-                                        resource.Value.AddMod += (int)upgrade.EffectValue;
+                                        resource.Value.AddMod += upgrade.EffectValue;
                                     }
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        resource.Value.MultMod *= (int)upgrade.EffectValue;
+                                        resource.Value.MultMod *= upgrade.EffectValue;
                                     }
                                 }
                             }
@@ -195,11 +195,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Additive)
                                     {
-                                        click.Value.AddMod += (int)upgrade.EffectValue;
+                                        click.Value.AddMod += upgrade.EffectValue;
                                     }
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        click.Value.MultMod *= (int)upgrade.EffectValue;
+                                        click.Value.MultMod *= upgrade.EffectValue;
                                     }
                                 }
                             }
@@ -223,11 +223,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Additive)
                                     {
-                                        contract.Value.AddMod += (int)upgrade.EffectValue;
+                                        contract.Value.AddMod += upgrade.EffectValue;
                                     }
                                     if (upgrade.EffectOp == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        contract.Value.MultMod *= (int)upgrade.EffectValue;
+                                        contract.Value.MultMod *= upgrade.EffectValue;
                                     }
                                 }
                             }
@@ -377,11 +377,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
                                     {
-                                        coin.Value.AddMod += (int)spec.EffectValue;
+                                        coin.Value.AddMod += spec.EffectValue;
                                     }
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        coin.Value.MultMod *= (int)spec.EffectValue;
+                                        coin.Value.MultMod *= spec.EffectValue;
                                     }
                                 }
                             }
@@ -405,11 +405,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
                                     {
-                                        know.Value.AddMod += (int)spec.EffectValue;
+                                        know.Value.AddMod += spec.EffectValue;
                                     }
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        know.Value.MultMod *= (int)spec.EffectValue;
+                                        know.Value.MultMod *= spec.EffectValue;
                                     }
                                 }
                             }
@@ -433,11 +433,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
                                     {
-                                        resource.Value.AddMod += (int)spec.EffectValue;
+                                        resource.Value.AddMod += spec.EffectValue;
                                     }
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        resource.Value.MultMod *= (int)spec.EffectValue;
+                                        resource.Value.MultMod *= spec.EffectValue;
                                     }
                                 }
                             }
@@ -461,11 +461,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
                                     {
-                                        click.Value.AddMod += (int)spec.EffectValue;
+                                        click.Value.AddMod += spec.EffectValue;
                                     }
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        click.Value.MultMod *= (int)spec.EffectValue;
+                                        click.Value.MultMod *= spec.EffectValue;
                                     }
                                 }
                             }
@@ -489,11 +489,11 @@ namespace FurmaIdle.Services
                                 {
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
                                     {
-                                        contract.Value.AddMod += (int)spec.EffectValue;
+                                        contract.Value.AddMod += spec.EffectValue;
                                     }
                                     if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        contract.Value.MultMod *= (int)spec.EffectValue;
+                                        contract.Value.MultMod *= spec.EffectValue;
                                     }
                                 }
                             }

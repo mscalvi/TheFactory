@@ -49,6 +49,20 @@ namespace FurmaIdle.Services
 
             }, save: true);
 
+            if (type == ItemHelper.ItemType.Contract)
+            {
+                var contract = _locate.LocateContract(game, itemId);
+
+                await _game.Mutate(g =>
+                {
+                    var st = _locate.LocateStage(g, stageId);
+                    st.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
+                    st.ActiveContracts[contract.Id] = (st.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
+
+                    st.lockedContracts.Add(contract.Level);
+                }, save: true);
+            }
+
             await _effect.ApplyEffect(type, itemId, stageId);            
         }
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId)

@@ -43,13 +43,14 @@ namespace FurmaIdle.Services
 
                 if(sourceType == ItemHelper.ItemType.Click)
                 {
-                    Game.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var previous);
+                    Game.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var prevExp);
+                    Game.ExpeditionStats.ClicksMade[sourceId] = prevExp + 1;
 
-                    long clickCount = 1 + previous;
+                    Game.ExpansionStats.ClicksMade.TryGetValue(sourceId, out var prevExpa);
+                    Game.ExpansionStats.ClicksMade[sourceId] = prevExpa + 1;
 
-                    Game.ExpeditionStats.ClicksMade[sourceId] = clickCount;
-                    Game.ExpansionStats.ClicksMade[sourceId] = clickCount;
-                    Game.GameStats.ClicksMade[sourceId] = clickCount;
+                    Game.GameStats.ClicksMade.TryGetValue(sourceId, out var prevGame);
+                    Game.GameStats.ClicksMade[sourceId] = prevGame + 1;
                 }
 
                 result = new GainModel
@@ -94,11 +95,11 @@ namespace FurmaIdle.Services
                 Game.ExpeditionStats.CoinsFrac[id] = newRestDouble;
 
                 Game.ExpansionStats.CoinsGain.TryGetValue(id, out var coinExpa);
-                coinExpa = coinExpa + gain;
+                coinExpa = coinExpa + gain + extra;
                 Game.ExpansionStats.CoinsGain[id] = coinExpa;
 
                 Game.GameStats.CoinsGain.TryGetValue(id, out var coinGame);
-                coinGame = coinGame + gain;
+                coinGame = coinGame + gain + extra;
                 Game.GameStats.CoinsGain[id] = coinGame;
             }
             if (type == ItemType.Resource)
@@ -127,11 +128,11 @@ namespace FurmaIdle.Services
                 Game.ExpeditionStats.ResourcesFrac[id] = newRestDouble;
 
                 Game.ExpansionStats.ResourcesGain.TryGetValue(id, out var coinExpa);
-                coinExpa = coinExpa + gain;
+                coinExpa = coinExpa + gain + extra;
                 Game.ExpansionStats.ResourcesGain[id] = coinExpa;
 
                 Game.GameStats.ResourcesGain.TryGetValue(id, out var coinGame);
-                coinGame = coinGame + gain;
+                coinGame = coinGame + gain + extra;
                 Game.GameStats.ResourcesGain[id] = coinGame;
             }
             if (type == ItemType.Knowledge)

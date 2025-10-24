@@ -6,7 +6,7 @@ namespace FurmaIdle.Helpers
 {
     public class ContractHelper
     {
-        #region Contract Generation
+        #region Contract Identity
         public required string CoinId { get; init; }
         public required double CoinsPerCycle { get; init; }
         public required double SecondsPerCycle { get; init; }

@@ -65,7 +65,6 @@ namespace FurmaIdle.Services
 
         private void RegenOnce(GameModel game)
         {
-            // Para cada recurso desbloqueado: soma per-second efetivo, respeitando cap (se houver)
             foreach (var res in game.Resources.Values)
             {
                 if (res is null || res.State != UnlockHelper.State.Unlocked) continue;
