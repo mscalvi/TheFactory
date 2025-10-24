@@ -25,6 +25,7 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
                 StageId = "s00",
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -40,6 +41,7 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
                 StageId = "s00",
+                Modifiers = new List<ModifierModel>(),
             },
             ["l02"] = new LocalModel
             {
@@ -52,6 +54,7 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
                 StageId = "s00",
+                Modifiers = new List<ModifierModel>(),
             },
             ["l03"] = new LocalModel
             {
@@ -64,6 +67,7 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
                 StageId = "s00",
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
         };
@@ -89,6 +93,7 @@ namespace FurmaIdle.Data
                 State = local.State,
                 Persistence = local.Persistence,
                 StageId = local.StageId,
+                Modifiers = local.Modifiers,
             };
         }
 

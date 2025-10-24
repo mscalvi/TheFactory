@@ -13,5 +13,9 @@ namespace FurmaIdle.Models
         public UnlockHelper.State State { get; set; }
         public DateTimeOffset? StartedAt { get; set; }
         public DateTimeOffset? FinishedAt { get; set; }
+
+
+        // Modifiers
+        public List<ModifierModel> Modifiers { get; set; }
     }
 }

@@ -5,7 +5,8 @@
         public string Id { get; set; }
         public string StageId { get; set; }
         public double BaseGain { get; set; }
-        public double MultMod { get; set; }
-        public double AddMod { get; set; }
+
+        // Modifiers
+        public List<ModifierModel> Modifiers { get; set; }
     }
 }

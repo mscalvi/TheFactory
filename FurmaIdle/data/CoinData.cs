@@ -22,8 +22,7 @@ namespace FurmaIdle.Data
                 UnlockId = "s00",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
                 Lore = "",
             },
             #endregion
@@ -46,8 +45,7 @@ namespace FurmaIdle.Data
                 UnlockId = coin.UnlockId,
                 State = coin.State,
                 Persistence = coin.Persistence,
-                AddMod = coin.AddMod,
-                MultMod = coin.MultMod,
+                Modifiers = coin.Modifiers,
                 Lore = coin.Lore
             };
         }

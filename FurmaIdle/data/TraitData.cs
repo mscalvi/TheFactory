@@ -22,6 +22,7 @@ namespace FurmaIdle.Data
                 EffectValue = 1.05,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
+                Modifiers = new List<ModifierModel>(),
             },
             ["tr02"] = new TraitModel
             {
@@ -31,6 +32,7 @@ namespace FurmaIdle.Data
                 EffectValue = 1.05,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
+                Modifiers = new List<ModifierModel>(),
             },
             ["tr03"] = new TraitModel
             {
@@ -40,6 +42,7 @@ namespace FurmaIdle.Data
                 EffectValue = 1.05,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -52,6 +55,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0.5,
                 EffectOperation = EffectHelper.EffectOperation.Additive,
                 EffectType = EffectHelper.EffectType.ResourceGain,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -64,6 +68,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0.95,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.CharacterCost,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
         };
@@ -85,6 +90,7 @@ namespace FurmaIdle.Data
                 EffectValue = trait.EffectValue,
                 EffectOperation = trait.EffectOperation,
                 EffectType = trait.EffectType,
+                Modifiers = trait.Modifiers,
             };
         }
 

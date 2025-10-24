@@ -13,5 +13,8 @@ namespace FurmaIdle.Models
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
         public string StageId { get; set; }
+
+        // Modifier
+        public List<ModifierModel> Modifiers { get; set; }
     }
 }

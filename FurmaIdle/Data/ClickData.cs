@@ -17,8 +17,7 @@ namespace FurmaIdle.Data
                 Id = "cl00",
                 StageId = "s00",
                 BaseGain = 1,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
             #region NoExistent Stage (s01)
@@ -27,8 +26,7 @@ namespace FurmaIdle.Data
                 Id = "cl01",
                 StageId = "s01",
                 BaseGain = 1,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
         };
@@ -48,8 +46,7 @@ namespace FurmaIdle.Data
                 Id = click.Id,
                 StageId = click.StageId,
                 BaseGain = click.BaseGain,
-                AddMod = click.AddMod,
-                MultMod = click.MultMod,
+                Modifiers = click.Modifiers,
             };
         }
 

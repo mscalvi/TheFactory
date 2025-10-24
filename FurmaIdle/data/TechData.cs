@@ -25,6 +25,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlock1k01,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -33,25 +34,27 @@ namespace FurmaIdle.Data
             {
                 Id = "t021",
                 Name = "Vilas Litorâneas",
-                Icon = "icons/techs/t021.jpg", // CORRIGIDO
+                Icon = "icons/techs/t021.jpg",
                 Description = "",
                 UnlockId = "ut0210",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k02,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             ["t022"] = new TechModel
             {
                 Id = "t022",
                 Name = "Litorais Rochosos",
-                Icon = "icons/techs/t022.jpg", // CORRIGIDO
+                Icon = "icons/techs/t022.jpg",
                 Description = "",
                 UnlockId = "ut0220",
                 Level = 2,
                 PricingId = PricingHelper.PricingId.TechUnlock1k02,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -60,25 +63,27 @@ namespace FurmaIdle.Data
             {
                 Id = "t031",
                 Name = "Vida em Muradas",
-                Icon = "icons/techs/t031.jpg", // CORRIGIDO
+                Icon = "icons/techs/t031.jpg",
                 Description = "",
                 UnlockId = "ut0310",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k03,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             ["t032"] = new TechModel
             {
                 Id = "t032",
                 Name = "Sobrevivência na Selva",
-                Icon = "icons/techs/t032.jpg", // CORRIGIDO
+                Icon = "icons/techs/t032.jpg",
                 Description = "",
                 UnlockId = "ut0320",
                 Level = 2,
                 PricingId = PricingHelper.PricingId.TechUnlock1k03,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -87,13 +92,14 @@ namespace FurmaIdle.Data
             {
                 Id = "t041",
                 Name = "Construção de Barcos",
-                Icon = "icons/techs/t041.jpg", // CORRIGIDO
+                Icon = "icons/techs/t041.jpg", 
                 Description = "",
                 UnlockId = "ut0410",
                 Level = 1,
                 PricingId = PricingHelper.PricingId.TechUnlock1k04,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -109,6 +115,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlock1k05,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             ["t052"] = new TechModel
             {
@@ -121,6 +128,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlock1k05,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             },
             ["t053"] = new TechModel
             {
@@ -133,6 +141,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlock1k05,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
+                Modifiers = new List<ModifierModel>(),
             }
             #endregion
         };
@@ -157,6 +166,7 @@ namespace FurmaIdle.Data
                 PricingId = tech.PricingId,
                 State = tech.State,
                 Persistence = tech.Persistence,
+                Modifiers = tech.Modifiers,
             };
         }
 

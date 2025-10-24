@@ -177,7 +177,7 @@ else
     }
 
     private static bool IsExpeditionActive(StageModel? st)
-        => st?.ActiveExpedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
+        => st?.Expedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
 
     private void ToggleLevel(int lvl)
     {

@@ -25,32 +25,59 @@ namespace FurmaIdle.Helpers
         #endregion
 
         #region Contract Generation
-        public static (string CoinId, double CoinsPerCycle, double SecondsPerCycle) ProdParams(ContractModel c)
+        public static (string CoinId, double CoinsPerCycle, double SecondsPerCycle) BaseProdParams(ContractModel c)
         {
             if (!GetContractBase(c, out var bal)) return ("", 0, 1);
-            return (bal.CoinId, bal.CoinsPerCycle, bal.SecondsPerCycle * c.TimeFactor);
+            return (bal.CoinId, bal.CoinsPerCycle, bal.SecondsPerCycle);
         }
 
         // Produção por segundo considerando quantidade atual no Stage
         public static string CoinIdOf(ContractModel c)
         {
-            var (coin, _, _) = ProdParams(c);
+            var (coin, _, _) = BaseProdParams(c);
             return coin;
         }
 
         // Produção efetiva por segundo (com qty e modificadores)
-        public static double ProdPerSecond(ContractModel contract, StageModel stage)
+        public static double RealProdPerSecond(ContractModel contract, StageModel stage)
         {
             stage.ActiveContracts.TryGetValue(contract.Id, out var qty);
             if (qty <= 0) return 0;
 
-            var (_, cps, spc) = ProdParams(contract);
-            if (!(cps > 0) || !(spc > 0)) return 0;
+            var (_, cps, spc) = BaseProdParams(contract);
 
-            var perCycle = (cps + contract.AddMod) * contract.MultMod * contract.GainFactor;
+            var gainMod = GetModifiers(contract, EffectHelper.EffectTarget.Gain);
+            var timeMod = GetModifiers(contract, EffectHelper.EffectTarget.Time);
 
-            return (perCycle / spc) * qty;
+            var coinsPerCycle = (cps + gainMod.AddMod) * gainMod.MultMod;
+            var timePerCycle = (spc + timeMod.AddMod) * timeMod.MultMod;
+
+            return (coinsPerCycle / timePerCycle) * qty;
         }
+
+        public static (double AddMod, double MultMod) GetModifiers(ContractModel contract, EffectHelper.EffectTarget type)
+        {
+            double AddMod = 0;
+            double MultMod = 0;
+
+            foreach (var modifier in contract.Modifiers) 
+            {
+                if (type == modifier.Target)
+                {
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        AddMod += modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        AddMod *= modifier.Value;
+                    }
+                }
+            }
+
+            return (AddMod, MultMod);
+        }
+
         #endregion
     }
 }

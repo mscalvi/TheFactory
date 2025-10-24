@@ -22,7 +22,8 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                State = UnlockHelper.State.Blocked
+                State = UnlockHelper.State.Blocked,
+                Modifiers = new List<ModifierModel>(),
             },
             ["x01"] = new ExpansionModel
             {
@@ -32,7 +33,8 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                State = UnlockHelper.State.Blocked
+                State = UnlockHelper.State.Blocked,
+                Modifiers = new List<ModifierModel>(),
             },
             ["x02"] = new ExpansionModel
             {
@@ -42,7 +44,8 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 2,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                State = UnlockHelper.State.Blocked
+                State = UnlockHelper.State.Blocked,
+                Modifiers = new List<ModifierModel>(),
             },
             ["x03"] = new ExpansionModel
             {
@@ -52,7 +55,8 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 3,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                State = UnlockHelper.State.Blocked
+                State = UnlockHelper.State.Blocked,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
         };
@@ -76,6 +80,7 @@ namespace FurmaIdle.Data
                 Level = expansion.Level,
                 Persistence = expansion.Persistence,
                 State = expansion.State,
+                Modifiers = expansion.Modifiers,
             };
         }
 

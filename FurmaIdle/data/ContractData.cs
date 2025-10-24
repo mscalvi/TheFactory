@@ -29,8 +29,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c12"] = new ContractModel
             {
@@ -47,8 +46,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -68,8 +66,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c22"] = new ContractModel
             {
@@ -86,8 +83,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c23"] = new ContractModel
             {
@@ -104,8 +100,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -125,8 +120,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c32"] = new ContractModel
             {
@@ -143,8 +137,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c33"] = new ContractModel
             {
@@ -161,8 +154,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c34"] = new ContractModel
             {
@@ -179,8 +171,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = "k01",
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
@@ -200,8 +191,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c42"] = new ContractModel
             {
@@ -218,8 +208,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k01",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c43"] = new ContractModel
             {
@@ -236,8 +225,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 KnowledgeFactor2 = "k03",
                 KnowledgeFactor3 = null,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c44"] = new ContractModel
             {
@@ -254,8 +242,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = "k01",
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             ["c45"] = new ContractModel
             {
@@ -272,8 +259,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = "k05",
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
         };
@@ -296,9 +282,6 @@ namespace FurmaIdle.Data
                 Icon = contract.Icon,
                 Image = contract.Image,
                 Level = contract.Level,
-                GainFactor = 1,
-                PriceFactor = 1,
-                TimeFactor = 1,
                 PricingId = contract.PricingId,
                 UnlockId = contract.UnlockId,
                 Persistence = contract.Persistence,
@@ -306,8 +289,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = contract.KnowledgeFactor1,
                 KnowledgeFactor2 = contract.KnowledgeFactor2,
                 KnowledgeFactor3 = contract.KnowledgeFactor3,
-                AddMod = contract.AddMod,
-                MultMod = contract.MultMod,
+                Modifiers = contract.Modifiers,
             };
         }
 

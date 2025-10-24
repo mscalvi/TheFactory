@@ -24,7 +24,8 @@ namespace FurmaIdle.Data
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 0,
                 Cost = 10,
-                PricingId = "r01"
+                PricingId = "r01",
+                Modifiers = new List<ModifierModel>(),
             },
             ["es02"] = new SpecialtyModel
             {
@@ -38,7 +39,8 @@ namespace FurmaIdle.Data
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 20,
                 Cost = 15,
-                PricingId = "r01"
+                PricingId = "r01",
+                Modifiers = new List<ModifierModel>(),
             },
             ["es03"] = new SpecialtyModel
             {
@@ -52,7 +54,8 @@ namespace FurmaIdle.Data
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 30,
                 Cost = 30,
-                PricingId = "r01"
+                PricingId = "r01",
+                Modifiers = new List<ModifierModel>(),
             },
             ["es04"] = new SpecialtyModel
             {
@@ -66,7 +69,8 @@ namespace FurmaIdle.Data
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 10,
                 Cost = 10,
-                PricingId = "r01"
+                PricingId = "r01",
+                Modifiers = new List<ModifierModel>(),
             }
             #endregion
         };
@@ -91,9 +95,7 @@ namespace FurmaIdle.Data
                 Duration = specialty.Duration,
                 Cost = specialty.Cost,
                 PricingId = specialty.PricingId,
-                GainFactor = 1,
-                PriceFactor = 1,
-                TimeFactor = 1,
+                Modifiers = specialty.Modifiers,
             };
         }
 
@@ -127,9 +129,7 @@ namespace FurmaIdle.Data
                     Duration = specialty.Duration,
                     Cost = specialty.Cost,
                     PricingId = specialty.PricingId,
-                    GainFactor = 1,
-                    PriceFactor = 1,
-                    TimeFactor = 1,
+                    Modifiers = specialty.Modifiers,
                 };
             }
             return dict;

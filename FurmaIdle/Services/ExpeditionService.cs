@@ -60,7 +60,7 @@ namespace FurmaIdle.Services
         {
             var st = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
             // garante não-nulo
-            return st.ActiveExpedition ??= new ExpeditionModel
+            return st.Expedition ??= new ExpeditionModel
             {
                 StageId = st.Id,
                 ExpeditionState = UnlockHelper.ExpeditionState.Idle,
@@ -71,7 +71,7 @@ namespace FurmaIdle.Services
         public bool IsExpeditionActive()
         {
             var st = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
-            var ex = st?.ActiveExpedition;
+            var ex = st?.Expedition;
             return ex is not null && ex.ExpeditionState == UnlockHelper.ExpeditionState.Active;
         }
 
@@ -190,17 +190,10 @@ namespace FurmaIdle.Services
 
         public async Task EndExpedition(GameModel g, string stageId)
         {
-            List<HashSet<string>> saves = new();
-
-            await _game.Mutate(g => 
-            {
-                SaveState(g, stageId, saves);
-            }, save:  false);
-
             await _game.Mutate(g =>
             {
                 var st = _locate.LocateStage(g, stageId);
-                var ex = st?.ActiveExpedition;
+                var ex = st?.Expedition;
                 if (st is null || ex is null) return;
 
                 // finalizar expedição
@@ -225,126 +218,9 @@ namespace FurmaIdle.Services
                 st.ActiveContracts?.Clear();
                 st.lockedContracts?.Clear();
 
-                // zerar a coin do stage nesta expedição
-                var coinId = st.CoinId;
-                if (!string.IsNullOrWhiteSpace(coinId))
-                {
-                    AddOrSet(g.ExpeditionStats.Coins, coinId, setTo: 0);
-                    AddOrSet(g.ExpeditionStats.CoinsGain, coinId, setTo: 0);
-                    AddOrSetFrac(g.ExpeditionStats.CoinsFrac, coinId, setTo: 0.0);
-                }
+                // transforma coins em Knowledge
+                // Income?
             }, save: true);
-
-            foreach (var hash in saves)
-            {
-                foreach (var id in hash)
-                {
-                    await _unlock.UnlockItem(id);
-                    _effect.ReApplyEffect(id);
-                }
-            }
         }
-
-        public List<HashSet<string>> SaveState(GameModel g, string stageId, List<HashSet<string>> saves)
-        {
-            // ---------- Fase 1: snapshot do que persiste ----------
-            HashSet<string> keepCharacters = new(StringComparer.Ordinal);
-            foreach (var u in g.Characters.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepCharacters.Add(u.Id);
-            }
-            saves.Add(keepCharacters);
-
-            HashSet<string> keepCoins = new(StringComparer.Ordinal);
-            foreach (var u in g.Coins.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepCoins.Add(u.Id);
-            }
-            saves.Add(keepCoins);
-
-            HashSet<string> keepContracts = new(StringComparer.Ordinal);
-            foreach (var u in g.Contracts.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepContracts.Add(u.Id);
-            }
-            saves.Add(keepContracts);
-
-            HashSet<string> keepExpansions = new(StringComparer.Ordinal);
-            foreach (var u in g.Expansions.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepExpansions.Add(u.Id);
-            }
-            saves.Add(keepExpansions);
-
-            HashSet<string> keepKnowledges = new(StringComparer.Ordinal);
-            foreach (var u in g.Knowledges.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepKnowledges.Add(u.Id);
-            }
-            saves.Add(keepKnowledges);
-
-            HashSet<string> keepLocals = new(StringComparer.Ordinal);
-            foreach (var u in g.Locals.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepLocals.Add(u.Id);
-            }
-            saves.Add(keepLocals);
-
-            HashSet<string> keepResources = new(StringComparer.Ordinal);
-            foreach (var u in g.Resources.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepResources.Add(u.Id);
-            }
-            saves.Add(keepResources);
-
-            HashSet<string> keepStages = new(StringComparer.Ordinal);
-            foreach (var u in g.Stages.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepStages.Add(u.Id);
-            }
-            saves.Add(keepStages);
-
-            HashSet<string> keepTechs = new(StringComparer.Ordinal);
-            foreach (var u in g.Techs.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepTechs.Add(u.Id);
-            }
-            saves.Add(keepTechs);
-
-            HashSet<string> keepUpgrades = new(StringComparer.Ordinal);
-            foreach (var u in g.Upgrades.Values)
-            {
-                if (u.State != UnlockHelper.State.Unlocked) continue;
-                if (u.Persistence != Persistence.untilExpedition)
-                    keepUpgrades.Add(u.Id);
-            }
-            saves.Add(keepUpgrades);
-
-            return saves;
-        }
-        
-        private static void AddOrSet(Dictionary<string, long> dict, string key, long setTo)
-            => dict[key] = setTo;
-
-        private static void AddOrSetFrac(Dictionary<string, double> dict, string key, double setTo)
-            => dict[key] = setTo;
     }
 }

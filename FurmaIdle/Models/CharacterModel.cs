@@ -7,15 +7,13 @@ namespace FurmaIdle.Models
         // Basics
         public string Id { get; set; }
         public string Name { get; set; }
-        public string? Description { get; set; }
-        public string? Lore { get; set; }
+        public string Description { get; set; }
+        public string Lore { get; set; }
         public string Icon { get; set; }
         public string Image { get; set; }
 
-        // Factor
-        public double GainFactor { get; set; }
-        public double TimeFactor { get; set; }
-        public double PriceFactor { get; set; }
+        // Modifier
+        public List<ModifierModel> Modifiers { get; set; }
 
         // Status
         public string UnlockId { get; set; }

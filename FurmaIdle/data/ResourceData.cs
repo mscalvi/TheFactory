@@ -26,8 +26,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Persistence = UnlockHelper.Persistence.untilExpansion,
                 State = UnlockHelper.State.Blocked,
-                AddMod = 0,
-                MultMod = 1,
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
         };
@@ -53,8 +52,7 @@ namespace FurmaIdle.Data
                 Lore = resource.Lore,
                 Persistence = resource.Persistence,
                 State = resource.State,
-                AddMod = resource.AddMod,
-                MultMod = resource.MultMod,
+                Modifiers= resource.Modifiers,
             };
         }
 

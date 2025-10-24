@@ -45,6 +45,8 @@ namespace FurmaIdle.Data
                 MaxContractLevel = 6,
                 CoinId = "m01",
                 ClickId = "cl00",
+                Modifiers = new List<ModifierModel>(),
+                Expedition = new ExpeditionModel(),
             },
             #endregion
 
@@ -79,6 +81,8 @@ namespace FurmaIdle.Data
                 MaxContractLevel = 6,
                 CoinId = "m02",
                 ClickId = "cl00",
+                Modifiers = new List<ModifierModel>(),
+                Expedition = new ExpeditionModel(),
             },
             #endregion
         };
@@ -111,9 +115,10 @@ namespace FurmaIdle.Data
                 StartContractLevel = stage.StartContractLevel,
                 ActualContractLevel = stage.ActualContractLevel,
                 MaxContractLevel = stage.MaxContractLevel,
-                ActiveExpedition = new ExpeditionModel(),
+                Expedition = stage.Expedition,
                 CoinId = stage.CoinId,
                 ClickId = stage.ClickId,
+                Modifiers = stage.Modifiers,
             };
         }
 

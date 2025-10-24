@@ -30,7 +30,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 ContractsIds = new() { "c11", "c21", "c31", "c41" },
                 TraitId = "tr05",
-                SpecialtyId = "es03"
+                SpecialtyId = "es03",
+                Modifiers = new List<ModifierModel>(),
             },
             ["p002"] = new CharacterModel
             {
@@ -50,7 +51,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 ContractsIds = new() { "c11", "c21", "c32", "c42" },
                 TraitId = "tr04",
-                SpecialtyId = "es01"
+                SpecialtyId = "es01",
+                Modifiers = new List<ModifierModel>(),
             },
             ["p003"] = new CharacterModel
             {
@@ -70,7 +72,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 ContractsIds = new() { "c12", "c22", "c31", "c43" },
                 TraitId = "tr03",
-                SpecialtyId = "es02"
+                SpecialtyId = "es02",
+                Modifiers = new List<ModifierModel>(),
             },
             ["p004"] = new CharacterModel
             {
@@ -90,7 +93,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 ContractsIds = new() { "c11", "c23", "c34", "c44" },
                 TraitId = "tr01",
-                SpecialtyId = "es03"
+                SpecialtyId = "es03",
+                Modifiers = new List<ModifierModel>(),
             },
             ["p011"] = new CharacterModel
             {
@@ -110,7 +114,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k04",
                 ContractsIds = new() { "c12", "c22", "c32", "c45" },
                 TraitId = "tr02",
-                SpecialtyId = "es04"
+                SpecialtyId = "es04",
+                Modifiers = new List<ModifierModel>(),
             },
             ["p021"] = new CharacterModel
             {
@@ -130,7 +135,8 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 ContractsIds = new() { "c11", "c22", "c33", "c45" },
                 TraitId = "tr04",
-                SpecialtyId = "es02"
+                SpecialtyId = "es02",
+                Modifiers = new List<ModifierModel>(),
             },
             #endregion
         };
@@ -157,9 +163,7 @@ namespace FurmaIdle.Data
                 ContractsIds = chara.ContractsIds,
                 TraitId = chara.TraitId,
                 SpecialtyId = chara.SpecialtyId,
-                GainFactor = 1,
-                PriceFactor = 1,
-                TimeFactor = 1,
+                Modifiers = chara.Modifiers,
             };
         }
 

@@ -2293,6 +2293,7 @@ namespace FurmaIdle.Data
                 EffectType = upgrade.EffectType,
                 EffectOp = upgrade.EffectOp,
                 EffectValue = upgrade.EffectValue,
+                Modifiers = new List<ModifierModel>(),
             };
         }
 

@@ -33,7 +33,7 @@ namespace FurmaIdle.Services
         {
             foreach (var st in game.Stages.Values)
             {
-                var ex = st.ActiveExpedition;
+                var ex = st.Expedition;
                 if (ex is null) continue;
 
                 _contracts.TickContracts(game, st.Id, dtSeconds);
@@ -65,7 +65,7 @@ namespace FurmaIdle.Services
             }
 
             // 1) Expedição ativa
-            var ex = stage.ActiveExpedition;
+            var ex = stage.Expedition;
             if (ex is null || ex.ExpeditionState != UnlockHelper.ExpeditionState.Active)
             {
                 return true;
@@ -116,9 +116,9 @@ namespace FurmaIdle.Services
 
             var stage = _locate.LocateStage(game, stageId);
 
-            if (stage.ActiveExpedition.PartyIds.Count == 0) return 0;
+            if (stage.Expedition.PartyIds.Count == 0) return 0;
 
-            foreach (var characterId in stage.ActiveExpedition.PartyIds)
+            foreach (var characterId in stage.Expedition.PartyIds)
             {
                 game.Characters.TryGetValue(characterId, out var character);
                 contractsMax += character.ContractCap;
@@ -197,7 +197,7 @@ namespace FurmaIdle.Services
             if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
             if (!game.Stages.TryGetValue(stageId, out var stage) || stage is null) return;
 
-            var ex = stage.ActiveExpedition;
+            var ex = stage.Expedition;
             if (ex is null || ex.ExpeditionState != UnlockHelper.ExpeditionState.Active) return;
 
             var act = stage.ActiveContracts;
@@ -244,6 +244,7 @@ namespace FurmaIdle.Services
                 stage.ActiveContractsProgress[contractId] = prog;
             }
         }
+
         public double GetContractProgress(GameModel game, string stageId, string contractId)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || string.IsNullOrWhiteSpace(contractId))
@@ -299,6 +300,13 @@ namespace FurmaIdle.Services
             if (amount > 0)
                 await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, amount,
                                        ItemHelper.ItemType.Specialty, specId);
+        }
+        static double ApplyMods(double baseValue, params Modifier?[] mods)
+        {
+            double v = baseValue;
+            foreach (var m in mods)
+                v = m is null ? v : m.Compute(v);
+            return v;
         }
     }
 }

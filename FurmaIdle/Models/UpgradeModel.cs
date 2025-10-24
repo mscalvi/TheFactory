@@ -23,5 +23,8 @@ namespace FurmaIdle.Models
         public EffectHelper.EffectOperation EffectOp { get; set; }
         public double EffectValue { get; set; }
 
+        // Modifier
+        public List<ModifierModel> Modifiers { get; set; }
+
     }
 }

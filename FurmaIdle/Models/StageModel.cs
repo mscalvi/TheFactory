@@ -15,6 +15,7 @@ namespace FurmaIdle.Models
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);
         public List<int> lockedContracts { get; set; } = new();
         public Dictionary<string, double> ActiveContractsProgress { get; set; } = new Dictionary<string, double>();
+        public ExpeditionModel Expedition { get; set; } = new ExpeditionModel();
 
         public PricingHelper.PricingId? PricingId { get; set; }
         public UnlockHelper.State State { get; set; }
@@ -31,12 +32,7 @@ namespace FurmaIdle.Models
         public string CoinId { get; set; }
         public string ClickId { get; set; }
 
-
-        private ExpeditionModel? _activeExpedition;
-        public ExpeditionModel ActiveExpedition
-        {
-            get => _activeExpedition ??= new ExpeditionModel(Id);
-            set => _activeExpedition = value ?? new ExpeditionModel(Id);
-        }
+        // Modifier
+        public List<ModifierModel> Modifiers { get; set; }
     }
 }

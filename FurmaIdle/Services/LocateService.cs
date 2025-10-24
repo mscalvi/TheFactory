@@ -89,9 +89,9 @@ namespace FurmaIdle.Services
         public ExpeditionModel LocateExpedition(GameModel game, string stageId)
         {
             var stage = LocateStage(game, stageId);
-            if (stage.ActiveExpedition is null)
+            if (stage.Expedition is null)
                 throw new InvalidOperationException($"Stage '{stageId}' não possui expedição ativa.");
-            return stage.ActiveExpedition;
+            return stage.Expedition;
         }
 
         public ExpansionModel LocateExpansion(GameModel game, string expansionId)

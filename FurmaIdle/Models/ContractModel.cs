@@ -16,13 +16,9 @@ namespace FurmaIdle.Models
         public string UnlockId { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
         public UnlockHelper.State State { get; set; }
-        public double AddMod { get; set; } = 0;
-        public double MultMod { get; set; } = 1;
 
-        // Factor
-        public double GainFactor { get; set; }
-        public double TimeFactor { get; set; }
-        public double PriceFactor { get; set; }
+        // Modifiers
+        public List<ModifierModel> Modifiers { get; set; }
 
         // Info
         public int Level { get; set; }

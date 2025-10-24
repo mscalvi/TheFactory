@@ -14,8 +14,7 @@ namespace FurmaIdle.Models
         public string? UnlockId { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
-        public double AddMod { get; set; } = 0;
-        public double MultMod { get; set; } = 1;
+
 
         // Gain
         public string GainCoinId { get; set; }
@@ -26,5 +25,8 @@ namespace FurmaIdle.Models
         // Boost
         public double GenerationFactor { get; set; }
         public double GenerationPenaltie { get; set; }
+
+        // Modifier
+        public List<ModifierModel> Modifiers { get; set; }
     }
 }

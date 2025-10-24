@@ -45,5 +45,21 @@
             Override,
             Unlock
         }
+
+        public enum EffectScope
+        {
+            Permanent,
+            Expedition,
+            Expansion
+        }
+
+        public enum EffectTarget 
+        {
+            Gain,
+            Time,
+            Price,
+            Cap,
+        }
+
     }
 }
