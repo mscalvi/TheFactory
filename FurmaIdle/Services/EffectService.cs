@@ -8,6 +8,9 @@ namespace FurmaIdle.Services
     public interface IEffectService
     {
         Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId);
+        
+        void OnExpeditionStarted(GameModel g, ExpeditionModel ex);
+        void OnExpeditionEnded(GameModel g, ExpeditionModel ex);
     }
 
     public sealed class EffectService : IEffectService
@@ -601,6 +604,40 @@ namespace FurmaIdle.Services
                     }
 
                 }, save: true);
+            }
+        }
+
+        public void OnExpeditionStarted(GameModel g, ExpeditionModel ex)
+        {
+            if (g is null || ex is null) return;
+
+            foreach (var charId in ex.PartyIds ?? Enumerable.Empty<string>())
+            {
+                var ch = _locate.LocateCharacter(g, charId);
+                if (ch is null || ch.State != UnlockHelper.State.Unlocked) continue;
+
+                if (!string.IsNullOrWhiteSpace(ch.TraitId))
+                {
+                    var tr = _locate.LocateTrait(g, ch.TraitId);
+                    if (tr is not null)
+                    {
+                         ApplyEffect(ItemHelper.ItemType.Trait, tr.Id, "aStages");
+                    }
+                }
+            }
+        }
+
+        public void OnExpeditionEnded(GameModel g, ExpeditionModel ex)
+        {
+            if (g is null || ex is null) return;
+        }
+
+        private void RevertTraitEffects(GameModel g)
+        {
+            foreach (var r in g.Resources.Values)
+            {
+                if (r is null) continue;
+                r.AddMod = Math.Max(0, r.AddMod - 0.5);
             }
         }
     }

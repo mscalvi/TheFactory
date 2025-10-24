@@ -148,7 +148,7 @@ namespace FurmaIdle.Services
             long costValue = 0;
             string costId = string.Empty;
             long costBase = 0;
-            double costCurve = 0;
+            double costCurve = 1;
             double costAddFactor = 0;
             double costMultFactor = 1;
             double costFactorValue = 1;
@@ -158,7 +158,8 @@ namespace FurmaIdle.Services
                 case ItemHelper.ItemType.Specialty:
                     {
                         var specialty = _locate.LocateSpecialty(game, itemId);
-                        costValue = specialty.Cost;
+                        double raw = specialty.Cost * specialty.PriceFactor;
+                        costValue = (long)Math.Ceiling(raw);
                         costId = specialty.PricingId;
                         break;
                     }
@@ -244,14 +245,14 @@ namespace FurmaIdle.Services
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = Math.Pow(entry.CostFactorCurve, up.ActualBuy) * costFactorValue;
+                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue, up.ActualBuy);
                                 costMultFactor = 1;
                             }
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
                             {
                                 costAddFactor = 0;
-                                costMultFactor = Math.Pow(entry.CostFactorCurve, up.ActualBuy) * costFactorValue;
+                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue, up.ActualBuy) ;
                             }
                         }
 
@@ -285,14 +286,14 @@ namespace FurmaIdle.Services
                         {
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = Math.Pow(entry.CostFactorCurve, quantity) * costFactorValue;
+                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue + contract.PriceFactor, quantity);
                                 costMultFactor = 1;
                             }
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
                             {
                                 costAddFactor = 0;
-                                costMultFactor = Math.Pow(entry.CostFactorCurve, quantity) * costFactorValue;
+                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue * contract.PriceFactor, quantity);
                             }
                         }
 
@@ -314,7 +315,7 @@ namespace FurmaIdle.Services
         {
             if (!dict.TryGetValue(id, out var v)) v = 0L;
             var nv = v + delta;
-            if (nv < 0) nv = 0; // proteção mínima
+            if (nv < 0) nv = 0;
             dict[id] = nv;
         }
         private static long GetOrZero(Dictionary<string, long> dict, string id)

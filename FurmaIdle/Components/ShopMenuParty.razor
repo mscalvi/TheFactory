@@ -10,6 +10,7 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject IIncomeService Income
+@inject IPurchaseService Purchase
 @inject ILocateService Locate
 
 @{
@@ -36,7 +37,7 @@
         .ToList();
     var members = activeCharsForCap.Count;
 
-    // recursos desbloqueados (ordem simples por Id; troque para ShowOrder se tiver)
+    // recursos desbloqueados
     var unlockedResources = g.Resources.Values
         .Where(r => r.State == UnlockHelper.State.Unlocked)
         .OrderBy(r => r.Id)
@@ -59,23 +60,15 @@
         .OrderBy(c => c.Id)
         .ToList();
 
-    bool IsSpecActive(CharacterModel c)
+    bool IsSpecActive(SpecialtyModel spec)
     {
         return false;
     }
 
-    bool CanUseSpec(CharacterModel c, out string? reason)
+    bool CanUseSpec(SpecialtyModel spec)
     {
-        reason = null;
-        var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
-        if (spec is null) { reason = "Sem especialidade."; return false; }
-
-        var resId = spec.PricingId;
-        var cost = Math.Max(0, spec.Cost);
-        var have = g.ExpeditionStats?.Resources.TryGetValue(resId, out var v) == true ? v : 0L;
-
-        if (have < cost) { reason = $"Precisa de {cost:N0} {resId}. Você tem {have:N0}."; return false; }
-        if (IsSpecActive(c)) { reason = "Especialidade em uso."; return false; }
+        if (Purchase.CanAfford(ItemHelper.ItemType.Specialty, spec.Id, "s00")) {return false; }
+        if (IsSpecActive(spec)) { return false; }
 
         return true;
     }
@@ -136,8 +129,8 @@
                 var id = c.Id;
 
                 var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
-                var canUse = CanUseSpec(c, out var why);
-                var isActive = IsSpecActive(c);
+                var canUse = CanUseSpec(spec);
+                var isActive = IsSpecActive(spec);
 
                 <div class="party-slot">
                     <!-- Ícone do personagem (imagem) -->
@@ -161,10 +154,11 @@
                         }
                     </div>
 
-                    <!-- Botão da Specialty (sem função por enquanto) -->
+                    <!-- Botão da Specialty -->
                     <button type="button"
                             class="icon-button"
                             disabled="@( isActive || !canUse )"
+                            @onclick="() => UseSpec(spec)"
                             @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, c.SpecialtyId, g.SelectedStageId))"
                             @onmouseleave="Tooltips.Clear"
                             @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, c.SpecialtyId, g.SelectedStageId))"
@@ -192,6 +186,11 @@
     {
         _broken.Add(id);
         StateHasChanged(); // geralmente nem precisa, o onerror já re-renderiza
+    }
+
+    public async Task UseSpec(SpecialtyModel spec)
+    {
+        await Purchase.Purchase(ItemHelper.ItemType.Specialty, spec.Id, Game?.CurrentGame.SelectedStageId);
     }
 
     private static string CharImg(string id) => $"images/characters/{id}.png";

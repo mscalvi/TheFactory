@@ -13,10 +13,12 @@ namespace FurmaIdle.Services
     public sealed class IncomeService : IIncomeService
     {
         private readonly ICurrentGameService _game;
+        private readonly IUiLogService _log;
 
-        public IncomeService(ICurrentGameService game)
+        public IncomeService(ICurrentGameService game, IUiLogService log)
         {
             _game = game;
+            _log = log;
         }
 
         public async Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount, ItemHelper.ItemType? sourceType, string? sourceId)
@@ -67,6 +69,7 @@ namespace FurmaIdle.Services
         {
             if (type == ItemType.Coin)
             {
+                _log.Success($"[Income] Ganhando {id} {gain}");
                 // ---- trabalhar em centavos (0..99) ----
                 Game.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
@@ -101,7 +104,7 @@ namespace FurmaIdle.Services
             }
             if (type == ItemType.Resource)
             {
-                // ---- trabalhar em centavos (0..99) ----
+                _log.Success($"[Income] Regenenrando {id} {gain}");
                 Game.ExpeditionStats.ResourcesFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
 
@@ -135,6 +138,7 @@ namespace FurmaIdle.Services
             }
             if (type == ItemType.Knowledge)
             {
+                _log.Success($"[Income] Aprendendo {id} {gain}");
                 // ---- acumula moedas ----
                 Game.ExpeditionStats.Knowledge.TryGetValue(id, out var coin);
                 coin = coin + gain;

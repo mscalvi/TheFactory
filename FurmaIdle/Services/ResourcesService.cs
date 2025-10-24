@@ -1,5 +1,6 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System.Diagnostics.Contracts;
 using static FurmaIdle.Helpers.ItemHelper;
 
 namespace FurmaIdle.Services
@@ -121,19 +122,8 @@ namespace FurmaIdle.Services
             var perChar = Math.Max(0, r.RsPerChar);
             if (perChar <= 0) return 0;
 
-            // membros = personagens UNLOCKED e InStage na Stage selecionada (coerente com a UI que você montou)
-            var stageId = game.SelectedStageId;
-            var members = 0;
-            foreach (var c in game.Characters.Values)
-            {
-                if (c is null) continue;
-                if (c.State != UnlockHelper.State.Unlocked) continue;
-                if (c.CharState != UnlockHelper.CharState.InStage) continue;
-                if (!string.Equals(c.InStageId, stageId, StringComparison.Ordinal)) continue;
-                members++;
-            }
-
-            return members > 0 ? perChar * members : 0;
+            var unlockedChars = game.Characters.Values.Count(c => c is not null && c.State == UnlockHelper.State.Unlocked);
+            return unlockedChars > 0 ? perChar * unlockedChars : 0;
         }
 
     }

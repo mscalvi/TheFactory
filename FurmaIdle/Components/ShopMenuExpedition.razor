@@ -6,6 +6,7 @@
 @using FurmaIdle.Services
 
 @inject IExpeditionService Expedition
+@inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 
@@ -161,7 +162,7 @@ else
             return;
         }
 
-        var st2 = Expedition.GetCurrentStage();
+        var st2 = Locate.LocateStage(Game.CurrentGame, Game.CurrentGame.SelectedStageId);
         if (st2 is null) { Log.Error("Nenhum Stage selecionado."); return; }
         Expedition.EndExpedition(g, st2.Id);
         await Game.Mutate(_ => { }, save: true);

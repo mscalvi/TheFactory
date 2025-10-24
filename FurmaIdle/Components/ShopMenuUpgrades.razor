@@ -200,12 +200,13 @@
     private static bool IsUnlockAny(UpgradeModel u)
     {
         var id = u.Id ?? string.Empty;
-        return id.StartsWith("ul", StringComparison.OrdinalIgnoreCase) // unlock local
-            || id.StartsWith("us", StringComparison.OrdinalIgnoreCase) // unlock stage
-            || id.StartsWith("uh", StringComparison.OrdinalIgnoreCase) // unlock tech
-            || id.StartsWith("ue", StringComparison.OrdinalIgnoreCase) // unlock expansion
-            || id.StartsWith("up", StringComparison.OrdinalIgnoreCase) // unlock character
-            || id.StartsWith("uk", StringComparison.OrdinalIgnoreCase); // unlock knowledge;
+        return true;
+        // id.StartsWith("ul", StringComparison.OrdinalIgnoreCase) // unlock local
+        //     || id.StartsWith("us", StringComparison.OrdinalIgnoreCase) // unlock stage
+        //     || id.StartsWith("uh", StringComparison.OrdinalIgnoreCase) // unlock tech
+        //     || id.StartsWith("ue", StringComparison.OrdinalIgnoreCase) // unlock expansion
+        //     || id.StartsWith("up", StringComparison.OrdinalIgnoreCase) // unlock character
+        //     || id.StartsWith("uk", StringComparison.OrdinalIgnoreCase); // unlock knowledge;
     }
 
     // Mesma regra que você já usava

@@ -28,7 +28,7 @@ namespace FurmaIdle.Helpers
         public static (string CoinId, double CoinsPerCycle, double SecondsPerCycle) ProdParams(ContractModel c)
         {
             if (!GetContractBase(c, out var bal)) return ("", 0, 1);
-            return (bal.CoinId, bal.CoinsPerCycle, bal.SecondsPerCycle);
+            return (bal.CoinId, bal.CoinsPerCycle, bal.SecondsPerCycle * c.TimeFactor);
         }
 
         // Produção por segundo considerando quantidade atual no Stage
