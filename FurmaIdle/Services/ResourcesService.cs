@@ -35,7 +35,6 @@ namespace FurmaIdle.Services
 
     public sealed class ResourcesService : IResourcesService
     {
-
         private readonly IIncomeService _income;
         private readonly ILocateService _locate;
         private readonly ICurrentGameService _game;
@@ -101,16 +100,13 @@ namespace FurmaIdle.Services
             if (string.IsNullOrWhiteSpace(resourceId)) return 0;
             if (!game.Resources.TryGetValue(resourceId, out var r) || r is null) return 0;
 
-            // Regras:
-            // - r.RsPerSecond: base
-            // - r.AddMod: aditivo (ex.: Trait ativo pode setar AddMod = +0.5)
-            // - r.MultMod: multiplicativo
             var basePerSec = Math.Max(0, r.RsPerSecond);
-            var add = r.AddMod;    // você ajusta via efeitos/traits fora deste serviço
+            var add = r.AddMod;
             var mult = r.MultMod <= 0 ? 1 : r.MultMod;
 
             var effective = (basePerSec + add) * mult;
             if (effective < 0) effective = 0;
+
             return effective;
         }
 

@@ -35,6 +35,7 @@ namespace FurmaIdle.Services
             _game = game;
             _ui = ui;
         }
+
         public bool IsRunning { get; private set; }
         public event Action? RunningChanged;
 

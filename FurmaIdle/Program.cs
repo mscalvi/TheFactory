@@ -35,5 +35,6 @@ builder.Services.AddSingleton<IGameStore, GameStore>();
 var host = builder.Build();
 
 _ = host.Services.GetRequiredService<ContractsTickSink>();
+_ = host.Services.GetRequiredService<ResourcesTickSink>();
 
 await host.RunAsync();

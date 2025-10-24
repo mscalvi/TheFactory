@@ -22,6 +22,7 @@
             ResourceUnlock,
             // Coins
             CoinGain,
+            BurstCoinGain,
             // Specialties
             SpecialtyCost,
             // Clicks

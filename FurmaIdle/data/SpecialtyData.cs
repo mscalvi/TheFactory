@@ -16,13 +16,13 @@ namespace FurmaIdle.Data
             {
                 Id = "es01",
                 Name = "Coleta Acelerada",
-                Description = "Produz instantaneamente a média de Moedas por segundo de Expedição",
+                Description = "Produz instantaneamente a média de Moedas por segundo da Expedição",
                 Image = "images/specialties/es01.jpg",
                 TargetId = "aCoins",
                 EffectValue = 20.0,
-                EffectType = EffectHelper.EffectType.CoinGain,
+                EffectType = EffectHelper.EffectType.BurstCoinGain,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
-                Duration = null,
+                Duration = 0,
                 Cost = 10,
                 PricingId = "r01"
             },
@@ -30,7 +30,7 @@ namespace FurmaIdle.Data
             {
                 Id = "es02",
                 Name = "Produção Eficiente",
-                Description = "Aumenta a geração de Recursos",
+                Description = "Aumenta a geração de Recursos da Expedição",
                 Image = "images/specialties/es02.jpg",
                 TargetId = "aResources",
                 EffectValue = 1.2,
@@ -44,7 +44,7 @@ namespace FurmaIdle.Data
             {
                 Id = "es03",
                 Name = "Gorjetas",
-                Description = "Aumenta o ganhos dos Contratos",
+                Description = "Aumenta o ganho dos Contratos da Expedição",
                 Image = "images/specialties/es03.jpg",
                 TargetId = "aContracts",
                 EffectValue = 2.0,
@@ -58,7 +58,7 @@ namespace FurmaIdle.Data
             {
                 Id = "es04",
                 Name = "Uso Consciente",
-                Description = "Diminui o custo das Especialidades",
+                Description = "Diminui o custo das Especialidades da Expedição",
                 Image = "images/specialties/es04.jpg",
                 TargetId = "aSpecialties",
                 EffectValue = 0.8,
@@ -126,7 +126,10 @@ namespace FurmaIdle.Data
                     EffectOperation = specialty.EffectOperation,
                     Duration = specialty.Duration,
                     Cost = specialty.Cost,
-                    PricingId = specialty.PricingId
+                    PricingId = specialty.PricingId,
+                    GainFactor = 1,
+                    PriceFactor = 1,
+                    TimeFactor = 1,
                 };
             }
             return dict;

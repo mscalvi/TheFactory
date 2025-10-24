@@ -1,7 +1,11 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using FurmaIdle.Services;
+using System.Diagnostics.Contracts;
+using System.Threading.Channels;
 using System.Xml.Linq;
+using static FurmaIdle.Helpers.ItemHelper;
+using static FurmaIdle.Helpers.LogHelper;
 
 namespace FurmaIdle.Services
 {
@@ -11,6 +15,8 @@ namespace FurmaIdle.Services
         
         void OnExpeditionStarted(GameModel g, ExpeditionModel ex);
         void OnExpeditionEnded(GameModel g, ExpeditionModel ex);
+
+        (double Actual, double Total) GetSpecialtyTimer(SpecialtyModel spec);
     }
 
     public sealed class EffectService : IEffectService
@@ -19,14 +25,20 @@ namespace FurmaIdle.Services
         private readonly IUnlockService _unlock;
         private readonly ILocateService _locate;
         private readonly IUiLogService _log;
+        private readonly IIncomeService _income;
 
-        public EffectService(ICurrentGameService Game, IUnlockService Unlock, IUiLogService Log, ILocateService Locate)
+        public EffectService(ICurrentGameService Game, IUnlockService Unlock, IUiLogService Log, ILocateService Locate, IIncomeService income)
         {
             _game = Game;
             _unlock = Unlock;
             _locate = Locate;
             _log = Log;
+            _income = income;
         }
+
+        // Timers de Specialties: specialtyId -> (EndsAt, TotalSec)
+        private readonly Dictionary<string, (DateTimeOffset endsAt, double totalSec)> _specTimers
+            = new(StringComparer.Ordinal);
 
         public async Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId)
         {
@@ -345,9 +357,270 @@ namespace FurmaIdle.Services
             }
             if (type == ItemHelper.ItemType.Specialty)
             {
-                // Uso de Habilidade
-                Console.WriteLine("[Purchase] Aplicando Efeitos da Especialidade");
+                var spec = _locate.LocateSpecialty(_game.CurrentGame, itemId);
+                var stage = _locate.LocateStage(_game.CurrentGame, stageId);
+                var Game = _game.CurrentGame;
+                if (spec is null) return;
+
+                await _game.Mutate(g =>
+                {
+                    var dur = Math.Max(0.001, spec.Duration);
+                    var now = DateTimeOffset.UtcNow;
+
+                    switch (spec.EffectType)
+                    {
+                        // Gains
+                        case EffectHelper.EffectType.CoinGain:
+                            if (spec.TargetId == "aCoins")
+                            {
+                                foreach (var coin in g.Coins)
+                                {
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        coin.Value.AddMod += (int)spec.EffectValue;
+                                    }
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        coin.Value.MultMod *= (int)spec.EffectValue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var coin = _locate.LocateCoin(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                {
+                                    coin.AddMod += spec.EffectValue;
+                                }
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                {
+                                    coin.MultMod *= spec.EffectValue;
+                                }
+                            }
+                            break;
+                        case EffectHelper.EffectType.KnowledgeGain:
+                            if (spec.TargetId == "aKnowledges")
+                            {
+                                foreach (var know in g.Knowledges)
+                                {
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        know.Value.AddMod += (int)spec.EffectValue;
+                                    }
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        know.Value.MultMod *= (int)spec.EffectValue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var know = _locate.LocateKnowledge(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                {
+                                    know.AddMod += spec.EffectValue;
+                                }
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                {
+                                    know.MultMod *= spec.EffectValue;
+                                }
+                            }
+                            break;
+                        case EffectHelper.EffectType.ResourceGain:
+                            if (spec.TargetId == "aResources")
+                            {
+                                foreach (var resource in g.Resources)
+                                {
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        resource.Value.AddMod += (int)spec.EffectValue;
+                                    }
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        resource.Value.MultMod *= (int)spec.EffectValue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var resource = _locate.LocateResource(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                {
+                                    resource.AddMod += spec.EffectValue;
+                                }
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                {
+                                    resource.MultMod *= spec.EffectValue;
+                                }
+                            }
+                            break;
+                        case EffectHelper.EffectType.ClickGain:
+                            if (spec.TargetId == "aClicks")
+                            {
+                                foreach (var click in g.Clicks)
+                                {
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        click.Value.AddMod += (int)spec.EffectValue;
+                                    }
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        click.Value.MultMod *= (int)spec.EffectValue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var click = _locate.LocateStageClick(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                {
+                                    click.AddMod += spec.EffectValue;
+                                }
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                {
+                                    click.MultMod *= spec.EffectValue;
+                                }
+                            }
+                            break;
+                        case EffectHelper.EffectType.ContractGain:
+                            if (spec.TargetId == "aContracts")
+                            {
+                                foreach (var contract in g.Contracts)
+                                {
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        contract.Value.AddMod += (int)spec.EffectValue;
+                                    }
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        contract.Value.MultMod *= (int)spec.EffectValue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var contract = _locate.LocateContract(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                {
+                                    contract.AddMod += spec.EffectValue;
+                                }
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                {
+                                    contract.MultMod *= spec.EffectValue;
+                                }
+                            }
+                            break;
+
+                        // Modifiers
+                        case EffectHelper.EffectType.CharacterCost:
+                            if (spec.TargetId == "aCharacters")
+                            {
+                                foreach (var kv in g.Characters)
+                                {
+                                    var c = kv.Value;
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                        c.PriceFactor *= spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                        c.PriceFactor += spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                        c.PriceFactor = spec.EffectValue;
+                                }
+                            }
+                            else
+                            {
+                                var c = _locate.LocateCharacter(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    c.PriceFactor *= spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    c.PriceFactor += spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                    c.PriceFactor = spec.EffectValue;
+                            }
+                            break;
+                        case EffectHelper.EffectType.SpecialtyCost:
+                            if (spec.TargetId == "aSpecialities")
+                            {
+                                foreach (var kv in g.Specialties)
+                                {
+                                    var c = kv.Value;
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                        c.PriceFactor *= spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                        c.PriceFactor += spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                        c.PriceFactor = spec.EffectValue;
+                                }
+                            }
+                            else
+                            {
+                                var c = _locate.LocateSpecialty(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    c.PriceFactor *= spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    c.PriceFactor += spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                    c.PriceFactor = spec.EffectValue;
+                            }
+                            break;
+                        case EffectHelper.EffectType.ContractCost:
+                            if (spec.TargetId == "aContracts")
+                            {
+                                foreach (var kv in g.Contracts)
+                                {
+                                    var c = kv.Value;
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                        c.PriceFactor *= spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                        c.PriceFactor += spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                        c.PriceFactor = spec.EffectValue;
+                                }
+                            }
+                            else
+                            {
+                                var c = _locate.LocateContract(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    c.PriceFactor *= spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    c.PriceFactor += spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                    c.PriceFactor = spec.EffectValue;
+                            }
+                            break;
+                        case EffectHelper.EffectType.ContractTime:
+                            if (spec.TargetId == "aContracts")
+                            {
+                                foreach (var kv in g.Contracts)
+                                {
+                                    var c = kv.Value;
+                                    if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                        c.TimeFactor *= spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                        c.TimeFactor += spec.EffectValue;
+                                    else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                        c.TimeFactor = spec.EffectValue;
+                                }
+                            }
+                            else
+                            {
+                                var c = _locate.LocateContract(g, spec.TargetId);
+                                if (spec.EffectOperation == EffectHelper.EffectOperation.Multiplicative)
+                                    c.TimeFactor *= spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Additive)
+                                    c.TimeFactor += spec.EffectValue;
+                                else if (spec.EffectOperation == EffectHelper.EffectOperation.Override)
+                                    c.TimeFactor = spec.EffectValue;
+                            }
+                            break;
+                    }
+
+                    _specTimers[itemId] = (now.AddSeconds(dur), dur);
+
+                    Console.WriteLine($"[Purchase] Specialty {itemId} ativa por {dur:0.##}s");
+
+                }, save: true);
             }
+
             if (type == ItemHelper.ItemType.Trait)
             {
                 var g = _game.CurrentGame;
@@ -607,6 +880,7 @@ namespace FurmaIdle.Services
             }
         }
 
+        // Expedition
         public void OnExpeditionStarted(GameModel g, ExpeditionModel ex)
         {
             if (g is null || ex is null) return;
@@ -640,5 +914,26 @@ namespace FurmaIdle.Services
                 r.AddMod = Math.Max(0, r.AddMod - 0.5);
             }
         }
+
+        // Specialties
+        public (double Actual, double Total) GetSpecialtyTimer(string specialtyId)
+        {
+            if (string.IsNullOrWhiteSpace(specialtyId)) return (0, 0);
+
+            if (_specTimers.TryGetValue(specialtyId, out var t))
+            {
+                var now = DateTimeOffset.UtcNow;
+                var remaining = (t.endsAt - now).TotalSeconds;
+                if (remaining <= 0)
+                {
+                    _specTimers.Remove(specialtyId);
+                    return (0, t.totalSec);
+                }
+                return (remaining, t.totalSec);
+            }
+            return (0, 0);
+        }
+        public (double Actual, double Total) GetSpecialtyTimer(SpecialtyModel spec)
+            => spec is null ? (0, 0) : GetSpecialtyTimer(spec.Id);
     }
 }

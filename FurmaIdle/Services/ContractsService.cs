@@ -1,5 +1,6 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System.Diagnostics.Contracts;
 
 namespace FurmaIdle.Services
 {
@@ -14,6 +15,7 @@ namespace FurmaIdle.Services
         Task BuyContract(GameModel game, string stageId, string contractId);
         public double GetContractsPerSecond(GameModel game, string stageId, string coinId);
         double GetContractProgress(GameModel game, string stageId, string contractId);
+        Task BurstProduction(double BurstTime, string stageId, string specId);
     }
 
     public sealed class ContractsTickSink : ITickSink, IDisposable
@@ -295,5 +297,16 @@ namespace FurmaIdle.Services
             return sum;
         }
 
+        public async Task BurstProduction(double BurstTime, string stageId, string specId)
+        {
+            var stage = _locate.LocateStage(_game.CurrentGame, stageId);
+            var perSec = GetContractsPerSecond(_game.CurrentGame, stageId, stage.CoinId);
+
+            var amount = perSec * BurstTime;
+
+            if (amount > 0)
+                await _income.AddAsync(ItemHelper.ItemType.Resource, stage.CoinId, amount,
+                                       ItemHelper.ItemType.Specialty, specId);
+        }
     }
 }

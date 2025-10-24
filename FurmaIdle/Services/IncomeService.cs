@@ -69,7 +69,6 @@ namespace FurmaIdle.Services
         {
             if (type == ItemType.Coin)
             {
-                _log.Success($"[Income] Ganhando {id} {gain}");
                 // ---- trabalhar em centavos (0..99) ----
                 Game.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
@@ -104,7 +103,6 @@ namespace FurmaIdle.Services
             }
             if (type == ItemType.Resource)
             {
-                _log.Success($"[Income] Regenenrando {id} {gain}");
                 Game.ExpeditionStats.ResourcesFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
 
@@ -116,7 +114,7 @@ namespace FurmaIdle.Services
 
                 double newRestDouble = newRestCents / 100.0;
 
-                // ---- acumula moedas ----
+                // ---- acumula ----
                 Game.ExpeditionStats.Resources.TryGetValue(id, out var coin);
                 coin = coin + gain + extra;
 
@@ -138,7 +136,6 @@ namespace FurmaIdle.Services
             }
             if (type == ItemType.Knowledge)
             {
-                _log.Success($"[Income] Aprendendo {id} {gain}");
                 // ---- acumula moedas ----
                 Game.ExpeditionStats.Knowledge.TryGetValue(id, out var coin);
                 coin = coin + gain;

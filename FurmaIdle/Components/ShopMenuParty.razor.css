@@ -16,12 +16,3 @@
         height: 100%;
         object-fit: cover; /* se quiser preencher */
     }
-
-    .char-thumb .thumb-fallback {
-        width: 100%;
-        height: 100%;
-        border: 1px dashed #999; /* só pra “marcar” o box */
-        display: grid;
-        place-items: center;
-        font-size: 10px; /* opcional */
-    }
