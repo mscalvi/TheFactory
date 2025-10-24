@@ -1,7 +1,10 @@
 ﻿using FurmaIdle.Data;
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml.Linq;
+using static FurmaIdle.Helpers.UnlockHelper;
 
 namespace FurmaIdle.Services
 {
@@ -21,7 +24,7 @@ namespace FurmaIdle.Services
         bool ToggleChar(string charId, out string? reason);
 
         Task LaunchExpedition(IReadOnlyCollection<string> roster);
-        void EndExpedition(GameModel g, string stageId);
+        Task EndExpedition(GameModel g, string stageId);
     }
 
     public sealed class ExpeditionService : IExpeditionService
@@ -29,12 +32,14 @@ namespace FurmaIdle.Services
         private readonly ILocateService _locate;
         private readonly ICurrentGameService _game;
         private readonly IEffectService _effect;
+        private readonly IUnlockService _unlock;
 
-        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect)
+        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IUnlockService unlock)
         {
             _locate = locate;
             _game = game;
             _effect = effect;
+            _unlock = unlock;
         }
 
         public List<CharacterModel> GetActiveCharacters(ExpeditionModel expedition)
@@ -145,11 +150,10 @@ namespace FurmaIdle.Services
                 var ex = GetOrCreateCurrentExpedition();
 
                 if (ex.ExpeditionState == UnlockHelper.ExpeditionState.Active)
-                    return; // já ativa — nada a fazer
+                    return;
 
                 ex.PartyIds ??= new List<string>();
 
-                // Normaliza roster: remove vazios, distinct e respeita o cap
                 var cap = GetPartyCap();
                 var ids = (roster ?? Array.Empty<string>())
                     .Where(id => !string.IsNullOrWhiteSpace(id))
@@ -157,7 +161,6 @@ namespace FurmaIdle.Services
                     .Take(cap)
                     .ToList();
 
-                // Mantém apenas personagens válidos e "na base"
                 var finalIds = new List<string>(ids.Count);
                 foreach (var id in ids)
                 {
@@ -166,14 +169,12 @@ namespace FurmaIdle.Services
                     if (c.State != UnlockHelper.State.Unlocked) continue;
                     if (c.CharState != UnlockHelper.CharState.InBase) continue;
 
-                    // Marca no personagem
                     c.CharState = UnlockHelper.CharState.InStage;
                     c.InStageId = st.Id;
 
                     finalIds.Add(id);
                 }
 
-                // Atualiza expedição
                 ex.PartyIds.Clear();
                 ex.PartyIds.AddRange(finalIds);
 
@@ -187,9 +188,163 @@ namespace FurmaIdle.Services
             }, save: true);
         }
 
-        public void EndExpedition(GameModel g, string stageId)
+        public async Task EndExpedition(GameModel g, string stageId)
         {
+            List<HashSet<string>> saves = new();
 
+            await _game.Mutate(g => 
+            {
+                SaveState(g, stageId, saves);
+            }, save:  false);
+
+            await _game.Mutate(g =>
+            {
+                var st = _locate.LocateStage(g, stageId);
+                var ex = st?.ActiveExpedition;
+                if (st is null || ex is null) return;
+
+                // finalizar expedição
+                ex.FinishedAt = DateTimeOffset.UtcNow;
+                ex.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
+
+                // devolver personagens para a base
+                if (ex.PartyIds is not null && ex.PartyIds.Count > 0)
+                {
+                    foreach (var cid in ex.PartyIds)
+                    {
+                        if (g.Characters.TryGetValue(cid, out var ch) && ch is not null)
+                        {
+                            ch.CharState = UnlockHelper.CharState.InBase;
+                            ch.InStageId = null;
+                        }
+                    }
+                    ex.PartyIds.Clear();
+                }
+
+                // limpar contratos/timers do stage
+                st.ActiveContracts?.Clear();
+                st.lockedContracts?.Clear();
+
+                // zerar a coin do stage nesta expedição
+                var coinId = st.CoinId;
+                if (!string.IsNullOrWhiteSpace(coinId))
+                {
+                    AddOrSet(g.ExpeditionStats.Coins, coinId, setTo: 0);
+                    AddOrSet(g.ExpeditionStats.CoinsGain, coinId, setTo: 0);
+                    AddOrSetFrac(g.ExpeditionStats.CoinsFrac, coinId, setTo: 0.0);
+                }
+            }, save: true);
+
+            foreach (var hash in saves)
+            {
+                foreach (var id in hash)
+                {
+                    await _unlock.UnlockItem(id);
+                    _effect.ReApplyEffect(id);
+                }
+            }
         }
+
+        public List<HashSet<string>> SaveState(GameModel g, string stageId, List<HashSet<string>> saves)
+        {
+            // ---------- Fase 1: snapshot do que persiste ----------
+            HashSet<string> keepCharacters = new(StringComparer.Ordinal);
+            foreach (var u in g.Characters.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepCharacters.Add(u.Id);
+            }
+            saves.Add(keepCharacters);
+
+            HashSet<string> keepCoins = new(StringComparer.Ordinal);
+            foreach (var u in g.Coins.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepCoins.Add(u.Id);
+            }
+            saves.Add(keepCoins);
+
+            HashSet<string> keepContracts = new(StringComparer.Ordinal);
+            foreach (var u in g.Contracts.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepContracts.Add(u.Id);
+            }
+            saves.Add(keepContracts);
+
+            HashSet<string> keepExpansions = new(StringComparer.Ordinal);
+            foreach (var u in g.Expansions.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepExpansions.Add(u.Id);
+            }
+            saves.Add(keepExpansions);
+
+            HashSet<string> keepKnowledges = new(StringComparer.Ordinal);
+            foreach (var u in g.Knowledges.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepKnowledges.Add(u.Id);
+            }
+            saves.Add(keepKnowledges);
+
+            HashSet<string> keepLocals = new(StringComparer.Ordinal);
+            foreach (var u in g.Locals.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepLocals.Add(u.Id);
+            }
+            saves.Add(keepLocals);
+
+            HashSet<string> keepResources = new(StringComparer.Ordinal);
+            foreach (var u in g.Resources.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepResources.Add(u.Id);
+            }
+            saves.Add(keepResources);
+
+            HashSet<string> keepStages = new(StringComparer.Ordinal);
+            foreach (var u in g.Stages.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepStages.Add(u.Id);
+            }
+            saves.Add(keepStages);
+
+            HashSet<string> keepTechs = new(StringComparer.Ordinal);
+            foreach (var u in g.Techs.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepTechs.Add(u.Id);
+            }
+            saves.Add(keepTechs);
+
+            HashSet<string> keepUpgrades = new(StringComparer.Ordinal);
+            foreach (var u in g.Upgrades.Values)
+            {
+                if (u.State != UnlockHelper.State.Unlocked) continue;
+                if (u.Persistence != Persistence.untilExpedition)
+                    keepUpgrades.Add(u.Id);
+            }
+            saves.Add(keepUpgrades);
+
+            return saves;
+        }
+        
+        private static void AddOrSet(Dictionary<string, long> dict, string key, long setTo)
+            => dict[key] = setTo;
+
+        private static void AddOrSetFrac(Dictionary<string, double> dict, string key, double setTo)
+            => dict[key] = setTo;
     }
 }

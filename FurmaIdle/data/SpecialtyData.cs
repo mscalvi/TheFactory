@@ -48,7 +48,7 @@ namespace FurmaIdle.Data
                 Image = "images/specialties/es03.jpg",
                 TargetId = "aContracts",
                 EffectValue = 2.0,
-                EffectType = EffectHelper.EffectType.CoinGain,
+                EffectType = EffectHelper.EffectType.ContractGain,
                 EffectOperation = EffectHelper.EffectOperation.Multiplicative,
                 Duration = 30,
                 Cost = 30,

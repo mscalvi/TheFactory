@@ -25,15 +25,13 @@ namespace FurmaIdle.Services
         private readonly IUnlockService _unlock;
         private readonly ILocateService _locate;
         private readonly IUiLogService _log;
-        private readonly IIncomeService _income;
 
-        public EffectService(ICurrentGameService Game, IUnlockService Unlock, IUiLogService Log, ILocateService Locate, IIncomeService income)
+        public EffectService(ICurrentGameService Game, IUnlockService Unlock, IUiLogService Log, ILocateService Locate)
         {
             _game = Game;
             _unlock = Unlock;
             _locate = Locate;
             _log = Log;
-            _income = income;
         }
 
         // Timers de Specialties: specialtyId -> (EndsAt, TotalSec)

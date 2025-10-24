@@ -278,6 +278,14 @@ namespace FurmaIdle.Services
                 if (string.Equals(ContractHelper.CoinIdOf(c), coinId, StringComparison.Ordinal))
                     sum += ContractHelper.ProdPerSecond(c, stage);
             }
+
+            if (game.Coins.TryGetValue(coinId, out var coin) && coin is not null)
+            {
+                var cAdd = coin.AddMod;
+                var cMult = coin.MultMod <= 0 ? 1 : coin.MultMod;
+                sum = (sum + cAdd) * cMult;
+            }
+
             return sum;
         }
 
