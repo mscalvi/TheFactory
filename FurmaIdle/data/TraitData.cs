@@ -13,60 +13,60 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, TraitModel> All = new()
         {
-            #region Knowledge Gain Traits (tr01 - tr03)
-            ["tr01"] = new TraitModel
+            #region Knowledge Gain Traits (o01 - o03)
+            ["o01"] = new TraitModel
             {
-                Id = "tr01",
+                Id = "o01",
                 Description = "Aumenta o ganho de Conhecimento Cultural",
                 TargetId = "k01",
                 EffectValue = 1.05,
-                EffectOperation = EffectHelper.EffectOperation.Multiplicative,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["tr02"] = new TraitModel
+            ["o02"] = new TraitModel
             {
-                Id = "tr02",
+                Id = "o02",
                 Description = "Aumenta o ganho de Conhecimento Geográfico",
                 TargetId = "k02",
                 EffectValue = 1.05,
-                EffectOperation = EffectHelper.EffectOperation.Multiplicative,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["tr03"] = new TraitModel
+            ["o03"] = new TraitModel
             {
-                Id = "tr03",
+                Id = "o03",
                 Description = "Aumenta o ganho de Conhecimento em Sobrevivência",
                 TargetId = "k03",
                 EffectValue = 1.05,
-                EffectOperation = EffectHelper.EffectOperation.Multiplicative,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
-            #region Resource Gain Trait (tr04)
-            ["tr04"] = new TraitModel
+            #region Resource Gain Trait (to04)
+            ["o04"] = new TraitModel
             {
-                Id = "tr04",
+                Id = "o04",
                 Description = "Gera Mantimentos por segundo",
-                TargetId = "r01",
+                TargetId = "o01",
                 EffectValue = 0.5,
-                EffectOperation = EffectHelper.EffectOperation.Additive,
+                EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectType = EffectHelper.EffectType.ResourceGain,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
 
-            #region Cost Reduction Trait (tr05)
-            ["tr05"] = new TraitModel
+            #region Cost Reduction Trait (to05)
+            ["o05"] = new TraitModel
             {
-                Id = "tr05",
+                Id = "o05",
                 Description = "Reduz o custo de novos Personagens",
                 TargetId = "aCharacters",
                 EffectValue = 0.95,
-                EffectOperation = EffectHelper.EffectOperation.Multiplicative,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.CharacterCost,
                 Modifiers = new List<ModifierModel>(),
             },
@@ -88,9 +88,10 @@ namespace FurmaIdle.Data
                 Description = trait.Description,
                 TargetId = trait.TargetId,
                 EffectValue = trait.EffectValue,
-                EffectOperation = trait.EffectOperation,
+                EffectOp = trait.EffectOp,
                 EffectType = trait.EffectType,
                 Modifiers = trait.Modifiers,
+                Persistence = UnlockHelper.Persistence.untilExpedition,
             };
         }
 

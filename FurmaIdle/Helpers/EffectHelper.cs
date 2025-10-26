@@ -29,7 +29,7 @@
             ClickGain,
             // Stages
             StageUnlock,
-            PartySize,
+            PartyCapSize,
             // Locals
             LocalUnlock,
             // Tech
@@ -52,14 +52,5 @@
             Expedition,
             Expansion
         }
-
-        public enum EffectTarget 
-        {
-            Gain,
-            Time,
-            Price,
-            Cap,
-        }
-
     }
 }

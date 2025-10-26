@@ -102,8 +102,22 @@ namespace FurmaIdle.Services
         }
         public int GetPartyCap()
         {
-            var st = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
-            return (st?.PartySizeActual > 0) ? st!.PartySizeActual : 3;
+            var stage = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
+
+            int partySize = 0;
+
+            foreach (var modifier in stage.Modifiers)
+            {
+                if (modifier.Type == EffectHelper.EffectType.PartyCapSize)
+                {
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        partySize += (int)modifier.Value;
+                    }
+                }
+            }
+
+            return partySize;
         }
         public bool CanToggleChar(string charId)
         {

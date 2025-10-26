@@ -8,6 +8,8 @@
 @using FurmaIdle.Services
 
 @inject IPurchaseService Purchase
+@inject IContractsService Contracts
+@inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 
@@ -210,7 +212,7 @@
     }
 
     // Mesma regra que você já usava
-    private static bool IsContractUpgradeVisible(GameModel g, string upgradeId)
+    private bool IsContractUpgradeVisible(GameModel g, string upgradeId)
     {
         // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
         if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId)) return true;
@@ -229,7 +231,15 @@
         else
         {
             // “uu”: visível se o nível atual de contrato for >= nível do upgrade
-            return stage.ActualContractLevel >= (up?.Level ?? 0);
+            int maxLevel = Contracts.GetContractsMaxLevel(g, stage.Id);
+            var upgrade = Locate.LocateUpgrade(g, upgradeId);
+            if (upgrade.Level > maxLevel)
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
         }
     }
 

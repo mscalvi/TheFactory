@@ -167,12 +167,14 @@ namespace FurmaIdle.Services
             double costMultFactor = 1;
             double costFactorValue = 1;
 
+            var modifiers = GetCostModifiers(game, type, itemId);
+
             switch (type)
             {
                 case ItemHelper.ItemType.Specialty:
                     {
                         var specialty = _locate.LocateSpecialty(game, itemId);
-                        double raw = specialty.Cost * specialty.PriceFactor;
+                        double raw = specialty.Cost;
                         costValue = (long)Math.Ceiling(raw);
                         costId = specialty.PricingId;
                         break;
@@ -300,14 +302,14 @@ namespace FurmaIdle.Services
                         {
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue + contract.PriceFactor, quantity);
+                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue + modifiers.AddMod, quantity);
                                 costMultFactor = 1;
                             }
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
                             {
                                 costAddFactor = 0;
-                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue * contract.PriceFactor, quantity);
+                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue, quantity);
                             }
                         }
 
@@ -334,5 +336,52 @@ namespace FurmaIdle.Services
         }
         private static long GetOrZero(Dictionary<string, long> dict, string id)
                     => dict is not null && dict.TryGetValue(id, out var v) ? v : 0L;
+
+        public (double AddMod, double MultMod) GetCostModifiers(GameModel game, ItemHelper.ItemType itemType, string itemId)
+        {
+            double AddMod = 0;
+            double MultMod = 1;
+
+            switch (itemType)
+            {
+                case ItemHelper.ItemType.Character:
+                    var character = _locate.LocateCharacter(game, itemId);
+                    foreach (var modifier in character.Modifiers)
+                    {
+                        if (modifier.Type == EffectType.CharacterCost)
+                        {
+                            if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                            {
+                                AddMod += modifier.Value;
+                            }
+                            if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                            {
+                                AddMod *= modifier.Value;
+                            }
+                        }
+                    }
+                    return (AddMod, MultMod);
+
+                case ItemHelper.ItemType.Contract:
+                    var contract = _locate.LocateContract(game, itemId);
+                    foreach (var modifier in contract.Modifiers)
+                    {
+                        if (modifier.Type == EffectType.ContractCost)
+                        {
+                            if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                            {
+                                AddMod += modifier.Value;
+                            }
+                            if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                            {
+                                AddMod *= modifier.Value;
+                            }
+                        }
+                    }
+                    return (AddMod, MultMod);
+            }
+
+            return (AddMod, MultMod);
+        }
     }
 }

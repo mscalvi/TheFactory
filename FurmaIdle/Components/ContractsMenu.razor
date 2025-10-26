@@ -20,6 +20,7 @@ else
 {
     var totalCons = Contracts.GetContractsCap(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
     var usedCons = Contracts.GetContractsUsed(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
+    var maxLevel = Contracts.GetContractsMaxLevel(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
 
     <div class="contracts-capbar">
         <strong>Contratos:</strong> @usedCons / @totalCons
@@ -31,7 +32,7 @@ else
             var level = lvl;
 
             <div class="contracts-level">
-                @if (level > _stage.ActualContractLevel)
+                @if (level > maxLevel)
                 {
                     <div class="level-locked">Nível de Contrato Bloqueado</div>
                 }

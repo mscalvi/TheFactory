@@ -10,8 +10,10 @@ namespace FurmaIdle.Models
         // Effect
         public string? TargetId { get; set; }
         public double EffectValue { get; set; }
-        public EffectHelper.EffectOperation EffectOperation { get; set; }
+        public EffectHelper.EffectOperation EffectOp { get; set; }
         public EffectHelper.EffectType EffectType { get; set; }
+        public UnlockHelper.Persistence Persistence { get; set; } = UnlockHelper.Persistence.untilExpedition;
+
 
 
         // Modifier

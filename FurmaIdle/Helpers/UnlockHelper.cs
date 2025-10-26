@@ -13,7 +13,8 @@
         {
             Permanent,
             untilExpansion,
-            untilExpedition
+            untilExpedition,
+            untilTimer,
         }
         public enum CharState
         {

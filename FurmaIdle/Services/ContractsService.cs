@@ -9,6 +9,7 @@ namespace FurmaIdle.Services
         void TickContracts(GameModel game, string stageId, double dtSeconds);
         int GetContractsCap(GameModel game, string stageId);
         int GetContractsUsed(GameModel game, string stageId);
+        int GetContractsMaxLevel(GameModel game, string stageId);
         bool IsMaxContract(GameModel game, string stageId);
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
@@ -88,6 +89,23 @@ namespace FurmaIdle.Services
                 }
 
                 var cap = Math.Max(0, character.ContractCap);
+
+                foreach (var modifier in character.Modifiers)
+                {
+                    if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock) 
+                    {
+                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                        {
+                            cap += (int)modifier.Value;
+                        }
+
+                        if(modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                        {
+                            cap *= (int)modifier.Value;
+                        }
+                    }
+                }
+
                 contractsMax += cap;
             }
 
@@ -138,6 +156,23 @@ namespace FurmaIdle.Services
             }
 
             return contractsTotal;
+        }
+        public int GetContractsMaxLevel(GameModel game, string stageId)
+        {
+            var stage = _locate.LocateStage(game,stageId);
+
+            foreach (var modifier in stage.Modifiers)
+            {
+                if(modifier.Type == EffectHelper.EffectType.ContractLevelUnlock)
+                {
+                    if(modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        stage.ActualContractLevel += (int)modifier.Value;
+                    }
+                }
+            }
+
+            return stage.ActualContractLevel;
         }
         public IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId)
         {
@@ -192,6 +227,7 @@ namespace FurmaIdle.Services
             }
             return null;
         }
+
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
@@ -211,12 +247,12 @@ namespace FurmaIdle.Services
 
                 if (!game.Contracts.TryGetValue(contractId, out var contract) || contract is null) continue;
 
-                var (coinId, coinsPerCycle, secondsPerCycle) = ContractHelper.ProdParams(contract);
-                if (string.IsNullOrWhiteSpace(coinId) || secondsPerCycle <= 0 || coinsPerCycle <= 0) continue;
-
                 // progresso visual (0..1)
                 var prog = stage.ActiveContractsProgress.TryGetValue(contractId, out var p) ? p : 0.0;
-                prog += dtSeconds / secondsPerCycle;
+
+                var realParameters = ContractHelper.RealProdParams(contract);
+
+                prog += dtSeconds / realParameters.SecondsPerCycle;
 
                 // fecha ciclos inteiros
                 var cycles = (long)Math.Floor(prog);
@@ -224,21 +260,13 @@ namespace FurmaIdle.Services
                 {
                     prog -= cycles;
 
-                    // produção POR CICLO com modificadores do contrato (se existir no seu modelo)
-                    var perCycle = coinsPerCycle;
-                    if (contract is not null)
-                    {
-                        // ajuste só se esses campos existirem no seu ContractModel
-                        perCycle = (coinsPerCycle + contract.AddMod) * contract.MultMod * contract.GainFactor;
-                    }
+                    var perCycle = realParameters.CoinsPerCycle;
 
                     var total = perCycle * qty * cycles;
 
-                    // credita usando IncomeService (ele já faz floor e acumula fração de sobra)
-                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, coinId, total, ItemHelper.ItemType.Contract, contractId);
+                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, realParameters.CoinId, total, ItemHelper.ItemType.Contract, contractId);
                 }
 
-                // grava o progresso (clamped p/ UI)
                 if (prog < 0) prog = 0;
                 if (prog > 1) prog = 1;
                 stage.ActiveContractsProgress[contractId] = prog;
@@ -277,13 +305,14 @@ namespace FurmaIdle.Services
                 if (!game.Contracts.TryGetValue(cid, out var c) || c is null) continue;
 
                 if (string.Equals(ContractHelper.CoinIdOf(c), coinId, StringComparison.Ordinal))
-                    sum += ContractHelper.ProdPerSecond(c, stage);
+                    sum += ContractHelper.RealProdPerSecond(c, stage);
             }
 
             if (game.Coins.TryGetValue(coinId, out var coin) && coin is not null)
             {
-                var cAdd = coin.AddMod;
-                var cMult = coin.MultMod <= 0 ? 1 : coin.MultMod;
+                var coinModifiers = GetCoinModifiers(coin, EffectHelper.EffectType.CoinGain);
+                var cAdd = coinModifiers.AddMod;
+                var cMult = coinModifiers.MultMod <= 0 ? 1 : coinModifiers.MultMod;
                 sum = (sum + cAdd) * cMult;
             }
 
@@ -301,12 +330,29 @@ namespace FurmaIdle.Services
                 await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, amount,
                                        ItemHelper.ItemType.Specialty, specId);
         }
-        static double ApplyMods(double baseValue, params Modifier?[] mods)
+
+        public static (double AddMod, double MultMod) GetCoinModifiers(CoinModel coin, EffectHelper.EffectType type)
         {
-            double v = baseValue;
-            foreach (var m in mods)
-                v = m is null ? v : m.Compute(v);
-            return v;
+            double AddMod = 0;
+            double MultMod = 1;
+
+            foreach (var modifier in coin.Modifiers)
+            {
+                if (type == modifier.Type)
+                {
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        AddMod += modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        AddMod *= modifier.Value;
+                    }
+                }
+            }
+
+            return (AddMod, MultMod);
         }
+
     }
 }

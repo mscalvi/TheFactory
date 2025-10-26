@@ -100,8 +100,11 @@ namespace FurmaIdle.Services
             if (!game.Resources.TryGetValue(resourceId, out var r) || r is null) return 0;
 
             var basePerSec = Math.Max(0, r.RsPerSecond);
-            var add = r.AddMod;
-            var mult = r.MultMod <= 0 ? 1 : r.MultMod;
+
+            var modifier = GetModifiers(r, EffectHelper.EffectType.ResourceGain);
+
+            var add = modifier.AddMod;
+            var mult = modifier.MultMod <= 0 ? 1 : modifier.MultMod;
 
             var effective = (basePerSec + add) * mult;
             if (effective < 0) effective = 0;
@@ -119,6 +122,29 @@ namespace FurmaIdle.Services
 
             var unlockedChars = game.Characters.Values.Count(c => c is not null && c.State == UnlockHelper.State.Unlocked);
             return unlockedChars > 0 ? perChar * unlockedChars : 0;
+        }
+
+        public static (double AddMod, double MultMod) GetModifiers(ResourceModel resource, EffectHelper.EffectType type)
+        {
+            double AddMod = 0;
+            double MultMod = 1;
+
+            foreach (var modifier in resource.Modifiers)
+            {
+                if (type == modifier.Type)
+                {
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        AddMod += modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        AddMod *= modifier.Value;
+                    }
+                }
+            }
+
+            return (AddMod, MultMod);
         }
 
     }
