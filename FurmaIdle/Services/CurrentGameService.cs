@@ -10,14 +10,18 @@ namespace FurmaIdle.Services
 {
     public interface ICurrentGameService
     {
+        // GameModel
         GameModel CurrentGame { get; }
-        bool IsReady { get; }
-        event Action? GameChanged;
-        event Action? ReadyChanged;
+
+        // Preparation
         void Attach(GameModel game);
-        Task Mutate(Action<GameModel> edit, bool save = true);
-        event Action<string, LogKind>? Logged;
         void MarkReady();
+        bool IsReady { get; }
+        event Action? ReadyChanged;
+
+        // Game Change
+        Task Mutate(Action<GameModel> edit, bool save = true);
+        event Action? GameChanged;
     }
 
     public sealed class CurrentGameService : ICurrentGameService
@@ -33,7 +37,6 @@ namespace FurmaIdle.Services
         public bool IsReady { get; private set; }
         public event Action? GameChanged;
         public event Action? ReadyChanged;
-        public event Action<string, LogKind>? Logged;
 
         #region Geral
         public void Attach(GameModel game)

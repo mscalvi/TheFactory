@@ -196,7 +196,6 @@ namespace FurmaIdle.Services
                 ex.ExpeditionState = UnlockHelper.ExpeditionState.Active;
                 ex.StartedAt = DateTimeOffset.UtcNow;
 
-                _effect.OnExpeditionStarted(g, ex);
                 ex.FinishedAt = null;
 
             }, save: true);

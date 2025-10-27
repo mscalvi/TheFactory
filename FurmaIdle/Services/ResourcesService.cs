@@ -8,9 +8,7 @@ namespace FurmaIdle.Services
     public interface IResourcesService
     {
         void TickResources(GameModel game, double dtSeconds);
-        double GetPerSecond(GameModel game, string resourceId);
-        long GetCap(GameModel game, string resourceId);
-
+        (double rsRegen, long rsCap) GetResourceInfo(GameModel game, string resourceId);
     }
 
     public sealed class ResourcesTickSink : ITickSink, IDisposable
@@ -54,11 +52,10 @@ namespace FurmaIdle.Services
             if (game is null || dtSeconds <= 0) return;
 
             _acc += dtSeconds;
-            if (_acc < 1.0) return;          // só processa de 1 em 1 segundo
+            if (_acc < 1.0) return;
             var steps = (int)Math.Floor(_acc);
             _acc -= steps;
 
-            // processa 'steps' segundos de uma vez (normalmente 1)
             for (int s = 0; s < steps; s++)
                 RegenOnce(game);
         }
@@ -69,62 +66,51 @@ namespace FurmaIdle.Services
             {
                 if (res is null || res.State != UnlockHelper.State.Unlocked) continue;
 
-                var perSec = GetPerSecond(game, res.Id);
-                if (perSec <= 0) continue;
+                var resource = GetResourceInfo(game, res.Id);
 
-                // cap atual (opcional, mas útil p/ não passar do máximo)
-                var cap = GetCap(game, res.Id);
+                if (resource.rsRegen <= 0) continue;
 
-                // valor atual
                 long current = 0;
                 if (game.ExpeditionStats?.Resources?.TryGetValue(res.Id, out var cur) == true)
                     current = cur;
 
-                // Se há cap (>0), limita o ganho
-                if (cap > 0 && current >= cap) continue;
+                if (resource.rsCap > 0 && current >= resource.rsCap) continue;
 
-                var room = cap > 0 ? Math.Max(0, cap - current) : long.MaxValue;
-                var amount = Math.Min(room, perSec);
+                var room = resource.rsCap > 0 ? Math.Max(0, resource.rsCap - current) : long.MaxValue;
+                var amount = Math.Min(room, resource.rsRegen);
 
                 if (amount > 0)
                 {
-                    // credita usando IncomeService (ele já trata frações e acumula em Expedition/Expansion/GameStats)
                     _ = _income.AddAsync(ItemType.Resource, res.Id, amount, sourceType: null, sourceId: null);
                 }
             }
         }
-
-        public double GetPerSecond(GameModel game, string resourceId)
+        public (double rsRegen, long rsCap) GetResourceInfo(GameModel game, string resourceId)
         {
-            if (string.IsNullOrWhiteSpace(resourceId)) return 0;
-            if (!game.Resources.TryGetValue(resourceId, out var r) || r is null) return 0;
+            var resource = _locate.LocateResource(game, resourceId);
 
-            var basePerSec = Math.Max(0, r.RsPerSecond);
+            var regenModifier = GetModifiers(resource, EffectHelper.EffectType.ResourceGain);
 
-            var modifier = GetModifiers(r, EffectHelper.EffectType.ResourceGain);
+            var capModifier = GetModifiers(resource, EffectHelper.EffectType.ResourceCap);
 
-            var add = modifier.AddMod;
-            var mult = modifier.MultMod <= 0 ? 1 : modifier.MultMod;
+            var regen = (resource.RsPerSecond + regenModifier.AddMod) * regenModifier.MultMod;
+            if (regen < 0) regen = 0;
 
-            var effective = (basePerSec + add) * mult;
-            if (effective < 0) effective = 0;
+            long baseCap = 0;
 
-            return effective;
+            foreach(var character in game.Characters)
+            {
+                if (character.Value.State == UnlockHelper.State.Unlocked)
+                {
+                    baseCap += resource.RsPerChar;
+                }
+            }
+
+            long cap = (long)((baseCap + capModifier.AddMod) * capModifier.MultMod);
+
+            return (regen, cap);
         }
-
-        public long GetCap(GameModel game, string resourceId)
-        {
-            if (string.IsNullOrWhiteSpace(resourceId)) return 0;
-            if (!game.Resources.TryGetValue(resourceId, out var r) || r is null) return 0;
-
-            var perChar = Math.Max(0, r.RsPerChar);
-            if (perChar <= 0) return 0;
-
-            var unlockedChars = game.Characters.Values.Count(c => c is not null && c.State == UnlockHelper.State.Unlocked);
-            return unlockedChars > 0 ? perChar * unlockedChars : 0;
-        }
-
-        public static (double AddMod, double MultMod) GetModifiers(ResourceModel resource, EffectHelper.EffectType type)
+        private static (double AddMod, double MultMod) GetModifiers(ResourceModel resource, EffectHelper.EffectType type)
         {
             double AddMod = 0;
             double MultMod = 1;

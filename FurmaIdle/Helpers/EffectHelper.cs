@@ -14,12 +14,14 @@
             // Knowledge
             KnowledgeUnlock,
             KnowledgeGain,
+            KnowledgeCost,
             // Characters
             CharacterUnlock,
             CharacterCost,
             // Resources
             ResourceGain,
             ResourceUnlock,
+            ResourceCap,
             // Coins
             CoinGain,
             BurstCoinGain,
@@ -36,6 +38,12 @@
             TechUnlock,
             // Expansions
             ExpansionUnlock,
+            ExpansionCost,
+            // Expedition
+            ExpeditionCost,
+            ExpeditionGain,
+            // Upgrade
+            UpgradeCost,
         }
 
         public enum EffectOperation

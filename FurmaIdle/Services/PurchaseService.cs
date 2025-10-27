@@ -1,11 +1,8 @@
 ﻿using FurmaIdle.Data;
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
-using System.Diagnostics.Contracts;
-using System.Resources;
 using static FurmaIdle.Helpers.EffectHelper;
 using static FurmaIdle.Helpers.PricingHelper;
-using static FurmaIdle.Services.PurchaseService;
 
 namespace FurmaIdle.Services
 {
@@ -25,7 +22,7 @@ namespace FurmaIdle.Services
 
         public sealed record CostLine(string CurrencyGroup, string CurrencyId, double Amount);
 
-        public PurchaseService(ICurrentGameService Game, IUiLogService Log, ILocateService Locate, IExpeditionService expedition, IEffectService effect)
+        public PurchaseService(ICurrentGameService Game, IUiLogService Log, ILocateService Locate, IEffectService effect)
         {
             _game = Game;
             _locate = Locate;
@@ -53,17 +50,18 @@ namespace FurmaIdle.Services
             {
                 var contract = _locate.LocateContract(game, itemId);
 
-                await _game.Mutate(g =>
+                await _game.Mutate(game =>
                 {
-                    var st = _locate.LocateStage(g, stageId);
-                    st.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
-                    st.ActiveContracts[contract.Id] = (st.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
+                    stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
+                    stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
 
-                    st.lockedContracts.Add(contract.Level);
+                    stage.lockedContracts.Add(contract.Level);
                 }, save: true);
+
+                // Invocar effect para desbloquear melhorias relacionadas a número de contratos ativos?
             }
 
-            await _effect.ApplyEffect(type, itemId, stageId);            
+            await _effect.ApplyEffect(type, itemId, stageId);
         }
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId)
         {
@@ -159,13 +157,13 @@ namespace FurmaIdle.Services
         {
             var game = _game.CurrentGame;
 
-            long costValue = 0;
             string costId = string.Empty;
+            long costValue = 0;
             long costBase = 0;
             double costCurve = 1;
             double costAddFactor = 0;
             double costMultFactor = 1;
-            double costFactorValue = 1;
+            double costFactorValue = 0;
 
             var modifiers = GetCostModifiers(game, type, itemId);
 
@@ -174,17 +172,23 @@ namespace FurmaIdle.Services
                 case ItemHelper.ItemType.Specialty:
                     {
                         var specialty = _locate.LocateSpecialty(game, itemId);
-                        double raw = specialty.Cost;
+
+                        costAddFactor = modifiers.AddMod;
+                        costMultFactor = modifiers.MultMod;
+
+                        double raw = (specialty.Cost + costAddFactor) * costMultFactor;
+
                         costValue = (long)Math.Ceiling(raw);
+
                         costId = specialty.PricingId;
                         break;
                     }
 
                 case ItemHelper.ItemType.Upgrade:
                     {
-                        var up = _locate.LocateUpgrade(game, itemId);
+                        var upgrade = _locate.LocateUpgrade(game, itemId);
 
-                        var entry = PricingCost.Get(up.PricingId);
+                        var entry = PricingCost.Get(upgrade.PricingId);
 
                         costId = entry.CostCoinId;
 
@@ -261,23 +265,21 @@ namespace FurmaIdle.Services
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue, up.ActualBuy);
+                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue, upgrade.ActualBuy);
                                 costMultFactor = 1;
                             }
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
                             {
                                 costAddFactor = 0;
-                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue, up.ActualBuy) ;
+                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue, upgrade.ActualBuy) ;
                             }
                         }
 
-                        double baseVal = costBase;
-                        double curve = costCurve;
-                        double addF = costAddFactor;
-                        double multF = costMultFactor;
+                        costMultFactor *= modifiers.MultMod;
+                        costAddFactor += modifiers.AddMod;
 
-                        double raw = (baseVal + addF) * Math.Pow(curve, up.ActualBuy) * multF;
+                        double raw = (costBase + costAddFactor) * Math.Pow(costCurve, upgrade.ActualBuy) * costMultFactor;
                         costValue = (long)Math.Ceiling(raw);
 
                         break;
@@ -286,15 +288,12 @@ namespace FurmaIdle.Services
                 case ItemHelper.ItemType.Contract:
                     {
                         var contract = _locate.LocateContract(game, itemId);
-
-                        var entry = PricingCost.Get(contract.PricingId);
-
                         var stage = _locate.LocateStage(game, stageId);
+                        var entry = PricingCost.Get(contract.PricingId);
 
                         stage.ActiveContracts.TryGetValue(itemId, out var quantity);
 
                         costId = entry.CostCoinId;
-
                         costBase = entry.CostBase;
                         costCurve = entry.CostCurve;
 
@@ -302,7 +301,7 @@ namespace FurmaIdle.Services
                         {
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue + modifiers.AddMod, quantity);
+                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue, quantity);
                                 costMultFactor = 1;
                             }
 
@@ -313,16 +312,47 @@ namespace FurmaIdle.Services
                             }
                         }
 
-                        double baseVal = costBase;
-                        double curve = costCurve;
-                        double addF = costAddFactor;
-                        double multF = costMultFactor;
+                        costMultFactor *= modifiers.MultMod;
+                        costAddFactor += modifiers.AddMod;
 
-                        double raw = (baseVal + addF) * Math.Pow(curve, quantity) * multF;
+                        double raw = (costBase + costAddFactor) * Math.Pow(costCurve, quantity) * costMultFactor;
                         costValue = (long)Math.Ceiling(raw);
 
                         break;
                     }
+
+                case ItemHelper.ItemType.Expansion:
+                    {
+                        var expansion = _locate.LocateExpansion(game, itemId);
+
+                        var entry = PricingCost.Get(expansion.PricingId);
+
+                        costId = entry.CostCoinId;
+
+                        costBase = entry.CostBase;
+                        costCurve = entry.CostCurve;
+
+                        costFactorValue = -1;
+
+                        foreach (var activeExpansions in game.Expansions)
+                        {
+                            var previousexpansion = _locate.LocateExpansion(game, activeExpansions.Key);
+                            if (expansion.State == UnlockHelper.State.Unlocked)
+                            {
+                                costFactorValue++;
+                            }
+                        }
+
+                        costMultFactor = Math.Pow(entry.CostFactorCurve, costFactorValue);
+
+                        costMultFactor *= modifiers.MultMod;
+                        costAddFactor += modifiers.AddMod;
+
+                        double raw = (costBase + costAddFactor) * costMultFactor;
+                        costValue = (long)Math.Ceiling(raw);
+
+                        break;
+                        }
             }
 
             return (costValue, costId);
@@ -336,7 +366,6 @@ namespace FurmaIdle.Services
         }
         private static long GetOrZero(Dictionary<string, long> dict, string id)
                     => dict is not null && dict.TryGetValue(id, out var v) ? v : 0L;
-
         public (double AddMod, double MultMod) GetCostModifiers(GameModel game, ItemHelper.ItemType itemType, string itemId)
         {
             double AddMod = 0;
@@ -367,6 +396,142 @@ namespace FurmaIdle.Services
                     foreach (var modifier in contract.Modifiers)
                     {
                         if (modifier.Type == EffectType.ContractCost)
+                        {
+                            if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                            {
+                                AddMod += modifier.Value;
+                            }
+                            if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                            {
+                                AddMod *= modifier.Value;
+                            }
+                        }
+                    }
+                    return (AddMod, MultMod);
+
+                case ItemHelper.ItemType.Upgrade:
+                    var upgrade = _locate.LocateUpgrade(game, itemId);
+                    string upgradeKind = upgrade.Id.Length >= 2
+                        ? upgrade.Id.Substring(0, 2)
+                        : upgrade.Id;
+
+                    if (upgrade.EffectOp == EffectOperation.Unlock)
+                    {
+                        switch (upgradeKind)
+                        {
+                            case "uk":
+                                var knowledgeupgrade = _locate.LocateKnowledge(game, upgrade.TargetId);
+                                foreach (var modifier in knowledgeupgrade.Modifiers)
+                                {
+                                    if (modifier.Type == EffectType.KnowledgeCost)
+                                    {
+                                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                                        {
+                                            AddMod += modifier.Value;
+                                        }
+                                        if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                                        {
+                                            AddMod *= modifier.Value;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "up":
+                                var characterupgrade = _locate.LocateCharacter(game, upgrade.TargetId);
+                                foreach (var modifier in characterupgrade.Modifiers)
+                                {
+                                    if (modifier.Type == EffectType.CharacterCost)
+                                    {
+                                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                                        {
+                                            AddMod += modifier.Value;
+                                        }
+                                        if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                                        {
+                                            AddMod *= modifier.Value;
+                                        }
+                                    }
+                                }
+                                break;
+                        }
+                    } else
+                    {
+                        foreach (var modifier in upgrade.Modifiers)
+                        {
+                            if (modifier.Type == EffectType.UpgradeCost)
+                            {
+                                if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                                {
+                                    AddMod += modifier.Value;
+                                }
+                                if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                                {
+                                    AddMod *= modifier.Value;
+                                }
+                            }
+                        }
+                    }
+                    return (AddMod, MultMod);
+
+                case ItemHelper.ItemType.Expedition:
+                    var expedition = _locate.LocateExpedition(game, itemId);
+                    foreach (var modifier in expedition.Modifiers)
+                    {
+                        if (modifier.Type == EffectType.ExpeditionCost)
+                        {
+                            if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                            {
+                                AddMod += modifier.Value;
+                            }
+                            if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                            {
+                                AddMod *= modifier.Value;
+                            }
+                        }
+                    }
+                    return (AddMod, MultMod);
+
+                case ItemHelper.ItemType.Expansion:
+                    var expansion = _locate.LocateExpansion(game, itemId);
+                    foreach (var modifier in expansion.Modifiers)
+                    {
+                        if (modifier.Type == EffectType.ExpansionCost)
+                        {
+                            if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                            {
+                                AddMod += modifier.Value;
+                            }
+                            if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                            {
+                                AddMod *= modifier.Value;
+                            }
+                        }
+                    }
+                    return (AddMod, MultMod);
+
+                case ItemHelper.ItemType.Specialty:
+                    var specialty = _locate.LocateSpecialty(game, itemId);
+                    foreach (var modifier in specialty.Modifiers)
+                    {
+                        if (modifier.Type == EffectType.SpecialtyCost)
+                        {
+                            if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                            {
+                                AddMod += modifier.Value;
+                            }
+                            if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                            {
+                                AddMod *= modifier.Value;
+                            }
+                        }
+                    }
+                    return (AddMod, MultMod);
+
+                case ItemHelper.ItemType.Knowledge:
+                    var knowledge = _locate.LocateKnowledge(game, itemId);
+                    foreach (var modifier in knowledge.Modifiers)
+                    {
+                        if (modifier.Type == EffectType.UpgradeCost)
                         {
                             if (modifier.Operation == EffectHelper.EffectOperation.Additive)
                             {

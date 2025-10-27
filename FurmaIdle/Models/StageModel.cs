@@ -13,20 +13,18 @@ namespace FurmaIdle.Models
         public int? Level { get; set; }
 
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);
-        public List<int> lockedContracts { get; set; } = new();
         public Dictionary<string, double> ActiveContractsProgress { get; set; } = new Dictionary<string, double>();
+        public List<int> lockedContracts { get; set; } = new();
         public ExpeditionModel Expedition { get; set; } = new ExpeditionModel();
 
         public PricingHelper.PricingId? PricingId { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
 
-        public int PartySizeStart { get; set; }
-        public int PartySizeActual { get; set; }
-        public int PartySizeMax { get; set; }
+        public int StartPartySize { get; set; }
+        public int MaxPartySize { get; set; }
 
         public int StartContractLevel { get; set; }
-        public int ActualContractLevel { get; set; }
         public int MaxContractLevel { get; set; }
 
         public string CoinId { get; set; }

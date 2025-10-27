@@ -7,13 +7,11 @@ namespace FurmaIdle.Services
     public interface IContractsService
     {
         void TickContracts(GameModel game, string stageId, double dtSeconds);
-        int GetContractsCap(GameModel game, string stageId);
-        int GetContractsUsed(GameModel game, string stageId);
-        int GetContractsMaxLevel(GameModel game, string stageId);
-        bool IsMaxContract(GameModel game, string stageId);
+        (int ContractsCap, int ContractsUsed, int ContractsLevel, int ContractsMaxLevel) GetStageContractsInfo (GameModel game, string stageId);
+        
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
-        public double GetContractsPerSecond(GameModel game, string stageId, string coinId);
+        public double GetTotalContractsPerSecond(GameModel game, string stageId, string coinId);
         double GetContractProgress(GameModel game, string stageId, string contractId);
         Task BurstProduction(double BurstTime, string stageId, string specId);
     }
@@ -56,124 +54,42 @@ namespace FurmaIdle.Services
             _game = game;
         }
 
-        public bool IsMaxContract(GameModel game, string stageId)
+        public (int ContractsCap, int ContractsUsed, int ContractsLevel, int ContractsMaxLevel) GetStageContractsInfo(GameModel game, string stageId)
         {
-            // 0) Stage válido
-            var stage = _locate.LocateStage(game, stageId);
-            if (stage is null)
-            {
-                return true;
-            }
-
-            // 1) Expedição ativa
-            var ex = stage.Expedition;
-            if (ex is null || ex.ExpeditionState != UnlockHelper.ExpeditionState.Active)
-            {
-                return true;
-            }
-
-            // 2) Party válida?
-            var party = ex.PartyIds ?? new List<string>();
-            if (party.Count == 0)
-            {
-                return true;
-            }
-
-            // 3) Cap total
-            int contractsMax = 0;
-            foreach (var characterId in party.Distinct(StringComparer.Ordinal))
-            {
-                if (!game.Characters.TryGetValue(characterId, out var character) || character is null)
-                {
-                    continue;
-                }
-
-                var cap = Math.Max(0, character.ContractCap);
-
-                foreach (var modifier in character.Modifiers)
-                {
-                    if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock) 
-                    {
-                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
-                        {
-                            cap += (int)modifier.Value;
-                        }
-
-                        if(modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
-                        {
-                            cap *= (int)modifier.Value;
-                        }
-                    }
-                }
-
-                contractsMax += cap;
-            }
-
-            if (contractsMax <= 0)
-            {
-                return true;
-            }
-
-            // 4) Usados = soma das QUANTIDADES no dicionário ActiveContracts
-            int contractsTotal = 0;
-            if (stage.ActiveContracts is not null)
-            {
-                foreach (var kv in stage.ActiveContracts)
-                {
-                    var contractId = kv.Key;
-                    var qty = Math.Max(0, kv.Value);
-                    contractsTotal += qty;
-                }
-            }
-
-            return contractsTotal >= contractsMax;
-        }
-        public int GetContractsCap(GameModel game, string stageId)
-        {
-            int contractsMax = 0;
-
             var stage = _locate.LocateStage(game, stageId);
 
-            if (stage.Expedition.PartyIds.Count == 0) return 0;
+            int contractsCap = 0;
+            int contractsUsed = 0;
+            int contractsLevel = stage.StartContractLevel;
+            int contractsMaxLevel = stage.MaxContractLevel;
 
             foreach (var characterId in stage.Expedition.PartyIds)
             {
-                game.Characters.TryGetValue(characterId, out var character);
-                contractsMax += character.ContractCap;
+                var character = _locate.LocateCharacter(game, characterId);;
+                contractsCap += character.ContractCap;
             }
-
-            return contractsMax;
-        }
-        public int GetContractsUsed(GameModel game, string stageId)
-        {
-            int contractsTotal = 0;
-
-            var stage = _locate.LocateStage(game, stageId);
-
             foreach (var contract in stage.ActiveContracts)
             {
-                contractsTotal += contract.Value;
+                contractsUsed += contract.Value;
             }
-
-            return contractsTotal;
-        }
-        public int GetContractsMaxLevel(GameModel game, string stageId)
-        {
-            var stage = _locate.LocateStage(game,stageId);
-
             foreach (var modifier in stage.Modifiers)
             {
-                if(modifier.Type == EffectHelper.EffectType.ContractLevelUnlock)
+                if (modifier.Type == EffectHelper.EffectType.ContractLevelUnlock)
                 {
-                    if(modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
                     {
-                        stage.ActualContractLevel += (int)modifier.Value;
+                        contractsLevel += (int)modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        contractsLevel *= (int)modifier.Value;
                     }
                 }
             }
 
-            return stage.ActualContractLevel;
+            return (contractsCap, contractsUsed, contractsLevel, contractsMaxLevel);
         }
+        
         public IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId)
         {
             if (game is null) return Array.Empty<string>();
@@ -231,10 +147,11 @@ namespace FurmaIdle.Services
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
-            if (!game.Stages.TryGetValue(stageId, out var stage) || stage is null) return;
 
-            var ex = stage.Expedition;
-            if (ex is null || ex.ExpeditionState != UnlockHelper.ExpeditionState.Active) return;
+            var stage = _locate.LocateStage(game, stageId);
+            var expedition = stage.Expedition;
+
+            if (expedition is null || expedition.ExpeditionState != UnlockHelper.ExpeditionState.Active) return;
 
             var act = stage.ActiveContracts;
             if (act is null || act.Count == 0) return;
@@ -245,7 +162,7 @@ namespace FurmaIdle.Services
             {
                 if (qty <= 0) continue;
 
-                if (!game.Contracts.TryGetValue(contractId, out var contract) || contract is null) continue;
+                var contract = _locate.LocateContract(game, contractId);
 
                 // progresso visual (0..1)
                 var prog = stage.ActiveContractsProgress.TryGetValue(contractId, out var p) ? p : 0.0;
@@ -289,7 +206,7 @@ namespace FurmaIdle.Services
             if (prog > 1) prog = 1;
             return prog;
         }
-        public double GetContractsPerSecond(GameModel game, string stageId, string coinId)
+        public double GetTotalContractsPerSecond(GameModel game, string stageId, string coinId)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || string.IsNullOrWhiteSpace(coinId))
                 return 0;
@@ -322,7 +239,7 @@ namespace FurmaIdle.Services
         public async Task BurstProduction(double BurstTime, string stageId, string specId)
         {
             var stage = _locate.LocateStage(_game.CurrentGame, stageId);
-            var perSec = GetContractsPerSecond(_game.CurrentGame, stageId, stage.CoinId);
+            var perSec = GetTotalContractsPerSecond(_game.CurrentGame, stageId, stage.CoinId);
 
             var amount = perSec * BurstTime;
 
@@ -331,7 +248,7 @@ namespace FurmaIdle.Services
                                        ItemHelper.ItemType.Specialty, specId);
         }
 
-        public static (double AddMod, double MultMod) GetCoinModifiers(CoinModel coin, EffectHelper.EffectType type)
+        private static (double AddMod, double MultMod) GetCoinModifiers(CoinModel coin, EffectHelper.EffectType type)
         {
             double AddMod = 0;
             double MultMod = 1;
@@ -353,6 +270,5 @@ namespace FurmaIdle.Services
 
             return (AddMod, MultMod);
         }
-
     }
 }

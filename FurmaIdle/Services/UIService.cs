@@ -8,8 +8,8 @@
         string? OpenMenuId { get; }
         string? PreviousMenuId { get; }
         void SetOpenMenu(string? id);
-        event Action? Changed;
 
+        event Action? Changed;
         event Action? Pulse;          
         void RaisePulse();
     }

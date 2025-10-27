@@ -13,11 +13,6 @@ namespace FurmaIdle.Services
     public interface IEffectService
     {
         Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId);
-        
-        void OnExpeditionStarted(GameModel g, ExpeditionModel ex);
-        void OnExpeditionEnded(GameModel g, ExpeditionModel ex);
-
-        (double Actual, double Total) GetSpecialtyTimer(SpecialtyModel spec);
     }
 
     public sealed class EffectService : IEffectService
@@ -35,20 +30,16 @@ namespace FurmaIdle.Services
             _log = Log;
         }
 
-        // Timers de Specialties: specialtyId -> (EndsAt, TotalSec)
-        private readonly Dictionary<string, (DateTimeOffset endsAt, double totalSec)> _specTimers
-            = new(StringComparer.Ordinal);
-
         public async Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId)
         {
-            var g = _game.CurrentGame;
+            var game = _game.CurrentGame;
+            var stage = _locate.LocateStage(game, stageId);
+
+            ModifierModel newModifier = new ModifierModel();
 
             if (type == ItemHelper.ItemType.Upgrade)
             {
-                var upgrade = _locate.LocateUpgrade(_game.CurrentGame, itemId);
-                var game = _game.CurrentGame;
-
-                ModifierModel newModifier = new ModifierModel();
+                var upgrade = _locate.LocateUpgrade(game, itemId);
                 string targetTypeId = upgrade.TargetId.Length >= 2
                     ? upgrade.TargetId.Substring(0, 1)
                     : upgrade.TargetId;
@@ -67,244 +58,269 @@ namespace FurmaIdle.Services
                     await _unlock.UnlockUpgrade(upgrade.Id);
                 }
 
-                await _game.Mutate(g =>
+                await _game.Mutate(game =>
                 {
-                    var stage = _locate.LocateStage(g, stageId);
-
-                    switch (targetTypeId)
+                    if (upgrade.EffectOp != EffectOperation.Unlock)
                     {
-                        case "a": // All of a Kind
-                            if (upgrade.TargetId == "aContracts")
-                            {
-                                foreach (var acontract in g.Contracts)
+                        switch (targetTypeId)
+                        {
+                            case "a": // All of a Kind
+                                if (upgrade.TargetId == "aContracts")
                                 {
-                                    newModifier.ApplyerId = itemId;
-                                    newModifier.Type = upgrade.EffectType;
-                                    newModifier.Scope = upgrade.Persistence;
-                                    newModifier.Operation = upgrade.EffectOp;
-                                    newModifier.Value = upgrade.EffectValue;
+                                    foreach (var acontract in game.Contracts)
+                                    {
+                                        newModifier.ApplyerId = itemId;
+                                        newModifier.Type = upgrade.EffectType;
+                                        newModifier.Scope = upgrade.Persistence;
+                                        newModifier.Operation = upgrade.EffectOp;
+                                        newModifier.Value = upgrade.EffectValue;
 
-                                    acontract.Value.Modifiers.Add(newModifier);
+                                        acontract.Value.Modifiers.Add(newModifier);
+                                    }
                                 }
-                            }
-                            if (upgrade.TargetId == "aKnowledges")
-                            {
-                                foreach (var aknow in g.Knowledges)
+                                if (upgrade.TargetId == "aKnowledges")
                                 {
-                                    newModifier.ApplyerId = itemId;
-                                    newModifier.Type = upgrade.EffectType;
-                                    newModifier.Scope = upgrade.Persistence;
-                                    newModifier.Operation = upgrade.EffectOp;
-                                    newModifier.Value = upgrade.EffectValue;
+                                    foreach (var aknow in game.Knowledges)
+                                    {
+                                        newModifier.ApplyerId = itemId;
+                                        newModifier.Type = upgrade.EffectType;
+                                        newModifier.Scope = upgrade.Persistence;
+                                        newModifier.Operation = upgrade.EffectOp;
+                                        newModifier.Value = upgrade.EffectValue;
 
-                                    aknow.Value.Modifiers.Add(newModifier);
+                                        aknow.Value.Modifiers.Add(newModifier);
+                                    }
                                 }
-                            }
-                            if (upgrade.TargetId == "aCoins")
-                            {
-                                foreach (var acoin in g.Coins)
+                                if (upgrade.TargetId == "aCoins")
                                 {
-                                    newModifier.ApplyerId = itemId;
-                                    newModifier.Type = upgrade.EffectType;
-                                    newModifier.Scope = upgrade.Persistence;
-                                    newModifier.Operation = upgrade.EffectOp;
-                                    newModifier.Value = upgrade.EffectValue;
+                                    foreach (var acoin in game.Coins)
+                                    {
+                                        newModifier.ApplyerId = itemId;
+                                        newModifier.Type = upgrade.EffectType;
+                                        newModifier.Scope = upgrade.Persistence;
+                                        newModifier.Operation = upgrade.EffectOp;
+                                        newModifier.Value = upgrade.EffectValue;
 
-                                    acoin.Value.Modifiers.Add(newModifier);
+                                        acoin.Value.Modifiers.Add(newModifier);
+                                    }
                                 }
-                            }
-                            if (upgrade.TargetId == "aResources")
-                            {
-                                foreach (var aresource in g.Resources)
+                                if (upgrade.TargetId == "aResources")
                                 {
-                                    newModifier.ApplyerId = itemId;
-                                    newModifier.Type = upgrade.EffectType;
-                                    newModifier.Scope = upgrade.Persistence;
-                                    newModifier.Operation = upgrade.EffectOp;
-                                    newModifier.Value = upgrade.EffectValue;
+                                    foreach (var aresource in game.Resources)
+                                    {
+                                        newModifier.ApplyerId = itemId;
+                                        newModifier.Type = upgrade.EffectType;
+                                        newModifier.Scope = upgrade.Persistence;
+                                        newModifier.Operation = upgrade.EffectOp;
+                                        newModifier.Value = upgrade.EffectValue;
 
-                                    aresource.Value.Modifiers.Add(newModifier);
+                                        aresource.Value.Modifiers.Add(newModifier);
+                                    }
                                 }
-                            }
-                            if (upgrade.TargetId == "aClicks")
-                            {
-                                foreach (var aclick in g.Clicks)
+                                if (upgrade.TargetId == "aClicks")
                                 {
-                                    newModifier.ApplyerId = itemId;
-                                    newModifier.Type = upgrade.EffectType;
-                                    newModifier.Scope = upgrade.Persistence;
-                                    newModifier.Operation = upgrade.EffectOp;
-                                    newModifier.Value = upgrade.EffectValue;
+                                    foreach (var aclick in game.Clicks)
+                                    {
+                                        newModifier.ApplyerId = itemId;
+                                        newModifier.Type = upgrade.EffectType;
+                                        newModifier.Scope = upgrade.Persistence;
+                                        newModifier.Operation = upgrade.EffectOp;
+                                        newModifier.Value = upgrade.EffectValue;
 
-                                    aclick.Value.Modifiers.Add(newModifier);
+                                        aclick.Value.Modifiers.Add(newModifier);
+                                    }
                                 }
-                            }
-                            break;
-                        case "m": // Coins
-                            var coins = _locate.LocateCoin(g, upgrade.TargetId);
+                                if (upgrade.TargetId == "aCharacters")
+                                {
+                                    foreach (var acharacters in game.Characters)
+                                    {
+                                        newModifier.ApplyerId = itemId;
+                                        newModifier.Type = upgrade.EffectType;
+                                        newModifier.Scope = upgrade.Persistence;
+                                        newModifier.Operation = upgrade.EffectOp;
+                                        newModifier.Value = upgrade.EffectValue;
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                        acharacters.Value.Modifiers.Add(newModifier);
+                                    }
+                                }
+                                if (upgrade.TargetId == "aUpgrades")
+                                {
+                                    foreach (var aupgrades in game.Upgrades)
+                                    {
+                                        newModifier.ApplyerId = itemId;
+                                        newModifier.Type = upgrade.EffectType;
+                                        newModifier.Scope = upgrade.Persistence;
+                                        newModifier.Operation = upgrade.EffectOp;
+                                        newModifier.Value = upgrade.EffectValue;
 
-                            coins.Modifiers.Add(newModifier);
-                            break;
-                        case "p": // Characters
-                            var character = _locate.LocateCharacter(g, upgrade.TargetId);
+                                        aupgrades.Value.Modifiers.Add(newModifier);
+                                    }
+                                }
+                                break;
+                            case "m": // Coins
+                                var coins = _locate.LocateCoin(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            character.Modifiers.Add(newModifier);
-                            break;
-                        case "k": // Knowledge
-                            var knowledge = _locate.LocateKnowledge(g, upgrade.TargetId);
+                                coins.Modifiers.Add(newModifier);
+                                break;
+                            case "p": // Characters
+                                var character = _locate.LocateCharacter(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            knowledge.Modifiers.Add(newModifier);
-                            break;
-                        case "t": // Techs
-                            var tech = _locate.LocateTech(g, upgrade.TargetId);
+                                character.Modifiers.Add(newModifier);
+                                break;
+                            case "k": // Knowledge
+                                var knowledge = _locate.LocateKnowledge(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            tech.Modifiers.Add(newModifier);
-                            break;
-                        case "u": // Upgrades
-                            var targetupgrade = _locate.LocateUpgrade(g, upgrade.TargetId);
+                                knowledge.Modifiers.Add(newModifier);
+                                break;
+                            case "t": // Techs
+                                var tech = _locate.LocateTech(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            targetupgrade.Modifiers.Add(newModifier);
-                            break;
-                        case "l": // Locals
-                            var local = _locate.LocateLocal(g, upgrade.TargetId);
+                                tech.Modifiers.Add(newModifier);
+                                break;
+                            case "u": // Upgrades
+                                var targetupgrade = _locate.LocateUpgrade(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            local.Modifiers.Add(newModifier);
-                            break;
-                        case "s": // Stages
-                            var targetstage = _locate.LocateStage(g, upgrade.TargetId);
+                                targetupgrade.Modifiers.Add(newModifier);
+                                break;
+                            case "l": // Locals
+                                var local = _locate.LocateLocal(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            targetstage.Modifiers.Add(newModifier);
-                            break;
-                        case "x": // Expansions
-                            var expansion = _locate.LocateExpansion(g, upgrade.TargetId);
+                                local.Modifiers.Add(newModifier);
+                                break;
+                            case "s": // Stages
+                                var targetstage = _locate.LocateStage(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            expansion.Modifiers.Add(newModifier);
-                            break;
-                        case "d": // Expeditions
-                            var expedition = _locate.LocateExpedition(g, upgrade.TargetId);
+                                targetstage.Modifiers.Add(newModifier);
+                                break;
+                            case "x": // Expansions
+                                var expansion = _locate.LocateExpansion(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            expedition.Modifiers.Add(newModifier);
-                            break;
-                        case "o": // Traits
-                            var trait = _locate.LocateTrait(g, upgrade.TargetId);
+                                expansion.Modifiers.Add(newModifier);
+                                break;
+                            case "d": // Expeditions
+                                var expedition = _locate.LocateExpedition(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            trait.Modifiers.Add(newModifier);
-                            break;
-                        case "e": // Specialty
-                            var speciality = _locate.LocateSpecialty(g, upgrade.TargetId);
+                                expedition.Modifiers.Add(newModifier);
+                                break;
+                            case "o": // Traits
+                                var trait = _locate.LocateTrait(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            speciality.Modifiers.Add(newModifier);
-                            break;
-                        case "c": // Contracts
-                            var contract = _locate.LocateContract(g, upgrade.TargetId);
+                                trait.Modifiers.Add(newModifier);
+                                break;
+                            case "e": // Specialty
+                                var speciality = _locate.LocateSpecialty(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            contract.Modifiers.Add(newModifier);
-                            break;
-                        case "i": // Clicks
-                            var click = _locate.LocateStageClick(g, upgrade.TargetId);
+                                speciality.Modifiers.Add(newModifier);
+                                break;
+                            case "c": // Contracts
+                                var contract = _locate.LocateContract(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            click.Modifiers.Add(newModifier);
-                            break;
-                        case "r": // Resources
-                            var resource = _locate.LocateResource(g, upgrade.TargetId);
+                                contract.Modifiers.Add(newModifier);
+                                break;
+                            case "i": // Clicks
+                                var click = _locate.LocateStageClick(game, upgrade.TargetId);
 
-                            newModifier.ApplyerId = itemId;
-                            newModifier.Type = upgrade.EffectType;
-                            newModifier.Scope = upgrade.Persistence;
-                            newModifier.Operation = upgrade.EffectOp;
-                            newModifier.Value = upgrade.EffectValue;
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
 
-                            resource.Modifiers.Add(newModifier);
-                            break;
+                                click.Modifiers.Add(newModifier);
+                                break;
+                            case "r": // Resources
+                                var resource = _locate.LocateResource(game, upgrade.TargetId);
+
+                                newModifier.ApplyerId = itemId;
+                                newModifier.Type = upgrade.EffectType;
+                                newModifier.Scope = upgrade.Persistence;
+                                newModifier.Operation = upgrade.EffectOp;
+                                newModifier.Value = upgrade.EffectValue;
+
+                                resource.Modifiers.Add(newModifier);
+                                break;
+                        }
                     }
                 }, save: true);
             }
             if (type == ItemHelper.ItemType.Specialty)
             {
                 var spec = _locate.LocateSpecialty(_game.CurrentGame, itemId);
-                var stage = _locate.LocateStage(_game.CurrentGame, stageId);
                 var Game = _game.CurrentGame;
                 if (spec is null) return;
 
-                ModifierModel newModifier = new ModifierModel();
                 string targetTypeId = spec.TargetId.Length >= 2
                     ? spec.TargetId.Substring(0, 1)
                     : spec.TargetId;
@@ -319,7 +335,7 @@ namespace FurmaIdle.Services
                         case "a": // All of a Kind
                             if (spec.TargetId == "aContracts")
                             {
-                                foreach (var acontract in g.Contracts)
+                                foreach (var acontract in game.Contracts)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = spec.EffectType;
@@ -332,7 +348,7 @@ namespace FurmaIdle.Services
                             }
                             if (spec.TargetId == "aKnowledges")
                             {
-                                foreach (var aknow in g.Knowledges)
+                                foreach (var aknow in game.Knowledges)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = spec.EffectType;
@@ -345,7 +361,7 @@ namespace FurmaIdle.Services
                             }
                             if (spec.TargetId == "aCoins")
                             {
-                                foreach (var acoin in g.Coins)
+                                foreach (var acoin in game.Coins)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = spec.EffectType;
@@ -358,7 +374,7 @@ namespace FurmaIdle.Services
                             }
                             if (spec.TargetId == "aResources")
                             {
-                                foreach (var aresource in g.Resources)
+                                foreach (var aresource in game.Resources)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = spec.EffectType;
@@ -371,7 +387,7 @@ namespace FurmaIdle.Services
                             }
                             if (spec.TargetId == "aClicks")
                             {
-                                foreach (var aclick in g.Clicks)
+                                foreach (var aclick in game.Clicks)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = spec.EffectType;
@@ -382,9 +398,83 @@ namespace FurmaIdle.Services
                                     aclick.Value.Modifiers.Add(newModifier);
                                 }
                             }
+                            if (spec.TargetId == "aCharacters")
+                            {
+                                foreach (var acharacters in game.Characters)
+                                {
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = spec.EffectType;
+                                    newModifier.Scope = spec.Persistence;
+                                    newModifier.Operation = spec.EffectOp;
+                                    newModifier.Value = spec.EffectValue;
+
+                                    acharacters.Value.Modifiers.Add(newModifier);
+                                }
+                            }
+                            if (spec.TargetId == "aUpgrades")
+                            {
+                                foreach (var aupgrades in game.Upgrades)
+                                {
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = spec.EffectType;
+                                    newModifier.Scope = spec.Persistence;
+                                    newModifier.Operation = spec.EffectOp;
+                                    newModifier.Value = spec.EffectValue;
+
+                                    aupgrades.Value.Modifiers.Add(newModifier);
+                                }
+                            }
+                            break;
+                        case "z": // All of a Kind in a Stage
+                            if (spec.TargetId == "zContracts")
+                            {
+                                foreach (var contractId in stage.ActiveContracts)
+                                {
+                                    var targetcontract = _locate.LocateContract(game, contractId.Key);
+
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = spec.EffectType;
+                                    newModifier.Scope = spec.Persistence;
+                                    newModifier.Operation = spec.EffectOp;
+                                    newModifier.Value = spec.EffectValue;
+
+                                    targetcontract.Modifiers.Add(newModifier);
+                                }
+                            }
+                            if (spec.TargetId == "zCharacters")
+                            {
+                                foreach (var characterId in stage.Expedition.PartyIds)
+                                {
+                                    var character = _locate.LocateCharacter(game, characterId);
+
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = spec.EffectType;
+                                    newModifier.Scope = spec.Persistence;
+                                    newModifier.Operation = spec.EffectOp;
+                                    newModifier.Value = spec.EffectValue;
+
+                                    character.Modifiers.Add(newModifier);
+                                }
+                            }
+                            if (spec.TargetId == "zSpecialties")
+                            {
+                                foreach (var characterId in stage.Expedition.PartyIds)
+                                {
+                                    var character = _locate.LocateCharacter(game, characterId);
+                                    var specialty = _locate.LocateSpecialty(game, character.SpecialtyId);
+
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = spec.EffectType;
+                                    newModifier.Scope = spec.Persistence;
+                                    newModifier.Operation = spec.EffectOp;
+                                    newModifier.Value = spec.EffectValue;
+
+                                    specialty.Modifiers.Add(newModifier);
+                                }
+                            }
                             break;
                         case "m": // Coins
-                            var coins = _locate.LocateCoin(g, spec.TargetId);
+                            var coins = _locate.LocateCoin(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -395,7 +485,7 @@ namespace FurmaIdle.Services
                             coins.Modifiers.Add(newModifier);
                             break;
                         case "p": // Characters
-                            var characte = _locate.LocateCharacter(g, spec.TargetId);
+                            var characte = _locate.LocateCharacter(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -406,7 +496,7 @@ namespace FurmaIdle.Services
                             characte.Modifiers.Add(newModifier);
                             break;
                         case "k": // Knowledge
-                            var knowledge = _locate.LocateKnowledge(g, spec.TargetId);
+                            var knowledge = _locate.LocateKnowledge(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -417,7 +507,7 @@ namespace FurmaIdle.Services
                             knowledge.Modifiers.Add(newModifier);
                             break;
                         case "t": // Techs
-                            var tech = _locate.LocateTech(g, spec.TargetId);
+                            var tech = _locate.LocateTech(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -428,7 +518,7 @@ namespace FurmaIdle.Services
                             tech.Modifiers.Add(newModifier);
                             break;
                         case "u": // Upgrades
-                            var targetupgrade = _locate.LocateUpgrade(g, spec.TargetId);
+                            var targetupgrade = _locate.LocateUpgrade(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -439,7 +529,7 @@ namespace FurmaIdle.Services
                             targetupgrade.Modifiers.Add(newModifier);
                             break;
                         case "l": // Locals
-                            var local = _locate.LocateLocal(g, spec.TargetId);
+                            var local = _locate.LocateLocal(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -450,7 +540,7 @@ namespace FurmaIdle.Services
                             local.Modifiers.Add(newModifier);
                             break;
                         case "s": // Stages
-                            var targetstage = _locate.LocateStage(g, spec.TargetId);
+                            var targetstage = _locate.LocateStage(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -461,7 +551,7 @@ namespace FurmaIdle.Services
                             targetstage.Modifiers.Add(newModifier);
                             break;
                         case "x": // Expansions
-                            var expansion = _locate.LocateExpansion(g, spec.TargetId);
+                            var expansion = _locate.LocateExpansion(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -472,7 +562,7 @@ namespace FurmaIdle.Services
                             expansion.Modifiers.Add(newModifier);
                             break;
                         case "d": // Expeditions
-                            var expedition = _locate.LocateExpedition(g, spec.TargetId);
+                            var expedition = _locate.LocateExpedition(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -483,7 +573,7 @@ namespace FurmaIdle.Services
                             expedition.Modifiers.Add(newModifier);
                             break;
                         case "o": // Traits
-                            var trait = _locate.LocateTrait(g, spec.TargetId);
+                            var trait = _locate.LocateTrait(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -494,7 +584,7 @@ namespace FurmaIdle.Services
                             trait.Modifiers.Add(newModifier);
                             break;
                         case "e": // Specialty
-                            var speciality = _locate.LocateSpecialty(g, spec.TargetId);
+                            var speciality = _locate.LocateSpecialty(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -505,7 +595,7 @@ namespace FurmaIdle.Services
                             speciality.Modifiers.Add(newModifier);
                             break;
                         case "c": // Contracts
-                            var contract = _locate.LocateContract(g, spec.TargetId);
+                            var contract = _locate.LocateContract(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -516,7 +606,7 @@ namespace FurmaIdle.Services
                             contract.Modifiers.Add(newModifier);
                             break;
                         case "i": // Clicks
-                            var click = _locate.LocateStageClick(g, spec.TargetId);
+                            var click = _locate.LocateStageClick(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -527,7 +617,7 @@ namespace FurmaIdle.Services
                             click.Modifiers.Add(newModifier);
                             break;
                         case "r": // Resources
-                            var resource = _locate.LocateResource(g, spec.TargetId);
+                            var resource = _locate.LocateResource(game, spec.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = spec.EffectType;
@@ -539,13 +629,8 @@ namespace FurmaIdle.Services
                             break;
                     }
 
-                    _specTimers[itemId] = (now.AddSeconds(dur), dur);
-
-                    Console.WriteLine($"[Purchase] Specialty {itemId} ativa por {dur:0.##}s");
-
                 }, save: true);
             }
-
             if (type == ItemHelper.ItemType.Trait)
             {
                 await _game.Mutate(g =>
@@ -556,15 +641,12 @@ namespace FurmaIdle.Services
                     string targetTypeId = trait.TargetId.Length >= 2
                         ? trait.TargetId.Substring(0, 1)
                         : trait.TargetId;
-
-
-
                     switch (targetTypeId)
                     {
                         case "a": // All of a Kind
                             if (trait.TargetId == "aContracts")
                             {
-                                foreach (var acontract in g.Contracts)
+                                foreach (var acontract in game.Contracts)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = trait.EffectType;
@@ -577,7 +659,7 @@ namespace FurmaIdle.Services
                             }
                             if (trait.TargetId == "aKnowledges")
                             {
-                                foreach (var aknow in g.Knowledges)
+                                foreach (var aknow in game.Knowledges)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = trait.EffectType;
@@ -590,7 +672,7 @@ namespace FurmaIdle.Services
                             }
                             if (trait.TargetId == "aCoins")
                             {
-                                foreach (var acoin in g.Coins)
+                                foreach (var acoin in game.Coins)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = trait.EffectType;
@@ -603,7 +685,7 @@ namespace FurmaIdle.Services
                             }
                             if (trait.TargetId == "aResources")
                             {
-                                foreach (var aresource in g.Resources)
+                                foreach (var aresource in game.Resources)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = trait.EffectType;
@@ -616,7 +698,7 @@ namespace FurmaIdle.Services
                             }
                             if (trait.TargetId == "aClicks")
                             {
-                                foreach (var aclick in g.Clicks)
+                                foreach (var aclick in game.Clicks)
                                 {
                                     newModifier.ApplyerId = itemId;
                                     newModifier.Type = trait.EffectType;
@@ -627,9 +709,83 @@ namespace FurmaIdle.Services
                                     aclick.Value.Modifiers.Add(newModifier);
                                 }
                             }
+                            if (trait.TargetId == "aCharacters")
+                            {
+                                foreach (var acharacters in game.Characters)
+                                {
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = trait.EffectType;
+                                    newModifier.Scope = trait.Persistence;
+                                    newModifier.Operation = trait.EffectOp;
+                                    newModifier.Value = trait.EffectValue;
+
+                                    acharacters.Value.Modifiers.Add(newModifier);
+                                }
+                            }
+                            if (trait.TargetId == "aUpgrades")
+                            {
+                                foreach (var aupgrades in game.Upgrades)
+                                {
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = trait.EffectType;
+                                    newModifier.Scope = trait.Persistence;
+                                    newModifier.Operation = trait.EffectOp;
+                                    newModifier.Value = trait.EffectValue;
+
+                                    aupgrades.Value.Modifiers.Add(newModifier);
+                                }
+                            }
+                            break;
+                        case "z": // All of a Kind in a Stage
+                            if (trait.TargetId == "zContracts")
+                            {
+                                foreach (var contractId in stage.ActiveContracts)
+                                {
+                                    var targetcontract = _locate.LocateContract(game, contractId.Key);
+
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = trait.EffectType;
+                                    newModifier.Scope = trait.Persistence;
+                                    newModifier.Operation = trait.EffectOp;
+                                    newModifier.Value = trait.EffectValue;
+
+                                    targetcontract.Modifiers.Add(newModifier);
+                                }
+                            }
+                            if (trait.TargetId == "zCharacters")
+                            {
+                                foreach (var characterId in stage.Expedition.PartyIds)
+                                {
+                                    var character = _locate.LocateCharacter(game, characterId);
+
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = trait.EffectType;
+                                    newModifier.Scope = trait.Persistence;
+                                    newModifier.Operation = trait.EffectOp;
+                                    newModifier.Value = trait.EffectValue;
+
+                                    character.Modifiers.Add(newModifier);
+                                }
+                            }
+                            if (trait.TargetId == "zSpecialties")
+                            {
+                                foreach (var characterId in stage.Expedition.PartyIds)
+                                {
+                                    var character = _locate.LocateCharacter(game, characterId);
+                                    var targetSpecialty = _locate.LocateSpecialty(game, character.SpecialtyId);
+
+                                    newModifier.ApplyerId = itemId;
+                                    newModifier.Type = trait.EffectType;
+                                    newModifier.Scope = trait.Persistence;
+                                    newModifier.Operation = trait.EffectOp;
+                                    newModifier.Value = trait.EffectValue;
+
+                                    targetSpecialty.Modifiers.Add(newModifier);
+                                }
+                            }
                             break;
                         case "m": // Coins
-                            var coins = _locate.LocateCoin(g, trait.TargetId);
+                            var coins = _locate.LocateCoin(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -640,7 +796,7 @@ namespace FurmaIdle.Services
                             coins.Modifiers.Add(newModifier);
                             break;
                         case "p": // Characters
-                            var characte = _locate.LocateCharacter(g, trait.TargetId);
+                            var characte = _locate.LocateCharacter(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -651,7 +807,7 @@ namespace FurmaIdle.Services
                             characte.Modifiers.Add(newModifier);
                             break;
                         case "k": // Knowledge
-                            var knowledge = _locate.LocateKnowledge(g, trait.TargetId);
+                            var knowledge = _locate.LocateKnowledge(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -662,7 +818,7 @@ namespace FurmaIdle.Services
                             knowledge.Modifiers.Add(newModifier);
                             break;
                         case "t": // Techs
-                            var tech = _locate.LocateTech(g, trait.TargetId);
+                            var tech = _locate.LocateTech(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -673,7 +829,7 @@ namespace FurmaIdle.Services
                             tech.Modifiers.Add(newModifier);
                             break;
                         case "u": // Upgrades
-                            var targetupgrade = _locate.LocateUpgrade(g, trait.TargetId);
+                            var targetupgrade = _locate.LocateUpgrade(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -684,7 +840,7 @@ namespace FurmaIdle.Services
                             targetupgrade.Modifiers.Add(newModifier);
                             break;
                         case "l": // Locals
-                            var local = _locate.LocateLocal(g, trait.TargetId);
+                            var local = _locate.LocateLocal(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -695,7 +851,7 @@ namespace FurmaIdle.Services
                             local.Modifiers.Add(newModifier);
                             break;
                         case "s": // Stages
-                            var targetstage = _locate.LocateStage(g, trait.TargetId);
+                            var targetstage = _locate.LocateStage(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -706,7 +862,7 @@ namespace FurmaIdle.Services
                             targetstage.Modifiers.Add(newModifier);
                             break;
                         case "x": // Expansions
-                            var expansion = _locate.LocateExpansion(g, trait.TargetId);
+                            var expansion = _locate.LocateExpansion(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -717,7 +873,7 @@ namespace FurmaIdle.Services
                             expansion.Modifiers.Add(newModifier);
                             break;
                         case "d": // Expeditions
-                            var expedition = _locate.LocateExpedition(g, trait.TargetId);
+                            var expedition = _locate.LocateExpedition(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -728,7 +884,7 @@ namespace FurmaIdle.Services
                             expedition.Modifiers.Add(newModifier);
                             break;
                         case "o": // Traits
-                            var targettrait = _locate.LocateTrait(g, trait.TargetId);
+                            var targettrait = _locate.LocateTrait(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -739,7 +895,7 @@ namespace FurmaIdle.Services
                             targettrait.Modifiers.Add(newModifier);
                             break;
                         case "e": // Speciality
-                            var specialty = _locate.LocateSpecialty(g, trait.TargetId);
+                            var specialty = _locate.LocateSpecialty(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -750,7 +906,7 @@ namespace FurmaIdle.Services
                             specialty.Modifiers.Add(newModifier);
                             break;
                         case "c": // Contracts
-                            var contract = _locate.LocateContract(g, trait.TargetId);
+                            var contract = _locate.LocateContract(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -761,7 +917,7 @@ namespace FurmaIdle.Services
                             contract.Modifiers.Add(newModifier);
                             break;
                         case "i": // Clicks
-                            var click = _locate.LocateStageClick(g, trait.TargetId);
+                            var click = _locate.LocateStageClick(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -772,7 +928,7 @@ namespace FurmaIdle.Services
                             click.Modifiers.Add(newModifier);
                             break;
                         case "r": // Resources
-                            var resource = _locate.LocateResource(g, trait.TargetId);
+                            var resource = _locate.LocateResource(game, trait.TargetId);
 
                             newModifier.ApplyerId = itemId;
                             newModifier.Type = trait.EffectType;
@@ -787,52 +943,5 @@ namespace FurmaIdle.Services
                 }, save: true);
             }
         }
-
-        // Expedition
-        public void OnExpeditionStarted(GameModel g, ExpeditionModel ex)
-        {
-            if (g is null || ex is null) return;
-
-            foreach (var charId in ex.PartyIds ?? Enumerable.Empty<string>())
-            {
-                var ch = _locate.LocateCharacter(g, charId);
-                if (ch is null || ch.State != UnlockHelper.State.Unlocked) continue;
-
-                if (!string.IsNullOrWhiteSpace(ch.TraitId))
-                {
-                    var tr = _locate.LocateTrait(g, ch.TraitId);
-                    if (tr is not null)
-                    {
-                         ApplyEffect(ItemHelper.ItemType.Trait, tr.Id, "aStages");
-                    }
-                }
-            }
-        }
-
-        public void OnExpeditionEnded(GameModel g, ExpeditionModel ex)
-        {
-            if (g is null || ex is null) return;
-        }
-
-        // Specialties
-        public (double Actual, double Total) GetSpecialtyTimer(string specialtyId)
-        {
-            if (string.IsNullOrWhiteSpace(specialtyId)) return (0, 0);
-
-            if (_specTimers.TryGetValue(specialtyId, out var t))
-            {
-                var now = DateTimeOffset.UtcNow;
-                var remaining = (t.endsAt - now).TotalSeconds;
-                if (remaining <= 0)
-                {
-                    _specTimers.Remove(specialtyId);
-                    return (0, t.totalSec);
-                }
-                return (remaining, t.totalSec);
-            }
-            return (0, 0);
-        }
-        public (double Actual, double Total) GetSpecialtyTimer(SpecialtyModel spec)
-            => spec is null ? (0, 0) : GetSpecialtyTimer(spec.Id);
     }
 }
