@@ -16,6 +16,7 @@ namespace FurmaIdle.Models
         public string UnlockId { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
         public UnlockHelper.State State { get; set; }
+        public UnlockHelper.ContractState UseState { get; set; }
 
         // Modifiers
         public List<ModifierModel> Modifiers { get; set; }

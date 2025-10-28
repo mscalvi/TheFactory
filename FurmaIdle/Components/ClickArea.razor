@@ -7,46 +7,39 @@
 
 @inject ILocateService Locate
 @inject IIncomeService Income
+@inject IClickService Clicks
 
-<div class="click-area-root"
-     @oncontextmenu:preventDefault
-     @onpointerdown="Click"
-     tabindex="0">
+@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+{
+    <div class="contracts-placeholder">Stage não Selecionado</div>
+}
+else
+{
+    <div class="click-area-root"
+         @oncontextmenu:preventDefault
+         @onpointerdown="Click"
+         tabindex="0">
 
-    @* imagem do stage cobrindo 100% *@
-    @{
-        var game = Game.CurrentGame;
-        StageModel? Stage = null;
-        if (!string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
-            game?.Stages?.TryGetValue(Game?.CurrentGame.SelectedStageId, out Stage);
-        ClickModel stageClick = Locate.LocateStageClick(Game.CurrentGame, Game.CurrentGame.SelectedStageId);
+        <div class="click-hud">
+            <h3>@(_stage.Name ?? _stage.Id ?? "—")</h3>
+            <small>Click Gain: @Clicks.ClickGain.ToString()</small>
+        </div>
 
-        var stageImg = !string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId)
-        ? $"images/stages/{Game?.CurrentGame.SelectedStageId}_0000.jpg"
-        : $"Stage: {Stage.Name}";
-    }
+        @{
+            var stageImg = !string.IsNullOrWhiteSpace(_stage.Id)
+                ? $"images/stages/{_stage.Id}_0000.jpg"
+                : $"Stage: {_stage.Name}";
+        }
 
-    <img class="click-stage-img"
-         src="@stageImg"
-         alt="@($"Stage {Stage?.Name ?? Stage?.Id ?? "—"}")" />
-
-    @* HUD simples (opcional) *@
-    <div class="click-hud">
-        <h3>@(Stage?.Name ?? Stage?.Id ?? "—")</h3>
-        <small>Click Gain: @GetClickTotalString()</small>
+        <img class="click-stage-img"
+             src="@stageImg"
+             alt="@($"Stage {_stage.Name ?? _stage.Id ?? "—"}")" />
     </div>
+}
 
-    @* textos flutuantes dos cliques *@
-    @foreach (var clickVisual in _ClickVisual)
-    {
-        <span class="click-fx"
-              style="left:@clickVisual.Xpx; top:@clickVisual.Ypx">
-            @clickVisual.Text
-        </span>
-    }
-</div>
 
 @code {
+    private StageModel? _stage;
     // eventos externos
     [Parameter] public EventCallback<int> OnClick { get; set; }
     [Parameter] public EventCallback<double> ClickAdd { get; set; }
@@ -54,41 +47,29 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        // se quiser carregar algo só uma vez, faça aqui
+        RefreshStage();
     }
 
     protected override void OnGameChanged()
     {
-        // se precisar recalcular alguma cache local, faça aqui
-        // o base já chama StateHasChanged()
+        RefreshStage();
     }
 
-    // Efeito Visual do Click
-    private sealed class ClickVisual
+    private void RefreshStage()
     {
-        public required string Text { get; init; }
-        public required string Xpx { get; init; }
-        public required string Ypx { get; init; }
-        public required long BornMs { get; init; }
-        public int LifespanMs { get; init; } = 700;
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
     }
-    private readonly List<ClickVisual> _ClickVisual = new();
 
     private async Task Click(PointerEventArgs e)
     {
-        var game = Game.CurrentGame;
-        var stageId = game?.SelectedStageId;
-
-        var ClickTotal = GetClickTotal();
-
-        if(game.Stages.TryGetValue(stageId, out var stage))
-        {
-            var clickGain = await Income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal, ItemHelper.ItemType.Click, stage.ClickId);
-        } else
-        {
-            Console.WriteLine("[ClickArea] Bug");
-        }
-
-        //StateHasChanged();
+        await Income.AddAsync(ItemHelper.ItemType.Coin, _stage.CoinId, Clicks.ClickGain, ItemHelper.ItemType.Click, _stage.ClickId);
     }
 }

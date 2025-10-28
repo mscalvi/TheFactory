@@ -11,20 +11,18 @@ namespace FurmaIdle.Services
     public interface IExpeditionService
     {
         List<CharacterModel> GetActiveCharacters(ExpeditionModel expedition);
+        ExpeditionModel GetOrCreateCurrentExpedition(StageModel stage);
 
-        ExpeditionModel GetOrCreateCurrentExpedition();
-
-        // novo: consulta e seleção
         IEnumerable<CharacterModel> GetCharactersInBase();
-        IReadOnlyCollection<string> GetPartyIds();
-        bool IsExpeditionActive();
-        bool CharSelected(string charId);
-        int GetPartyCap();
-        bool CanToggleChar(string charId);
-        bool ToggleChar(string charId, out string? reason);
+        IReadOnlyCollection<string> GetPartyIds(StageModel stage);
+        bool IsExpeditionActive(ExpeditionModel expedition);
+        bool CharSelected(StageModel stage, string charId);
+        int GetPartyCap(StageModel stage);
+        bool CanToggleChar(StageModel stage, string charId);
+        bool ToggleChar(StageModel stage, string charId, out string? reason);
 
-        Task LaunchExpedition(IReadOnlyCollection<string> roster);
-        Task EndExpedition(GameModel g, string stageId);
+        Task LaunchExpedition(StageModel stage, IReadOnlyCollection<string> roster);
+        Task EndExpedition(StageModel stage);
     }
 
     public sealed class ExpeditionService : IExpeditionService
@@ -33,13 +31,15 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly IEffectService _effect;
         private readonly IUnlockService _unlock;
+        private readonly IUiService _ui;
 
-        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IUnlockService unlock)
+        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IUnlockService unlock, IUiService ui)
         {
             _locate = locate;
             _game = game;
             _effect = effect;
             _unlock = unlock;
+            _ui = ui;
         }
 
         public List<CharacterModel> GetActiveCharacters(ExpeditionModel expedition)
@@ -56,23 +56,19 @@ namespace FurmaIdle.Services
             return result;
         }
 
-        public ExpeditionModel GetOrCreateCurrentExpedition()
+        public ExpeditionModel GetOrCreateCurrentExpedition(StageModel stage)
         {
-            var st = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
-            // garante não-nulo
-            return st.Expedition ??= new ExpeditionModel
+            return stage.Expedition ??= new ExpeditionModel
             {
-                StageId = st.Id,
+                StageId = stage.Id,
                 ExpeditionState = UnlockHelper.ExpeditionState.Idle,
                 PartyIds = new List<string>()
             };
         }
 
-        public bool IsExpeditionActive()
+        public bool IsExpeditionActive(ExpeditionModel expedition)
         {
-            var st = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
-            var ex = st?.Expedition;
-            return ex is not null && ex.ExpeditionState == UnlockHelper.ExpeditionState.Active;
+            return expedition is not null && expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active;
         }
 
         // ===== Consulta de personagens =====
@@ -90,20 +86,20 @@ namespace FurmaIdle.Services
         }
 
         // ===== Seleção (Party) =====
-        public IReadOnlyCollection<string> GetPartyIds()
+        public IReadOnlyCollection<string> GetPartyIds(StageModel stage)
         {
-            var ex = GetOrCreateCurrentExpedition();
+            var ex = GetOrCreateCurrentExpedition(stage);
             return ex.PartyIds ??= new List<string>();
         }
-        public bool CharSelected(string charId)
+
+        public bool CharSelected(StageModel stage, string charId)
         {
-            var ids = GetPartyIds();
+            var ids = GetPartyIds(stage);
             return ids.Contains(charId);
         }
-        public int GetPartyCap()
-        {
-            var stage = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
 
+        public int GetPartyCap(StageModel stage)
+        {
             int partySize = 0;
 
             foreach (var modifier in stage.Modifiers)
@@ -119,35 +115,33 @@ namespace FurmaIdle.Services
 
             return partySize;
         }
-        public bool CanToggleChar(string charId)
-        {
-            if (IsExpeditionActive()) return false;
-            var ex = GetOrCreateCurrentExpedition();
 
-            // Remover é sempre permitido
+        public bool CanToggleChar(StageModel stage, string charId)
+        {
+            if (IsExpeditionActive(stage.Expedition)) return false;
+            var ex = stage?.Expedition;
+
             if (ex.PartyIds!.Contains(charId)) return true;
 
-            // Adicionar respeitando cap
-            return ex.PartyIds!.Count < GetPartyCap();
+            return ex.PartyIds!.Count < GetPartyCap(stage);
         }
-        public bool ToggleChar(string charId, out string? reason)
+
+        public bool ToggleChar(StageModel stage, string charId, out string? reason)
         {
             reason = null;
 
             if (string.IsNullOrWhiteSpace(charId)) { reason = "Id inválido."; return false; }
-            if (IsExpeditionActive()) { reason = "Expedição já está ativa."; return false; }
+            if (IsExpeditionActive(stage.Expedition)) { reason = "Expedição já está ativa."; return false; }
 
-            var ex = GetOrCreateCurrentExpedition();
+            var ex = GetOrCreateCurrentExpedition(stage);
             ex.PartyIds ??= new List<string>();
 
-            // Se já está, desseleciona
             if (ex.PartyIds.Remove(charId))
                 return true;
 
-            // Se não está, respeita o cap
-            if (ex.PartyIds.Count >= GetPartyCap())
+            if (ex.PartyIds.Count >= GetPartyCap(stage))
             {
-                reason = $"Limite de equipe atingido ({GetPartyCap()}).";
+                reason = $"Limite de equipe atingido ({GetPartyCap(stage)}).";
                 return false;
             }
 
@@ -156,19 +150,18 @@ namespace FurmaIdle.Services
         }
 
         // Start e End
-        public async Task LaunchExpedition(IReadOnlyCollection<string> roster)
+        public async Task LaunchExpedition(StageModel stage, IReadOnlyCollection<string> roster)
         {
-            await _game.Mutate(g =>
+            await _game.Mutate(game =>
             {
-                var st = _locate.LocateStage(_game.CurrentGame, _game.CurrentGame.SelectedStageId);
-                var ex = GetOrCreateCurrentExpedition();
+                var ex = stage?.Expedition;
 
                 if (ex.ExpeditionState == UnlockHelper.ExpeditionState.Active)
                     return;
 
                 ex.PartyIds ??= new List<string>();
 
-                var cap = GetPartyCap();
+                var cap = GetPartyCap(stage);
                 var ids = (roster ?? Array.Empty<string>())
                     .Where(id => !string.IsNullOrWhiteSpace(id))
                     .Distinct(StringComparer.Ordinal)
@@ -184,7 +177,7 @@ namespace FurmaIdle.Services
                     if (c.CharState != UnlockHelper.CharState.InBase) continue;
 
                     c.CharState = UnlockHelper.CharState.InStage;
-                    c.InStageId = st.Id;
+                    c.InStageId = stage.Id;
 
                     finalIds.Add(id);
                 }
@@ -192,22 +185,27 @@ namespace FurmaIdle.Services
                 ex.PartyIds.Clear();
                 ex.PartyIds.AddRange(finalIds);
 
-                ex.StageId = st.Id;
+                ex.StageId = stage.Id;
                 ex.ExpeditionState = UnlockHelper.ExpeditionState.Active;
                 ex.StartedAt = DateTimeOffset.UtcNow;
 
                 ex.FinishedAt = null;
 
+                // Lançar Traits
+
+                _ui.UnlockMenu("i4");
+
             }, save: true);
         }
 
-        public async Task EndExpedition(GameModel g, string stageId)
+        public async Task EndExpedition(StageModel stage)
         {
-            await _game.Mutate(g =>
+            await _game.Mutate(game =>
             {
-                var st = _locate.LocateStage(g, stageId);
-                var ex = st?.Expedition;
-                if (st is null || ex is null) return;
+                _ui.LockMenu("i4");
+
+                var ex = stage?.Expedition;
+                if (stage is null || ex is null) return;
 
                 // finalizar expedição
                 ex.FinishedAt = DateTimeOffset.UtcNow;
@@ -218,7 +216,7 @@ namespace FurmaIdle.Services
                 {
                     foreach (var cid in ex.PartyIds)
                     {
-                        if (g.Characters.TryGetValue(cid, out var ch) && ch is not null)
+                        if (game.Characters.TryGetValue(cid, out var ch) && ch is not null)
                         {
                             ch.CharState = UnlockHelper.CharState.InBase;
                             ch.InStageId = null;
@@ -228,11 +226,27 @@ namespace FurmaIdle.Services
                 }
 
                 // limpar contratos/timers do stage
-                st.ActiveContracts?.Clear();
-                st.lockedContracts?.Clear();
+                foreach (var contracts in stage.ActiveContracts)
+                {
+                    var contract = _locate.LocateContract(game, contracts.Key);
+                    contract.UseState = UnlockHelper.ContractState.Avaliable;
+                }
+                stage.ActiveContracts?.Clear();
+                stage.lockedContracts?.Clear();
 
                 // transforma coins em Knowledge
                 // Income?
+
+                // reseta upgrades
+                foreach (var upgrades in game.Upgrades)
+                {
+                    if (upgrades.Value.Persistence == Persistence.untilExpedition)
+                    {
+                        upgrades.Value.State = State.Available;
+                        upgrades.Value.ActualBuy = 0;
+                    }
+                }
+
             }, save: true);
         }
     }

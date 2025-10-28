@@ -22,6 +22,12 @@
             InBase,
             InStage
         }
+        public enum ContractState
+        {
+            InUse,
+            Avaliable,
+            Blocked,
+        }
         public enum ExpeditionState
         {
             Active,

@@ -3,77 +3,94 @@
 
 @using FurmaIdle.Models
 
-@* ===== Corpo ===== *@
-@{
-    var panelId = NormalizePanelId(SelectedMenuId);
-}
-
-@switch (panelId)
+@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
 {
-    case "i1":
-        @* (1) Stage — Avaliable Stages / SelectedStage* / Unlocked Locals* / Avaliable Locals* *@
-        <ShopMenuStage/>
-        break;
-
-    case "i2":
-        @* (2) Tech — Knowledge / Avaliable Techs / Unlocked Techs *@
-        <ShopMenuTech/>
-        break;
-
-    case "i3":
-        @* (3) Party — Active Characters in Stage* / Resources / Specialties* *@
-        <ShopMenuParty />
-        break;
-
-    case "i4":
-        @* (4) Expedition — Expedition Toggle* / Current Expedition Stats* / End Expedition Gains* *@
-        <ShopMenuExpedition/>
-        break;
-
-    case "i5":
-        @* (5) Expansion — Next Expansion Button / Current Expansion Stats / inBase Characters *@
-        <ShopMenuExpansion/>
-        break;
-
-    case "i6":
-        @* (6) Upgrades — Avaliable Expedition Upgrades* / Avaliable Expansion Upgrades / Unlocked Upgrades *@
-        <ShopMenuUpgrades />
-        break;
-
-    case "i7":
-        @* (7) Achievements — Game Statistics / Unlocked / Locked *@
-        <div>Achievements panel (placeholder)</div>
-        break;
-
-    case "i8":
-        @* (8) Outside — Real Money Shop? *@
-        <div>Outside panel (placeholder)</div>
-        break;
-
-    case "i9":
-        @* (9) Settings *@
-        <div>Settings panel (placeholder)</div>
-        break;
-
-    default:
-        <div>Selecione um painel do menu.</div>
-        break;
+    <div class="contracts-placeholder">Stage não Selecionado</div>
 }
+else
+{
+    @switch (SelectedMenuId)
+    {
+        case "i1":
+            @* (1) Expansion — Next Expansion Button / Current Expansion Stats / inBase Characters *@
+            <ShopMenuExpansion />
+            break;
+
+        case "i2":
+            @* (2) Stage — Avaliable Stages / SelectedStage* / Unlocked Locals* / Avaliable Locals* *@
+            <ShopMenuStage />
+            break;
+
+        case "i3":
+            @* (3) Expedition — Expedition Toggle* / Current Expedition Stats* / End Expedition Gains* *@
+            <ShopMenuExpedition />
+            break;
+
+        case "i4":
+            @* (4) Party — Active Characters in Stage* / Resources / Specialties* *@
+            <ShopMenuParty />
+            break;
+
+        case "i5":
+            @* (5) Upgrades — Avaliable Expedition Upgrades* / Avaliable Expansion Upgrades / Unlocked Upgrades *@
+            <ShopMenuUpgrades />
+            break;
+
+        case "i50":
+            @* (50) Tech — Knowledge / Avaliable Techs / Unlocked Techs *@
+            <ShopMenuTech />
+            break;
+
+        case "i97":
+            @* () Achievements — Game Statistics / Unlocked / Locked *@
+            <div>Achievements panel (placeholder)</div>
+            break;
+
+        case "i98":
+            @* () Outside — Real Money Shop? *@
+            <div>Outside panel (placeholder)</div>
+            break;
+
+        case "i99":
+            @* () Settings *@
+            <div>Settings panel (placeholder)</div>
+            break;
+
+        default:
+            <div>Selecione um painel do menu.</div>
+            break;
+    }
+
+}
+
 
 @code {
+    private StageModel? _stage;
+
     // Id selecionado vindo do NavMenu (ex.: i1…i9 ou i97/i98/i99)
     [Parameter] public string? SelectedMenuId { get; set; }
 
-    // Mapeia i97/98/99 para i7/8/9 e retorna o id original para os demais.
-    private static string NormalizePanelId(string? id)
+    protected override void OnInitialized()
     {
-        if (string.IsNullOrWhiteSpace(id)) return "i1";
-        return id switch
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
-            "i97" => "i7",
-            "i98" => "i8",
-            "i99" => "i9",
-            _ => id
-        };
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
     }
 }

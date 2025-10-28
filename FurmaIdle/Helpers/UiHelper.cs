@@ -8,7 +8,6 @@ public abstract class UiHelper : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        // Assina uma vez
         UI.Pulse += OnUiPulseInternal;
         Game.GameChanged += OnGameChangedInternal;
         Game.ReadyChanged += OnGameChangedInternal;

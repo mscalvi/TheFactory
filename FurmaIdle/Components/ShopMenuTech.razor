@@ -7,7 +7,6 @@
 @using FurmaIdle.Helpers
 @using FurmaIdle.Services
 
-@* ===== Injeções ===== *@
 @inject IPurchaseService Purchase
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
@@ -77,9 +76,9 @@
                 <button type="button"
                         class="icon-button"
                         disabled
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, Game?.CurrentGame.SelectedStageId))"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, game.SelectedStageId))"
                         @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, Game?.CurrentGame.SelectedStageId))"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, game.SelectedStageId))"
                         @onblur="Tooltips.Clear">
                     @id <text>:</text> @total
                 </button>
@@ -100,15 +99,15 @@
             @foreach (var u in availableKnowledgeUpgrades)
             {
                 var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId);
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
 
                 <button type="button"
                         class="icon-button"
                         disabled="@( !canBuy )"
                         @onclick="() => OnClickBuyKnowledgeUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
                         @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
                         @onblur="Tooltips.Clear">
                     @id
                 </button>
@@ -129,14 +128,14 @@
             @foreach (var u in availableTechUpgrades)
             {
                 var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId);
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
                 <button type="button"
                         class="icon-button"
                         disabled="@( !canBuy )"
                         @onclick="() => OnClickBuyTechUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
                         @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
                         @onblur="Tooltips.Clear">
                     @id
                 </button>
@@ -161,9 +160,9 @@
                 <button type="button"
                         class="icon-button"
                         disabled
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, Game?.CurrentGame.SelectedStageId))"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, game.SelectedStageId))"
                         @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, Game?.CurrentGame.SelectedStageId))"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, game.SelectedStageId))"
                         @onblur="Tooltips.Clear">
                     @id
                 </button>
@@ -178,7 +177,10 @@
     private async Task OnClickBuyTechUpgrade(string upgradeId)
     {
         if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId))
-        { Log.Error($"Sem recursos para comprar upgrade {upgradeId}."); return; }
+        { 
+            Log.Error($"Sem recursos para comprar upgrade {upgradeId}."); 
+            return; 
+        }
 
         await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId);
     }

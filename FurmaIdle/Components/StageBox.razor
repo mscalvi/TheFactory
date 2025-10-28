@@ -8,50 +8,63 @@
 @inject IUnlockService Unlock
 @inject ILocateService Locate
 
-<div class="stage-box title">
-    @{
-        var stage = Locate.LocateStage(Game.CurrentGame, Game?.CurrentGame.SelectedStageId);
-    }
-    <div class="stage-name">
-        @if (stage is null)
-        {
-            <h3>(carregando…)</h3>
-        }
-        else
-        {
-            <h3>@stage.Name</h3>
-        }
-    </div>
-    <div class="stage-locals text">
-        @{
-            var unlocked = new List<string>();
-            foreach (var lid in Game.CurrentGame.Locals)
-            {
-                var local = Locate.LocateLocal(Game.CurrentGame, lid.Key);
-                if (local.StageId == stage.Id)
+@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+{
+    <div class="contracts-placeholder">Stage não Selecionado</div>
+}
+else
+{
+    var game = Game.CurrentGame;
+    <div class="stage-box title">
+        <div class="stage-name">
+            <h3>@_stage.Name</h3>
+        </div>
+        <div class="stage-locals text">
+            @{
+                var unlocked = new List<string>();
+                foreach (var lid in game.Locals)
                 {
-                    if (local.State == UnlockHelper.State.Unlocked)
+                    var local = Locate.LocateLocal(game, lid.Key);
+                    if (local.StageId == _stage.Id)
                     {
-                        unlocked.Add(local.Name);
+                        if (local.State == UnlockHelper.State.Unlocked)
+                        {
+                            unlocked.Add(local.Name);
+                        }
                     }
                 }
+                <p>@(unlocked.Count > 0 ? string.Join("- ", unlocked) : "Nenhum local desbloqueado")</p>
             }
-            <p>@(unlocked.Count > 0 ? string.Join(", ", unlocked) : "Nenhum local desbloqueado")</p>
-        }
+        </div>
     </div>
-</div>
+}
+
 
 
 @code {
+    private StageModel? _stage;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        // se quiser carregar algo só uma vez, faça aqui
+        RefreshStage();
     }
 
     protected override void OnGameChanged()
     {
-        // se precisar recalcular alguma cache local, faça aqui
-        // o base já chama StateHasChanged()
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
     }
 }

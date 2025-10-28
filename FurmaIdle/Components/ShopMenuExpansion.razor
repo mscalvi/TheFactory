@@ -6,23 +6,17 @@
 @using FurmaIdle.Services
 @using FurmaIdle.Data
 
-@inject IExpeditionService Expedition
 @inject IPurchaseService Purchase
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
+@inject ILocateService Locate
 
 @{
     var game = Game.CurrentGame;
-    if (game is null)
-    {
-        <div>Carregando…</div>
-        ; return;
-    }
-
     var expansionStats = Game.CurrentGame?.ExpansionStats;
     var currExpId = Game.CurrentGame?.LastExpansionId;
 
-    ExpansionModel? currExpansion = null;
+    ExpansionModel currExpansion = Locate.LocateExpansion(game, currExpId);
 
     if (!string.IsNullOrWhiteSpace(currExpId) &&
     game?.Expansions.TryGetValue(currExpId!, out currExpansion) == true)
@@ -30,7 +24,7 @@
         // Expansão Ativa
     }
 
-    var chars = Game.CurrentGame?.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
+    var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
     TimeSpan? expDuration = null;
     if (currExpansion?.StartedAt is DateTimeOffset startedAt)
@@ -50,12 +44,12 @@
 
     var inBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
                                && c.CharState == UnlockHelper.CharState.InBase)
-                      .OrderBy(c => c.Name)
+                      .OrderBy(c => c.Id)
                       .ToList();
 
     var inStage = chars.Where(c => c.State == UnlockHelper.State.Unlocked
                                 && c.CharState == UnlockHelper.CharState.InStage)
-                       .OrderBy(c => c.Name)
+                       .OrderBy(c => c.Id)
                        .ToList();
 }
 
@@ -97,9 +91,9 @@
             <button type="button"
                     class="icon-button"
                     disabled
-                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
                     @onmouseleave="Tooltips.Clear"
-                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
                     @onblur="Tooltips.Clear">
                 @id
             </button>
@@ -121,9 +115,9 @@
             <button type="button"
                     class="icon-button"
                     disabled
-                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
                     @onmouseleave="Tooltips.Clear"
-                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, Game?.CurrentGame.SelectedStageId))"
+                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
                     @onblur="Tooltips.Clear">
                 @id
             </button>
@@ -143,15 +137,15 @@
             @foreach (var u in availableExpansionUpgrades)
             {
                 var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId);
+                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
 
                 <button type="button"
                         class="icon-button"
                         disabled="@( !canBuy )"
                         @onclick="() => OnClickBuyExpansionUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
                         @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId))"
+                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
                         @onblur="Tooltips.Clear">
                     @id
                 </button>
@@ -163,9 +157,6 @@
 @code {
     private async Task OnClickBuyExpansionUpgrade(string upgradeId)
     {
-        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId))
-        { Log.Error($"Sem recursos para comprar upgrade {upgradeId}."); return; }
-
         await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId);
     }
 }

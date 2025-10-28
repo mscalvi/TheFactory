@@ -1,6 +1,7 @@
 ﻿using FurmaIdle.Data;
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System.Xml;
 using static FurmaIdle.Helpers.EffectHelper;
 using static FurmaIdle.Helpers.PricingHelper;
 
@@ -19,15 +20,17 @@ namespace FurmaIdle.Services
         private readonly ILocateService _locate;
         private readonly IUiLogService _log;
         private readonly IEffectService _effect;
+        private readonly IUiService _ui;
 
         public sealed record CostLine(string CurrencyGroup, string CurrencyId, double Amount);
 
-        public PurchaseService(ICurrentGameService Game, IUiLogService Log, ILocateService Locate, IEffectService effect)
+        public PurchaseService(ICurrentGameService Game, IUiLogService Log, ILocateService Locate, IEffectService effect, IUiService ui)
         {
             _game = Game;
             _locate = Locate;
             _log = Log;
             _effect = effect;
+            _ui = ui;
         }
 
         // Purchase
@@ -52,6 +55,7 @@ namespace FurmaIdle.Services
 
                 await _game.Mutate(game =>
                 {
+                    contract.UseState = UnlockHelper.ContractState.InUse;
                     stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
                     stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
 
@@ -62,7 +66,10 @@ namespace FurmaIdle.Services
             }
 
             await _effect.ApplyEffect(type, itemId, stageId);
+
+            _ui.NavMenuControl(itemId);
         }
+
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId)
         {
             var game = _game.CurrentGame;
@@ -256,7 +263,14 @@ namespace FurmaIdle.Services
 
                                 case CostFactor.PartySize:
                                     var stage = _locate.LocateStage(game, stageId);
-                                    costFactorValue = stage?.PartySizeActual ?? 0;
+                                    costFactorValue = stage.StartPartySize;
+                                    foreach(var modifier in stage.Modifiers)
+                                    {
+                                        if(modifier.Type == EffectType.PartyCapSize)
+                                        {
+                                            costFactorValue += modifier.Value;
+                                        }
+                                    }
                                     break;
 
                                 default:

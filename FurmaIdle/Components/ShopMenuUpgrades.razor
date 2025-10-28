@@ -13,31 +13,27 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 
-@{
-    var g = Game.CurrentGame;
-    if (g is null)
-    {
-        <div>Carregando…</div>
-        ; return;
-    }
+@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+{
+    <div class="contracts-placeholder">Stage não Selecionado</div>
+}
+else
+{
+    var game = Game.CurrentGame;
 
-    // ===== Available Expedition Upgrades* (uc...) =====
-    var availableExpeditionUpgrades = OrderedUpgrades(g)
+    var availableExpeditionUpgrades = OrderedUpgrades(game)
         .Where(u => StartsWithUc(u.Id) || StartsWithUu(u.Id)
                  && u.State == UnlockHelper.State.Available
-                 && IsContractUpgradeVisible(g, u.Id))
-        .Where(u => IsContractUpgradeVisible(g, u.Id));
+                 && IsContractUpgradeVisible(game, u.Id));
 
-    // ===== Available Expansion Upgrades (ut... / ux...) =====
-    var availableExpansionUpgrades = OrderedUpgrades(g)
-        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id))
-                 && u.State == UnlockHelper.State.Available)
-        .Where(u => IsContractUpgradeVisible(g, u.Id));
+    var availableExpansionUpgrades = OrderedUpgrades(game)
+        .Where(u => StartsWithUt(u.Id) || StartsWithUx(u.Id)
+                 && u.State == UnlockHelper.State.Available
+                 && IsContractUpgradeVisible(game, u.Id));
 
     // ===== Unlocked Upgrades (uc + ut + ux) =====
-    var unlockedUpgrades = OrderedUpgrades(g)
-        .Where(u => (StartsWithUc(u.Id) || StartsWithUt(u.Id) || StartsWithUx(u.Id)))
-        .Where(u => !IsUnlockAny(u)) // não listar desbloqueios (ul/us/uh/ue/up...)
+    var unlockedUpgrades = OrderedUpgrades(game)
+        .Where(u => (StartsWithUc(u.Id) || StartsWithUu(u.Id) || StartsWithUt(u.Id) || StartsWithUx(u.Id)))
         .Where(u => u.State == UnlockHelper.State.Unlocked)
         .Where(u =>
         {
@@ -45,10 +41,10 @@
             var cur = u.ActualBuy;
             return max > 0 && cur >= max;
         })
-        .Where(u => IsContractUpgradeVisible(g, u.Id));
+        .Where(u => IsContractUpgradeVisible(game, u.Id));
 
-    var availableCharacterUpgrades = Game.CurrentGame is null ? Enumerable.Empty<UpgradeModel>() :
-        Game.CurrentGame.Upgrades.Values
+    var availableCharacterUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
+        game.Upgrades.Values
             .Where(u => u?.Id != null
                      && u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
                      && u.State == UnlockHelper.State.Available)
@@ -58,124 +54,152 @@
                 return idx < 0 ? int.MaxValue : idx;
             })
             .ThenBy(u => u.Id);
+
+
+    <!-- Available Characters -->
+    <div>
+        <h3>Characters for Hire</h3>
+        @if (!availableCharacterUpgrades.Any())
+        {
+            <div>Nenhum upgrade de personagem disponível.</div>
+        }
+        else
+        {
+            <div>
+                @foreach (var u in availableCharacterUpgrades)
+                {
+                    var id = u.Id;
+                    var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
+
+                    <button type="button"
+                            class="icon-button"
+                            disabled="@( !canBuy )"
+                            @onclick="() => OnClickBuyCharacterUpgrade(id)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onblur="Tooltips.Clear">
+                        @id
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- (1) Available Expedition Upgrades* (uc...) -->
+    <div>
+        <h3>Available Expedition Upgrades</h3>
+        @if (!availableExpeditionUpgrades.Any())
+        {
+            <div>Nenhum upgrade de expedição disponível.</div>
+        }
+        else
+        {
+            <div>
+                @foreach (var u in availableExpeditionUpgrades)
+                {
+                    var id = u.Id;
+                    var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
+                    <button type="button"
+                            class="icon-button"
+                            disabled="@( !canBuy )"
+                            @onclick="() => OnClickBuyUpgrade(id)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onblur="Tooltips.Clear">
+                        @id
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- (2) Available Expansion Upgrades (ut/ux) -->
+    <div>
+        <h3>Available Expansion Upgrades</h3>
+        @if (!availableExpansionUpgrades.Any())
+        {
+            <div>Nenhum upgrade de expansão disponível.</div>
+        }
+        else
+        {
+            <div>
+                @foreach (var u in availableExpansionUpgrades)
+                {
+                    var id = u.Id;
+                    var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
+                    <button type="button"
+                            class="icon-button"
+                            disabled="@( !canBuy )"
+                            @onclick="() => OnClickBuyUpgrade(id)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onblur="Tooltips.Clear">
+                        @id
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- (3) Unlocked Upgrades (uc+ut+ux) -->
+    <div>
+        <h3>Unlocked Upgrades</h3>
+        @if (!unlockedUpgrades.Any())
+        {
+            <div>Nenhum upgrade concluído.</div>
+        }
+        else
+        {
+            <div>
+                @foreach (var u in unlockedUpgrades)
+                {
+                    var id = u.Id;
+                    <button type="button"
+                            class="icon-button"
+                            disabled
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                            @onblur="Tooltips.Clear">
+                        @id
+                    </button>
+                }
+            </div>
+        }
+    </div>
 }
 
-<!-- Available Characters -->
-<div>
-    <h3>Characters for Hire</h3>
-    @if (!availableCharacterUpgrades.Any())
-    {
-        <div>Nenhum upgrade de personagem disponível.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var u in availableCharacterUpgrades)
-            {
-                var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game.CurrentGame?.SelectedStageId);
-
-                <button type="button"
-                        class="icon-button"
-                        disabled="@( !canBuy )"
-                        @onclick="() => OnClickBuyCharacterUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game.CurrentGame?.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
-    }
-</div>
-
-<!-- (1) Available Expedition Upgrades* (uc...) -->
-<div>
-    <h3>Available Expedition Upgrades</h3>
-    @if (!availableExpeditionUpgrades.Any())
-    {
-        <div>Nenhum upgrade de expedição disponível.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var u in availableExpeditionUpgrades)
-            {
-                var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId);
-                <button type="button"
-                        class="icon-button"
-                        disabled="@( !canBuy )"
-                        @onclick="() => OnClickBuyUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
-    }
-</div>
-
-<!-- (2) Available Expansion Upgrades (ut/ux) -->
-<div>
-    <h3>Available Expansion Upgrades</h3>
-    @if (!availableExpansionUpgrades.Any())
-    {
-        <div>Nenhum upgrade de expansão disponível.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var u in availableExpansionUpgrades)
-            {
-                var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId);
-                <button type="button"
-                        class="icon-button"
-                        disabled="@( !canBuy )"
-                        @onclick="() => OnClickBuyUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
-    }
-</div>
-
-<!-- (3) Unlocked Upgrades (uc+ut+ux) -->
-<div>
-    <h3>Unlocked Upgrades</h3>
-    @if (!unlockedUpgrades.Any())
-    {
-        <div>Nenhum upgrade concluído.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var u in unlockedUpgrades)
-            {
-                var id = u.Id;
-                <button type="button"
-                        class="icon-button"
-                        disabled
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, Game?.CurrentGame.SelectedStageId ?? g.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
-    }
-</div>
 
 @code {
+    private StageModel? _stage;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
+    }
+
     // ===== Helpers de ordenação/filtragem =====
     private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
         => g.Upgrades.Values
@@ -212,28 +236,24 @@
     }
 
     // Mesma regra que você já usava
-    private bool IsContractUpgradeVisible(GameModel g, string upgradeId)
+    private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {
         // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
         if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId)) return true;
 
-        g.Upgrades.TryGetValue(upgradeId, out var up);
+        game.Upgrades.TryGetValue(upgradeId, out var up);
         var targetContractId = up?.TargetId;
-
-        g.Stages.TryGetValue(g.SelectedStageId, out var stage);
-        if (stage is null || string.IsNullOrWhiteSpace(targetContractId)) return false;
 
         if (StartsWithUc(upgradeId))
         {
-            // visível se houver ao menos 1 contrato ativo do target
-            return stage.ActiveContracts.TryGetValue(targetContractId, out var qty) && qty > 0;
+            return _stage.ActiveContracts.TryGetValue(targetContractId, out var qty) && qty > 0;
         }
         else
         {
             // “uu”: visível se o nível atual de contrato for >= nível do upgrade
-            int maxLevel = Contracts.GetContractsMaxLevel(g, stage.Id);
-            var upgrade = Locate.LocateUpgrade(g, upgradeId);
-            if (upgrade.Level > maxLevel)
+            var contractsInfo = Contracts.GetStageContractsInfo(game, _stage.Id);
+            var upgrade = Locate.LocateUpgrade(game, upgradeId);
+            if (upgrade.Level > contractsInfo.ContractsMaxLevel)
             {
                 return false;
             } else
@@ -246,25 +266,23 @@
     // ===== Ações =====
     private async Task OnClickBuyUpgrade(string upgradeId)
     {
-        var stageCtx = Game?.CurrentGame.SelectedStageId ?? Game.CurrentGame?.SelectedStageId;
-
-        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, stageCtx))
+        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id))
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
             return;
         }
 
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, stageCtx);
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
     }
 
     private async Task OnClickBuyCharacterUpgrade(string upgradeId)
     {
-        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId))
+        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id))
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
             return;
         }
 
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame?.SelectedStageId);
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
     }
 }

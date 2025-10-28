@@ -286,6 +286,7 @@ namespace FurmaIdle.Data
                 UnlockId = contract.UnlockId,
                 Persistence = contract.Persistence,
                 State = contract.State,
+                UseState = UnlockHelper.ContractState.Avaliable,
                 KnowledgeFactor1 = contract.KnowledgeFactor1,
                 KnowledgeFactor2 = contract.KnowledgeFactor2,
                 KnowledgeFactor3 = contract.KnowledgeFactor3,
