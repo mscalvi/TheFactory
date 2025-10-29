@@ -13,6 +13,9 @@
         public bool Started { get; set; } = false;
         public bool On { get; set; } = false;
 
+        // Ui
+        public HashSet<string> UnlockedMenus { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
         // Total
         public StatsModel ExpeditionStats { get; set; } = new();
         public StatsModel ExpansionStats { get; set; } = new();

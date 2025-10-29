@@ -1533,9 +1533,9 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectValue = 0,
             },
-            ["ue01"] = new UpgradeModel
+            ["ue02"] = new UpgradeModel
             {
-                Id = "ue010",
+                Id = "ue02",
                 Name = "Reestruturar a Guilda: Territórios",
                 Level = 1,
                 Icon = "images/upgrades/ue02.jpg",
@@ -1553,7 +1553,7 @@ namespace FurmaIdle.Data
             },
             ["ue03"] = new UpgradeModel
             {
-                Id = "ue030",
+                Id = "ue03",
                 Name = "Reestruturar a Guilda: Alcance",
                 Level = 1,
                 Icon = "images/upgrades/ue03.jpg",

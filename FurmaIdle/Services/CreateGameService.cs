@@ -48,6 +48,7 @@ namespace FurmaIdle.Services
                     ExpansionStats = new StatsModel(),
                     GameStats = new StatsModel(),
                     LastExpansionId = "x00",
+                    UnlockedMenus = new(StringComparer.OrdinalIgnoreCase),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),
                     Coins = Seed("[CGS] Coins", () => CoinsData.CreateInitialStates()),

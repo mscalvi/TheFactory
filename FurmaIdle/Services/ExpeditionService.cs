@@ -102,6 +102,8 @@ namespace FurmaIdle.Services
         {
             int partySize = 0;
 
+            partySize = stage.StartPartySize;
+
             foreach (var modifier in stage.Modifiers)
             {
                 if (modifier.Type == EffectHelper.EffectType.PartyCapSize)
@@ -120,6 +122,7 @@ namespace FurmaIdle.Services
         {
             if (IsExpeditionActive(stage.Expedition)) return false;
             var ex = stage?.Expedition;
+            Console.WriteLine($"Party: {ex.PartyIds.ToString()}");
 
             if (ex.PartyIds!.Contains(charId)) return true;
 

@@ -205,6 +205,7 @@ namespace FurmaIdle.Data
                     ContractsIds = chara.ContractsIds,
                     TraitId = chara.TraitId,
                     SpecialtyId = chara.SpecialtyId,
+                    Modifiers = chara.Modifiers,
                 };
             }
             return dict;

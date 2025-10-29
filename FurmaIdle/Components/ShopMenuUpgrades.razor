@@ -22,12 +22,12 @@ else
     var game = Game.CurrentGame;
 
     var availableExpeditionUpgrades = OrderedUpgrades(game)
-        .Where(u => StartsWithUc(u.Id) || StartsWithUu(u.Id)
+        .Where(u => (StartsWithUc(u.Id) || StartsWithUu(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
     var availableExpansionUpgrades = OrderedUpgrades(game)
-        .Where(u => StartsWithUt(u.Id) || StartsWithUx(u.Id)
+        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
@@ -54,7 +54,6 @@ else
                 return idx < 0 ? int.MaxValue : idx;
             })
             .ThenBy(u => u.Id);
-
 
     <!-- Available Characters -->
     <div>
@@ -246,14 +245,21 @@ else
 
         if (StartsWithUc(upgradeId))
         {
-            return _stage.ActiveContracts.TryGetValue(targetContractId, out var qty) && qty > 0;
+            if (_stage.ActiveContracts.TryGetValue(targetContractId, out var qty))
+            {
+                if (qty > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         else
         {
             // “uu”: visível se o nível atual de contrato for >= nível do upgrade
             var contractsInfo = Contracts.GetStageContractsInfo(game, _stage.Id);
             var upgrade = Locate.LocateUpgrade(game, upgradeId);
-            if (upgrade.Level > contractsInfo.ContractsMaxLevel)
+            if (upgrade.Level > contractsInfo.ContractsLevel)
             {
                 return false;
             } else

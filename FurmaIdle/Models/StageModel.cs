@@ -31,6 +31,6 @@ namespace FurmaIdle.Models
         public string ClickId { get; set; }
 
         // Modifier
-        public List<ModifierModel> Modifiers { get; set; }
+        public List<ModifierModel> Modifiers { get; set; } = new List<ModifierModel> ();
     }
 }

@@ -19,7 +19,7 @@
 @inject ITooltipService Tooltip
 @inject ITickService Ticks
 @inject IUnlockService Unlock
-@inject IUiService UI
+@inject IUiService Ui
 
 @code {
     #region GameStart
@@ -58,6 +58,7 @@
         Console.WriteLine("[GP] Ticks iniciados");
 
         // 4) marca pronto e re-renderiza
+        Ui.SyncMenusFromGame(Game.CurrentGame);
         RecomputeReady();
         StateHasChanged();
 

@@ -398,8 +398,8 @@ namespace FurmaIdle.Services
                                 AddMod += modifier.Value;
                             }
                             if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
-                            {
-                                AddMod *= modifier.Value;
+                            { 
+                                MultMod *= modifier.Value;
                             }
                         }
                     }
@@ -417,7 +417,7 @@ namespace FurmaIdle.Services
                             }
                             if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                             {
-                                AddMod *= modifier.Value;
+                                MultMod *= modifier.Value;
                             }
                         }
                     }
@@ -445,7 +445,7 @@ namespace FurmaIdle.Services
                                         }
                                         if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                                         {
-                                            AddMod *= modifier.Value;
+                                            MultMod *= modifier.Value;
                                         }
                                     }
                                 }
@@ -462,7 +462,7 @@ namespace FurmaIdle.Services
                                         }
                                         if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                                         {
-                                            AddMod *= modifier.Value;
+                                            MultMod *= modifier.Value;
                                         }
                                     }
                                 }
@@ -480,7 +480,7 @@ namespace FurmaIdle.Services
                                 }
                                 if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                                 {
-                                    AddMod *= modifier.Value;
+                                    MultMod *= modifier.Value;
                                 }
                             }
                         }
@@ -499,7 +499,7 @@ namespace FurmaIdle.Services
                             }
                             if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                             {
-                                AddMod *= modifier.Value;
+                                MultMod *= modifier.Value;
                             }
                         }
                     }
@@ -517,7 +517,7 @@ namespace FurmaIdle.Services
                             }
                             if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                             {
-                                AddMod *= modifier.Value;
+                                MultMod *= modifier.Value;
                             }
                         }
                     }
@@ -535,7 +535,7 @@ namespace FurmaIdle.Services
                             }
                             if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                             {
-                                AddMod *= modifier.Value;
+                                MultMod *= modifier.Value;
                             }
                         }
                     }
@@ -553,7 +553,7 @@ namespace FurmaIdle.Services
                             }
                             if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                             {
-                                AddMod *= modifier.Value;
+                                MultMod *= modifier.Value;
                             }
                         }
                     }
