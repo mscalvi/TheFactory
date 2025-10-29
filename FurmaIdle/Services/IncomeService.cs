@@ -61,7 +61,7 @@ namespace FurmaIdle.Services
                     GainTotal = amount,
                     GainFraction = frac
                 };
-            }, save: gain != 0 || saveFrac);
+            }, save: false);
 
             return result!;
         }

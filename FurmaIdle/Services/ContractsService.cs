@@ -167,6 +167,7 @@ namespace FurmaIdle.Services
             result.Sort(StringComparer.Ordinal);
             return result;
         }
+
         public string GetChosenContractIdForLevel(GameModel game, string stageId, int level)
         {
             var stage = _locate.LocateStage(game, stageId);

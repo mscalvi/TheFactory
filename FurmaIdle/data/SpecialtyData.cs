@@ -63,7 +63,7 @@ namespace FurmaIdle.Data
                 Name = "Uso Consciente",
                 Description = "Diminui o custo das Especialidades da Expedição",
                 Image = "images/specialties/e04.jpg",
-                TargetId = "zSpecialties",
+                TargetId = "zCharacters",
                 EffectValue = 0.8,
                 EffectType = EffectHelper.EffectType.SpecialtyCost,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,

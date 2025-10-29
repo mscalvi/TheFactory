@@ -30,13 +30,11 @@ else
         .Where(u => u.State == UnlockHelper.State.Available)
         .ToList();
 
-    var unlockedLocalsInStage = _stage is null ? Enumerable.Empty<LocalModel>() :
-        OrderedLocals(game)
+    var unlockedLocalsInStage = OrderedLocals(game)
             .Where(l => string.Equals(l.StageId, _stage.Id, StringComparison.OrdinalIgnoreCase)
                      && l.State == UnlockHelper.State.Unlocked);
 
-    var availableLocalUpgradesInStage = _stage is null ? Enumerable.Empty<UpgradeModel>() :
-        OrderedLocalUnlockUpgrades(game)
+    var availableLocalUpgradesInStage = OrderedLocalUnlockUpgrades(game)
             .Where(u =>
                 u.State == UnlockHelper.State.Available &&
                 string.Equals(u.UnlockId, _stage.Id, StringComparison.OrdinalIgnoreCase));

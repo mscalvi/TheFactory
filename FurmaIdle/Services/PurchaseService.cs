@@ -526,6 +526,28 @@ namespace FurmaIdle.Services
 
                 case ItemHelper.ItemType.Specialty:
                     var specialty = _locate.LocateSpecialty(game, itemId);
+                    var stage = _locate.LocateStage(game, game.SelectedStageId);
+                    foreach (var characterId in stage.Expedition.PartyIds)
+                    {
+                        var characterTarget = _locate.LocateCharacter(game, characterId);
+                        if(characterTarget.SpecialtyId == specialty.Id)
+                        {
+                            foreach (var modifier in characterTarget.Modifiers)
+                            {
+                                if (modifier.Type == EffectType.SpecialtyCost)
+                                {
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value;
+                                    }
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value;
+                                    }
+                                }
+                            }
+                        }
+                    }
                     foreach (var modifier in specialty.Modifiers)
                     {
                         if (modifier.Type == EffectType.SpecialtyCost)

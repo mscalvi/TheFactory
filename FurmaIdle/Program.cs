@@ -39,5 +39,6 @@ var host = builder.Build();
 
 _ = host.Services.GetRequiredService<ContractsTickSink>();
 _ = host.Services.GetRequiredService<ResourcesTickSink>();
+_ = host.Services.GetRequiredService<SpecialtiesTickSink>();
 
 await host.RunAsync();
