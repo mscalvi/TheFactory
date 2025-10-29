@@ -13,7 +13,7 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 
-@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+@if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
 }
@@ -31,7 +31,7 @@ else
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
-    // ===== Unlocked Upgrades (uc + ut + ux) =====
+    // ===== Unlocked Upgrades =====
     var unlockedUpgrades = OrderedUpgrades(game)
         .Where(u => (StartsWithUc(u.Id) || StartsWithUu(u.Id) || StartsWithUt(u.Id) || StartsWithUx(u.Id)))
         .Where(u => u.State == UnlockHelper.State.Unlocked)

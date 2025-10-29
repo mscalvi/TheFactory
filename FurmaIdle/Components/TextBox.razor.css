@@ -52,17 +52,17 @@
 
 /* cores por tipo */
 .msg-row.is-info .msg-text {
-    color: #0f172a;
+    color: whitesmoke;
 }
 
 .msg-row.is-warn .msg-text {
-    color: #92400e;
+    color: yellow;
 }
 
 .msg-row.is-error .msg-text {
-    color: #991b1b;
+    color: darkred;
 }
 
 .msg-row.is-success .msg-text {
-    color: #166534;
+    color: forestgreen;
 }

@@ -87,6 +87,7 @@ namespace FurmaIdle.Services
             await _game.Mutate(game =>
             {
                 var contract = _locate.LocateContract(_game.CurrentGame, contractId);
+                Console.WriteLine($"[Unlock] Contract {contract.Id}: localizado");
 
                 foreach (var upgradeId in UpgradeData.ShowOrder)
                 {
@@ -94,6 +95,7 @@ namespace FurmaIdle.Services
                     if (string.Equals(up.UnlockId, contract.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Id}: localizado e liberado");
                     }
                 }
 

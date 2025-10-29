@@ -18,6 +18,8 @@ builder.Services.AddSingleton<IContractsService, ContractsService>();
 builder.Services.AddSingleton<ContractsTickSink>();
 builder.Services.AddSingleton<IResourcesService, ResourcesService>();
 builder.Services.AddSingleton<ResourcesTickSink>();
+builder.Services.AddSingleton<ISpecialtiesService, SpecialtiesService>();
+builder.Services.AddSingleton<SpecialtiesTickSink>();
 
 builder.Services.AddSingleton<IUiService, UiService>();
 builder.Services.AddSingleton<ITooltipService, TooltipService>();
@@ -30,7 +32,6 @@ builder.Services.AddSingleton<IPurchaseService, PurchaseService>();
 builder.Services.AddSingleton<IExpeditionService, ExpeditionService>();
 builder.Services.AddSingleton<IEffectService, EffectService>();
 builder.Services.AddSingleton<IClickService, ClickService>();
-builder.Services.AddSingleton<ISpecialitiesService, SpecialitiesService>();
 
 builder.Services.AddSingleton<IGameStore, GameStore>();
 

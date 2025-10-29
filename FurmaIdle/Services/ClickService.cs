@@ -30,19 +30,19 @@ namespace FurmaIdle.Services
             var stageId = game?.SelectedStageId;
             var stage = _locate.LocateStage(game, stageId);
 
-            var ClickTotal = GetClickTotal();
+            var ClickTotal = GetClickTotal(stage);
 
             var gain = await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal, ItemHelper.ItemType.Click, stage.ClickId);
             
             ClickGain = gain.GainEffective;
         }
 
-        private double GetClickTotal()
+        private double GetClickTotal(StageModel stage)
         {
             var game = _game.CurrentGame;
             var click = _locate.LocateStageClick(game, game.SelectedStageId);
 
-            var modifier = GetModifier(click);
+            var modifier = GetModifier(click, stage);
 
             var baseGain = click.BaseGain;
             var addMod = modifier.AddMod;
@@ -51,7 +51,7 @@ namespace FurmaIdle.Services
             return (baseGain + addMod) * multMod;
         }
 
-        private (double AddMod, double MultMod) GetModifier(ClickModel click)
+        private (double AddMod, double MultMod) GetModifier(ClickModel click, StageModel stage)
         {
             double AddMod = 0;
             double MultMod = 1;
@@ -66,7 +66,21 @@ namespace FurmaIdle.Services
                     }
                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                     {
-                        AddMod *= modifier.Value;
+                        MultMod *= modifier.Value;
+                    }
+                }
+            }
+            foreach (var modifier in stage.Modifiers)
+            {
+                if (modifier.Type == EffectHelper.EffectType.ClickGain)
+                {
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        AddMod += modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        MultMod *= modifier.Value;
                     }
                 }
             }

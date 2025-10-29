@@ -85,6 +85,7 @@ namespace FurmaIdle.Services
                 }
             }
         }
+
         public (double rsRegen, long rsCap) GetResourceInfo(GameModel game, string resourceId)
         {
             var resource = _locate.LocateResource(game, resourceId);
@@ -110,6 +111,7 @@ namespace FurmaIdle.Services
 
             return (regen, cap);
         }
+
         private static (double AddMod, double MultMod) GetModifiers(ResourceModel resource, EffectHelper.EffectType type)
         {
             double AddMod = 0;
@@ -125,7 +127,7 @@ namespace FurmaIdle.Services
                     }
                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                     {
-                        AddMod *= modifier.Value;
+                        MultMod *= modifier.Value;
                     }
                 }
             }

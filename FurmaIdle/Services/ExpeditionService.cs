@@ -122,7 +122,6 @@ namespace FurmaIdle.Services
         {
             if (IsExpeditionActive(stage.Expedition)) return false;
             var ex = stage?.Expedition;
-            Console.WriteLine($"Party: {ex.PartyIds.ToString()}");
 
             if (ex.PartyIds!.Contains(charId)) return true;
 
@@ -174,7 +173,7 @@ namespace FurmaIdle.Services
                 var finalIds = new List<string>(ids.Count);
                 foreach (var id in ids)
                 {
-                    var c = _locate.LocateCharacter(_game.CurrentGame, id);
+                    var c = _locate.LocateCharacter(game, id);
                     if (c is null) continue;
                     if (c.State != UnlockHelper.State.Unlocked) continue;
                     if (c.CharState != UnlockHelper.CharState.InBase) continue;
@@ -194,19 +193,25 @@ namespace FurmaIdle.Services
 
                 ex.FinishedAt = null;
 
-                // Lançar Traits
-
                 _ui.UnlockMenu("i4");
 
             }, save: true);
+
+            var expedition = stage?.Expedition;
+            var game = _game.CurrentGame;
+
+            foreach (var characterId in expedition.PartyIds)
+            {
+                var character = _locate.LocateCharacter(game, characterId);
+                var traitId = character.TraitId;
+                _effect.ApplyEffect(ItemHelper.ItemType.Trait, traitId, stage.Id);
+            }
         }
 
         public async Task EndExpedition(StageModel stage)
         {
             await _game.Mutate(game =>
             {
-                _ui.LockMenu("i4");
-
                 var ex = stage?.Expedition;
                 if (stage is null || ex is null) return;
 

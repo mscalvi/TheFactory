@@ -10,7 +10,7 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject IExpeditionService Expedition
-@inject ISpecialitiesService Specialty
+@inject ISpecialtiesService Specialty
 @inject IIncomeService Income
 @inject IPurchaseService Purchase
 @inject ILocateService Locate
@@ -98,81 +98,76 @@ else
 
     <!-- ========= Party grid (PartySizeMax slots) ========= -->
     <section class="party-grid panel">
-        @{
-
-            for (var i = 0; i < Expedition.GetPartyCap(_stage); i++)
+        @for (var i = 0; i < Expedition.GetPartyCap(_stage); i++)
+        {
+            if (i < activeChars.Count)
             {
+                var c = activeChars[i];
+                var id = c.Id;
 
-                if (i < activeChars.Count)
-                {
-                    var c = activeChars[i];
-                    var id = c.Id;
+                var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
 
-                    var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
+                var canUse = CanUseSpec(spec);
+                var isActive = IsSpecActive(spec);
 
-                    var canUse = CanUseSpec(spec);
-                    var isActive = IsSpecActive(spec);
+                var timer = Specialty.GetSpecialtyTimer(spec);
+                double ratio = isActive && timer.Total > 0 ? (1.0 - ((timer.Total - timer.Actual) / timer.Total)) : 0.0;
+                int stepsOn = Math.Clamp((int)Math.Floor(ratio * 10.0), 0, 10);
 
-                    var timer = Specialty.GetSpecialtyTimer(spec);
-                    double ratio = isActive && timer.Total > 0 ? (1.0 - ((timer.Total - timer.Actual) / timer.Total)) : 0.0;
-                    int stepsOn = Math.Clamp((int)Math.Floor(ratio * 10.0), 0, 10);
+                <div class="party-slot">
+                    <!-- Char -->
+                    <div class="char-cell-icon"
+                         @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, c.Id, c.SpecialtyId))"
+                         @onmouseout="Tooltips.Clear">
+                        <span class="icon-wrap">
+                            <img src="@CharImg(id)"
+                                 alt="@c.Id"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                            <span class="icon-fallback">@c.Id</span>
+                        </span>
+                    </div>
 
-                    <div class="party-slot">
-                        <!-- Char -->
-                        <div class="char-cell-icon"
-                             @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, c.Id, c.SpecialtyId))"
-                             @onmouseout="Tooltips.Clear">
-                            <span class="icon-wrap">
-                                <img src="@CharImg(id)"
-                                     alt="@c.Id"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-                                <span class="icon-fallback">@c.Id</span>
-                            </span>
-                        </div>
+                    <!-- Custo -->
+                    <div class="">
+                        @(spec is null ? "—" : $"{spec.Cost:N0}")
+                    </div>
 
-                        <!-- Custo -->
-                        <div class="">
-                            @(spec is null ? "—" : $"{spec.Cost:N0}")
-                        </div>
-
-                        <!-- Specialty -->
-                        <div class="char-cell-actions">
-                            @if (isActive)
-                            {
-                                <div class="contract-selected is-compact" aria-hidden="true">
-                                    <div class="contract-progress"></div>
-                                    <div class="contract-steps">
-                                        @for (int j = 0; j < 10; j++)
-                                        {
-                                            var on = j < stepsOn ? "is-on" : null;
-                                            <span class="step @on"></span>
-                                        }
-                                    </div>
+                    <!-- Specialty -->
+                    <div class="char-cell-actions">
+                        @if (isActive)
+                        {
+                            <div class="contract-selected is-compact" aria-hidden="true">
+                                <div class="contract-progress"></div>
+                                <div class="contract-steps">
+                                    @for (int j = 0; j < 10; j++)
+                                    {
+                                        var on = j < stepsOn ? "is-on" : null;
+                                        <span class="step @on"></span>
+                                    }
                                 </div>
-                            }
-                            else
-                            {
-                                <button class="mini-btn"
-                                        disabled="@(!canUse || isActive)"
-                                        @onclick="() => UseSpec(spec)"
-                                        @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, spec.Id, _stage.Id))"
-                                        @onmouseout="Tooltips.Clear">
-                                    @spec.Name
-                                </button>
-                            }
-                        </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="mini-btn"
+                                    disabled="@(!canUse || isActive)"
+                                    @onclick="() => UseSpec(spec)"
+                                    @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, spec.Id, _stage.Id))"
+                                    @onmouseout="Tooltips.Clear">
+                                @spec.Name
+                            </button>
+                        }
                     </div>
-                }
-                else
-                {
-                    <!-- slot vazio -->
-                    <div class="party-slot">
-                        <div class="party-slot-empty icon-button">—</div>
-                    </div>
-                }
+                </div>
+            }
+            else
+            {
+                <!-- slot vazio -->
+                <div class="party-slot">
+                    <div class="party-slot-empty icon-button">—</div>
+                </div>
             }
         }
-    }
     </section>
 }
 

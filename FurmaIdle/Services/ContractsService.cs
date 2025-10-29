@@ -68,6 +68,33 @@ namespace FurmaIdle.Services
             {
                 var character = _locate.LocateCharacter(game, characterId);;
                 contractsCap += character.ContractCap;
+
+                foreach (var modifier in character.Modifiers)
+                {
+                    if (modifier.Type == EffectHelper.EffectType.ContractLevelUnlock)
+                    {
+                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                        {
+                            contractsLevel += (int)modifier.Value;
+                        }
+                        if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                        {
+                            contractsLevel *= (int)modifier.Value;
+                        }
+                    }
+                    if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock)
+                    {
+                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                        {
+                            contractsCap += (int)modifier.Value;
+                        }
+                        if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                        {
+                            contractsCap *= (int)modifier.Value;
+                        }
+                    }
+                }
+
             }
             foreach (var contract in stage.ActiveContracts)
             {
@@ -84,6 +111,17 @@ namespace FurmaIdle.Services
                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                     {
                         contractsLevel *= (int)modifier.Value;
+                    }
+                }
+                if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock)
+                {
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        contractsCap += (int)modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        contractsCap *= (int)modifier.Value;
                     }
                 }
             }

@@ -30,7 +30,7 @@ else
             var level = lvl;
 
             <div class="contracts-level">
-                @if (level > contractsInfo.ContractsMaxLevel)
+                @if (level > contractsInfo.ContractsLevel)
                 {
                     <div class="level-locked">Nível de Contrato Bloqueado</div>
                 }
@@ -191,19 +191,21 @@ else
 
     private void CloseLevel() => _expandedLevel = null;
 
-    private void BuyContract(string contractId)
+    private async Task BuyContract(string contractId)
     {
-        Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id);
-
         var contract = Locate.LocateContract(Game.CurrentGame, contractId);
+
+        if (!CanPurchase(contract, _stage)) return;
+
+        await Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id);
 
         var qty = _stage.ActiveContracts?.TryGetValue(contract.Id, out var q) == true ? q : 0;
 
-        if(qty == 1)
+        if(qty == 0)
         {
             Log.Info($"Nosso primeiro contrato para {contract.Name}, incrível!");
         }
-        if(qty == 100)
+        if(qty == 99)
         {
             Log.Info($"Estamos ficando profissionais em {contract.Name}, sensacional!");
         }
@@ -214,8 +216,7 @@ else
 
     private bool CanPurchase(ContractModel contract, StageModel stage)
     {
-        if (contract.UseState == UnlockHelper.ContractState.InUse) return false;
-        return Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id, _stage.Id);
+        return Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
     }
 
     private ContractModel? ChosenContract(int level)

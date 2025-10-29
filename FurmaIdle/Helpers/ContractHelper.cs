@@ -85,7 +85,7 @@ namespace FurmaIdle.Helpers
                     }
                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                     {
-                        AddMod *= modifier.Value;
+                        MultMod *= modifier.Value;
                     }
                 }
             }

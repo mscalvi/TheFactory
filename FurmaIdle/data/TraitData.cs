@@ -51,7 +51,7 @@ namespace FurmaIdle.Data
             {
                 Id = "o04",
                 Description = "Gera Mantimentos por segundo",
-                TargetId = "o01",
+                TargetId = "r01",
                 EffectValue = 0.5,
                 EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectType = EffectHelper.EffectType.ResourceGain,
