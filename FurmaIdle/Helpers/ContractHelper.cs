@@ -44,7 +44,7 @@ namespace FurmaIdle.Helpers
             var timePerCycle = (spc + timeMod.AddMod) * timeMod.MultMod;
 
 
-            return (bal.CoinId, bal.CoinsPerCycle, bal.SecondsPerCycle);
+            return (bal.CoinId, coinsPerCycle, timePerCycle);
         }
 
         // Produção efetiva por segundo (com qty e modificadores)

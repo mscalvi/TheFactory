@@ -63,6 +63,11 @@ namespace FurmaIdle.Services
                 };
             }, save: gain != 0 || saveFrac);
 
+            if(type == ItemType.Coin)
+            {
+                _log.Warn($"Ganho de {type}, total: {amount}, fonte: {sourceId}");
+            }
+
             return result!;
         }
 

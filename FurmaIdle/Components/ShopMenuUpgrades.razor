@@ -22,12 +22,12 @@ else
     var game = Game.CurrentGame;
 
     var availableExpeditionUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUc(u.Id) || StartsWithUu(u.Id))
+        .Where(u => (StartsWithUc(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
     var availableExpansionUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id))
+        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id) || StartsWithUu(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 

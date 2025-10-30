@@ -47,6 +47,22 @@ button {
     white-space: nowrap;
 }
 
+.image-resource {
+    width: 20px;
+    height: 20px;
+    max-height: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    object-fit: contain;
+}
+
 /* Tamanho da Tela */
 :root {
     --ui-scale: 1;

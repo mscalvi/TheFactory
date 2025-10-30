@@ -512,63 +512,6 @@ namespace FurmaIdle.Services
                                     }
                                 }
                                 break;
-                            case "z": // All of a Kind in a Stage
-                                if (spec.TargetId == "zContracts")
-                                {
-                                    foreach (var contractId in stage.ActiveContracts)
-                                    {
-                                        var targetcontract = _locate.LocateContract(game, contractId.Key);
-
-                                        var zmod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
-                                        };
-
-                                        targetcontract.Modifiers.Add(zmod);
-                                    }
-                                }
-                                if (spec.TargetId == "zCharacters")
-                                {
-                                    foreach (var characterId in stage.Expedition.PartyIds)
-                                    {
-                                        var zcharacter = _locate.LocateCharacter(game, characterId);
-
-                                        var zmod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
-                                        };
-
-                                        zcharacter.Modifiers.Add(zmod);
-                                    }
-                                }
-                                if (spec.TargetId == "zSpecialties")
-                                {
-                                    foreach (var characterId in stage.Expedition.PartyIds)
-                                    {
-                                        var zcharacter = _locate.LocateCharacter(game, characterId);
-                                        var specialty = _locate.LocateSpecialty(game, zcharacter.SpecialtyId);
-
-                                        var zmod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
-                                        };
-
-                                        specialty.Modifiers.Add(zmod);
-                                    }
-                                }
-                                break;
                             case "m": // Coins
                                 var coins = _locate.LocateCoin(game, spec.TargetId);
 
@@ -893,63 +836,6 @@ namespace FurmaIdle.Services
                                     };
 
                                     aupgrades.Value.Modifiers.Add(amod);
-                                }
-                            }
-                            break;
-                        case "z": // All of a Kind in a Stage
-                            if (trait.TargetId == "zContracts")
-                            {
-                                foreach (var contractId in stage.ActiveContracts)
-                                {
-                                    var targetcontract = _locate.LocateContract(game, contractId.Key);
-
-                                    var zmod = new ModifierModel
-                                    {
-                                        ApplyerId = trait.Id,
-                                        Type = trait.EffectType,
-                                        Scope = trait.Persistence,
-                                        Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
-                                    };
-
-                                    targetcontract.Modifiers.Add(zmod);
-                                }
-                            }
-                            if (trait.TargetId == "zCharacters")
-                            {
-                                foreach (var characterId in stage.Expedition.PartyIds)
-                                {
-                                    var zcharacter = _locate.LocateCharacter(game, characterId);
-
-                                    var zmod = new ModifierModel
-                                    {
-                                        ApplyerId = trait.Id,
-                                        Type = trait.EffectType,
-                                        Scope = trait.Persistence,
-                                        Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
-                                    };
-
-                                    zcharacter.Modifiers.Add(zmod);
-                                }
-                            }
-                            if (trait.TargetId == "zSpecialties")
-                            {
-                                foreach (var characterId in stage.Expedition.PartyIds)
-                                {
-                                    var zcharacter = _locate.LocateCharacter(game, characterId);
-                                    var targetSpecialty = _locate.LocateSpecialty(game, zcharacter.SpecialtyId);
-
-                                    var zmod = new ModifierModel
-                                    {
-                                        ApplyerId = trait.Id,
-                                        Type = trait.EffectType,
-                                        Scope = trait.Persistence,
-                                        Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
-                                    };
-
-                                    targetSpecialty.Modifiers.Add(zmod);
                                 }
                             }
                             break;

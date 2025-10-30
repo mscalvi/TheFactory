@@ -277,43 +277,33 @@ namespace FurmaIdle.Services
         }
         public Dictionary<string, double> GetTotalContractsPerSecond(GameModel game)
         {
-            var result = new Dictionary<string, double>();
-            CoinModel coin = new CoinModel();
+            var result = new Dictionary<string, double>(StringComparer.Ordinal);
             
             if (game is null)
                 return result;
 
-            foreach (var stageDict in game.Stages)
+            foreach (var st in game.Stages.Values)
             {
-                var stage = stageDict.Value;
+                if (st.State != UnlockHelper.State.Unlocked || st.ActiveContracts.Count == 0) continue;
 
-                if(stage.State == UnlockHelper.State.Unlocked)
+                foreach (var (cid, qty) in st.ActiveContracts)
                 {
-                    if (stage.ActiveContracts.Count <= 0) continue;
+                    if (!game.Contracts.TryGetValue(cid, out var c) || qty <= 0) continue;
 
-                    double sum = 0;
-
-                    foreach (var contractDict in stage.ActiveContracts)
-                    {
-                        var contract = _locate.LocateContract(game, contractDict.Key);
-                        var coinId = ContractHelper.CoinIdOf(contract);
-                        coin = _locate.LocateCoin(game, coinId);
-
-                        if (coin.State == UnlockHelper.State.Unlocked)
-                        {
-                            sum += ContractHelper.RealProdPerSecond(contract, stage);
-
-                            var coinModifiers = GetCoinModifiers(coin, EffectHelper.EffectType.CoinGain);
-                            var cAdd = coinModifiers.AddMod;
-                            var cMult = coinModifiers.MultMod <= 0 ? 1 : coinModifiers.MultMod;
-                            sum = (sum + cAdd) * cMult;
-                        }
-                    }
-
-                    result.Add(coin.Id, sum);
+                    var coinId = ContractHelper.CoinIdOf(c);
+                    var add = ContractHelper.RealProdPerSecond(c, st);
+                    result[coinId] = (result.TryGetValue(coinId, out var cur) ? cur : 0) + add;
                 }
+            }
 
-                return result;
+            foreach (var kv in result.Keys.ToList())
+            {
+                var coin = _locate.LocateCoin(game, kv);
+                if (coin is null || coin.State != UnlockHelper.State.Unlocked) continue;
+
+                var (cAdd, cMult) = GetCoinModifiers(coin, EffectHelper.EffectType.CoinGain);
+                if (cMult <= 0) cMult = 1;
+                result[kv] = (result[kv] + cAdd) * cMult;
             }
 
             return result;
@@ -346,7 +336,7 @@ namespace FurmaIdle.Services
                     }
                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                     {
-                        AddMod *= modifier.Value;
+                        MultMod *= modifier.Value;
                     }
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using System.Security.AccessControl;
 using static FurmaIdle.Helpers.ItemHelper;
 
 namespace FurmaIdle.Services
@@ -35,11 +36,13 @@ namespace FurmaIdle.Services
     {
         private readonly ILocateService _locate;
         private readonly ICurrentGameService _game;
+        private readonly IUiLogService _log;
 
-        public SpecialtiesService(ILocateService locate, ICurrentGameService game)
+        public SpecialtiesService(ILocateService locate, ICurrentGameService game, IUiLogService log)
         {
             _locate = locate;
             _game = game;
+            _log = log;
         }
 
         private double _acc;
@@ -50,6 +53,7 @@ namespace FurmaIdle.Services
 
         public void ActivateSpecialtyTimer(string specialtyId, double durationSec)
         {
+            _log.Warn($"Início da {specialtyId}, duração: {durationSec}");
             if (string.IsNullOrWhiteSpace(specialtyId)) return;
             var now = DateTimeOffset.UtcNow;
             var dur = Math.Max(0.001, durationSec);
@@ -66,7 +70,6 @@ namespace FurmaIdle.Services
                 var remaining = (t.endsAt - DateTimeOffset.UtcNow).TotalSeconds;
                 if (remaining <= 0)
                 {
-                    _specTimers.Remove(specialtyId);
                     return (0, t.totalSec);
                 }
                 return (remaining, t.totalSec);
@@ -89,12 +92,11 @@ namespace FurmaIdle.Services
                 DecreaseSpec(game);
         }
 
-        private void DecreaseSpec(GameModel game)
+        private async void DecreaseSpec(GameModel game)
         {
             if (_specTimers.Count == 0) return;
 
             var now = DateTimeOffset.UtcNow;
-            // pegue uma cópia das chaves que expiraram
             var expired = _specTimers
                 .Where(kvp => kvp.Value.endsAt <= now)
                 .Select(kvp => kvp.Key)
@@ -102,39 +104,42 @@ namespace FurmaIdle.Services
 
             if (expired.Count == 0) return;
 
-            foreach (var specId in expired)
+            await _game.Mutate(g =>
             {
-                RemoveAllSpecModifiers(game, specId);
-                _specTimers.Remove(specId);
-            }
+                foreach (var specId in expired)
+                {
+                    var spec = _locate.LocateSpecialty(g, specId);
+                    if (spec is null) continue;
+
+                    if (spec.TargetId == "aSpecialties")
+                    {
+                        foreach (var it in g.Specialties.Values)
+                            Scrub(it.Modifiers, specId);
+                    }
+                    else if (spec.TargetId == "aContracts")
+                    {
+                        foreach (var it in g.Contracts.Values)
+                            Scrub(it.Modifiers, specId);
+                    }
+                    else if (spec.TargetId == "aResources")
+                    {
+                        foreach (var it in g.Resources.Values)
+                            Scrub(it.Modifiers, specId);
+                    }
+
+                    _log.Warn($"Fim da {specId}");
+
+                    _specTimers.Remove(specId);
+                }
+
+            }, save: true);
         }
 
-        public void RemoveAllSpecModifiers(GameModel game, string specId)
+        private static void Scrub(List<ModifierModel> list, string specId)
         {
-            void CleanList(List<ModifierModel> list, string specIdToRemove)
-            {
-                list.RemoveAll(m =>
-                    m.ApplyerId == specIdToRemove &&
-                    m.Scope == UnlockHelper.Persistence.untilTimer
-                );
-            }
-
-            var spec = _locate.LocateSpecialty(game, specId);
-
-            if(spec.TargetId == "zSpecialties")
-            {
-                foreach (var it in game.Specialties.Values) CleanList(it.Modifiers, specId);
-            }
-            if(spec.TargetId == "zContracts")
-            {
-                foreach (var it in game.Contracts.Values) CleanList(it.Modifiers, specId);
-            }
-            if (spec.TargetId == "aResources")
-            {
-                foreach (var it in game.Resources.Values) CleanList(it.Modifiers, specId);
-            }
+            list.RemoveAll(m =>
+                m.Scope == UnlockHelper.Persistence.untilTimer &&
+                string.Equals(m.ApplyerId, specId, StringComparison.Ordinal));
         }
-
     }
-
 }

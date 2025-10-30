@@ -30,7 +30,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 ContractsIds = new() { "c11", "c21", "c31", "c41" },
                 TraitId = "o05",
-                SpecialtyId = "e03",
+                SpecialtyId = "e01",
                 Modifiers = new List<ModifierModel>(),
             },
             ["p002"] = new CharacterModel
@@ -51,7 +51,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 ContractsIds = new() { "c11", "c21", "c32", "c42" },
                 TraitId = "o04",
-                SpecialtyId = "e01",
+                SpecialtyId = "e02",
                 Modifiers = new List<ModifierModel>(),
             },
             ["p003"] = new CharacterModel
@@ -72,7 +72,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 ContractsIds = new() { "c12", "c22", "c31", "c43" },
                 TraitId = "o03",
-                SpecialtyId = "e02",
+                SpecialtyId = "e03",
                 Modifiers = new List<ModifierModel>(),
             },
             ["p004"] = new CharacterModel
@@ -93,7 +93,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 ContractsIds = new() { "c11", "c23", "c34", "c44" },
                 TraitId = "o01",
-                SpecialtyId = "e03",
+                SpecialtyId = "e04",
                 Modifiers = new List<ModifierModel>(),
             },
             ["p011"] = new CharacterModel
@@ -114,7 +114,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k04",
                 ContractsIds = new() { "c12", "c22", "c32", "c45" },
                 TraitId = "o02",
-                SpecialtyId = "e04",
+                SpecialtyId = "e05",
                 Modifiers = new List<ModifierModel>(),
             },
             ["p021"] = new CharacterModel
@@ -135,7 +135,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 ContractsIds = new() { "c11", "c22", "c33", "c45" },
                 TraitId = "o04",
-                SpecialtyId = "e02",
+                SpecialtyId = "e06",
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion

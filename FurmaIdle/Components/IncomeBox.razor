@@ -6,25 +6,58 @@
 
 @inject ILocateService Locate
 @inject IContractsService Contracts
+@inject IResourcesService Resource
 
 <section class="income-box panel">
-    @foreach (var it in GetCoins())
-    {
-        <ul>
-            <li class="income-row">
-                <span class="nano-image"></span>
-                <span class="income-name">@it.Key</span>
+    <!-- TOPO: COINS -->
+    @{
+        var coins = GetCoinTiles();
+        var coinCount = coins.Count;
+    }
+    <div class="band band-coins" style="--count:@(coinCount)">
+        @foreach (var it in coins)
+        {
+            <div class="coin-camp">
+                <img class="image-resource" src="@it.Image"
+                     alt="@it.Id"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <span class="income-total">
-                    @it.Value.total.ToString("N0")
-                    @if (it.Value.perSec > 0)
+                    @it.Total.ToString("N0")
+                    @if (it.PerSec > 0)
                     {
-                        <text> +@it.Value.perSec.ToString("N2") /s</text>
+                        <text> +@it.PerSec.ToString("N2")/s</text>
                     }
                 </span>
-            </li>
-        </ul>
+            </div>
+        }
+    </div>
+
+    <div class="band-divider" aria-hidden="true"></div>
+
+    <!-- BASE: RESOURCES -->
+    @{
+        var res = GetResourceTiles();
+        var resCount = res.Count;
     }
+    <div class="band band-resources" style="--count:@(resCount)">
+        @foreach (var it in res)
+        {
+            <div class="coin-camp">
+                <img class="image-resource" src="@it.Image"
+                     alt="@it.Id"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <span class="income-total">
+                    @it.Total.ToString("N0") / @it.Cap.ToString()
+                    @if (it.PerSec > 0)
+                    {
+                        <text> +@it.PerSec.ToString("N2")/s</text>
+                    }
+                </span>
+            </div>
+        }
+    </div>
 </section>
+
 
 @code {
     protected override void OnInitialized()
@@ -37,31 +70,62 @@
         base.OnGameChanged();
     }
 
-    private Dictionary<string, (string image, long total, double perSec)> GetCoins()
+    private sealed record TileVM(string Id, string Image, long Total, long Cap, double PerSec);
+
+    // COINS (topo)
+    private List<TileVM> GetCoinTiles()
     {
         var game = Game.CurrentGame;
+        var list = new List<TileVM>();
 
-        var result = new Dictionary<string, (string, long, double)>();
+        if (game?.Coins is null) return list;
 
-        foreach(var coin in game.Coins)
+        // produção por segundo por moeda (dos contratos)
+        var perSecByCoin = Contracts.GetTotalContractsPerSecond(game);
+
+        foreach (var kv in game.Coins)
         {
-            long current = 0;
-            double generation = 0;
+            var coin = kv.Value;
+            if (coin.State != UnlockHelper.State.Unlocked) continue;
 
-            if (coin.Value.State == UnlockHelper.State.Unlocked)
-            {
-                var coinsGeneration = Contracts.GetTotalContractsPerSecond(game);
+            // total atual
+            long total = 0;
+            if (game.ExpeditionStats?.Coins?.TryGetValue(coin.Id, out var t) == true)
+                total = t;
 
-                if (coinsGeneration.TryGetValue(coin.Key, out var g) == true)
-                    generation = g;
+            // per-sec (se existir)
+            perSecByCoin.TryGetValue(coin.Id, out var psec);
 
-                if (game.ExpeditionStats?.Coins?.TryGetValue(coin.Key, out var v) == true)
-                    current = v;
-
-                result[coin.Value.Id] = (coin.Value.Image, current, generation);
-            }
+            list.Add(new TileVM(coin.Id, coin.Image, total, 0, psec));
         }
 
-        return result;
+        return list;
+    }
+
+    // RESOURCES (base)
+    private List<TileVM> GetResourceTiles()
+    {
+        var game = Game.CurrentGame;
+        var list = new List<TileVM>();
+
+        if (game?.Resources is null) return list;
+
+        foreach (var kv in game.Resources)
+        {
+            var psec = Resource.GetResourceInfo(game, kv.Value.Id);
+
+            var res = kv.Value;
+            if (res.State != UnlockHelper.State.Unlocked) continue;
+
+            // total atual (se você guarda em ExpeditionStats)
+            long total = 0;
+            if (game.ExpeditionStats?.Resources?.TryGetValue(res.Id, out var t) == true)
+                total = t;
+
+
+            list.Add(new TileVM(res.Id, res.Image, total, psec.rsCap, psec.rsRegen));
+        }
+
+        return list;
     }
 }
