@@ -18,7 +18,7 @@ else
 {
     var game = Game.CurrentGame;
 
-    var expeditionStats = Game.CurrentGame?.ExpeditionStats;
+    var expeditionStats = _stage.ExpeditionStats;
 
     var isActive = Expedition.IsExpeditionActive(_stage.Expedition);
     var partySize = Expedition.GetPartyCap(_stage);

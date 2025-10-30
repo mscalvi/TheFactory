@@ -221,7 +221,7 @@ namespace FurmaIdle.Services
 
                     var total = perCycle * qty * cycles;
 
-                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, realParameters.CoinId, total, ItemHelper.ItemType.Contract, contractId);
+                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, realParameters.CoinId, total, ItemHelper.ItemType.Contract, contractId, stageId);
                 }
 
                 if (prog < 0) prog = 0;
@@ -319,7 +319,7 @@ namespace FurmaIdle.Services
 
             if (amount > 0)
                 await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, amount,
-                                       ItemHelper.ItemType.Specialty, specId);
+                                       ItemHelper.ItemType.Specialty, specId, stageId);
         }
 
         private static (double AddMod, double MultMod) GetCoinModifiers(CoinModel coin, EffectHelper.EffectType type)

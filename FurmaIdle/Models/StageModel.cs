@@ -21,6 +21,8 @@ namespace FurmaIdle.Models
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
 
+        public StatsModel ExpeditionStats { get; set; } = new();
+
         public int StartPartySize { get; set; }
         public int MaxPartySize { get; set; }
 

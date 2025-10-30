@@ -44,7 +44,6 @@ namespace FurmaIdle.Services
                 {
                     SchemaVersion = 1,
                     LastTick = DateTime.UtcNow,
-                    ExpeditionStats = new StatsModel(),
                     ExpansionStats = new StatsModel(),
                     GameStats = new StatsModel(),
                     LastExpansionId = "x00",

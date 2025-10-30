@@ -2,6 +2,7 @@
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using static FurmaIdle.Helpers.UnlockHelper;
@@ -241,7 +242,13 @@ namespace FurmaIdle.Services
                 stage.lockedContracts?.Clear();
 
                 // transforma coins em Knowledge
-                // Income?
+                foreach (var coins in stage.ExpeditionStats.Coins)
+                {
+                    if(coins.Key == stage.CoinId)
+                    {
+                        // zerar coin
+                    }
+                }
 
                 // reseta upgrades
                 foreach (var upgrades in game.Upgrades)

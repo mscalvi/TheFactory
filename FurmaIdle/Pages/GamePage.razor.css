@@ -76,6 +76,7 @@
 
 .contracts-menu {
     grid-area: contracts;
+    min-height: 0;
 }
 
 /* ------ Estilo temporário para visualizar caixas ------ */

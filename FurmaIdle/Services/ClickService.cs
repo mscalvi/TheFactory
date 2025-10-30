@@ -32,7 +32,7 @@ namespace FurmaIdle.Services
 
             var ClickTotal = GetClickTotal(stage);
 
-            var gain = await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal, ItemHelper.ItemType.Click, stage.ClickId);
+            var gain = await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, ClickTotal, ItemHelper.ItemType.Click, stage.ClickId, stage.Id);
             
             ClickGain = gain.GainEffective;
         }

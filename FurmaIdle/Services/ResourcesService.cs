@@ -71,8 +71,11 @@ namespace FurmaIdle.Services
                 if (resource.rsRegen <= 0) continue;
 
                 long current = 0;
-                if (game.ExpeditionStats?.Resources?.TryGetValue(res.Id, out var cur) == true)
-                    current = cur;
+                foreach (var stage in game.Stages)
+                {
+                    if (stage.Value.ExpeditionStats.Resources.TryGetValue(res.Id, out var cur) == true)
+                        current += cur;
+                }
 
                 if (resource.rsCap > 0 && current >= resource.rsCap) continue;
 
@@ -81,7 +84,7 @@ namespace FurmaIdle.Services
 
                 if (amount > 0)
                 {
-                    _ = _income.AddAsync(ItemType.Resource, res.Id, amount, sourceType: null, sourceId: null);
+                    _ = _income.AddAsync(ItemType.Resource, res.Id, amount, sourceType: null, sourceId: null, null);
                 }
             }
         }

@@ -7,21 +7,23 @@ namespace FurmaIdle.Services
 {
     public interface IIncomeService
     {
-        Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount, ItemHelper.ItemType? sourceType, string sourceId);
+        Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount, ItemHelper.ItemType? sourceType, string sourceId, string stageId);
     }
 
     public sealed class IncomeService : IIncomeService
     {
         private readonly ICurrentGameService _game;
         private readonly IUiLogService _log;
+        private readonly ILocateService _locate;
 
-        public IncomeService(ICurrentGameService game, IUiLogService log)
+        public IncomeService(ICurrentGameService game, IUiLogService log, ILocateService locate)
         {
             _game = game;
             _log = log;
+            _locate = locate;
         }
 
-        public async Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount, ItemHelper.ItemType? sourceType, string? sourceId)
+        public async Task<GainModel> AddAsync(ItemHelper.ItemType type, string itemId, double amount, ItemHelper.ItemType? sourceType, string? sourceId, string stageId)
         {
             if (string.IsNullOrWhiteSpace(itemId))
                 throw new ArgumentException("itemId inválido.", nameof(itemId));
@@ -30,21 +32,22 @@ namespace FurmaIdle.Services
 
             var gain = (long)Math.Floor(amount);
             var frac = amount - gain;
+            var stage = _locate.LocateStage(_game.CurrentGame, stageId);
 
-            GainModel? result = null;
+            GainModel ? result = null;
 
             var saveFrac = Math.Round(frac * 100, MidpointRounding.AwayFromZero) != 0;
             await _game.Mutate(Game =>
             {
-                if (!ApplyStats(Game, type, itemId, gain, frac))
+                if (!ApplyStats(Game, type, itemId, gain, frac, stage))
                 {
                     gain = 0;
                 }
 
                 if(sourceType == ItemHelper.ItemType.Click)
                 {
-                    Game.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var prevExp);
-                    Game.ExpeditionStats.ClicksMade[sourceId] = prevExp + 1;
+                    stage.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var prevExp);
+                    stage.ExpeditionStats.ClicksMade[sourceId] = prevExp + 1;
 
                     Game.ExpansionStats.ClicksMade.TryGetValue(sourceId, out var prevExpa);
                     Game.ExpansionStats.ClicksMade[sourceId] = prevExpa + 1;
@@ -66,12 +69,12 @@ namespace FurmaIdle.Services
             return result!;
         }
 
-        private bool ApplyStats(GameModel Game, ItemHelper.ItemType type, string id, long gain, double frac)
+        private bool ApplyStats(GameModel Game, ItemHelper.ItemType type, string id, long gain, double frac, StageModel stage)
         {
             if (type == ItemType.Coin)
             {
                 // ---- trabalhar em centavos (0..99) ----
-                Game.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
+                stage.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
 
                 int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
@@ -83,16 +86,16 @@ namespace FurmaIdle.Services
                 double newRestDouble = newRestCents / 100.0;
 
                 // ---- acumula moedas ----
-                Game.ExpeditionStats.Coins.TryGetValue(id, out var coin);
+                stage.ExpeditionStats.Coins.TryGetValue(id, out var coin);
                 coin = coin + gain + extra;
 
-                Game.ExpeditionStats.CoinsGain.TryGetValue(id, out var coinExpe);
+                stage.ExpeditionStats.CoinsGain.TryGetValue(id, out var coinExpe);
                 coinExpe = coinExpe + gain + extra;
 
                 // ---- persistir ----
-                Game.ExpeditionStats.Coins[id] = coin;
-                Game.ExpeditionStats.CoinsGain[id] = coinExpe;
-                Game.ExpeditionStats.CoinsFrac[id] = newRestDouble;
+                stage.ExpeditionStats.Coins[id] = coin;
+                stage.ExpeditionStats.CoinsGain[id] = coinExpe;
+                stage.ExpeditionStats.CoinsFrac[id] = newRestDouble;
 
                 Game.ExpansionStats.CoinsGain.TryGetValue(id, out var coinExpa);
                 coinExpa = coinExpa + gain + extra;
@@ -104,7 +107,7 @@ namespace FurmaIdle.Services
             }
             if (type == ItemType.Resource)
             {
-                Game.ExpeditionStats.ResourcesFrac.TryGetValue(id, out var restDouble);
+                stage.ExpeditionStats.ResourcesFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
 
                 int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
@@ -116,16 +119,16 @@ namespace FurmaIdle.Services
                 double newRestDouble = newRestCents / 100.0;
 
                 // ---- acumula ----
-                Game.ExpeditionStats.Resources.TryGetValue(id, out var coin);
+                stage.ExpeditionStats.Resources.TryGetValue(id, out var coin);
                 coin = coin + gain + extra;
 
-                Game.ExpeditionStats.ResourcesGain.TryGetValue(id, out var coinExpe);
+                stage.ExpeditionStats.ResourcesGain.TryGetValue(id, out var coinExpe);
                 coinExpe = coinExpe + gain + extra;
 
                 // ---- persistir ----
-                Game.ExpeditionStats.Resources[id] = coin;
-                Game.ExpeditionStats.ResourcesGain[id] = coinExpe;
-                Game.ExpeditionStats.ResourcesFrac[id] = newRestDouble;
+                stage.ExpeditionStats.Resources[id] = coin;
+                stage.ExpeditionStats.ResourcesGain[id] = coinExpe;
+                stage.ExpeditionStats.ResourcesFrac[id] = newRestDouble;
 
                 Game.ExpansionStats.ResourcesGain.TryGetValue(id, out var coinExpa);
                 coinExpa = coinExpa + gain + extra;
@@ -138,15 +141,15 @@ namespace FurmaIdle.Services
             if (type == ItemType.Knowledge)
             {
                 // ---- acumula moedas ----
-                Game.ExpeditionStats.Knowledge.TryGetValue(id, out var coin);
+                stage.ExpeditionStats.Knowledge.TryGetValue(id, out var coin);
                 coin = coin + gain;
 
-                Game.ExpeditionStats.KnowledgeGain.TryGetValue(id, out var coinExpe);
+                stage.ExpeditionStats.KnowledgeGain.TryGetValue(id, out var coinExpe);
                 coinExpe = coinExpe + gain;
 
                 // ---- persistir ----
-                Game.ExpeditionStats.Knowledge[id] = coin;
-                Game.ExpeditionStats.KnowledgeGain[id] = coinExpe;
+                stage.ExpeditionStats.Knowledge[id] = coin;
+                stage.ExpeditionStats.KnowledgeGain[id] = coinExpe;
 
                 Game.ExpansionStats.KnowledgeGain.TryGetValue(id, out var coinExpa);
                 coinExpa = coinExpa + gain;

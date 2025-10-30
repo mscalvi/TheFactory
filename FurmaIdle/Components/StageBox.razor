@@ -186,7 +186,12 @@ else
 
     long getResTotal(string resId)
     {
-        long resTotal = Game.CurrentGame.ExpeditionStats.Resources.TryGetValue(resId, out var v) == true ? v : 0L;
+        long resTotal = 0;
+        foreach(var stage in Game.CurrentGame.Stages)
+        {
+            resTotal += stage.Value.ExpeditionStats.Resources.TryGetValue(resId, out var v) == true ? v : 0L;
+            
+        }
         return resTotal;
     }
 

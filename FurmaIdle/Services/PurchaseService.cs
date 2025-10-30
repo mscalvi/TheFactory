@@ -44,7 +44,7 @@ namespace FurmaIdle.Services
             await _game.Mutate(game =>
             {
                 Console.WriteLine($"[Purchase] {itemId} Custo: {cost.costValue} {cost.costId}");
-                ApplyDebit(game.ExpeditionStats, cost.costValue, cost.costId);
+                ApplyDebit(stage.ExpeditionStats, cost.costValue, cost.costId);
                 ApplyStats(game.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
 
             }, save: true);
@@ -73,7 +73,8 @@ namespace FurmaIdle.Services
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId)
         {
             var game = _game.CurrentGame;
-            var stats = game.ExpeditionStats ?? throw new InvalidOperationException("ExpeditionStats indisponível.");
+            var stage = _locate.LocateStage(game, stageId);
+            var stats = stage.ExpeditionStats ?? throw new InvalidOperationException("ExpeditionStats indisponível.");
 
             var cost = ComputeCost(type, itemId, stageId);
 

@@ -17,7 +17,6 @@
         public HashSet<string> UnlockedMenus { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
         // Total
-        public StatsModel ExpeditionStats { get; set; } = new();
         public StatsModel ExpansionStats { get; set; } = new();
         public StatsModel GameStats { get; set; } = new();
         public Dictionary<string, CoinModel> Coins { get; set; } = new();
