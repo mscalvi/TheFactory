@@ -1,0 +1,67 @@
+﻿:root {
+    --title-h: 72px; /* altura da faixa (ajuste se quiser) */
+    --title-gap: 4px;
+}
+
+:host {
+    display: block;
+    height: var(--title-h);
+}
+
+/* container da faixa: sem scroll SEMPRE */
+.title-strip {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+    border: 1px solid var(--panel-border, rgba(255,255,255,.08));
+    border-radius: 10px;
+    background: var(--panel-bg, rgba(255,255,255,.03));
+    padding: 8px 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* centro vertical/horizontal com 2 linhas */
+.title-center {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 3fr 2fr;
+    gap: var(--title-gap);
+    place-items: center;
+    text-align: center;
+    min-height: 0;
+}
+
+/* linhas */
+.t-line {
+    width: 100%;
+    min-width: 0; /* habilita ellipsis */
+    min-height: 0;
+}
+
+/* tipografia */
+.t-title {
+    font-weight: 800;
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    line-height: 1.15;
+}
+
+.t-locals {
+    font-weight: 600;
+    font-size: clamp(.9rem, 1.8vw, 1.05rem);
+    line-height: 1.15;
+    opacity: .95;
+}
+
+/* utilitários */
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* só pra garantir que NENHUM filho crie scroll */
+.title-strip * {
+    max-width: 100%;
+}

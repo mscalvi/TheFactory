@@ -710,7 +710,7 @@ namespace FurmaIdle.Services
                                 break;
                         }
 
-                        _specialty.ActivateSpecialtyTimer(spec.Id, spec.Duration, stageId);
+                        _specialty.ActivateSpecialtyTimer(spec.Id, spec.Duration);
                     }, save: true);
                 }
             }

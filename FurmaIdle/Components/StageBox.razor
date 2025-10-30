@@ -1,45 +1,151 @@
-﻿@inherits UiHelper
+﻿@* Components/StageBox.razor *@
+@inherits UiHelper
 
-@using FurmaIdle.Data
+@using System.Linq
+@using FurmaIdle.Helpers
 @using FurmaIdle.Models
+@using FurmaIdle.Data
 @using FurmaIdle.Services
-@using FurmaIdle.Helpers;
 
-@inject IUnlockService Unlock
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+@inject IExpeditionService Expedition
+@inject ISpecialtiesService Specialty
+@inject IIncomeService Income
+@inject IPurchaseService Purchase
 @inject ILocateService Locate
+@inject IResourcesService Resource
+@inject IContractsService Contracts
 
-@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+@if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
 }
 else
 {
     var game = Game.CurrentGame;
-    <div class="stage-box title">
-        <div class="stage-name">
-            <h3>@_stage.Name</h3>
-        </div>
-        <div class="stage-locals text">
-            @{
-                var unlocked = new List<string>();
-                foreach (var lid in game.Locals)
-                {
-                    var local = Locate.LocateLocal(game, lid.Key);
-                    if (local.StageId == _stage.Id)
-                    {
-                        if (local.State == UnlockHelper.State.Unlocked)
-                        {
-                            unlocked.Add(local.Name);
-                        }
-                    }
-                }
-                <p>@(unlocked.Count > 0 ? string.Join("- ", unlocked) : "Nenhum local desbloqueado")</p>
+
+    var activeCharsForCap = game.Characters.Values
+        .Where(c => c.State == UnlockHelper.State.Unlocked
+                && c.CharState == UnlockHelper.CharState.InStage
+                && c.InStageId == game.SelectedStageId)
+        .ToList();
+    var members = activeCharsForCap.Count;
+
+    var unlockedResources = game.Resources.Values
+        .Where(r => r.State == UnlockHelper.State.Unlocked)
+        .OrderBy(r => r.Id)
+        .ToList();
+
+    var activeChars = game.Characters.Values
+        .Where(c => c.State == UnlockHelper.State.Unlocked
+                 && c.CharState == UnlockHelper.CharState.InStage
+                 && c.InStageId == game.SelectedStageId)
+        .OrderBy(c => c.Id)
+        .ToList();
+
+    bool IsSpecActive(SpecialtyModel spec)
+    {
+        var timer = Specialty.GetSpecialtyTimer(spec);
+        return timer.Actual > 0;
+    }
+
+    bool CanUseSpec(SpecialtyModel spec)
+    {
+        if (IsSpecActive(spec)) return false;
+
+        var stageId = game.SelectedStageId;
+        if (string.IsNullOrWhiteSpace(stageId)) return false;
+
+        return Purchase.CanAfford(ItemHelper.ItemType.Specialty, spec.Id, stageId);
+    }
+
+    <!-- ========= Party grid (PartySizeMax slots) ========= -->
+    <section class="party-grid panel" style="--slots:@Expedition.GetPartyCap(_stage)">
+        @for (var i = 0; i < Expedition.GetPartyCap(_stage); i++)
+        {
+            if (i < activeChars.Count)
+            {
+                var c = activeChars[i];
+                var id = c.Id;
+
+                var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
+
+                var canUse = CanUseSpec(spec);
+                var isActive = IsSpecActive(spec);
+
+                var timer = Specialty.GetSpecialtyTimer(spec);
+                double ratio = isActive && timer.Total > 0 ? (1.0 - ((timer.Total - timer.Actual) / timer.Total)) : 0.0;
+                int stepsOn = Math.Clamp((int)Math.Floor(ratio * 10.0), 0, 10);
+
+                <div class="party-slot">
+                    <div class="party-card">
+                        <!-- imagem do personagem (ocupa 2 linhas) -->
+                        <div class="pc-char"
+                             @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, c.Id, c.SpecialtyId))"
+                             @onmouseout="Tooltips.Clear">
+                            <span class="party-icon">
+                                <img src="@CharImg(id)" alt="@c.Id"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+                                <span class="icon-fallback">@c.Id</span>
+                            </span>
+                        </div>
+
+                        <!-- botão da specialty (topo-direita) -->
+                        <div class="pc-action">
+                            @if (!isActive)
+                            {
+                                <button class="spec-btn"
+                                        disabled="@(!canUse)"
+                                        @onclick="() => UseSpec(spec)"
+                                        @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, spec.Id, _stage!.Id))"
+                                        @onmouseout="Tooltips.Clear">
+                                    @spec.Name
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="pc-badge">Em uso</span>
+                            }
+                        </div>
+
+                        <!-- barra de progresso (base-direita) -->
+                        <div class="pc-progress">
+                            @if (isActive)
+                            {
+                                var prog = (timer.Total > 0) ? (1.0 - (timer.Actual / timer.Total)) : 0.0;
+                                prog = Math.Clamp(prog, 0.0, 1.0);
+                                var pct = $"{prog * 100:0.#}%";
+                                var secs = $"{timer.Actual:0.##}s";
+
+                                <div class="specialty-selected is-compact" aria-hidden="true">
+                                    <div class="specialty-progress" style="width:@pct"></div>
+                                    <div class="specialty-steps">
+                                        @for (int j = 0; j < 10; j++)
+                                        {
+                                            <span class="step @(j < Math.Floor(prog * 10) ? "is-on" : null)"></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="progress-caption">@pct – @secs</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+
             }
-        </div>
-    </div>
+            else
+            {
+                <div class="party-slot">
+                    <div class="party-card is-empty">
+                        <div class="party-slot-empty icon-button">—</div>
+                    </div>
+                </div>
+            }
+        }
+    </section>
 }
-
-
 
 @code {
     private StageModel? _stage;
@@ -67,4 +173,23 @@ else
         g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
         _stage = st;
     }
+
+    public async Task UseSpec(SpecialtyModel spec)
+    {
+        await Purchase.Purchase(ItemHelper.ItemType.Specialty, spec.Id, _stage.Id);
+
+        if (spec.Id == "e02" || spec.Id == "e06")
+        {
+            await Contracts.BurstProduction(spec.EffectValue, _stage.Id, spec.Id);
+        }
+    }
+
+    long getResTotal(string resId)
+    {
+        long resTotal = Game.CurrentGame.ExpeditionStats.Resources.TryGetValue(resId, out var v) == true ? v : 0L;
+        return resTotal;
+    }
+
+    private static string CharImg(string id) => $"images/characters/{id}.png";
+
 }

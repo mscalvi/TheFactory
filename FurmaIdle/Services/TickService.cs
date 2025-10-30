@@ -50,7 +50,7 @@ namespace FurmaIdle.Services
         private DateTime _lastLoopUtc;      // para calcular dt entre iterações
         private double _saveAcc;            // acumula tempo p/ salvar
         private double _uiAcc;              // acumula tempo para atualizar UI
-        private const double UiEvery = 0.5; // em segundos (2x/seg undo lag visual)
+        private const double UiEvery = 0.2; // em segundos (2x/seg undo lag visual)
 
         // config
         private const int TickMs = 200;                 // 5x por segundo

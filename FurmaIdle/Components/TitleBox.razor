@@ -2,21 +2,51 @@
 
 @using FurmaIdle.Models
 @using FurmaIdle.Services
+@using FurmaIdle.Helpers
 
-<div class="title-box title">
-        <h2>FurmaIdle - Exploradores de Furma</h2>
+@inject ILocateService Locate
+
+<div class="title-strip">
+    <div class="title-center">
+        @if (!Game.IsReady)
+        {
+            <div class="t-line t-title ellipsis">Exploradores de Furma</div>
+            <div class="t-line t-locals ellipsis">Carregando…</div>
+        }
+        else
+        {
+            var g = Game.CurrentGame;
+            StageModel? stage = null;
+            if (!string.IsNullOrWhiteSpace(g.SelectedStageId))
+                g.Stages.TryGetValue(g.SelectedStageId, out stage);
+
+            var stageName = stage?.Name ?? "Sem Stage";
+            var unlocked = g.Locals
+            .Select(kv => Locate.LocateLocal(g, kv.Key))
+            .Where(l => l is not null && l.StageId == stage?.Id && l.State == UnlockHelper.State.Unlocked)
+            .Select(l => l!.Name)
+            .ToList();
+
+            var localsText = unlocked.Count > 0 ? string.Join(" · ", unlocked) : "Nenhum local desbloqueado";
+
+            <div class="t-line t-title ellipsis">Exploradores de Furma — @stageName</div>
+            <div class="t-line t-locals ellipsis">@localsText</div>
+        }
+    </div>
 </div>
 
 @code {
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        // se quiser carregar algo só uma vez, faça aqui
-    }
+    private StageModel? _stage;
 
-    protected override void OnGameChanged()
+    protected override void OnInitialized() => RefreshStage();
+    protected override void OnGameChanged() => RefreshStage();
+
+    private void RefreshStage()
     {
-        // se precisar recalcular alguma cache local, faça aqui
-        // o base já chama StateHasChanged()
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        { _stage = null; return; }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game.CurrentGame.SelectedStageId, out _stage);
     }
 }

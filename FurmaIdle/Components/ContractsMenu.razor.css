@@ -1,0 +1,225 @@
+﻿:root {
+    --level-h: 96px; /* ajuste: 88/96/104... */
+}
+
+/* raiz ocupa o espaço do componente */
+.contracts-root {
+    display: block;
+    height: 100%;
+    min-height: 0;
+}
+
+/* estado sem stage: imagem cheia */
+.contracts-empty {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: var(--panel-bg, rgba(255,255,255,0.03));
+    border: 1px solid var(--panel-border, rgba(255,255,255,0.06));
+    border-radius: 10px;
+}
+
+    .contracts-empty > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        border-radius: 10px;
+    }
+
+/* layout: header + grid */
+.contracts-layout {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 8px;
+    height: 100%;
+}
+
+/* barra capacidade */
+.contracts-capbar {
+    display: grid;
+    place-items: center;
+    padding: 8px 12px;
+    font-weight: 600;
+    gap: 6px;
+    grid-auto-flow: column;
+    justify-content: center;
+    background: var(--panel-bg, rgba(255,255,255,0.03));
+    border: 1px solid var(--panel-border, rgba(255,255,255,0.06));
+    border-radius: 10px;
+}
+
+ .contracts-grid {
+    display: grid;
+    grid-template-rows: repeat(var(--levels), minmax(0, 1fr));
+    gap: 8px;
+    height: 100%;
+    min-height: 0;    
+}
+
+/* cada nível = slot de altura fixa */
+
+.contracts-level {
+    box-sizing: border-box;
+    min-height: 0;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    padding: 6px;
+    background: var(--panel-bg,rgba(255,255,255,.02));
+    border: 1px solid var(--panel-border,rgba(255,255,255,.06));
+    border-radius: 10px;
+}
+
+    .contracts-level > * {
+        margin: 0;
+        min-height: 0;
+    }
+
+/* estados simples dentro do slot */
+.level-locked,
+.level-chosen,
+.no-contracts {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    padding: 0 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* cabeçalho do modo "escolher" */
+.level-header {
+    width: 100%;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.level-button,
+.back-button {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 0 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* lista de contratos quando expandido */
+.contracts-list {
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 8px;
+}
+
+.contract-button {
+    height: 42px;
+    display: grid;
+    place-items: center;
+}
+
+/* ===== nível ESCOLHIDO: mesma altura do slot ===== */
+.contracts-picked {
+    display: grid;
+    grid-template-rows: 1fr 26px;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+/* TOP: botão estreito + card */
+.cp-top {
+    display: grid;
+    grid-template-columns: 80px 1fr; /* botão estreito + card */
+    gap: 8px;
+    align-items: stretch;
+    min-height: 0;
+}
+
+    .cp-top .contract-button {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        padding: 0 8px;
+    }
+
+/* Card compacto */
+.contract-card {
+    display: grid;
+    grid-auto-rows: min-content;
+    align-content: start;
+    gap: 3px;
+    padding: 8px 10px;
+    background: var(--panel-bg,rgba(255,255,255,.04));
+    border: 1px solid var(--panel-border,rgba(255,255,255,.08));
+    border-radius: 10px;
+    height: 100%;
+    overflow: hidden;
+    font-size: .92rem;
+    min-height: 0;
+}
+
+    .contract-card .cc-name {
+        font-weight: 700;
+        text-align: center;
+    }
+
+
+    .contract-card .cc-cycle {
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: center;
+        opacity: 0.95;
+    }
+
+/* ===== Rodapé (timer) — 28px de altura total ===== */
+.cp-bottom {
+    display: grid;
+    grid-template-rows: 12px auto; /* barra 12px + texto abaixo */
+    align-content: center;
+    gap: 2px;
+}
+
+/* barra segmentada em 20 partes (compacta) */
+.cp-bar.cp-bar-chunked {
+    display: grid;
+    grid-template-columns: repeat(20,1fr);
+    gap: 2px;
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    overflow: hidden;
+}
+
+    .cp-bar.cp-bar-chunked .chunk {
+        height: 100%;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.12);
+        transition: background 120ms linear;
+    }
+
+        .cp-bar.cp-bar-chunked .chunk.is-filled {
+            background: rgba(255,255,255,0.55);
+        }
+
+.cp-eta {
+    text-align: center;
+    font-size: 0.82rem;
+    opacity: 0.9;
+    line-height: 1;
+}

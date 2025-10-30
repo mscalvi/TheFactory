@@ -84,7 +84,6 @@ namespace FurmaIdle.Services
             new() { Id = "i1",  Label = "Expan",   Unlocked = false },
             new() { Id = "i2",  Label = "Stage",   Unlocked = true },
             new() { Id = "i3",  Label = "Exped",   Unlocked = false },
-            new() { Id = "i4",  Label = "Party",   Unlocked = false },
             new() { Id = "i5",  Label = "Up",      Unlocked = false },
             new() { Id = "i50", Label = "Tech",    Unlocked = false },
             new() { Id = "i97", Label = "Achiev",  Unlocked = false },
@@ -208,11 +207,6 @@ namespace FurmaIdle.Services
                     }
                     break;
 
-                case "ux004":
-                    SetNotificationMenu("i4");
-                    UnlockMenu("i4");
-                    break;
-
                 case "ul00":
                     SetNotificationMenu("i5");
                     UnlockMenu("i5");
@@ -220,21 +214,21 @@ namespace FurmaIdle.Services
                     UnlockMenu("i99");
                     break;
 
-                case "uk01":
+                case "ul01":
                     SetNotificationMenu("i50");
                     if (!IsMenuUnlocked("i50"))
                     {
                         UnlockMenu("i50");
                     }
                     break;
-                case "uk02":
+                case "ul02":
                     SetNotificationMenu("i50");
                     if (!IsMenuUnlocked("i50"))
                     {
                         UnlockMenu("i50");
                     }
                     break;
-                case "uk03":
+                case "ul03":
                     SetNotificationMenu("i50");
                     if (!IsMenuUnlocked("i50"))
                     {

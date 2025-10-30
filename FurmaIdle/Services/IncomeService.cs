@@ -63,11 +63,6 @@ namespace FurmaIdle.Services
                 };
             }, save: false);
 
-            if(type == ItemType.Coin)
-            {
-                _log.Warn($"Ganho de {type}, total: {amount}, fonte: {sourceId}");
-            }
-
             return result!;
         }
 

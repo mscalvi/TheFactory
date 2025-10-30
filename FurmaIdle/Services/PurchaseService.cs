@@ -11,7 +11,6 @@ namespace FurmaIdle.Services
     public interface IPurchaseService
     {
         Task Purchase(ItemHelper.ItemType type, string itemId, string stageId);
-
         bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId);
     }
 

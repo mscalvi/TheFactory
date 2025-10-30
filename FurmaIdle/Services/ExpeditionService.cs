@@ -193,8 +193,6 @@ namespace FurmaIdle.Services
 
                 ex.FinishedAt = null;
 
-                _ui.UnlockMenu("i4");
-
             }, save: true);
 
             var expedition = stage?.Expedition;
