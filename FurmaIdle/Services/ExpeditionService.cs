@@ -255,7 +255,22 @@ namespace FurmaIdle.Services
                     }
                 }
 
+                // reseta modifiers
+                foreach (var contracts in game.Contracts)
+                {
+                    ScrubExpeditionMods(contracts.Value.Modifiers);
+                }
+
             }, save: true);
+        }
+
+        private static void ScrubExpeditionMods(List<ModifierModel> list)
+        {
+            list.RemoveAll(m =>
+                m.Scope == UnlockHelper.Persistence.untilExpedition &&
+                m.ApplyerId != null &&
+                m.ApplyerId.StartsWith("uc", StringComparison.Ordinal)
+            );
         }
     }
 }

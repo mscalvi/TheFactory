@@ -20,7 +20,7 @@ namespace FurmaIdle.Services
         event Action? ReadyChanged;
 
         // Game Change
-        Task Mutate(Action<GameModel> edit, bool save = true);
+        Task Mutate(Action<GameModel> edit, bool save = true, bool ui = true);
         event Action? GameChanged;
     }
 
@@ -44,14 +44,18 @@ namespace FurmaIdle.Services
             CurrentGame = game;
             GameChanged?.Invoke();
         }
-        public async Task Mutate(Action<GameModel> edit, bool save = true)
+        public async Task Mutate(Action<GameModel> edit, bool save = true, bool ui = true)
         {
             if (edit is null) return;
 
             // aplica mutações no estado vivo
             edit(CurrentGame);
+
             // notifica a UI
-            GameChanged?.Invoke();
+            if (ui)
+            {
+                GameChanged?.Invoke();
+            }
 
             // persiste no storage (IndexedDB via JS)
             if (save)
