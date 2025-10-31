@@ -31,16 +31,14 @@ namespace FurmaIdle.Services
         private readonly ILocateService _locate;
         private readonly ICurrentGameService _game;
         private readonly IEffectService _effect;
-        private readonly IUnlockService _unlock;
-        private readonly IUiService _ui;
+        private readonly IKnowledgeService _knowledge;
 
-        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IUnlockService unlock, IUiService ui)
+        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IKnowledgeService knowledge)
         {
             _locate = locate;
             _game = game;
             _effect = effect;
-            _unlock = unlock;
-            _ui = ui;
+            _knowledge = knowledge;
         }
 
         public List<CharacterModel> GetActiveCharacters(ExpeditionModel expedition)
@@ -160,7 +158,15 @@ namespace FurmaIdle.Services
                 var ex = stage?.Expedition;
 
                 if (ex.ExpeditionState == UnlockHelper.ExpeditionState.Active)
+                {
                     return;
+                } else
+                {
+                    ex = new ExpeditionModel();
+                    stage.Expedition = ex;
+                }
+
+                stage.ExpeditionStats = new StatsModel();
 
                 ex.PartyIds ??= new List<string>();
 
@@ -209,6 +215,19 @@ namespace FurmaIdle.Services
 
         public async Task EndExpedition(StageModel stage)
         {
+
+            // transforma coins em Knowledge
+            long cTotal = 0;
+            foreach (var coins in stage.ExpeditionStats.CoinsGain)
+            {
+                if (coins.Key == stage.CoinId)
+                {
+                    cTotal += coins.Value;
+                }
+            }
+
+            var kApplied = await _knowledge.ApplyGainsAsync(stage, cTotal);
+
             await _game.Mutate(game =>
             {
                 var ex = stage?.Expedition;
@@ -240,15 +259,6 @@ namespace FurmaIdle.Services
                 }
                 stage.ActiveContracts?.Clear();
                 stage.lockedContracts?.Clear();
-
-                // transforma coins em Knowledge
-                foreach (var coins in stage.ExpeditionStats.Coins)
-                {
-                    if(coins.Key == stage.CoinId)
-                    {
-                        // zerar coin
-                    }
-                }
 
                 // reseta upgrades
                 foreach (var upgrades in game.Upgrades)

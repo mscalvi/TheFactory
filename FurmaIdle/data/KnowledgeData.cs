@@ -23,7 +23,7 @@ namespace FurmaIdle.Data
                 Modifiers = new List<ModifierModel>(),
 
                 // Knowledge Gain
-                GainCoinId = "c01",
+                GainCoinId = "m01",
                 GainCoinBase = 100000,
                 GainCoinCurve = 0.85,
                 GainFactorCurve = 0.6,
@@ -43,7 +43,7 @@ namespace FurmaIdle.Data
                 Modifiers = new List<ModifierModel>(),
 
                 // Knowledge Gain
-                GainCoinId = "c01",
+                GainCoinId = "m01",
                 GainCoinBase = 100000,
                 GainCoinCurve = 0.85,
                 GainFactorCurve = 0.6,
@@ -63,7 +63,7 @@ namespace FurmaIdle.Data
                 Modifiers = new List<ModifierModel>(),
 
                 // Knowledge Gain
-                GainCoinId = "c01",
+                GainCoinId = "m01",
                 GainCoinBase = 100000,
                 GainCoinCurve = 0.85,
                 GainFactorCurve = 0.6,
@@ -86,7 +86,7 @@ namespace FurmaIdle.Data
                 Modifiers = new List<ModifierModel>(),
 
                 // Knowledge Gain
-                GainCoinId = "c01",
+                GainCoinId = "m01",
                 GainCoinBase = 1000000,
                 GainCoinCurve = 0.84,
                 GainFactorCurve = 0.6,
@@ -106,7 +106,7 @@ namespace FurmaIdle.Data
                 Modifiers = new List<ModifierModel>(),
 
                 // Knowledge Gain
-                GainCoinId = "c01",
+                GainCoinId = "m01",
                 GainCoinBase = 10000000,
                 GainCoinCurve = 0.83,
                 GainFactorCurve = 0.6,

@@ -32,6 +32,7 @@ builder.Services.AddSingleton<IPurchaseService, PurchaseService>();
 builder.Services.AddSingleton<IExpeditionService, ExpeditionService>();
 builder.Services.AddSingleton<IEffectService, EffectService>();
 builder.Services.AddSingleton<IClickService, ClickService>();
+builder.Services.AddSingleton<IKnowledgeService, KnowledgeService>();
 
 builder.Services.AddSingleton<IGameStore, GameStore>();
 

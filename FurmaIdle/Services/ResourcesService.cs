@@ -84,7 +84,7 @@ namespace FurmaIdle.Services
 
                 if (amount > 0)
                 {
-                    _ = _income.AddAsync(ItemType.Resource, res.Id, amount, sourceType: null, sourceId: null, null);
+                    _ = _income.AddAsync(ItemType.Resource, res.Id, amount, sourceType: null, sourceId: null, "s00");
                 }
             }
         }

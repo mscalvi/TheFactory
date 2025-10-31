@@ -9,8 +9,9 @@
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
+@inject IKnowledgeService Knowledge
 
-@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage?.Id) || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
 }
@@ -47,6 +48,7 @@ else
         <div>
             <h3>Status</h3>
             <div>Duração: @(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</div>
+
             <div>Ganhos</div>
             @foreach (var coin in expeditionStats.CoinsGain)
             {
@@ -56,20 +58,26 @@ else
             {
                 <div>@resource.Key @resource.Value</div>
             }
-            @foreach (var know in expeditionStats.KnowledgeGain)
-            {
-                <div>@know.Key @know.Value</div>
-            }
             @foreach (var click in expeditionStats.ClicksMade)
             {
                 <div>@click.Key @click.Value</div>
             }
-        </div>
 
-        <!-- Ganhos da Expedição -->
-        <div>
-            <h3>Gains (placeholder)</h3>
-            <div>Conhecimentos ao final da expedição…</div>
+            <!-- Conhecimento (PARCIAL durante a expedição) -->
+            <div style="margin-top:.5rem;">
+                <h4>Conhecimento (parcial)</h4>
+                @if (expeditionStats.KnowledgeGain is { Count: > 0 })
+                {
+                    @foreach (var know in expeditionStats.KnowledgeGain.OrderByDescending(k => k.Value))
+                    {
+                        <div>@know.Key @know.Value</div>
+                    }
+                }
+                else
+                {
+                    <div>—</div>
+                }
+            </div>
         </div>
     }
     else
@@ -106,34 +114,29 @@ else
             }
         </div>
 
-        <!-- Character Details -->
-        var selectedIds = Expedition.GetPartyIds(_stage);
-        var selectedChars = selectedIds
-            .Select(id => game.Characters.TryGetValue(id, out var c) == true ? c : null)
-            .Where(c => c is not null)!;
-
-        <div>
-            <h3>Traits & Specialties</h3>
-            @if (!selectedChars.Any())
+        <!-- Conhecimento aplicado no último encerramento (snapshot LOCAL do componente) -->
+        <div style="margin-top:1rem;">
+            <h3>Conhecimento (aplicado no último encerramento)</h3>
+            @if (_appliedKnowledge is { Count: > 0 })
             {
-                <div>Nenhum personagem selecionado.</div>
+                @foreach (var kv in _appliedKnowledge.OrderByDescending(x => x.Value))
+                {
+                    <div>@kv.Key @kv.Value</div>
+                }
             }
             else
             {
-                @foreach (var c in selectedChars)
-                {
-                    <div>@c!.Id — Trait: @c.TraitId — Specialty: @c.SpecialtyId - Knowledges: @c.KnowledgeFactor1 e @c.KnowledgeFactor2</div>
-                }
+                <div>Nenhum ganho aplicado recentemente.</div>
             }
         </div>
     }
-
 }
-
-
 
 @code {
     private StageModel? _stage;
+
+    // Snapshot LOCAL do que foi aplicado no último "Encerrar Expedição"
+    private Dictionary<string, long>? _appliedKnowledge;   // <— NOVO
 
     protected override void OnInitialized()
     {
@@ -170,13 +173,35 @@ else
         {
             await Expedition.LaunchExpedition(_stage, Expedition.GetPartyIds(_stage));
             Log.Success($"Expedição iniciada em {_stage.Name}.");
+
+            // limpamos o snapshot local ao iniciar uma nova
+            _appliedKnowledge = null;
+
             return;
         }
         else
         {
+            // 1) calcula total de coins da run para a coin da Stage
+            long cTotal = 0L;
+            if (_stage?.ExpeditionStats?.CoinsGain is not null &&
+                _stage.ExpeditionStats.CoinsGain.TryGetValue(_stage.CoinId, out var v))
+            {
+                cTotal = v;
+            }
+
+            // 2) aplica os conhecimentos (sem gravar nada no modelo)
+            //    -> devolve um dicionário simples (kId -> ganho inteiro) que a UI guarda localmente
+            _appliedKnowledge = await Knowledge.ApplyGainsAsync(_stage, cTotal);
+
+            // 3) encerra a expedição (limpezas, devolve chars, etc.)
             await Expedition.EndExpedition(_stage);
+
+            // 4) salva estado e avisa
             await Game.Mutate(_ => { }, save: true);
             Log.Success($"Expedição encerrada em {_stage.Name}.");
+
+            // 5) re-render
+            StateHasChanged();
         }
     }
 

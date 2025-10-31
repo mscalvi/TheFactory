@@ -9,40 +9,40 @@
 @inject IIncomeService Income
 @inject IClickService Clicks
 
-@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+@if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
 }
 else
 {
-    <div class="click-area-root"
-         @oncontextmenu:preventDefault
-         @onpointerdown="Click"
-         tabindex="0">
-
-        <div class="click-hud">
-            <h3>@(_stage.Name ?? _stage.Id ?? "—")</h3>
-            <small>Click Gain: @Clicks.ClickGain.ToString()</small>
-        </div>
-
-        @{
-            var stageImg = !string.IsNullOrWhiteSpace(_stage.Id)
-                ? $"images/stages/{_stage.Id}_0000.jpg"
-                : $"Stage: {_stage.Name}";
-        }
-
+    <div class="click-area-root" @ref="_root" @onpointerdown="HandleClick">
         <img class="click-stage-img"
-             src="@stageImg"
-             alt="@($"Stage {_stage.Name ?? _stage.Id ?? "—"}")" />
+             src="@StageImagePath()"
+             alt="@($"Stage {_stage?.Name ?? _stage?.Id ?? "—"}")"
+             draggable="false" />
+
+        @foreach (var p in _pops)
+        {
+            <span class="click-pop"
+                  style="left:@p.Xpx; top:@p.Ypx; --dx:@p.Dxpx; --dy:@p.Dypx; --dur:@p.Durms;">
+                @p.Text
+            </span>
+        }
     </div>
 }
 
-
 @code {
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
     private StageModel? _stage;
-    // eventos externos
+
+    private string StageImagePath()
+        => StageImageHelper.GetStageImagePath(Game.CurrentGame, _stage!);
+
     [Parameter] public EventCallback<int> OnClick { get; set; }
     [Parameter] public EventCallback<double> ClickAdd { get; set; }
+
+    private ElementReference _root;
 
     protected override void OnInitialized()
     {
@@ -68,9 +68,47 @@ else
         _stage = st;
     }
 
-    private async Task Click(PointerEventArgs e)
+    private double GetClickAmount() => Clicks.ClickGain;
+
+    private async Task HandleClick(PointerEventArgs e)
     {
+        if (_stage is null) return;
+
         await Clicks.Click();
-        
+
+        var pos = await JS.InvokeAsync<Pos>("ClickArea.getPos", _root, e);
+        var dx = _rng.NextDouble() * 48 - 24;    
+        var dy = -(_rng.Next(64, 104));          
+        var dur = $"{_rng.Next(450, 550)}ms";
+
+        var amount = GetClickAmount();
+        var id = $"p{++_seq}";
+        var pop = new Pop(id, $"+{amount:0.#}", pos.x, pos.y, dx, dy, dur);
+
+        _pops.Add(pop);
+        StateHasChanged();
+
+        try
+        {
+            await Task.Delay(1000);
+            var i = _pops.FindIndex(p => p.Id == id);
+            if (i >= 0) { _pops.RemoveAt(i); await InvokeAsync(StateHasChanged); }
+        }
+        catch { /* ignore */ }
     }
+
+    private readonly record struct Pos(double x, double y);
+
+    private sealed record Pop(string Id, string Text, double X, double Y, double Dx, double Dy, string Dur)
+    {
+        public string Xpx => $"{X}px";
+        public string Ypx => $"{Y}px";
+        public string Dxpx => $"{Dx}px";
+        public string Dypx => $"{Dy}px";
+        public string Durms => Dur;
+    }
+
+    private readonly List<Pop> _pops = new();
+    private int _seq;
+    private readonly Random _rng = new();
 }

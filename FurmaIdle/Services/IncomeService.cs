@@ -30,6 +30,7 @@ namespace FurmaIdle.Services
             if (double.IsNaN(amount) || double.IsInfinity(amount))
                 throw new ArgumentOutOfRangeException(nameof(amount), "amount inválido");
 
+
             var gain = (long)Math.Floor(amount);
             var frac = amount - gain;
             var stage = _locate.LocateStage(_game.CurrentGame, stageId);
