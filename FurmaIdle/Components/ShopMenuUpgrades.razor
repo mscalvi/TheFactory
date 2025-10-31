@@ -27,13 +27,12 @@ else
                  && IsContractUpgradeVisible(game, u.Id));
 
     var availableExpansionUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id) || StartsWithUu(u.Id))
+        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id) || StartsWithUu(u.Id) || StartsWithUl(u.Id) || StartsWithUk(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
     // ===== Unlocked Upgrades =====
     var unlockedUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUc(u.Id) || StartsWithUu(u.Id) || StartsWithUt(u.Id) || StartsWithUx(u.Id)))
         .Where(u => u.State == UnlockHelper.State.Unlocked)
         .Where(u =>
         {
@@ -215,6 +214,12 @@ else
     private static bool StartsWithUt(string id)
         => id?.StartsWith("ut", StringComparison.OrdinalIgnoreCase) == true;
 
+    private static bool StartsWithUl(string id)
+        => id?.StartsWith("ul", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool StartsWithUk(string id)
+        => id?.StartsWith("uk", StringComparison.OrdinalIgnoreCase) == true;
+
     private static bool StartsWithUx(string id)
         => id?.StartsWith("ux", StringComparison.OrdinalIgnoreCase) == true;
 
@@ -226,12 +231,6 @@ else
     {
         var id = u.Id ?? string.Empty;
         return true;
-        // id.StartsWith("ul", StringComparison.OrdinalIgnoreCase) // unlock local
-        //     || id.StartsWith("us", StringComparison.OrdinalIgnoreCase) // unlock stage
-        //     || id.StartsWith("uh", StringComparison.OrdinalIgnoreCase) // unlock tech
-        //     || id.StartsWith("ue", StringComparison.OrdinalIgnoreCase) // unlock expansion
-        //     || id.StartsWith("up", StringComparison.OrdinalIgnoreCase) // unlock character
-        //     || id.StartsWith("uk", StringComparison.OrdinalIgnoreCase); // unlock knowledge;
     }
 
     // Mesma regra que você já usava

@@ -150,7 +150,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ResourceUnlock1m01] = new Entry("m01", 2000, 1.0, CostFactor.ResourcesUnlocked, CostFactorType.Multiplicative, 1.7),
                 [PricingId.StageUnlock1m01] = new Entry("m01", 50000000, 1.0, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.LocalUnlock0m01] = new Entry("m01", 0, 1.0, CostFactor.LocalsUnlocked, CostFactorType.Multiplicative, 1),
-                [PricingId.LocalUnlock1m01] = new Entry("m01", 300000, 1.0, CostFactor.LocalsUnlocked, CostFactorType.Multiplicative, 2.7),
+                [PricingId.LocalUnlock1m01] = new Entry("m01", 70000, 1.0, CostFactor.LocalsUnlocked, CostFactorType.Multiplicative, 3.3),
                 [PricingId.TechUnlock1k01] = new Entry("k01", 1, 10.0, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.TechUnlock1k02] = new Entry("k02", 1, 10.0, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.TechUnlock1k03] = new Entry("k03", 1, 10.0, CostFactor.None, CostFactorType.None, 0),

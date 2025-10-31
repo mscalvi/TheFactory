@@ -12,6 +12,9 @@ namespace FurmaIdle.Services
     {
         Task Purchase(ItemHelper.ItemType type, string itemId, string stageId);
         bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId);
+
+        Task PurchaseTech(string itemId);
+        bool CanAffordTech(string itemId);
     }
 
     public sealed class PurchaseService : IPurchaseService
@@ -584,6 +587,89 @@ namespace FurmaIdle.Services
             }
 
             return (AddMod, MultMod);
+        }
+
+        // Tech Purchase
+        public async Task PurchaseTech(string itemId)
+        {
+            var game = _game.CurrentGame;
+
+            var cost = ComputeTechCost(itemId);
+
+            await _game.Mutate(game =>
+            {
+                Console.WriteLine($"[Purchase] {itemId} Custo: {cost.costValue} {cost.costId}");
+                ApplyDebit(game.ExpansionStats, cost.costValue, cost.costId);
+                ApplyStats(game.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
+
+            }, save: true);
+
+            _ui.NavMenuControl(itemId);
+        }
+        private (long costValue, string costId) ComputeTechCost(string itemId)
+        {
+            var game = _game.CurrentGame;
+
+            string costId = string.Empty;
+            long costValue = 0;
+            long costBase = 0;
+            double costCurve = 1;
+            double costAddFactor = 0;
+            double costMultFactor = 1;
+            double costFactorValue = 0;
+
+            var tech = _locate.LocateTech(game, itemId);
+            var modifiers = GetTechCostModifiers(tech);
+
+            var entry = PricingCost.Get(tech.PricingId);
+
+            costId = entry.CostCoinId;
+
+            costBase = entry.CostBase;
+            costCurve = entry.CostCurve;
+
+            costMultFactor *= modifiers.MultMod;
+            costAddFactor += modifiers.AddMod;
+
+            double raw = (costBase + costAddFactor) * Math.Pow(costCurve, tech.Level) * costMultFactor;
+            costValue = (long)Math.Ceiling(raw);
+
+            return (costValue, costId);
+        }
+        public (double AddMod, double MultMod) GetTechCostModifiers(TechModel tech)
+        {
+            double AddMod = 0;
+            double MultMod = 1;
+
+            foreach (var modifier in tech.Modifiers)
+            {
+                if (modifier.Type == EffectType.CharacterCost)
+                {
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        AddMod += modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        MultMod *= modifier.Value;
+                    }
+                }
+            }
+            return (AddMod, MultMod);
+        }
+        public bool CanAffordTech(string itemId)
+        {
+            var game = _game.CurrentGame;
+            var stats = game.ExpansionStats ?? throw new InvalidOperationException("ExpeditionStats indisponível.");
+
+            var cost = ComputeTechCost(itemId);
+
+            var haveKnowledge = GetOrZero(stats.Knowledge, cost.costId);
+            if (haveKnowledge < cost.costValue)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

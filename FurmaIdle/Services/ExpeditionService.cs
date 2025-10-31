@@ -273,19 +273,42 @@ namespace FurmaIdle.Services
                 // reseta modifiers
                 foreach (var contracts in game.Contracts)
                 {
-                    ScrubExpeditionMods(contracts.Value.Modifiers);
+                    ScrubExpeditionMods(contracts.Value.Modifiers, "Upgrades");
+                }
+                foreach (var resources in game.Resources)
+                {
+                    ScrubExpeditionMods(resources.Value.Modifiers, "Traits");
+                }
+                foreach (var characters in game.Characters)
+                {
+                    ScrubExpeditionMods(characters.Value.Modifiers, "Traits");
+                }
+                foreach (var knowledges in game.Knowledges)
+                {
+                    ScrubExpeditionMods(knowledges.Value.Modifiers, "Traits");
                 }
 
             }, save: true);
         }
 
-        private static void ScrubExpeditionMods(List<ModifierModel> list)
+        private static void ScrubExpeditionMods(List<ModifierModel> list, string type)
         {
-            list.RemoveAll(m =>
-                m.Scope == UnlockHelper.Persistence.untilExpedition &&
-                m.ApplyerId != null &&
-                m.ApplyerId.StartsWith("uc", StringComparison.Ordinal)
-            );
+            if(type == "Upgrades")
+            {
+                list.RemoveAll(m =>
+                    m.Scope == UnlockHelper.Persistence.untilExpedition &&
+                    m.ApplyerId != null &&
+                    m.ApplyerId.StartsWith("uc", StringComparison.Ordinal)
+                );
+            }
+            if (type == "Traits")
+            {
+                list.RemoveAll(m =>
+                    m.Scope == UnlockHelper.Persistence.untilExpedition &&
+                    m.ApplyerId != null &&
+                    m.ApplyerId.StartsWith("o", StringComparison.Ordinal)
+                );
+            }
         }
     }
 }

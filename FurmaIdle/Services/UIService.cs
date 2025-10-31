@@ -81,14 +81,14 @@ namespace FurmaIdle.Services
 
         private readonly List<NavItem> _nav = new()
         {
-            new() { Id = "i1",  Label = "Expan",   Unlocked = false },
+            new() { Id = "i1",  Label = "Expan",   Unlocked = true },
             new() { Id = "i2",  Label = "Stage",   Unlocked = true },
-            new() { Id = "i3",  Label = "Exped",   Unlocked = false },
-            new() { Id = "i5",  Label = "Up",      Unlocked = false },
-            new() { Id = "i50", Label = "Tech",    Unlocked = false },
-            new() { Id = "i97", Label = "Achiev",  Unlocked = false },
-            new() { Id = "i98", Label = "Out",     Unlocked = false },
-            new() { Id = "i99", Label = "Sett",    Unlocked = false },
+            new() { Id = "i3",  Label = "Exped",   Unlocked = true },
+            new() { Id = "i5",  Label = "Up",      Unlocked = true },
+            new() { Id = "i50", Label = "Tech",    Unlocked = true },
+            new() { Id = "i97", Label = "Achiev",  Unlocked = true },
+            new() { Id = "i98", Label = "Out",     Unlocked = true },
+            new() { Id = "i99", Label = "Sett",    Unlocked = true },
         };
 
         public IEnumerable<NavItem> VisibleNav =>
@@ -146,104 +146,7 @@ namespace FurmaIdle.Services
 
         public void NavMenuControl(string itemId)
         {
-            switch (itemId)
-            {
-                case "ue01":
-                    SetNotificationMenu("i1");
-                    if (!IsMenuUnlocked("i1"))
-                    {
-                        UnlockMenu("i1");
-                    }
-                    if (!IsMenuUnlocked("i97"))
-                    {
-                        UnlockMenu("i97");
-                        SetNotificationMenu("i97");
-                    }
-                    break;
-                case "ue02":
-                    SetNotificationMenu("i1");
-                    if (!IsMenuUnlocked("i1"))
-                    {
-                        UnlockMenu("i1");
-                    }
-                    if (!IsMenuUnlocked("i197"))
-                    {
-                        UnlockMenu("i97");
-                        SetNotificationMenu("i97");
-                    }
-                    break;
-                case "ue03":
-                    SetNotificationMenu("i1");
-                    if (!IsMenuUnlocked("i1"))
-                    {
-                        UnlockMenu("i1");
-                    }
-                    if (!IsMenuUnlocked("i97"))
-                    {
-                        UnlockMenu("i97");
-                        SetNotificationMenu("i97");
-                    }
-                    break;
 
-                case "up001":
-                    SetNotificationMenu("i3");
-                    if (!IsMenuUnlocked("i3"))
-                    {
-                        UnlockMenu("i3");
-                    }
-                    break;
-                case "up002":
-                    SetNotificationMenu("i3");
-                    if (!IsMenuUnlocked("i3"))
-                    {
-                        UnlockMenu("i3");
-                    }
-                    break;
-                case "up003":
-                    SetNotificationMenu("i3");
-                    if (!IsMenuUnlocked("i3"))
-                    {
-                        UnlockMenu("i3");
-                    }
-                    break;
-
-                case "ul00":
-                    SetNotificationMenu("i5");
-                    UnlockMenu("i5");
-                    SetNotificationMenu("i99");
-                    UnlockMenu("i99");
-                    break;
-
-                case "ul01":
-                    SetNotificationMenu("i50");
-                    if (!IsMenuUnlocked("i50"))
-                    {
-                        UnlockMenu("i50");
-                    }
-                    break;
-                case "ul02":
-                    SetNotificationMenu("i50");
-                    if (!IsMenuUnlocked("i50"))
-                    {
-                        UnlockMenu("i50");
-                    }
-                    break;
-                case "ul03":
-                    SetNotificationMenu("i50");
-                    if (!IsMenuUnlocked("i50"))
-                    {
-                        UnlockMenu("i50");
-                    }
-                    break;
-
-                case "uk04":
-                    SetNotificationMenu("i98");
-                    UnlockMenu("i98");
-                    break;
-
-                default:
-                    break;
-            }
         }
 
         public bool SetNotificationMenu(string menuId)

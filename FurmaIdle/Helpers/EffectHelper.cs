@@ -11,17 +11,30 @@
             ContractUnlock,
             ContractLevelUnlock,
             ContractCapUnlock,
+
+            ContractGainPerTech,
+            ContractGainPerLocal,
+
             // Knowledge
             KnowledgeUnlock,
             KnowledgeGain,
             KnowledgeCost,
+
+            KnowledgeGainPerTech,
+            KnowledgeGainPerLocal,
+
             // Characters
             CharacterUnlock,
             CharacterCost,
+
             // Resources
             ResourceGain,
             ResourceUnlock,
             ResourceCap,
+
+            ResourceGainPerTech,
+            ResourceGainPerLocal,
+
             // Coins
             CoinGain,
             BurstCoinGain,

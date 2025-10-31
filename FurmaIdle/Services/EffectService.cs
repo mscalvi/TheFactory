@@ -37,6 +37,7 @@ namespace FurmaIdle.Services
         {
             var game = _game.CurrentGame;
             var stage = _locate.LocateStage(game, stageId);
+            int multiplier = 1;
 
             if (type == ItemHelper.ItemType.Upgrade)
             {
@@ -70,13 +71,34 @@ namespace FurmaIdle.Services
                                 {
                                     foreach (var acontract in game.Contracts)
                                     {
+                                        if (upgrade.EffectType == EffectType.ContractGainPerTech)
+                                        {
+                                            foreach(var unlockedTech in game.Techs)
+                                            {
+                                                if(unlockedTech.Value.State == UnlockHelper.State.Unlocked)
+                                                {
+                                                    multiplier++;
+                                                }
+                                            }
+                                        }
+                                        if (upgrade.EffectType == EffectType.ContractGainPerLocal)
+                                        {
+                                            foreach (var unlockedLocal in game.Locals)
+                                            {
+                                                if (unlockedLocal.Value.State == UnlockHelper.State.Unlocked)
+                                                {
+                                                    multiplier++;
+                                                }
+                                            }
+                                        }
+
                                         var aNewMod = new ModifierModel
                                         {
                                             ApplyerId = upgrade.Id,
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue
+                                            Value = upgrade.EffectValue * multiplier
                                         };
 
                                         acontract.Value.Modifiers.Add(aNewMod);
@@ -86,13 +108,34 @@ namespace FurmaIdle.Services
                                 {
                                     foreach (var aknow in game.Knowledges)
                                     {
+                                        if (upgrade.EffectType == EffectType.KnowledgeGainPerTech)
+                                        {
+                                            foreach (var unlockedTech in game.Techs)
+                                            {
+                                                if (unlockedTech.Value.State == UnlockHelper.State.Unlocked)
+                                                {
+                                                    multiplier++;
+                                                }
+                                            }
+                                        }
+                                        if (upgrade.EffectType == EffectType.KnowledgeGainPerLocal)
+                                        {
+                                            foreach (var unlockedLocal in game.Locals)
+                                            {
+                                                if (unlockedLocal.Value.State == UnlockHelper.State.Unlocked)
+                                                {
+                                                    multiplier++;
+                                                }
+                                            }
+                                        }
+
                                         var aNewMod = new ModifierModel
                                         {
                                             ApplyerId = upgrade.Id,
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue
+                                            Value = upgrade.EffectValue * multiplier
                                         };
 
                                         aknow.Value.Modifiers.Add(aNewMod);
@@ -118,13 +161,34 @@ namespace FurmaIdle.Services
                                 {
                                     foreach (var aresource in game.Resources)
                                     {
+                                        if (upgrade.EffectType == EffectType.ResourceGainPerTech)
+                                        {
+                                            foreach (var unlockedTech in game.Techs)
+                                            {
+                                                if (unlockedTech.Value.State == UnlockHelper.State.Unlocked)
+                                                {
+                                                    multiplier++;
+                                                }
+                                            }
+                                        }
+                                        if (upgrade.EffectType == EffectType.ResourceGainPerLocal)
+                                        {
+                                            foreach (var unlockedLocal in game.Locals)
+                                            {
+                                                if (unlockedLocal.Value.State == UnlockHelper.State.Unlocked)
+                                                {
+                                                    multiplier++;
+                                                }
+                                            }
+                                        }
+
                                         var aNewMod = new ModifierModel
                                         {
                                             ApplyerId = upgrade.Id,
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue
+                                            Value = upgrade.EffectValue * multiplier
                                         };
 
                                         aresource.Value.Modifiers.Add(aNewMod);

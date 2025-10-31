@@ -63,14 +63,22 @@ else
                 <div>@click.Key @click.Value</div>
             }
 
-            <!-- Conhecimento (PARCIAL durante a expedição) -->
+            <!-- Conhecimento -->
             <div style="margin-top:.5rem;">
-                <h4>Conhecimento (parcial)</h4>
-                @if (expeditionStats.KnowledgeGain is { Count: > 0 })
+                @{
+                    long cTotal = 0L;
+                    if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
+                        cTotal = v;
+
+                    var kPreview = Knowledge.ComputeGains(_stage, cTotal);
+                }
+                <h4>Ganhos</h4>
+                @if (kPreview is { Count: > 0 })
                 {
-                    @foreach (var know in expeditionStats.KnowledgeGain.OrderByDescending(k => k.Value))
+                    @foreach (var kv in kPreview.OrderByDescending(x => x.Value))
                     {
-                        <div>@know.Key @know.Value</div>
+                        // formatação: inteiro se quiser, ou com 2 casas
+                        <div>@kv.Key @kv.Value.ToString("N2")</div>
                     }
                 }
                 else

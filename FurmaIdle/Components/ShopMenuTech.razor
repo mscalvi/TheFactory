@@ -29,35 +29,10 @@
             })
             .ThenBy(k => k.Id);
 
-    var availableTechUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
-        game.Upgrades.Values
-            .Where(u => u?.Id != null
-                     && u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
-                     && u.State == UnlockHelper.State.Available)
-            .OrderBy(u =>
-            {
-                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.Ordinal));
-                return idx < 0 ? int.MaxValue : idx;
-            })
-            .ThenBy(u => u.Id);
-
     var unlockedTechs = game is null ? Enumerable.Empty<TechModel>() :
         game.Techs.Values
             .Where(t => t.State == UnlockHelper.State.Unlocked)
             .OrderBy(t => t.Id);
-
-
-    var availableKnowledgeUpgrades = Game.CurrentGame is null ? Enumerable.Empty<UpgradeModel>() :
-        Game.CurrentGame.Upgrades.Values
-            .Where(u => u?.Id != null
-                     && u.Id.StartsWith("uk", StringComparison.OrdinalIgnoreCase)
-                     && u.State == UnlockHelper.State.Available)
-            .OrderBy(u =>
-            {
-                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.Ordinal));
-                return idx < 0 ? int.MaxValue : idx;
-            })
-            .ThenBy(u => u.Id);
 }
 
 <div>
@@ -88,64 +63,6 @@
 </div>
 
 <div>
-    <h3>Available Knowledge Upgrades</h3>
-    @if (!availableKnowledgeUpgrades.Any())
-    {
-        <div>Nenhum upgrade de Knowledge disponível.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var u in availableKnowledgeUpgrades)
-            {
-                var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
-
-                <button type="button"
-                        class="icon-button"
-                        disabled="@( !canBuy )"
-                        @onclick="() => OnClickBuyKnowledgeUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
-    }
-</div>
-
-<div>
-    <h3>Available Tech Upgrades</h3>
-    @if (!availableTechUpgrades.Any())
-    {
-        <div>Nenhum Upgrade de Tech disponível.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var u in availableTechUpgrades)
-            {
-                var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
-                <button type="button"
-                        class="icon-button"
-                        disabled="@( !canBuy )"
-                        @onclick="() => OnClickBuyTechUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
-    }
-</div>
-
-
-<div>
     <h3>Unlocked Techs</h3>
     @if (!unlockedTechs.Any())
     {
@@ -172,27 +89,16 @@
 </div>
 
 @code {
-    long Total(string kId) => Game?.CurrentGame.GameStats.Knowledge.TryGetValue(kId, out var v) == true ? v : 0L;
-
-    private async Task OnClickBuyTechUpgrade(string upgradeId)
-    {
-        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId))
-        { 
-            Log.Error($"Sem recursos para comprar upgrade {upgradeId}."); 
-            return; 
-        }
-
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId);
-    }
+    long Total(string kId) => Game?.CurrentGame.ExpansionStats.Knowledge.TryGetValue(kId, out var v) == true ? v : 0L;
 
     private async Task OnClickBuyKnowledgeUpgrade(string upgradeId)
     {
-        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId))
+        if (!Purchase.CanAffordTech(upgradeId))
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
             return;
         }
 
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId);
+        await Purchase.PurchaseTech(upgradeId);
     }
 }
