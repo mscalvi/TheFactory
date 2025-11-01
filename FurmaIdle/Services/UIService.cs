@@ -73,7 +73,7 @@ namespace FurmaIdle.Services
         {
             public required string Id { get; init; } = "";
             public required string Label { get; init; } = "";
-            public bool Unlocked { get; set; } = false;
+            public bool Unlocked { get; set; } = true;
             public bool Notification { get; set; } = false;
             public int SortKey =>
                 int.TryParse(Id.AsSpan(1), out var n) ? n : int.MaxValue;
@@ -170,12 +170,11 @@ namespace FurmaIdle.Services
             // garante pelo menos Stage aberto (i2) pra não quebrar a UI:
             if (!g.UnlockedMenus.Any())
             {
-                var fallback = _nav.FirstOrDefault(x => x.Id == "i2");
-                if (fallback is not null)
-                {
-                    fallback.Unlocked = true;
-                    g.UnlockedMenus.Add("i2");
-                }
+                foreach (var id in _nav.Select(n => n.Id))
+                    g.UnlockedMenus.Add(id);
+
+                foreach (var item in _nav)
+                    item.Unlocked = true;
             }
 
             // opcional: também seta qual menu está aberto visualmente

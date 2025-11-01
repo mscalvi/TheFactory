@@ -215,7 +215,6 @@ namespace FurmaIdle.Services
 
         public async Task EndExpedition(StageModel stage)
         {
-
             // transforma coins em Knowledge
             long cTotal = 0;
             foreach (var coins in stage.ExpeditionStats.CoinsGain)

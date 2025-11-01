@@ -53,7 +53,6 @@ namespace FurmaIdle.Services
 
         public void ActivateSpecialtyTimer(string specialtyId, double durationSec)
         {
-            _log.Warn($"Início da {specialtyId}, duração: {durationSec}");
             if (string.IsNullOrWhiteSpace(specialtyId)) return;
             var now = DateTimeOffset.UtcNow;
             var dur = Math.Max(0.001, durationSec);
@@ -126,8 +125,6 @@ namespace FurmaIdle.Services
                         foreach (var it in g.Resources.Values)
                             Scrub(it.Modifiers, specId);
                     }
-
-                    _log.Warn($"Fim da {specId}");
 
                     _specTimers.Remove(specId);
                 }

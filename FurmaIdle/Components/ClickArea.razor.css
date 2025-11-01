@@ -34,7 +34,7 @@
     white-space: nowrap;
     pointer-events: none;
     will-change: transform, opacity;
-    animation: pop-arc var(--dur, 500ms) cubic-bezier(.22,1,.36,1) forwards;
+    animation: pop-arc var(--dur, 650ms) cubic-bezier(.22,1,.36,1) forwards;
     opacity: 0;
 }
 

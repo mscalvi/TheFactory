@@ -47,7 +47,13 @@ namespace FurmaIdle.Services
             await _game.Mutate(game =>
             {
                 Console.WriteLine($"[Purchase] {itemId} Custo: {cost.costValue} {cost.costId}");
-                ApplyDebit(stage.ExpeditionStats, cost.costValue, cost.costId);
+                if(type != ItemHelper.ItemType.Knowledge)
+                {
+                    ApplyDebit(stage.ExpeditionStats, cost.costValue, cost.costId);
+                } else
+                {
+                    ApplyDebit(game.ExpansionStats, cost.costValue, cost.costId);
+                }
                 ApplyStats(game.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
 
             }, save: true);
@@ -87,7 +93,7 @@ namespace FurmaIdle.Services
             {
                 case 'm':
                     var haveCoins = GetOrZero(stats.Coins, cost.costId);
-                    if (haveCoins < cost.costValue)
+                    if (cost.costValue > haveCoins)
                     {
                         return false;
                     }
@@ -95,7 +101,7 @@ namespace FurmaIdle.Services
 
                 case 'r':
                     var haveResources = GetOrZero(stats.Resources, cost.costId);
-                    if (haveResources < cost.costValue)
+                    if (cost.costValue > haveResources)
                     {
                         return false;
                     }
@@ -103,7 +109,7 @@ namespace FurmaIdle.Services
 
                 case 'k':
                     var haveKnowledge = GetOrZero(stats.Knowledge, cost.costId);
-                    if (haveKnowledge < cost.costValue)
+                    if (cost.costValue > haveKnowledge)
                     {
                         return false;
                     }
@@ -131,7 +137,6 @@ namespace FurmaIdle.Services
 
                 case 'k':
                     AddOrSet(stats.Knowledge, costId, -cost);
-                    AddOrSet(stats.KnowledgeSpent, costId, +cost);
                     break;
 
                 default:
@@ -163,7 +168,6 @@ namespace FurmaIdle.Services
                     break;
             }
         }
-
         private (long costValue, string costId) ComputeCost(ItemHelper.ItemType type, string itemId, string stageId)
         {
             var game = _game.CurrentGame;
@@ -174,7 +178,7 @@ namespace FurmaIdle.Services
             double costCurve = 1;
             double costAddFactor = 0;
             double costMultFactor = 1;
-            double costFactorValue = 0;
+            double costFactorValue = 1;
 
             var modifiers = GetCostModifiers(game, type, itemId);
 
@@ -283,21 +287,29 @@ namespace FurmaIdle.Services
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue, upgrade.ActualBuy);
-                                costMultFactor = 1;
+                                costAddFactor = Math.Pow(costFactorValue, entry.CostFactorCurve);
                             }
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
                             {
-                                costAddFactor = 0;
-                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue, upgrade.ActualBuy) ;
+                                costMultFactor = Math.Pow(costFactorValue, entry.CostFactorCurve) ;
                             }
                         }
 
                         costMultFactor *= modifiers.MultMod;
                         costAddFactor += modifiers.AddMod;
 
-                        double raw = (costBase + costAddFactor) * Math.Pow(costCurve, upgrade.ActualBuy) * costMultFactor;
+                        double raw = 0;
+
+                        if(upgrade.MaxBuy == 1)
+                        {
+                            raw = (costBase + costAddFactor) * costMultFactor;
+                        }
+                        else
+                        {
+                            raw = (costBase + costAddFactor) * Math.Pow(upgrade.ActualBuy + 1, costCurve) * costMultFactor;
+                        }
+
                         costValue = (long)Math.Ceiling(raw);
 
                         break;
@@ -311,6 +323,7 @@ namespace FurmaIdle.Services
 
                         stage.ActiveContracts.TryGetValue(itemId, out var quantity);
 
+                        var nextQnt = quantity + 1;
                         costId = entry.CostCoinId;
                         costBase = entry.CostBase;
                         costCurve = entry.CostCurve;
@@ -319,21 +332,19 @@ namespace FurmaIdle.Services
                         {
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
                             {
-                                costAddFactor = Math.Pow(entry.CostFactorCurve + costFactorValue, quantity);
-                                costMultFactor = 1;
+                                costAddFactor = Math.Pow(costFactorValue, entry.CostFactorCurve);
                             }
 
                             if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
                             {
-                                costAddFactor = 0;
-                                costMultFactor = Math.Pow(entry.CostFactorCurve * costFactorValue, quantity);
+                                costMultFactor = Math.Pow(costFactorValue, entry.CostFactorCurve);
                             }
                         }
 
                         costMultFactor *= modifiers.MultMod;
                         costAddFactor += modifiers.AddMod;
 
-                        double raw = (costBase + costAddFactor) * Math.Pow(costCurve, quantity) * costMultFactor;
+                        double raw = (costBase + costAddFactor) * Math.Pow(nextQnt, costCurve) * costMultFactor;
                         costValue = (long)Math.Ceiling(raw);
 
                         break;
@@ -361,7 +372,7 @@ namespace FurmaIdle.Services
                             }
                         }
 
-                        costMultFactor = Math.Pow(entry.CostFactorCurve, costFactorValue);
+                        costMultFactor = Math.Pow(costFactorValue, entry.CostFactorCurve);
 
                         costMultFactor *= modifiers.MultMod;
                         costAddFactor += modifiers.AddMod;
@@ -604,6 +615,8 @@ namespace FurmaIdle.Services
 
             }, save: true);
 
+            await _effect.ApplyEffect(ItemHelper.ItemType.Upgrade, itemId, "s00");
+
             _ui.NavMenuControl(itemId);
         }
         private (long costValue, string costId) ComputeTechCost(string itemId)
@@ -616,22 +629,23 @@ namespace FurmaIdle.Services
             double costCurve = 1;
             double costAddFactor = 0;
             double costMultFactor = 1;
-            double costFactorValue = 0;
 
-            var tech = _locate.LocateTech(game, itemId);
-            var modifiers = GetTechCostModifiers(tech);
+            var upgrade = _locate.LocateUpgrade(game, itemId);
+            var tech = _locate.LocateTech(game, upgrade.TargetId);
 
-            var entry = PricingCost.Get(tech.PricingId);
+            var techModifiers = GetTechCostModifiers(tech);
+
+            var entry = PricingCost.Get(upgrade.PricingId);
 
             costId = entry.CostCoinId;
 
             costBase = entry.CostBase;
             costCurve = entry.CostCurve;
 
-            costMultFactor *= modifiers.MultMod;
-            costAddFactor += modifiers.AddMod;
+            costMultFactor *= techModifiers.MultMod;
+            costAddFactor += techModifiers.AddMod;
 
-            double raw = (costBase + costAddFactor) * Math.Pow(costCurve, tech.Level) * costMultFactor;
+            double raw = (costBase + costAddFactor) * Math.Pow(tech.Level, costCurve) * costMultFactor;
             costValue = (long)Math.Ceiling(raw);
 
             return (costValue, costId);

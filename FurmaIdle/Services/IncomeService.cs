@@ -141,24 +141,17 @@ namespace FurmaIdle.Services
             }
             if (type == ItemType.Knowledge)
             {
-                // ---- acumula moedas ----
-                stage.ExpeditionStats.Knowledge.TryGetValue(id, out var coin);
-                coin = coin + gain;
+                Game.ExpansionStats.Knowledge.TryGetValue(id, out var know);
+                know = know + gain;
+                Game.ExpansionStats.Knowledge[id] = know;
 
-                stage.ExpeditionStats.KnowledgeGain.TryGetValue(id, out var coinExpe);
-                coinExpe = coinExpe + gain;
+                Game.ExpansionStats.KnowledgeGain.TryGetValue(id, out var knowExpa);
+                knowExpa = knowExpa + gain;
+                Game.ExpansionStats.KnowledgeGain[id] = knowExpa;
 
-                // ---- persistir ----
-                stage.ExpeditionStats.Knowledge[id] = coin;
-                stage.ExpeditionStats.KnowledgeGain[id] = coinExpe;
-
-                Game.ExpansionStats.KnowledgeGain.TryGetValue(id, out var coinExpa);
-                coinExpa = coinExpa + gain;
-                Game.ExpansionStats.KnowledgeGain[id] = coinExpa;
-
-                Game.GameStats.KnowledgeGain.TryGetValue(id, out var coinGame);
-                coinGame = coinGame + gain;
-                Game.GameStats.KnowledgeGain[id] = coinGame;
+                Game.GameStats.KnowledgeGain.TryGetValue(id, out var knowGame);
+                knowGame = knowGame + gain;
+                Game.GameStats.KnowledgeGain[id] = knowGame;
             }
 
             return true;

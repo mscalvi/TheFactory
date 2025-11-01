@@ -13,21 +13,16 @@
 
 @{
     var game = Game.CurrentGame;
-    if (game is null)
-    {
-        <div>Carregando…</div>
-        return;
-    }
+
+    var availableTechUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
+    game.Upgrades.Values
+        .Where(u => u?.Id != null
+                 && u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
+                 && u.State == UnlockHelper.State.Available);
 
     var unlockedKnowledges = game is null ? Enumerable.Empty<KnowledgeModel>() :
         game.Knowledges.Values
-            .Where(k => k.State == UnlockHelper.State.Unlocked)
-            .OrderBy(k =>
-            {
-                var idx = KnowledgeData.ShowOrder.FindIndex(id => string.Equals(id, k.Id, StringComparison.Ordinal));
-                return idx < 0 ? int.MaxValue : idx;
-            })
-            .ThenBy(k => k.Id);
+            .Where(k => k.State == UnlockHelper.State.Unlocked);
 
     var unlockedTechs = game is null ? Enumerable.Empty<TechModel>() :
         game.Techs.Values
@@ -37,68 +32,68 @@
 
 <div>
     <h3>Knowledges</h3>
-    @if (!unlockedKnowledges.Any())
+    @foreach (var k in unlockedKnowledges)
     {
-        <div>Nenhum Knowledge desbloqueado.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var k in unlockedKnowledges)
-            {
-                var id = k.Id;
-                var total = Total(id);
-                <button type="button"
-                        class="icon-button"
-                        disabled
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, game.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, game.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id <text>:</text> @total
-                </button>
-            }
-        </div>
+        var id = k.Id;
+        var total = Total(id);
+        <button type="button"
+                class="icon-button"
+                disabled
+                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, game.SelectedStageId))"
+                @onmouseleave="Tooltips.Clear"
+                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, game.SelectedStageId))"
+                @onblur="Tooltips.Clear">
+            @id <text>:</text> @total
+        </button>
     }
 </div>
 
 <div>
-    <h3>Unlocked Techs</h3>
-    @if (!unlockedTechs.Any())
+    <h3>Available Techs</h3>
+    @foreach (var u in availableTechUpgrades)
     {
-        <div>Nenhuma Tech desbloqueada.</div>
+        var id = u.Id;
+        var canBuy = Purchase.CanAffordTech(id);
+        <button type="button"
+                class="icon-button"
+                disabled="@( !canBuy )"
+                @onclick="() => OnClickBuyTech(id)"
+                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
+                @onmouseleave="Tooltips.Clear"
+                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
+                @onblur="Tooltips.Clear">
+            @id
+        </button>
     }
-    else
+</div>
+
+<div>
+    @foreach (var t in unlockedTechs)
     {
-        <div>
-            @foreach (var t in unlockedTechs)
-            {
-                var id = t.Id;
-                <button type="button"
-                        class="icon-button"
-                        disabled
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, game.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, game.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
+        var id = t.Id;
+        <button type="button"
+                class="icon-button"
+                disabled
+                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, game.SelectedStageId))"
+                @onmouseleave="Tooltips.Clear"
+                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, game.SelectedStageId))"
+                @onblur="Tooltips.Clear">
+            @id
+        </button>
     }
 </div>
 
 @code {
     long Total(string kId) => Game?.CurrentGame.ExpansionStats.Knowledge.TryGetValue(kId, out var v) == true ? v : 0L;
 
-    private async Task OnClickBuyKnowledgeUpgrade(string upgradeId)
+    private async Task OnClickBuyTech(string techId)
     {
-        if (!Purchase.CanAffordTech(upgradeId))
+        if (!Purchase.CanAffordTech(techId))
         {
-            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            Log.Error($"Sem recursos para comprar upgrade {techId}.");
             return;
         }
 
-        await Purchase.PurchaseTech(upgradeId);
+        await Purchase.PurchaseTech(techId);
     }
 }

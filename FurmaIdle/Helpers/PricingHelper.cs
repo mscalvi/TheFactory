@@ -128,7 +128,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ContractGain2m01] = new Entry("m01", 500, 1.8, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ContractGain3m01] = new Entry("m01", 10000, 1.8, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ContractGain4m01] = new Entry("m01", 150000, 1.8, CostFactor.None, CostFactorType.None, 0),
-                [PricingId.ContractLevelUnlock1m01] = new Entry("m01", 300, 14.0, CostFactor.None, CostFactorType.None, 0),
+                [PricingId.ContractLevelUnlock1m01] = new Entry("m01", 300, 4.0, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ContractTime1m01] = new Entry("m01", 200, 2.9, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ContractTime2m01] = new Entry("m01", 2000, 2.9, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ContractTime3m01] = new Entry("m01", 40000, 2.9, CostFactor.None, CostFactorType.None, 0),
@@ -143,7 +143,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ContractAdd4m01] = new Entry("m01", 50000, 1.19, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ContractAdd5m01] = new Entry("m01", 100000, 1.21, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ContractAdd6m01] = new Entry("m01", 5000000, 1.23, CostFactor.None, CostFactorType.None, 0),
-                [PricingId.KnowledgeUnlock1m01] = new Entry("m01", 100000, 1.0, CostFactor.KnowledgesUnlocked, CostFactorType.Multiplicative, 2.7),
+                [PricingId.KnowledgeUnlock1m01] = new Entry("m01", 80000, 1.0, CostFactor.KnowledgesUnlocked, CostFactorType.Multiplicative, 2.7),
                 [PricingId.KnowledgeGain1m01] = new Entry("m01", 50000, 2.9, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ResourceGain1m01] = new Entry("m01", 9000, 1.0, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.ResourceGain2m01] = new Entry("m01", 35000, 1.0, CostFactor.None, CostFactorType.None, 0),
@@ -156,8 +156,8 @@ namespace FurmaIdle.Helpers
                 [PricingId.TechUnlock1k03] = new Entry("k03", 1, 10.0, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.TechUnlock1k04] = new Entry("k04", 1, 10.0, CostFactor.None, CostFactorType.None, 0),
                 [PricingId.TechUnlock1k05] = new Entry("k05", 1, 10.0, CostFactor.None, CostFactorType.None, 0),
-                [PricingId.Expansions1] = new Entry("m01", 500000, 1.0, CostFactor.ExpansionsUnlocked, CostFactorType.Multiplicative, 13.0),
-                [PricingId.PartySize] = new Entry("m01", 100000, 1.0, CostFactor.PartySize, CostFactorType.Multiplicative, 7.0),
+                [PricingId.Expansions1] = new Entry("m01", 500000, 1.0, CostFactor.ExpansionsUnlocked, CostFactorType.Multiplicative, 3.7),
+                [PricingId.PartySize] = new Entry("m01", 100000, 1.0, CostFactor.PartySize, CostFactorType.Multiplicative, 3.3),
             };
 
             public static Entry Get(PricingId id) => _map[id];

@@ -37,6 +37,7 @@
 
 @code {
     ElementReference _msgBodyRef;
+    bool _scrollPending;
 
     enum MsgKind { Info, Warn, Error, Success }
     sealed class UiMessage
@@ -51,12 +52,33 @@
     {
         base.OnInitialized();
         UiLog.OnMessage += HandleUiLogMessage;
+        Tooltips.Changed += OnTooltipChanged;
     }
 
     public void Dispose()
     {
+        Tooltips.Changed -= OnTooltipChanged;
         UiLog.OnMessage -= HandleUiLogMessage;
         base.Dispose();
+    }
+
+    void OnTooltipChanged()
+    {
+        // Se a tooltip sumiu, queremos ir para baixo
+        if (Tooltips.Current is null)
+        {
+            _scrollPending = true;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_scrollPending)
+        {
+            _scrollPending = false;
+            await JS.InvokeVoidAsync("ui.scrollToBottom", _msgBodyRef);
+        }
     }
 
     void HandleUiLogMessage(UiLogMessage msg)
