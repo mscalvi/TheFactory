@@ -17,7 +17,7 @@ namespace FurmaIdle.Data
             ["m01"] = new CoinModel
             {
                 Id = "m01",
-                Name = "Talho",
+                Name = "Talhos",
                 Image = "images/coins/m01.jpg",
                 UnlockId = "s00",
                 State = UnlockHelper.State.Unlocked,

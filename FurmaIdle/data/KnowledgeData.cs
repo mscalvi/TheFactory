@@ -24,7 +24,7 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 100000,
+                GainCoinBase = 500000,
                 GainCoinCurve = 0.85,
                 GainFactorCurve = 0.6,
 
@@ -44,7 +44,7 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 100000,
+                GainCoinBase = 500000,
                 GainCoinCurve = 0.85,
                 GainFactorCurve = 0.6,
 
@@ -64,7 +64,7 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 100000,
+                GainCoinBase = 500000,
                 GainCoinCurve = 0.85,
                 GainFactorCurve = 0.6,
 
@@ -87,7 +87,7 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 1000000,
+                GainCoinBase = 5000000,
                 GainCoinCurve = 0.84,
                 GainFactorCurve = 0.6,
 
@@ -107,7 +107,7 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 10000000,
+                GainCoinBase = 50000000,
                 GainCoinCurve = 0.83,
                 GainFactorCurve = 0.6,
 

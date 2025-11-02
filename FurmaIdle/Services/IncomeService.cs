@@ -1,4 +1,5 @@
-﻿using FurmaIdle.Helpers;
+﻿using FurmaIdle.Data;
+using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using System.Collections.Concurrent;
 using static FurmaIdle.Helpers.ItemHelper;
@@ -74,6 +75,10 @@ namespace FurmaIdle.Services
         {
             if (type == ItemType.Coin)
             {
+                var modifier = GetKnowledgeModifiers(Game, id);
+                gain = (long)Math.Floor(gain * modifier);
+                frac = frac * modifier;
+
                 // ---- trabalhar em centavos (0..99) ----
                 stage.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
@@ -156,5 +161,29 @@ namespace FurmaIdle.Services
 
             return true;
         }
+
+        private double GetKnowledgeModifiers(GameModel game, string coinId)
+        {
+            double mult = 1.0;
+
+            if (coinId == "m01")
+            {
+                foreach (var kv in game.Knowledges)
+                {
+                    if (kv.Key != "k01" || kv.Key != "k02" || kv.Key != "k03") continue;
+                    var k = kv.Value;
+                    var knowledge = _locate.LocateKnowledge(game, k.Id);
+
+                    game.ExpansionStats.KnowledgeGain.TryGetValue(knowledge.Id, out var totalK);
+
+                    double bonus = 1.0 + (knowledge.GenerationFactor * Math.Pow(totalK, knowledge.GainCoinCurve));
+
+                    mult *= bonus;
+                }
+            }
+
+            return mult;
+        }
+
     }
 }

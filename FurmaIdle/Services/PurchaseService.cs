@@ -12,6 +12,8 @@ namespace FurmaIdle.Services
     {
         Task Purchase(ItemHelper.ItemType type, string itemId, string stageId);
         bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId);
+        (long costValue, string costId) GetCurrentCost(ItemHelper.ItemType type, string itemId, string stageId);
+
 
         Task PurchaseTech(string itemId);
         bool CanAffordTech(string itemId);
@@ -78,6 +80,8 @@ namespace FurmaIdle.Services
 
             _ui.NavMenuControl(itemId);
         }
+        public (long costValue, string costId) GetCurrentCost(ItemHelper.ItemType type, string itemId, string stageId)
+            => ComputeCost(type, itemId, stageId);
 
         public bool CanAfford(ItemHelper.ItemType type, string itemId, string stageId)
         {

@@ -66,6 +66,9 @@ namespace FurmaIdle.Services
                 CurrentGame.Attach(model);
                 Console.WriteLine("[CGS] Jogo criado");
 
+                await Unlock.UnlockInitialState();
+                Console.WriteLine("[CGS] Estágio Inicial Desbloqueado");
+
                 await Store.SaveAsync(model, "main");
                 Console.WriteLine("[CGS] Jogo salvo");
 

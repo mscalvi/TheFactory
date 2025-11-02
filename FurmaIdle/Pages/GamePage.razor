@@ -46,18 +46,14 @@
         await Start.InitAsync();
         Console.WriteLine($"[GP] Finalizado Load/Create");
 
-        // 2) aplica unlocks
-        await Unlock.UnlockInitialState();
-        Console.WriteLine("[GP] Estágio Inicial Desbloqueado");
-
         Game.MarkReady();
         Console.WriteLine("[GP] Jogo marcado como Pronto");
 
-        // 3) inicia ticks
+        // 2) inicia ticks
         Ticks.Start();
         Console.WriteLine("[GP] Ticks iniciados");
 
-        // 4) marca pronto e re-renderiza
+        // 3) marca pronto e re-renderiza
         Ui.SyncMenusFromGame(Game.CurrentGame);
         RecomputeReady();
         StateHasChanged();

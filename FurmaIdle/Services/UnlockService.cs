@@ -50,14 +50,14 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var character = _locate.LocateCharacter(_game.CurrentGame, characterId);
+                var character = _locate.LocateCharacter(game, characterId);
 
-                foreach (var upgradeId in UpgradeData.ShowOrder)
+                foreach (var up in game.Upgrades)
                 {
-                    var up = _locate.LocateUpgrade(_game.CurrentGame, upgradeId);
-                    if (string.Equals(up.UnlockId, character.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(up.Value.UnlockId, character.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        up.State = UnlockHelper.State.Available;
+                        up.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
@@ -73,7 +73,7 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var coin = _locate.LocateCoin(_game.CurrentGame, coinId);
+                var coin = _locate.LocateCoin(game, coinId);
 
                 coin.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Coin {coin.Id}: {coin.State}");
@@ -86,15 +86,14 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var contract = _locate.LocateContract(_game.CurrentGame, contractId);
-                Console.WriteLine($"[Unlock] Contract {contract.Id}: localizado");
+                var contract = _locate.LocateContract(game, contractId);
 
                 foreach (var up in game.Upgrades)
                 {
                     if (string.Equals(up.Value.UnlockId, contract.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: localizado e {up.Value.State}");
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
@@ -110,24 +109,17 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var expansion = _locate.LocateExpansion(_game.CurrentGame, expansionId);
+                var expansion = _locate.LocateExpansion(game, expansionId);
 
-                // Conferindo Instância do Jogo
-                var fromDict = game.Expansions.TryGetValue(expansionId, out var ex)
-                     ? ex
-                     : null;
-
-                Console.WriteLine($"[Unlock] LocateExpansion id='{expansion.Id}', same instance? {ReferenceEquals(expansion, fromDict)}");
-
-                foreach (var upgradeId in UpgradeData.ShowOrder)
+                foreach (var up in game.Upgrades)
                 {
-                    var up = _locate.LocateUpgrade(_game.CurrentGame, upgradeId);
-                    if (string.Equals(up.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(up.Value.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        up.State = UnlockHelper.State.Available;
+                        up.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
-                if (expansion.State == UnlockHelper.State.Blocked)
+                if (expansion.State != UnlockHelper.State.Unlocked)
                 {
                     expansion.StartedAt = DateTime.Now;
                 }
@@ -143,7 +135,7 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var know = _locate.LocateKnowledge(_game.CurrentGame, knowledgeId);
+                var know = _locate.LocateKnowledge(game, knowledgeId);
 
                 know.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Knowledge {know.Id}: {know.State}");
@@ -156,32 +148,32 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var local = _locate.LocateLocal(_game.CurrentGame, localId);
+                var local = _locate.LocateLocal(game, localId);
 
-                foreach (var techId in TechData.ShowOrder)
+                foreach (var tech in game.Techs)
                 {
-                    var tech = _locate.LocateTech(_game.CurrentGame, techId);
-                    if (string.Equals(tech.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(tech.Value.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        tech.State = UnlockHelper.State.Available;
+                        tech.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Tech {tech.Value.Id}: {tech.Value.State}");
                     }
                 }
 
-                foreach (var expansionId in ExpansionData.ShowOrder)
+                foreach (var expansion in game.Expansions)
                 {
-                    var expansion = _locate.LocateExpansion(_game.CurrentGame, expansionId);
-                    if (string.Equals(expansion.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(expansion.Value.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        expansion.State = UnlockHelper.State.Available;
+                        expansion.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Expansion {expansion.Value.Id}: {expansion.Value.State}");
                     }
                 }
 
-                foreach (var upgradeId in UpgradeData.ShowOrder)
+                foreach (var up in game.Upgrades)
                 {
-                    var up = _locate.LocateUpgrade(_game.CurrentGame, upgradeId);
-                    if (string.Equals(up.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(up.Value.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        up.State = UnlockHelper.State.Available;
+                        up.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
@@ -196,23 +188,23 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var stage = _locate.LocateStage(_game.CurrentGame, stageId);
+                var stage = _locate.LocateStage(game, stageId);
 
-                foreach (var coinId in CoinsData.ShowOrder)
+                foreach (var coin in game.Coins)
                 {
-                    var coin = _locate.LocateCoin(_game.CurrentGame, coinId);
-                    if (string.Equals(coin.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(coin.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        coin.State = UnlockHelper.State.Unlocked;
+                        coin.Value.State = UnlockHelper.State.Unlocked;
+                        Console.WriteLine($"[Unlock] Coin {coin.Value.Id}: {coin.Value.State}");
                     }
                 }
 
-                foreach (var upgradeId in UpgradeData.ShowOrder)
+                foreach (var up in game.Upgrades)
                 {
-                    var up = _locate.LocateUpgrade(_game.CurrentGame, upgradeId);
-                    if (string.Equals(up.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(up.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        up.State = UnlockHelper.State.Available;
+                        up.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
@@ -228,14 +220,14 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var tech = _locate.LocateTech(_game.CurrentGame, techId);
+                var tech = _locate.LocateTech(game, techId);
 
-                foreach (var upgradeId in UpgradeData.ShowOrder)
+                foreach (var up in game.Upgrades)
                 {
-                    var up = _locate.LocateUpgrade(_game.CurrentGame, upgradeId);
-                    if (string.Equals(up.UnlockId, tech.Id, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(up.Value.UnlockId, tech.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        up.State = UnlockHelper.State.Available;
+                        up.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
@@ -250,7 +242,7 @@ namespace FurmaIdle.Services
         {
             await _game.Mutate(game =>
             {
-                var resource = _locate.LocateResource(_game.CurrentGame, resourceId);
+                var resource = _locate.LocateResource(game, resourceId);
 
                 resource.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Resource {resource.Id}: {resource.State}");
@@ -290,6 +282,9 @@ namespace FurmaIdle.Services
                         break;
                     case EffectHelper.EffectType.TechUnlock:
                         await UnlockTech(up.TargetId);
+                        break;
+                    case EffectHelper.EffectType.CoinUnlock:
+                        await UnlockCoin(up.TargetId);
                         break;
 
                     default:

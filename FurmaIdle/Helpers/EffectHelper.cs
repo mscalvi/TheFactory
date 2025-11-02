@@ -36,25 +36,34 @@
             ResourceGainPerLocal,
 
             // Coins
+            CoinUnlock,
             CoinGain,
             BurstCoinGain,
+
             // Specialties
             SpecialtyCost,
+
             // Clicks
             ClickGain,
+
             // Stages
             StageUnlock,
             PartyCapSize,
+
             // Locals
             LocalUnlock,
+
             // Tech
             TechUnlock,
+
             // Expansions
             ExpansionUnlock,
             ExpansionCost,
+
             // Expedition
             ExpeditionCost,
             ExpeditionGain,
+
             // Upgrade
             UpgradeCost,
         }

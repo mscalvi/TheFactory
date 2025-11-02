@@ -34,12 +34,6 @@ else
     // ===== Unlocked Upgrades =====
     var unlockedUpgrades = OrderedUpgrades(game)
         .Where(u => u.State == UnlockHelper.State.Unlocked)
-        .Where(u =>
-        {
-            var max = u.MaxBuy;
-            var cur = u.ActualBuy;
-            return max > 0 && cur >= max;
-        })
         .Where(u => IsContractUpgradeVisible(game, u.Id));
 
     var availableCharacterUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
@@ -47,12 +41,7 @@ else
             .Where(u => u?.Id != null
                      && u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
                      && u.State == UnlockHelper.State.Available)
-            .OrderBy(u =>
-            {
-                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.Ordinal));
-                return idx < 0 ? int.MaxValue : idx;
-            })
-            .ThenBy(u => u.Id);
+            .OrderBy(u => u.Id);
 
     <!-- Available Characters -->
     <div>
@@ -201,12 +190,7 @@ else
     // ===== Helpers de ordenação/filtragem =====
     private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
         => g.Upgrades.Values
-            .OrderBy(u =>
-            {
-                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.OrdinalIgnoreCase));
-                return idx < 0 ? int.MaxValue : idx;
-            })
-            .ThenBy(u => u.Id);
+            .OrderBy(u => u.Id);
 
     private static bool StartsWithUc(string id)
         => id?.StartsWith("uc", StringComparison.OrdinalIgnoreCase) == true;

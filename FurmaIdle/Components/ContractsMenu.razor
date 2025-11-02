@@ -17,7 +17,7 @@
     @if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage?.Id) || _stage is null || !IsExpeditionActive(_stage))
     {
         <div class="contracts-empty">
-            <img src="image/nostage-contracts" alt="Sem Expedição Ativa" />
+            <img src="image/contracts-noStage" alt="Sem Expedição Ativa" />
         </div>
     }
     else
@@ -38,7 +38,10 @@
                     <div class="contracts-level">
                         @if (level > contractsInfo.ContractsLevel)
                         {
-                            <div class="level-locked">Nível de Contrato Bloqueado</div>
+                            // <div class="level-locked">Nível de Contrato Bloqueado</div>
+                            <div class="level-locked">
+                                <img src="image/contracts-blockedLevel" alt="Nível de Contrato Bloqueado" />
+                            </div>
                         }
                         else
                         {
@@ -50,7 +53,10 @@
                                 var chosenCon = ChosenContract(level);
                                 @if (chosenCon is null)
                                 {
-                                    <div class="level-chosen">Contrato deste nível já foi escolhido.</div>
+                                    // <div class="level-chosen">Contrato deste nível não foi escolhido.</div>
+                                    <div class="level-chosen">
+                                        <img src="image/contracts-chosenBug" alt="Contrato do Nível não Escolhido" />
+                                    </div>
                                 }
                                 else
                                 {
@@ -61,7 +67,9 @@
                                     var disabled = noCapacity || !canBuy;
 
                                     var rp = RealProdParams(chosen);
+                                    var perSec = qty * rp.CoinsPerCycle / rp.SecondsPerCycle;
                                     var coin = Locate.LocateCoin(Game.CurrentGame, rp.CoinId);
+                                    var (costTotal, costCoinName) = CostOf(chosen.Id);
 
                                     <div class="contracts-picked">
                                         <div class="cp-top">
@@ -78,7 +86,8 @@
 
                                             <div class="contract-card">
                                                 <div class="cc-name">x<strong>@qty</strong> contratos para @chosen.Name</div>
-                                                <div class="cc-cycle"><strong>@rp.CoinsPerCycle.ToString("N2") @coin?.Name</strong> a cada @rp.SecondsPerCycle.ToString("N2")s - Cost: @canBuy</div>
+                                                <div class="cc-cycle">@rp.CoinsPerCycle.ToString("N2") @coin?.Name a cada @rp.SecondsPerCycle.ToString("N2")s</div>
+                                                <div class="cc-cycle">@perSec.ToString("N2") @coin.Name/s - Próximo: @costTotal @costCoinName</div>
                                             </div>
                                         </div>
 
@@ -127,7 +136,10 @@
 
                                     @if (list.Count == 0)
                                     {
-                                        <div class="no-contracts">Nenhum contrato disponível neste nível.</div>
+                                        // <div class="no-contracts">Nenhum contrato disponível neste nível.</div>
+                                        <div class="no-contracts">
+                                            <img src="image/contracts-noContracts" alt="Nenhum Contrato Desbloqueado" />
+                                        </div>
                                     }
                                     else
                                     {
@@ -182,7 +194,9 @@
 
     private void RefreshStage(bool maybeCollapse)
     {
-        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        var game = Game.CurrentGame;
+
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(game.SelectedStageId))
         {
             _stage = null;
             _expandedLevel = null;
@@ -191,18 +205,17 @@
             return;
         }
 
-        var g = Game.CurrentGame;
-        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        game.Stages.TryGetValue(game.SelectedStageId, out var st);
         _stage = st;
 
         var activeNow = IsExpeditionActive(st);
-        var stageChanged = !string.Equals(_lastStageId, Game?.CurrentGame.SelectedStageId, StringComparison.Ordinal);
+        var stageChanged = !string.Equals(_lastStageId, game.SelectedStageId, StringComparison.Ordinal);
         var activeDropped = _lastActive && !activeNow;
 
         if (maybeCollapse && (stageChanged || activeDropped))
             _expandedLevel = null;
 
-        _lastStageId = Game?.CurrentGame.SelectedStageId;
+        _lastStageId = game.SelectedStageId;
         _lastActive = activeNow;
     }
 
@@ -241,5 +254,24 @@
         var id = Contracts.GetChosenContractIdForLevel(Game.CurrentGame, _stage.Id, level);
         if (string.IsNullOrWhiteSpace(id)) return null;
         return Locate.LocateContract(Game.CurrentGame, id);
+    }
+
+    (long val, string coinName) CostOf(string contractId)
+    {
+        var (v, costId) = Purchase.GetCurrentCost(ItemHelper.ItemType.Contract, contractId, _stage.Id);
+        return (v, IdToName(costId));
+    }
+
+    private string IdToName(string? id)
+    {
+        if (string.IsNullOrWhiteSpace(id)) return "";
+        var g = Game.CurrentGame;
+        return id[0] switch
+        {
+            'm' => Locate.LocateCoin(g, id).Name,       // moedas
+            'r' => Locate.LocateResource(g, id).Name,   // recursos
+            'k' => Locate.LocateKnowledge(g, id).Name,  // conhecimento
+            _ => id
+        };
     }
 }
