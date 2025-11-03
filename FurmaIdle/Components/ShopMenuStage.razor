@@ -9,6 +9,7 @@
 
 @inject IPurchaseService Purchase
 @inject ILocateService Locate
+@inject ICostService Cost
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject IExpeditionService Expedition
@@ -177,7 +178,7 @@ else
 
     private async Task OnClickBuyLocalUpgrade(string upgradeId)
     {
-        var canAfford = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
+        var canAfford = Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
         if (!canAfford)
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
@@ -189,7 +190,7 @@ else
 
     private async Task OnClickBuyStageUpgrade(string upgradeId)
     {
-        var canAfford = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
+        var canAfford = Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
         if (!canAfford)
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");

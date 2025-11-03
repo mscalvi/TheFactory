@@ -61,10 +61,10 @@
                                 else
                                 {
                                     var chosen = chosenCon;
-                                    bool noCapacity = contractsInfo.ContractsUsed >= contractsInfo.ContractsCap;
                                     var qty = _stage.ActiveContracts?.TryGetValue(chosen.Id, out var q) == true ? q : 0;
+                                    var hasCapacity = HasCapacity(_stage);
                                     var canBuy = CanPurchase(chosen, _stage!);
-                                    var disabled = noCapacity || !canBuy;
+                                    var disabled = !hasCapacity || !canBuy;
 
                                     var rp = Contracts.GetContractInfo(chosen, _stage);
                                     var coin = Locate.LocateCoin(Game.CurrentGame, rp.CoinId);
@@ -129,9 +129,9 @@
 
                                     var ids = Contracts.AvaliableContracts(Game.CurrentGame, _stage.Id);
                                     var list = ids
-                                    .Select(id => Locate.LocateContract(Game.CurrentGame, id))
-                                    .Where(c => c is not null && c.Level == level)
-                                    .ToList();
+                                        .Select(id => Locate.LocateContract(Game.CurrentGame, id))
+                                        .Where(c => c is not null && c.Level == level)
+                                        .ToList();
 
                                     @if (list.Count == 0)
                                     {
@@ -145,9 +145,9 @@
                                         <div class="contracts-list">
                                             @foreach (var c in list)
                                             {
-                                                bool noCapacity = contractsInfo.ContractsUsed >= contractsInfo.ContractsCap;
+                                                var hasCapacity = HasCapacity(_stage);
                                                 var canBuy = CanPurchase(c, _stage);
-                                                var disabled = noCapacity || !canBuy;
+                                                var disabled = !hasCapacity || !canBuy;
 
                                                 <button type="button"
                                                         class="contract-button icon-button @(disabled ? "is-locked" : null)"
@@ -234,6 +234,8 @@
         var contract = Locate.LocateContract(Game.CurrentGame, contractId);
         if (!CanPurchase(contract, _stage)) return;
 
+        if (!HasCapacity(_stage)) return;
+
         await Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id);
 
         var qty = _stage.ActiveContracts?.TryGetValue(contract.Id, out var q) == true ? q : 0;
@@ -247,6 +249,14 @@
 
     private bool CanPurchase(ContractModel contract, StageModel stage)
         => Cost.CanAfford(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
+
+    private bool HasCapacity(StageModel stage)
+    {
+        var contractsInfo = Contracts.GetStageInfo(Game.CurrentGame, _stage.Id);
+        bool capacity = contractsInfo.ContractsUsed < contractsInfo.ContractsCap;
+
+        return capacity;
+    }
 
     private ContractModel? ChosenContract(int level)
     {

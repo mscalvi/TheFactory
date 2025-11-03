@@ -27,12 +27,14 @@ else
     .ToList();
 
     var localsText = unlocked.Count > 0 ? string.Join(" · ", unlocked) : "Nenhum local desbloqueado";
+    var expansion = Locate.LocateExpansion(g, g.CurrentExpansionId);
+    var expansionName = expansion.Name;
 
     <div class="title-strip">
         <div class="title-center">
 
-            <div class="t-line t-title ellipsis">Exploradores de Furma — @stageName</div>
-            <div class="t-line t-locals ellipsis">@localsText</div>
+            <div class="t-line t-title ellipsis">Exploradores de Furma — @expansionName</div>
+            <div class="t-line t-locals ellipsis">@stageName: @localsText</div>
 
         </div>
     </div>

@@ -202,7 +202,7 @@ namespace FurmaIdle.Services
                     {
                         if (!expansion.inUseContracts.Contains(contract.Id))
                         {
-                            liberated.Add(contract.Id);
+                            if(!liberated.Contains(contract.Id)) liberated.Add(contract.Id);
                         }
                     }
                 }

@@ -55,26 +55,41 @@ namespace FurmaIdle.Services
 
             return partySize;
         }
+
         public bool CanToggleChar(StageModel stage, string charId)
         {
             var expedition = stage.Expedition;
-            if (expedition.ExpeditionState == ExpeditionState.Idle) return false;
+            var character = _locate.LocateCharacter(_game.CurrentGame, charId);
 
-            if (expedition.PartyIds.Contains(charId)) return false;
+            if (expedition.ExpeditionState != ExpeditionState.Idle) return false;
+            if (character.CharState == CharState.InLine) return true;
 
-            return expedition.PartyIds.Count < GetPartyCap(stage);
+            int countLine = 0;
+            foreach (var characters in _game.CurrentGame.Characters)
+            {
+                if (characters.Value.CharState == CharState.InLine) countLine++;
+            }
+
+            if(countLine < GetPartyCap(stage))
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
         }
+
         public bool ToggleChar(StageModel stage, string charId)
         {
             var character = _locate.LocateCharacter(_game.CurrentGame, charId);
 
             if (character.CharState == CharState.InBase)
             {
-                character.CharState = CharState.InStage;
+                character.CharState = CharState.InLine;
                 character.InStageId = stage.Id;
                 return true;
             } 
-            else if (character.CharState == CharState.InStage)
+            else if (character.CharState == CharState.InLine)
             {
                 character.CharState = CharState.InBase;
                 return true;
@@ -120,9 +135,11 @@ namespace FurmaIdle.Services
 
                 foreach(var character in game.Characters)
                 {
-                    if(character.Value.InStageId == stage.Id)
+                    if(character.Value.CharState == CharState.InLine)
                     {
                         expedition.PartyIds.Add(character.Key);
+                        character.Value.CharState = CharState.InStage;
+                        character.Value.InStageId = stage.Id;
                     }
                 }
 

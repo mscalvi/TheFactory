@@ -36,12 +36,14 @@ namespace FurmaIdle.Services
         private readonly IIncomeService _income;
         private readonly ILocateService _locate;
         private readonly ICurrentGameService _game;
+        private readonly IModifierService _modifier;
 
-        public ResourcesService(IIncomeService income, ILocateService locate, ICurrentGameService game)
+        public ResourcesService(IIncomeService income, ILocateService locate, ICurrentGameService game, IModifierService modifier)
         {
             _income = income;
             _locate = locate;
             _game = game;
+            _modifier = modifier;
         }
 
         // acumula tempo para processar de 1 em 1 segundo
@@ -71,11 +73,10 @@ namespace FurmaIdle.Services
                 if (resource.rsRegen <= 0) continue;
 
                 long current = 0;
-                foreach (var stage in game.Stages)
-                {
-                    if (stage.Value.ExpeditionStats.Resources.TryGetValue(res.Id, out var cur) == true)
-                        current += cur;
-                }
+
+                var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
+
+                current = expansion.ExpansionStats.Resources.GetValueOrDefault(res.Id);
 
                 if (resource.rsCap > 0 && current >= resource.rsCap) continue;
 
@@ -93,9 +94,9 @@ namespace FurmaIdle.Services
         {
             var resource = _locate.LocateResource(game, resourceId);
 
-            var regenModifier = GetModifiers(resource, EffectHelper.EffectType.ResourceGain);
+            var regenModifier = _modifier.GetModifiers(ItemType.Resource, resourceId, "s00", EffectHelper.EffectSupertype.Gain);
 
-            var capModifier = GetModifiers(resource, EffectHelper.EffectType.ResourceCap);
+            var capModifier = GetResourceCap(resource);
 
             var regen = (resource.RsPerSecond + regenModifier.AddMod) * regenModifier.MultMod;
             if (regen < 0) regen = 0;
@@ -115,14 +116,14 @@ namespace FurmaIdle.Services
             return (regen, cap);
         }
 
-        private static (double AddMod, double MultMod) GetModifiers(ResourceModel resource, EffectHelper.EffectType type)
+        private static (double AddMod, double MultMod) GetResourceCap(ResourceModel resource)
         {
             double AddMod = 0;
             double MultMod = 1;
 
             foreach (var modifier in resource.Modifiers)
             {
-                if (type == modifier.Type)
+                if (modifier.Type == EffectHelper.EffectType.ResourceCap)
                 {
                     if (modifier.Operation == EffectHelper.EffectOperation.Additive)
                     {

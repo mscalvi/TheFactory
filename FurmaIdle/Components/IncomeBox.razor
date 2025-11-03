@@ -99,11 +99,13 @@
                     if (stage.Value.ExpeditionStats?.Coins?.TryGetValue(coin.Id, out var st) == true)
                         stageTotal = st;
                 }
-                if (stage.Value.ExpeditionStats?.Coins?.TryGetValue(coin.Id, out var t) == true)
-                    gameTotal = t;
+                if (stage.Value.ExpeditionStats?.Coins?.TryGetValue(coin.Id, out var rt) == true)
+                    gameTotal = rt;
             }
 
-            // per-sec (se existir)
+            if (game.NoExpeditionStats?.Coins?.TryGetValue(coin.Id, out var t) == true)
+                gameTotal += t;
+
             perSecGame.TryGetValue(coin.Id, out var pSecGame);
             perSecStage.TryGetValue(coin.Id, out var pSecStage);
 

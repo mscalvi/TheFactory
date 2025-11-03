@@ -51,12 +51,28 @@ namespace FurmaIdle.Services
                 };
                 if (!hasFunds) return;
 
-                if(cost.costId[0] != 'm')
+                if (cost.costId[0] != 'm')
                 {
                     ApplyDebit(expansion.ExpansionStats, cost.costValue, cost.costId);
-                } else
+                }
+                else
                 {
                     ApplyDebit(stage.ExpeditionStats, cost.costValue, cost.costId);
+                }
+
+                if (type == ItemHelper.ItemType.Contract)
+                {
+                    var contract = _locate.LocateContract(game, itemId);
+
+                    contract.UseState = UnlockHelper.ContractState.InUse;
+                    stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
+                    stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
+
+                    stage.lockedContractLevel.Add(contract.Level);
+                    if (!expansion.inUseContracts.Contains(contract.Id))
+                    {
+                        expansion.inUseContracts.Add(contract.Id);
+                    }
                 }
 
                 ApplyStats(expansion.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
@@ -64,22 +80,6 @@ namespace FurmaIdle.Services
                 Console.WriteLine($"[Purchase] {itemId} Custo: {cost.costValue} {cost.costId}");
 
             }, save: true);
-
-            if (type == ItemHelper.ItemType.Contract)
-            {
-                var contract = _locate.LocateContract(game, itemId);
-
-                await _game.Mutate(game =>
-                {
-                    contract.UseState = UnlockHelper.ContractState.InUse;
-                    stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
-                    stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
-
-                    stage.lockedContractLevel.Add(contract.Level);
-                    expansion.inUseContracts.Add(contract.Id);
-
-                }, save: true);
-            }
 
             await _effect.ApplyEffect(type, itemId, stageId);
 

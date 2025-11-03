@@ -8,6 +8,7 @@
 @using FurmaIdle.Services
 
 @inject IPurchaseService Purchase
+@inject ICostService Cost
 @inject IContractsService Contracts
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
@@ -56,12 +57,12 @@ else
                 @foreach (var u in availableCharacterUpgrades)
                 {
                     var id = u.Id;
-                    var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
+                    var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
 
                     <button type="button"
                             class="icon-button"
                             disabled="@( !canBuy )"
-                            @onclick="() => OnClickBuyCharacterUpgrade(id)"
+                            @onclick="() => OnClickBuyUpgrade(id)"
                             @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
                             @onmouseleave="Tooltips.Clear"
                             @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
@@ -86,7 +87,7 @@ else
                 @foreach (var u in availableExpeditionUpgrades)
                 {
                     var id = u.Id;
-                    var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
+                    var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
                     <button type="button"
                             class="icon-button"
                             disabled="@( !canBuy )"
@@ -115,7 +116,7 @@ else
                 @foreach (var u in availableExpansionUpgrades)
                 {
                     var id = u.Id;
-                    var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
+                    var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
                     <button type="button"
                             class="icon-button"
                             disabled="@( !canBuy )"
@@ -187,6 +188,8 @@ else
         _stage = st;
     }
 
+    private bool freeProcess = true;
+
     // ===== Helpers de ordenação/filtragem =====
     private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
         => g.Upgrades.Values
@@ -224,11 +227,11 @@ else
         if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId)) return true;
 
         game.Upgrades.TryGetValue(upgradeId, out var up);
-        var targetContractId = up?.TargetId;
+        var contract = Locate.LocateContract(game, up.TargetId);
 
         if (StartsWithUc(upgradeId))
         {
-            if (_stage.ActiveContracts.TryGetValue(targetContractId, out var qty))
+            if (_stage.ActiveContracts.TryGetValue(up.TargetId, out var qty))
             {
                 if (qty > 0)
                 {
@@ -240,9 +243,9 @@ else
         else
         {
             // “uu”: visível se o nível atual de contrato for >= nível do upgrade
-            var contractsInfo = Contracts.GetStageContractsInfo(game, _stage.Id);
+            var stageInfo = Contracts.GetStageInfo(game, _stage.Id);
             var upgrade = Locate.LocateUpgrade(game, upgradeId);
-            if (upgrade.Level > contractsInfo.ContractsLevel)
+            if (upgrade.Level > stageInfo.ContractsLevel)
             {
                 return false;
             } else
@@ -255,23 +258,21 @@ else
     // ===== Ações =====
     private async Task OnClickBuyUpgrade(string upgradeId)
     {
-        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id))
+        if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id))
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
             return;
         }
 
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
-    }
-
-    private async Task OnClickBuyCharacterUpgrade(string upgradeId)
-    {
-        if (!Purchase.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id))
+        if (freeProcess)
         {
-            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            freeProcess = false;
+            await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
+            freeProcess = true;
+        }
+        else
+        {
             return;
         }
-
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
     }
 }

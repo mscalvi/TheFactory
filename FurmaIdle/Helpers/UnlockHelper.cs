@@ -20,7 +20,8 @@
         {
             Blocked,
             InBase,
-            InStage
+            InStage,
+            InLine
         }
         public enum ContractState
         {

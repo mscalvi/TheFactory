@@ -25,7 +25,7 @@ else
     var partySize = Expedition.GetPartyCap(_stage);
     var partyIds = expedition.PartyIds;
 
-    var selectedCount = partyIds.Count;
+    var selectedCount = CountLine();
 
     var canLaunch = !isActive && _stage is not null && selectedCount == partySize;
 
@@ -90,20 +90,20 @@ else
     {
         <!-- Characters inBase -->
         var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
-        var charsInBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
-                                   && c.CharState == UnlockHelper.CharState.InBase)
+        var avaliableChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+                                   && c.CharState == UnlockHelper.CharState.InBase || c.CharState == UnlockHelper.CharState.InLine)
                           .OrderBy(c => c.Id)
                           .ToList();
 
         <div>
             <h3>Characters (In Base)</h3>
-            @if (charsInBase.Count == 0)
+            @if (avaliableChars.Count == 0)
             {
                 <div>Nenhum personagem na base.</div>
             }
             else
             {
-                @foreach (var ch in charsInBase)
+                @foreach (var ch in avaliableChars)
                 {
                     var selected = ch.InStageId == _stage.Id;
                     var canToggle = Expedition.CanToggleChar(_stage, ch.Id);
@@ -188,17 +188,31 @@ else
 
     private void OnToggleChar(string id)
     {
-        var toggled = Expedition.ToggleChar(_stage, id);
+        Expedition.ToggleChar(_stage, id);
 
-        if (toggled)
+        var character = Locate.LocateCharacter(Game.CurrentGame, id);
+
+        if (character.CharState == UnlockHelper.CharState.InLine)
         {
             Log.Info($"{id} adicionado à equipe.");
-
-            StateHasChanged();
         }
         else
         {
             Log.Info($"{id} removido da equipe.");
         }
+
+        StateHasChanged();
+    }
+
+    private int CountLine()
+    {
+        int line = 0;
+
+        foreach (var character in Game.CurrentGame.Characters)
+        {
+            if (character.Value.CharState == UnlockHelper.CharState.InLine) line++;
+        }
+
+        return line;
     }
 }

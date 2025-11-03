@@ -131,17 +131,19 @@
     max-height: 100%;
     overflow: hidden;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(84px,1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(60px,1fr));
+    gap: 0px 1px;
+    justify-items: center;
 }
 
 .contract-button {
     display: flex;
     align-items: center;
+    align-content: center;
     justify-content: center;
     max-width: 100%;
     height: clamp(30px, 3.2vh, 42px);
-    padding: 4px 8px;
+    padding: 4px 6px;
     line-height: 1.05;
     font-size: clamp(.8rem, .85vw, .92rem);
     white-space: nowrap;
@@ -167,11 +169,12 @@
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 6px;
+    grid-template-columns: 70px 1fr;
+    gap: 5px;
     align-items: stretch;
     min-height: 0;
     overflow: hidden;
+    justify-items: center;
 }
 
     .cp-top .contract-button {
@@ -184,35 +187,39 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        align-items: center;
+        justify-items: center;
     }
 
 /* card compacto dentro do topo (se usado) */
-.contract-card {
-    display: grid;
-    grid-auto-rows: min-content;
-    align-content: center;
-    gap: 2px;
-    padding: 6px 8px;
-    background: var(--panel-bg, rgba(255,255,255,.04));
-    border: 1px solid var(--panel-border, rgba(255,255,255,.08));
-    border-radius: 10px;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-    font-size: clamp(.8rem, .84vw, .9rem);
-}
-    .contract-card .cc-name,
-    .contract-card .cc-cycle {
-        text-align: center;
-        white-space: nowrap;
+    .cp-top .contract-card {
+        display: grid;
+        grid-auto-rows: min-content;
+        align-content: center;
+        gap: 2px;
+        padding: 2px 4px;
+        background: var(--panel-bg, rgba(255,255,255,.04));
+        border: 1px solid var(--panel-border, rgba(255,255,255,.08));
+        border-radius: 10px;
+        height: 100%;
+        width: 100%;
+        min-height: 0;
         overflow: hidden;
-        text-overflow: ellipsis;
-        padding: 1px;
+        font-size: clamp(.6rem, .84vw, .9rem);
     }
 
-    .contract-card .cc-name {
-        font-weight: 700;
-    }
+        .cp-top .contract-card .cc-name,
+        .cp-top .contract-card .cc-cycle {
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 1px;
+        }
+
+        .cp-top .contract-card .cc-name {
+            font-weight: 700;
+        }
 
 /* =========================
    Rodapé: barra + legenda

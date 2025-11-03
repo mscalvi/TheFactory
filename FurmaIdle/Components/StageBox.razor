@@ -10,8 +10,8 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject IExpeditionService Expedition
+@inject ICostService Cost
 @inject ISpecialtiesService Specialty
-@inject IIncomeService Income
 @inject IPurchaseService Purchase
 @inject ILocateService Locate
 @inject IResourcesService Resource
@@ -57,7 +57,7 @@ else
         var stageId = game.SelectedStageId;
         if (string.IsNullOrWhiteSpace(stageId)) return false;
 
-        return Purchase.CanAfford(ItemHelper.ItemType.Specialty, spec.Id, stageId);
+        return Cost.CanAfford(ItemHelper.ItemType.Specialty, spec.Id, stageId);
     }
 
     <!-- ========= Party grid (PartySizeMax slots) ========= -->

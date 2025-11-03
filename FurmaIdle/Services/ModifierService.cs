@@ -325,6 +325,24 @@ namespace FurmaIdle.Services
                                 }
                             }
                             break;
+
+                        case ItemType.Resource:
+                            var resource = _locate.LocateResource(game, itemId);
+                            foreach (var modifier in resource.Modifiers)
+                            {
+                                if (modifier.Type == EffectType.ResourceGain)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value;
+                                    }
+                                }
+                            }
+                            break;
                     }
                     break;
                 #endregion
