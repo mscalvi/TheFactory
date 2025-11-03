@@ -119,6 +119,16 @@ namespace FurmaIdle.Services
                         Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
+
+                foreach (var nextExpansion in game.Expansions)
+                {
+                    if (string.Equals(nextExpansion.Value.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        nextExpansion.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Expansion {nextExpansion.Value.Id}: {nextExpansion.Value.State}");
+                    }
+                }
+
                 if (expansion.State != UnlockHelper.State.Unlocked)
                 {
                     expansion.StartedAt = DateTime.Now;
@@ -156,15 +166,6 @@ namespace FurmaIdle.Services
                     {
                         tech.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Tech {tech.Value.Id}: {tech.Value.State}");
-                    }
-                }
-
-                foreach (var expansion in game.Expansions)
-                {
-                    if (string.Equals(expansion.Value.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
-                    {
-                        expansion.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Expansion {expansion.Value.Id}: {expansion.Value.State}");
                     }
                 }
 

@@ -7,40 +7,29 @@
 @using FurmaIdle.Data
 
 @inject IPurchaseService Purchase
+@inject ICostService Cost
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject ILocateService Locate
 
 @{
     var game = Game.CurrentGame;
-    var expansionStats = Game.CurrentGame?.ExpansionStats;
-    var currExpId = Game.CurrentGame?.LastExpansionId;
 
-    ExpansionModel currExpansion = Locate.LocateExpansion(game, currExpId);
+    ExpansionModel expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
 
-    if (!string.IsNullOrWhiteSpace(currExpId) &&
-    game?.Expansions.TryGetValue(currExpId!, out currExpansion) == true)
-    {
-        // Expansão Ativa
-    }
+    var expansionStats = expansion.ExpansionStats;
 
     var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
     TimeSpan? expDuration = null;
-    if (currExpansion?.StartedAt is DateTimeOffset startedAt)
+    if (expansion?.StartedAt is DateTimeOffset startedAt)
         expDuration = DateTimeOffset.UtcNow - startedAt;
 
     var availableExpansionUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
         game.Upgrades.Values
             .Where(u => u?.Id != null
                      && u.Id.StartsWith("ue", StringComparison.OrdinalIgnoreCase)
-                     && u.State == UnlockHelper.State.Available)
-            .OrderBy(u =>
-            {
-                var idx = UpgradeData.ShowOrder.FindIndex(id => string.Equals(id, u.Id, StringComparison.Ordinal));
-                return idx < 0 ? int.MaxValue : idx;
-            })
-            .ThenBy(u => u.Id);
+                     && u.State == UnlockHelper.State.Available);
 
     var inBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
                                && c.CharState == UnlockHelper.CharState.InBase)
@@ -56,7 +45,7 @@
 
 <div>
     <h3>Expansion Status</h3>
-    <div>@currExpansion.Name</div>
+    <div>@expansion.Name</div>
     <div>Duração: @(expDuration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</div>
     <div>Ganhos</div>
     @foreach (var coin in expansionStats.CoinsGain)
@@ -102,10 +91,10 @@
 </div>
 
 <div>
-    <h3>Characters In Stage</h3>
+    <h3>Characters In Expedition</h3>
     @if (inStage.Count == 0)
     {
-        <div>Ninguém no stage.</div>
+        <div>Ninguém em Expedição.</div>
     }
     else
     {
@@ -137,7 +126,7 @@
             @foreach (var u in availableExpansionUpgrades)
             {
                 var id = u.Id;
-                var canBuy = Purchase.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
+                var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
 
                 <button type="button"
                         class="icon-button"

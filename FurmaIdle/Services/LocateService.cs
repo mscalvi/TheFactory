@@ -7,6 +7,7 @@ namespace FurmaIdle.Services
     {
         StageModel LocateStage(GameModel game, string stageId);
         CoinModel LocateCoin(GameModel game, string coinId);
+        ClickModel LocateClick(GameModel game, string clickId);
         UpgradeModel LocateUpgrade(GameModel game, string upgradeId);
         CharacterModel LocateCharacter(GameModel game, string characterId);
         LocalModel LocateLocal(GameModel game, string localId);
@@ -39,6 +40,15 @@ namespace FurmaIdle.Services
 
             if (game.Coins.TryGetValue(coinId, out var coin)) return coin;
             throw new KeyNotFoundException($"Coin '{coinId}' não encontrada no jogo atual.");
+        }
+
+        public ClickModel LocateClick(GameModel game, string clickId)
+        {
+            if (string.IsNullOrWhiteSpace(clickId))
+                throw new ArgumentException("clickId inválido.", nameof(clickId));
+
+            if (game.Clicks.TryGetValue(clickId, out var click)) return click;
+            throw new KeyNotFoundException($"Click '{clickId}' não encontrada no jogo atual.");
         }
 
         public UpgradeModel LocateUpgrade(GameModel game, string upgradeId)

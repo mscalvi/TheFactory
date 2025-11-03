@@ -68,6 +68,16 @@
             UpgradeCost,
         }
 
+        public enum EffectSupertype 
+        { 
+            Cost,
+            Gain,
+            Time,
+            Unlock,
+            Cap,
+        }
+
+
         public enum EffectOperation
         {
             Additive,

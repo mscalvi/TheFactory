@@ -5,19 +5,16 @@
         public int SchemaVersion { get; set; }
 
         // Ativo
+        public DateTime StartTime { get; set; }
         public DateTime LastTick { get; set; }
         public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
         public string SelectedStageId { get; set; } = "s00";
-        public string LastExpansionId { get; set; } = "x00";
-        public List<string> ActiveStagesIds { get; set; }
-        public bool Started { get; set; } = false;
-        public bool On { get; set; } = false;
+        public string CurrentExpansionId { get; set; } = "x00";
 
         // Ui
         public HashSet<string> UnlockedMenus { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
         // Total
-        public StatsModel ExpansionStats { get; set; } = new();
         public StatsModel GameStats { get; set; } = new();
         public Dictionary<string, CoinModel> Coins { get; set; } = new();
         public Dictionary<string, ClickModel> Clicks { get; set; } = new();

@@ -10,6 +10,7 @@ namespace FurmaIdle.Models
         public DateTimeOffset? StartedAt { get; set; }
         public DateTimeOffset? FinishedAt { get; set; }
 
+
         // Modifiers
         public List<ModifierModel> Modifiers { get; set; }
     }

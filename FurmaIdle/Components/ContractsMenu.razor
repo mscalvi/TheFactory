@@ -3,11 +3,11 @@
 @using FurmaIdle.Models
 @using FurmaIdle.Helpers
 @using FurmaIdle.Services
-@using static FurmaIdle.Helpers.ContractHelper
 
 @inject IContractsService Contracts
 @inject ILocateService Locate
 @inject IPurchaseService Purchase
+@inject ICostService Cost
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 
@@ -22,7 +22,7 @@
     }
     else
     {
-        var contractsInfo = Contracts.GetStageContractsInfo(Game.CurrentGame, _stage.Id);
+        var contractsInfo = Contracts.GetStageInfo(Game.CurrentGame, _stage.Id);
 
         <div class="contracts-layout" style="--levels:@_stage.MaxContractLevel">
             <div class="contracts-capbar">
@@ -45,7 +45,7 @@
                         }
                         else
                         {
-                            var lvlChosen = _stage.lockedContracts.Contains(level) == true;
+                            var lvlChosen = _stage.lockedContractLevel.Contains(level) == true;
                             var expanded = _expandedLevel == level;
 
                             if (lvlChosen)
@@ -66,8 +66,7 @@
                                     var canBuy = CanPurchase(chosen, _stage!);
                                     var disabled = noCapacity || !canBuy;
 
-                                    var rp = RealProdParams(chosen);
-                                    var perSec = qty * rp.CoinsPerCycle / rp.SecondsPerCycle;
+                                    var rp = Contracts.GetContractInfo(chosen, _stage);
                                     var coin = Locate.LocateCoin(Game.CurrentGame, rp.CoinId);
                                     var (costTotal, costCoinName) = CostOf(chosen.Id);
 
@@ -87,7 +86,7 @@
                                             <div class="contract-card">
                                                 <div class="cc-name">x<strong>@qty</strong> contratos para @chosen.Name</div>
                                                 <div class="cc-cycle">@rp.CoinsPerCycle.ToString("N2") @coin?.Name a cada @rp.SecondsPerCycle.ToString("N2")s</div>
-                                                <div class="cc-cycle">@perSec.ToString("N2") @coin.Name/s - Próximo: @costTotal @costCoinName</div>
+                                                <div class="cc-cycle">@rp.TotalPerSecond.ToString("N2") @coin.Name/s - Próximo: @costTotal @costCoinName</div>
                                             </div>
                                         </div>
 
@@ -247,7 +246,7 @@
     }
 
     private bool CanPurchase(ContractModel contract, StageModel stage)
-        => Purchase.CanAfford(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
+        => Cost.CanAfford(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
 
     private ContractModel? ChosenContract(int level)
     {
@@ -258,7 +257,7 @@
 
     (long val, string coinName) CostOf(string contractId)
     {
-        var (v, costId) = Purchase.GetCurrentCost(ItemHelper.ItemType.Contract, contractId, _stage.Id);
+        var (v, costId) = Cost.ComputeCost(ItemHelper.ItemType.Contract, contractId, _stage.Id);
         return (v, IdToName(costId));
     }
 

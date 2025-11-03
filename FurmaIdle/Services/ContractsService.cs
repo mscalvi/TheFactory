@@ -7,14 +7,18 @@ namespace FurmaIdle.Services
     public interface IContractsService
     {
         void TickContracts(GameModel game, string stageId, double dtSeconds);
-        (int ContractsCap, int ContractsUsed, int ContractsLevel, int ContractsMaxLevel) GetStageContractsInfo (GameModel game, string stageId);
-        
+
+        (int ContractsCap, int ContractsUsed, int ContractsLevel, int ContractsMaxLevel) GetStageInfo(GameModel game, string stageId);
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
-        public Dictionary<string, double> GetTotalContractsPerSecond(GameModel game);
-        public double GetStageContractsPerSecond(GameModel game, string stageId, string coinId);
+
+        (string CoinId, double CoinsPerCycle, double SecondsPerCycle, double TotalPerSecond) GetContractInfo(ContractModel contract, StageModel stage);
         double GetContractProgress(GameModel game, string stageId, string contractId);
-        Task BurstProduction(double BurstTime, string stageId, string specId);
+
+        public Dictionary<string, double> GetGameContractsPerSecond(GameModel game);
+        public Dictionary<string, double> GetStageContractsPerSecond(GameModel game, string stageId);
+
+        Task BurstProduction(double BurstTime, string stageId, string specId);        
     }
 
     public sealed class ContractsTickSink : ITickSink, IDisposable
@@ -48,14 +52,63 @@ namespace FurmaIdle.Services
         private readonly ILocateService _locate;
         private readonly IIncomeService _income;
         private readonly ICurrentGameService _game;
-        public ContractsService(ILocateService locate, IIncomeService income, ICurrentGameService game)
+        private readonly IModifierService _modifier;
+        public ContractsService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier)
         {
             _locate = locate;
             _income = income;
             _game = game;
+            _modifier = modifier;
         }
 
-        public (int ContractsCap, int ContractsUsed, int ContractsLevel, int ContractsMaxLevel) GetStageContractsInfo(GameModel game, string stageId)
+        public void TickContracts(GameModel game, string stageId, double dtSeconds)
+        {
+            if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
+
+            var stage = _locate.LocateStage(game, stageId);
+            var expedition = stage.Expedition;
+
+            if (expedition is null || expedition.ExpeditionState != UnlockHelper.ExpeditionState.Active) return;
+
+            var act = stage.ActiveContracts;
+            if (act is null || act.Count == 0) return;
+
+            stage.ActiveContractsProgress ??= new Dictionary<string, double>(StringComparer.Ordinal);
+
+            foreach (var (contractId, qty) in act)
+            {
+                if (qty <= 0) continue;
+
+                var contract = _locate.LocateContract(game, contractId);
+
+                // progresso visual (0..1)
+                var prog = stage.ActiveContractsProgress.TryGetValue(contractId, out var p) ? p : 0.0;
+
+                var realParameters = GetContractInfo(contract, stage);
+
+                prog += dtSeconds / realParameters.SecondsPerCycle;
+
+                // fecha ciclos inteiros
+                var cycles = (long)Math.Floor(prog);
+                if (cycles > 0)
+                {
+                    prog -= cycles;
+
+                    var perCycle = realParameters.CoinsPerCycle;
+
+                    var total = perCycle * qty * cycles;
+
+                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, realParameters.CoinId, total, ItemHelper.ItemType.Contract, contractId, stageId);
+                }
+
+                if (prog < 0) prog = 0;
+                if (prog > 1) prog = 1;
+                stage.ActiveContractsProgress[contractId] = prog;
+            }
+        }
+
+        // Parâmetros do Stage
+        public (int ContractsCap, int ContractsUsed, int ContractsLevel, int ContractsMaxLevel) GetStageInfo(GameModel game, string stageId)
         {
             var stage = _locate.LocateStage(game, stageId);
 
@@ -96,10 +149,12 @@ namespace FurmaIdle.Services
                 }
 
             }
+
             foreach (var contract in stage.ActiveContracts)
             {
                 contractsUsed += contract.Value;
             }
+
             foreach (var modifier in stage.Modifiers)
             {
                 if (modifier.Type == EffectHelper.EffectType.ContractLevelUnlock)
@@ -128,46 +183,35 @@ namespace FurmaIdle.Services
 
             return (contractsCap, contractsUsed, contractsLevel, contractsMaxLevel);
         }
-        
         public IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId)
         {
             if (game is null) return Array.Empty<string>();
 
-            // 1) Colete todos os IDs permitidos a partir dos personagens desbloqueados
-            var allowed = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var ch in game.Characters.Values)
-            {
-                if (ch is null) continue;
-                if (ch.State != UnlockHelper.State.Unlocked) continue;
-                if (ch.ContractsIds is null) continue;
+            var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
+            var stage = _locate.LocateStage(game, stageId);
+            var expedition = stage.Expedition;
 
-                foreach (var cid in ch.ContractsIds)
+            var liberated = new List<string>();
+            foreach (var characterId in expedition.PartyIds)
+            {
+                var character = _locate.LocateCharacter(game, characterId);
+                foreach (var contractId in character.ContractsIds)
                 {
-                    if (!string.IsNullOrWhiteSpace(cid))
-                        allowed.Add(cid);
+                    var contract = _locate.LocateContract(game, contractId);
+                    if (contract.State == UnlockHelper.State.Unlocked)
+                    {
+                        if (!expansion.inUseContracts.Contains(contract.Id))
+                        {
+                            liberated.Add(contract.Id);
+                        }
+                    }
                 }
             }
 
-            if (allowed.Count == 0 || game.Contracts is null)
-                return Array.Empty<string>();
+            liberated.Sort(StringComparer.Ordinal);
 
-            // 2) Filtre apenas contratos desbloqueados que estejam nesse conjunto
-            var result = new List<string>(allowed.Count);
-            foreach (var cid in allowed)
-            {
-                if (game.Contracts.TryGetValue(cid, out var c) &&
-                    c is not null &&
-                    c.State == UnlockHelper.State.Unlocked)
-                {
-                    result.Add(cid);
-                }
-            }
-
-            // (Opcional) ordenar
-            result.Sort(StringComparer.Ordinal);
-            return result;
+            return liberated;
         }
-
         public string GetChosenContractIdForLevel(GameModel game, string stageId, int level)
         {
             var stage = _locate.LocateStage(game, stageId);
@@ -184,52 +228,23 @@ namespace FurmaIdle.Services
             return null;
         }
 
-        public void TickContracts(GameModel game, string stageId, double dtSeconds)
+        // Parametros de produção de um contrato
+        public (string CoinId, double CoinsPerCycle, double SecondsPerCycle, double TotalPerSecond) GetContractInfo(ContractModel contract, StageModel stage)
         {
-            if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
+            stage.ActiveContracts.TryGetValue(contract.Id, out var qty);
 
-            var stage = _locate.LocateStage(game, stageId);
-            var expedition = stage.Expedition;
+            var (cps, spc) = ContractHelper.GetContractBase(contract);
 
-            if (expedition is null || expedition.ExpeditionState != UnlockHelper.ExpeditionState.Active) return;
+            var gainMod = _modifier.GetModifiers(ItemHelper.ItemType.Contract, contract.Id, stage.Id, EffectHelper.EffectSupertype.Gain);
+            var timeMod = _modifier.GetModifiers(ItemHelper.ItemType.Contract, contract.Id, stage.Id, EffectHelper.EffectSupertype.Time);
 
-            var act = stage.ActiveContracts;
-            if (act is null || act.Count == 0) return;
+            var coinsPerCycle = (cps + gainMod.AddMod) * gainMod.MultMod;
+            var timePerCycle = (spc + timeMod.AddMod) * timeMod.MultMod;
 
-            stage.ActiveContractsProgress ??= new Dictionary<string, double>(StringComparer.Ordinal);
+            var totalPerSecond = (coinsPerCycle / timePerCycle) * qty;
 
-            foreach (var (contractId, qty) in act)
-            {
-                if (qty <= 0) continue;
-
-                var contract = _locate.LocateContract(game, contractId);
-
-                // progresso visual (0..1)
-                var prog = stage.ActiveContractsProgress.TryGetValue(contractId, out var p) ? p : 0.0;
-
-                var realParameters = ContractHelper.RealProdParams(contract);
-
-                prog += dtSeconds / realParameters.SecondsPerCycle;
-
-                // fecha ciclos inteiros
-                var cycles = (long)Math.Floor(prog);
-                if (cycles > 0)
-                {
-                    prog -= cycles;
-
-                    var perCycle = realParameters.CoinsPerCycle;
-
-                    var total = perCycle * qty * cycles;
-
-                    _ = _income.AddAsync(ItemHelper.ItemType.Coin, realParameters.CoinId, total, ItemHelper.ItemType.Contract, contractId, stageId);
-                }
-
-                if (prog < 0) prog = 0;
-                if (prog > 1) prog = 1;
-                stage.ActiveContractsProgress[contractId] = prog;
-            }
+            return (contract.CoinId, coinsPerCycle, timePerCycle, totalPerSecond);
         }
-
         public double GetContractProgress(GameModel game, string stageId, string contractId)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || string.IsNullOrWhiteSpace(contractId))
@@ -247,64 +262,79 @@ namespace FurmaIdle.Services
             return prog;
         }
 
-        public double GetStageContractsPerSecond(GameModel game, string stageId, string coinId)
+        // Parâmetros Generalistas
+        public Dictionary<string, double> GetStageContractsPerSecond(GameModel game, string stageId)
         {
-            if (game is null || string.IsNullOrWhiteSpace(stageId) || string.IsNullOrWhiteSpace(coinId))
-                return 0;
+            Dictionary<string, double> result = new Dictionary<string, double>();
 
-            var stage = _locate.LocateStage(game, stageId);
-            var act = stage?.ActiveContracts;
-            if (stage is null || act is null || act.Count == 0) return 0;
-
-            double sum = 0;
-            foreach (var (cid, qty) in act)
-            {
-                if (qty <= 0) continue;
-                if (!game.Contracts.TryGetValue(cid, out var c) || c is null) continue;
-
-                if (string.Equals(ContractHelper.CoinIdOf(c), coinId, StringComparison.Ordinal))
-                    sum += ContractHelper.RealProdPerSecond(c, stage);
-            }
-
-            if (game.Coins.TryGetValue(coinId, out var coin) && coin is not null)
-            {
-                var coinModifiers = GetCoinModifiers(coin, EffectHelper.EffectType.CoinGain);
-                var cAdd = coinModifiers.AddMod;
-                var cMult = coinModifiers.MultMod <= 0 ? 1 : coinModifiers.MultMod;
-                sum = (sum + cAdd) * cMult;
-            }
-
-            return sum;
-        }
-        public Dictionary<string, double> GetTotalContractsPerSecond(GameModel game)
-        {
-            var result = new Dictionary<string, double>(StringComparer.Ordinal);
-            
-            if (game is null)
+            if (game is null || string.IsNullOrWhiteSpace(stageId))
                 return result;
 
-            foreach (var st in game.Stages.Values)
+            var stage = _locate.LocateStage(game, stageId);
+            var activeContracts = stage?.ActiveContracts;
+            if (stage is null || activeContracts is null || activeContracts.Count == 0) return result;
+
+            foreach(var coin in game.Coins)
             {
-                if (st.State != UnlockHelper.State.Unlocked || st.ActiveContracts.Count == 0) continue;
-
-                foreach (var (cid, qty) in st.ActiveContracts)
+                if (coin.Value.State == UnlockHelper.State.Unlocked)
                 {
-                    if (!game.Contracts.TryGetValue(cid, out var c) || qty <= 0) continue;
+                    double sum = 0;
 
-                    var coinId = ContractHelper.CoinIdOf(c);
-                    var add = ContractHelper.RealProdPerSecond(c, st);
-                    result[coinId] = (result.TryGetValue(coinId, out var cur) ? cur : 0) + add;
+                    foreach (var (contractId, qty) in activeContracts)
+                    {
+                        if (qty <= 0) continue;
+                        var contract = _locate.LocateContract(game, contractId);
+                        if (contract.CoinId == coin.Key)
+                        {
+                            var contractGeneration = GetContractInfo(contract, stage);
+                            sum += contractGeneration.TotalPerSecond;
+                        }
+                    }
+
+                    if(sum >= 0)
+                    {
+                        result.Add(coin.Key, sum);
+                    }
                 }
             }
 
-            foreach (var kv in result.Keys.ToList())
-            {
-                var coin = _locate.LocateCoin(game, kv);
-                if (coin is null || coin.State != UnlockHelper.State.Unlocked) continue;
+            return result;
+        }
+        public Dictionary<string, double> GetGameContractsPerSecond(GameModel game)
+        {
 
-                var (cAdd, cMult) = GetCoinModifiers(coin, EffectHelper.EffectType.CoinGain);
-                if (cMult <= 0) cMult = 1;
-                result[kv] = (result[kv] + cAdd) * cMult;
+            Dictionary<string, double> result = new Dictionary<string, double>();
+
+            if (game is null) return result;
+
+            foreach (var coin in game.Coins)
+            {
+                if (coin.Value.State == UnlockHelper.State.Unlocked)
+                {
+                    double sum = 0;
+
+                    foreach (var stage in game.Stages)
+                    {
+                        if (stage.Value.State == UnlockHelper.State.Unlocked)
+                        {
+                            foreach (var (contractId, qty) in stage.Value.ActiveContracts)
+                            {
+                                if (qty <= 0) continue;
+                                var contract = _locate.LocateContract(game, contractId);
+                                if (contract.CoinId == coin.Key)
+                                {
+                                    var contractGeneration = GetContractInfo(contract, stage.Value);
+                                    sum += contractGeneration.TotalPerSecond;
+                                }
+                            }
+                        }
+                    }
+
+                    if (sum >= 0)
+                    {
+                        result.Add(coin.Key, sum);
+                    }
+                }
             }
 
             return result;
@@ -313,36 +343,16 @@ namespace FurmaIdle.Services
         public async Task BurstProduction(double BurstTime, string stageId, string specId)
         {
             var stage = _locate.LocateStage(_game.CurrentGame, stageId);
-            var perSec = GetStageContractsPerSecond(_game.CurrentGame, stageId, stage.CoinId);
+            var stagePerSec = GetStageContractsPerSecond(_game.CurrentGame, stageId);
 
-            var amount = perSec * BurstTime;
-
-            if (amount > 0)
-                await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, amount,
-                                       ItemHelper.ItemType.Specialty, specId, stageId);
-        }
-
-        private static (double AddMod, double MultMod) GetCoinModifiers(CoinModel coin, EffectHelper.EffectType type)
-        {
-            double AddMod = 0;
-            double MultMod = 1;
-
-            foreach (var modifier in coin.Modifiers)
+            foreach (var coin in stagePerSec)
             {
-                if (type == modifier.Type)
-                {
-                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
-                    {
-                        AddMod += modifier.Value;
-                    }
-                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
-                    {
-                        MultMod *= modifier.Value;
-                    }
-                }
-            }
+                var amount = coin.Value * BurstTime;
 
-            return (AddMod, MultMod);
+                if (amount > 0)
+                    await _income.AddAsync(ItemHelper.ItemType.Coin, stage.CoinId, amount,
+                                           ItemHelper.ItemType.Specialty, specId, stageId);
+            }
         }
     }
 }

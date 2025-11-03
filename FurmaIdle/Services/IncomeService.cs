@@ -34,14 +34,16 @@ namespace FurmaIdle.Services
 
             var gain = (long)Math.Floor(amount);
             var frac = amount - gain;
-            var stage = _locate.LocateStage(_game.CurrentGame, stageId);
+            var game = _game.CurrentGame;
+            var stage = _locate.LocateStage(game, stageId);
+            var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
 
             GainModel ? result = null;
 
             var saveFrac = Math.Round(frac * 100, MidpointRounding.AwayFromZero) != 0;
-            await _game.Mutate(Game =>
+            await _game.Mutate(game =>
             {
-                if (!ApplyStats(Game, type, itemId, gain, frac, stage))
+                if (!ApplyStats(game, type, itemId, gain, frac, stage))
                 {
                     gain = 0;
                 }
@@ -51,11 +53,11 @@ namespace FurmaIdle.Services
                     stage.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var prevExp);
                     stage.ExpeditionStats.ClicksMade[sourceId] = prevExp + 1;
 
-                    Game.ExpansionStats.ClicksMade.TryGetValue(sourceId, out var prevExpa);
-                    Game.ExpansionStats.ClicksMade[sourceId] = prevExpa + 1;
+                    expansion.ExpansionStats.ClicksMade.TryGetValue(sourceId, out var prevExpa);
+                    expansion.ExpansionStats.ClicksMade[sourceId] = prevExpa + 1;
 
-                    Game.GameStats.ClicksMade.TryGetValue(sourceId, out var prevGame);
-                    Game.GameStats.ClicksMade[sourceId] = prevGame + 1;
+                    game.GameStats.ClicksMade.TryGetValue(sourceId, out var prevGame);
+                    game.GameStats.ClicksMade[sourceId] = prevGame + 1;
                 }
 
                 result = new GainModel
@@ -71,11 +73,12 @@ namespace FurmaIdle.Services
             return result!;
         }
 
-        private bool ApplyStats(GameModel Game, ItemHelper.ItemType type, string id, long gain, double frac, StageModel stage)
+        private bool ApplyStats(GameModel game, ItemHelper.ItemType type, string id, long gain, double frac, StageModel stage)
         {
+            var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
             if (type == ItemType.Coin)
             {
-                var modifier = GetKnowledgeModifiers(Game, id);
+                var modifier = GetKnowledgeBurst(game, id, expansion);
                 gain = (long)Math.Floor(gain * modifier);
                 frac = frac * modifier;
 
@@ -103,17 +106,17 @@ namespace FurmaIdle.Services
                 stage.ExpeditionStats.CoinsGain[id] = coinExpe;
                 stage.ExpeditionStats.CoinsFrac[id] = newRestDouble;
 
-                Game.ExpansionStats.CoinsGain.TryGetValue(id, out var coinExpa);
+                expansion.ExpansionStats.CoinsGain.TryGetValue(id, out var coinExpa);
                 coinExpa = coinExpa + gain + extra;
-                Game.ExpansionStats.CoinsGain[id] = coinExpa;
+                expansion.ExpansionStats.CoinsGain[id] = coinExpa;
 
-                Game.GameStats.CoinsGain.TryGetValue(id, out var coinGame);
+                game.GameStats.CoinsGain.TryGetValue(id, out var coinGame);
                 coinGame = coinGame + gain + extra;
-                Game.GameStats.CoinsGain[id] = coinGame;
+                game.GameStats.CoinsGain[id] = coinGame;
             }
             if (type == ItemType.Resource)
             {
-                stage.ExpeditionStats.ResourcesFrac.TryGetValue(id, out var restDouble);
+                expansion.ExpansionStats.ResourcesFrac.TryGetValue(id, out var restDouble);
                 int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
 
                 int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
@@ -125,44 +128,40 @@ namespace FurmaIdle.Services
                 double newRestDouble = newRestCents / 100.0;
 
                 // ---- acumula ----
-                stage.ExpeditionStats.Resources.TryGetValue(id, out var coin);
+                expansion.ExpansionStats.Resources.TryGetValue(id, out var coin);
                 coin = coin + gain + extra;
 
-                stage.ExpeditionStats.ResourcesGain.TryGetValue(id, out var coinExpe);
+                expansion.ExpansionStats.ResourcesGain.TryGetValue(id, out var coinExpe);
                 coinExpe = coinExpe + gain + extra;
 
                 // ---- persistir ----
-                stage.ExpeditionStats.Resources[id] = coin;
-                stage.ExpeditionStats.ResourcesGain[id] = coinExpe;
-                stage.ExpeditionStats.ResourcesFrac[id] = newRestDouble;
+                expansion.ExpansionStats.Resources[id] = coin;
+                expansion.ExpansionStats.ResourcesGain[id] = coinExpe;
+                expansion.ExpansionStats.ResourcesFrac[id] = newRestDouble;
 
-                Game.ExpansionStats.ResourcesGain.TryGetValue(id, out var coinExpa);
-                coinExpa = coinExpa + gain + extra;
-                Game.ExpansionStats.ResourcesGain[id] = coinExpa;
-
-                Game.GameStats.ResourcesGain.TryGetValue(id, out var coinGame);
+                game.GameStats.ResourcesGain.TryGetValue(id, out var coinGame);
                 coinGame = coinGame + gain + extra;
-                Game.GameStats.ResourcesGain[id] = coinGame;
+                game.GameStats.ResourcesGain[id] = coinGame;
             }
             if (type == ItemType.Knowledge)
             {
-                Game.ExpansionStats.Knowledge.TryGetValue(id, out var know);
+                expansion.ExpansionStats.Knowledge.TryGetValue(id, out var know);
                 know = know + gain;
-                Game.ExpansionStats.Knowledge[id] = know;
+                expansion.ExpansionStats.Knowledge[id] = know;
 
-                Game.ExpansionStats.KnowledgeGain.TryGetValue(id, out var knowExpa);
+                expansion.ExpansionStats.KnowledgeGain.TryGetValue(id, out var knowExpa);
                 knowExpa = knowExpa + gain;
-                Game.ExpansionStats.KnowledgeGain[id] = knowExpa;
+                expansion.ExpansionStats.KnowledgeGain[id] = knowExpa;
 
-                Game.GameStats.KnowledgeGain.TryGetValue(id, out var knowGame);
+                game.GameStats.KnowledgeGain.TryGetValue(id, out var knowGame);
                 knowGame = knowGame + gain;
-                Game.GameStats.KnowledgeGain[id] = knowGame;
+                game.GameStats.KnowledgeGain[id] = knowGame;
             }
 
             return true;
         }
 
-        private double GetKnowledgeModifiers(GameModel game, string coinId)
+        private double GetKnowledgeBurst(GameModel game, string coinId, ExpansionModel expansion)
         {
             double mult = 1.0;
 
@@ -174,7 +173,7 @@ namespace FurmaIdle.Services
                     var k = kv.Value;
                     var knowledge = _locate.LocateKnowledge(game, k.Id);
 
-                    game.ExpansionStats.KnowledgeGain.TryGetValue(knowledge.Id, out var totalK);
+                    expansion.ExpansionStats.KnowledgeGain.TryGetValue(knowledge.Id, out var totalK);
 
                     double bonus = 1.0 + (knowledge.GenerationFactor * Math.Pow(totalK, knowledge.GainCoinCurve));
 

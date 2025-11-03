@@ -43,10 +43,10 @@ namespace FurmaIdle.Services
                 var model = new GameModel
                 {
                     SchemaVersion = 1,
+                    StartTime = DateTime.Now,
                     LastTick = DateTime.UtcNow,
-                    ExpansionStats = new StatsModel(),
                     GameStats = new StatsModel(),
-                    LastExpansionId = "x00",
+                    CurrentExpansionId = "x00",
                     UnlockedMenus = new(StringComparer.OrdinalIgnoreCase),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),

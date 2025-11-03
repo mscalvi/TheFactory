@@ -1,6 +1,5 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
-using FurmaIdle.Services;
 using System.Diagnostics.Contracts;
 using System.Threading.Channels;
 using System.Transactions;

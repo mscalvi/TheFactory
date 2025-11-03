@@ -2046,7 +2046,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Libera começar o próximo nível de Contratos na Ilha de Vera",
                 UnlockId = "x00",
-                MaxBuy = 9,
+                MaxBuy = 5,
                 PricingId = PricingHelper.PricingId.ContractLevelUnlock1m01,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,

@@ -18,12 +18,12 @@
 else
 {
     var game = Game.CurrentGame;
-
+    var expedition = _stage.Expedition;
     var expeditionStats = _stage.ExpeditionStats;
 
-    var isActive = Expedition.IsExpeditionActive(_stage.Expedition);
+    var isActive = isExpActive(_stage);
     var partySize = Expedition.GetPartyCap(_stage);
-    var partyIds = Expedition.GetPartyIds(_stage);
+    var partyIds = expedition.PartyIds;
 
     var selectedCount = partyIds.Count;
 
@@ -41,8 +41,7 @@ else
     @if (isActive)
     {
         <!-- Status da expedição -->
-        var ex = Expedition.GetOrCreateCurrentExpedition(_stage);
-        var started = ex.StartedAt;
+        var started = expedition.StartedAt;
         var duration = started.HasValue ? (DateTimeOffset.UtcNow - started.Value) : (TimeSpan?)null;
 
         <div>
@@ -70,20 +69,19 @@ else
                     if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
                         cTotal = v;
 
-                    var kPreview = Knowledge.ComputeGains(_stage, cTotal);
+                    var kPreview = Knowledge.KnowledgeGain(_stage, cTotal);
                 }
                 <h4>Ganhos</h4>
-                @if (kPreview is { Count: > 0 })
+                @if (kPreview.Count > 0)
                 {
                     @foreach (var kv in kPreview.OrderByDescending(x => x.Value))
                     {
-                        // formatação: inteiro se quiser, ou com 2 casas
                         <div>@kv.Key @kv.Value.ToString("N2")</div>
                     }
                 }
                 else
                 {
-                    <div>—</div>
+                    <div>Não aprendemos nada ainda</div>
                 }
             </div>
         </div>
@@ -91,9 +89,11 @@ else
     else
     {
         <!-- Characters inBase -->
-        var charsInBase = Expedition.GetCharactersInBase()
-                .OrderBy(c => c.Name)
-                .ToList();
+        var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
+        var charsInBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+                                   && c.CharState == UnlockHelper.CharState.InBase)
+                          .OrderBy(c => c.Id)
+                          .ToList();
 
         <div>
             <h3>Characters (In Base)</h3>
@@ -105,7 +105,7 @@ else
             {
                 @foreach (var ch in charsInBase)
                 {
-                    var selected = Expedition.CharSelected(_stage, ch.Id);
+                    var selected = ch.InStageId == _stage.Id;
                     var canToggle = Expedition.CanToggleChar(_stage, ch.Id);
 
                     <button type="button"
@@ -121,30 +121,11 @@ else
                 }
             }
         </div>
-
-        <!-- Conhecimento aplicado no último encerramento (snapshot LOCAL do componente) -->
-        <div style="margin-top:1rem;">
-            <h3>Conhecimento (aplicado no último encerramento)</h3>
-            @if (_appliedKnowledge is { Count: > 0 })
-            {
-                @foreach (var kv in _appliedKnowledge.OrderByDescending(x => x.Value))
-                {
-                    <div>@kv.Key @kv.Value</div>
-                }
-            }
-            else
-            {
-                <div>Nenhum ganho aplicado recentemente.</div>
-            }
-        </div>
     }
 }
 
 @code {
     private StageModel? _stage;
-
-    // Snapshot LOCAL do que foi aplicado no último "Encerrar Expedição"
-    private Dictionary<string, long>? _appliedKnowledge;   // <— NOVO
 
     protected override void OnInitialized()
     {
@@ -170,65 +151,54 @@ else
         _stage = st;
     }
 
+    private bool isExpActive(StageModel stage)
+    {
+        var expedition = stage.Expedition;
+
+        if(expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
     private async Task OnClickToggleExpedition()
     {
         var game = Game.CurrentGame;
         if (game is null) return;
 
-        var isActive = Expedition.IsExpeditionActive(_stage.Expedition);
+        var isActive = isExpActive(_stage);
 
         if (!isActive)
         {
-            await Expedition.LaunchExpedition(_stage, Expedition.GetPartyIds(_stage));
+            await Expedition.LaunchExpedition(_stage);
             Log.Success($"Expedição iniciada em {_stage.Name}.");
-
-            // limpamos o snapshot local ao iniciar uma nova
-            _appliedKnowledge = null;
 
             return;
         }
         else
         {
-            // 1) calcula total de coins da run para a coin da Stage
-            long cTotal = 0L;
-            if (_stage?.ExpeditionStats?.CoinsGain is not null &&
-                _stage.ExpeditionStats.CoinsGain.TryGetValue(_stage.CoinId, out var v))
-            {
-                cTotal = v;
-            }
-
-            // 2) aplica os conhecimentos (sem gravar nada no modelo)
-            //    -> devolve um dicionário simples (kId -> ganho inteiro) que a UI guarda localmente
-            _appliedKnowledge = await Knowledge.ApplyGainsAsync(_stage, cTotal);
-
-            // 3) encerra a expedição (limpezas, devolve chars, etc.)
             await Expedition.EndExpedition(_stage);
 
-            // 4) salva estado e avisa
-            await Game.Mutate(_ => { }, save: true);
             Log.Success($"Expedição encerrada em {_stage.Name}.");
-
-            // 5) re-render
-            StateHasChanged();
         }
     }
 
     private void OnToggleChar(string id)
     {
-        var wasSelected = Expedition.CharSelected(_stage, id);
+        var toggled = Expedition.ToggleChar(_stage, id);
 
-        if (Expedition.ToggleChar(_stage, id, out var reason))
+        if (toggled)
         {
-            var nowSelected = Expedition.CharSelected(_stage, id);
-            if (nowSelected && !wasSelected) Log.Info($"{id} adicionado à equipe.");
-            else if (!nowSelected && wasSelected) Log.Info($"{id} removido da equipe.");
-            else Log.Error("Exploração com problemas.");
+            Log.Info($"{id} adicionado à equipe.");
 
             StateHasChanged();
         }
-        else if (!string.IsNullOrWhiteSpace(reason))
+        else
         {
-            Log.Error(reason);
+            Log.Info($"{id} removido da equipe.");
         }
     }
 }

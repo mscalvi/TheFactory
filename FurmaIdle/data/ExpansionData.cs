@@ -29,7 +29,7 @@ namespace FurmaIdle.Data
             {
                 Id = "x01",
                 Name = "Apoiando a Murada Cairu",
-                UnlockId = "l01",
+                UnlockId = "x00",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -40,7 +40,7 @@ namespace FurmaIdle.Data
             {
                 Id = "x02",
                 Name = "Mestres da Ilha de Vera",
-                UnlockId = "l02",
+                UnlockId = "x01",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 2,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -51,7 +51,7 @@ namespace FurmaIdle.Data
             {
                 Id = "x03",
                 Name = "Correntezas de Vera",
-                UnlockId = "l03",
+                UnlockId = "x02",
                 PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 3,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -81,6 +81,7 @@ namespace FurmaIdle.Data
                 Persistence = expansion.Persistence,
                 State = expansion.State,
                 Modifiers = expansion.Modifiers,
+                ExpansionStats = new StatsModel(),
             };
         }
 

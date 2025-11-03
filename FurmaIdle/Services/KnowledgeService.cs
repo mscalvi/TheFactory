@@ -7,10 +7,9 @@ namespace FurmaIdle.Services
 {
     public interface IKnowledgeService
     {
-        Dictionary<string, double> ComputeGains(StageModel stage, long coins);
-        IEnumerable<KnowledgePreview> ComputePreview(StageModel stage, long coinsSoFar, double coinsPerSec = 0);
+        Task EndExpeditionKnowGain(StageModel stage, long coins);
 
-        Task<Dictionary<string, long>> ApplyGainsAsync(StageModel stage, long coins);
+        Dictionary<string, double> KnowledgeGain(StageModel stage, long coins);
     }
 
     public sealed record KnowledgePreview(
@@ -27,55 +26,23 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly IIncomeService _income;
         private readonly ILocateService _locate;
+        private readonly IModifierService _modifier;
 
-        public KnowledgeService (IUiLogService log, ICurrentGameService game, IIncomeService income, ILocateService locate)
+        public KnowledgeService (IUiLogService log, ICurrentGameService game, IIncomeService income, ILocateService locate, IModifierService modifier)
         {
             _log = log;
             _game = game;
             _income = income;
             _locate = locate;
+            _modifier = modifier;
         }
-        public Dictionary<string, double> ComputeGains(StageModel stage, long coins)
+        public async Task EndExpeditionKnowGain(StageModel stage, long coins)
         {
-            var result = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
-            var weights = GetKnowFactor(stage);
-            var kCoinId = stage.CoinId;
+            var parcialResult = KnowledgeGain(stage, coins);
 
-            foreach (var (kId, w) in weights)
+            foreach (var (kId, result) in parcialResult)
             {
-                var knowledge = _locate.LocateKnowledge(_game.CurrentGame, kId);
-                if (knowledge.GainCoinId != kCoinId) continue;
-
-                double coinsK = coins * w;
-
-                double kPrev = 0;
-                if (_game.CurrentGame.ExpansionStats?.KnowledgeGain?.TryGetValue(kId, out var stored) == true)
-                    kPrev = stored;
-
-                double baseC = knowledge.GainCoinBase;
-                double curve = knowledge.GainCoinCurve;
-
-                double cPrev = baseC * Math.Pow(kPrev + 1.0, 1.0 / curve);
-                double cNew = cPrev + coinsK;
-                double kNew = Math.Pow(cNew / baseC, curve) - 1.0;
-                double dK = kNew - kPrev;
-
-                var (add, mult) = GetModifiers(knowledge, EffectHelper.EffectType.KnowledgeGain);
-                double final = (dK + add) * mult;
-
-                if (final > 0) result[kId] = final;
-            }
-            return result;
-        }
-
-        public async Task<Dictionary<string, long>> ApplyGainsAsync(StageModel stage, long coins)
-        {
-            var fractional = ComputeGains(stage, coins);
-            var applied = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var (kId, d) in fractional)
-            {
-                long gainInt = (long)Math.Floor(d);
+                long gainInt = (long)Math.Floor(result);
                 if (gainInt < 1) continue;
 
                 await _income.AddAsync(
@@ -83,44 +50,37 @@ namespace FurmaIdle.Services
                     kId, gainInt,
                     ItemHelper.ItemType.Expedition, stage.Id, stage.Id
                 );
-
-                applied[kId] = gainInt;
             }
-            return applied;
         }
-
-        public IEnumerable<KnowledgePreview> ComputePreview(StageModel stage, long coinsSoFar, double coinsPerSec = 0)
+        public Dictionary<string, double> KnowledgeGain(StageModel stage, long coins)
         {
-            var weights = GetKnowFactor(stage);
+            var result = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+            var factors = GetKnowFactor(stage);
             var kCoinId = stage.CoinId;
+            var expansion = _locate.LocateExpansion(_game.CurrentGame, _game.CurrentGame.CurrentExpansionId);
 
-            foreach (var (kId, w) in weights)
+            foreach (var (kId, factor) in factors)
             {
-                var k = _locate.LocateKnowledge(_game.CurrentGame, kId);
-                if (k.GainCoinId != kCoinId) continue;
+                var knowledge = _locate.LocateKnowledge(_game.CurrentGame, kId);
+                if (knowledge.GainCoinId != kCoinId) continue;
 
+                double coinsK = coins * factor;
+
+                double kGain = 0;
                 double kPrev = 0;
-                if (_game.CurrentGame.ExpansionStats?.KnowledgeGain?.TryGetValue(kId, out var stored) == true)
+
+                if (expansion.ExpansionStats.KnowledgeGain?.TryGetValue(kId, out var stored) == true)
                     kPrev = stored;
 
-                double baseC = k.GainCoinBase;
-                double curve = k.GainCoinCurve;
+                kGain = coinsK/(knowledge.GainCoinBase * Math.Pow(kPrev + 1, knowledge.GainCoinCurve));
 
-                double cPrev = baseC * Math.Pow(kPrev + 1.0, 1.0 / curve);
-                long kTargetInt = (long)Math.Floor(kPrev) + 1;
-                double cTarget = baseC * Math.Pow(kTargetInt + 1.0, 1.0 / curve);
+                var modifier = _modifier.GetModifiers(ItemHelper.ItemType.Knowledge, kId, stage.Id, EffectHelper.EffectSupertype.Gain);
+                double final = (kGain + modifier.AddMod) * modifier.MultMod;
 
-                double deltaC = Math.Max(0, cTarget - cPrev);
-
-                double? eta = null;
-                if (coinsPerSec > 0 && w > 0)
-                    eta = deltaC / (coinsPerSec * w);
-
-                yield return new KnowledgePreview(kId, w, kPrev, deltaC, eta);
+                if (final > 0) result[kId] = final;
             }
+            return result;
         }
-
-        // Helpers
         private Dictionary<string, double> GetKnowFactor(StageModel stage)
         {
             Dictionary<string, int> kCounters = new Dictionary<string, int>();
@@ -176,77 +136,10 @@ namespace FurmaIdle.Services
 
             foreach (var know in kCounters)
             {
-                kFactors.Add(know.Key, (know.Value) / (kTotal));
+                kFactors.Add(know.Key, (know.Value / kTotal));
             }
 
             return kFactors;
-        }
-        private static (double AddMod, double MultMod) GetModifiers(KnowledgeModel knowledge, EffectHelper.EffectType type)
-        {
-            double AddMod = 0;
-            double MultMod = 1;
-
-            foreach (var modifier in knowledge.Modifiers)
-            {
-                if (type == modifier.Type)
-                {
-                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
-                    {
-                        AddMod += modifier.Value;
-                    }
-                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
-                    {
-                        MultMod *= modifier.Value;
-                    }
-                }
-            }
-
-            return (AddMod, MultMod);
-        }
-
-
-        // Obsoleta, só fiquei com dó de apagar
-        public async Task GetKnowledgeGain(StageModel stage, long coins)
-        {
-            var result = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
-            var kFactors = GetKnowFactor(stage);
-            string kCoinId = stage.CoinId;
-
-            foreach (var know in kFactors)
-            {
-                var knowledge = _locate.LocateKnowledge(_game.CurrentGame, know.Key);
-
-                if (knowledge.GainCoinId != kCoinId) continue;
-
-                double coinsK = coins * know.Value;
-
-                // K já existente (acumulado)
-                double kPrev = 0.0;
-                if (_game.CurrentGame.ExpansionStats?.KnowledgeGain is not null &&
-                    _game.CurrentGame.ExpansionStats.KnowledgeGain.TryGetValue(know.Key, out var stored))
-                {
-                    kPrev = Math.Max(0.0, stored);
-                }
-
-                double cPrev = knowledge.GainCoinBase * Math.Pow(kPrev + 1.0, 1.0 / knowledge.GainCoinCurve);
-                double cNew = cPrev + coinsK;
-                double kNew = Math.Max(0.0, Math.Pow(cNew / knowledge.GainCoinBase, knowledge.GainCoinCurve) - 1.0);
-                double dK = Math.Max(0.0, kNew - kPrev);
-
-                var modifier = GetModifiers(knowledge, EffectHelper.EffectType.KnowledgeGain);
-
-                double finalGain = (dK + modifier.AddMod) * modifier.MultMod;
-
-                long finalInt = (long)Math.Floor(finalGain);
-
-                if (finalGain > 0) result[know.Key] = finalGain;
-
-            }
-
-            foreach (var know in result)
-            {
-                await _income.AddAsync(ItemHelper.ItemType.Knowledge, know.Key, know.Value, ItemHelper.ItemType.Expedition, stage.Id, stage.Id);
-            }
-        }
+        }       
     }
 }

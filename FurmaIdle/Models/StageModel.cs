@@ -14,7 +14,7 @@ namespace FurmaIdle.Models
 
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);
         public Dictionary<string, double> ActiveContractsProgress { get; set; } = new Dictionary<string, double>();
-        public List<int> lockedContracts { get; set; } = new();
+        public List<int> lockedContractLevel { get; set; } = new();
         public ExpeditionModel Expedition { get; set; } = new ExpeditionModel();
 
         public PricingHelper.PricingId? PricingId { get; set; }

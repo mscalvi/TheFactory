@@ -22,10 +22,10 @@
                      alt="@it.Id"
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <span class="income-total">
-                    @it.Total.ToString("N0")
-                    @if (it.PerSec > 0)
+                    @it.StageTotal.ToString("N0") (@it.GameTotal.ToString("N0"))
+                    @if (it.GamePerSec > 0)
                     {
-                        <text> +@it.PerSec.ToString("N2")/s</text>
+                        <text> +@it.StagePerSec.ToString("N2")/s (@it.GamePerSec.ToString("N2")/s)</text>
                     }
                 </span>
             </div>
@@ -47,10 +47,10 @@
                      alt="@it.Id"
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <span class="income-total">
-                    @it.Total.ToString("N0") / @it.Cap.ToString()
-                    @if (it.PerSec > 0)
+                    @it.GameTotal.ToString("N0") / @it.Cap.ToString()
+                    @if (it.GamePerSec > 0)
                     {
-                        <text> +@it.PerSec.ToString("N2")/s</text>
+                        <text> +@it.GamePerSec.ToString("N2")/s</text>
                     }
                 </span>
             </div>
@@ -70,7 +70,7 @@
         base.OnGameChanged();
     }
 
-    private sealed record TileVM(string Id, string Image, long Total, long Cap, double PerSec);
+    private sealed record TileVM(string Id, string Image, long GameTotal, long StageTotal, long Cap, double GamePerSec, double StagePerSec);
 
     // COINS (topo)
     private List<TileVM> GetCoinTiles()
@@ -81,7 +81,8 @@
         if (game?.Coins is null) return list;
 
         // produção por segundo por moeda (dos contratos)
-        var perSecByCoin = Contracts.GetTotalContractsPerSecond(game);
+        var perSecStage = Contracts.GetStageContractsPerSecond(game, game.SelectedStageId);
+        var perSecGame = Contracts.GetGameContractsPerSecond(game);
 
         foreach (var kv in game.Coins)
         {
@@ -89,17 +90,24 @@
             if (coin.State != UnlockHelper.State.Unlocked) continue;
 
             // total atual
-            long total = 0;
+            long gameTotal = 0;
+            long stageTotal = 0;
             foreach (var stage in game.Stages)
             {
+                if(game.SelectedStageId == stage.Key)
+                {
+                    if (stage.Value.ExpeditionStats?.Coins?.TryGetValue(coin.Id, out var st) == true)
+                        stageTotal = st;
+                }
                 if (stage.Value.ExpeditionStats?.Coins?.TryGetValue(coin.Id, out var t) == true)
-                    total = t;
+                    gameTotal = t;
             }
 
             // per-sec (se existir)
-            perSecByCoin.TryGetValue(coin.Id, out var psec);
+            perSecGame.TryGetValue(coin.Id, out var pSecGame);
+            perSecStage.TryGetValue(coin.Id, out var pSecStage);
 
-            list.Add(new TileVM(coin.Id, coin.Image, total, 0, psec));
+            list.Add(new TileVM(coin.Id, coin.Image, gameTotal, stageTotal, 0, pSecGame, pSecStage));
         }
 
         return list;
@@ -122,13 +130,13 @@
 
             // total atual (se você guarda em ExpeditionStats)
             long total = 0;
-            foreach (var stage in game.Stages)
+            foreach (var expansion in game.Expansions)
             {
-                if (stage.Value.ExpeditionStats?.Resources?.TryGetValue(res.Id, out var t) == true)
+                if (expansion.Value.ExpansionStats?.Resources?.TryGetValue(res.Id, out var t) == true)
                     total = t;
             }
 
-            list.Add(new TileVM(res.Id, res.Image, total, psec.rsCap, psec.rsRegen));
+            list.Add(new TileVM(res.Id, res.Image, total, 0, psec.rsCap, psec.rsRegen, 0));
         }
 
         return list;

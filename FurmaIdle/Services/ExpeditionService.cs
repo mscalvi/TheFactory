@@ -11,18 +11,13 @@ namespace FurmaIdle.Services
 {
     public interface IExpeditionService
     {
-        List<CharacterModel> GetActiveCharacters(ExpeditionModel expedition);
-        ExpeditionModel GetOrCreateCurrentExpedition(StageModel stage);
-
-        IEnumerable<CharacterModel> GetCharactersInBase();
-        IReadOnlyCollection<string> GetPartyIds(StageModel stage);
-        bool IsExpeditionActive(ExpeditionModel expedition);
-        bool CharSelected(StageModel stage, string charId);
         int GetPartyCap(StageModel stage);
         bool CanToggleChar(StageModel stage, string charId);
-        bool ToggleChar(StageModel stage, string charId, out string? reason);
+        bool ToggleChar(StageModel stage, string charId);
 
-        Task LaunchExpedition(StageModel stage, IReadOnlyCollection<string> roster);
+        List<CharacterModel> GetInExpCharacters(ExpeditionModel expedition);
+
+        Task LaunchExpedition(StageModel stage);
         Task EndExpedition(StageModel stage);
     }
 
@@ -39,62 +34,6 @@ namespace FurmaIdle.Services
             _game = game;
             _effect = effect;
             _knowledge = knowledge;
-        }
-
-        public List<CharacterModel> GetActiveCharacters(ExpeditionModel expedition)
-        {
-            var result = new List<CharacterModel>();
-            if (expedition?.PartyIds == null) return result;
-
-            foreach (var id in expedition.PartyIds)
-            {
-                if (string.IsNullOrWhiteSpace(id)) continue;
-                var c = _locate.LocateCharacter(_game.CurrentGame, id);
-                if (c != null) result.Add(c);
-            }
-            return result;
-        }
-
-        public ExpeditionModel GetOrCreateCurrentExpedition(StageModel stage)
-        {
-            return stage.Expedition ??= new ExpeditionModel
-            {
-                StageId = stage.Id,
-                ExpeditionState = UnlockHelper.ExpeditionState.Idle,
-                PartyIds = new List<string>()
-            };
-        }
-
-        public bool IsExpeditionActive(ExpeditionModel expedition)
-        {
-            return expedition is not null && expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active;
-        }
-
-        // ===== Consulta de personagens =====
-        public IEnumerable<CharacterModel> GetCharactersInBase()
-        {
-            var g = _game.CurrentGame;
-            if (g?.Characters is null) yield break;
-
-            foreach (var c in g.Characters.Values)
-            {
-                if (c is null) continue;
-                if (c.State != UnlockHelper.State.Unlocked) continue;
-                if (c.CharState == UnlockHelper.CharState.InBase) yield return c;
-            }
-        }
-
-        // ===== Seleção (Party) =====
-        public IReadOnlyCollection<string> GetPartyIds(StageModel stage)
-        {
-            var ex = GetOrCreateCurrentExpedition(stage);
-            return ex.PartyIds ??= new List<string>();
-        }
-
-        public bool CharSelected(StageModel stage, string charId)
-        {
-            var ids = GetPartyIds(stage);
-            return ids.Contains(charId);
         }
 
         public int GetPartyCap(StageModel stage)
@@ -116,94 +55,84 @@ namespace FurmaIdle.Services
 
             return partySize;
         }
-
         public bool CanToggleChar(StageModel stage, string charId)
         {
-            if (IsExpeditionActive(stage.Expedition)) return false;
-            var ex = stage?.Expedition;
+            var expedition = stage.Expedition;
+            if (expedition.ExpeditionState == ExpeditionState.Idle) return false;
 
-            if (ex.PartyIds!.Contains(charId)) return true;
+            if (expedition.PartyIds.Contains(charId)) return false;
 
-            return ex.PartyIds!.Count < GetPartyCap(stage);
+            return expedition.PartyIds.Count < GetPartyCap(stage);
         }
-
-        public bool ToggleChar(StageModel stage, string charId, out string? reason)
+        public bool ToggleChar(StageModel stage, string charId)
         {
-            reason = null;
+            var character = _locate.LocateCharacter(_game.CurrentGame, charId);
 
-            if (string.IsNullOrWhiteSpace(charId)) { reason = "Id inválido."; return false; }
-            if (IsExpeditionActive(stage.Expedition)) { reason = "Expedição já está ativa."; return false; }
-
-            var ex = GetOrCreateCurrentExpedition(stage);
-            ex.PartyIds ??= new List<string>();
-
-            if (ex.PartyIds.Remove(charId))
-                return true;
-
-            if (ex.PartyIds.Count >= GetPartyCap(stage))
+            if (character.CharState == CharState.InBase)
             {
-                reason = $"Limite de equipe atingido ({GetPartyCap(stage)}).";
-                return false;
+                character.CharState = CharState.InStage;
+                character.InStageId = stage.Id;
+                return true;
+            } 
+            else if (character.CharState == CharState.InStage)
+            {
+                character.CharState = CharState.InBase;
+                return true;
             }
 
-            ex.PartyIds.Add(charId);
-            return true;
+            return false;
+        }
+
+        public List<CharacterModel> GetInExpCharacters(ExpeditionModel expedition)
+        {
+            var result = new List<CharacterModel>();
+            if (expedition?.PartyIds == null) return result;
+
+            foreach (var id in expedition.PartyIds)
+            {
+                if (string.IsNullOrWhiteSpace(id)) continue;
+                var c = _locate.LocateCharacter(_game.CurrentGame, id);
+                if (c != null) result.Add(c);
+            }
+            return result;
         }
 
         // Start e End
-        public async Task LaunchExpedition(StageModel stage, IReadOnlyCollection<string> roster)
+        public async Task LaunchExpedition(StageModel stage)
         {
+            var expedition = stage?.Expedition;
+            var game = _game.CurrentGame;
+
             await _game.Mutate(game =>
             {
-                var ex = stage?.Expedition;
-
-                if (ex.ExpeditionState == UnlockHelper.ExpeditionState.Active)
+                if (expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
                 {
                     return;
                 } else
                 {
-                    ex = new ExpeditionModel();
-                    stage.Expedition = ex;
+                    expedition = new ExpeditionModel();
+                    stage.Expedition = expedition;
                 }
 
                 stage.ExpeditionStats = new StatsModel();
 
-                ex.PartyIds ??= new List<string>();
+                expedition.PartyIds.Clear();
 
-                var cap = GetPartyCap(stage);
-                var ids = (roster ?? Array.Empty<string>())
-                    .Where(id => !string.IsNullOrWhiteSpace(id))
-                    .Distinct(StringComparer.Ordinal)
-                    .Take(cap)
-                    .ToList();
-
-                var finalIds = new List<string>(ids.Count);
-                foreach (var id in ids)
+                foreach(var character in game.Characters)
                 {
-                    var c = _locate.LocateCharacter(game, id);
-                    if (c is null) continue;
-                    if (c.State != UnlockHelper.State.Unlocked) continue;
-                    if (c.CharState != UnlockHelper.CharState.InBase) continue;
-
-                    c.CharState = UnlockHelper.CharState.InStage;
-                    c.InStageId = stage.Id;
-
-                    finalIds.Add(id);
+                    if(character.Value.InStageId == stage.Id)
+                    {
+                        expedition.PartyIds.Add(character.Key);
+                    }
                 }
 
-                ex.PartyIds.Clear();
-                ex.PartyIds.AddRange(finalIds);
+                expedition.StageId = stage.Id;
+                expedition.ExpeditionState = UnlockHelper.ExpeditionState.Active;
+                expedition.StartedAt = DateTimeOffset.UtcNow;
 
-                ex.StageId = stage.Id;
-                ex.ExpeditionState = UnlockHelper.ExpeditionState.Active;
-                ex.StartedAt = DateTimeOffset.UtcNow;
-
-                ex.FinishedAt = null;
+                expedition.FinishedAt = null;
 
             }, save: true);
-
-            var expedition = stage?.Expedition;
-            var game = _game.CurrentGame;
 
             foreach (var characterId in expedition.PartyIds)
             {
@@ -212,7 +141,6 @@ namespace FurmaIdle.Services
                 _effect.ApplyEffect(ItemHelper.ItemType.Trait, traitId, stage.Id);
             }
         }
-
         public async Task EndExpedition(StageModel stage)
         {
             // transforma coins em Knowledge
@@ -225,21 +153,19 @@ namespace FurmaIdle.Services
                 }
             }
 
-            var kApplied = await _knowledge.ApplyGainsAsync(stage, cTotal);
+            await _knowledge.EndExpeditionKnowGain(stage, cTotal);
 
             await _game.Mutate(game =>
             {
-                var ex = stage?.Expedition;
-                if (stage is null || ex is null) return;
+                var expedition = stage?.Expedition;
+                if (stage is null || expedition is null) return;
 
-                // finalizar expedição
-                ex.FinishedAt = DateTimeOffset.UtcNow;
-                ex.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
+                var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
 
                 // devolver personagens para a base
-                if (ex.PartyIds is not null && ex.PartyIds.Count > 0)
+                if (expedition.PartyIds is not null && expedition.PartyIds.Count > 0)
                 {
-                    foreach (var cid in ex.PartyIds)
+                    foreach (var cid in expedition.PartyIds)
                     {
                         if (game.Characters.TryGetValue(cid, out var ch) && ch is not null)
                         {
@@ -247,17 +173,18 @@ namespace FurmaIdle.Services
                             ch.InStageId = null;
                         }
                     }
-                    ex.PartyIds.Clear();
+                    expedition.PartyIds.Clear();
                 }
 
                 // limpar contratos/timers do stage
                 foreach (var contracts in stage.ActiveContracts)
                 {
                     var contract = _locate.LocateContract(game, contracts.Key);
+                    expansion.inUseContracts.Remove(contracts.Key);
                     contract.UseState = UnlockHelper.ContractState.Avaliable;
                 }
                 stage.ActiveContracts?.Clear();
-                stage.lockedContracts?.Clear();
+                stage.lockedContractLevel.Clear();
 
                 // reseta upgrades
                 foreach (var upgrades in game.Upgrades)
@@ -272,42 +199,32 @@ namespace FurmaIdle.Services
                 // reseta modifiers
                 foreach (var contracts in game.Contracts)
                 {
-                    ScrubExpeditionMods(contracts.Value.Modifiers, "Upgrades");
+                    ScrubExpeditionMods(contracts.Value.Modifiers);
                 }
                 foreach (var resources in game.Resources)
                 {
-                    ScrubExpeditionMods(resources.Value.Modifiers, "Traits");
+                    ScrubExpeditionMods(resources.Value.Modifiers);
                 }
                 foreach (var characters in game.Characters)
                 {
-                    ScrubExpeditionMods(characters.Value.Modifiers, "Traits");
+                    ScrubExpeditionMods(characters.Value.Modifiers);
                 }
                 foreach (var knowledges in game.Knowledges)
                 {
-                    ScrubExpeditionMods(knowledges.Value.Modifiers, "Traits");
+                    ScrubExpeditionMods(knowledges.Value.Modifiers);
                 }
+
+                // finalizar expedição
+                expedition.FinishedAt = DateTimeOffset.UtcNow;
+                expedition.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
 
             }, save: true);
         }
-
-        private static void ScrubExpeditionMods(List<ModifierModel> list, string type)
+        private static void ScrubExpeditionMods(List<ModifierModel> list)
         {
-            if(type == "Upgrades")
-            {
-                list.RemoveAll(m =>
-                    m.Scope == UnlockHelper.Persistence.untilExpedition &&
-                    m.ApplyerId != null &&
-                    m.ApplyerId.StartsWith("uc", StringComparison.Ordinal)
-                );
-            }
-            if (type == "Traits")
-            {
-                list.RemoveAll(m =>
-                    m.Scope == UnlockHelper.Persistence.untilExpedition &&
-                    m.ApplyerId != null &&
-                    m.ApplyerId.StartsWith("o", StringComparison.Ordinal)
-                );
-            }
+            list.RemoveAll(m =>
+                    m.Scope == UnlockHelper.Persistence.untilExpedition
+                );            
         }
     }
 }
