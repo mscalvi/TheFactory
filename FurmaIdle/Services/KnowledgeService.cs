@@ -10,6 +10,7 @@ namespace FurmaIdle.Services
         Task EndExpeditionKnowGain(StageModel stage, long coins);
 
         Dictionary<string, double> KnowledgeGain(StageModel stage, long coins);
+        double GetKnowledgeBurst(GameModel game, string coinId, ExpansionModel expansion);
     }
 
     public sealed record KnowledgePreview(
@@ -36,6 +37,7 @@ namespace FurmaIdle.Services
             _locate = locate;
             _modifier = modifier;
         }
+
         public async Task EndExpeditionKnowGain(StageModel stage, long coins)
         {
             var parcialResult = KnowledgeGain(stage, coins);
@@ -52,6 +54,7 @@ namespace FurmaIdle.Services
                 );
             }
         }
+
         public Dictionary<string, double> KnowledgeGain(StageModel stage, long coins)
         {
             var result = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
@@ -62,25 +65,41 @@ namespace FurmaIdle.Services
             foreach (var (kId, factor) in factors)
             {
                 var knowledge = _locate.LocateKnowledge(_game.CurrentGame, kId);
-                if (knowledge.GainCoinId != kCoinId) continue;
+                if (!string.Equals(knowledge.GainCoinId, kCoinId, StringComparison.OrdinalIgnoreCase))
+                    continue;
 
                 double coinsK = coins * factor;
+                if (coinsK <= 0) continue;
 
-                double kGain = 0;
-                double kPrev = 0;
-
+                int kPrev = 0;
                 if (expansion.ExpansionStats.KnowledgeGain?.TryGetValue(kId, out var stored) == true)
-                    kPrev = stored;
+                    kPrev = (int)stored;
 
-                kGain = coinsK/(knowledge.GainCoinBase * Math.Pow(kPrev + 1, knowledge.GainCoinCurve));
+                int gained = 0;
+                double remaining = coinsK;
+
+                // (opcional: um limite de segurança para evitar laços enormes)
+                const int hardCap = 1_000_000;
+
+                while (gained < hardCap)
+                {
+                    double nextCost = knowledge.GainCoinBase * Math.Pow(kPrev + gained + 1, knowledge.GainCoinCurve);
+                    if (remaining + 1e-9 >= nextCost)
+                    {
+                        remaining -= nextCost;
+                        gained++;
+                    }
+                    else break;
+                }
 
                 var modifier = _modifier.GetModifiers(ItemHelper.ItemType.Knowledge, kId, stage.Id, EffectHelper.EffectSupertype.Gain);
-                double final = (kGain + modifier.AddMod) * modifier.MultMod;
+                double final = (gained + modifier.AddMod) * modifier.MultMod;
 
                 if (final > 0) result[kId] = final;
             }
             return result;
         }
+
         private Dictionary<string, double> GetKnowFactor(StageModel stage)
         {
             Dictionary<string, int> kCounters = new Dictionary<string, int>();
@@ -104,7 +123,7 @@ namespace FurmaIdle.Services
                         }
                     }
 
-                    if (stage.ActiveContracts.Count > 0)
+                    if (stage.ActiveContracts is not null && stage.ActiveContracts.Count > 0)
                     {
                         foreach (var contractId in stage.ActiveContracts)
                         {
@@ -134,12 +153,52 @@ namespace FurmaIdle.Services
                 kTotal += know.Value;
             }
 
+            if (kTotal == 0) return kFactors; // todos 0 → sem factors
+
             foreach (var know in kCounters)
             {
-                kFactors.Add(know.Key, (know.Value / kTotal));
+                kFactors[know.Key] = (double)know.Value / (double)kTotal;
             }
 
             return kFactors;
-        }       
+        }
+
+        public double GetKnowledgeBurst(GameModel game, string coinId, ExpansionModel expansion)
+        {
+            double burst = 1.0;
+            switch (coinId)
+            {
+                case "m01":
+                    foreach (var kv in game.Knowledges)
+                    {
+                        if (kv.Value.GenerationCoin != IncomeHelper.CoinBurst.m01) continue;
+                        var k = kv.Value;
+                        var knowledge = _locate.LocateKnowledge(game, k.Id);
+
+                        expansion.ExpansionStats.KnowledgeGain.TryGetValue(knowledge.Id, out var totalK);
+
+                        double bonus = 1.0 + (knowledge.GenerationFactor * Math.Pow(totalK, knowledge.GainCoinCurve));
+
+                        burst *= bonus;
+                    }
+                    break;
+                case "m02":
+                    foreach (var kv in game.Knowledges)
+                    {
+                        if (kv.Value.GenerationCoin != IncomeHelper.CoinBurst.m02) continue;
+                        var k = kv.Value;
+                        var knowledge = _locate.LocateKnowledge(game, k.Id);
+
+                        expansion.ExpansionStats.KnowledgeGain.TryGetValue(knowledge.Id, out var totalK);
+
+                        double bonus = 1.0 + (knowledge.GenerationFactor * Math.Pow(totalK, knowledge.GainCoinCurve));
+
+                        burst *= bonus;
+                    }
+                    break;
+            }
+
+            return burst;
+        }
     }
 }

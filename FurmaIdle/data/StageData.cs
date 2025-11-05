@@ -19,7 +19,7 @@ namespace FurmaIdle.Data
             {
                 Id = "s00",
                 Name = "Ilha de Vera",
-                Description = "", // Vazio na tabela
+                Description = "",
                 Icon = "icons/stages/s00.jpg",
                 Images = new List<string> {
                     "images/stages/s00_0000.jpg",
@@ -53,7 +53,7 @@ namespace FurmaIdle.Data
             {
                 Id = "s01",
                 Name = "Correntezas",
-                Description = "", // Vazio na tabela
+                Description = "",
                 Icon = "icons/stages/s01.jpg",
                 Images = new List<string> {
                     "images/stages/s01_0000.jpg",

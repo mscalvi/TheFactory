@@ -11,6 +11,7 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject ILocateService Locate
+@inject IExpeditionService Expedition
 
 @{
     var game = Game.CurrentGame;
@@ -64,6 +65,16 @@
     {
         <div>@click.Key @click.Value</div>
     }
+    <div>Characters Unlocked: @game.GameStats.CharactersUnlocked</div>
+    <div>Coins Unlocked: @game.GameStats.CoinsUnlocked</div>
+    <div>Contracts Unlocked: @game.GameStats.ContractsUnlocked</div>
+    <div>Expansions Unlocked: @game.GameStats.ExpansionsUnlocked</div>
+    <div>Knowledges Unlocked: @game.GameStats.KnowledgesUnlocked</div>
+    <div>Locals Unlocked: @game.GameStats.LocalsUnlocked</div>
+    <div>Stages Unlocked: @game.GameStats.StagesUnlocked</div>
+    <div>Techs Unlocked: @game.GameStats.TechUnlocked</div>
+    <div>Resources Unlocked: @game.GameStats.ResourcesUnlocked</div>
+    <div>Upgrades Unlocked: @game.GameStats.UpgradesUnlocked</div>
 </div>
 
 <div>
@@ -146,6 +157,7 @@
 @code {
     private async Task OnClickBuyExpansionUpgrade(string upgradeId)
     {
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game?.CurrentGame.SelectedStageId);
+        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId);
+        await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
     }
 }

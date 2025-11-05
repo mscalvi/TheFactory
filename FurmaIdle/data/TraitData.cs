@@ -22,6 +22,7 @@ namespace FurmaIdle.Data
                 EffectValue = 1.05,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Modifiers = new List<ModifierModel>(),
             },
             ["o02"] = new TraitModel
@@ -32,6 +33,7 @@ namespace FurmaIdle.Data
                 EffectValue = 1.05,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Modifiers = new List<ModifierModel>(),
             },
             ["o03"] = new TraitModel
@@ -42,6 +44,7 @@ namespace FurmaIdle.Data
                 EffectValue = 1.05,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.KnowledgeGain,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -55,6 +58,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0.5,
                 EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectType = EffectHelper.EffectType.ResourceGain,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -68,6 +72,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0.95,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.CharacterCost,
+                EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -91,6 +96,7 @@ namespace FurmaIdle.Data
                 EffectOp = trait.EffectOp,
                 EffectType = trait.EffectType,
                 Modifiers = trait.Modifiers,
+                EffectSupertype= trait.EffectSupertype,
                 Persistence = UnlockHelper.Persistence.untilExpedition,
             };
         }

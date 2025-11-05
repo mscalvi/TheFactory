@@ -20,11 +20,11 @@ namespace FurmaIdle.Models
         public string GainCoinId { get; set; }
         public int GainCoinBase { get; set; }
         public double GainCoinCurve { get; set; }
-        public double GainFactorCurve { get; set; }
 
         // Boost
         public double GenerationFactor { get; set; }
         public double GenerationPenaltie { get; set; }
+        public IncomeHelper.CoinBurst GenerationCoin { get; set;}
 
         // Modifier
         public List<ModifierModel> Modifiers { get; set; }

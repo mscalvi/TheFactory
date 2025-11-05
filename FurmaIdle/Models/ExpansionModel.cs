@@ -16,7 +16,7 @@ namespace FurmaIdle.Models
         
         public List<string> inUseContracts { get; set; } = new List<string>();
         public StatsModel ExpansionStats { get; set; } = new();
-
+        public string NextExpansion { get; set; }
 
         // Modifiers
         public List<ModifierModel> Modifiers { get; set; }

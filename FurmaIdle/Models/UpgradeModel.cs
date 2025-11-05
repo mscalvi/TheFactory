@@ -20,6 +20,7 @@ namespace FurmaIdle.Models
         // Efeito
         public string TargetId { get; set; }
         public EffectHelper.EffectType EffectType { get; set; }
+        public EffectHelper.EffectSupertype EffectSupertype { get; set; }
         public EffectHelper.EffectOperation EffectOp { get; set; }
         public double EffectValue { get; set; }
 

@@ -85,11 +85,6 @@ namespace FurmaIdle.Services
                 long extra = 0;
                 if(stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
                 {
-
-                    var modifier = GetKnowledgeBurst(game, id, expansion);
-                    gain = (long)Math.Floor(gain * modifier);
-                    frac = frac * modifier;
-
                     // ---- trabalhar em centavos (0..99) ----
                     stage.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
                     int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
@@ -116,10 +111,6 @@ namespace FurmaIdle.Services
                 }
                 else
                 {
-                    var modifier = GetKnowledgeBurst(game, id, expansion);
-                    gain = (long)Math.Floor(gain * modifier);
-                    frac = frac * modifier;
-
                     // ---- trabalhar em centavos (0..99) ----
                     game.NoExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
                     int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
@@ -197,29 +188,5 @@ namespace FurmaIdle.Services
                 game.GameStats.KnowledgeGain[id] = knowGame;
             }
         }
-
-        private double GetKnowledgeBurst(GameModel game, string coinId, ExpansionModel expansion)
-        {
-            double mult = 1.0;
-
-            if (coinId == "m01")
-            {
-                foreach (var kv in game.Knowledges)
-                {
-                    if (kv.Key != "k01" || kv.Key != "k02" || kv.Key != "k03") continue;
-                    var k = kv.Value;
-                    var knowledge = _locate.LocateKnowledge(game, k.Id);
-
-                    expansion.ExpansionStats.KnowledgeGain.TryGetValue(knowledge.Id, out var totalK);
-
-                    double bonus = 1.0 + (knowledge.GenerationFactor * Math.Pow(totalK, knowledge.GainCoinCurve));
-
-                    mult *= bonus;
-                }
-            }
-
-            return mult;
-        }
-
     }
 }

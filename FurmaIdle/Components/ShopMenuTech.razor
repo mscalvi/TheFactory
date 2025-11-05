@@ -71,6 +71,7 @@
 </div>
 
 <div>
+    <h3>Unlocked Techs</h3>
     @foreach (var t in unlockedTechs)
     {
         var id = t.Id;
@@ -87,6 +88,8 @@
 </div>
 
 @code {
+    private bool freeProcess = true;
+
     private long Total(string kId)
     {
         long total = 0;
@@ -108,6 +111,15 @@
             return;
         }
 
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId);
+        if (freeProcess)
+        {
+            freeProcess = false;
+            await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId);
+            freeProcess = true;
+        }
+        else
+        {
+            return;
+        }
     }
 }

@@ -29,6 +29,9 @@ namespace FurmaIdle.Services
             double AddMod = 0;
             double MultMod = 1;
 
+            var stage = _locate.LocateStage(game, game.SelectedStageId);
+            var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
+
             switch (group)
             {
                 #region Cost
@@ -172,7 +175,6 @@ namespace FurmaIdle.Services
                             break;
 
                         case ItemType.Expansion:
-                            var expansion = _locate.LocateExpansion(game, itemId);
                             foreach (var modifier in expansion.Modifiers)
                             {
                                 if (modifier.Type == EffectType.ExpansionCost)
@@ -191,7 +193,6 @@ namespace FurmaIdle.Services
 
                         case ItemType.Specialty:
                             var specialty = _locate.LocateSpecialty(game, itemId);
-                            var stage = _locate.LocateStage(game, game.SelectedStageId);
 
                             foreach (var characterTarget in game.Characters)
                             {
@@ -239,7 +240,6 @@ namespace FurmaIdle.Services
                     {
                         case ItemType.Click:
                             var click = _locate.LocateClick(game, itemId);
-                            var stage = _locate.LocateStage(game, stageId);
 
                             foreach (var modifier in click.Modifiers)
                             {
@@ -305,6 +305,28 @@ namespace FurmaIdle.Services
                                         MultMod *= modifier.Value;
                                     }
                                 }
+                                if (modifier.Type == EffectType.ContractGainPerTech)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                    }
+                                }
+                                if (modifier.Type == EffectType.ContractGainPerLocal)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                    }
+                                }
                             }
                             break;
 
@@ -323,6 +345,28 @@ namespace FurmaIdle.Services
                                         MultMod *= modifier.Value;
                                     }
                                 }
+                                if (modifier.Type == EffectType.KnowledgeGainPerTech)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                    }
+                                }
+                                if (modifier.Type == EffectType.KnowledgeGainPerLocal)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                    }
+                                }
                             }
                             break;
 
@@ -339,6 +383,28 @@ namespace FurmaIdle.Services
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
                                         MultMod *= modifier.Value;
+                                    }
+                                }
+                                if (modifier.Type == EffectType.ResourceGainPerTech)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                    }
+                                }
+                                if (modifier.Type == EffectType.ResourceGainPerLocal)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
                                     }
                                 }
                             }

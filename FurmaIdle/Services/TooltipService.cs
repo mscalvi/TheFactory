@@ -4,6 +4,7 @@ using FurmaIdle.Models;
 using FurmaIdle.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -26,14 +27,16 @@ namespace FurmaIdle.Services
     {
         private readonly ICurrentGameService _game;
         private readonly ILocateService _locate;
+        private readonly ICostService _cost;
 
         public HoverTip? Current { get; private set; }
         public event Action? Changed;
 
-        public TooltipService(ICurrentGameService game, ILocateService locate)
+        public TooltipService(ICurrentGameService game, ILocateService locate, ICostService cost)
         {
             _game = game;
             _locate = locate;
+            _cost = cost;
         }
 
         public void Show(HoverTip tip)
@@ -68,19 +71,89 @@ namespace FurmaIdle.Services
         }
 
         // Character
-        private HoverTip BuildCharacterHover(string id, GameModel game)
+        // dentro do TooltipService (ou onde você já faz os builders)
+        private HoverTip BuildCharacterHover(string charId, GameModel g)
         {
-            game.Characters.TryGetValue(id, out var character);
+            var ch = _locate.LocateCharacter(g, charId);
 
-            return new HoverTip($"Character ({character.Name})", $"{character.State}");
+            // Nomes/descrições vindos do Locate (ajuste os métodos conforme seu LocateService)
+            var spec = !string.IsNullOrWhiteSpace(ch.SpecialtyId) ? _locate.LocateSpecialty(g, ch.SpecialtyId) : null;
+            var trait = !string.IsNullOrWhiteSpace(ch.TraitId) ? _locate.LocateTrait(g, ch.TraitId) : null;
+            var k1 = !string.IsNullOrWhiteSpace(ch.KnowledgeFactor1) ? _locate.LocateKnowledge(g, ch.KnowledgeFactor1) : null;
+            var k2 = !string.IsNullOrWhiteSpace(ch.KnowledgeFactor2) ? _locate.LocateKnowledge(g, ch.KnowledgeFactor2) : null;
+
+            // Contratos possíveis (IDs -> nomes)
+            var contracts = new List<string>();
+            if (ch.ContractsIds != null)
+            {
+                foreach (var cid in ch.ContractsIds)
+                {
+                    var c = _locate.LocateContract(g, cid);
+                    contracts.Add(!string.IsNullOrWhiteSpace(c?.Name) ? c.Name : cid);
+                }
+            }
+
+            // Monta HTML (corpo) seguindo o layout pedido
+            // Obs.: ch.Lore pode estar vazio pelos seus dados atuais; deixei a seção, mas só renderiza se tiver conteúdo.
+            string body = $@"
+                <div class='tt'>
+                  <div class='tt-name'>{HtmlEncode(ch.Name)}</div>
+                  {(string.IsNullOrWhiteSpace(ch.Lore) ? "" : $"<div class='tt-lore'><em>{HtmlEncode(ch.Lore)}</em></div>")}
+
+                  <div class='tt-list'>
+                    {(spec is null ? "" : $"<div><strong>{HtmlEncode(spec.Name)}:</strong> {HtmlEncode(spec.Description ?? "")}</div>")}
+                    {(trait is null ? "" : $"<div>{HtmlEncode(trait.Description ?? "")}</div>")}
+                  </div>
+
+                  <div class='tt-know'>
+                    {(k1 is null && k2 is null ? "" : $"{HtmlEncode(k1?.Name ?? "")}{(k1 != null && k2 != null ? " — " : "")}{HtmlEncode(k2?.Name ?? "")}")}
+                  </div>
+
+                  {(contracts.Count == 0 ? "" : $"<div class='tt-footnote'>{HtmlEncode(string.Join(" • ", contracts))}</div>")}
+                </div>";
+
+            // Title pode ficar só o nome (você queria centralizado/negrito — isso está no HTML do body).
+            return new HoverTip(
+                Title: ch.Name,  // mantém por compatibilidade (não precisa usar visualmente)
+                Body: body
+            );
         }
 
-        // Upgrade
-        private HoverTip BuildUpgradeHover(string id, GameModel game)
-        {
-            game.Upgrades.TryGetValue(id, out var upgrade);
 
-            return new HoverTip($"Upgrade ({upgrade.Name})", $"{upgrade.Description}");
+        // Upgrade
+        private HoverTip BuildUpgradeHover(string upgradeId, GameModel game)
+        {
+            var up = _locate.LocateUpgrade(game, upgradeId);
+
+            var stageId = game.SelectedStageId;
+
+            var (costValue, costId) = _cost.ComputeCost(ItemHelper.ItemType.Upgrade, upgradeId, stageId);
+
+            // tenta mostrar o nome da moeda em vez do id
+            string costCoinName = costId;
+            try
+            {
+                var coin = _locate.LocateCoin(game, costId);
+                if (!string.IsNullOrWhiteSpace(coin?.Name))
+                    costCoinName = coin.Name;
+            }
+            catch { /* ok manter o id */ }
+
+            string title = up?.Name ?? upgradeId;
+            string lore = up?.Lore ?? "";
+            string desc = up?.Description ?? "";
+
+            string costLine = $"{Format(costValue)} {costCoinName}";
+
+            string body = $@"
+                <div class='tt'>
+                  <div class='tt-name'>{HtmlEncode(title)}</div>
+                  {(string.IsNullOrWhiteSpace(lore) ? "" : $"<div class='tt-lore'><em>{HtmlEncode(lore)}</em></div>")}
+                  {(string.IsNullOrWhiteSpace(desc) ? "" : $"<div class='tt-list'><div>{HtmlEncode(desc)}</div></div>")}
+                  <div class='tt-know tt-cost'>Custo: {HtmlEncode(costLine)}</div>
+                </div>";
+
+            return new HoverTip(title, body);
         }
 
         // Contract
@@ -138,5 +211,16 @@ namespace FurmaIdle.Services
 
             return new HoverTip($"Coin ({coin.Name})", $"{coin.Lore}");
         }
+
+
+        // Utilitário simples pra escapar (caso seus textos venham “soltos”)
+        private static string HtmlEncode(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return "";
+            return System.Net.WebUtility.HtmlEncode(s);
+        }
+
+        private static string Format(long v)
+          => v.ToString("N0", CultureInfo.InvariantCulture);
     }
 }

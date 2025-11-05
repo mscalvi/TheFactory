@@ -26,16 +26,18 @@
         public Dictionary<string, long> ContractsMade { get; set; } = new(StringComparer.Ordinal);
         public Dictionary<string, long> ClicksMade { get; set; } = new(StringComparer.Ordinal);
 
-        public int UpgradesUnlocked { get; set; }
-        public int UniqueUpgradesUnlocked { get; set; }
+        // Unlock Stats
+        public int CharactersUnlocked { get; set; } = 0;
+        public int CoinsUnlocked { get; set; } = 0;
+        public int ContractsUnlocked { get; set; } = 0;
+        public int ExpansionsUnlocked { get; set; } = 0;
+        public int KnowledgesUnlocked { get; set; } = 0;
+        public int LocalsUnlocked { get; set; } = 0;
+        public int StagesUnlocked { get; set; } = 0;
+        public int TechUnlocked { get; set; } = 0;
+        public int ResourcesUnlocked { get; set; } = 0;
+        public int UpgradesUnlocked { get; set; } = 0;
 
-        public int TechUnlocked { get; set; }
-        public int UniqueTechUnlocked { get; set; }
-
-        public int LocalsUnlocked { get; set; }
-        public int UniqueLocalsUnlocked { get; set; }
-
-        public int CharactersUnlocked { get; set; }
 
         public TimeOnly TimeSpent { get; set; }
     }

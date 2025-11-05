@@ -13,7 +13,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, LocalModel> All = new()
         {
-            #region Initial Local (l00)
+            #region Stage s00
             ["l00"] = new LocalModel
             {
                 Id = "l00",
@@ -23,13 +23,10 @@ namespace FurmaIdle.Data
                 Level = null,
                 UnlockId = "ul00",
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s00",
                 Modifiers = new List<ModifierModel>(),
             },
-            #endregion
-
-            #region Unlockable Locals (l01 - l03)
             ["l01"] = new LocalModel
             {
                 Id = "l01",
@@ -39,7 +36,7 @@ namespace FurmaIdle.Data
                 Level = 1,
                 UnlockId = "ul01",
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s00",
                 Modifiers = new List<ModifierModel>(),
             },
@@ -52,7 +49,7 @@ namespace FurmaIdle.Data
                 Level = 1,
                 UnlockId = "ul02",
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s00",
                 Modifiers = new List<ModifierModel>(),
             },
@@ -65,7 +62,7 @@ namespace FurmaIdle.Data
                 Level = 1,
                 UnlockId = "ul03",
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s00",
                 Modifiers = new List<ModifierModel>(),
             },

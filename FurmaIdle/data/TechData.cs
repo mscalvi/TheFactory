@@ -23,7 +23,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0110",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -38,7 +38,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0210",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             ["t022"] = new TechModel
@@ -50,7 +50,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0220",
                 Level = 2,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -65,7 +65,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0310",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             ["t032"] = new TechModel
@@ -77,7 +77,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0320",
                 Level = 2,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -92,7 +92,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0410",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -107,7 +107,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0510",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             ["t052"] = new TechModel
@@ -119,7 +119,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0520",
                 Level = 2,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
             ["t053"] = new TechModel
@@ -131,7 +131,7 @@ namespace FurmaIdle.Data
                 UnlockId = "uh0530",
                 Level = 3,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             }
             #endregion

@@ -19,44 +19,44 @@ namespace FurmaIdle.Data
                 Id = "x00",
                 Name = "Início da História",
                 UnlockId = null,
-                PricingId = PricingHelper.PricingId.Expansions1,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
+                NextExpansion = "x01",
             },
             ["x01"] = new ExpansionModel
             {
                 Id = "x01",
                 Name = "Apoiando a Murada Cairu",
-                UnlockId = "x00",
-                PricingId = PricingHelper.PricingId.Expansions1,
+                UnlockId = "ue01",
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
+                NextExpansion = "x02",
             },
             ["x02"] = new ExpansionModel
             {
                 Id = "x02",
                 Name = "Mestres da Ilha de Vera",
-                UnlockId = "x01",
-                PricingId = PricingHelper.PricingId.Expansions1,
+                UnlockId = "ue02",
                 Level = 2,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
+                NextExpansion = "x03",
             },
             ["x03"] = new ExpansionModel
             {
                 Id = "x03",
                 Name = "Correntezas de Vera",
-                UnlockId = "x02",
-                PricingId = PricingHelper.PricingId.Expansions1,
+                UnlockId = "ue03",
                 Level = 3,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
+                NextExpansion = "x04",
             },
             #endregion
         };
@@ -82,6 +82,7 @@ namespace FurmaIdle.Data
                 State = expansion.State,
                 Modifiers = expansion.Modifiers,
                 ExpansionStats = new StatsModel(),
+                NextExpansion = expansion.NextExpansion,
             };
         }
 

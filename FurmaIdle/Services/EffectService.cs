@@ -36,7 +36,6 @@ namespace FurmaIdle.Services
         {
             var game = _game.CurrentGame;
             var stage = _locate.LocateStage(game, stageId);
-            int multiplier = 1;
 
             if (type == ItemHelper.ItemType.Upgrade)
             {
@@ -70,34 +69,14 @@ namespace FurmaIdle.Services
                                 {
                                     foreach (var acontract in game.Contracts)
                                     {
-                                        if (upgrade.EffectType == EffectType.ContractGainPerTech)
-                                        {
-                                            foreach(var unlockedTech in game.Techs)
-                                            {
-                                                if(unlockedTech.Value.State == UnlockHelper.State.Unlocked)
-                                                {
-                                                    multiplier++;
-                                                }
-                                            }
-                                        }
-                                        if (upgrade.EffectType == EffectType.ContractGainPerLocal)
-                                        {
-                                            foreach (var unlockedLocal in game.Locals)
-                                            {
-                                                if (unlockedLocal.Value.State == UnlockHelper.State.Unlocked)
-                                                {
-                                                    multiplier++;
-                                                }
-                                            }
-                                        }
-
                                         var aNewMod = new ModifierModel
                                         {
                                             ApplyerId = upgrade.Id,
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue * multiplier
+                                            Value = upgrade.EffectValue,
+                                            Supertype = upgrade.EffectSupertype,
                                         };
 
                                         acontract.Value.Modifiers.Add(aNewMod);
@@ -107,26 +86,6 @@ namespace FurmaIdle.Services
                                 {
                                     foreach (var aknow in game.Knowledges)
                                     {
-                                        if (upgrade.EffectType == EffectType.KnowledgeGainPerTech)
-                                        {
-                                            foreach (var unlockedTech in game.Techs)
-                                            {
-                                                if (unlockedTech.Value.State == UnlockHelper.State.Unlocked)
-                                                {
-                                                    multiplier++;
-                                                }
-                                            }
-                                        }
-                                        if (upgrade.EffectType == EffectType.KnowledgeGainPerLocal)
-                                        {
-                                            foreach (var unlockedLocal in game.Locals)
-                                            {
-                                                if (unlockedLocal.Value.State == UnlockHelper.State.Unlocked)
-                                                {
-                                                    multiplier++;
-                                                }
-                                            }
-                                        }
 
                                         var aNewMod = new ModifierModel
                                         {
@@ -134,7 +93,8 @@ namespace FurmaIdle.Services
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue * multiplier
+                                            Value = upgrade.EffectValue,
+                                            Supertype = upgrade.EffectSupertype,
                                         };
 
                                         aknow.Value.Modifiers.Add(aNewMod);
@@ -150,7 +110,8 @@ namespace FurmaIdle.Services
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue
+                                            Value = upgrade.EffectValue,
+                                            Supertype = upgrade.EffectSupertype,
                                         };
 
                                         acoin.Value.Modifiers.Add(aNewMod);
@@ -160,34 +121,14 @@ namespace FurmaIdle.Services
                                 {
                                     foreach (var aresource in game.Resources)
                                     {
-                                        if (upgrade.EffectType == EffectType.ResourceGainPerTech)
-                                        {
-                                            foreach (var unlockedTech in game.Techs)
-                                            {
-                                                if (unlockedTech.Value.State == UnlockHelper.State.Unlocked)
-                                                {
-                                                    multiplier++;
-                                                }
-                                            }
-                                        }
-                                        if (upgrade.EffectType == EffectType.ResourceGainPerLocal)
-                                        {
-                                            foreach (var unlockedLocal in game.Locals)
-                                            {
-                                                if (unlockedLocal.Value.State == UnlockHelper.State.Unlocked)
-                                                {
-                                                    multiplier++;
-                                                }
-                                            }
-                                        }
-
                                         var aNewMod = new ModifierModel
                                         {
                                             ApplyerId = upgrade.Id,
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue * multiplier
+                                            Value = upgrade.EffectValue,
+                                            Supertype = upgrade.EffectSupertype,
                                         };
 
                                         aresource.Value.Modifiers.Add(aNewMod);
@@ -203,7 +144,8 @@ namespace FurmaIdle.Services
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue
+                                            Value = upgrade.EffectValue,
+                                            Supertype = upgrade.EffectSupertype,
                                         };
 
                                         aclick.Value.Modifiers.Add(aNewMod);
@@ -219,7 +161,8 @@ namespace FurmaIdle.Services
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue
+                                            Value = upgrade.EffectValue,
+                                            Supertype = upgrade.EffectSupertype,
                                         };
 
                                         acharacters.Value.Modifiers.Add(aNewMod);
@@ -235,7 +178,8 @@ namespace FurmaIdle.Services
                                             Type = upgrade.EffectType,
                                             Scope = upgrade.Persistence,
                                             Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue
+                                            Value = upgrade.EffectValue,
+                                            Supertype = upgrade.EffectSupertype,
                                         };
 
                                         aupgrades.Value.Modifiers.Add(aNewMod);
@@ -251,7 +195,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 coins.Modifiers.Add(mMod);
@@ -265,7 +210,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 character.Modifiers.Add(pMod);
@@ -279,7 +225,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 knowledge.Modifiers.Add(kMod);
@@ -293,7 +240,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 tech.Modifiers.Add(tmod);
@@ -307,7 +255,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 targetupgrade.Modifiers.Add(umod);
@@ -321,7 +270,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 local.Modifiers.Add(lmod);
@@ -335,7 +285,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 targetstage.Modifiers.Add(smod);
@@ -349,7 +300,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 expansion.Modifiers.Add(xmod);
@@ -363,7 +315,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 expedition.Modifiers.Add(dmod);
@@ -377,7 +330,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 trait.Modifiers.Add(omod);
@@ -391,7 +345,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 speciality.Modifiers.Add(emod);
@@ -405,7 +360,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 contract.Modifiers.Add(cmod);
@@ -419,7 +375,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 click.Modifiers.Add(imod);
@@ -433,7 +390,8 @@ namespace FurmaIdle.Services
                                     Type = upgrade.EffectType,
                                     Scope = upgrade.Persistence,
                                     Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue
+                                    Value = upgrade.EffectValue,
+                                    Supertype = upgrade.EffectSupertype,
                                 };
 
                                 resource.Modifiers.Add(rmod);
@@ -472,7 +430,8 @@ namespace FurmaIdle.Services
                                             Type = spec.EffectType,
                                             Scope = spec.Persistence,
                                             Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
+                                            Value = spec.EffectValue,
+                                            Supertype = spec.EffectSupertype,
                                         };
 
                                         acontract.Value.Modifiers.Add(amod);
@@ -488,7 +447,8 @@ namespace FurmaIdle.Services
                                             Type = spec.EffectType,
                                             Scope = spec.Persistence,
                                             Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
+                                            Value = spec.EffectValue,
+                                            Supertype = spec.EffectSupertype,
                                         };
 
                                         aknow.Value.Modifiers.Add(amod);
@@ -504,7 +464,8 @@ namespace FurmaIdle.Services
                                             Type = spec.EffectType,
                                             Scope = spec.Persistence,
                                             Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
+                                            Value = spec.EffectValue,
+                                            Supertype = spec.EffectSupertype,
                                         };
 
                                         acoin.Value.Modifiers.Add(amod);
@@ -520,7 +481,8 @@ namespace FurmaIdle.Services
                                             Type = spec.EffectType,
                                             Scope = spec.Persistence,
                                             Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
+                                            Value = spec.EffectValue,
+                                            Supertype = spec.EffectSupertype,
                                         };
 
                                         aresource.Value.Modifiers.Add(amod);
@@ -536,7 +498,8 @@ namespace FurmaIdle.Services
                                             Type = spec.EffectType,
                                             Scope = spec.Persistence,
                                             Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
+                                            Value = spec.EffectValue,
+                                            Supertype = spec.EffectSupertype,
                                         };
 
                                         aclick.Value.Modifiers.Add(amod);
@@ -552,7 +515,8 @@ namespace FurmaIdle.Services
                                             Type = spec.EffectType,
                                             Scope = spec.Persistence,
                                             Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
+                                            Value = spec.EffectValue,
+                                            Supertype = spec.EffectSupertype,
                                         };
 
                                         acharacters.Value.Modifiers.Add(amod);
@@ -568,7 +532,8 @@ namespace FurmaIdle.Services
                                             Type = spec.EffectType,
                                             Scope = spec.Persistence,
                                             Operation = spec.EffectOp,
-                                            Value = spec.EffectValue
+                                            Value = spec.EffectValue,
+                                            Supertype = spec.EffectSupertype,
                                         };
 
                                         aupgrades.Value.Modifiers.Add(amod);
@@ -584,7 +549,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 coins.Modifiers.Add(mmod);
@@ -598,7 +564,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 character.Modifiers.Add(pmod);
@@ -612,7 +579,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 knowledge.Modifiers.Add(kmod);
@@ -626,7 +594,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 tech.Modifiers.Add(tmod);
@@ -640,7 +609,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 targetupgrade.Modifiers.Add(umod);
@@ -654,7 +624,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 local.Modifiers.Add(lmod);
@@ -668,7 +639,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 targetstage.Modifiers.Add(smod);
@@ -682,7 +654,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 expansion.Modifiers.Add(xmod);
@@ -696,7 +669,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 expedition.Modifiers.Add(dmod);
@@ -710,7 +684,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 trait.Modifiers.Add(omod);
@@ -724,7 +699,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 speciality.Modifiers.Add(emod);
@@ -738,7 +714,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 contract.Modifiers.Add(cmod);
@@ -752,7 +729,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 click.Modifiers.Add(imod);
@@ -766,7 +744,8 @@ namespace FurmaIdle.Services
                                     Type = spec.EffectType,
                                     Scope = spec.Persistence,
                                     Operation = spec.EffectOp,
-                                    Value = spec.EffectValue
+                                    Value = spec.EffectValue,
+                                    Supertype = spec.EffectSupertype,
                                 };
 
                                 resource.Modifiers.Add(rmod);
@@ -799,7 +778,8 @@ namespace FurmaIdle.Services
                                         Type = trait.EffectType,
                                         Scope = trait.Persistence,
                                         Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
                                     };
 
                                     acontract.Value.Modifiers.Add(amod);
@@ -815,7 +795,8 @@ namespace FurmaIdle.Services
                                         Type = trait.EffectType,
                                         Scope = trait.Persistence,
                                         Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
                                     };
 
                                     aknow.Value.Modifiers.Add(amod);
@@ -831,7 +812,8 @@ namespace FurmaIdle.Services
                                         Type = trait.EffectType,
                                         Scope = trait.Persistence,
                                         Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
                                     };
 
                                     acoin.Value.Modifiers.Add(amod);
@@ -847,7 +829,8 @@ namespace FurmaIdle.Services
                                         Type = trait.EffectType,
                                         Scope = trait.Persistence,
                                         Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
                                     };
 
                                     aresource.Value.Modifiers.Add(amod);
@@ -863,7 +846,8 @@ namespace FurmaIdle.Services
                                         Type = trait.EffectType,
                                         Scope = trait.Persistence,
                                         Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
                                     };
 
                                     aclick.Value.Modifiers.Add(amod);
@@ -879,7 +863,8 @@ namespace FurmaIdle.Services
                                         Type = trait.EffectType,
                                         Scope = trait.Persistence,
                                         Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
                                     };
 
                                     acharacters.Value.Modifiers.Add(amod);
@@ -895,7 +880,8 @@ namespace FurmaIdle.Services
                                         Type = trait.EffectType,
                                         Scope = trait.Persistence,
                                         Operation = trait.EffectOp,
-                                        Value = trait.EffectValue
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
                                     };
 
                                     aupgrades.Value.Modifiers.Add(amod);
@@ -911,7 +897,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             coins.Modifiers.Add(mmod);
@@ -925,7 +912,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             character.Modifiers.Add(pmod);
@@ -939,7 +927,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             knowledge.Modifiers.Add(kmod);
@@ -953,7 +942,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             tech.Modifiers.Add(tmod);
@@ -967,7 +957,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             targetupgrade.Modifiers.Add(umod);
@@ -981,7 +972,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             local.Modifiers.Add(lmod);
@@ -995,7 +987,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             stage.Modifiers.Add(smod);
@@ -1009,7 +1002,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             expansion.Modifiers.Add(xmod);
@@ -1023,7 +1017,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             expedition.Modifiers.Add(dmod);
@@ -1037,7 +1032,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             targettrait.Modifiers.Add(omod);
@@ -1051,7 +1047,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             specialty.Modifiers.Add(emod);
@@ -1065,7 +1062,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             contract.Modifiers.Add(cmod);
@@ -1079,7 +1077,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             click.Modifiers.Add(imod);
@@ -1093,7 +1092,8 @@ namespace FurmaIdle.Services
                                 Type = trait.EffectType,
                                 Scope = trait.Persistence,
                                 Operation = trait.EffectOp,
-                                Value = trait.EffectValue
+                                Value = trait.EffectValue,
+                                Supertype = trait.EffectSupertype,
                             };
 
                             resource.Modifiers.Add(rmod);

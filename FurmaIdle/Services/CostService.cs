@@ -159,7 +159,6 @@ namespace FurmaIdle.Services
 
                         stage.ActiveContracts.TryGetValue(itemId, out var quantity);
 
-                        var nextQnt = quantity + 1;
                         costId = entry.CostCoinId;
                         costBase = entry.CostBase;
                         costCurve = entry.CostCurve;
@@ -167,7 +166,7 @@ namespace FurmaIdle.Services
                         costMultFactor *= costModifiers.MultMod;
                         costAddFactor += costModifiers.AddMod;
 
-                        raw = (costBase + costAddFactor) * Math.Pow(nextQnt, costCurve) * costMultFactor;
+                        raw = (costBase + costAddFactor) * Math.Pow(quantity + 1, costCurve) * costMultFactor;
                         costValue = (long)Math.Ceiling(raw);
 
                         break;

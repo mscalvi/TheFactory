@@ -26,11 +26,11 @@ namespace FurmaIdle.Data
                 GainCoinId = "m01",
                 GainCoinBase = 500000,
                 GainCoinCurve = 0.85,
-                GainFactorCurve = 0.6,
 
                 // Generation Boost
                 GenerationFactor = 0.15,
                 GenerationPenaltie = 0.65,
+                GenerationCoin = IncomeHelper.CoinBurst.m01,
             },
             ["k02"] = new KnowledgeModel
             {
@@ -46,11 +46,11 @@ namespace FurmaIdle.Data
                 GainCoinId = "m01",
                 GainCoinBase = 500000,
                 GainCoinCurve = 0.85,
-                GainFactorCurve = 0.6,
 
                 // Generation Boost
                 GenerationFactor = 0.15,
                 GenerationPenaltie = 0.65,
+                GenerationCoin = IncomeHelper.CoinBurst.m01,
             },
             ["k03"] = new KnowledgeModel
             {
@@ -66,11 +66,11 @@ namespace FurmaIdle.Data
                 GainCoinId = "m01",
                 GainCoinBase = 500000,
                 GainCoinCurve = 0.85,
-                GainFactorCurve = 0.6,
 
                 // Generation Boost
                 GenerationFactor = 0.15,
                 GenerationPenaltie = 0.65,
+                GenerationCoin = IncomeHelper.CoinBurst.m01,
             },
             #endregion
 
@@ -89,11 +89,11 @@ namespace FurmaIdle.Data
                 GainCoinId = "m01",
                 GainCoinBase = 5000000,
                 GainCoinCurve = 0.84,
-                GainFactorCurve = 0.6,
 
                 // Generation Boost
                 GenerationFactor = 0.16,
                 GenerationPenaltie = 0.7,
+                GenerationCoin = IncomeHelper.CoinBurst.m02,
             },
             ["k05"] = new KnowledgeModel
             {
@@ -109,11 +109,11 @@ namespace FurmaIdle.Data
                 GainCoinId = "m01",
                 GainCoinBase = 50000000,
                 GainCoinCurve = 0.83,
-                GainFactorCurve = 0.6,
 
                 // Generation Boost
                 GenerationFactor = 0.17,
                 GenerationPenaltie = 0.75,
+                GenerationCoin = IncomeHelper.CoinBurst.m02,
             }
             #endregion
         };
@@ -139,9 +139,9 @@ namespace FurmaIdle.Data
                 GainCoinId = knowledge.GainCoinId,
                 GainCoinBase = knowledge.GainCoinBase,
                 GainCoinCurve = knowledge.GainCoinCurve,
-                GainFactorCurve = knowledge.GainFactorCurve,
                 GenerationFactor = knowledge.GenerationFactor,
                 GenerationPenaltie = knowledge.GenerationPenaltie,
+                GenerationCoin = knowledge.GenerationCoin,
                 Modifiers = knowledge.Modifiers,
             };
         }

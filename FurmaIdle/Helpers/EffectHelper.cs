@@ -4,68 +4,48 @@
     {
         public enum EffectType
         {
-            // Contracts
-            ContractGain,
-            ContractTime,
-            ContractCost,
-            ContractUnlock,
-            ContractLevelUnlock,
-            ContractCapUnlock,
-
+            // Gain
             ContractGainPerTech,
             ContractGainPerLocal,
-
-            // Knowledge
-            KnowledgeUnlock,
+            ContractGain,
             KnowledgeGain,
-            KnowledgeCost,
-
             KnowledgeGainPerTech,
             KnowledgeGainPerLocal,
-
-            // Characters
-            CharacterUnlock,
-            CharacterCost,
-
-            // Resources
             ResourceGain,
-            ResourceUnlock,
-            ResourceCap,
-
             ResourceGainPerTech,
             ResourceGainPerLocal,
-
-            // Coins
-            CoinUnlock,
-            CoinGain,
             BurstCoinGain,
-
-            // Specialties
-            SpecialtyCost,
-
-            // Clicks
             ClickGain,
+            CoinGain,
 
-            // Stages
-            StageUnlock,
-            PartyCapSize,
-
-            // Locals
-            LocalUnlock,
-
-            // Tech
-            TechUnlock,
-
-            // Expansions
-            ExpansionUnlock,
+            // Cost
+            ContractCost,
+            KnowledgeCost,
+            CharacterCost,
+            SpecialtyCost,
             ExpansionCost,
-
-            // Expedition
             ExpeditionCost,
-            ExpeditionGain,
-
-            // Upgrade
             UpgradeCost,
+
+            // Time
+            ContractTime,
+
+            // Unlock
+            ContractUnlock,
+            KnowledgeUnlock,
+            CharacterUnlock,
+            ResourceUnlock,
+            CoinUnlock,
+            ExpansionUnlock,
+            TechUnlock,
+            LocalUnlock,
+            StageUnlock,
+
+            // Others
+            ContractLevelUnlock,
+            ContractCapUnlock,
+            ResourceCap,
+            PartyCapSize,
         }
 
         public enum EffectSupertype 

@@ -132,7 +132,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 ContractCap = 5,
                 KnowledgeFactor2 = "k03",
-                KnowledgeFactor1 = null,
+                KnowledgeFactor1 = "k05",
                 ContractsIds = new() { "c11", "c22", "c33", "c45" },
                 TraitId = "o04",
                 SpecialtyId = "e06",

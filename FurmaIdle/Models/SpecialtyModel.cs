@@ -14,6 +14,8 @@ namespace FurmaIdle.Models
         public double EffectValue { get; set; }
         public EffectHelper.EffectOperation EffectOp { get; set; }
         public EffectHelper.EffectType EffectType { get; set; }
+        public EffectHelper.EffectSupertype EffectSupertype { get; set; }
+
         public UnlockHelper.Persistence Persistence { get; set; }
         public double Duration { get; set; }
 

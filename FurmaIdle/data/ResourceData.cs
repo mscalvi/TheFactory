@@ -24,7 +24,7 @@ namespace FurmaIdle.Data
                 Icon = "icon/resources/r01.jpg",
                 Image = "images/resources/r01.jpg",
                 Lore = "",
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
             },

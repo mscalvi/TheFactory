@@ -96,8 +96,8 @@ namespace FurmaIdle.Services
                 .Where(item => item.Unlocked)
                 .OrderBy(item => item.SortKey);
 
-        public string? OpenMenuId { get; private set; } = "i2";
-        public string? PreviousMenuId { get; private set; } = "i2";
+        public string? OpenMenuId { get; private set; } = "i5";
+        public string? PreviousMenuId { get; private set; } = "i5";
 
         public void SetOpenMenu(string? id)
         {

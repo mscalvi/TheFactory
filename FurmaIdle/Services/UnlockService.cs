@@ -37,6 +37,7 @@ namespace FurmaIdle.Services
 
             await UnlockStage("s00");
             await UnlockExpansion("x00");
+            await UnlockCoin("m01");
 
             await _game.Mutate(g =>
             {
@@ -64,6 +65,7 @@ namespace FurmaIdle.Services
                 character.State = UnlockHelper.State.Unlocked;
                 character.CharState = UnlockHelper.CharState.InBase;
                 Console.WriteLine($"[Unlock] Character {character.Id}: {character.State}");
+                game.GameStats.CharactersUnlocked++;
             }, save: true);
         }
         #endregion
@@ -77,6 +79,7 @@ namespace FurmaIdle.Services
 
                 coin.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Coin {coin.Id}: {coin.State}");
+                game.GameStats.CoinsUnlocked++;
             }, save: true);
         }
         #endregion
@@ -99,6 +102,7 @@ namespace FurmaIdle.Services
 
                 contract.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Contract {contract.Id}: {contract.State}");
+                game.GameStats.ContractsUnlocked++;
             }, save: true);
         }
 
@@ -136,6 +140,7 @@ namespace FurmaIdle.Services
 
                 expansion.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Expansion {expansion.Id}: {expansion.State} -> {expansion.StartedAt}");
+                game.GameStats.ExpansionsUnlocked++;
             }, save: true);
         }
         #endregion
@@ -149,6 +154,7 @@ namespace FurmaIdle.Services
 
                 know.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Knowledge {know.Id}: {know.State}");
+                game.GameStats.KnowledgesUnlocked++;
             }, save: true);
         }
         #endregion
@@ -180,6 +186,7 @@ namespace FurmaIdle.Services
 
                 local.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Local {local.Id}: {local.State}");
+                game.GameStats.LocalsUnlocked++;
             }, save: true);
         }
         #endregion
@@ -195,7 +202,7 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(coin.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        coin.Value.State = UnlockHelper.State.Unlocked;
+                        coin.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Coin {coin.Value.Id}: {coin.Value.State}");
                     }
                 }
@@ -212,6 +219,7 @@ namespace FurmaIdle.Services
                 stage.State = UnlockHelper.State.Unlocked;
 
                 Console.WriteLine($"[Unlock] Stage {stage.Id}: {stage.State}");
+                game.GameStats.StagesUnlocked++;
             }, save: true);
         }
         #endregion
@@ -234,6 +242,7 @@ namespace FurmaIdle.Services
 
                 tech.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Tech {tech.Id}: {tech.State}");
+                game.GameStats.TechUnlocked++;
             }, save: true);
         }
         #endregion
@@ -247,6 +256,7 @@ namespace FurmaIdle.Services
 
                 resource.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Resource {resource.Id}: {resource.State}");
+                game.GameStats.ResourcesUnlocked++;
             }, save: true);
         }
         #endregion
@@ -297,6 +307,8 @@ namespace FurmaIdle.Services
                 up.State = UnlockHelper.State.Unlocked;
 
                 Console.WriteLine($"[Unlock] Upgrade {up.Id}: {up.State}");
+                
+                g.GameStats.UpgradesUnlocked++;
 
             }, save: true);
         }

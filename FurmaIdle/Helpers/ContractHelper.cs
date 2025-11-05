@@ -12,12 +12,12 @@ namespace FurmaIdle.Helpers
 
         public static readonly Dictionary<int, ContractHelper> m01ByLevel = new()
         {
-            [1] = new() {CoinsPerCycle = 2, SecondsPerCycle = 2 },
+            [1] = new() {CoinsPerCycle = 2, SecondsPerCycle = 5 },
             [2] = new() {CoinsPerCycle = 25, SecondsPerCycle = 10 },
             [3] = new() {CoinsPerCycle = 150, SecondsPerCycle = 20 },
-            [4] = new() {CoinsPerCycle = 500, SecondsPerCycle = 40 },
-            [5] = new() {CoinsPerCycle = 2000, SecondsPerCycle = 90 },
-            [6] = new() {CoinsPerCycle = 8000, SecondsPerCycle = 150 },
+            [4] = new() {CoinsPerCycle = 2000, SecondsPerCycle = 40 },
+            [5] = new() {CoinsPerCycle = 15000, SecondsPerCycle = 90 },
+            [6] = new() {CoinsPerCycle = 80000, SecondsPerCycle = 150 },
         };
 
         public static (double CoinsPerCycle, double SecondsPerCycle) GetContractBase(ContractModel contract)

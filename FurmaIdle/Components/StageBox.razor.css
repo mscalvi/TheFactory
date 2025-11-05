@@ -37,12 +37,11 @@
     grid-area: char;
 }
 
-    /* imagem do personagem */
     .pc-char .party-icon {
         display: grid;
         place-items: center;
         width: 48px;
-        height: 48px; /* ajuste se quiser maior/menor */
+        height: 48px;
         border-radius: 8px;
         background: rgba(255,255,255,.04);
         overflow: hidden;
@@ -77,7 +76,6 @@
     min-width: 0;
 }
 
-/* StageBox.razor.css (se optar por duplicar) */
 .specialty-selected {
     position: relative;
     height: 22px;
@@ -105,7 +103,7 @@
 
 .step {
     border-radius: 2px;
-    background: rgba(255,255,255,.08);
+    background: transparent;
 }
 
     .step.is-on {
@@ -125,7 +123,6 @@
     opacity: .8;
 }
 
-/* estado vazio ainda alinha tudo bonitinho */
 .party-card.is-empty {
     display: flex;
     align-items: center;
@@ -136,7 +133,6 @@
     opacity: .5;
 }
 
-/* responsivo: em telas muito estreitas, deixa quebrar para 2 linhas de cards */
 @media (max-width: 680px) {
     .party-grid {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

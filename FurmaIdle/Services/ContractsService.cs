@@ -1,6 +1,7 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using System.Diagnostics.Contracts;
+using System.Xml.Linq;
 
 namespace FurmaIdle.Services
 {
@@ -53,12 +54,14 @@ namespace FurmaIdle.Services
         private readonly IIncomeService _income;
         private readonly ICurrentGameService _game;
         private readonly IModifierService _modifier;
-        public ContractsService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier)
+        private readonly IKnowledgeService _knowledge;
+        public ContractsService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier, IKnowledgeService knowledge)
         {
             _locate = locate;
             _income = income;
             _game = game;
             _modifier = modifier;
+            _knowledge = knowledge;
         }
 
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
@@ -238,7 +241,11 @@ namespace FurmaIdle.Services
             var gainMod = _modifier.GetModifiers(ItemHelper.ItemType.Contract, contract.Id, stage.Id, EffectHelper.EffectSupertype.Gain);
             var timeMod = _modifier.GetModifiers(ItemHelper.ItemType.Contract, contract.Id, stage.Id, EffectHelper.EffectSupertype.Time);
 
-            var coinsPerCycle = (cps + gainMod.AddMod) * gainMod.MultMod;
+            var expansion = _locate.LocateExpansion(_game.CurrentGame, _game.CurrentGame.CurrentExpansionId);
+            
+            var knowBurst = _knowledge.GetKnowledgeBurst(_game.CurrentGame, contract.CoinId, expansion);
+
+            var coinsPerCycle = (cps + gainMod.AddMod) * gainMod.MultMod * knowBurst;
             var timePerCycle = (spc + timeMod.AddMod) * timeMod.MultMod;
 
             var totalPerSecond = (coinsPerCycle / timePerCycle) * qty;

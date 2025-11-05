@@ -29,7 +29,7 @@
             else
             {
                 <div class="tip-title">@Tooltips.Current.Title</div>
-                <pre class="tip-body">@Tooltips.Current.Body</pre>
+                <div class="tip-body">@((MarkupString)Tooltips.Current.Body)</div>
             }
         </div>
     </div>

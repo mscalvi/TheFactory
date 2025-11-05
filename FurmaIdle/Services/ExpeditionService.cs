@@ -2,6 +2,8 @@
 using FurmaIdle.Helpers;
 using FurmaIdle.Models;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Resources;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -19,6 +21,8 @@ namespace FurmaIdle.Services
 
         Task LaunchExpedition(StageModel stage);
         Task EndExpedition(StageModel stage);
+
+        Task EndExpansion(string expansionId);
     }
 
     public sealed class ExpeditionService : IExpeditionService
@@ -193,13 +197,17 @@ namespace FurmaIdle.Services
                     expedition.PartyIds.Clear();
                 }
 
-                // limpar contratos/timers do stage
-                foreach (var contracts in stage.ActiveContracts)
+                if (stage.ActiveContracts is not null && stage.ActiveContracts.Count > 0)
                 {
-                    var contract = _locate.LocateContract(game, contracts.Key);
-                    expansion.inUseContracts.Remove(contracts.Key);
-                    contract.UseState = UnlockHelper.ContractState.Avaliable;
+                    // limpar contratos/timers do stage
+                    foreach (var contracts in stage.ActiveContracts)
+                    {
+                        var contract = _locate.LocateContract(game, contracts.Key);
+                        expansion.inUseContracts.Remove(contracts.Key);
+                        contract.UseState = UnlockHelper.ContractState.Avaliable;
+                    }
                 }
+
                 stage.ActiveContracts?.Clear();
                 stage.lockedContractLevel.Clear();
 
@@ -213,35 +221,217 @@ namespace FurmaIdle.Services
                     }
                 }
 
-                // reseta modifiers
-                foreach (var contracts in game.Contracts)
-                {
-                    ScrubExpeditionMods(contracts.Value.Modifiers);
-                }
-                foreach (var resources in game.Resources)
-                {
-                    ScrubExpeditionMods(resources.Value.Modifiers);
-                }
-                foreach (var characters in game.Characters)
-                {
-                    ScrubExpeditionMods(characters.Value.Modifiers);
-                }
-                foreach (var knowledges in game.Knowledges)
-                {
-                    ScrubExpeditionMods(knowledges.Value.Modifiers);
-                }
-
                 // finalizar expedição
                 expedition.FinishedAt = DateTimeOffset.UtcNow;
                 expedition.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
 
             }, save: true);
+
+            await _game.Mutate(game =>
+            {
+                // reseta modifiers
+
+                foreach (var characters in game.Characters)
+                {
+                    ScrubExpeditionMods(characters.Value.Modifiers);
+                }
+                foreach (var click in game.Clicks)
+                {
+                    ScrubExpeditionMods(click.Value.Modifiers);
+                }
+                foreach (var contracts in game.Contracts)
+                {
+                    ScrubExpeditionMods(contracts.Value.Modifiers);
+                }
+                foreach (var knowledge in game.Knowledges)
+                {
+                    ScrubExpeditionMods(knowledge.Value.Modifiers);
+                }
+                foreach (var local in game.Locals)
+                {
+                    ScrubExpeditionMods(local.Value.Modifiers);
+                }
+                foreach (var resource in game.Resources)
+                {
+                    ScrubExpeditionMods(resource.Value.Modifiers);
+                }
+                foreach (var specialty in game.Specialties)
+                {
+                    ScrubExpeditionMods(specialty.Value.Modifiers);
+                }
+                foreach (var stage in game.Stages)
+                {
+                    ScrubExpeditionMods(stage.Value.Modifiers);
+                }
+                foreach (var tech in game.Techs)
+                {
+                    ScrubExpeditionMods(tech.Value.Modifiers);
+                }
+                foreach (var trait in game.Traits)
+                {
+                    ScrubExpeditionMods(trait.Value.Modifiers);
+                }
+                foreach (var upgrade in game.Upgrades)
+                {
+                    ScrubExpeditionMods(upgrade.Value.Modifiers);
+                }
+            }, save: true);
         }
+
+        public async Task EndExpansion(string expansionId)
+        {
+            foreach (var stage in _game.CurrentGame.Stages.Values)
+            {
+                if (stage.State != State.Unlocked) continue;
+
+                // transforma coins em Knowledge
+                long cTotal = 0;
+
+                var stats = stage.ExpeditionStats;
+                if (stats?.CoinsGain != null)
+                {
+                    foreach (var coins in stage.ExpeditionStats.CoinsGain)
+                    {
+                        if (coins.Key == stage.CoinId)
+                        {
+                            cTotal += coins.Value;
+                        }
+                    }
+                }
+
+                await _knowledge.EndExpeditionKnowGain(stage, cTotal);
+
+                await _game.Mutate(game =>
+                {
+                    var expedition = stage?.Expedition;
+                    if (stage is null || expedition is null) return;
+
+                    var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
+
+                    // devolver personagens para a base
+                    if (expedition.PartyIds is not null && expedition.PartyIds.Count > 0)
+                    {
+                        foreach (var cid in expedition.PartyIds)
+                        {
+                            if (game.Characters.TryGetValue(cid, out var ch) && ch is not null)
+                            {
+                                ch.CharState = UnlockHelper.CharState.InBase;
+                                ch.InStageId = null;
+                            }
+                        }
+                        expedition.PartyIds.Clear();
+                    }
+
+                    if (stage.ActiveContracts is not null && stage.ActiveContracts.Count > 0)
+                    {
+                        // limpar contratos/timers do stage
+                        foreach (var contracts in stage.ActiveContracts)
+                        {
+                            var contract = _locate.LocateContract(game, contracts.Key);
+                            expansion.inUseContracts.Remove(contracts.Key);
+                            contract.UseState = UnlockHelper.ContractState.Avaliable;
+                        }
+                    }
+
+                    stage.ActiveContracts?.Clear();
+                    stage.lockedContractLevel.Clear();
+
+                    // finalizar expedição
+                    expedition.FinishedAt = DateTimeOffset.UtcNow;
+                    expedition.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
+
+                    // reseta upgrades
+                    foreach (var upgrades in game.Upgrades)
+                    {
+                        if (upgrades.Value.Persistence == Persistence.untilExpedition)
+                        {
+                            upgrades.Value.State = State.Available;
+                            upgrades.Value.ActualBuy = 0;
+                        }
+                    }
+                    foreach (var upgrades in game.Upgrades)
+                    {
+                        if (upgrades.Value.Persistence == Persistence.untilExpansion)
+                        {
+                            upgrades.Value.State = State.Available;
+                            upgrades.Value.ActualBuy = 0;
+                        }
+                    }
+                }, save: true);
+            }            
+
+            await _game.Mutate(game =>
+                {
+                    // reseta modifiers
+                    foreach (var characters in game.Characters)
+                    {
+                        ScrubExpansionMods(characters.Value.Modifiers);
+                    }
+                    foreach (var click in game.Clicks)
+                    {
+                        ScrubExpansionMods(click.Value.Modifiers);
+                    }
+                    foreach (var contracts in game.Contracts)
+                    {
+                        ScrubExpansionMods(contracts.Value.Modifiers);
+                    }
+                    foreach (var knowledge in game.Knowledges)
+                    {
+                        ScrubExpansionMods(knowledge.Value.Modifiers);
+                    }
+                    foreach (var local in game.Locals)
+                    {
+                        ScrubExpansionMods(local.Value.Modifiers);
+                    }
+                    foreach (var resource in game.Resources)
+                    {
+                        ScrubExpansionMods(resource.Value.Modifiers);
+                    }
+                    foreach (var specialty in game.Specialties)
+                    {
+                        ScrubExpansionMods(specialty.Value.Modifiers);
+                    }
+                    foreach (var stage in game.Stages)
+                    {
+                        ScrubExpansionMods(stage.Value.Modifiers);
+                    }
+                    foreach (var tech in game.Techs)
+                    {
+                        ScrubExpansionMods(tech.Value.Modifiers);
+                    }
+                    foreach (var trait in game.Traits)
+                    {
+                        ScrubExpansionMods(trait.Value.Modifiers);
+                    }
+                    foreach (var upgrade in game.Upgrades)
+                    {
+                        ScrubExpansionMods(upgrade.Value.Modifiers);
+                    }
+
+                }, save: true);
+
+            await _game.Mutate(game =>
+            {
+                var expansion = _locate.LocateExpansion(game, expansionId);
+
+                expansion.FinishedAt = DateTimeOffset.UtcNow;
+
+                game.CurrentExpansionId = expansion.NextExpansion;
+
+            }, save: true);
+        }
+
         private static void ScrubExpeditionMods(List<ModifierModel> list)
         {
             list.RemoveAll(m =>
-                    m.Scope == UnlockHelper.Persistence.untilExpedition
-                );            
+                    m.Scope == Persistence.untilExpedition || m.Scope == Persistence.untilTimer
+                );
+        }
+        private static void ScrubExpansionMods(List<ModifierModel> list)
+        {
+            list.RemoveAll(m =>
+                    m.Scope == Persistence.untilExpansion || m.Scope == Persistence.untilExpedition || m.Scope == Persistence.untilTimer
+                );
         }
     }
 }

@@ -28,7 +28,7 @@ else
                  && IsContractUpgradeVisible(game, u.Id));
 
     var availableExpansionUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id) || StartsWithUu(u.Id) || StartsWithUl(u.Id) || StartsWithUk(u.Id))
+        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id) || StartsWithUu(u.Id) || StartsWithUl(u.Id) || StartsWithUr(u.Id) || StartsWithUk(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
@@ -198,6 +198,9 @@ else
     private static bool StartsWithUc(string id)
         => id?.StartsWith("uc", StringComparison.OrdinalIgnoreCase) == true;
 
+    private static bool StartsWithUr(string id)
+        => id?.StartsWith("ur", StringComparison.OrdinalIgnoreCase) == true;
+
     private static bool StartsWithUt(string id)
         => id?.StartsWith("ut", StringComparison.OrdinalIgnoreCase) == true;
 
@@ -224,10 +227,9 @@ else
     private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {
         // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
-        if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId)) return true;
+        if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId) && !StartsWithUt(upgradeId)) return true;
 
         game.Upgrades.TryGetValue(upgradeId, out var up);
-        var contract = Locate.LocateContract(game, up.TargetId);
 
         if (StartsWithUc(upgradeId))
         {
@@ -240,7 +242,7 @@ else
             }
             return false;
         }
-        else
+        else if (StartsWithUu(upgradeId))
         {
             // “uu”: visível se o nível atual de contrato for >= nível do upgrade
             var stageInfo = Contracts.GetStageInfo(game, _stage.Id);
@@ -253,6 +255,22 @@ else
                 return true;
             }
         }
+        else if (StartsWithUt(upgradeId))
+        {
+            if (!up.TargetId?.StartsWith("c", StringComparison.OrdinalIgnoreCase) ?? true)
+                return true;
+
+            if (_stage.ActiveContracts.TryGetValue(up.TargetId, out var qty))
+            {
+                if (qty > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return true;
     }
 
     // ===== Ações =====
