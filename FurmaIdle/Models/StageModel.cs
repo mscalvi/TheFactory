@@ -10,14 +10,12 @@ namespace FurmaIdle.Models
         public List<string> Images { get; set; }
         public string Description { get; set; }
         public string? UnlockId { get; set; }
-        public int? Level { get; set; }
 
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);
         public Dictionary<string, double> ActiveContractsProgress { get; set; } = new Dictionary<string, double>();
         public List<int> lockedContractLevel { get; set; } = new();
         public ExpeditionModel Expedition { get; set; } = new ExpeditionModel();
 
-        public PricingHelper.PricingId? PricingId { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
 

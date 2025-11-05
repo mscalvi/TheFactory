@@ -309,22 +309,22 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                        AddMod += Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
-                                        MultMod *= modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                 }
                                 if (modifier.Type == EffectType.ContractGainPerLocal)
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                        AddMod += Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
-                                        MultMod *= modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
                                     }
                                 }
                             }
@@ -349,22 +349,22 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                        AddMod += Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
-                                        MultMod *= modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                 }
                                 if (modifier.Type == EffectType.KnowledgeGainPerLocal)
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                        AddMod += Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
-                                        MultMod *= modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
                                     }
                                 }
                             }
@@ -389,22 +389,22 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                        AddMod += Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
-                                        MultMod *= modifier.Value * expansion.ExpansionStats.TechUnlocked;
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                 }
                                 if (modifier.Type == EffectType.ResourceGainPerLocal)
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                        AddMod += Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
-                                        MultMod *= modifier.Value * expansion.ExpansionStats.LocalsUnlocked;
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
                                     }
                                 }
                             }

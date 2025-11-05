@@ -13,23 +13,25 @@ namespace FurmaIdle.Services
     public sealed class CreateGameService : ICreateGameService
     {
         // Método para Salvar o Novo Jogo
-        private readonly IGameStore Store;
-        private readonly ICurrentGameService CurrentGame;
-        private readonly IUnlockService Unlock;
+        private readonly IGameStore _store;
+        private readonly ICurrentGameService _game;
+        private readonly IUnlockService _unlock;
+        private readonly IExpeditionService _expedition;
         public GameModel NewGame { get; private set; } = new();
 
-        public CreateGameService(IGameStore store, ICurrentGameService current, IUnlockService unlock)
+        public CreateGameService(IGameStore store, ICurrentGameService current, IUnlockService unlock, IExpeditionService expedition)
         {
-            Store = store;
-            CurrentGame = current;
-            Unlock = unlock;
+            _store = store;
+            _game = current;
+            _unlock = unlock;
+            _expedition = expedition;
         }
 
         public async Task<GameModel> InitAsync()
         {
             Console.WriteLine("[CGS] Iniciando Load/Create");
 
-            var loaded = await Store.LoadAsync("main");
+            var loaded = await _store.LoadAsync("main");
 
             bool invalid = loaded is null
             || loaded.SchemaVersion <= 0
@@ -63,13 +65,16 @@ namespace FurmaIdle.Services
                     Upgrades = Seed("[CGS] Upgrades", () => UpgradeData.CreateInitialStates()),
                 };
 
-                CurrentGame.Attach(model);
+                _game.Attach(model);
                 Console.WriteLine("[CGS] Jogo criado");
 
-                await Unlock.UnlockInitialState();
+                await _unlock.UnlockInitialState();
                 Console.WriteLine("[CGS] Estágio Inicial Desbloqueado");
 
-                await Store.SaveAsync(model, "main");
+                await _expedition.FirstExpeditionStart();
+                Console.WriteLine("[CGS] Primeira Expedição Iniciada");
+
+                await _store.SaveAsync(model, "main");
                 Console.WriteLine("[CGS] Jogo salvo");
 
                 return model;
@@ -78,12 +83,12 @@ namespace FurmaIdle.Services
             {
                 var changed = BackfillLoad(loaded);
 
-                CurrentGame.Attach(loaded);
+                _game.Attach(loaded);
                 Console.WriteLine("[CGS] Jogo carregado e anexado");
 
                 if (changed)
                 {
-                    await Store.SaveAsync(loaded, "main");
+                    await _store.SaveAsync(loaded, "main");
                     Console.WriteLine("[CGS] Jogo atualizado (backfill) e salvo");
                 }
 

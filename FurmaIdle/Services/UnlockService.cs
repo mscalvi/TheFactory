@@ -34,10 +34,13 @@ namespace FurmaIdle.Services
         #region Initial State
         public async Task UnlockInitialState()
         {
-
             await UnlockStage("s00");
+
             await UnlockExpansion("x00");
-            await UnlockCoin("m01");
+
+            await UnlockLocal("l00");
+
+            await UnlockCharacter("p001");
 
             await _game.Mutate(g =>
             {
@@ -57,6 +60,7 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(up.Value.UnlockId, character.Id, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
@@ -95,6 +99,7 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(up.Value.UnlockId, contract.Id, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
@@ -119,6 +124,7 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(up.Value.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
@@ -128,12 +134,13 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(nextExpansion.Value.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (nextExpansion.Value.State != UnlockHelper.State.Blocked) continue;
                         nextExpansion.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Expansion {nextExpansion.Value.Id}: {nextExpansion.Value.State}");
                     }
                 }
 
-                if (expansion.State != UnlockHelper.State.Unlocked)
+                if (expansion.State != UnlockHelper.State.Blocked)
                 {
                     expansion.StartedAt = DateTime.Now;
                 }
@@ -166,19 +173,11 @@ namespace FurmaIdle.Services
             {
                 var local = _locate.LocateLocal(game, localId);
 
-                foreach (var tech in game.Techs)
-                {
-                    if (string.Equals(tech.Value.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
-                    {
-                        tech.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Tech {tech.Value.Id}: {tech.Value.State}");
-                    }
-                }
-
                 foreach (var up in game.Upgrades)
                 {
                     if (string.Equals(up.Value.UnlockId, local.Id, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
@@ -202,7 +201,8 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(coin.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        coin.Value.State = UnlockHelper.State.Available;
+                        if (coin.Value.State != UnlockHelper.State.Blocked) continue;
+                        coin.Value.State = UnlockHelper.State.Unlocked;
                         Console.WriteLine($"[Unlock] Coin {coin.Value.Id}: {coin.Value.State}");
                     }
                 }
@@ -211,6 +211,7 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(up.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
@@ -235,6 +236,7 @@ namespace FurmaIdle.Services
                 {
                     if (string.Equals(up.Value.UnlockId, tech.Id, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
                         Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }

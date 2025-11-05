@@ -28,15 +28,17 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly ILocateService _locate;
         private readonly ICostService _cost;
+        private readonly IContractsService _contract;
 
         public HoverTip? Current { get; private set; }
         public event Action? Changed;
 
-        public TooltipService(ICurrentGameService game, ILocateService locate, ICostService cost)
+        public TooltipService(ICurrentGameService game, ILocateService locate, ICostService cost, IContractsService contract)
         {
             _game = game;
             _locate = locate;
             _cost = cost;
+            _contract = contract;
         }
 
         public void Show(HoverTip tip)
@@ -129,7 +131,6 @@ namespace FurmaIdle.Services
 
             var (costValue, costId) = _cost.ComputeCost(ItemHelper.ItemType.Upgrade, upgradeId, stageId);
 
-            // tenta mostrar o nome da moeda em vez do id
             string costCoinName = costId;
             try
             {
@@ -150,6 +151,7 @@ namespace FurmaIdle.Services
                   <div class='tt-name'>{HtmlEncode(title)}</div>
                   {(string.IsNullOrWhiteSpace(lore) ? "" : $"<div class='tt-lore'><em>{HtmlEncode(lore)}</em></div>")}
                   {(string.IsNullOrWhiteSpace(desc) ? "" : $"<div class='tt-list'><div>{HtmlEncode(desc)}</div></div>")}
+                  {(string.IsNullOrWhiteSpace(up.TargetId) ? "" : $"<div class='tt-list'><div>{HtmlEncode(up.TargetId)}</div></div>")}
                   <div class='tt-know tt-cost'>Custo: {HtmlEncode(costLine)}</div>
                 </div>";
 
@@ -160,9 +162,32 @@ namespace FurmaIdle.Services
         private HoverTip BuildContractHover(string id, GameModel game)
         {
             game.Contracts.TryGetValue(id, out var contract);
+            if (contract is null)
+                return new HoverTip("Contract (?)", "—");
 
-            return new HoverTip($"Contract ({contract.Name})", $"{contract.State}");
-        }
+            var stage = _locate.LocateStage(game, game.SelectedStageId);
+            var coin = _locate.LocateCoin(game, contract.CoinId);
+
+            var real = _contract.GetContractInfo(contract, stage);
+
+            // Lista de Knowledges (filtra nulos)
+            var knows = new List<string>();
+            if (!string.IsNullOrWhiteSpace(contract.KnowledgeFactor1) && game.Knowledges.TryGetValue(contract.KnowledgeFactor1, out var k1) && k1 is not null)
+                knows.Add(k1.Name);
+            if (!string.IsNullOrWhiteSpace(contract.KnowledgeFactor2) && game.Knowledges.TryGetValue(contract.KnowledgeFactor2, out var k2) && k2 is not null)
+                knows.Add(k2.Name);
+            if (!string.IsNullOrWhiteSpace(contract.KnowledgeFactor3) && game.Knowledges.TryGetValue(contract.KnowledgeFactor3, out var k3) && k3 is not null)
+                knows.Add(k3.Name);
+
+            double perSecond = real.CoinsPerCycle / real.SecondsPerCycle;
+            var coinName = coin?.Name ?? contract.CoinId;
+            var title = $"Contrato ({contract.Name})";
+            var body = $"Gera: ~{perSecond:0.##} {coinName}/s"
+                      + (knows.Count > 0 ? $"\nConhecimentos: {knows.ToString()}" : "\nConhecimentos: —");
+
+            return new HoverTip(title, body);
+            }
+
 
         // Local
         private HoverTip BuildLocalHover(string id, GameModel game)

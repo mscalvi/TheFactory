@@ -22,10 +22,10 @@
                      alt="@it.Id"
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <span class="income-total">
-                    @it.StageTotal.ToString("N0") (@it.GameTotal.ToString("N0"))
+                    @it.StageTotal.ToString("N0")
                     @if (it.GamePerSec > 0)
                     {
-                        <text> +@it.StagePerSec.ToString("N2")/s (@it.GamePerSec.ToString("N2")/s)</text>
+                        <text> +@it.StagePerSec.ToString("N2")/s</text>
                     }
                 </span>
             </div>

@@ -119,17 +119,9 @@ namespace FurmaIdle.Services
 
                         if (entry.CostFactor != PricingHelper.CostFactor.None)
                         {
-                            costFactorValue = GetCostFactor(entry, stageId);
+                            costFactorValue = GetCostFactor(entry, stageId, itemId);
 
-                            if (entry.CostFactorType == PricingHelper.CostFactorType.Additive)
-                            {
-                                costAddFactor = Math.Pow(costFactorValue, entry.CostFactorCurve);
-                            }
-
-                            if (entry.CostFactorType == PricingHelper.CostFactorType.Multiplicative)
-                            {
-                                costMultFactor = Math.Pow(costFactorValue, entry.CostFactorCurve);
-                            }
+                            costMultFactor *= Math.Pow(costFactorValue, entry.CostFactorCurve);
                         }
 
                         costMultFactor *= costModifiers.MultMod;
@@ -233,11 +225,28 @@ namespace FurmaIdle.Services
         private static long GetOrZero(Dictionary<string, long> dict, string id)
                     => dict is not null && dict.TryGetValue(id, out var v) ? v : 0L;
 
-        private int GetCostFactor(PricingCost.Entry entry, string stageId)
+        private int GetCostFactor(PricingCost.Entry entry, string stageId, string itemId)
         {
             var game = _game.CurrentGame;
 
             int costFactorValue = 1;
+
+            UpgradeModel upgrade = new UpgradeModel();
+            TechModel tech = new TechModel();
+            ContractModel contract = new ContractModel();
+
+            if (itemId.StartsWith("u"))
+            {
+                upgrade = _locate.LocateUpgrade(game, itemId);
+            }
+            if (itemId.StartsWith("t"))
+            {
+                tech = _locate.LocateTech(game, itemId);
+            }
+            if (itemId.StartsWith("t"))
+            {
+                tech = _locate.LocateTech(game, itemId);
+            }
 
             switch (entry.CostFactor)
             {
@@ -305,6 +314,21 @@ namespace FurmaIdle.Services
                         {
                             costFactorValue += (int)modifier.Value;
                         }
+                    }
+                    break;
+
+                case CostFactor.Level:
+                    if (itemId.StartsWith("u"))
+                    {
+                        costFactorValue *= upgrade.Level;
+                    }
+                    if (itemId.StartsWith("t"))
+                    {
+                        costFactorValue *= tech.Level;
+                    }
+                    if (itemId.StartsWith("c"))
+                    {
+                        costFactorValue *= contract.Level;
                     }
                     break;
 

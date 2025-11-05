@@ -14,16 +14,16 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, ContractModel> All = new()
         {
             #region Level 1 (Trivial)
-            ["c11"] = new ContractModel
+            ["c011"] = new ContractModel
             {
-                Id = "c11",
+                Id = "c011",
                 Name = "Varrer o Chão",
                 Description = "",
-                Icon = "icons/contracts/c11.jpg",
-                Image = "images/contracts/c11.jpg",
+                Icon = "icons/contracts/c011.jpg",
+                Image = "images/contracts/c011.jpg",
                 Level = 1,
                 UnlockId = "uu110",
-                PricingId = PricingHelper.PricingId.ContractAdd1m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase01,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -32,20 +32,20 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c12"] = new ContractModel
+            ["c012"] = new ContractModel
             {
-                Id = "c12",
+                Id = "c012",
                 Name = "Carregar o Barco",
                 Description = "",
-                Icon = "icons/contracts/c12.jpg",
-                Image = "images/contracts/c12.jpg",
+                Icon = "icons/contracts/c012.jpg",
+                Image = "images/contracts/c012.jpg",
                 Level = 1,
                 UnlockId = "uu120",
-                PricingId = PricingHelper.PricingId.ContractAdd1m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase01,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
-                KnowledgeFactor1 = "k04",
+                KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
@@ -53,16 +53,16 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Level 2 (Aprendiz)
-            ["c21"] = new ContractModel
+            ["c021"] = new ContractModel
             {
-                Id = "c21",
+                Id = "c021",
                 Name = "Servir Bebidas",
                 Description = "",
-                Icon = "icons/contracts/c21.jpg",
-                Image = "images/contracts/c21.jpg",
+                Icon = "icons/contracts/c021.jpg",
+                Image = "images/contracts/c021.jpg",
                 Level = 2,
                 UnlockId = "uu210",
-                PricingId = PricingHelper.PricingId.ContractAdd2m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase02,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -71,16 +71,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c22"] = new ContractModel
+            ["c022"] = new ContractModel
             {
-                Id = "c22",
+                Id = "c022",
                 Name = "Limpar Peixe",
                 Description = "",
-                Icon = "icons/contracts/c22.jpg",
-                Image = "images/contracts/c22.jpg",
+                Icon = "icons/contracts/c022.jpg",
+                Image = "images/contracts/c022.jpg",
                 Level = 2,
                 UnlockId = "uu220",
-                PricingId = PricingHelper.PricingId.ContractAdd2m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase02,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -89,16 +89,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c23"] = new ContractModel
+            ["c023"] = new ContractModel
             {
-                Id = "c23",
+                Id = "c023",
                 Name = "Lavar Figurino",
                 Description = "",
-                Icon = "icons/contracts/c23.jpg",
-                Image = "images/contracts/c23.jpg",
+                Icon = "icons/contracts/c023.jpg",
+                Image = "images/contracts/c023.jpg",
                 Level = 2,
                 UnlockId = "uu230",
-                PricingId = PricingHelper.PricingId.ContractAdd2m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase02,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -110,16 +110,16 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Level 3 (Iniciante)
-            ["c31"] = new ContractModel
+            ["c031"] = new ContractModel
             {
-                Id = "c31",
+                Id = "c031",
                 Name = "Ajudar na Cozinha",
                 Description = "",
-                Icon = "icons/contracts/c31.jpg",
-                Image = "images/contracts/c31.jpg",
+                Icon = "icons/contracts/c031.jpg",
+                Image = "images/contracts/c031.jpg",
                 Level = 3,
                 UnlockId = "uu310",
-                PricingId = PricingHelper.PricingId.ContractAdd3m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase03,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -128,16 +128,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c32"] = new ContractModel
+            ["c032"] = new ContractModel
             {
-                Id = "c32",
+                Id = "c032",
                 Name = "Organizar Ferramentas",
                 Description = "",
-                Icon = "icons/contracts/c32.jpg",
-                Image = "images/contracts/c32.jpg",
+                Icon = "icons/contracts/c032.jpg",
+                Image = "images/contracts/c032.jpg",
                 Level = 3,
                 UnlockId = "uu320",
-                PricingId = PricingHelper.PricingId.ContractAdd3m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase03,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -146,16 +146,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c33"] = new ContractModel
+            ["c033"] = new ContractModel
             {
-                Id = "c33",
+                Id = "c033",
                 Name = "Preparar Armas",
                 Description = "",
-                Icon = "icons/contracts/c33.jpg",
-                Image = "images/contracts/c33.jpg",
+                Icon = "icons/contracts/c033.jpg",
+                Image = "images/contracts/c033.jpg",
                 Level = 3,
                 UnlockId = "uu330",
-                PricingId = PricingHelper.PricingId.ContractAdd3m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase03,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -164,16 +164,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c34"] = new ContractModel
+            ["c034"] = new ContractModel
             {
-                Id = "c34",
+                Id = "c034",
                 Name = "Ajudar no Ensaio",
                 Description = "",
-                Icon = "icons/contracts/c34.jpg",
-                Image = "images/contracts/c34.jpg",
+                Icon = "icons/contracts/c034.jpg",
+                Image = "images/contracts/c034.jpg",
                 Level = 3,
                 UnlockId = "uu340",
-                PricingId = PricingHelper.PricingId.ContractAdd3m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase03,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -185,16 +185,16 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Level 4 (Profissional)
-            ["c41"] = new ContractModel
+            ["c041"] = new ContractModel
             {
-                Id = "c41",
+                Id = "c041",
                 Name = "Cozinhar",
                 Description = "",
-                Icon = "icons/contracts/c41.jpg",
-                Image = "images/contracts/c41.jpg",
+                Icon = "icons/contracts/c041.jpg",
+                Image = "images/contracts/c041.jpg",
                 Level = 4,
                 UnlockId = "uu410",
-                PricingId = PricingHelper.PricingId.ContractAdd4m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase04,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -203,16 +203,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c42"] = new ContractModel
+            ["c042"] = new ContractModel
             {
-                Id = "c42",
+                Id = "c042",
                 Name = "Entalhar",
                 Description = "",
-                Icon = "icons/contracts/c42.jpg",
-                Image = "images/contracts/c42.jpg",
+                Icon = "icons/contracts/c042.jpg",
+                Image = "images/contracts/c042.jpg",
                 Level = 4,
                 UnlockId = "uu420",
-                PricingId = PricingHelper.PricingId.ContractAdd4m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase04,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -221,16 +221,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c43"] = new ContractModel
+            ["c043"] = new ContractModel
             {
-                Id = "c43",
+                Id = "c043",
                 Name = "Pescar",
                 Description = "",
-                Icon = "icons/contracts/c43.jpg",
-                Image = "images/contracts/c43.jpg",
+                Icon = "icons/contracts/c043.jpg",
+                Image = "images/contracts/c043.jpg",
                 Level = 4,
                 UnlockId = "uu430",
-                PricingId = PricingHelper.PricingId.ContractAdd4m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase04,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -239,16 +239,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c44"] = new ContractModel
+            ["c044"] = new ContractModel
             {
-                Id = "c44",
+                Id = "c044",
                 Name = "Apresentar",
                 Description = "",
-                Icon = "icons/contracts/c44.jpg",
-                Image = "images/contracts/c44.jpg",
+                Icon = "icons/contracts/c044.jpg",
+                Image = "images/contracts/c044.jpg",
                 Level = 4,
                 UnlockId = "uu440",
-                PricingId = PricingHelper.PricingId.ContractAdd4m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase04,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
@@ -257,16 +257,16 @@ namespace FurmaIdle.Data
                 KnowledgeFactor3 = "k01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["c45"] = new ContractModel
+            ["c045"] = new ContractModel
             {
-                Id = "c45",
+                Id = "c045",
                 Name = "Caçar",
                 Description = "",
-                Icon = "icons/contracts/c45.jpg",
-                Image = "images/contracts/c45.jpg",
+                Icon = "icons/contracts/c045.jpg",
+                Image = "images/contracts/c045.jpg",
                 Level = 4,
                 UnlockId = "uu450",
-                PricingId = PricingHelper.PricingId.ContractAdd4m01,
+                PricingId = PricingHelper.PricingId.ContractPurchase04,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",

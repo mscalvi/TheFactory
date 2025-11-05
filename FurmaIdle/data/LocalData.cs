@@ -21,7 +21,7 @@ namespace FurmaIdle.Data
                 Description = "",
                 Icon = "icons/locals/l00.jpg",
                 Level = null,
-                UnlockId = "ul00",
+                UnlockId = null,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s00",

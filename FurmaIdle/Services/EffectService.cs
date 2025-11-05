@@ -37,6 +37,11 @@ namespace FurmaIdle.Services
             var game = _game.CurrentGame;
             var stage = _locate.LocateStage(game, stageId);
 
+            if (itemId == "ux0110")
+            {
+                Console.WriteLine($"[Effects] Aplicando {itemId}");
+            }
+
             if (type == ItemHelper.ItemType.Upgrade)
             {
                 var upgrade = _locate.LocateUpgrade(game, itemId);
@@ -410,351 +415,366 @@ namespace FurmaIdle.Services
                     ? spec.TargetId.Substring(0, 1)
                     : spec.TargetId;
 
-                if(spec.Id != "es01")
+                await _game.Mutate(g =>
                 {
-                    await _game.Mutate(g =>
+                    var dur = Math.Max(0.001, spec.Duration);
+                    var now = DateTimeOffset.UtcNow;
+
+                    switch (targetTypeId)
                     {
-                        var dur = Math.Max(0.001, spec.Duration);
-                        var now = DateTimeOffset.UtcNow;
-
-                        switch (targetTypeId)
-                        {
-                            case "a": // All of a Kind
-                                if (spec.TargetId == "aContracts")
+                        case "a": // All of a Kind
+                            if (spec.TargetId == "aContracts")
+                            {
+                                foreach (var acontract in game.Contracts)
                                 {
-                                    foreach (var acontract in game.Contracts)
+                                    var amod = new ModifierModel
                                     {
-                                        var amod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue,
-                                            Supertype = spec.EffectSupertype,
-                                        };
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                        acontract.Value.Modifiers.Add(amod);
-                                    }
+                                    acontract.Value.Modifiers.Add(amod);
                                 }
-                                if (spec.TargetId == "aKnowledges")
+                            }
+                            if (spec.TargetId == "aKnowledges")
+                            {
+                                foreach (var aknow in game.Knowledges)
                                 {
-                                    foreach (var aknow in game.Knowledges)
+                                    var amod = new ModifierModel
                                     {
-                                        var amod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue,
-                                            Supertype = spec.EffectSupertype,
-                                        };
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                        aknow.Value.Modifiers.Add(amod);
-                                    }
+                                    aknow.Value.Modifiers.Add(amod);
                                 }
-                                if (spec.TargetId == "aCoins")
+                            }
+                            if (spec.TargetId == "aCoins")
+                            {
+                                foreach (var acoin in game.Coins)
                                 {
-                                    foreach (var acoin in game.Coins)
+                                    var amod = new ModifierModel
                                     {
-                                        var amod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue,
-                                            Supertype = spec.EffectSupertype,
-                                        };
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                        acoin.Value.Modifiers.Add(amod);
-                                    }
+                                    acoin.Value.Modifiers.Add(amod);
                                 }
-                                if (spec.TargetId == "aResources")
+                            }
+                            if (spec.TargetId == "aResources")
+                            {
+                                foreach (var aresource in game.Resources)
                                 {
-                                    foreach (var aresource in game.Resources)
+                                    var amod = new ModifierModel
                                     {
-                                        var amod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue,
-                                            Supertype = spec.EffectSupertype,
-                                        };
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                        aresource.Value.Modifiers.Add(amod);
-                                    }
+                                    aresource.Value.Modifiers.Add(amod);
                                 }
-                                if (spec.TargetId == "aClicks")
+                            }
+                            if (spec.TargetId == "aClicks")
+                            {
+                                foreach (var aclick in game.Clicks)
                                 {
-                                    foreach (var aclick in game.Clicks)
+                                    var amod = new ModifierModel
                                     {
-                                        var amod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue,
-                                            Supertype = spec.EffectSupertype,
-                                        };
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                        aclick.Value.Modifiers.Add(amod);
-                                    }
+                                    aclick.Value.Modifiers.Add(amod);
                                 }
-                                if (spec.TargetId == "aCharacters")
+                            }
+                            if (spec.TargetId == "aCharacters")
+                            {
+                                foreach (var acharacters in game.Characters)
                                 {
-                                    foreach (var acharacters in game.Characters)
+                                    var amod = new ModifierModel
                                     {
-                                        var amod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue,
-                                            Supertype = spec.EffectSupertype,
-                                        };
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                        acharacters.Value.Modifiers.Add(amod);
-                                    }
+                                    acharacters.Value.Modifiers.Add(amod);
                                 }
-                                if (spec.TargetId == "aUpgrades")
+                            }
+                            if (spec.TargetId == "aUpgrades")
+                            {
+                                foreach (var aupgrades in game.Upgrades)
                                 {
-                                    foreach (var aupgrades in game.Upgrades)
+                                    var amod = new ModifierModel
                                     {
-                                        var amod = new ModifierModel
-                                        {
-                                            ApplyerId = spec.Id,
-                                            Type = spec.EffectType,
-                                            Scope = spec.Persistence,
-                                            Operation = spec.EffectOp,
-                                            Value = spec.EffectValue,
-                                            Supertype = spec.EffectSupertype,
-                                        };
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                        aupgrades.Value.Modifiers.Add(amod);
-                                    }
+                                    aupgrades.Value.Modifiers.Add(amod);
                                 }
-                                break;
-                            case "m": // Coins
-                                var coins = _locate.LocateCoin(game, spec.TargetId);
-
-                                var mmod = new ModifierModel
+                            }
+                            if (spec.TargetId == "aSpecialties")
+                            {
+                                foreach (var aspecialties in game.Specialties)
                                 {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                                    var amod = new ModifierModel
+                                    {
+                                        ApplyerId = spec.Id,
+                                        Type = spec.EffectType,
+                                        Scope = spec.Persistence,
+                                        Operation = spec.EffectOp,
+                                        Value = spec.EffectValue,
+                                        Supertype = spec.EffectSupertype,
+                                    };
 
-                                coins.Modifiers.Add(mmod);
-                                break;
-                            case "p": // Characters
-                                var character = _locate.LocateCharacter(game, spec.TargetId);
+                                    aspecialties.Value.Modifiers.Add(amod);
+                                }
+                            }
+                            break;
+                        case "m": // Coins
+                            var coins = _locate.LocateCoin(game, spec.TargetId);
 
-                                var pmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var mmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                character.Modifiers.Add(pmod);
-                                break;
-                            case "k": // Knowledge
-                                var knowledge = _locate.LocateKnowledge(game, spec.TargetId);
+                            coins.Modifiers.Add(mmod);
+                            break;
+                        case "p": // Characters
+                            var character = _locate.LocateCharacter(game, spec.TargetId);
 
-                                var kmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var pmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                knowledge.Modifiers.Add(kmod);
-                                break;
-                            case "t": // Techs
-                                var tech = _locate.LocateTech(game, spec.TargetId);
+                            character.Modifiers.Add(pmod);
+                            break;
+                        case "k": // Knowledge
+                            var knowledge = _locate.LocateKnowledge(game, spec.TargetId);
 
-                                var tmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var kmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                tech.Modifiers.Add(tmod);
-                                break;
-                            case "u": // Upgrades
-                                var targetupgrade = _locate.LocateUpgrade(game, spec.TargetId);
+                            knowledge.Modifiers.Add(kmod);
+                            break;
+                        case "t": // Techs
+                            var tech = _locate.LocateTech(game, spec.TargetId);
 
-                                var umod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var tmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                targetupgrade.Modifiers.Add(umod);
-                                break;
-                            case "l": // Locals
-                                var local = _locate.LocateLocal(game, spec.TargetId);
+                            tech.Modifiers.Add(tmod);
+                            break;
+                        case "u": // Upgrades
+                            var targetupgrade = _locate.LocateUpgrade(game, spec.TargetId);
 
-                                var lmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var umod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                local.Modifiers.Add(lmod);
-                                break;
-                            case "s": // Stages
-                                var targetstage = _locate.LocateStage(game, spec.TargetId);
+                            targetupgrade.Modifiers.Add(umod);
+                            break;
+                        case "l": // Locals
+                            var local = _locate.LocateLocal(game, spec.TargetId);
 
-                                var smod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var lmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                targetstage.Modifiers.Add(smod);
-                                break;
-                            case "x": // Expansions
-                                var expansion = _locate.LocateExpansion(game, spec.TargetId);
+                            local.Modifiers.Add(lmod);
+                            break;
+                        case "s": // Stages
+                            var targetstage = _locate.LocateStage(game, spec.TargetId);
 
-                                var xmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var smod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                expansion.Modifiers.Add(xmod);
-                                break;
-                            case "d": // Expeditions
-                                var expedition = _locate.LocateExpedition(game, spec.TargetId);
+                            targetstage.Modifiers.Add(smod);
+                            break;
+                        case "x": // Expansions
+                            var expansion = _locate.LocateExpansion(game, spec.TargetId);
 
-                                var dmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var xmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                expedition.Modifiers.Add(dmod);
-                                break;
-                            case "o": // Traits
-                                var trait = _locate.LocateTrait(game, spec.TargetId);
+                            expansion.Modifiers.Add(xmod);
+                            break;
+                        case "d": // Expeditions
+                            var expedition = _locate.LocateExpedition(game, spec.TargetId);
 
-                                var omod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var dmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                trait.Modifiers.Add(omod);
-                                break;
-                            case "e": // Specialty
-                                var speciality = _locate.LocateSpecialty(game, spec.TargetId);
+                            expedition.Modifiers.Add(dmod);
+                            break;
+                        case "o": // Traits
+                            var trait = _locate.LocateTrait(game, spec.TargetId);
 
-                                var emod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var omod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                speciality.Modifiers.Add(emod);
-                                break;
-                            case "c": // Contracts
-                                var contract = _locate.LocateContract(game, spec.TargetId);
+                            trait.Modifiers.Add(omod);
+                            break;
+                        case "e": // Specialty
+                            var speciality = _locate.LocateSpecialty(game, spec.TargetId);
 
-                                var cmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var emod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                contract.Modifiers.Add(cmod);
-                                break;
-                            case "i": // Clicks
-                                var click = _locate.LocateStageClick(game, spec.TargetId);
+                            speciality.Modifiers.Add(emod);
+                            break;
+                        case "c": // Contracts
+                            var contract = _locate.LocateContract(game, spec.TargetId);
 
-                                var imod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var cmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                click.Modifiers.Add(imod);
-                                break;
-                            case "r": // Resources
-                                var resource = _locate.LocateResource(game, spec.TargetId);
+                            contract.Modifiers.Add(cmod);
+                            break;
+                        case "i": // Clicks
+                            var click = _locate.LocateStageClick(game, spec.TargetId);
 
-                                var rmod = new ModifierModel
-                                {
-                                    ApplyerId = spec.Id,
-                                    Type = spec.EffectType,
-                                    Scope = spec.Persistence,
-                                    Operation = spec.EffectOp,
-                                    Value = spec.EffectValue,
-                                    Supertype = spec.EffectSupertype,
-                                };
+                            var imod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
 
-                                resource.Modifiers.Add(rmod);
-                                break;
-                        }
+                            click.Modifiers.Add(imod);
+                            break;
+                        case "r": // Resources
+                            var resource = _locate.LocateResource(game, spec.TargetId);
 
-                        _specialty.ActivateSpecialtyTimer(spec.Id, spec.Duration);
-                    }, save: true);
-                }
+                            var rmod = new ModifierModel
+                            {
+                                ApplyerId = spec.Id,
+                                Type = spec.EffectType,
+                                Scope = spec.Persistence,
+                                Operation = spec.EffectOp,
+                                Value = spec.EffectValue,
+                                Supertype = spec.EffectSupertype,
+                            };
+
+                            resource.Modifiers.Add(rmod);
+                            break;
+                    }
+
+                    _specialty.ActivateSpecialtyTimer(spec.Id, spec.Duration);
+                }, save: true);
+
             }
             if (type == ItemHelper.ItemType.Trait)
             {
@@ -885,6 +905,23 @@ namespace FurmaIdle.Services
                                     };
 
                                     aupgrades.Value.Modifiers.Add(amod);
+                                }
+                            }
+                            if (trait.TargetId == "aSpecialties")
+                            {
+                                foreach (var aspecialties in game.Specialties)
+                                {
+                                    var amod = new ModifierModel
+                                    {
+                                        ApplyerId = trait.Id,
+                                        Type = trait.EffectType,
+                                        Scope = trait.Persistence,
+                                        Operation = trait.EffectOp,
+                                        Value = trait.EffectValue,
+                                        Supertype = trait.EffectSupertype,
+                                    };
+
+                                    aspecialties.Value.Modifiers.Add(amod);
                                 }
                             }
                             break;

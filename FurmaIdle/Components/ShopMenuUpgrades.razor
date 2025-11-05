@@ -28,21 +28,19 @@ else
                  && IsContractUpgradeVisible(game, u.Id));
 
     var availableExpansionUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUt(u.Id) || StartsWithUx(u.Id) || StartsWithUu(u.Id) || StartsWithUl(u.Id) || StartsWithUr(u.Id) || StartsWithUk(u.Id))
+        .Where(u => (!StartsWithUc(u.Id) && !StartsWithUp(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
-    // ===== Unlocked Upgrades =====
-    var unlockedUpgrades = OrderedUpgrades(game)
-        .Where(u => u.State == UnlockHelper.State.Unlocked)
-        .Where(u => IsContractUpgradeVisible(game, u.Id));
-
-    var availableCharacterUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
-        game.Upgrades.Values
+    var availableCharacterUpgrades = OrderedUpgrades(game)
             .Where(u => u?.Id != null
                      && u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
                      && u.State == UnlockHelper.State.Available)
             .OrderBy(u => u.Id);
+
+    // ===== Unlocked Upgrades =====
+    var unlockedUpgrades = OrderedUpgrades(game)
+        .Where(u => u.State == UnlockHelper.State.Unlocked);
 
     <!-- Available Characters -->
     <div>
@@ -214,7 +212,10 @@ else
         => id?.StartsWith("ux", StringComparison.OrdinalIgnoreCase) == true;
 
     private static bool StartsWithUu(string id)
-        => id?.StartsWith("uu", StringComparison.OrdinalIgnoreCase) == true;
+    => id?.StartsWith("uu", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool StartsWithUp(string id)
+    => id?.StartsWith("up", StringComparison.OrdinalIgnoreCase) == true;
 
     // “Unlock-any” = upgrades de desbloqueio que não queremos listar em “Unlocked Upgrades”
     private static bool IsUnlockAny(UpgradeModel u)
