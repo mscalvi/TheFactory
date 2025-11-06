@@ -17,12 +17,12 @@
         font-size: 1.05rem;
         border-radius: 12px;
         border: 1px solid var(--panel-border, rgba(255,255,255,.08));
-        background: var(--panel-bg, rgb(132, 211, 143, 0,25));
+        background: var(--panel-bg, rgb(132, 211, 143, .25));
         text-align: center;
     }
 
     .expedition-actions .icon-button:disabled {
-        background: var(--panel-bg, rgb(173, 58, 27, 0,00));
+        background: var(--panel-bg, rgb(173, 58, 27, .00));
         cursor: not-allowed;
     }
 
@@ -36,14 +36,14 @@ h3, h4 {
 .characters-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
-    gap: 8px;
+    gap: 4px;
     max-width: min(820px, 90%);
-    margin: 8px auto 0;
+    margin: 3px auto 0;
     justify-items: center;
 }
 
     .characters-grid .icon-button {
-        min-width: 64px; /* mantém o tamanho atual */
+        min-width: 64px;
         height: 40px;
         padding: 4px 8px;
     }

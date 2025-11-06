@@ -13,78 +13,78 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 
-@{
-    var game = Game.CurrentGame;
-    var stage = Locate.LocateStage(game, game.SelectedStageId);
+<div class="menu-root">
+    @{
+        var game = Game.CurrentGame;
+        var stage = Locate.LocateStage(game, game.SelectedStageId);
 
-    var availableTechUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
-    game.Upgrades.Values
+        var availableTechUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
+        game.Upgrades.Values
         .Where(u => u?.Id != null
-                 && u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
-                 && u.State == UnlockHelper.State.Available);
+        && u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
+        && u.State == UnlockHelper.State.Available);
 
-    var unlockedKnowledges = game is null ? Enumerable.Empty<KnowledgeModel>() :
+        var unlockedKnowledges = game is null ? Enumerable.Empty<KnowledgeModel>() :
         game.Knowledges.Values
-            .Where(k => k.State == UnlockHelper.State.Unlocked);
+        .Where(k => k.State == UnlockHelper.State.Unlocked);
 
-    var unlockedTechs = game is null ? Enumerable.Empty<TechModel>() :
+        var unlockedTechs = game is null ? Enumerable.Empty<TechModel>() :
         game.Techs.Values
-            .Where(t => t.State == UnlockHelper.State.Unlocked)
-            .OrderBy(t => t.Id);
-}
-
-<div>
-    <h3>Knowledges</h3>
-    @foreach (var k in unlockedKnowledges)
-    {
-        var id = k.Id;
-        var total = Total(id);
-        <button type="button"
-                class=" "
-                disabled
-                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, stage.Id))"
-                @onmouseleave="Tooltips.Clear"
-                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, id, stage.Id))"
-                @onblur="Tooltips.Clear">
-            @id <text>:</text> @total
-        </button>
+        .Where(t => t.State == UnlockHelper.State.Unlocked)
+        .OrderBy(t => t.Id);
     }
-</div>
 
-<div>
-    <h3>Available Techs</h3>
-    @foreach (var u in availableTechUpgrades)
-    {
-        var id = u.Id;
-        var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, stage.Id);
-        <button type="button"
-                class="icon-button"
-                disabled="@( !canBuy )"
-                @onclick="() => OnClickBuyTech(id)"
-                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, stage.Id))"
-                @onmouseleave="Tooltips.Clear"
-                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, stage.Id))"
-                @onblur="Tooltips.Clear">
-            @id
-        </button>
-    }
-</div>
+    <section class="menu-panel knowledge">
+        <h3 class="title">Conhecimentos Acumulados</h3>
+        <table class="knowledge-table">
+            <thead>
+                <tr><th>Conhecimento</th><th style="text-align:right">Total</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var k in unlockedKnowledges)
+                {
+                    var total = Total(k.Id);
+                    <tr class="knowledge-row"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, k.Id, stage!.Id))"
+                        @onmouseleave="Tooltips.Clear">
+                        <td class="knowledge-name">@k.Name</td>
+                        <td class="knowledge-total">@total.ToString("N0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
 
-<div>
-    <h3>Unlocked Techs</h3>
-    @foreach (var t in unlockedTechs)
-    {
-        var id = t.Id;
-        <button type="button"
-                class="icon-button"
-                disabled
-                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, stage.Id))"
-                @onmouseleave="Tooltips.Clear"
-                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, id, stage.Id))"
-                @onblur="Tooltips.Clear">
-            @id
-        </button>
-    }
+    <section class="menu-panel menu-section available">
+        <h3 class="title">Pesquisas Disponíveis</h3>
+        <div class="icon-grid">
+            @foreach (var u in availableTechUpgrades)
+            {
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, stage.Id);
+                <button class="icon-button"
+                        disabled="@(!can)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, stage.Id))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onclick="() => OnClickBuyTech(u.Id)">
+                    @u.Id
+                </button>
+            }
+        </div>
+    </section>
+
+    <section class="menu-panel menu-section done">
+        <h3 class="title">Pesquisadas Realizadas</h3>
+        <div class="icon-grid">
+            @foreach (var t in unlockedTechs)
+            {
+                <span class="icon-button"
+                      @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, t.Id, stage.Id))"
+                      @onmouseleave="Tooltips.Clear">
+                    @t.Name
+                </span>
+            }
+        </div>
+    </section>
 </div>
 
 @code {

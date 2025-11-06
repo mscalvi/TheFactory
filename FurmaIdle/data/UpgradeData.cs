@@ -606,8 +606,9 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 1,
             },
-            #endregion  
+            #endregion
 
+            #region Desbloqueio de Techs (Tech Unlock)
             #region Desbloqueio de Techs Cultural (Tech Unlock)
             ["uh0110"] = new UpgradeModel
             {
@@ -793,6 +794,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0,
             },
             #endregion
+            #endregion
 
             #region Desbloqueio de Expansão (Expansion Unlock)
             ["ue01"] = new UpgradeModel
@@ -893,7 +895,7 @@ namespace FurmaIdle.Data
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize0,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "s00",
                 EffectType = EffectHelper.EffectType.PartyCapSize,
                 EffectOp = EffectHelper.EffectOperation.Additive,
@@ -912,7 +914,7 @@ namespace FurmaIdle.Data
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize0,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "s00",
                 EffectType = EffectHelper.EffectType.PartyCapSize,
                 EffectOp = EffectHelper.EffectOperation.Additive,

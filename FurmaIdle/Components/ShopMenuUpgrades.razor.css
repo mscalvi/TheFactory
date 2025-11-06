@@ -1,0 +1,56 @@
+﻿/* ===== ROOT ===== */
+.menu-root {
+    grid-template-rows: auto 1fr 1fr 1fr;
+    grid-template-areas:
+        "objective"
+        "expedition"
+        "expansion"
+        "permanents";
+}
+
+/* ===== ÁREA 1 ===== */
+.objetive {
+    grid-area: objective;
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.objetive-button {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 12px;
+    border: 1px solid var(--panel-border, rgba(255,255,255,.12));
+    background: linear-gradient(0deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    color: inherit;
+    padding: 10px 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: .2px;
+    cursor: pointer;
+    transition: transform .06s ease, background .12s ease, opacity .12s ease;
+}
+
+    .objetive-button:hover {
+        background: linear-gradient(0deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+        transform: translateY(-1px);
+    }
+
+    .objetive-button:disabled {
+        opacity: .5;
+        cursor: default;
+        transform: none;
+    }
+
+
+.permanents {
+    grid-area: permanents;
+}
+
+.expansion {
+    grid-area: expansion;
+}
+
+.expedition {
+    grid-area: expedition;
+}

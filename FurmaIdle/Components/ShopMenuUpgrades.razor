@@ -15,6 +15,7 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 
+<div class="menu-root">
 @if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -23,141 +24,104 @@ else
 {
     var game = Game.CurrentGame;
 
-    var availableExpeditionUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUc(u.Id) || StartsWithUi(u.Id))
-                 && u.State == UnlockHelper.State.Available
-                 && IsContractUpgradeVisible(game, u.Id));
+        var all = OrderedUpgrades(game);
+        var heroUpgrade =
+        all.FirstOrDefault(u =>
+        u.State == UnlockHelper.State.Available &&
+        (Ue(u.Id) || Us(u.Id)));
 
-    var availableExpansionUpgrades = OrderedUpgrades(game)
-        .Where(u => (!StartsWithUc(u.Id) && !StartsWithUp(u.Id) && !StartsWithUi(u.Id))
-                 && u.State == UnlockHelper.State.Available
-                 && IsContractUpgradeVisible(game, u.Id));
+        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK) ====
+        // Não inclui UC aqui (UC fica na área 4 – expedição)
+        var permanents =
+            all.Where(u =>
+            u.State == UnlockHelper.State.Available &&
+            (Up(u.Id) || Ul(u.Id) || Ur(u.Id) || Uk(u.Id) || Ua(u.Id)) &&
+            IsContractUpgradeVisible(game, u.Id))
+            .ToList();
 
-    var availableCharacterUpgrades = OrderedUpgrades(game)
-            .Where(u => u?.Id != null
-                     && u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
-                     && u.State == UnlockHelper.State.Available)
-            .OrderBy(u => u.Id);
+        // ==== ÁREA 3 — Avanços da Expansão (UT, UX) ====
+        var expansionUps =
+            all.Where(u =>
+            u.State == UnlockHelper.State.Available &&
+            (Ut(u.Id) || Ux(u.Id) || Um(u.Id) || Ub(u.Id)) &&
+            IsContractUpgradeVisible(game, u.Id))
+            .ToList();
 
-    // ===== Unlocked Upgrades =====
-    var unlockedUpgrades = OrderedUpgrades(game)
-        .Where(u => u.State == UnlockHelper.State.Unlocked);
+        // ==== ÁREA 4 — Avanços da Expedição (UC, UI) ====
+        var expeditionUps =
+            all.Where(u =>
+            u.State == UnlockHelper.State.Available &&
+            (Uc(u.Id) || Ui(u.Id)) &&
+            IsContractUpgradeVisible(game, u.Id))
+            .ToList();
 
-    <!-- Available Characters -->
-    <div>
-        <h3>Characters for Hire</h3>
-        @if (!availableCharacterUpgrades.Any())
-        {
-            <div>Nenhum upgrade de personagem disponível.</div>
-        }
-        else
-        {
-            <div>
-                @foreach (var u in availableCharacterUpgrades)
+        <section class="menu-panel objetive">
+            @if (heroUpgrade is not null)
+            {
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id);
+                <button class="objetive-button"
+                        disabled="@(!can)"
+                        @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, heroUpgrade.Id, _stage.Id))"
+                        @onmouseleave="Tooltips.Clear">
+                    @heroUpgrade.Id
+                </button>
+            }
+            else
+            {
+                <div style="text-align:center; opacity:.75;">Fim de Jogo - por enquanto</div>
+            }
+        </section>
+
+        <section class="menu-panel menu-section expedition">
+            <h3 class="title">Avanços da Expedição</h3>
+            <div class="icon-grid">
+                @foreach (var u in expeditionUps)
                 {
-                    var id = u.Id;
-                    var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
-
-                    <button type="button"
-                            class="icon-button"
-                            disabled="@( !canBuy )"
-                            @onclick="() => OnClickBuyUpgrade(id)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onblur="Tooltips.Clear">
-                        @id
+                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                    <button class="icon-button" disabled="@(!can)"
+                            @onclick="() => OnClickBuyUpgrade(u.Id)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear">
+                        @u.Id
                     </button>
                 }
             </div>
-        }
-    </div>
+        </section>
 
-    <!-- (1) Available Expedition Upgrades* (uc...) -->
-    <div>
-        <h3>Available Expedition Upgrades</h3>
-        @if (!availableExpeditionUpgrades.Any())
-        {
-            <div>Nenhum upgrade de expedição disponível.</div>
-        }
-        else
-        {
-            <div>
-                @foreach (var u in availableExpeditionUpgrades)
+        <section class="menu-panel menu-section expansion">
+            <h3 class="title">Avanços da Expansão</h3>
+            <div class="icon-grid">
+                @foreach (var u in expansionUps)
                 {
-                    var id = u.Id;
-                    var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
-                    <button type="button"
-                            class="icon-button"
-                            disabled="@( !canBuy )"
-                            @onclick="() => OnClickBuyUpgrade(id)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onblur="Tooltips.Clear">
-                        @id
+                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                    <button class="icon-button" disabled="@(!can)"
+                            @onclick="() => OnClickBuyUpgrade(u.Id)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear">
+                        @u.Id
                     </button>
                 }
             </div>
-        }
-    </div>
+        </section>
 
-    <!-- (2) Available Expansion Upgrades (ut/ux) -->
-    <div>
-        <h3>Available Expansion Upgrades</h3>
-        @if (!availableExpansionUpgrades.Any())
-        {
-            <div>Nenhum upgrade de expansão disponível.</div>
-        }
-        else
-        {
-            <div>
-                @foreach (var u in availableExpansionUpgrades)
+        <section class="menu-panel menu-section permanents">
+            <h3 class="title">Desbloqueios Permanentes</h3>
+            <div class="icon-grid">
+                @foreach (var u in permanents)
                 {
-                    var id = u.Id;
-                    var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, _stage.Id);
-                    <button type="button"
-                            class="icon-button"
-                            disabled="@( !canBuy )"
-                            @onclick="() => OnClickBuyUpgrade(id)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onblur="Tooltips.Clear">
-                        @id
+                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                    <button class="icon-button" disabled="@(!can)"
+                            @onclick="() => OnClickBuyUpgrade(u.Id)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear">
+                        @u.Id
                     </button>
                 }
             </div>
-        }
-    </div>
-
-    <!-- (3) Unlocked Upgrades (uc+ut+ux) -->
-    <div>
-        <h3>Unlocked Upgrades</h3>
-        @if (!unlockedUpgrades.Any())
-        {
-            <div>Nenhum upgrade concluído.</div>
-        }
-        else
-        {
-            <div>
-                @foreach (var u in unlockedUpgrades)
-                {
-                    var id = u.Id;
-                    <button type="button"
-                            class="icon-button"
-                            disabled
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onblur="Tooltips.Clear">
-                        @id
-                    </button>
-                }
-            </div>
-        }
-    </div>
+        </section>
 }
+</div>
 
 @code {
     private StageModel? _stage;
@@ -193,52 +157,31 @@ else
         => g.Upgrades.Values
             .OrderBy(u => u.Id);
 
-    private static bool StartsWithUc(string id)
-        => id?.StartsWith("uc", StringComparison.OrdinalIgnoreCase) == true;
+    static bool StartsWith(string? id, string prefix)
+        => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
 
-    private static bool StartsWithUr(string id)
-        => id?.StartsWith("ur", StringComparison.OrdinalIgnoreCase) == true;
+    static bool Ue(string? id) => StartsWith(id, "ue");
+    static bool Us(string? id) => StartsWith(id, "us");
+    static bool Up(string? id) => StartsWith(id, "up");
+    static bool Ul(string? id) => StartsWith(id, "ul");
+    static bool Ur(string? id) => StartsWith(id, "ur");
+    static bool Uk(string? id) => StartsWith(id, "uk");
+    static bool Ut(string? id) => StartsWith(id, "ut");
+    static bool Ux(string? id) => StartsWith(id, "ux");
+    static bool Uc(string? id) => StartsWith(id, "uc");
+    static bool Ui(string? id) => StartsWith(id, "ui");
+    static bool Um(string? id) => StartsWith(id, "um");
+    static bool Ua(string? id) => StartsWith(id, "ua");
+    static bool Ub(string? id) => StartsWith(id, "ub");
 
-    private static bool StartsWithUt(string id)
-        => id?.StartsWith("ut", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUl(string id)
-        => id?.StartsWith("ul", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUk(string id)
-        => id?.StartsWith("uk", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUx(string id)
-        => id?.StartsWith("ux", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUu(string id)
-        => id?.StartsWith("uu", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUp(string id)
-        => id?.StartsWith("up", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUi(string id)
-        => id?.StartsWith("ui", StringComparison.OrdinalIgnoreCase) == true;
-
-    private static bool StartsWithUe(string id)
-        => id?.StartsWith("ue", StringComparison.OrdinalIgnoreCase) == true;
-
-    // “Unlock-any” = upgrades de desbloqueio que não queremos listar em “Unlocked Upgrades”
-    private static bool IsUnlockAny(UpgradeModel u)
-    {
-        var id = u.Id ?? string.Empty;
-        return true;
-    }
-
-    // Mesma regra que você já usava
     private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {
         // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
-        if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId) && !StartsWithUt(upgradeId)) return true;
+        if (!StartsWith(upgradeId, "uc") && !StartsWith(upgradeId,"uu") && !StartsWith(upgradeId,"ut")) return true;
 
         var up = Locate.LocateUpgrade(game, upgradeId);
 
-        if (StartsWithUc(upgradeId))
+        if (StartsWith(upgradeId, "uc"))
         {
             if (_stage.ActiveContracts.TryGetValue(up.TargetId, out var qty))
             {
@@ -262,7 +205,7 @@ else
             }
             return false;
         }
-        else if (StartsWithUu(upgradeId))
+        else if (StartsWith(upgradeId, "uu"))
         {
             // “uu”: visível se o nível atual de contrato for >= nível do upgrade
             var stageInfo = Contracts.GetStageInfo(game, _stage.Id);
@@ -275,7 +218,7 @@ else
                 return true;
             }
         }
-        else if (StartsWithUt(upgradeId))
+        else if (StartsWith(upgradeId, "ut"))
         {
             var isContractTarget = up.TargetId?.StartsWith("c", StringComparison.OrdinalIgnoreCase) ?? false;
             if (!isContractTarget) return true;
@@ -289,7 +232,6 @@ else
             }
             return false;
         }
-
         return true;
     }
 
@@ -305,7 +247,7 @@ else
             return;
         }
 
-        if (StartsWithUc(upgrade.Id))
+        if (StartsWith(upgrade.Id, "uc"))
         {
             if (upgrade is null || string.IsNullOrWhiteSpace(upgrade.TargetId)) return;
 
@@ -335,7 +277,7 @@ else
         {
             freeProcess = false;
             await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
-            if (StartsWithUe(upgrade.Id))
+            if (StartsWith(upgrade.Id, "ue"))
             {
                 await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
             }
