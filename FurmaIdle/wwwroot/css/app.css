@@ -50,6 +50,10 @@ button {
     border-radius: 12px;
     padding: 5px;
 }
+    .menu-panel.is-hidden {
+        visibility: hidden;
+        pointer-events: none;
+    }
 
     .menu-panel .title {
         text-align: center;

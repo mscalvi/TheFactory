@@ -42,6 +42,8 @@ namespace FurmaIdle.Services
 
             await UnlockCharacter("p001");
 
+            await UnlockContract("c011");
+
             await _game.Mutate(g =>
             {
                 g.SelectedStageId ??= "s00";

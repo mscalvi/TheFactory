@@ -22,7 +22,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/contracts/c011.jpg",
                 Image = "images/contracts/c011.jpg",
                 Level = 1,
-                UnlockId = "uu110",
+                UnlockId = null,
                 PricingId = PricingHelper.PricingId.ContractPurchase01,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,

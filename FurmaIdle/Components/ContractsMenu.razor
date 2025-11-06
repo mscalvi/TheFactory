@@ -240,11 +240,6 @@
 
         await Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id);
 
-        var qty = _stage.ActiveContracts?.TryGetValue(contract.Id, out var q) == true ? q : 0;
-
-        if (qty == 1) Log.Info($"Nosso primeiro contrato para {contract.Name}, incrível!");
-        if (qty == 100) Log.Info($"Estamos ficando profissionais em {contract.Name}, sensacional!");
-
         _expandedLevel = null;
         StateHasChanged();
     }

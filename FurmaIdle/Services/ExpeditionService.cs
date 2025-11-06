@@ -32,13 +32,15 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly IEffectService _effect;
         private readonly IKnowledgeService _knowledge;
+        private readonly IUiService _ui;
 
-        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IKnowledgeService knowledge)
+        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IKnowledgeService knowledge, IUiService ui)
         {
             _locate = locate;
             _game = game;
             _effect = effect;
             _knowledge = knowledge;
+            _ui = ui;
         }
 
         public int GetPartyCap(StageModel stage)
@@ -165,6 +167,8 @@ namespace FurmaIdle.Services
                 var traitId = character.TraitId;
                 await _effect.ApplyEffect(ItemHelper.ItemType.Trait, traitId, stage.Id);
             }
+
+            _ui.NavMenuControl("GameStart");
         }
         public async Task LaunchExpedition(StageModel stage)
         {
@@ -202,6 +206,8 @@ namespace FurmaIdle.Services
 
                 expedition.FinishedAt = null;
 
+                _ui.NavMenuControl("ExpeditionStart");
+
             }, save: true);
 
             foreach (var characterId in expedition.PartyIds)
@@ -210,7 +216,9 @@ namespace FurmaIdle.Services
                 var traitId = character.TraitId;
                 await _effect.ApplyEffect(ItemHelper.ItemType.Trait, traitId, stage.Id);
             }
+
         }
+
         public async Task EndExpedition(StageModel stage)
         {
             // transforma coins em Knowledge
@@ -274,6 +282,8 @@ namespace FurmaIdle.Services
                 expedition.FinishedAt = DateTimeOffset.UtcNow;
                 expedition.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
 
+                _ui.NavMenuControl("ExpeditionEnd");
+
             }, save: true);
 
             await _game.Mutate(game =>
@@ -325,6 +335,7 @@ namespace FurmaIdle.Services
                     ScrubExpeditionMods(upgrade.Value.Modifiers);
                 }
             }, save: true);
+
         }
 
         public async Task EndExpansion(string expansionId)
@@ -468,6 +479,8 @@ namespace FurmaIdle.Services
                 expansion.FinishedAt = DateTimeOffset.UtcNow;
 
                 game.CurrentExpansionId = expansion.NextExpansion;
+
+                _ui.NavMenuControl("ExpansionEnd");
 
             }, save: true);
         }

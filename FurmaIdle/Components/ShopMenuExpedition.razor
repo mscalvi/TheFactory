@@ -186,32 +186,18 @@ else
         if (!isActive)
         {
             await Expedition.LaunchExpedition(_stage);
-            Log.Success($"Expedição iniciada em {_stage.Name}.");
 
             return;
         }
         else
         {
             await Expedition.EndExpedition(_stage);
-
-            Log.Success($"Expedição encerrada em {_stage.Name}.");
         }
     }
 
     private void OnToggleChar(string id)
     {
         Expedition.ToggleChar(_stage, id);
-
-        var character = Locate.LocateCharacter(Game.CurrentGame, id);
-
-        if (character.CharState == UnlockHelper.CharState.InLine)
-        {
-            Log.Info($"{id} adicionado à equipe.");
-        }
-        else
-        {
-            Log.Info($"{id} removido da equipe.");
-        }
 
         StateHasChanged();
     }

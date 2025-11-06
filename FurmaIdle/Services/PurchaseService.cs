@@ -31,6 +31,8 @@ namespace FurmaIdle.Services
             _cost = cost;
         }
 
+        private int contractBuy = 0;
+
         // Purchase
         public async Task Purchase(ItemHelper.ItemType type, string itemId, string stageId)
         {
@@ -68,6 +70,8 @@ namespace FurmaIdle.Services
                     stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
                     stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
 
+                    contractBuy = q + 1;
+
                     stage.lockedContractLevel.Add(contract.Level);
                     if (!expansion.inUseContracts.Contains(contract.Id))
                     {
@@ -77,13 +81,34 @@ namespace FurmaIdle.Services
 
                 ApplyStats(expansion.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
 
-                Console.WriteLine($"[Purchase] {itemId} Custo: {cost.costValue} {cost.costId}");
-
-            }, save: true);
+            }, save: true, ui: false);
 
             await _effect.ApplyEffect(type, itemId, stageId);
 
-            _ui.NavMenuControl(itemId);
+            await _game.Mutate(game =>
+            {
+                if (game.GameStats.CharactersUnlocked == 2 && itemId.StartsWith("up"))
+                {
+                    _ui.NavMenuControl("FirstCharacterPurchase");
+                }
+                else if (game.GameStats.KnowledgesUnlocked == 1 && itemId.StartsWith("uk"))
+                {
+                    _ui.NavMenuControl("FirstKnowledgePurchase");
+                }
+                else if (game.GameStats.TechUnlocked == 1 && itemId.StartsWith("uh"))
+                {
+                    _ui.NavMenuControl("FirstTechPurchase");
+                }
+                else if (itemId.StartsWith("c"))
+                {
+                    _ui.NavMenuControl(itemId, contractBuy.ToString());
+                }
+                else
+                {
+                    _ui.NavMenuControl(itemId);
+                }
+
+            }, save: true);
         }
         private static void ApplyDebit(StatsModel stats, long cost, string costId)
         {

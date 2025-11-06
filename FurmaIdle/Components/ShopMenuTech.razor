@@ -34,7 +34,7 @@
         .OrderBy(t => t.Id);
     }
 
-    <section class="menu-panel knowledge">
+    <section class="@($"menu-panel {UI.PanelClass("knowledge")}")">
         <h3 class="title">Conhecimentos Acumulados</h3>
         <table class="knowledge-table">
             <thead>
@@ -55,7 +55,7 @@
         </table>
     </section>
 
-    <section class="menu-panel menu-section available">
+    <section class="@($"menu-panel menu-section {UI.PanelClass("tech-available")}")">
         <h3 class="title">Pesquisas Disponíveis</h3>
         <div class="icon-grid">
             @foreach (var u in availableTechUpgrades)
@@ -72,7 +72,7 @@
         </div>
     </section>
 
-    <section class="menu-panel menu-section done">
+    <section class="@($"menu-panel menu-section {UI.PanelClass("tech-done")}")">
         <h3 class="title">Pesquisadas Realizadas</h3>
         <div class="icon-grid">
             @foreach (var t in unlockedTechs)
