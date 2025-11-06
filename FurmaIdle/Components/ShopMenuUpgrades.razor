@@ -8,6 +8,7 @@
 @using FurmaIdle.Services
 
 @inject IPurchaseService Purchase
+@inject IExpeditionService Expedition
 @inject ICostService Cost
 @inject IContractsService Contracts
 @inject ILocateService Locate
@@ -23,12 +24,12 @@ else
     var game = Game.CurrentGame;
 
     var availableExpeditionUpgrades = OrderedUpgrades(game)
-        .Where(u => (StartsWithUc(u.Id))
+        .Where(u => (StartsWithUc(u.Id) || StartsWithUi(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
     var availableExpansionUpgrades = OrderedUpgrades(game)
-        .Where(u => (!StartsWithUc(u.Id) && !StartsWithUp(u.Id))
+        .Where(u => (!StartsWithUc(u.Id) && !StartsWithUp(u.Id) && !StartsWithUi(u.Id))
                  && u.State == UnlockHelper.State.Available
                  && IsContractUpgradeVisible(game, u.Id));
 
@@ -158,7 +159,6 @@ else
     </div>
 }
 
-
 @code {
     private StageModel? _stage;
 
@@ -212,10 +212,16 @@ else
         => id?.StartsWith("ux", StringComparison.OrdinalIgnoreCase) == true;
 
     private static bool StartsWithUu(string id)
-    => id?.StartsWith("uu", StringComparison.OrdinalIgnoreCase) == true;
+        => id?.StartsWith("uu", StringComparison.OrdinalIgnoreCase) == true;
 
     private static bool StartsWithUp(string id)
-    => id?.StartsWith("up", StringComparison.OrdinalIgnoreCase) == true;
+        => id?.StartsWith("up", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool StartsWithUi(string id)
+        => id?.StartsWith("ui", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool StartsWithUe(string id)
+        => id?.StartsWith("ue", StringComparison.OrdinalIgnoreCase) == true;
 
     // “Unlock-any” = upgrades de desbloqueio que não queremos listar em “Unlocked Upgrades”
     private static bool IsUnlockAny(UpgradeModel u)
@@ -230,7 +236,7 @@ else
         // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
         if (!StartsWithUc(upgradeId) && !StartsWithUu(upgradeId) && !StartsWithUt(upgradeId)) return true;
 
-        game.Upgrades.TryGetValue(upgradeId, out var up);
+        var up = Locate.LocateUpgrade(game, upgradeId);
 
         if (StartsWithUc(upgradeId))
         {
@@ -238,7 +244,20 @@ else
             {
                 if (qty > 0)
                 {
-                    return true;
+                    var nextBuy = Math.Max(1, (up.ActualBuy) + 1);
+                    var maxBuy = up.MaxBuy <= 0 ? int.MaxValue : up.MaxBuy;
+
+                    var step = up.EffectType switch
+                    {
+                        EffectHelper.EffectType.ContractCost => 25,
+                        EffectHelper.EffectType.ContractGain => 5,
+                        EffectHelper.EffectType.ContractTime => 5,
+                        _ => 0
+                    };
+                    if (step <= 0) return true;
+
+                    var needed = step * nextBuy;
+                    return qty >= needed;
                 }
             }
             return false;
@@ -258,8 +277,8 @@ else
         }
         else if (StartsWithUt(upgradeId))
         {
-            if (!up.TargetId?.StartsWith("c", StringComparison.OrdinalIgnoreCase) ?? true)
-                return true;
+            var isContractTarget = up.TargetId?.StartsWith("c", StringComparison.OrdinalIgnoreCase) ?? false;
+            if (!isContractTarget) return true;
 
             if (_stage.ActiveContracts.TryGetValue(up.TargetId, out var qty))
             {
@@ -277,16 +296,49 @@ else
     // ===== Ações =====
     private async Task OnClickBuyUpgrade(string upgradeId)
     {
-        if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id))
+        var game = Game.CurrentGame;
+        var upgrade = Locate.LocateUpgrade(game, upgradeId);
+
+        if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgrade.Id, _stage.Id))
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
             return;
+        }
+
+        if (StartsWithUc(upgrade.Id))
+        {
+            if (upgrade is null || string.IsNullOrWhiteSpace(upgrade.TargetId)) return;
+
+            var nextBuy = Math.Max(1, upgrade.ActualBuy + 1);
+            var maxBuy = upgrade.MaxBuy <= 0 ? int.MaxValue : upgrade.MaxBuy;
+            if (nextBuy > maxBuy) return;
+
+            if (!(_stage.ActiveContracts?.TryGetValue(upgrade.TargetId, out var qty) ?? false) || qty <= 0)
+                return;
+
+            var step = upgrade.EffectType switch
+            {
+                EffectHelper.EffectType.ContractCost => 25,
+                EffectHelper.EffectType.ContractGain => 5,
+                EffectHelper.EffectType.ContractTime => 5,
+                _ => 0
+            };
+
+            if (step > 0)
+            {
+                var needed = step * nextBuy;
+                if (qty < needed) return;
+            }
         }
 
         if (freeProcess)
         {
             freeProcess = false;
             await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
+            if (StartsWithUe(upgrade.Id))
+            {
+                await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
+            }
             freeProcess = true;
         }
         else

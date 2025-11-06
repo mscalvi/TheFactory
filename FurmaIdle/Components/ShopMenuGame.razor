@@ -1,0 +1,90 @@
+﻿@* Components/ShopMenuExpansion.razor *@
+@inherits UiHelper
+
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Data
+
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+@inject ILocateService Locate
+@inject IExpeditionService Expedition
+
+@if (!Game.IsReady || _stage is null)
+{
+    <div class="contracts-placeholder">Stage não Selecionado</div>
+}
+else
+{
+    var game = Game.CurrentGame;
+
+    var gameStats = game.GameStats;
+
+    var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
+
+    TimeSpan gameDuration = DateTime.UtcNow - game.StartTime;
+
+    <div>
+        <h3>Game Stats</h3>
+        <div>Current Expansion: @expansion.Name</div>
+        <div>Duração: @(gameDuration.ToString("hh\\:mm\\:ss") ?? "--:--:--")</div>
+
+        <div>Ganhos</div>
+        @foreach (var coin in gameStats.CoinsGain)
+        {
+            <div>@coin.Key @coin.Value</div>
+        }
+        @foreach (var resource in gameStats.ResourcesGain)
+        {
+            <div>@resource.Key @resource.Value</div>
+        }
+        @foreach (var know in gameStats.KnowledgeGain)
+        {
+            <div>@know.Key @know.Value</div>
+        }
+        @foreach (var click in gameStats.ClicksMade)
+        {
+            <div>@click.Key @click.Value</div>
+        }
+
+        <div>Characters Unlocked: @game.GameStats.CharactersUnlocked</div>
+        <div>Coins Unlocked: @game.GameStats.CoinsUnlocked</div>
+        <div>Contracts Unlocked: @game.GameStats.ContractsUnlocked</div>
+        <div>Expansions Unlocked: @game.GameStats.ExpansionsUnlocked</div>
+        <div>Knowledges Unlocked: @game.GameStats.KnowledgesUnlocked</div>
+        <div>Locals Unlocked: @game.GameStats.LocalsUnlocked</div>
+        <div>Stages Unlocked: @game.GameStats.StagesUnlocked</div>
+        <div>Techs Unlocked: @game.GameStats.TechUnlocked</div>
+        <div>Resources Unlocked: @game.GameStats.ResourcesUnlocked</div>
+        <div>Upgrades Unlocked: @game.GameStats.UpgradesUnlocked</div>
+    </div>
+}
+
+@code {
+    private StageModel? _stage;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
+    }
+}

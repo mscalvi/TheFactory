@@ -74,16 +74,23 @@ else
     {
         if (_stage is null) return;
 
+        var expedition = _stage.Expedition;
+        if (expedition.ExpeditionState == UnlockHelper.ExpeditionState.Idle) return;
+
         await Clicks.Click();
 
         var pos = await JS.InvokeAsync<Pos>("ClickArea.getPos", _root, e);
-        var dx = _rng.NextDouble() * 48 - 24;    
-        var dy = -(_rng.Next(64, 104));          
-        var dur = $"{_rng.Next(450, 550)}ms";
+
+        var originOffsetY = _rng.Next(4, 9);     // 4..8 px acima
+        var originOffsetX = _rng.Next(-5, 6);    // -5..+5 px
+
+        var dx = (_rng.NextDouble() * 40) - 20;  // -20..+20 px
+        var dy = -(_rng.Next(64, 104));          // sobe 64..104 px
+        var dur = $"{_rng.Next(650, 850)}ms";
 
         var amount = GetClickAmount();
         var id = $"p{++_seq}";
-        var pop = new Pop(id, $"+{amount:0.#}", pos.x, pos.y, dx, dy, dur);
+        var pop = new Pop(id, $"+{amount:0.#}", pos.x + originOffsetX, pos.y - originOffsetY, dx, dy, dur);
 
         _pops.Add(pop);
         StateHasChanged();

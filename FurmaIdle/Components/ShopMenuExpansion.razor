@@ -6,14 +6,16 @@
 @using FurmaIdle.Services
 @using FurmaIdle.Data
 
-@inject IPurchaseService Purchase
-@inject ICostService Cost
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject ILocateService Locate
 @inject IExpeditionService Expedition
 
-@{
+@if (!Game.IsReady || _stage is null)
+{
+    <div class="contracts-placeholder">Stage não Selecionado</div>
+}
+else{
     var game = Game.CurrentGame;
 
     ExpansionModel expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
@@ -23,14 +25,8 @@
     var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
     TimeSpan? expDuration = null;
-    if (expansion?.StartedAt is DateTimeOffset startedAt)
+    if (expansion.StartedAt is DateTimeOffset startedAt)
         expDuration = DateTimeOffset.UtcNow - startedAt;
-
-    var availableExpansionUpgrades = game is null ? Enumerable.Empty<UpgradeModel>() :
-        game.Upgrades.Values
-            .Where(u => u?.Id != null
-                     && u.Id.StartsWith("ue", StringComparison.OrdinalIgnoreCase)
-                     && u.State == UnlockHelper.State.Available);
 
     var inBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
                                && c.CharState == UnlockHelper.CharState.InBase)
@@ -41,8 +37,6 @@
                                 && c.CharState == UnlockHelper.CharState.InStage)
                        .OrderBy(c => c.Id)
                        .ToList();
-}
-
 
 <div>
     <h3>Expansion Status</h3>
@@ -65,16 +59,6 @@
     {
         <div>@click.Key @click.Value</div>
     }
-    <div>Characters Unlocked: @game.GameStats.CharactersUnlocked</div>
-    <div>Coins Unlocked: @game.GameStats.CoinsUnlocked</div>
-    <div>Contracts Unlocked: @game.GameStats.ContractsUnlocked</div>
-    <div>Expansions Unlocked: @game.GameStats.ExpansionsUnlocked</div>
-    <div>Knowledges Unlocked: @game.GameStats.KnowledgesUnlocked</div>
-    <div>Locals Unlocked: @game.GameStats.LocalsUnlocked</div>
-    <div>Stages Unlocked: @game.GameStats.StagesUnlocked</div>
-    <div>Techs Unlocked: @game.GameStats.TechUnlocked</div>
-    <div>Resources Unlocked: @game.GameStats.ResourcesUnlocked</div>
-    <div>Upgrades Unlocked: @game.GameStats.UpgradesUnlocked</div>
 </div>
 
 <div>
@@ -124,40 +108,32 @@
         }
     }
 </div>
-
-<div>
-    <h3>Next Expansion</h3>
-    @if (!availableExpansionUpgrades.Any())
-    {
-        <div>Nenhum upgrade de expansão disponível.</div>
-    }
-    else
-    {
-        <div>
-            @foreach (var u in availableExpansionUpgrades)
-            {
-                var id = u.Id;
-                var canBuy = Cost.CanAfford(ItemHelper.ItemType.Upgrade, id, game.SelectedStageId);
-
-                <button type="button"
-                        class="icon-button"
-                        disabled="@( !canBuy )"
-                        @onclick="() => OnClickBuyExpansionUpgrade(id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, game.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
-            }
-        </div>
-    }
-</div>
+}
 
 @code {
-    private async Task OnClickBuyExpansionUpgrade(string upgradeId)
+    private StageModel? _stage;
+
+    protected override void OnInitialized()
     {
-        await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId);
-        await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
     }
 }

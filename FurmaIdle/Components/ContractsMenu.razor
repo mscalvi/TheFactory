@@ -85,28 +85,30 @@
 
                                             <div class="contract-card">
                                                 <div class="cc-name">x<strong>@qty</strong> contratos para @chosen.Name</div>
-                                                <div class="cc-cycle">@rp.CoinsPerCycle.ToString("N2") @coin?.Name a cada @rp.SecondsPerCycle.ToString("N2")s</div>
+                                                <div class="cc-cycle">@rp.TotalPerCycle.ToString("N2") @coin?.Name a cada @rp.SecondsPerCycle.ToString("N2")s</div>
                                                 <div class="cc-cycle">@rp.TotalPerSecond.ToString("N2") @coin.Name/s - Próximo: @costTotal @costCoinName</div>
                                             </div>
                                         </div>
 
                                         @{
-                                            var prog = Contracts.GetContractProgress(Game.CurrentGame, _stage.Id, chosen.Id);
+                                            var prog = Math.Clamp(Contracts.GetContractProgress(Game.CurrentGame, _stage.Id, chosen.Id), 0.0, 1.0);
                                             var pct = Math.Clamp(prog * 100, 0, 100);
-                                            var eta = Math.Max(0, (1 - prog) * rp.SecondsPerCycle);
 
-                                            var filled = (int)Math.Clamp(Math.Floor(prog * 20), 0, 20);
+                                            const int steps = 25;
+                                            // pinta ao ENTRAR no step; 0% -> 0, 0.1 step -> 1, 100% -> 25
+                                            int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
                                         }
                                         <div class="cp-bottom">
                                             <div class="cp-bar cp-bar-chunked" role="progressbar"
                                                  aria-valuemin="0" aria-valuemax="100" aria-valuenow="@pct.ToString("N0")">
-                                                @for (int i = 0; i < 20; i++)
+                                                @for (int i = 0; i < 25; i++)
                                                 {
                                                     var isFilled = i < filled;
                                                     <div class="chunk @(isFilled ? "is-filled" : null)"></div>
                                                 }
                                             </div>
                                         </div>
+
 
                                     </div>
 

@@ -13,7 +13,7 @@ namespace FurmaIdle.Services
         IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
 
-        (string CoinId, double CoinsPerCycle, double SecondsPerCycle, double TotalPerSecond) GetContractInfo(ContractModel contract, StageModel stage);
+        (string CoinId, double CoinsPerCycle, double SecondsPerCycle, double TotalPerCycle, double TotalPerSecond) GetContractInfo(ContractModel contract, StageModel stage);
         double GetContractProgress(GameModel game, string stageId, string contractId);
 
         public Dictionary<string, double> GetGameContractsPerSecond(GameModel game);
@@ -122,35 +122,26 @@ namespace FurmaIdle.Services
 
             foreach (var characterId in stage.Expedition.PartyIds)
             {
-                var character = _locate.LocateCharacter(game, characterId);;
-                contractsCap += character.ContractCap;
+                int characterCap = 0;
+                var character = _locate.LocateCharacter(game, characterId);
+                characterCap += character.ContractCap;
 
                 foreach (var modifier in character.Modifiers)
                 {
-                    if (modifier.Type == EffectHelper.EffectType.ContractLevelUnlock)
-                    {
-                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
-                        {
-                            contractsLevel += (int)modifier.Value;
-                        }
-                        if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
-                        {
-                            contractsLevel *= (int)modifier.Value;
-                        }
-                    }
                     if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock)
                     {
                         if (modifier.Operation == EffectHelper.EffectOperation.Additive)
                         {
-                            contractsCap += (int)modifier.Value;
+                            characterCap += (int)modifier.Value;
                         }
                         if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                         {
-                            contractsCap *= (int)modifier.Value;
+                            characterCap *= (int)modifier.Value;
                         }
                     }
                 }
 
+                contractsCap += characterCap;
             }
 
             foreach (var contract in stage.ActiveContracts)
@@ -160,6 +151,8 @@ namespace FurmaIdle.Services
 
             foreach (var modifier in stage.Modifiers)
             {
+                int stageCap = 0;
+
                 if (modifier.Type == EffectHelper.EffectType.ContractLevelUnlock)
                 {
                     if (modifier.Operation == EffectHelper.EffectOperation.Additive)
@@ -175,13 +168,15 @@ namespace FurmaIdle.Services
                 {
                     if (modifier.Operation == EffectHelper.EffectOperation.Additive)
                     {
-                        contractsCap += (int)modifier.Value;
+                        stageCap += (int)modifier.Value;
                     }
                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                     {
-                        contractsCap *= (int)modifier.Value;
+                        stageCap *= (int)modifier.Value;
                     }
                 }
+
+                contractsCap += stageCap;
             }
 
             return (contractsCap, contractsUsed, contractsLevel, contractsMaxLevel);
@@ -232,7 +227,7 @@ namespace FurmaIdle.Services
         }
 
         // Parametros de produção de um contrato
-        public (string CoinId, double CoinsPerCycle, double SecondsPerCycle, double TotalPerSecond) GetContractInfo(ContractModel contract, StageModel stage)
+        public (string CoinId, double CoinsPerCycle, double SecondsPerCycle, double TotalPerCycle, double TotalPerSecond) GetContractInfo(ContractModel contract, StageModel stage)
         {
             stage.ActiveContracts.TryGetValue(contract.Id, out var qty);
 
@@ -246,11 +241,14 @@ namespace FurmaIdle.Services
             var knowBurst = _knowledge.GetKnowledgeBurst(_game.CurrentGame, contract.CoinId, expansion);
 
             var coinsPerCycle = (cps + gainMod.AddMod) * gainMod.MultMod * knowBurst;
+
+            var totalPerCycle = coinsPerCycle * qty;
+
             var timePerCycle = (spc + timeMod.AddMod) * timeMod.MultMod;
 
             var totalPerSecond = (coinsPerCycle / timePerCycle) * qty;
 
-            return (contract.CoinId, coinsPerCycle, timePerCycle, totalPerSecond);
+            return (contract.CoinId, coinsPerCycle, timePerCycle, totalPerCycle, totalPerSecond);
         }
         public double GetContractProgress(GameModel game, string stageId, string contractId)
         {

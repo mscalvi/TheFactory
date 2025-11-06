@@ -1,3 +1,128 @@
-﻿.icon-button .selected{
-    background-color: red;
+﻿/* ----- layout base ----- */
+:host, .shop-exp {
+    display: block;
+    padding: 8px 10px;
 }
+
+/* ----- botão principal: centralizado, 80% da largura ----- */
+.expedition-actions {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0 16px;
+}
+
+    .expedition-actions .expedition-button {
+        width: min(800px, 80%);
+        padding: 14px 18px;
+        font-size: 1.05rem;
+        border-radius: 12px;
+        border: 1px solid var(--panel-border, rgba(255,255,255,.08));
+        background: var(--panel-bg, rgb(132, 211, 143, 0,25));
+        text-align: center;
+    }
+
+    .expedition-actions .icon-button:disabled {
+        background: var(--panel-bg, rgb(173, 58, 27, 0,00));
+        cursor: not-allowed;
+    }
+
+/* ----- headings/textos centralizados ----- */
+h3, h4 {
+    text-align: center;
+    margin: 10px 0 6px;
+}
+
+/* ----- grid de personagens (centralizada, espaçamento curto) ----- */
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+    gap: 8px;
+    max-width: min(820px, 90%);
+    margin: 8px auto 0;
+    justify-items: center;
+}
+
+    .characters-grid .icon-button {
+        min-width: 64px; /* mantém o tamanho atual */
+        height: 40px;
+        padding: 4px 8px;
+    }
+
+        .characters-grid .icon-button.selected {
+            outline: 2px solid rgba(255,255,255,.25);
+            outline-offset: 1px;
+            background: rgba(80, 200, 120, .18); 
+            border: 1px solid rgba(80, 200, 120, .35);
+            box-shadow: 0 0 0 2px rgba(80, 200, 120, .18) inset;
+            color: inherit;
+            transition: background .15s ease, box-shadow .15s ease, border-color .15s ease;
+        }
+
+            /* quando selecionado + hover (se não estiver disabled) */
+            .characters-grid .icon-button.selected:not(:disabled):hover {
+                background: rgba(80, 200, 120, .24);
+                border-color: rgba(80, 200, 120, .45);
+                box-shadow: 0 0 0 2px rgba(80, 200, 120, .24) inset;
+            }
+
+        /* estado selecionado E desabilitado (fica mais opaco, porém mantém o destaque) */
+        .characters-grid .icon-button:disabled.selected {
+            opacity: 1; /* não queremos o cinza padrão de disabled */
+            background: rgba(80, 200, 120, .14);
+            border-color: rgba(80, 200, 120, .28);
+            box-shadow: 0 0 0 2px rgba(80, 200, 120, .14) inset;
+            cursor: default;
+        }
+
+        /* acessibilidade: foco visível */
+        .characters-grid .icon-button.selected:focus-visible {
+            outline: 2px solid rgba(80, 200, 120, .75);
+            outline-offset: 2px;
+        }
+
+
+/* ----- listas chave/valor “tabeladas” e centralizadas ----- */
+.kv-list {
+    max-width: min(820px, 90%);
+    margin: 6px auto 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 10px;
+    align-items: center;
+}
+
+    .kv-list .kv { /* cada linha */
+        display: contents; /* permite grid nas crianças diretamente */
+    }
+
+    .kv-list .key {
+        text-align: right;
+        opacity: .8;
+        white-space: nowrap;
+    }
+
+    .kv-list .val {
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+/* ----- listas simples empilhadas (ex.: preview de knowledge) ----- */
+.stack-list {
+    max-width: min(820px, 90%);
+    margin: 6px auto 0;
+    display: grid;
+    gap: 4px;
+    text-align: center;
+}
+
+/* ----- cartõezinhos de status (opcional) ----- */
+.status-card {
+    max-width: min(860px, 92%);
+    margin: 8px auto 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--panel-border, rgba(255,255,255,.08));
+    background: var(--panel-bg, rgba(255,255,255,.03));
+}
+

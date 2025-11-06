@@ -5,9 +5,8 @@
         public int SchemaVersion { get; set; }
 
         // Ativo
-        public DateTime StartTime { get; set; }
-        public DateTime LastTick { get; set; }
-        public DateTimeOffset LastTickUtc { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset StartTime { get; set; }
+        public DateTimeOffset LastTick { get; set; }
         public string SelectedStageId { get; set; } = "s00";
         public string CurrentExpansionId { get; set; } = "x00";
 

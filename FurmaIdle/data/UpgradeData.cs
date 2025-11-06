@@ -818,7 +818,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ue02",
                 Name = "Reestruturar a Guilda: Territórios",
-                Level = 1,
+                Level = 2,
                 Icon = "images/upgrades/ue02.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
@@ -837,7 +837,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ue03",
                 Name = "Reestruturar a Guilda: Alcance",
-                Level = 1,
+                Level = 3,
                 Icon = "images/upgrades/ue03.jpg",
                 Lore = "",
                 Description = "Libera Expansão",
@@ -904,7 +904,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ua02",
                 Name = "Segundo Companheiro",
-                Level = 1,
+                Level = 2,
                 Icon = "images/upgrades/ua02.jpg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região",
@@ -923,7 +923,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ua03",
                 Name = "Segundo Companheiro",
-                Level = 1,
+                Level = 3,
                 Icon = "images/upgrades/ua03.jpg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região",
@@ -942,7 +942,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ua04",
                 Name = "Segundo Companheiro",
-                Level = 1,
+                Level = 4,
                 Icon = "images/upgrades/ua04.jpg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região",
@@ -2299,7 +2299,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Aumenta o limite de Contratos de todos os Personagens",
                 UnlockId = "x00",
-                MaxBuy = 9,
+                MaxBuy = 6,
                 PricingId = PricingHelper.PricingId.ContractCapUnlock0,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,

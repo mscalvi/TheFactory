@@ -120,7 +120,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.StageUnlock1] = new Entry("m01", 1000000000, 1.0, CostFactor.None, 1),
 
                 // Unlock Expansion Stage X
-                [PricingId.ExpansionUnlock0] = new Entry("m01", 50000, 3.5, CostFactor.None, 1),
+                [PricingId.ExpansionUnlock0] = new Entry("m01", 100000, 1.0, CostFactor.Level, 3.5),
 
                 // Unlock Tech Know X
                 [PricingId.TechUnlockk01] = new Entry("k01", 1, 1.0, CostFactor.Level, 2.8),
@@ -130,7 +130,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.TechUnlockk05] = new Entry("k05", 1, 1.0, CostFactor.Level, 4.6),
 
                 // Party Stage X
-                [PricingId.PartySize0] = new Entry("m01", 8000, 4.8, CostFactor.None, 1),
+                [PricingId.PartySize0] = new Entry("m01", 8000, 1, CostFactor.Level, 2.2),
                 [PricingId.ContractCapUnlock0] = new Entry("m01", 10, 2.8, CostFactor.None, 1),
 
                 // Contract Cost Stage X Contract Level X
@@ -155,7 +155,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.TechUpgrade0] = new Entry("m01", 50000, 1.0, CostFactor.Level, 3.3),
 
                 // Expansion Upgrades Stage X
-                [PricingId.ExpansionUpgrade0] = new Entry("m01", 5000, 1.0, CostFactor.Level, 3.7),
+                [PricingId.ExpansionUpgrade0] = new Entry("m01", 15000, 1.0, CostFactor.Level, 3.7),
             };
 
             public static Entry Get(PricingId id) => _map[id];

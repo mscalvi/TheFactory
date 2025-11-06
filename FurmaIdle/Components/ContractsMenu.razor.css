@@ -171,10 +171,12 @@
     display: grid;
     grid-template-columns: 70px 1fr;
     gap: 5px;
-    align-items: stretch;
     min-height: 0;
     overflow: hidden;
     justify-items: center;
+    align-self: stretch;
+    align-items: center;
+    justify-content: center;
 }
 
     .cp-top .contract-button {
@@ -189,6 +191,8 @@
         text-overflow: ellipsis;
         align-items: center;
         justify-items: center;
+        align-self: stretch;
+        justify-content: center;
     }
 
 /* card compacto dentro do topo (se usado) */
@@ -238,7 +242,7 @@
 /* barra segmentada (20 blocos), elástica */
 .cp-bar.cp-bar-chunked {
     display: grid;
-    grid-template-columns: repeat(20, 1fr);
+    grid-template-columns: repeat(25, 1fr);
     gap: calc(var(--bar-h) * 0.125); /* ~2px quando 14–16px */
     width: 100%;
     height: var(--bar-h);

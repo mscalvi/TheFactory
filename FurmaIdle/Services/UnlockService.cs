@@ -140,7 +140,7 @@ namespace FurmaIdle.Services
                     }
                 }
 
-                if (expansion.State != UnlockHelper.State.Blocked)
+                if (expansion.State != UnlockHelper.State.Unlocked)
                 {
                     expansion.StartedAt = DateTime.Now;
                 }

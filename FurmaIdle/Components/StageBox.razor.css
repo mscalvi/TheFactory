@@ -22,7 +22,7 @@
     background: var(--panel-bg, rgba(255,255,255,.03));
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 100px 1fr;
     grid-template-rows: 3fr 1fr;
     grid-template-areas:
         "char action"
@@ -35,6 +35,10 @@
 
 .pc-char {
     grid-area: char;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
     .pc-char .party-icon {
@@ -59,7 +63,7 @@
     align-self: stretch;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     min-width: 0;
 }
     .pc-action .spec-btn {

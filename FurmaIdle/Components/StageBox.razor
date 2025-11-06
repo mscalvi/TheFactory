@@ -75,6 +75,7 @@ else
                 var isActive = IsSpecActive(spec);
 
                 var timer = Specialty.GetSpecialtyTimer(spec);
+
                 double ratio = isActive && timer.Total > 0 ? (1.0 - ((timer.Total - timer.Actual) / timer.Total)) : 0.0;
                 int stepsOn = Math.Clamp((int)Math.Floor(ratio * 10.0), 0, 10);
 
@@ -93,20 +94,13 @@ else
 
                         <!-- botão da specialty (topo-direita) -->
                         <div class="pc-action">
-                            @if (!isActive)
-                            {
-                                <button class="spec-btn"
-                                        disabled="@(!canUse)"
-                                        @onclick="() => UseSpec(spec)"
-                                        @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, spec.Id, _stage!.Id))"
-                                        @onmouseout="Tooltips.Clear">
-                                    @spec.Name
-                                </button>
-                            }
-                            else
-                            {
-                                <span class="pc-badge">Em uso</span>
-                            }
+                            <button class="spec-btn"
+                                    disabled="@(!canUse)"
+                                    @onclick="() => UseSpec(spec)"
+                                    @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, spec.Id, _stage!.Id))"
+                                    @onmouseout="Tooltips.Clear">
+                                @spec.Name
+                            </button>
                         </div>
 
                         <!-- barra de progresso (base-direita) -->
@@ -115,19 +109,21 @@ else
                             {
                                 var prog = (timer.Total > 0) ? (1.0 - (timer.Actual / timer.Total)) : 0.0;
                                 prog = Math.Clamp(prog, 0.0, 1.0);
+                                const int steps = 10;                 
+
                                 var pct = $"{prog * 100:0.#}%";
                                 var secs = $"{timer.Actual:0.##}s";
 
+                                int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
+
                                 <div class="specialty-selected is-compact" aria-hidden="true">
-                                    <div class="specialty-progress" style="width:@pct"></div>
                                     <div class="specialty-steps">
-                                        @for (int j = 0; j < 10; j++)
+                                        @for (int j = 0; j < steps; j++)
                                         {
-                                            <span class="step @(j < Math.Floor(prog * 10) ? "is-on" : null)"></span>
+                                            <span class="step @(j < filled ? "is-on" : null)"></span>
                                         }
                                     </div>
                                 </div>
-                                <div class="progress-caption">@pct – @secs</div>
                             }
                         </div>
                     </div>

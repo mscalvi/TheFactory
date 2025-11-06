@@ -243,9 +243,9 @@ namespace FurmaIdle.Services
             {
                 tech = _locate.LocateTech(game, itemId);
             }
-            if (itemId.StartsWith("t"))
+            if (itemId.StartsWith("r"))
             {
-                tech = _locate.LocateTech(game, itemId);
+                contract = _locate.LocateContract(game, itemId);
             }
 
             switch (entry.CostFactor)
@@ -301,18 +301,6 @@ namespace FurmaIdle.Services
                         if (expansion.State == UnlockHelper.State.Unlocked)
                         {
                             costFactorValue++;
-                        }
-                    }
-                    break;
-
-                case CostFactor.PartySize:
-                    var stage = _locate.LocateStage(game, stageId);
-                    costFactorValue = stage.StartPartySize;
-                    foreach (var modifier in stage.Modifiers)
-                    {
-                        if (modifier.Type == EffectType.PartyCapSize)
-                        {
-                            costFactorValue += (int)modifier.Value;
                         }
                     }
                     break;
