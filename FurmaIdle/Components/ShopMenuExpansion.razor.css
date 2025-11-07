@@ -1,0 +1,26 @@
+﻿/* ===== Root ===== */
+.menu-root {
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+        "expansion-status"
+        "expansion-basechars"
+        "expansion-stagechars"
+        "expansion-upgrades"
+}
+
+/* ===== Conhecimentos (tabela) ===== */
+.expansion-status {
+    grid-area: expansion-status;
+}
+
+.expansion-basechars {
+    grid-area: expansion-basechars;
+}
+
+.expansion-stagechars {
+    grid-area: expansion-stagechars;
+}
+
+.expansion-upgrades {
+    grid-area: expansion-upgrades;
+}

@@ -11,6 +11,7 @@
 @inject ILocateService Locate
 @inject IExpeditionService Expedition
 
+<div class="menu-root">
 @if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -49,104 +50,127 @@ else{
                      && !u.Id.StartsWith("ur", StringComparison.OrdinalIgnoreCase)
                      && u.State == UnlockHelper.State.Unlocked);
 
-    <div>
-        <h3>Expansion Status</h3>
-        <div>@expansion.Name</div>
-        <div>Duração: @(expDuration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</div>
-        <div>Ganhos</div>
-        @foreach (var coin in expansionStats.CoinsGain)
-        {
-            <div>@coin.Key @coin.Value</div>
-        }
-        @foreach (var resource in expansionStats.ResourcesGain)
-        {
-            <div>@resource.Key @resource.Value</div>
-        }
-        @foreach (var know in expansionStats.KnowledgeGain)
-        {
-            <div>@know.Key @know.Value</div>
-        }
-        @foreach (var click in expansionStats.ClicksMade)
-        {
-            <div>@click.Key @click.Value</div>
-        }
-    </div>
 
-    <div>
-        <h3>Characters In Base</h3>
-        @if (inBase.Count == 0)
-        {
-            <div>Ninguém na base.</div>
-        }
-        else
-        {
-            foreach (var ch in inBase)
+        <section class="@($"menu-panel {UI.PanelClass("expansion-status")}")">
+            <h3 class="title">Expansion Status</h3>
+            <table class="info-table">
+                <thead>
+                    <tr><th colspan="2">@expansion.Name</th></tr>
+                    <tr><th colspan="2">@((expDuration?.ToString("hh\\:mm\\:ss")) ?? "--:--:--")</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var coin in expansionStats.CoinsGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@coin.Key</td>
+                            <td class="info-value">@coin.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                    @foreach (var resource in expansionStats.ResourcesGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@resource.Key</td>
+                            <td class="info-value">@resource.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                    @foreach (var know in expansionStats.KnowledgeGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@know.Key</td>
+                            <td class="info-value">@know.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                    @foreach (var click in expansionStats.ClicksMade)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@click.Key</td>
+                            <td class="info-value">@click.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-basechars")}")">
+            <h3 class="title">Characters In Base</h3>
+            @if (inBase.Count == 0)
             {
-                var id = ch.Id;
-                <button type="button"
-                        class="icon-button"
-                        disabled
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
+                <div>Ninguém na base.</div>
             }
-        }
-    </div>
-
-    <div>
-        <h3>Characters In Expedition</h3>
-        @if (inStage.Count == 0)
-        {
-            <div>Ninguém em Expedição.</div>
-        }
-        else
-        {
-            foreach (var ch in inStage)
+            else
             {
-                var id = ch.Id;
-                <button type="button"
-                        class="icon-button"
-                        disabled
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
-                        @onblur="Tooltips.Clear">
-                    @id
-                </button>
+                <div class="icon-grid">
+                    @foreach (var ch in inBase)
+                    {
+                        var id = ch.Id;
+                        <button type="button"
+                                class="icon-button"
+                                disabled
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
+                                @onblur="Tooltips.Clear">
+                            @id
+                        </button>
+                    }
+                </div>
             }
-        }
-    </div>
+        </section>
 
-    <!-- (3) Unlocked Upgrades (uc+ut+ux) -->
-    <div>
-        <h3>Unlocked Upgrades</h3>
-        @if (!unlockedUpgrades.Any())
-        {
-            <div>Nenhum upgrade concluído.</div>
-        }
-        else
-        {
-            <div>
-                @foreach (var u in unlockedUpgrades)
-                {
-                    var id = u.Id;
-                    <button type="button"
-                            class="icon-button"
-                            disabled
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
-                            @onblur="Tooltips.Clear">
-                        @id
-                    </button>
-                }
-            </div>
-        }
-    </div>
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-stagechars")}")">
+            <h3 class="title">Characters In Expedition</h3>
+            @if (inStage.Count == 0)
+            {
+                <div>Ninguém em Expedição.</div>
+            }
+            else
+            {
+                <div class="icon-grid">
+                    @foreach (var ch in inStage)
+                    {
+                        var id = ch.Id;
+                        <button type="button"
+                                class="icon-button"
+                                disabled
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
+                                @onblur="Tooltips.Clear">
+                            @id
+                        </button>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-upgrades")}")">
+            <h3 class="title">Unlocked Upgrades</h3>
+            @if (!unlockedUpgrades.Any())
+            {
+                <div>Nenhum upgrade concluído.</div>
+            }
+            else
+            {
+                <div class="icon-grid">
+                    @foreach (var u in unlockedUpgrades)
+                    {
+                        var id = u.Id;
+                        <button type="button"
+                                class="icon-button"
+                                disabled
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                                @onblur="Tooltips.Clear">
+                            @id
+                        </button>
+                    }
+                </div>
+            }
+        </section>
 }
+
+</div>
 
 @code {
     private StageModel? _stage;

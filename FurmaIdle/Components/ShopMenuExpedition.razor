@@ -11,116 +11,58 @@
 @inject IUiLogService Log
 @inject IKnowledgeService Knowledge
 
-@if (!Game.IsReady || _stage is null)
-{
-    <div class="contracts-placeholder">Stage não Selecionado</div>
-}
-else
-{
-    var game = Game.CurrentGame;
-    var expedition = _stage.Expedition;
-    var expeditionStats = _stage.ExpeditionStats;
-
-    var isActive = isExpActive(_stage);
-    var partySize = Expedition.GetPartyCap(_stage);
-    var partyIds = expedition.PartyIds;
-
-    var selectedCount = CountLine();
-
-    var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1;
-
-    <div class="expedition-actions">
-        <button type="button"
-                class="expedition-button"
-                disabled="@( !isActive && !canLaunch )"
-                @onclick="OnClickToggleExpedition">
-            @(isActive ? "Encerrar Expedição" : "Iniciar Expedição")
-        </button>
-    </div>
-
-    @if (isActive)
+<div class="menu-root">
+    @if (!Game.IsReady || _stage is null)
     {
-        <!-- Status da expedição -->
-        var started = expedition.StartedAt;
-        var duration = started.HasValue ? (DateTimeOffset.UtcNow - started.Value) : (TimeSpan?)null;
-
-        <div class="status-card">
-
-            <h3>Status</h3>
-            <div class="kv-list">
-                <div class="kv">
-                    <div class="key">Duração:</div><div class="val">
-                        @(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")
-                    </div>
-                </div>
-            </div>
-
-            <h4>Ganhos</h4>
-            <div class="kv-list">
-                @foreach (var coin in expeditionStats.CoinsGain)
-                {
-                    <div class="kv"><div class="key">@coin.Key</div><div class="val">@coin.Value</div></div>
-                }
-                @foreach (var resource in expeditionStats.ResourcesGain)
-                {
-                    <div class="kv"><div class="key">@resource.Key</div><div class="val">@resource.Value</div></div>
-                }
-                @foreach (var click in expeditionStats.ClicksMade)
-                {
-                    <div class="kv"><div class="key">@click.Key</div><div class="val">@click.Value</div></div>
-                }
-            </div>
-
-            <div style="margin-top:.5rem;">
-                <h4>Conhecimento</h4>
-                @{
-                    long cTotal = 0L;
-                    if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
-                        cTotal = v;
-                    var kPreview = Knowledge.KnowledgeGain(_stage, cTotal);
-                }
-                @if (kPreview.Count > 0)
-                {
-                    <div class="stack-list">
-                        @foreach (var kv in kPreview.OrderByDescending(x => x.Value))
-                        {
-                            <div>@kv.Key @kv.Value.ToString("N2")</div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="stack-list">Não aprendemos nada ainda</div>
-                }
-            </div>
-        </div>
-
+        <div class="contracts-placeholder">Stage não Selecionado</div>
     }
     else
     {
-        <!-- Characters inBase -->
+        var game = Game.CurrentGame;
+        var expedition = _stage.Expedition;
+        var expeditionStats = _stage.ExpeditionStats;
+
+        var started = expedition.StartedAt;
+        var duration = started.HasValue ? (DateTimeOffset.UtcNow - started.Value) : (TimeSpan?)null;
+
+        var isActive = isExpActive(_stage);
+        var partySize = Expedition.GetPartyCap(_stage);
+        var partyIds = expedition.PartyIds;
+
+        var selectedCount = CountLine();
+
+        var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1;
+
         var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
         var avaliableChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
-                                   && c.CharState == UnlockHelper.CharState.InBase || c.CharState == UnlockHelper.CharState.InLine)
-                          .OrderBy(c => c.Id)
-                          .ToList();
+        && c.CharState == UnlockHelper.CharState.InBase || c.CharState == UnlockHelper.CharState.InLine)
+        .OrderBy(c => c.Id)
+        .ToList();
 
-        <div>
-            <h3>Characters in Base</h3>
+        <section class="@($"menu-panel {UI.PanelClass("expedition-toggle")}")">
+            <button class="objetive-button"
+                    disabled="@( !isActive && !canLaunch )"
+                    @onclick="OnClickToggleExpedition">
+                @(isActive ? "Encerrar Expedição" : "Iniciar Expedição")
+            </button>
+        </section>
+
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">
+            <h3 class="title">Characters in Base</h3>
             @if (avaliableChars.Count == 0)
             {
                 <div>Nenhum personagem na base.</div>
             }
             else
             {
-                <div class="characters-grid">
+                <div class="image-grid">
                     @foreach (var ch in avaliableChars)
                     {
                         var selected = ch.CharState == UnlockHelper.CharState.InLine;
                         var canToggle = Expedition.CanToggleChar(_stage, ch.Id);
 
                         <button type="button"
-                                class="icon-button @(selected ? "selected" : null)"
+                                class="character-button @(selected ? "selected" : null)"
                                 disabled="@( !canToggle )"
                                 @onclick="() => OnToggleChar(ch.Id)"
                                 @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
@@ -132,9 +74,73 @@ else
                     }
                 </div>
             }
-        </div>
+        </section>
+
+        <section class="@($"menu-panel {UI.PanelClass("expedition-status")}")">
+            <h3 class="title">Expedition Status</h3>
+            <table class="info-table">
+                <thead>
+                    <tr><th colspan="2">@(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var coin in expeditionStats.CoinsGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@coin.Key</td>
+                            <td class="info-value">@coin.Value.ToString("N2")</td>
+                        </tr>
+                    }
+                    @foreach (var resource in expeditionStats.ResourcesGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@resource.Key</td>
+                            <td class="info-value">@resource.Value.ToString("N2")</td>
+                        </tr>
+                    }
+                    @foreach (var click in expeditionStats.ClicksMade)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@click.Key</td>
+                            <td class="info-value">@click.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+
+        <section class="@($"menu-panel {UI.PanelClass("expedition-gain")}")">
+            <h3 class="title">Expedition Gains</h3>
+            @{
+                long cTotal = 0L;
+                if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
+                    cTotal = v;
+                var kPreview = Knowledge.KnowledgeGain(_stage, cTotal);
+                if (kPreview.Count > 0)
+                {
+                    <table class="info-table">
+                        <thead class="info-line"><tr>@(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</tr></thead>
+                        <tbody>
+                            @foreach (var know in kPreview.OrderByDescending(x => x.Value))
+                            {
+                                <tr class="info-row">
+                                    <td class="info-name">@know.Key</td>
+                                    <td class="info-value">@know.Value.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="info-entry">
+                        <div class="info-line">Não aprendemos nada ainda</div>
+                    </div>
+                }
+        
+            }
+        </section>
     }
-}
+</div>
 
 @code {
     private StageModel? _stage;

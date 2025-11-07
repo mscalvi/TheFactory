@@ -68,13 +68,21 @@ namespace FurmaIdle.Services
         #region Menu Panels
         private readonly HashSet<string> _hidden = new(StringComparer.Ordinal);
         private static readonly string[] AllPanels = {
-            "knowledge",
+            "tech-knowledge",
             "tech-available",
             "tech-done",
             "up-objetive",
             "up-expansion",
             "up-expedition",
             "up-permanents",
+            "expedition-toggle",
+            "expedition-gain",
+            "expedition-status",
+            "expedition-party",
+            "expansion-status",
+            "expansion-basechars",
+            "expansion-stagechars",
+            "expansion-upgrades",
         };
 
         private readonly List<string> GamePanels = new(AllPanels);
@@ -282,6 +290,13 @@ namespace FurmaIdle.Services
                         if (IsHidden("up-permanents"))
                         {
                             ShowPanel("up-permanents");
+                        }
+                    }
+                    if (help == "10")
+                    {
+                        if (IsHidden("up-objetive"))
+                        {
+                            ShowPanel("up-objetive");
                         }
                     }
                     break;

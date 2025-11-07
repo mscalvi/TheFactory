@@ -34,21 +34,18 @@
         .OrderBy(t => t.Id);
     }
 
-    <section class="@($"menu-panel {UI.PanelClass("knowledge")}")">
-        <h3 class="title">Conhecimentos Acumulados</h3>
-        <table class="knowledge-table">
-            <thead>
-                <tr><th>Conhecimento</th><th style="text-align:right">Total</th></tr>
-            </thead>
+    <section class="@($"menu-panel {UI.PanelClass("tech-knowledge")}")">
+        <h3 class="title">Conhecimentos</h3>
+        <table class="info-table">
             <tbody>
                 @foreach (var k in unlockedKnowledges)
                 {
                     var total = Total(k.Id);
-                    <tr class="knowledge-row"
+                    <tr class="info-row"
                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, k.Id, stage!.Id))"
                         @onmouseleave="Tooltips.Clear">
-                        <td class="knowledge-name">@k.Name</td>
-                        <td class="knowledge-total">@total.ToString("N0")</td>
+                        <td class="info-name">@k.Name</td>
+                        <td class="info-value">@total.ToString("N0")</td>
                     </tr>
                 }
             </tbody>
@@ -80,7 +77,7 @@
                 <span class="icon-button"
                       @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, t.Id, stage.Id))"
                       @onmouseleave="Tooltips.Clear">
-                    @t.Name
+                    @t.Id
                 </span>
             }
         </div>

@@ -85,7 +85,7 @@ else
                         <div class="pc-char"
                              @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, c.Id, c.SpecialtyId))"
                              @onmouseout="Tooltips.Clear">
-                            <span class="party-icon">
+                            <span class="character-button">
                                 <img src="@CharImg(id)" alt="@c.Id"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
                                 <span class="icon-fallback">@c.Id</span>
