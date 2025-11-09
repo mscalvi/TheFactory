@@ -13,14 +13,6 @@ namespace FurmaIdle.Services
         double GetKnowledgeBurst(GameModel game, string coinId, ExpansionModel expansion);
     }
 
-    public sealed record KnowledgePreview(
-        string KnowledgeId,
-        double Factor,          
-        double KPrev,           
-        double CoinsNeededNext,
-        double? EtaSeconds
-    );
-
     public sealed class KnowledgeService : IKnowledgeService
     {
         private readonly IUiLogService _log;

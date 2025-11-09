@@ -219,6 +219,22 @@ namespace FurmaIdle.Services
                     Console.Write("[UI] Expansion Liberado");
 
                     UnlockMenu("i1");
+                    if (IsHidden("expansion-basechars"))
+                    {
+                        ShowPanel("expansion-basechars");
+                    }
+                    if (IsHidden("expansion-stagechars"))
+                    {
+                        ShowPanel("expansion-stagechars");
+                    }
+                    if (IsHidden("expansion-updates"))
+                    {
+                        ShowPanel("expansion-updates");
+                    }
+                    if (IsHidden("expansion-status"))
+                    {
+                        ShowPanel("expansion-status");
+                    }
 
                     SetNotificationMenu("i1");
                     break;
@@ -236,6 +252,22 @@ namespace FurmaIdle.Services
                     Console.Write("[UI] Expedition Liberado");
 
                     UnlockMenu("i3");
+                    if (IsHidden("expedition-gain"))
+                    {
+                        ShowPanel("expedition-gain");
+                    }
+                    if (IsHidden("expedition-status"))
+                    {
+                        ShowPanel("expedition-status");
+                    }
+                    if (IsHidden("expedition-party"))
+                    {
+                        ShowPanel("expedition-party");
+                    }
+                    if (IsHidden("expedition-toggle"))
+                    {
+                        ShowPanel("expedition-toggle");
+                    }
 
                     SetNotificationMenu("i3");
                     break;
@@ -307,7 +339,6 @@ namespace FurmaIdle.Services
                     }
                     break;
                 case "FirstTechPurchase":
-
                     if (IsHidden("tech-done"))
                     {
                         ShowPanel("tech-done");
