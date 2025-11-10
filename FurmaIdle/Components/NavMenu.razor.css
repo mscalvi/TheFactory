@@ -1,8 +1,6 @@
-﻿:host {
-    display: block;
-    height: 100%;
-    width: 100%;
-    min-width: 0;
+﻿.game-area{
+    gap: 0px;
+    padding: 1px;
 }
 
 .nav-menu {

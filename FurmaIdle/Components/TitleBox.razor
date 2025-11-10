@@ -7,7 +7,7 @@
 @inject ILocateService Locate
 
 
-
+<div class="game-area">
 @if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -31,14 +31,11 @@ else
     var expansionName = expansion.Name;
 
     <div class="title-strip">
-        <div class="title-center">
-
             <div class="t-line t-title ellipsis">Exploradores de Furma — @expansionName</div>
             <div class="t-line t-locals ellipsis">@stageName: @localsText</div>
-
-        </div>
     </div>
 }
+</div>
 
 @code {
     private StageModel? _stage;

@@ -17,6 +17,7 @@
 @inject IResourcesService Resource
 @inject IContractsService Contracts
 
+<div class="game-area">
 @if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -117,6 +118,7 @@ else
         }
     </section>
 }
+</div>
 
 @code {
     private StageModel? _stage;

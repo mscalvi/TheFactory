@@ -15,7 +15,7 @@
 }
 else
 {
-    <div class="click-area-root" @ref="_root" @onpointerdown="HandleClick">
+    <div class="game-area" @ref="_root" @onpointerdown="HandleClick">
         <img class="click-stage-img"
              src="@StageImagePath()"
              alt="@($"Stage {_stage?.Name ?? _stage?.Id ?? "—"}")"

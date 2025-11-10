@@ -4,6 +4,7 @@
 
 @using FurmaIdle.Models
 
+<div class="game-area">
 @if (!Game.IsReady || _stage is null || string.IsNullOrWhiteSpace(_stage.Id))
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -56,8 +57,8 @@ else
             <div>Selecione um painel do menu.</div>
             break;
     }
-
 }
+</div>
 
 
 @code {

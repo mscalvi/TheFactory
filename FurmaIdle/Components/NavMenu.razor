@@ -7,17 +7,9 @@
 @using FurmaIdle.Models
 @using FurmaIdle.Services
 
-<div class="nav-menu">
+<div class="game-area nav-menu">
     <div class="nav-col">
-        @if (!Ui.VisibleNav.Any())
-        {
-            <div>
-                -
-            </div>
-        }
-        else
-        {
-            @foreach (var it in Ui.VisibleNav)
+        @foreach (var it in Ui.VisibleNav)
             {
                 var isSelected = string.Equals(Ui.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
 
@@ -29,7 +21,6 @@
                     <span class="nav-glyph">@it.Label</span>
                 </button>
             }
-        }
     </div>
 </div>
 

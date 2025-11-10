@@ -6,6 +6,7 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService UiLog
 
+<div class="game-area">
 <section class="text-box panel" role="status" aria-live="polite">
     <div class="msg-body" @ref="_msgBodyRef">
         <div class="msg-list">
@@ -34,6 +35,7 @@
         </div>
     </div>
 </section>
+</div>
 
 @code {
     ElementReference _msgBodyRef;
