@@ -9,27 +9,20 @@
 @inject IIncomeService Income
 @inject IClickService Clicks
 
-@if (!Game.IsReady || _stage is null)
-{
-    <div class="contracts-placeholder">Stage não Selecionado</div>
-}
-else
-{
-    <div class="game-area" @ref="_root" @onpointerdown="HandleClick">
-        <img class="click-stage-img"
-             src="@StageImagePath()"
-             alt="@($"Stage {_stage?.Name ?? _stage?.Id ?? "—"}")"
-             draggable="false" />
+<div class="game-area" @ref="_root" @onpointerdown="HandleClick">
+    <img class="click-stage-img"
+         src="@StageImagePath()"
+         alt="@($"Stage {_stage?.Name ?? _stage?.Id ?? "—"}")"
+         draggable="false" />
 
-        @foreach (var p in _pops)
-        {
-            <span class="click-pop"
-                  style="left:@p.Xpx; top:@p.Ypx; --dx:@p.Dxpx; --dy:@p.Dypx; --dur:@p.Durms;">
-                @p.Text
-            </span>
-        }
-    </div>
-}
+    @foreach (var p in _pops)
+    {
+        <span class="click-pop"
+              style="left:@p.Xpx; top:@p.Ypx; --dx:@p.Dxpx; --dy:@p.Dypx; --dur:@p.Durms;">
+            @p.Text
+        </span>
+    }
+</div>
 
 @code {
     [Inject] IJSRuntime JS { get; set; } = default!;
@@ -79,7 +72,12 @@ else
 
         await Clicks.Click();
 
-        var pos = await JS.InvokeAsync<Pos>("ClickArea.getPos", _root, e);
+        var pos = await JS.InvokeAsync<Pos>(
+            "ClickArea.getPos",
+            _root,
+            e.ClientX,
+            e.ClientY
+        );
 
         var originOffsetY = _rng.Next(4, 9);     // 4..8 px acima
         var originOffsetX = _rng.Next(-5, 6);    // -5..+5 px

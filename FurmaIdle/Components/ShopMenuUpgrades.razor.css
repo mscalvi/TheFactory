@@ -9,21 +9,21 @@
 }
 
 /* ===== ÁREA 1 ===== */
-.objetive {
+.up-objetive {
     grid-area: up-objective;
     padding: 14px;
     display: grid;
     gap: 10px;
 }
 
-.permanents {
+.up-permanents {
     grid-area: up-permanents;
 }
 
-.expansion {
+.up-expansion {
     grid-area: up-expansion;
 }
 
-.expedition {
+.up-expedition {
     grid-area: up-expedition;
 }

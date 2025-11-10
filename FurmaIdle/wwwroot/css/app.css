@@ -38,7 +38,6 @@ html, body {
 .game-area {
     border: 1px solid rgb(122, 38, 1);
     border-radius: 10px;
-    padding: 1px;
     width: 100%;
     height: 100%;
     min-height: 0;
@@ -72,66 +71,6 @@ html, body {
         font-weight: 500;       
         margin: 0 0 10px;
     }
-
-    .menu-panel .scroll-y {
-        overflow: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-
-        .menu-panel .scroll-y::-webkit-scrollbar {
-            display: none;
-        }
-
-    .menu-panel .scroll-y {
-        position: relative; /* para ancorar os overlays */
-    }
-
-    /* Fades + setinhas (topo e base) */
-        .menu-panel .scroll-y::before,
-        .menu-panel .scroll-y::after {
-            content: "";
-            position: sticky; /* gruda no topo/base enquanto rola */
-            left: 0;
-            right: 0;
-            height: 28px;
-            pointer-events: none; /* não bloqueia cliques */
-            display: block;
-            z-index: 1;
-            /* fade suave para indicar mais conteúdo */
-            background-image: linear-gradient(to bottom, rgba(15,15,18,.9), rgba(15,15,18,0)), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e7e7ea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-            background-repeat: no-repeat;
-            background-position: center 70%, center;
-            background-size: 100% 100%, 16px 16px;
-            opacity: .85;
-            transition: opacity .15s ease;
-        }
-
-    /* topo */
-        .menu-panel .scroll-y::before {
-            top: 0;
-            transform: rotate(180deg); /* reaproveita a seta */
-        }
-
-    /* base */
-        .menu-panel .scroll-y::after {
-            bottom: 0;
-        }
-
-/* Esconde quando não há mais para cima/baixo */
-    .menu-panel .at-top::before {
-        opacity: 0;
-    }
-
-    .menu-panel .at-bottom::after {
-        opacity: 0;
-    }
-
-    .menu-panel .no-scroll::before,
-    .menu-panel .no-scroll::after {
-        opacity: 0;
-    }
-
 
 .icon-grid {
     display: grid;

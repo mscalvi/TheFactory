@@ -1,4 +1,8 @@
-﻿.click-stage-img {
+﻿.game-area {
+    position: relative !important;
+}
+
+.click-stage-img {
     pointer-events: none;
     -webkit-user-drag: none;
     user-drag: none;

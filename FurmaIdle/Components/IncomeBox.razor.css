@@ -1,15 +1,9 @@
 ﻿.game-area {
-    grid-template-rows: 1fr 1fr;
-}
-
-/* Faixas */
-.band {
     display: grid;
-    grid-template-columns: repeat(var(--count, 1), minmax(0, 1fr));
-    align-items: stretch;
-    justify-items: stretch;
-    overflow: hidden;
-    background: var(--panel-bg, rgba(255,255,255,0.02));
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+        "coins"
+        "resources";
 }
 
 .coin-camp {
@@ -18,13 +12,27 @@
     align-items: center;
     justify-content: center;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    height: 100%;
 }
 
-/* Pequenas diferenças de cor entre as faixas (opcional) */
-.band-coins {
+.coins {
+    grid-area: coins;
+    display: grid;
+    grid-template-columns: repeat(var(--count, 1), minmax(0, 1fr));
+    align-items: stretch;
+    justify-items: stretch;
+    overflow: hidden;
     background: var(--res-bg, rgba(160,255,100,0.05));
+    min-height: 0;
 }
 
-.band-resources {
+.resources {
+    grid-area: resources;
+    display: grid;
+    grid-template-columns: repeat(var(--count, 1), minmax(0, 1fr));
+    align-items: stretch;
+    justify-items: stretch;
+    overflow: hidden;
     background: var(--coins-bg, rgba(80,180,255,0.05));
+    min-height: 0;
 }

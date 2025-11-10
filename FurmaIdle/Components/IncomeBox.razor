@@ -14,7 +14,8 @@
         var coins = GetCoinTiles();
         var coinCount = coins.Count;
     }
-    <div class="band band-coins" style="--count:@(coinCount)">
+
+    <div class="coins" style="--count:@(coinCount)">
         @foreach (var it in coins)
         {
             <div class="coin-camp">
@@ -37,7 +38,7 @@
         var res = GetResourceTiles();
         var resCount = res.Count;
     }
-    <div class="band band-resources" style="--count:@(resCount)">
+    <div class="resources" style="--count:@(resCount)">
         @foreach (var it in res)
         {
             <div class="coin-camp">
@@ -78,7 +79,6 @@
 
         if (game?.Coins is null) return list;
 
-        // produção por segundo por moeda (dos contratos)
         var perSecStage = Contracts.GetStageContractsPerSecond(game, game.SelectedStageId);
         var perSecGame = Contracts.GetGameContractsPerSecond(game);
 
@@ -87,7 +87,6 @@
             var coin = kv.Value;
             if (coin.State != UnlockHelper.State.Unlocked) continue;
 
-            // total atual
             long gameTotal = 0;
             long stageTotal = 0;
             foreach (var stage in game.Stages)
@@ -128,7 +127,6 @@
             var res = kv.Value;
             if (res.State != UnlockHelper.State.Unlocked) continue;
 
-            // total atual (se você guarda em ExpeditionStats)
             long total = 0;
             foreach (var expansion in game.Expansions)
             {

@@ -35,72 +35,66 @@
                 {
                     var level = lvl;
 
-                    <div class="contracts-level">
+                    <div class="contracts-level"
+                         @onmouseenter="() => OnEnterLevel(level)"
+                         @onmouseleave="() => OnLeaveLevel(level)">
                         @if (level > contractsInfo.ContractsLevel)
                         {
-                            // <div class="level-locked">Nível de Contrato Bloqueado</div>
-                            <div class="level-locked">
+                            <div class="level-noChosen">
                                 <img src="image/contracts-blockedLevel" alt="Nível de Contrato Bloqueado" />
                             </div>
                         }
                         else
                         {
-                            var lvlChosen = _stage.lockedContractLevel.Contains(level) == true;
-                            var expanded = _expandedLevel == level;
-
-                            if (lvlChosen)
+                            @if (ShowOverlay(level))
                             {
-                                var chosenCon = ChosenContract(level);
-                                @if (chosenCon is null)
+                                <div class="level-noChosen">
+                                    <img src="image/contracts-@level" alt="Passe o mouse para ver contratos" />
+                                </div>
+                            }
+                            else
+                            {
+
+                                @if (HasChosen(level))
                                 {
-                                    // <div class="level-chosen">Contrato deste nível não foi escolhido.</div>
-                                    <div class="level-chosen">
-                                        <img src="image/contracts-chosenBug" alt="Contrato do Nível não Escolhido" />
-                                    </div>
-                                }
-                                else
-                                {
-                                    var chosen = chosenCon;
-                                    var qty = _stage.ActiveContracts?.TryGetValue(chosen.Id, out var q) == true ? q : 0;
+                                    var chosenCon = ChosenContract(level);
+                                    var qty = _stage.ActiveContracts?.TryGetValue(chosenCon.Id, out var q) == true ? q : 0;
+
                                     var hasCapacity = HasCapacity(_stage);
-                                    var canBuy = CanPurchase(chosen, _stage!);
+                                    var canBuy = CanPurchase(chosenCon, _stage!);
                                     var disabled = !hasCapacity || !canBuy;
 
-                                    var rp = Contracts.GetContractInfo(chosen, _stage);
+                                    var rp = Contracts.GetContractInfo(chosenCon, _stage);
                                     var coin = Locate.LocateCoin(Game.CurrentGame, rp.CoinId);
-                                    var (costTotal, costCoinName) = CostOf(chosen.Id);
+                                    var (costTotal, costCoinName) = CostOf(chosenCon.Id);
 
-                                    <div class="contracts-picked">
-                                        <div class="cp-top">
-                                            <button type="button"
-                                                    class="contract-button @(disabled ? "is-locked" : null)"
+                                    <div class="contract-card">
+                                        <div class="contract-card-top">
+                                            <button class="contract-button @(disabled ? "is-locked" : null)"
                                                     disabled="@disabled"
-                                                    @onclick="() => BuyContract(chosen.Id)"
-                                                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, _stage.Id))"
+                                                    @onclick="() => BuyContract(chosenCon.Id)"
+                                                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
                                                     @onmouseleave="Tooltips.Clear"
-                                                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, _stage.Id))"
+                                                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
                                                     @onblur="Tooltips.Clear">
-                                                @chosen.Id
+                                                @chosenCon.Id
                                             </button>
 
-                                            <div class="contract-card">
-                                                <div class="cc-name">x<strong>@qty</strong> contratos para @chosen.Name</div>
+                                            <div class="contract-info">
+                                                <div class="cc-name">x<strong>@qty</strong> contratos para @chosenCon.Name</div>
                                                 <div class="cc-cycle">@rp.TotalPerCycle.ToString("N2") @coin?.Name a cada @rp.SecondsPerCycle.ToString("N2")s</div>
                                                 <div class="cc-cycle">@rp.TotalPerSecond.ToString("N2") @coin.Name/s - Próximo: @costTotal @costCoinName</div>
                                             </div>
                                         </div>
 
-                                        @{
-                                            var prog = Math.Clamp(Contracts.GetContractProgress(Game.CurrentGame, _stage.Id, chosen.Id), 0.0, 1.0);
-                                            var pct = Math.Clamp(prog * 100, 0, 100);
+                                        <div class="contract-card-bottom">
+                                            @{
+                                                var prog = Math.Clamp(Contracts.GetContractProgress(Game.CurrentGame, _stage.Id, chosenCon.Id), 0.0, 1.0);
 
-                                            const int steps = 25;
-                                            // pinta ao ENTRAR no step; 0% -> 0, 0.1 step -> 1, 100% -> 25
-                                            int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
-                                        }
-                                        <div class="cp-bottom">
-                                            <div class="cp-bar cp-bar-chunked" role="progressbar"
-                                                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="@pct.ToString("N0")">
+                                                const int steps = 25;
+                                                int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
+                                            }
+                                            <div class="contract-progress-bar">
                                                 @for (int i = 0; i < 25; i++)
                                                 {
                                                     var isFilled = i < filled;
@@ -108,51 +102,33 @@
                                                 }
                                             </div>
                                         </div>
-
-
                                     </div>
 
-                                }
-                            }
-                            else
-                            {
-                                if (!expanded)
-                                {
-                                    <button type="button" class="level-button" @onclick="() => ToggleLevel(level)">
-                                        Contrato Nível @level
-                                    </button>
                                 }
                                 else
                                 {
-                                    <div class="level-header">
-                                        <strong>Contratos de nível @level</strong>
-                                        <button type="button" class="back-button icon-button" @onclick="CloseLevel">Voltar</button>
-                                    </div>
-
                                     var ids = Contracts.AvaliableContracts(Game.CurrentGame, _stage.Id);
                                     var list = ids
-                                        .Select(id => Locate.LocateContract(Game.CurrentGame, id))
-                                        .Where(c => c is not null && c.Level == level)
-                                        .ToList();
+                                    .Select(id => Locate.LocateContract(Game.CurrentGame, id))
+                                    .Where(c => c is not null && c.Level == level)
+                                    .ToList();
 
                                     @if (list.Count == 0)
                                     {
-                                        // <div class="no-contracts">Nenhum contrato disponível neste nível.</div>
-                                        <div class="no-contracts">
+                                        <div class="level-noChosen">
                                             <img src="image/contracts-noContracts" alt="Nenhum Contrato Desbloqueado" />
                                         </div>
                                     }
                                     else
                                     {
-                                        <div class="contracts-list">
+                                        <div class="icon-grid">
                                             @foreach (var c in list)
                                             {
                                                 var hasCapacity = HasCapacity(_stage);
                                                 var canBuy = CanPurchase(c, _stage);
                                                 var disabled = !hasCapacity || !canBuy;
 
-                                                <button type="button"
-                                                        class="contract-button @(disabled ? "is-locked" : null)"
+                                                <button class="icon-button @(disabled ? "is-locked" : null)"
                                                         disabled="@disabled"
                                                         @onclick="() => BuyContract(c.Id)"
                                                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, _stage.Id))"
@@ -177,7 +153,6 @@
 
 @code {
     private StageModel? _stage;
-    private int? _expandedLevel;
 
     private string? _lastStageId;
     private bool _lastActive;
@@ -200,7 +175,6 @@
         if (!Game.IsReady || string.IsNullOrWhiteSpace(game.SelectedStageId))
         {
             _stage = null;
-            _expandedLevel = null;
             _lastStageId = null;
             _lastActive = false;
             return;
@@ -213,23 +187,12 @@
         var stageChanged = !string.Equals(_lastStageId, game.SelectedStageId, StringComparison.Ordinal);
         var activeDropped = _lastActive && !activeNow;
 
-        if (maybeCollapse && (stageChanged || activeDropped))
-            _expandedLevel = null;
-
         _lastStageId = game.SelectedStageId;
         _lastActive = activeNow;
     }
 
     private static bool IsExpeditionActive(StageModel? st)
         => st?.Expedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
-
-    private void ToggleLevel(int lvl)
-    {
-        _expandedLevel = (_expandedLevel == lvl) ? null : lvl;
-        StateHasChanged();
-    }
-
-    private void CloseLevel() => _expandedLevel = null;
 
     private async Task BuyContract(string contractId)
     {
@@ -240,7 +203,6 @@
 
         await Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id);
 
-        _expandedLevel = null;
         StateHasChanged();
     }
 
@@ -280,4 +242,16 @@
             _ => id
         };
     }
+
+    private HashSet<int> _hoverLevels = new();
+
+    private bool HasChosen(int level)
+        => ChosenContract(level) is not null;
+
+    private bool ShowOverlay(int level)
+        => !HasChosen(level) && !_hoverLevels.Contains(level);
+
+    private void OnEnterLevel(int level) => _hoverLevels.Add(level);
+    private void OnLeaveLevel(int level) => _hoverLevels.Remove(level);
+
 }

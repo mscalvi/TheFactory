@@ -1,18 +1,8 @@
-﻿:root {
-    /* mantido por compat, não usado como altura fixa do slot */
-    --level-h: 88px;
-}
-
-/* estado vazio */
-.contracts-empty {
-    position: relative;
+﻿.contracts-empty {
     width: 100%;
     height: 100%;
     display: grid;
     place-items: center;
-    background: var(--panel-bg, rgba(255,255,255,.03));
-    border: 1px solid var(--panel-border, rgba(255,255,255,.06));
-    border-radius: 10px;
 }
 
     .contracts-empty > img {
@@ -21,117 +11,73 @@
         object-fit: cover;
         object-position: center;
         display: block;
-        border-radius: 10px;
     }
 
 .contracts-layout {
     display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 2px;
+    grid-template-rows: 40px 1fr;
+    grid-template-areas:
+        "contract-cap"
+        "contract-levels";
+    gap: 1px;
     height: 100%;
-    min-height: 0;
 }
 
 .contracts-capbar {
-    display: grid;
+    grid-area: contract-cap;
     place-items: center;
-    padding: 6px;
-    gap: 2px;
-    grid-auto-flow: column;
+    padding: 2px;
     justify-content: center;
-    font-weight: 400;
-    background: var(--panel-bg, rgba(255,255,255,.03));
     border: none;
     font-size: clamp(.86rem, .9vw, .98rem);
 }
 
 .contracts-grid {
+    grid-area: contract-levels;
     display: grid;
     grid-template-rows: repeat(var(--levels), minmax(0,1fr));
-    gap: 0px;
+    gap: 1px;
     height: 100%;
     min-height: 0;
+}
+
+.level-noChosen {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .contracts-level {
     box-sizing: border-box;
-    min-height: 0;
-    overflow: hidden;
-    display: grid;
-    place-items: center;
-    padding: 4px 6px;
-    background: transparent;
-}
-
-    .contracts-level > * {
-        margin: 0;
-        min-height: 0;
-    }
-
-.level-locked, .level-chosen, .no-contracts {
     height: 100%;
-    width: 100%;
-    display: grid;
-    place-items: center;
-    padding: 0 8px;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 2px;
+    border: 1px dashed rgb(9, 48, 16, .55);
+    border-radius: 10px;
 }
 
-/* =========================
-   Modo "escolher contrato"
-   ========================= */
-.level-header {
-    width: 100%;
+.contract-card {
+    grid-area: contract-info;
     display: grid;
-    grid-auto-flow: column;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 6px;
-}
-
-.level-button, .back-button {
-    height: 100%;
-    display: grid;
-    place-items: center;
-    padding: 0 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.contracts-list {
-    width: 100%;
-    max-height: 100%;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px,1fr));
-    gap: 0px 1px;
-    justify-items: center;
-}
-
-/* =========================
-   Nível já escolhido (card)
-   ========================= */
-.contracts-picked {
-    display: grid;
-    gap: 4px;
+    gap: 2px;
     width: 100%;
     height: 100%;
-    min-height: 0;
-    /* topo elástico + barra com --bar-h */
-    grid-template-rows: minmax(0, 1fr) var(--bar-h);
+    grid-template-rows: 1fr 20px;
+    grid-template-areas:
+        "contract-info"
+        "contract-progress";
 }
 
-/* TOP: ícone + botão e (opcional) card-resumo */
-.cp-top {
-    position: relative;
+.contract-card-top {
+    grid-area: contract-info;
     z-index: 1;
     display: grid;
     grid-template-columns: 70px 1fr;
-    gap: 5px;
+    gap: 2px;
     min-height: 0;
     overflow: hidden;
     justify-items: center;
@@ -140,28 +86,10 @@
     justify-content: center;
 }
 
-    .cp-top .contract-button {
-        height: 100%;
-        min-height: 0;
-        display: grid;
-        place-items: center;
-        padding: 0 6px;
-        font-size: clamp(.72rem, .78vw, .88rem);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        align-items: center;
-        justify-items: center;
-        align-self: stretch;
-        justify-content: center;
-    }
-
-/* card compacto dentro do topo (se usado) */
-    .cp-top .contract-card {
+    .contract-card-top .contract-info {
         display: grid;
         grid-auto-rows: min-content;
         align-content: center;
-        gap: 2px;
         padding: 2px 4px;
         background: var(--panel-bg, rgba(255,255,255,.04));
         border: 1px solid var(--panel-border, rgba(255,255,255,.08));
@@ -173,8 +101,8 @@
         font-size: clamp(.6rem, .84vw, .9rem);
     }
 
-        .cp-top .contract-card .cc-name,
-        .cp-top .contract-card .cc-cycle {
+        .contract-card-top .contract-info .cc-name,
+        .contract-card-top .contract-info .cc-cycle {
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
@@ -182,146 +110,38 @@
             padding: 1px;
         }
 
-        .cp-top .contract-card .cc-name {
-            font-weight: 700;
+        .contract-card-top .contract-info .cc-name {
+            font-weight: 400;
         }
 
-/* =========================
-   Rodapé: barra + legenda
-   ========================= */
-.cp-bottom {
-    position: relative;
-    z-index: 0;
+.contract-card-bottom {
+    grid-area: contract-progress;
     display: grid;
     align-content: center;
-    min-height: 0;
     overflow: hidden;
-    grid-template-rows: var(--bar-h) !important;
-    gap: 0 !important;
+    min-height: 20px;
+    height: 100%;
 }
 
-/* barra segmentada (20 blocos), elástica */
-.cp-bar.cp-bar-chunked {
+.contract-progress-bar {
     display: grid;
     grid-template-columns: repeat(25, 1fr);
-    gap: calc(var(--bar-h) * 0.125); /* ~2px quando 14–16px */
+    gap: 1px;
     width: 100%;
-    height: var(--bar-h);
-    border-radius: var(--bar-h); /* pílula perfeita */
+    height: 100%;
+    min-height: 20px;
     background: rgba(255,255,255,.08);
     overflow: hidden;
+    align-items: end;
 }
 
-    .cp-bar.cp-bar-chunked .chunk {
-        height: 100%;
-        border-radius: calc(var(--bar-h) * 0.125);
-        background: rgba(255,255,255,.12);
-        transition: background 120ms linear;
+    .contract-progress-bar .chunk {
+        height: 70%;
+        background: rgba(191, 113, 61, 0.50);
+        transition: background 120ms linear, height 120ms linear;
     }
 
-        .cp-bar.cp-bar-chunked .chunk.is-filled {
-            background: rgba(255,255,255,.55);
+        .contract-progress-bar .chunk.is-filled {
+            height: 90%;
+            background: rgba(67, 219, 219, 0.50);
         }
-
-/* ===== Compat: se em alguma tela ainda vier o markup antigo ===== */
-.contract-selected {
-    position: relative;
-    height: var(--bar-h);
-    border-radius: var(--bar-h);
-    background: rgba(255,255,255,.08);
-    overflow: hidden;
-}
-
-.contract-progress {
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 0;
-    background: rgba(255,255,255,.35);
-}
-
-.contract-steps {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(20, 1fr);
-    gap: calc(var(--bar-h) * 0.125);
-    height: 100%;
-    padding: 0 calc(var(--bar-h) * 0.25);
-    min-width: 0;
-}
-
-.step {
-    height: 100%;
-    border-radius: calc(var(--bar-h) * 0.125);
-    background: rgba(255,255,255,.12);
-}
-
-    .step.is-on {
-        background: rgba(255,255,255,.55);
-    }
-
-/* ===== Higiene: ninguém “trava” a altura ===== */
-.contracts-grid,
-.contracts-level,
-.contracts-picked,
-.contract-card,
-.cp-top,
-.cp-bottom {
-    min-height: 0;
-}
-
-
-
-/* Adicionados depois */
-
-/* ===== Mobile / telas estreitas ===== */
-@media (max-width: 680px) {
-    /* barra um pouquinho maior que no desktop muito estreito */
-    .contracts-root {
-        --bar-h: clamp(10px, 2.4vw, 14px);
-    }
-
-    /* capbar legível e compacta */
-    .contracts-capbar {
-        padding: 4px 8px;
-        gap: 4px;
-        font-size: clamp(.92rem, 3.4vw, 1rem);
-    }
-
-    /* lista (N níveis) continua “linha fina” entre itens */
-    .contracts-grid {
-        gap: 0;
-    }
-
-    .contracts-level {
-        padding: 3px 6px;
-    }
-
-    /* topo do slot: ícone menor, menos gap */
-    .cp-top {
-        grid-template-columns: 56px 1fr; /* antes 80px */
-        gap: 4px;
-    }
-
-        /* botão: aumenta o mínimo de leitura e ainda corta com ellipsis */
-        .cp-top .contract-button {
-            padding: 0 6px;
-            font-size: clamp(.85rem, 3.3vw, .98rem);
-            height: 100%;
-        }
-
-    /* opcional: esconder o card-resumo no topo para dar espaço ao botão */
-    .contract-card {
-        display: none;
-    }
-
-    /* legenda da barra um pouco menor */
-    .cp-eta {
-        font-size: .78rem;
-    }
-
-    /* lista de contratos (modo escolher) com botões mais altos e fonte legível */
-    .contracts-list .contract-button {
-        height: clamp(36px, 4.2vh, 44px);
-        font-size: clamp(.9rem, 3.3vw, 1rem);
-    }
-}

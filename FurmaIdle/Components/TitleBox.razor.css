@@ -1,10 +1,13 @@
-﻿.t-line {
+﻿.game-area {
+    align-content: center;
+}
+
+.t-line {
     width: 100%;
-    min-width: 0; /* habilita ellipsis */
+    min-width: 0;
     min-height: 0;
 }
 
-/* tipografia */
 .t-title {
     font-weight: 800;
     font-size: clamp(1rem, 2.2vw, 1.25rem);
@@ -18,14 +21,15 @@
     opacity: .95;
 }
 
-/* utilitários */
 .ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* só pra garantir que NENHUM filho crie scroll */
 .title-strip * {
     max-width: 100%;
+    height: 100%;
+    text-align: center;
+    align-content: center;
 }
