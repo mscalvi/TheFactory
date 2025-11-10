@@ -1,13 +1,11 @@
 ﻿.game-grid {
     display: grid;
-    grid-template-columns: 76px minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: 66px minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
     grid-template-rows: 76px 76px minmax(0, 1fr);
     grid-template-areas:
         "nav text title income"
         "nav text stage income"
         "nav shop click contracts";
-    gap: 1px;
-    padding: 1px;
     background: #0f0f12;
     color: #e7e7ea;
     transform: scale(var(--ui-scale));

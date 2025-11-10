@@ -15,7 +15,6 @@
     min-height: 0;
     max-height: none;
     border: 1px solid var(--panel-border, rgba(255,255,255,.08));
-    border-radius: 10px;
     background: var(--panel-bg, rgba(255,255,255,.03));
     padding: 8px 12px;
     box-sizing: border-box;

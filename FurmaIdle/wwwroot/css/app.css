@@ -20,7 +20,6 @@ html, body {
 
 .menu-root {
     display: grid;
-    gap: 2px;
     height: 100%;
     min-height: 0;
     overflow: hidden;
@@ -28,14 +27,11 @@ html, body {
 
 .menu-section {
     display: grid;
-    gap: 3px;
 }
 
 .menu-panel {
-    border: 1px solid rgba(255,255,255,.25);
+    border: 0.5px solid rgba(255,255,255,.25);
     background: rgba(255,255,255,.03);
-    border-radius: 12px;
-    padding: 5px;
     overflow: auto;
     height: 100%;
 }
@@ -46,9 +42,69 @@ html, body {
 
     .menu-panel .title {
         text-align: center;
-        font-weight: 700;
+        font-weight: 500;       
         margin: 0 0 10px;
     }
+
+    .menu-panel .scroll-y {
+        overflow: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+        .menu-panel .scroll-y::-webkit-scrollbar {
+            display: none;
+        }
+
+    .menu-panel .scroll-y {
+        position: relative; /* para ancorar os overlays */
+    }
+
+    /* Fades + setinhas (topo e base) */
+        .menu-panel .scroll-y::before,
+        .menu-panel .scroll-y::after {
+            content: "";
+            position: sticky; /* gruda no topo/base enquanto rola */
+            left: 0;
+            right: 0;
+            height: 28px;
+            pointer-events: none; /* não bloqueia cliques */
+            display: block;
+            z-index: 1;
+            /* fade suave para indicar mais conteúdo */
+            background-image: linear-gradient(to bottom, rgba(15,15,18,.9), rgba(15,15,18,0)), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e7e7ea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: center 70%, center;
+            background-size: 100% 100%, 16px 16px;
+            opacity: .85;
+            transition: opacity .15s ease;
+        }
+
+    /* topo */
+        .menu-panel .scroll-y::before {
+            top: 0;
+            transform: rotate(180deg); /* reaproveita a seta */
+        }
+
+    /* base */
+        .menu-panel .scroll-y::after {
+            bottom: 0;
+        }
+
+/* Esconde quando não há mais para cima/baixo */
+    .menu-panel .at-top::before {
+        opacity: 0;
+    }
+
+    .menu-panel .at-bottom::after {
+        opacity: 0;
+    }
+
+    .menu-panel .no-scroll::before,
+    .menu-panel .no-scroll::after {
+        opacity: 0;
+    }
+
 
 .icon-grid {
     display: grid;
@@ -58,16 +114,17 @@ html, body {
 }
 
 .icon-button {
-    width: 52px;
-    height: 52px;
-    max-width: 52px;
-    max-height: 52px;
-    min-width: 52px;
-    min-height: 52px;
+    width: calc(var(--icon-btn) * var(--ui-scale));
+    height: calc(var(--icon-btn) * var(--ui-scale));
+    min-width: calc(var(--icon-btn) * var(--ui-scale));
+    min-height: calc(var(--icon-btn) * var(--ui-scale));
+    max-width: calc(var(--icon-btn) * var(--ui-scale));
+    max-height: calc(var(--icon-btn) * var(--ui-scale));
+    border-radius: calc(var(--radius) * var(--ui-scale));
+    padding: calc(var(--pad-small) * var(--ui-scale));
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 3px;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 10px;
@@ -93,16 +150,17 @@ html, body {
     }
 
 .character-button {
-    width: 80px;
-    height: 60px;
-    max-width: 80px;
-    max-height: 60px;
-    min-width: 80px;
-    min-height: 60px;
+    width: calc(var(--char-btn-w) * var(--ui-scale));
+    height: calc(var(--char-btn-h) * var(--ui-scale));
+    min-width: calc(var(--char-btn-w) * var(--ui-scale));
+    min-height: calc(var(--char-btn-h) * var(--ui-scale));
+    max-width: calc(var(--char-btn-w) * var(--ui-scale));
+    max-height: calc(var(--char-btn-h) * var(--ui-scale));
+    border-radius: calc(var(--radius) * var(--ui-scale));
+    padding: calc(2px * var(--ui-scale));
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 10px;
@@ -133,12 +191,13 @@ html, body {
 
 .objetive-button {
     width: 100%;
-    min-height: 54px;
-    border-radius: 12px;
+    min-height: calc(54px * var(--ui-scale));
+    border-radius: calc(12px * var(--ui-scale));
+    padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
+    font-size: calc(1rem * var(--ui-scale));
     border: 1px solid rgba(255,255,255,.20);
     background: rgb(78, 219, 38, .25);
     color: inherit;
-    padding: 10px 14px;
     font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: .2px;
@@ -164,12 +223,13 @@ html, body {
 
 .spec-button {
     width: 100%;
-    min-height: 54px;
-    border-radius: 12px;
+    min-height: calc(54px * var(--ui-scale));
+    border-radius: calc(12px * var(--ui-scale));
+    padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
+    font-size: calc(1rem * var(--ui-scale));
     border: 1px solid rgba(255,255,255,.20);
     background: rgb(78, 219, 38, .25);
     color: inherit;
-    padding: 10px 14px;
     font-size: .95rem;
     font-weight: 500;
     letter-spacing: .2px;
@@ -189,16 +249,17 @@ html, body {
     }
 
 .contract-button {
-    width: 60px;
-    height: 60px;
-    max-width: 60px;
-    max-height: 80px;
-    min-width: 60px;
-    min-height: 80px;
+    width: calc(var(--contract-btn-w) * var(--ui-scale));
+    height: calc(var(--contract-btn-h) * var(--ui-scale));
+    min-width: calc(var(--contract-btn-w) * var(--ui-scale));
+    min-height: calc(var(--contract-btn-h) * var(--ui-scale));
+    max-width: calc(var(--contract-btn-w) * var(--ui-scale));
+    max-height: calc(var(--contract-btn-h) * var(--ui-scale));
+    border-radius: calc(var(--radius) * var(--ui-scale));
+    padding: calc(2px * var(--ui-scale));
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 10px;
@@ -289,6 +350,13 @@ html, body {
 /* Tamanho da Tela */
 :root {
     --ui-scale: 1;
+    --icon-btn: 52px;
+    --char-btn-w: 80px;
+    --char-btn-h: 60px;
+    --contract-btn-w: 60px;
+    --contract-btn-h: 80px;
+    --radius: 10px;
+    --pad-small: 3px;
 }
 
 /* ajuste como preferir; estes são exemplos */

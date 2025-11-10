@@ -25,10 +25,12 @@ namespace FurmaIdle.Services
     public sealed class UiService : IUiService
     {
         private readonly ICurrentGameService _game;
+        private readonly IUiLogService _log;
 
-        public UiService(ICurrentGameService game)
+        public UiService(ICurrentGameService game, IUiLogService log)
         {
             _game = game;
+            _log = log;
         }
 
         public async Task LoadStage(string stageId)
@@ -402,7 +404,11 @@ namespace FurmaIdle.Services
                     break;
                 case "ExpansionEnd":
                     break;
-                case "CharacterPurchase":
+                case "FirstCharacterPurchase":
+                    _log.Success("Ótimo, agora sim estamos montando uma Guilda!");
+                    break;
+                case "ua01":
+                    _log.Info("Talvez seja hora de terminar a Expedição.");
                     break;
                 default: break;
             }
