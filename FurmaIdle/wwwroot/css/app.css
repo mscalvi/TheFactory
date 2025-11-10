@@ -20,9 +20,10 @@ html, body {
 
 .menu-root {
     display: grid;
-    gap: 4px;
+    gap: 2px;
     height: 100%;
     min-height: 0;
+    overflow: hidden;
 }
 
 .menu-section {
@@ -35,6 +36,8 @@ html, body {
     background: rgba(255,255,255,.03);
     border-radius: 12px;
     padding: 5px;
+    overflow: auto;
+    height: 100%;
 }
     .menu-panel.is-hidden {
         visibility: hidden;
@@ -69,41 +72,50 @@ html, body {
     white-space: nowrap;
     border-radius: 10px;
     border: 1px solid rgba(255,255,255,.20);
-    background: rgba(132, 211, 143, .25);
+    background: rgb(78, 219, 38, 0.25);
     transition: transform .06s ease, background .12s ease, opacity .12s ease;
     cursor: default;
 }
 
+    .icon-button:active {
+        background: rgba(78, 219, 38, 0.45);
+        transform: translateY(1px) scale(0.98);
+    }
+
     .icon-button:hover {
         background: rgba(144, 235, 157, .25);
-        transform: translateY(-1px);
     }
 
     .icon-button:disabled {
         background: rgba(255,255,255,.15);
-        opacity: .45;
+        opacity: .5;
         transform: none;
     }
 
 .character-button {
-    width: 120px;
-    height: 80px;
-    max-width: 120px;
-    max-height: 80px;
-    min-width: 120px;
-    min-height: 80px;
+    width: 80px;
+    height: 60px;
+    max-width: 80px;
+    max-height: 60px;
+    min-width: 80px;
+    min-height: 60px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 3px;
+    padding: 2px;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 10px;
     border: 1px solid rgba(255,255,255,.20);
-    background: rgba(132, 211, 143, .25);
+    background: rgb(78, 219, 38, 0.25);
     transition: transform .06s ease, background .12s ease, opacity .12s ease;
     cursor: default;
 }
+
+    .character-button:active {
+        background: rgba(78, 219, 38, 0.45);
+        transform: translateY(1px) scale(0.98);
+    }
 
     .character-button:hover {
         background: rgba(144, 235, 157, .25);
@@ -111,16 +123,20 @@ html, body {
 
     .character-button:disabled {
         background: rgba(255,255,255,.15);
-        opacity: .45;
+        opacity: .5;
         transform: none;
+    }
+
+    .character-button .selected {
+        background: rgb(84, 234, 147, .25);
     }
 
 .objetive-button {
     width: 100%;
     min-height: 54px;
     border-radius: 12px;
-    border: 1px solid var(--panel-border, rgba(255,255,255,.12));
-    background: linear-gradient(0deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    border: 1px solid rgba(255,255,255,.20);
+    background: rgb(78, 219, 38, .25);
     color: inherit;
     padding: 10px 14px;
     font-size: 1.05rem;
@@ -130,16 +146,83 @@ html, body {
     transition: transform .06s ease, background .12s ease, opacity .12s ease;
 }
 
+    .objetive-button:active {
+        background: rgba(78, 219, 38, 0.45);
+        transform: translateY(1px) scale(0.98);
+    }
+
     .objetive-button:hover {
-        background: linear-gradient(0deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
-        transform: translateY(-1px);
+        background: rgba(144, 235, 157, .25);
     }
 
     .objetive-button:disabled {
+        background: rgba(255,255,255,.15);
         opacity: .5;
         cursor: default;
         transform: none;
     }
+
+.spec-button {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.20);
+    background: rgb(78, 219, 38, .25);
+    color: inherit;
+    padding: 10px 14px;
+    font-size: .95rem;
+    font-weight: 500;
+    letter-spacing: .2px;
+    cursor: pointer;
+    transition: transform .06s ease, background .12s ease, opacity .12s ease;
+}
+
+    .spec-button:hover {
+        background: rgba(144, 235, 157, .25);
+    }
+
+    .spec-button:disabled {
+        background: rgba(255,255,255,.15);
+        opacity: .5;
+        cursor: default;
+        transform: none;
+    }
+
+.contract-button {
+    width: 60px;
+    height: 60px;
+    max-width: 60px;
+    max-height: 80px;
+    min-width: 60px;
+    min-height: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.20);
+    background: rgb(78, 219, 38, 0.25);
+    transition: transform .06s ease, background .12s ease, opacity .12s ease;
+    cursor: default;
+}
+
+    .contract-button:active {
+        background: rgba(78, 219, 38, 0.45);
+        transform: translateY(1px) scale(0.98);
+    }
+
+    .contract-button:hover {
+        background: rgba(144, 235, 157, .25);
+    }
+
+    .contract-button:disabled {
+        background: rgba(255,255,255,.15);
+        opacity: .5;
+        transform: none;
+    }
+
 
 .image-resource {
     width: 20px;

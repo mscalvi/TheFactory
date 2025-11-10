@@ -83,6 +83,7 @@ namespace FurmaIdle.Services
             "expansion-basechars",
             "expansion-stagechars",
             "expansion-upgrades",
+            "game-status",
         };
 
         private readonly List<string> GamePanels = new(AllPanels);
@@ -227,9 +228,9 @@ namespace FurmaIdle.Services
                     {
                         ShowPanel("expansion-stagechars");
                     }
-                    if (IsHidden("expansion-updates"))
+                    if (IsHidden("expansion-upgrades"))
                     {
-                        ShowPanel("expansion-updates");
+                        ShowPanel("expansion-upgrades");
                     }
                     if (IsHidden("expansion-status"))
                     {
@@ -307,6 +308,11 @@ namespace FurmaIdle.Services
                 case "ue01":
                     // Libera Menu de Archievments
                     Console.Write("[UI] Game Stats Liberados");
+
+                    if (IsHidden("game-status"))
+                    {
+                        ShowPanel("game-status");
+                    }
 
                     UnlockMenu("i97");
 

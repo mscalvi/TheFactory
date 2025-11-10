@@ -136,21 +136,6 @@
     justify-items: center;
 }
 
-.contract-button {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    max-width: 100%;
-    height: clamp(30px, 3.2vh, 42px);
-    padding: 4px 6px;
-    line-height: 1.05;
-    font-size: clamp(.8rem, .85vw, .92rem);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* =========================
    Nível já escolhido (card)
    ========================= */

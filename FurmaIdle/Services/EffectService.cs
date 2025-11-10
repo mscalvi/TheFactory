@@ -741,7 +741,7 @@ namespace FurmaIdle.Services
                             contract.Modifiers.Add(cmod);
                             break;
                         case "i": // Clicks
-                            var click = _locate.LocateStageClick(game, spec.TargetId);
+                            var click = _locate.LocateClick(game, spec.TargetId);
 
                             var imod = new ModifierModel
                             {

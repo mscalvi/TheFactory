@@ -1,9 +1,10 @@
 ﻿@* ShopMenu.razor *@
+
 @inherits UiHelper
 
 @using FurmaIdle.Models
 
-@if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
+@if (!Game.IsReady || _stage is null || string.IsNullOrWhiteSpace(_stage.Id))
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
 }
@@ -61,19 +62,25 @@ else
 
 @code {
     private StageModel? _stage;
-
-    // Id selecionado vindo do NavMenu (ex.: i1…i9 ou i97/i98/i99)
-    [Parameter] public string? SelectedMenuId { get; set; }
+    private string? SelectedMenuId;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        UI.Changed += OnUiChanged;
+        SelectedMenuId = UI.OpenMenuId;
         RefreshStage();
     }
 
     protected override void OnGameChanged()
     {
         RefreshStage();
+    }
+
+    private void OnUiChanged()
+    {
+        SelectedMenuId = UI.OpenMenuId;
+        InvokeAsync(StateHasChanged);
     }
 
     private void RefreshStage()

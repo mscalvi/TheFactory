@@ -95,8 +95,6 @@ namespace FurmaIdle.Services
                 }
             }
 
-            // Monta HTML (corpo) seguindo o layout pedido
-            // Obs.: ch.Lore pode estar vazio pelos seus dados atuais; deixei a seção, mas só renderiza se tiver conteúdo.
             string body = $@"
                 <div class='tt'>
                   <div class='tt-name'>{HtmlEncode(ch.Name)}</div>
@@ -151,7 +149,8 @@ namespace FurmaIdle.Services
                   <div class='tt-name'>{HtmlEncode(title)}</div>
                   {(string.IsNullOrWhiteSpace(lore) ? "" : $"<div class='tt-lore'><em>{HtmlEncode(lore)}</em></div>")}
                   {(string.IsNullOrWhiteSpace(desc) ? "" : $"<div class='tt-list'><div>{HtmlEncode(desc)}</div></div>")}
-                  {(string.IsNullOrWhiteSpace(up.TargetId) ? "" : $"<div class='tt-list'><div>{HtmlEncode(up.TargetId)}</div></div>")}
+                  {(string.IsNullOrWhiteSpace(up.TargetId) ? "" : $"<div class='tt-list'><div>Afeta: {HtmlEncode(up.TargetId)}</div></div>")}
+                  {(string.IsNullOrWhiteSpace(up.TargetId) ? "" : $"<div class='tt-list'><div>Tipo: {HtmlEncode(up.EffectOp.ToString())} - Valor {HtmlEncode(up.EffectValue.ToString())}</div></div>")}
                   <div class='tt-know tt-cost'>Custo: {HtmlEncode(costLine)}</div>
                 </div>";
 

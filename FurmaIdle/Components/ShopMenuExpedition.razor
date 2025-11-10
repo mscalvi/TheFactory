@@ -38,6 +38,10 @@
         && c.CharState == UnlockHelper.CharState.InBase || c.CharState == UnlockHelper.CharState.InLine)
         .OrderBy(c => c.Id)
         .ToList();
+        var inStageChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+        && c.CharState == UnlockHelper.CharState.InStage && c.InStageId == _stage.Id)
+        .OrderBy(c => c.Id)
+        .ToList();
 
         <section class="@($"menu-panel {UI.PanelClass("expedition-toggle")}")">
             <button class="objetive-button"
@@ -49,9 +53,22 @@
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">
             <h3 class="title">Characters in Base</h3>
-            @if (avaliableChars.Count == 0)
+            @if (_stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
             {
-                <div>Nenhum personagem na base.</div>
+                <div class="image-grid">
+                    @foreach (var ch in inStageChars)
+                    {
+                        <button type="button"
+                                class="character-button"
+                                disabled
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
+                                @onblur="Tooltips.Clear">
+                            @ch.Id
+                        </button>
+                    }
+                </div>
             }
             else
             {
@@ -87,14 +104,14 @@
                     {
                         <tr class="info-row">
                             <td class="info-name">@coin.Key</td>
-                            <td class="info-value">@coin.Value.ToString("N2")</td>
+                            <td class="info-value">@coin.Value.ToString("N0")</td>
                         </tr>
                     }
                     @foreach (var resource in expeditionStats.ResourcesGain)
                     {
                         <tr class="info-row">
                             <td class="info-name">@resource.Key</td>
-                            <td class="info-value">@resource.Value.ToString("N2")</td>
+                            <td class="info-value">@resource.Value.ToString("N0")</td>
                         </tr>
                     }
                     @foreach (var click in expeditionStats.ClicksMade)

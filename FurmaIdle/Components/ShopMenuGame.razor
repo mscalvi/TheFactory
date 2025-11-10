@@ -11,6 +11,7 @@
 @inject ILocateService Locate
 @inject IExpeditionService Expedition
 
+<div class="menu-root">
 @if (!Game.IsReady || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -24,42 +25,59 @@ else
     var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
 
     TimeSpan gameDuration = DateTime.UtcNow - game.StartTime;
+    
+        <section class="@($"menu-panel {UI.PanelClass("game-status")}")">
+        <h3 class="title">Game Stats</h3>
 
-    <div>
-        <h3>Game Stats</h3>
-        <div>Current Expansion: @expansion.Name</div>
-        <div>Duração: @(gameDuration.ToString("hh\\:mm\\:ss") ?? "--:--:--")</div>
-
-        <div>Ganhos</div>
-        @foreach (var coin in gameStats.CoinsGain)
-        {
-            <div>@coin.Key @coin.Value</div>
-        }
-        @foreach (var resource in gameStats.ResourcesGain)
-        {
-            <div>@resource.Key @resource.Value</div>
-        }
-        @foreach (var know in gameStats.KnowledgeGain)
-        {
-            <div>@know.Key @know.Value</div>
-        }
-        @foreach (var click in gameStats.ClicksMade)
-        {
-            <div>@click.Key @click.Value</div>
-        }
-
-        <div>Characters Unlocked: @game.GameStats.CharactersUnlocked</div>
-        <div>Coins Unlocked: @game.GameStats.CoinsUnlocked</div>
-        <div>Contracts Unlocked: @game.GameStats.ContractsUnlocked</div>
-        <div>Expansions Unlocked: @game.GameStats.ExpansionsUnlocked</div>
-        <div>Knowledges Unlocked: @game.GameStats.KnowledgesUnlocked</div>
-        <div>Locals Unlocked: @game.GameStats.LocalsUnlocked</div>
-        <div>Stages Unlocked: @game.GameStats.StagesUnlocked</div>
-        <div>Techs Unlocked: @game.GameStats.TechUnlocked</div>
-        <div>Resources Unlocked: @game.GameStats.ResourcesUnlocked</div>
-        <div>Upgrades Unlocked: @game.GameStats.UpgradesUnlocked</div>
-    </div>
+            <table class="info-table">
+                <thead>
+                    <tr><th colspan="2">@expansion.Name</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var coin in gameStats.CoinsGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@coin.Key</td>
+                            <td class="info-value">@coin.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                    @foreach (var resource in gameStats.ResourcesGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@resource.Key</td>
+                            <td class="info-value">@resource.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                    @foreach (var knowledge in gameStats.KnowledgeGain)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@knowledge.Key</td>
+                            <td class="info-value">@knowledge.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                    @foreach (var click in gameStats.ClicksMade)
+                    {
+                        <tr class="info-row">
+                            <td class="info-name">@click.Key</td>
+                            <td class="info-value">@click.Value.ToString("N0")</td>
+                        </tr>
+                    }
+                    <tr class="info-row" colspan="2">Characters Unlocked: @game.GameStats.CharactersUnlocked</tr>
+                    <tr class="info-row" colspan="2">Coins Unlocked: @game.GameStats.CoinsUnlocked</tr>
+                    <tr class="info-row" colspan="2">Contracts Unlocked: @game.GameStats.ContractsUnlocked</tr>
+                    <tr class="info-row" colspan="2">Expansions Unlocked: @game.GameStats.ExpansionsUnlocked</tr>
+                    <tr class="info-row" colspan="2">Knowledges Unlocked: @game.GameStats.KnowledgesUnlocked</tr>
+                    <tr class="info-row" colspan="2">Locals Unlocked: @game.GameStats.LocalsUnlocked</tr>
+                    <tr class="info-row" colspan="2">Stages Unlocked: @game.GameStats.StagesUnlocked</tr>
+                    <tr class="info-row" colspan="2">Techs Unlocked: @game.GameStats.TechUnlocked</tr>
+                    <tr class="info-row" colspan="2">Resources Unlocked: @game.GameStats.ResourcesUnlocked</tr>
+                    <tr class="info-row" colspan="2">Upgrades Unlocked: @game.GameStats.UpgradesUnlocked</tr>
+                </tbody>
+            </table>
+    </section>
 }
+
+</div>
 
 @code {
     private StageModel? _stage;

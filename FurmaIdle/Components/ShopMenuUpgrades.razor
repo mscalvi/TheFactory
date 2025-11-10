@@ -30,8 +30,7 @@ else
         u.State == UnlockHelper.State.Available &&
         (Ue(u.Id) || Us(u.Id)));
 
-        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK) ====
-        // Não inclui UC aqui (UC fica na área 4 – expedição)
+        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK, UA, UU) ====
         var permanents =
             all.Where(u =>
             u.State == UnlockHelper.State.Available &&
@@ -39,7 +38,7 @@ else
             IsContractUpgradeVisible(game, u.Id))
             .ToList();
 
-        // ==== ÁREA 3 — Avanços da Expansão (UT, UX) ====
+        // ==== ÁREA 3 — Avanços da Expansão (UT, UX, UM, UB) ====
         var expansionUps =
             all.Where(u =>
             u.State == UnlockHelper.State.Available &&

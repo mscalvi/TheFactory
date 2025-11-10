@@ -34,8 +34,6 @@
 </div>
 
 @code {
-    [Parameter] public string? SelectedMenuId { get; set; } = "i2";
-    [Parameter] public EventCallback<string?> SelectedMenuIdChanged { get; set; }
     [Parameter] public EventCallback<string> OnSelect { get; set; }
     [Parameter] public string IconBasePath { get; set; } = "/icons/nav-menu";
 
@@ -59,14 +57,8 @@
 
     private async Task Select(string id)
     {
-        SelectedMenuId = id;
-        Ui.SetOpenMenu(id);
-
-        if (SelectedMenuIdChanged.HasDelegate)
-            await SelectedMenuIdChanged.InvokeAsync(SelectedMenuId);
-
-        if (OnSelect.HasDelegate)
-            await OnSelect.InvokeAsync(id);
+        UI.SetOpenMenu(id);
+        if (OnSelect.HasDelegate) await OnSelect.InvokeAsync(id);
     }
 
     private string GetIconPath(string id)

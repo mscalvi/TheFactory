@@ -13,7 +13,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, TraitModel> All = new()
         {
-            #region Knowledge Gain Traits (o01 - o03)
+            #region Traits
             ["o02"] = new TraitModel
             {
                 Id = "o02",
@@ -47,9 +47,6 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 Modifiers = new List<ModifierModel>(),
             },
-            #endregion
-
-            #region Resource Gain Trait (to04)
             ["o04"] = new TraitModel
             {
                 Id = "o04",
@@ -61,9 +58,6 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Modifiers = new List<ModifierModel>(),
             },
-            #endregion
-
-            #region Cost Reduction Trait (to05)
             ["o05"] = new TraitModel
             {
                 Id = "o05",
@@ -73,6 +67,17 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.SpecialtyCost,
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
+                Modifiers = new List<ModifierModel>(),
+            },
+            ["o06"] = new TraitModel
+            {
+                Id = "o06",
+                Description = "Aumenta o Ganho para Caçar ",
+                TargetId = "c045",
+                EffectValue = 1.5,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectType = EffectHelper.EffectType.ContractGain,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion

@@ -15,6 +15,7 @@
 @inject IExpeditionService Expedition
 @inject IUiService Ui
 
+<div class="menu-root">
 @if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
 {
     <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -31,8 +32,8 @@ else
             .Where(l => string.Equals(l.StageId, _stage.Id, StringComparison.OrdinalIgnoreCase)
                      && l.State == UnlockHelper.State.Unlocked);
 
-    <div class="shop-menu-stages">
-        <h3>Unlocked Stages</h3>
+        <section class="@($"menu-panel {UI.PanelClass("stage-select")}")">
+        <h3 class="title">Unlocked Stages</h3>
         @if (!unlockedStages.Any())
         {
             <div>Nenhuma Stage desbloqueada.</div>
@@ -45,7 +46,7 @@ else
                     var isSelected = string.Equals(_stage.Id, stage.Id, StringComparison.OrdinalIgnoreCase);
 
                     <button type="button"
-                            class="icon-button"
+                            class="character-button"
                             disabled="@(isSelected)"
                             aria-pressed="@(isSelected)"
                             @onclick="() => SelectStage(stage.Id)"
@@ -59,54 +60,10 @@ else
                 }
             </div>
         }
-    </div>
-
-    <div>
-        <h3>Unlocked Locals in Stage</h3>
-        @if (_stage is null)
-        {
-            <div>Selecione uma Stage.</div>
-        }
-        else if (!unlockedLocalsInStage.Any())
-        {
-            <div>Nenhum Local desbloqueado nessa Stage.</div>
-        }
-        else
-        {
-            <div>
-                @foreach (var local in unlockedLocalsInStage)
-                {
-                    <button type="button"
-                            class="icon-button"
-                            disabled
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Local, local.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Local, local.Id, _stage.Id))"
-                            @onblur="Tooltips.Clear"
-                            tabindex="0">
-                        @local.Id
-                    </button>
-                }
-            </div>
-        }
-    </div>
-
-    <div>
-        <h3>Selected Stage</h3>
-        @if (_stage is null)
-        {
-            <div>Nenhuma Stage selecionada.</div>
-        }
-        else
-        {
-            <div>
-                <div>@_stage.Id - @_stage.Name</div>
-                <div><b>PartySize:</b> @Expedition.GetPartyCap(_stage) / @_stage.MaxPartySize</div>
-                <div><b>MaxContractLevel:</b> @_stage.MaxContractLevel</div>
-            </div>
-        }
-    </div>
+    </section>
 }
+
+</div>
 
 @code {
     private StageModel? _stage;

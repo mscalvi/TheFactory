@@ -71,11 +71,6 @@
         => _ready = Game.IsReady && Ticks.IsRunning;
     #endregion
 
-    #region NavMenu
-    private NavMenu? navRef;
-    private string? _navId = "i5";
-    #endregion
-
     #region Gerais
     public void RecomputeGame()
     {
@@ -108,7 +103,7 @@ else
     <div class="game-grid">
         <!-- Navegador -->
         <aside class="nav-menu panel">
-            <NavMenu @bind-SelectedMenuId="_navId" />
+            <NavMenu />
         </aside>
 
         <!-- Texto -->
@@ -118,7 +113,7 @@ else
 
         <!-- Shop -->
         <section class="shop-menu panel">
-            <ShopMenu SelectedMenuId="@_navId" />
+            <ShopMenu />
         </section>
 
         <!-- Título -->

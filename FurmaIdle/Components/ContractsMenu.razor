@@ -73,7 +73,7 @@
                                     <div class="contracts-picked">
                                         <div class="cp-top">
                                             <button type="button"
-                                                    class="contract-button icon-button @(disabled ? "is-locked" : null)"
+                                                    class="contract-button @(disabled ? "is-locked" : null)"
                                                     disabled="@disabled"
                                                     @onclick="() => BuyContract(chosen.Id)"
                                                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosen.Id, _stage.Id))"
@@ -152,7 +152,7 @@
                                                 var disabled = !hasCapacity || !canBuy;
 
                                                 <button type="button"
-                                                        class="contract-button icon-button @(disabled ? "is-locked" : null)"
+                                                        class="contract-button @(disabled ? "is-locked" : null)"
                                                         disabled="@disabled"
                                                         @onclick="() => BuyContract(c.Id)"
                                                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, _stage.Id))"
