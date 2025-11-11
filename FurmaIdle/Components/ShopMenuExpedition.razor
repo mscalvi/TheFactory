@@ -52,14 +52,13 @@
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">
-            <h3 class="title">Characters in Base</h3>
             @if (_stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
             {
+                <h3 class="title">Personagens na Expedição</h3>
                 <div class="image-grid">
                     @foreach (var ch in inStageChars)
                     {
-                        <button type="button"
-                                class="character-button"
+                        <button class="character-button"
                                 disabled
                                 @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
                                 @onmouseleave="Tooltips.Clear"
@@ -72,6 +71,7 @@
             }
             else
             {
+                <h3 class="title">Personagens na Base</h3>
                 <div class="image-grid">
                     @foreach (var ch in avaliableChars)
                     {
@@ -94,39 +94,74 @@
         </section>
 
         <section class="@($"menu-panel {UI.PanelClass("expedition-status")}")">
-            <h3 class="title">Expedition Status</h3>
-            <table class="info-table">
-                <thead>
-                    <tr><th colspan="2">@(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</th></tr>
-                </thead>
-                <tbody>
-                    @foreach (var coin in expeditionStats.CoinsGain)
-                    {
-                        <tr class="info-row">
-                            <td class="info-name">@coin.Key</td>
-                            <td class="info-value">@coin.Value.ToString("N0")</td>
-                        </tr>
-                    }
-                    @foreach (var resource in expeditionStats.ResourcesGain)
-                    {
-                        <tr class="info-row">
-                            <td class="info-name">@resource.Key</td>
-                            <td class="info-value">@resource.Value.ToString("N0")</td>
-                        </tr>
-                    }
-                    @foreach (var click in expeditionStats.ClicksMade)
-                    {
-                        <tr class="info-row">
-                            <td class="info-name">@click.Key</td>
-                            <td class="info-value">@click.Value.ToString("N0")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            @if (expedition.ExpeditionState != UnlockHelper.ExpeditionState.Active)
+            {
+                <h3 class="title">Expedição Atual</h3>
+                <table class="info-table">
+                    <thead>
+                        <tr><th colspan="2">--:--:--</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var coin in expeditionStats.CoinsGain)
+                        {
+                            <tr class="info-row">
+                                <td class="info-name">@coin.Key</td>
+                                <td class="info-value">-</td>
+                            </tr>
+                        }
+                        @foreach (var resource in expeditionStats.ResourcesGain)
+                        {
+                            <tr class="info-row">
+                                <td class="info-name">@resource.Key</td>
+                                <td class="info-value">-</td>
+                            </tr>
+                        }
+                        @foreach (var click in expeditionStats.ClicksMade)
+                        {
+                            <tr class="info-row">
+                                <td class="info-name">@click.Key</td>
+                                <td class="info-value">-</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <h3 class="title">Expedição Atual</h3>
+                <table class="info-table">
+                    <thead>
+                        <tr><th colspan="2">@(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var coin in expeditionStats.CoinsGain)
+                        {
+                            <tr class="info-row">
+                                <td class="info-name">@coin.Key</td>
+                                <td class="info-value">@coin.Value.ToString("N0")</td>
+                            </tr>
+                        }
+                        @foreach (var resource in expeditionStats.ResourcesGain)
+                        {
+                            <tr class="info-row">
+                                <td class="info-name">@resource.Key</td>
+                                <td class="info-value">@resource.Value.ToString("N0")</td>
+                            </tr>
+                        }
+                        @foreach (var click in expeditionStats.ClicksMade)
+                        {
+                            <tr class="info-row">
+                                <td class="info-name">@click.Key</td>
+                                <td class="info-value">@click.Value.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }       
         </section>
 
         <section class="@($"menu-panel {UI.PanelClass("expedition-gain")}")">
-            <h3 class="title">Expedition Gains</h3>
+            <h3 class="title">Ganhos ao Encerrar</h3>
             @{
                 long cTotal = 0L;
                 if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
@@ -150,7 +185,7 @@
                 else
                 {
                     <div class="info-entry">
-                        <div class="info-line">Não aprendemos nada ainda</div>
+                        <div class="info-line">-</div>
                     </div>
                 }
         

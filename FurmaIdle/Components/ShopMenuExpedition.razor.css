@@ -10,9 +10,6 @@
 
 .expedition-toggle {
     grid-area: expedition-toggle;
-    padding: 14px;
-    display: grid;
-    gap: 10px;
 }
 
 .expedition-party {
@@ -26,15 +23,10 @@
     justify-items: center;
 }
 
-    .image-grid .character-button {
-    }
+.character-button.selected {
+    background: rgb(106, 196, 196);
+}
 
-        .image-grid .character-button.selected {
-            background: rgb(84, 207, 31, 0,20);
-        }
-
-            .image-grid .character-button.selected:hover {
-            }
 
 .expedition-status {
     grid-area: expedition-status;

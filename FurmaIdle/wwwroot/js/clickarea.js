@@ -16,8 +16,6 @@
         if (sx && sx !== 1) x /= sx;
         if (sy && sy !== 1) y /= sy;
 
-        console.log({ cx, cy, rect: { left: r.left, top: r.top, width: r.width, height: r.height }, sx, sy, x, y });
-
         return { x, y };
     }
 };

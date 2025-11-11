@@ -11,9 +11,7 @@
 /* ===== ÁREA 1 ===== */
 .up-objetive {
     grid-area: up-objective;
-    padding: 14px;
     display: grid;
-    gap: 10px;
 }
 
 .up-permanents {

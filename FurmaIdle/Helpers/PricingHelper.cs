@@ -155,7 +155,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.TechUpgrade0] = new Entry("m01", 50000, 1.0, CostFactor.Level, 3.3),
 
                 // Expansion Upgrades Stage X
-                [PricingId.ExpansionUpgrade0] = new Entry("m01", 15000, 1.0, CostFactor.Level, 3.7),
+                [PricingId.ExpansionUpgrade0] = new Entry("m01", 5000, 1.0, CostFactor.Level, 2.7),
             };
 
             public static Entry Get(PricingId id) => _map[id];

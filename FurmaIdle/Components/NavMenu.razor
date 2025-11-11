@@ -10,17 +10,18 @@
 <div class="game-area nav-menu">
     <div class="nav-col">
         @foreach (var it in Ui.VisibleNav)
-            {
-                var isSelected = string.Equals(Ui.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
+        {
+            var isSelected = string.Equals(Ui.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
+            var hasNotif = it.Notification;
 
-                <button class="nav-button @(isSelected ? "is-selected" : null)"
-                        title="@it.Label"
-                        aria-label="@it.Label"
-                        aria-pressed="@isSelected"
-                        @onclick="() => Select(it.Id)">
-                    <span class="nav-glyph">@it.Label</span>
-                </button>
-            }
+            <button class="@($"nav-button{(isSelected ? " is-selected" : "")}{(hasNotif ? " has-notif" : "")}")"
+                    title="@it.Label"
+                    aria-label="@it.Label"
+                    aria-pressed="@isSelected"
+                    @onclick="() => Select(it.Id)">
+                <span class="nav-glyph">@it.Label</span>
+            </button>
+        }
     </div>
 </div>
 

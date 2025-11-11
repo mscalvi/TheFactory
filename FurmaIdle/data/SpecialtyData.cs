@@ -15,7 +15,7 @@ namespace FurmaIdle.Data
             ["e01"] = new SpecialtyModel
             {
                 Id = "e01",
-                Name = "Gorjetas",
+                Name = "Cobrar um Extra",
                 Description = "Aumenta o ganho dos Contratos da Expedição",
                 Image = "images/specialties/e01.jpg",
                 TargetId = "aContracts",
@@ -31,7 +31,7 @@ namespace FurmaIdle.Data
             ["e02"] = new SpecialtyModel
             {
                 Id = "e02",
-                Name = "Coleta Acelerada",
+                Name = "Gorjetas",
                 Description = "Produz instantaneamente a média de Moedas por segundo dos Contratos da Expedição",
                 Image = "images/specialties/e02.jpg",
                 TargetId = "aContracts",

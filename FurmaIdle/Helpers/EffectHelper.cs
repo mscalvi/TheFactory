@@ -16,6 +16,7 @@
             ResourceGainPerLocal,
             BurstCoinGain,
             ClickGain,
+            ClickGainCent,
             CoinGain,
 
             // Cost

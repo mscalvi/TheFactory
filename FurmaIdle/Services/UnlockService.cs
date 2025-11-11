@@ -195,6 +195,9 @@ namespace FurmaIdle.Services
         #region Stage Unlock
         public async Task UnlockStage(string stageId)
         {
+            bool newCoin = false;
+            string newCoinId = "";
+
             await _game.Mutate(game =>
             {
                 var stage = _locate.LocateStage(game, stageId);
@@ -204,7 +207,9 @@ namespace FurmaIdle.Services
                     if (string.Equals(coin.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         if (coin.Value.State != UnlockHelper.State.Blocked) continue;
-                        coin.Value.State = UnlockHelper.State.Unlocked;
+                        coin.Value.State = UnlockHelper.State.Available;
+                        newCoin = true;
+                        newCoinId = coin.Value.Id;
                         Console.WriteLine($"[Unlock] Coin {coin.Value.Id}: {coin.Value.State}");
                     }
                 }
@@ -224,6 +229,11 @@ namespace FurmaIdle.Services
                 Console.WriteLine($"[Unlock] Stage {stage.Id}: {stage.State}");
                 game.GameStats.StagesUnlocked++;
             }, save: true);
+
+            if (newCoin)
+            {
+                await UnlockCoin(newCoinId);
+            }
         }
         #endregion
 

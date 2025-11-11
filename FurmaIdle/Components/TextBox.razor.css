@@ -3,10 +3,10 @@
     grid-template-rows: 1fr;
     height: 100%;
     width: 100%;
-    border: 1px solid #cbd5e1;
     overflow: hidden;
     box-sizing: border-box;
     font-size: smaller;
+    padding: 2px;
 }
 
 .msg-list {
@@ -23,7 +23,7 @@
 
 .msg-row {
     display: grid;
-    grid-template-columns: 70px 1fr;
+    grid-template-columns: 65px 1fr;
     gap: .5rem;
     align-items: baseline;
 }
@@ -54,7 +54,7 @@
     color: whitesmoke;
 }
 
-.msg-row.is-warn .msg-text {
+.msg-row.is-lore .msg-text {
     color: yellow;
 }
 
@@ -62,7 +62,7 @@
     color: darkred;
 }
 
-.msg-row.is-success .msg-text {
+.msg-row.is-unlock .msg-text {
     color: forestgreen;
 }
 

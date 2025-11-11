@@ -276,6 +276,8 @@ namespace FurmaIdle.Services
                 return result;
 
             var stage = _locate.LocateStage(game, stageId);
+            var expedition = _locate.LocateExpedition(game, stage.Id);
+
             var activeContracts = stage?.ActiveContracts;
             if (stage is null || activeContracts is null || activeContracts.Count == 0) return result;
 
@@ -300,8 +302,11 @@ namespace FurmaIdle.Services
                     {
                         result.Add(coin.Key, sum);
                     }
+
+                    expedition.CurrentCoinPerSec = sum;
                 }
             }
+
 
             return result;
         }

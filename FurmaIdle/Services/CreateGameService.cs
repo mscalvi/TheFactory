@@ -49,7 +49,7 @@ namespace FurmaIdle.Services
                     LastTick = DateTime.UtcNow,
                     GameStats = new StatsModel(),
                     CurrentExpansionId = "x00",
-                    UnlockedMenus = new(StringComparer.OrdinalIgnoreCase),
+                    Ui = new UiState(),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),
                     Coins = Seed("[CGS] Coins", () => CoinsData.CreateInitialStates()),

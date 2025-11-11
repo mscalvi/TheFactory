@@ -2,32 +2,52 @@
     box-sizing: border-box;
 }
 
+:root {
+    /* escala e medidas */
+    --ui-scale: 1;
+    --icon-btn: 52px;
+    --char-btn-w: 80px;
+    --char-btn-h: 60px;
+    --contract-btn-w: 60px;
+    --contract-btn-h: 80px;
+    --radius: 10px;
+    --pad-small: 3px;
+
+    /* ===== Paleta Madeira + Metal escuro ===== */
+    --wood-00: #1c1713; /* fundo geral (madeira bem escura) */
+    --wood-01: #221b16; /* painéis */
+    --wood-02: #2a221b; /* áreas internas */
+    --grain-00: #3a2f26; /* linhas/bordas discretas */
+    --metal-ink: #e6dccf; /* texto “marfim” visível no escuro */
+    --metal-ink-dim: #c9bead;
+    --brass-00: #b79a63; /* latão/brass base */
+    --brass-10: rgba(183,154,99,.22);
+    --brass-20: rgba(183,154,99,.36);
+    --brass-30: #a4864f; /* active */
+    --steel-00: #6a6b6e; /* aço frio p/ detalhes */
+    --steel-10: rgba(106,107,110,.25);
+    --muted-pane: rgba(255,255,255,.05);
+    --muted-line: rgba(230,220,207,.08);
+    --disabled-bg: rgba(255,255,255,.08);
+    --disabled-fg: rgba(106,107,110,.25);
+}
+
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #0f0f12;
-    color: #e7e7ea;
+    background: var(--wood-00);
+    color: var(--metal-ink);
 }
 
 .game-shell {
     min-height: 100dvh;
     display: grid;
     grid-template-rows: auto 1fr;
-    background: #0f0f12;
-    color: #e7e7ea;
 }
 
 .game-grid {
     display: grid;
-    grid-template-columns: 66px minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
-    grid-template-rows: 76px 76px minmax(0, 1fr);
-    grid-template-areas:
-        "nav text title income"
-        "nav text stage income"
-        "nav shop click contracts";
-    background: #0f0f12;
-    color: #e7e7ea;
     transform: scale(var(--ui-scale));
     transform-origin: top left;
     width: calc(100% / var(--ui-scale));
@@ -35,13 +55,16 @@ html, body {
     gap: 4px;
 }
 
+/* Área principal (madeira) com aro metálico */
 .game-area {
-    border: 1px solid rgb(122, 38, 1);
+    border: 1px solid var(--grain-00);
     border-radius: 10px;
     width: 100%;
     height: 100%;
     min-height: 0;
     overflow: hidden;
+    background: var(--wood-02);
+    box-shadow: inset 0 0 0 1px var(--muted-line);
 }
 
 .menu-root {
@@ -55,12 +78,15 @@ html, body {
     display: grid;
 }
 
+/* Painéis com leve “verniz” e aro de aço */
 .menu-panel {
-    border: 0.5px solid rgba(255,255,255,.25);
-    background: rgba(255,255,255,.03);
+    border: 1px solid var(--steel-10);
+    background: linear-gradient(180deg, var(--wood-01), var(--wood-02));
     overflow: auto;
     height: 100%;
+    box-shadow: inset 0 1px 0 var(--muted-line);
 }
+
     .menu-panel.is-hidden {
         visibility: hidden;
         pointer-events: none;
@@ -68,8 +94,9 @@ html, body {
 
     .menu-panel .title {
         text-align: center;
-        font-weight: 500;       
+        font-weight: 600;
         margin: 0 0 10px;
+        color: var(--metal-ink);
     }
 
 .icon-grid {
@@ -79,6 +106,24 @@ html, body {
     justify-items: center;
 }
 
+/* ===== Botões (placa de metal com aro de latão) ===== */
+.icon-button,
+.character-button,
+.contract-button {
+    border: 1px solid var(--steel-10);
+    background: var(--brass-10);
+    color: var(--metal-ink);
+    transition: transform .06s ease, background .12s ease, opacity .12s ease, box-shadow .12s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: default;
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 1px var(--muted-line);
+}
+
 .icon-button {
     width: calc(var(--icon-btn) * var(--ui-scale));
     height: calc(var(--icon-btn) * var(--ui-scale));
@@ -86,34 +131,8 @@ html, body {
     min-height: calc(var(--icon-btn) * var(--ui-scale));
     max-width: calc(var(--icon-btn) * var(--ui-scale));
     max-height: calc(var(--icon-btn) * var(--ui-scale));
-    border-radius: calc(var(--radius) * var(--ui-scale));
     padding: calc(var(--pad-small) * var(--ui-scale));
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    white-space: nowrap;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,.20);
-    background: rgb(78, 219, 38, 0.25);
-    transition: transform .06s ease, background .12s ease, opacity .12s ease;
-    cursor: default;
 }
-
-    .icon-button:active {
-        background: rgba(78, 219, 38, 0.45);
-        transform: translateY(1px) scale(0.98);
-    }
-
-    .icon-button:hover {
-        background: rgba(144, 235, 157, .25);
-    }
-
-    .icon-button:disabled {
-        background: rgba(255,255,255,.15);
-        opacity: .5;
-        transform: none;
-    }
 
 .character-button {
     width: calc(var(--char-btn-w) * var(--ui-scale));
@@ -122,97 +141,8 @@ html, body {
     min-height: calc(var(--char-btn-h) * var(--ui-scale));
     max-width: calc(var(--char-btn-w) * var(--ui-scale));
     max-height: calc(var(--char-btn-h) * var(--ui-scale));
-    border-radius: calc(var(--radius) * var(--ui-scale));
     padding: calc(2px * var(--ui-scale));
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    white-space: nowrap;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,.20);
-    background: rgb(78, 219, 38, 0.25);
-    transition: transform .06s ease, background .12s ease, opacity .12s ease;
-    cursor: default;
 }
-
-    .character-button:active {
-        background: rgba(78, 219, 38, 0.45);
-        transform: translateY(1px) scale(0.98);
-    }
-
-    .character-button:hover {
-        background: rgba(144, 235, 157, .25);
-    }
-
-    .character-button:disabled {
-        background: rgba(255,255,255,.15);
-        opacity: .5;
-        transform: none;
-    }
-
-    .character-button .selected {
-        background: rgb(57, 211, 154, 0,25);
-    }
-
-.objetive-button {
-    width: 100%;
-    min-height: calc(54px * var(--ui-scale));
-    border-radius: calc(12px * var(--ui-scale));
-    padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
-    font-size: calc(1rem * var(--ui-scale));
-    border: 1px solid rgba(255,255,255,.20);
-    background: rgb(78, 219, 38, .25);
-    color: inherit;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: .2px;
-    cursor: pointer;
-    transition: transform .06s ease, background .12s ease, opacity .12s ease;
-}
-
-    .objetive-button:active {
-        background: rgba(78, 219, 38, 0.45);
-        transform: translateY(1px) scale(0.98);
-    }
-
-    .objetive-button:hover {
-        background: rgba(144, 235, 157, .25);
-    }
-
-    .objetive-button:disabled {
-        background: rgba(255,255,255,.15);
-        opacity: .5;
-        cursor: default;
-        transform: none;
-    }
-
-.spec-button {
-    width: 100%;
-    min-height: calc(54px * var(--ui-scale));
-    border-radius: calc(12px * var(--ui-scale));
-    padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
-    font-size: calc(1rem * var(--ui-scale));
-    border: 1px solid rgba(255,255,255,.20);
-    background: rgb(78, 219, 38, .25);
-    color: inherit;
-    font-size: .95rem;
-    font-weight: 500;
-    letter-spacing: .2px;
-    cursor: pointer;
-    transition: transform .06s ease, background .12s ease, opacity .12s ease;
-}
-
-    .spec-button:hover {
-        background: rgba(144, 235, 157, .25);
-    }
-
-    .spec-button:disabled {
-        background: rgba(255,255,255,.15);
-        opacity: .5;
-        cursor: default;
-        transform: none;
-    }
 
 .contract-button {
     width: calc(var(--contract-btn-w) * var(--ui-scale));
@@ -221,43 +151,93 @@ html, body {
     min-height: calc(var(--contract-btn-h) * var(--ui-scale));
     max-width: calc(var(--contract-btn-w) * var(--ui-scale));
     max-height: calc(var(--contract-btn-h) * var(--ui-scale));
-    border-radius: calc(var(--radius) * var(--ui-scale));
     padding: calc(2px * var(--ui-scale));
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    white-space: nowrap;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,.20);
-    background: rgb(78, 219, 38, 0.25);
-    transition: transform .06s ease, background .12s ease, opacity .12s ease;
-    cursor: default;
 }
 
-    .contract-button:active {
-        background: rgba(78, 219, 38, 0.45);
-        transform: translateY(1px) scale(0.98);
-    }
-
+    /* estados */
+    .icon-button:hover,
+    .character-button:hover,
     .contract-button:hover {
-        background: rgba(144, 235, 157, .25);
+        background: var(--brass-20);
     }
 
+    .icon-button:active,
+    .character-button:active,
+    .contract-button:active {
+        background: var(--brass-30);
+        transform: translateY(1px) scale(.98);
+        box-shadow: 0 0 0 1px var(--brass-00), inset 0 0 0 1px var(--muted-line);
+    }
+
+    .icon-button:disabled,
+    .character-button:disabled,
     .contract-button:disabled {
-        background: rgba(255,255,255,.15);
-        opacity: .5;
+        background: var(--disabled-bg);
+        color: var(--disabled-fg);
+        opacity: .6;
         transform: none;
+        box-shadow: none;
     }
 
+/* Botões longos */
+.objetive-button,
+.spec-button {
+    min-height: calc(54px * var(--ui-scale));
+    border: 1px solid var(--steel-10);
+    padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
+    font-size: calc(1rem * var(--ui-scale));
+    background: var(--brass-10);
+    color: var(--metal-ink);
+    font-weight: 600;
+    letter-spacing: .2px;
+    cursor: pointer;
+    transition: transform .06s ease, background .12s ease, opacity .12s ease, box-shadow .12s ease;
+    box-shadow: inset 0 0 0 1px var(--muted-line);
+}
 
+    .objetive-button:hover, .spec-button:hover {
+        background: var(--brass-20);
+    }
+
+    .objetive-button:active, .spec-button:active {
+        background: var(--brass-30);
+        transform: translateY(1px) scale(.98);
+        box-shadow: 0 0 0 1px var(--brass-00), inset 0 0 0 1px var(--muted-line);
+    }
+
+    .objetive-button:disabled, .spec-button:disabled {
+        background: var(--disabled-bg);
+        color: var(--disabled-fg);
+        opacity: .6;
+        transform: none;
+        box-shadow: none;
+        cursor: default;
+    }
+
+.spec-button {
+    border-radius: calc(12px * var(--ui-scale));
+    width: 70%;
+    height: 70%;
+}
+
+.objetive-button{
+    width: 100%;
+    height: 100%;
+}
+
+/* seleção de personagem (sutil) */
+.character-button .selected {
+    background: rgba(183,154,99,.18);
+}
+
+/* Ícones/recursos */
 .image-resource {
     width: 20px;
     height: 20px;
-    max-height: 20px;
-    max-width: 20px;
-    min-height: 20px;
     min-width: 20px;
+    min-height: 20px;
+    max-width: 20px;
+    max-height: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -267,6 +247,7 @@ html, body {
     object-fit: contain;
 }
 
+/* Tabelas/infos */
 .info-table {
     width: 100%;
     gap: 8px 12px;
@@ -278,7 +259,8 @@ html, body {
         font-weight: 700;
         font-size: .95rem;
         padding: 4px 6px;
-        border-bottom: 1px solid rgba(255,255,255,.08);
+        border-bottom: 1px solid var(--muted-line);
+        color: var(--metal-ink);
     }
 
     .info-table tbody {
@@ -289,6 +271,7 @@ html, body {
         .info-table tbody td {
             padding: 2px 4px;
             vertical-align: middle;
+            color: var(--metal-ink-dim);
         }
 
 .info-row {
@@ -298,7 +281,7 @@ html, body {
 }
 
     .info-row:hover {
-        background: rgba(255,255,255,.05);
+        background: var(--muted-pane);
     }
 
 .info-name {
@@ -306,26 +289,16 @@ html, body {
     text-align: left;
     gap: 4px;
     font-weight: 600;
+    color: var(--metal-ink);
 }
 
 .info-value {
     text-align: right;
     font-variant-numeric: tabular-nums;
+    color: var(--metal-ink);
 }
 
-/* Tamanho da Tela */
-:root {
-    --ui-scale: 1;
-    --icon-btn: 52px;
-    --char-btn-w: 80px;
-    --char-btn-h: 60px;
-    --contract-btn-w: 60px;
-    --contract-btn-h: 80px;
-    --radius: 10px;
-    --pad-small: 3px;
-}
-
-/* ajuste como preferir; estes são exemplos */
+/* Responsividade (mantida) */
 @media (max-width: 1440px) {
     :root {
         --ui-scale: 0.95;

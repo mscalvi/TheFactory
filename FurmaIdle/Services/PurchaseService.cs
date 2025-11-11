@@ -20,8 +20,9 @@ namespace FurmaIdle.Services
         private readonly IEffectService _effect;
         private readonly IUiService _ui;
         private readonly ICostService _cost;
+        private readonly ILoreService _lore;
 
-        public PurchaseService(ICurrentGameService Game, IUiLogService Log, ILocateService Locate, IEffectService effect, IUiService ui, ICostService cost)
+        public PurchaseService(ICurrentGameService Game, IUiLogService Log, ILocateService Locate, IEffectService effect, IUiService ui, ICostService cost, ILoreService lore)
         {
             _game = Game;
             _locate = Locate;
@@ -29,6 +30,7 @@ namespace FurmaIdle.Services
             _effect = effect;
             _ui = ui;
             _cost = cost;
+            _lore = lore;
         }
 
         private int contractBuy = 0;
@@ -43,6 +45,9 @@ namespace FurmaIdle.Services
             await _game.Mutate(game =>
             {
                 var cost = _cost.ComputeCost(type, itemId, stageId);
+                var coinCost = new CoinModel();
+                var resourceCost = new ResourceModel();
+                var knowledgeCost = new KnowledgeModel();
 
                 bool hasFunds = cost.costId[0] switch
                 {
@@ -51,7 +56,47 @@ namespace FurmaIdle.Services
                     'k' => GetOrZero(expansion.ExpansionStats.Knowledge, cost.costId) >= cost.costValue,
                     _ => false
                 };
-                if (!hasFunds) return;
+
+                switch (cost.costId[0])
+                {
+                    case 'm':
+                        coinCost = _locate.LocateCoin(game, cost.costId);
+                        break;
+                    case 'r':
+                        resourceCost = _locate.LocateResource(game, cost.costId);
+                        break;
+                    case 'k':
+                        knowledgeCost = _locate.LocateKnowledge(game, cost.costId);
+                        break;
+                }
+
+                if (!hasFunds)
+                {
+                    _log.Error($"Faltam recursos para comprar/usar {itemId}. Você não deveria estar vendo essa mensagem.");
+                    return;
+                }
+
+                switch (type)
+                {
+                    case ItemHelper.ItemType.Upgrade:
+                        var upInfo = _locate.LocateUpgrade(game, itemId);
+                        if (upInfo.Id.StartsWith("uh"))
+                        {
+                            _lore.PurchaseInfo(upInfo.Name, cost.costValue.ToString("N0"), knowledgeCost.Name, "compra");
+                        } else
+                        {
+                            _lore.PurchaseInfo(upInfo.Name, cost.costValue.ToString("N0"), coinCost.Name, "compra");
+                        }
+                        break;
+                    case ItemHelper.ItemType.Contract:
+                        var conInfo = _locate.LocateContract(game, itemId);
+                        _lore.PurchaseInfo(conInfo.Name, cost.costValue.ToString("N0"), coinCost.Name, "contract");
+                        break;
+                    case ItemHelper.ItemType.Specialty:
+                        var specInfo = _locate.LocateSpecialty(game, itemId);
+                        _lore.PurchaseInfo(specInfo.Name, cost.costValue.ToString("N0"), resourceCost.Name, "spec");
+                        break;
+                }
 
                 if (cost.costId[0] != 'm')
                 {
@@ -90,22 +135,30 @@ namespace FurmaIdle.Services
                 if (game.GameStats.CharactersUnlocked == 2 && itemId.StartsWith("up"))
                 {
                     _ui.NavMenuControl("FirstCharacterPurchase");
+                    _lore.LoreTrigger("FirstCharacterPurchase");
+                    _lore.LoreTrigger(itemId);
                 }
                 else if (game.GameStats.KnowledgesUnlocked == 1 && itemId.StartsWith("uk"))
                 {
                     _ui.NavMenuControl("FirstKnowledgePurchase");
+                    _lore.LoreTrigger("FirstKnowledgePurchase");
+                    _lore.LoreTrigger(itemId);
                 }
                 else if (game.GameStats.TechUnlocked == 1 && itemId.StartsWith("uh"))
                 {
                     _ui.NavMenuControl("FirstTechPurchase");
+                    _lore.LoreTrigger("FirstTechPurchase");
+                    _lore.LoreTrigger(itemId);
                 }
                 else if (itemId.StartsWith("c"))
                 {
                     _ui.NavMenuControl(itemId, contractBuy.ToString());
+                    _lore.LoreTrigger(itemId, contractBuy.ToString());
                 }
                 else
                 {
                     _ui.NavMenuControl(itemId);
+                    _lore.LoreTrigger(itemId);
                 }
 
             }, save: true);

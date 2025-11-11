@@ -41,18 +41,21 @@ else{
 
     var unlockedUpgrades = OrderedUpgrades(game)
             .Where(u => u?.Id != null
-                     && !u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
-                     && !u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
-                     && !u.Id.StartsWith("uk", StringComparison.OrdinalIgnoreCase)
-                     && !u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase)
-                     && !u.Id.StartsWith("ue", StringComparison.OrdinalIgnoreCase)
-                     && !u.Id.StartsWith("us", StringComparison.OrdinalIgnoreCase)
-                     && !u.Id.StartsWith("ur", StringComparison.OrdinalIgnoreCase)
-                     && u.State == UnlockHelper.State.Unlocked);
+                    && !u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("uk", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("ue", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("us", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("ur", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("uc", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("uu", StringComparison.OrdinalIgnoreCase)
+                    && !u.Id.StartsWith("ua", StringComparison.OrdinalIgnoreCase)
+                    && u.State == UnlockHelper.State.Unlocked);
 
 
         <section class="@($"menu-panel {UI.PanelClass("expansion-status")}")">
-            <h3 class="title">Expansion Status</h3>
+            <h3 class="title">Expansão Atual</h3>
             <table class="info-table">
                 <thead>
                     <tr><th colspan="2">@expansion.Name</th></tr>
@@ -92,7 +95,7 @@ else{
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-basechars")}")">
-            <h3 class="title">Characters In Base</h3>
+            <h3 class="title">Personagens na Base</h3>
             @if (inBase.Count == 0)
             {
                 <div>Ninguém na base.</div>
@@ -118,7 +121,7 @@ else{
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-stagechars")}")">
-            <h3 class="title">Characters In Expedition</h3>
+            <h3 class="title">Personagens em Expedição</h3>
             @if (inStage.Count == 0)
             {
                 <div>Ninguém em Expedição.</div>
@@ -144,7 +147,7 @@ else{
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-upgrades")}")">
-            <h3 class="title">Unlocked Upgrades</h3>
+            <h3 class="title">Upgrades da Expansão</h3>
             @if (!unlockedUpgrades.Any())
             {
                 <div>Nenhum upgrade concluído.</div>

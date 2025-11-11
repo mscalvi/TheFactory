@@ -26,11 +26,13 @@ namespace FurmaIdle.Services
     {
         private readonly ICurrentGameService _game;
         private readonly IUiLogService _log;
+        private readonly ILoreService _lore;
 
-        public UiService(ICurrentGameService game, IUiLogService log)
+        public UiService(ICurrentGameService game, IUiLogService log, ILoreService lore)
         {
             _game = game;
             _log = log;
+            _lore = lore;
         }
 
         public async Task LoadStage(string stageId)
@@ -90,9 +92,32 @@ namespace FurmaIdle.Services
 
         private readonly List<string> GamePanels = new(AllPanels);
 
-        public void HidePanel(string id) => _hidden.Add(id);
-        public void ShowPanel(string id) => _hidden.Remove(id);
-        public bool IsHidden(string id) => _hidden.Contains(id);
+        public void HidePanel(string id)
+        {
+            _ = _game.Mutate(g =>
+            {
+                g.Ui ??= new UiState();
+                g.Ui.HiddenPanels.Add(id);
+            }, save: true);
+            RaiseChanged();
+        }
+
+        public void ShowPanel(string id)
+        {
+            _ = _game.Mutate(g =>
+            {
+                g.Ui ??= new UiState();
+                g.Ui.HiddenPanels.Remove(id);
+            }, save: true);
+            RaiseChanged();
+        }
+
+        public bool IsHidden(string id)
+        {
+            var g = _game.CurrentGame;
+            return g?.Ui?.HiddenPanels?.Contains(id) == true;
+        }
+
 
         public string PanelClass(string id)
         {
@@ -131,31 +156,40 @@ namespace FurmaIdle.Services
 
         public void SyncMenusFromGame(GameModel g)
         {
+            g.Ui ??= new UiState();
+
             // garante que sempre existe HashSet no save
-            g.UnlockedMenus ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            g.Ui.UnlockedMenus ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var item in _nav)
             {
                 // Regra: se o id está no save, fica desbloqueado.
                 // Se não está, fica bloqueado.
-                item.Unlocked = g.UnlockedMenus.Contains(item.Id);
+                item.Unlocked = g.Ui.UnlockedMenus.Contains(item.Id);
             }
 
             // fallback obrigatório: se nada estava salvo ainda (jogo novo),
             // garante pelo menos Updates aberto (i5) pra não quebrar a UI:
-            if (!g.UnlockedMenus.Any())
+            if (!g.Ui.UnlockedMenus.Any())
             {
                 foreach (var id in _nav.Select(n => n.Id))
-                    g.UnlockedMenus.Add(id);
+                    g.Ui.UnlockedMenus.Add(id);
 
                 foreach (var item in _nav)
                     item.Unlocked = true;
             }
 
             // opcional: também seta qual menu está aberto visualmente
-            OpenMenuId = g.UnlockedMenus.Contains(OpenMenuId ?? "")
-                ? OpenMenuId
-                : "i5";
+            if (!string.IsNullOrWhiteSpace(g.Ui.OpenMenuId) &&
+                _nav.Any(n => n.Id == g.Ui.OpenMenuId && n.Unlocked))
+            {
+                OpenMenuId = g.Ui.OpenMenuId;
+            }
+            else
+            {
+                OpenMenuId = "i5";
+                g.Ui.OpenMenuId = OpenMenuId;
+            }
 
             PreviousMenuId = OpenMenuId;
             RaiseChanged();
@@ -169,8 +203,13 @@ namespace FurmaIdle.Services
             PreviousMenuId = OpenMenuId;
             OpenMenuId = id;
 
+            if (!string.IsNullOrWhiteSpace(id))
+                ClearNotificationMenu(id);
+
+            _ = _game.Mutate(g => g.Ui.OpenMenuId = id, save: true);
             RaiseChanged();
         }
+
         private void LockMenu(string id)
         {
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, id, StringComparison.OrdinalIgnoreCase));
@@ -181,8 +220,8 @@ namespace FurmaIdle.Services
 
             _ = _game.Mutate(g =>
             {
-                g.UnlockedMenus ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                g.UnlockedMenus.Remove(id);
+                g.Ui.UnlockedMenus ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                g.Ui.UnlockedMenus.Remove(id);
             }, save: true);
 
             RaiseChanged();
@@ -197,8 +236,8 @@ namespace FurmaIdle.Services
 
             _ = _game.Mutate(g =>
             {
-                g.UnlockedMenus ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                g.UnlockedMenus.Add(id);
+                g.Ui.UnlockedMenus ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                g.Ui.UnlockedMenus.Add(id);
             }, save: true);
 
             RaiseChanged();
@@ -214,12 +253,14 @@ namespace FurmaIdle.Services
             string itemType1 = itemId.Substring(0, 1);
             string itemType2 = itemId.Substring(0, 2);
 
+            var game = _game.CurrentGame;
+
             switch (itemId) 
             {
                 // First Unlocks
                 case "FirstCharacterPurchase":
                     // Libera Menu de Expansion
-                    Console.Write("[UI] Expansion Liberado");
+                    Console.WriteLine("[UI] Expansion Menu Liberado");
 
                     UnlockMenu("i1");
                     if (IsHidden("expansion-basechars"))
@@ -243,16 +284,17 @@ namespace FurmaIdle.Services
                     break;
                 case "us00":
                     // Libera Menu de Stage e de Outside Market
-                    Console.Write("[UI] Stage e Market Liberados");
+                    Console.WriteLine("[UI] Stage e Market Menu Liberados");
 
                     UnlockMenu("i2");
                     UnlockMenu("i98");
 
+                    SetNotificationMenu("i98");
                     SetOpenMenu("i2");
                     break;
                 case "ua01":
                     // Libera Menu de Expedition
-                    Console.Write("[UI] Expedition Liberado");
+                    Console.WriteLine("[UI] Expedition Menu Liberado");
 
                     UnlockMenu("i3");
                     if (IsHidden("expedition-gain"))
@@ -276,7 +318,7 @@ namespace FurmaIdle.Services
                     break;
                 case "GameStart":
                     // Libera Menu de Updates e de Settings
-                    Console.Write("[UI] Updates e Settings Liberados");
+                    Console.WriteLine("[UI] Updates e Settings Menu Liberados");
 
                     foreach(var panel in GamePanels)
                     {
@@ -290,12 +332,12 @@ namespace FurmaIdle.Services
                     SetNotificationMenu("i99");
                     break;
                 case "FirstKnowledgePurchase":
-                    Console.Write("[UI] Tech Liberado");
+                    Console.WriteLine("[UI] Tech Menu Liberado");
                     // Libera Menu de Tech
 
-                    if (IsHidden("knowledge"))
+                    if (IsHidden("tech-knowledge"))
                     {
-                        ShowPanel("knowledge");
+                        ShowPanel("tech-knowledge");
                     }
 
                     if (IsHidden("tech-available"))
@@ -309,7 +351,7 @@ namespace FurmaIdle.Services
                     break;
                 case "ue01":
                     // Libera Menu de Archievments
-                    Console.Write("[UI] Game Stats Liberados");
+                    Console.WriteLine("[UI] Game Stats Menu Liberado");
 
                     if (IsHidden("game-status"))
                     {
@@ -323,12 +365,14 @@ namespace FurmaIdle.Services
                 case "c011":
                     if (IsHidden("up-expansion"))
                     {
+                        _lore.LoreTrigger("FirstContractPurchase");
                         ShowPanel("up-expansion");
                     }
                     if(help == "2")
                     {
                         if (IsHidden("up-permanents"))
                         {
+                            _lore.LoreTrigger("SecondContractPurchase");
                             ShowPanel("up-permanents");
                         }
                     }
@@ -336,6 +380,7 @@ namespace FurmaIdle.Services
                     {
                         if (IsHidden("up-objetive"))
                         {
+                            _lore.LoreTrigger("ObjetiveUnlock");
                             ShowPanel("up-objetive");
                         }
                     }
@@ -343,6 +388,7 @@ namespace FurmaIdle.Services
                 case "um01":
                     if (IsHidden("up-expedition"))
                     {
+                        _lore.LoreTrigger("FirstCapPurchase");
                         ShowPanel("up-expedition");
                     }
                     break;
@@ -355,21 +401,21 @@ namespace FurmaIdle.Services
 
                 // Gerais
                 case "ExpeditionStart":
-                    Console.Write("[UI] Expedition Start");
+                    Console.WriteLine("[UI] Expedition Start");
 
                     UnlockMenu("i5");
 
                     SetOpenMenu("i5");
                     break;
                 case "ExpeditionEnd":
-                    Console.Write("[UI] Expedition End");
+                    Console.WriteLine("[UI] Expedition End");
 
                     SetOpenMenu("i3");
 
                     LockMenu("i5");
                     break;
                 case "ExpansionEnd":
-                    Console.Write("[UI] Expansion End");
+                    Console.WriteLine("[UI] Expansion End");
 
                     SetOpenMenu("i3");
 
@@ -378,45 +424,33 @@ namespace FurmaIdle.Services
 
                 default: break;
             }
-
-            LoreTrigger(itemId);
         }
 
         private bool SetNotificationMenu(string menuId)
         {
+            var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
+            if (item is null) return false;
+            if (item.Notification) return false;      
+
+            item.Notification = true;
+            RaiseChanged();                          
             return true;
         }
-        #endregion
 
-        #region Lore
-        private void LoreTrigger(string itemId)
+        public bool ClearNotificationMenu(string menuId)
         {
-            string itemType1 = itemId.Substring(0, 1);
-            string itemType2 = itemId.Substring(0, 2);
+            var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
+            if (item is null) return false;
+            if (!item.Notification) return false;
 
-            switch (itemId)
-            {
-                case "GameStart":
-                    break;
-                case "ExpeditionStart":
-                    break;
-                case "ExpeditionEnd":
-                    break;
-                case "ExpansionEnd":
-                    break;
-                case "FirstCharacterPurchase":
-                    _log.Success("Ótimo, agora sim estamos montando uma Guilda!");
-                    break;
-                case "ua01":
-                    _log.Info("Talvez seja hora de terminar a Expedição.");
-                    break;
-                default: break;
-            }
+            item.Notification = false;
+            RaiseChanged();
+            return true;
         }
         #endregion
     }
 
-    public enum UiLogKind { Info, Warn, Error, Success }
+    public enum UiLogKind { Info, Lore, Error, Unlock }
     public sealed class UiLogMessage
     {
         public DateTime Time { get; init; } = DateTime.Now;
@@ -427,20 +461,39 @@ namespace FurmaIdle.Services
     {
         event Action<UiLogMessage>? OnMessage;
         void Info(string text);
-        void Warn(string text);
+        void Lore(string text);
         void Error(string text);
-        void Success(string text);
+        void Unlock(string text);
     }
     public sealed class UiLogService : IUiLogService
     {
         public event Action<UiLogMessage>? OnMessage;
+        private readonly ICurrentGameService _game;
 
-        private void Emit(string text, UiLogKind kind) =>
-            OnMessage?.Invoke(new UiLogMessage { Text = text, Kind = kind, Time = DateTime.Now });
+        private const int MaxLog = 200;
+        public UiLogService(ICurrentGameService game) { _game = game; }
+
+        private void Emit(string text, UiLogKind kind)
+        {
+            var msg = new UiLogMessage { Text = text, Kind = kind, Time = DateTime.Now };
+
+            // dispara para a tela "ao vivo"
+            OnMessage?.Invoke(msg);
+
+            // persiste no save
+            _ = _game.Mutate(g =>
+            {
+                g.Ui ??= new UiState();
+                g.Ui.LogBuffer ??= new List<UiLogMessage>();
+                g.Ui.LogBuffer.Add(msg);
+                if (g.Ui.LogBuffer.Count > MaxLog)
+                    g.Ui.LogBuffer.RemoveRange(0, g.Ui.LogBuffer.Count - MaxLog);
+            }, save: true);
+        }
 
         public void Info(string text) => Emit(text, UiLogKind.Info);
-        public void Warn(string text) => Emit(text, UiLogKind.Warn);
+        public void Lore(string text) => Emit(text, UiLogKind.Lore);
         public void Error(string text) => Emit(text, UiLogKind.Error);
-        public void Success(string text) => Emit(text, UiLogKind.Success);
+        public void Unlock(string text) => Emit(text, UiLogKind.Unlock);
     }
 }

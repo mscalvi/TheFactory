@@ -35,10 +35,11 @@
     align-items: center;
     border: 1px solid #3a4057;
     background: #141824;
-    color: #e7eaf5;
+    color: rgb(131, 57, 25);
     border-radius: 10px;
     cursor: pointer;
     padding: 0;
+    position: relative;
 }
 
     .nav-button:hover {
@@ -46,8 +47,22 @@
     }
 
     .nav-button.is-selected {
-        border-color: #6aa0ff;
+        background: rgba(255,255,255,.08);
+        border-color: rgba(255,255,255,.35);
         box-shadow: 0 0 0 2px rgba(106,160,255,.25);
+    }
+
+    .nav-button.has-notif::after {
+        content: "";
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #C87A3D;
+        box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+        animation: notif-pulse .6s ease-out 1;
     }
 
 .nav-glyph {
@@ -56,4 +71,26 @@
     user-select: none;
     text-transform: uppercase;
 }
-    
+
+@media (prefers-reduced-motion: no-preference) {
+    .nav-button.has-notification::after {
+        animation: notif-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes notif-pulse {
+        0% {
+            transform: scale(.9);
+            opacity: .8
+        }
+
+        50% {
+            transform: scale(1.15);
+            opacity: 1
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: .95
+        }
+    }
+}

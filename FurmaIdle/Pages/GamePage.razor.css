@@ -5,8 +5,6 @@
         "nav text title income"
         "nav text stage income"
         "nav shop click contracts";
-    transform: scale(var(--ui-scale));
-    transform-origin: top left;
 }
 
     .game-grid > * {

@@ -1,4 +1,6 @@
-﻿namespace FurmaIdle.Models
+﻿using FurmaIdle.Services;
+
+namespace FurmaIdle.Models
 {
     public class GameModel
     {
@@ -11,7 +13,7 @@
         public string CurrentExpansionId { get; set; } = "x00";
 
         // Ui
-        public HashSet<string> UnlockedMenus { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+        public UiState Ui { get; set; } = new();
 
         // Total
         public StatsModel NoExpeditionStats { get; set; } = new();
@@ -29,5 +31,16 @@
         public Dictionary<string, ExpansionModel> Expansions { get; set; } = new();
         public Dictionary<string, SpecialtyModel> Specialties { get; set; } = new();
         public Dictionary<string, TraitModel> Traits { get; set; } = new();
+    }
+    public sealed class UiState
+    {
+        public HashSet<string> UnlockedMenus { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+        public HashSet<string> HiddenPanels { get; set; } = new(StringComparer.Ordinal);
+        public string? OpenMenuId { get; set; }        // qual menu estava aberto
+
+
+        // guarde um buffer curto pra não inchar o save
+        public List<UiLogMessage> LogBuffer { get; set; } = new();
+        public const int LogMax = 200;
     }
 }

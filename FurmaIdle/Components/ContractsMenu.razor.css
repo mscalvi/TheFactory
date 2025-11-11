@@ -15,7 +15,7 @@
 
 .contracts-layout {
     display: grid;
-    grid-template-rows: 40px 1fr;
+    grid-template-rows: 30px 1fr;
     grid-template-areas:
         "contract-cap"
         "contract-levels";
@@ -30,6 +30,7 @@
     justify-content: center;
     border: none;
     font-size: clamp(.86rem, .9vw, .98rem);
+    text-align: center;
 }
 
 .contracts-grid {
@@ -125,7 +126,7 @@
 
 .contract-progress-bar {
     display: grid;
-    grid-template-columns: repeat(25, 1fr);
+    grid-template-columns: repeat(100, 1fr);
     gap: 1px;
     width: 100%;
     height: 100%;

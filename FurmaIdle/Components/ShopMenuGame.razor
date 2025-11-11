@@ -22,15 +22,24 @@ else
 
     var gameStats = game.GameStats;
 
+    var unlockedUpgrades = OrderedUpgrades(game)
+        .Where(u => u?.Id != null
+        && !u.Id.StartsWith("uc", StringComparison.OrdinalIgnoreCase)
+        && !u.Id.StartsWith("uu", StringComparison.OrdinalIgnoreCase)
+        && !u.Id.StartsWith("ub", StringComparison.OrdinalIgnoreCase)
+        && !u.Id.StartsWith("um", StringComparison.OrdinalIgnoreCase)
+        && u.State == UnlockHelper.State.Unlocked);
+
     var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
 
     TimeSpan gameDuration = DateTime.UtcNow - game.StartTime;
     
         <section class="@($"menu-panel {UI.PanelClass("game-status")}")">
-        <h3 class="title">Game Stats</h3>
+        <h3 class="title">Jogo</h3>
 
             <table class="info-table">
                 <thead>
+                    <tr><th colspan="2">@(gameDuration.ToString("hh\\:mm\\:ss") ?? "--:--:--")</th></tr>
                     <tr><th colspan="2">@expansion.Name</th></tr>
                 </thead>
                 <tbody>
@@ -75,6 +84,32 @@ else
                 </tbody>
             </table>
     </section>
+
+        <section class="@($"menu-panel menu-section {UI.PanelClass("game-upgrades")}")">
+            <h3 class="title">Upgrades de Desbloqueio</h3>
+            @if (!unlockedUpgrades.Any())
+            {
+                <div>Nenhum upgrade concluído.</div>
+            }
+            else
+            {
+                <div class="icon-grid">
+                    @foreach (var u in unlockedUpgrades)
+                    {
+                        var id = u.Id;
+                        <button type="button"
+                                class="icon-button"
+                                disabled
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, id, _stage.Id))"
+                                @onblur="Tooltips.Clear">
+                            @id
+                        </button>
+                    }
+                </div>
+            }
+        </section>
 }
 
 </div>
@@ -105,4 +140,8 @@ else
         g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
         _stage = st;
     }
+
+    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
+        => g.Upgrades.Values
+            .OrderBy(u => u.Id);
 }

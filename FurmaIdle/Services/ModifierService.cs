@@ -1,4 +1,5 @@
 ﻿using FurmaIdle.Helpers;
+using FurmaIdle.Models;
 using static FurmaIdle.Helpers.EffectHelper;
 using static FurmaIdle.Helpers.ItemHelper;
 using static FurmaIdle.Helpers.UnlockHelper;
@@ -31,6 +32,16 @@ namespace FurmaIdle.Services
 
             var stage = _locate.LocateStage(game, game.SelectedStageId);
             var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
+
+            var expedition = new ExpeditionModel();
+
+            if(type != ItemType.Expedition)
+            {
+                expedition = _locate.LocateExpedition(game, stage.Id);
+            } else
+            {
+                expedition = _locate.LocateExpedition(game, itemId);
+            }
 
             switch (group)
             {
@@ -157,7 +168,6 @@ namespace FurmaIdle.Services
                             break;
 
                         case ItemType.Expedition:
-                            var expedition = _locate.LocateExpedition(game, itemId);
                             foreach (var modifier in expedition.Modifiers)
                             {
                                 if (modifier.Type == EffectType.ExpeditionCost)
@@ -254,6 +264,18 @@ namespace FurmaIdle.Services
                                         MultMod *= modifier.Value;
                                     }
                                 }
+
+                                if (modifier.Type == EffectHelper.EffectType.ClickGainCent)
+                                {
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * expedition.CurrentCoinPerSec;
+                                    }
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= Math.Pow(modifier.Value, 1);
+                                    }
+                                }
                             }
 
                             foreach (var modifier in stage.Modifiers)
@@ -309,7 +331,7 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
+                                        AddMod += modifier.Value * game.GameStats.TechUnlocked;
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
@@ -320,7 +342,7 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
+                                        AddMod += modifier.Value * game.GameStats.LocalsUnlocked;
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
@@ -349,7 +371,7 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
+                                        AddMod += modifier.Value * game.GameStats.TechUnlocked;
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
@@ -360,7 +382,7 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
+                                        AddMod += modifier.Value * game.GameStats.LocalsUnlocked;
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
@@ -389,7 +411,7 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
+                                        AddMod += modifier.Value * game.GameStats.TechUnlocked;
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
@@ -400,7 +422,7 @@ namespace FurmaIdle.Services
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
                                     {
-                                        AddMod += Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
+                                        AddMod += modifier.Value * game.GameStats.LocalsUnlocked;
                                     }
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
@@ -436,14 +458,14 @@ namespace FurmaIdle.Services
                             break;
                     }
                     break;
-                #endregion
+                    #endregion
 
-                #region Cap
-                // ContractLevel e ContractCap estão no ContractService
-                #endregion
+                    #region Cap
+                    // ContractLevel e ContractCap estão no ContractService
+                    #endregion
 
-                #region Unlock
-                #endregion
+                    #region Unlock
+                    #endregion
             }
 
             return (AddMod, MultMod);

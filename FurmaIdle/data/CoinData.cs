@@ -20,7 +20,7 @@ namespace FurmaIdle.Data
                 Name = "Talhos",
                 Image = "images/coins/m01.jpg",
                 UnlockId = "s00",
-                State = UnlockHelper.State.Unlocked,
+                State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
                 Lore = "",

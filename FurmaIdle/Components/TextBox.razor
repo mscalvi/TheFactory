@@ -41,7 +41,7 @@
     ElementReference _msgBodyRef;
     bool _scrollPending;
 
-    enum MsgKind { Info, Warn, Error, Success }
+    enum MsgKind { Info, Lore, Error, Unlock }
     sealed class UiMessage
     {
         public DateTime Time { get; init; } = DateTime.Now;
@@ -53,9 +53,34 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+
+        var buf = Game.CurrentGame?.Ui?.LogBuffer;
+        if (buf is not null && buf.Count > 0)
+        {
+            foreach (var m in buf)
+            {
+                _msgs.Add(new UiMessage
+                {
+                    Text = m.Text,
+                    Time = m.Time,
+                    Kind = m.Kind switch
+                    {
+                        UiLogKind.Lore => MsgKind.Lore,
+                        UiLogKind.Error => MsgKind.Error,
+                        UiLogKind.Unlock => MsgKind.Unlock,
+                        _ => MsgKind.Info
+                    }
+                });
+            }
+
+            _scrollPending = true;
+        }
+
         UiLog.OnMessage += HandleUiLogMessage;
+
         Tooltips.Changed += OnTooltipChanged;
     }
+
 
     public void Dispose()
     {
@@ -91,9 +116,9 @@
             Time = msg.Time,
             Kind = msg.Kind switch
             {
-                UiLogKind.Warn => MsgKind.Warn,
+                UiLogKind.Lore => MsgKind.Lore,
                 UiLogKind.Error => MsgKind.Error,
-                UiLogKind.Success => MsgKind.Success,
+                UiLogKind.Unlock => MsgKind.Unlock,
                 _ => MsgKind.Info
             }
         });
@@ -102,9 +127,9 @@
 
     string Css(MsgKind k) => k switch
     {
-        MsgKind.Warn => "is-warn",
+        MsgKind.Lore => "is-lore",
         MsgKind.Error => "is-error",
-        MsgKind.Success => "is-success",
+        MsgKind.Unlock => "is-unlock",
         _ => "is-info"
     };
 }

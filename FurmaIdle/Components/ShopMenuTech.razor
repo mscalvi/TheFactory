@@ -45,7 +45,7 @@
                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Knowledge, k.Id, stage!.Id))"
                         @onmouseleave="Tooltips.Clear">
                         <td class="info-name">@k.Name</td>
-                        <td class="info-value">@total.ToString("N0")</td>
+                        <td class="info-value">@total.atual.ToString("N0") / @total.total.ToString("N0")</td>
                     </tr>
                 }
             </tbody>
@@ -87,17 +87,21 @@
 @code {
     private bool freeProcess = true;
 
-    private long Total(string kId)
+    private (long atual, long total) Total(string kId)
     {
         long total = 0;
+        long atual = 0;
 
         var game = Game.CurrentGame;
         var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
 
         expansion.ExpansionStats.Knowledge.TryGetValue(kId, out var value);
-        total = value;
+        atual = value;
 
-        return total;
+        expansion.ExpansionStats.KnowledgeGain.TryGetValue(kId, out var tot);
+        total = tot;
+
+        return (atual, total);
     }
 
     private async Task OnClickBuyTech(string upgradeId)

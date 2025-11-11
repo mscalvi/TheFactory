@@ -320,7 +320,7 @@ namespace FurmaIdle.Data
                 Icon = "images/upgrades/uk02.jpg",
                 Lore = "",
                 Description = "Libera o Conhecimento",
-                UnlockId = "x00",
+                UnlockId = "x01",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.KnowledgeUnlock0,
                 State = UnlockHelper.State.Blocked,
@@ -933,7 +933,7 @@ namespace FurmaIdle.Data
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize0,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "s00",
                 EffectType = EffectHelper.EffectType.PartyCapSize,
                 EffectOp = EffectHelper.EffectOperation.Additive,
@@ -952,7 +952,7 @@ namespace FurmaIdle.Data
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize0,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "s00",
                 EffectType = EffectHelper.EffectType.PartyCapSize,
                 EffectOp = EffectHelper.EffectOperation.Additive,
@@ -2333,6 +2333,44 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Upgrades de Expansão x00
+            ["ux001"] = new UpgradeModel
+            {
+                Id = "ux001",
+                Name = "Esforço Recompensado",
+                Level = 1,
+                Icon = "images/upgrades/ux001.jpg",
+                Lore = "",
+                Description = "Aumenta o ganho base do Click de acordo com o ganho de Talhos",
+                UnlockId = "x00",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.ExpansionUpgrade0,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpansion,
+                TargetId = "i00",
+                EffectType = EffectHelper.EffectType.ClickGainCent,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 0.001,
+            },
+            ["ux002"] = new UpgradeModel
+            {
+                Id = "ux002",
+                Name = "Planejamento de Aventura",
+                Level = 1,
+                Icon = "images/upgrades/ux002.jpg",
+                Lore = "",
+                Description = "Aumenta o ganho de Mantimentos",
+                UnlockId = "x00",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.ExpansionUpgrade0,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpansion,
+                TargetId = "r01",
+                EffectType = EffectHelper.EffectType.ResourceGain,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 0.25,
+            },
             #endregion
 
             #region Upgrades de Expansão x01
@@ -2340,7 +2378,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux011",
                 Name = "Disseminar Conhecimento",
-                Level = 1,
+                Level = 2,
                 Icon = "images/upgrades/ux011.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Contratos por Tech desbloqueada",
@@ -2359,7 +2397,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux012",
                 Name = "Estudo Coletivo",
-                Level = 1,
+                Level = 2,
                 Icon = "images/upgrades/ux012.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Conhecimentos por Tech desbloqueada",
@@ -2378,7 +2416,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux013",
                 Name = "Eficiência da Base",
-                Level = 1,
+                Level = 2,
                 Icon = "images/upgrades/ux013.jpg",
                 Lore = "",
                 Description = "Aumenta a geração de Recursos por Tech desbloqueada",
@@ -2400,7 +2438,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux021",
                 Name = "Conhecer os Métodos Locais",
-                Level = 2,
+                Level = 3,
                 Icon = "images/upgrades/ux021.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Contratos por Local desbloqueado",
@@ -2419,7 +2457,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux022",
                 Name = "Conhecer a Área",
-                Level = 2,
+                Level = 3,
                 Icon = "images/upgrades/ux022.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Conhecimentos por Local desbloqueado",
@@ -2438,7 +2476,7 @@ namespace FurmaIdle.Data
             {
                 Id = "ux023",
                 Name = "Conexão com a Base",
-                Level = 2,
+                Level = 3,
                 Icon = "images/upgrades/ux023.jpg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Recursos por Local desbloqueado",

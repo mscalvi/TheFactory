@@ -33,14 +33,16 @@ namespace FurmaIdle.Services
         private readonly IEffectService _effect;
         private readonly IKnowledgeService _knowledge;
         private readonly IUiService _ui;
+        private readonly ILoreService _lore;
 
-        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IKnowledgeService knowledge, IUiService ui)
+        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IKnowledgeService knowledge, IUiService ui, ILoreService lore)
         {
             _locate = locate;
             _game = game;
             _effect = effect;
             _knowledge = knowledge;
             _ui = ui;
+            _lore = lore;
         }
 
         public int GetPartyCap(StageModel stage)
@@ -169,6 +171,7 @@ namespace FurmaIdle.Services
             }
 
             _ui.NavMenuControl("GameStart");
+            _lore.LoreTrigger("GameStart");
         }
         public async Task LaunchExpedition(StageModel stage)
         {
@@ -207,6 +210,7 @@ namespace FurmaIdle.Services
                 expedition.FinishedAt = null;
 
                 _ui.NavMenuControl("ExpeditionStart");
+                _lore.LoreTrigger("ExpeditionStart");
 
             }, save: true);
 
@@ -273,8 +277,11 @@ namespace FurmaIdle.Services
                 {
                     if (upgrades.Value.Persistence == Persistence.untilExpedition)
                     {
-                        upgrades.Value.State = State.Available;
-                        upgrades.Value.ActualBuy = 0;
+                        if (upgrades.Value.State != State.Blocked)
+                        {
+                            upgrades.Value.State = State.Available;
+                            upgrades.Value.ActualBuy = 0;
+                        }
                     }
                 }
 
@@ -283,6 +290,7 @@ namespace FurmaIdle.Services
                 expedition.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
 
                 _ui.NavMenuControl("ExpeditionEnd");
+                _lore.LoreTrigger("ExpeditionEnd", "aprendeu");
 
             }, save: true);
 
@@ -407,16 +415,22 @@ namespace FurmaIdle.Services
                     {
                         if (upgrades.Value.Persistence == Persistence.untilExpedition)
                         {
-                            upgrades.Value.State = State.Available;
-                            upgrades.Value.ActualBuy = 0;
+                            if(upgrades.Value.State != State.Blocked)
+                            {
+                                upgrades.Value.State = State.Available;
+                                upgrades.Value.ActualBuy = 0;
+                            }
                         }
                     }
                     foreach (var upgrades in game.Upgrades)
                     {
                         if (upgrades.Value.Persistence == Persistence.untilExpansion)
                         {
-                            upgrades.Value.State = State.Available;
-                            upgrades.Value.ActualBuy = 0;
+                            if (upgrades.Value.State != State.Blocked)
+                            {
+                                upgrades.Value.State = State.Available;
+                                upgrades.Value.ActualBuy = 0;
+                            }
                         }
                     }
                 }, save: true);
@@ -481,6 +495,7 @@ namespace FurmaIdle.Services
                 game.CurrentExpansionId = expansion.NextExpansion;
 
                 _ui.NavMenuControl("ExpansionEnd");
+                _lore.LoreTrigger("ExpansionEnd");
 
             }, save: true);
         }

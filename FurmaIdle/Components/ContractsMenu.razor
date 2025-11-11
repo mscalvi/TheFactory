@@ -41,7 +41,7 @@
                         @if (level > contractsInfo.ContractsLevel)
                         {
                             <div class="level-noChosen">
-                                <img src="image/contracts-blockedLevel" alt="Nível de Contrato Bloqueado" />
+                                <img src="image/contracts-blockedLevel" alt="X" />
                             </div>
                         }
                         else
@@ -49,7 +49,7 @@
                             @if (ShowOverlay(level))
                             {
                                 <div class="level-noChosen">
-                                    <img src="image/contracts-@level" alt="Passe o mouse para ver contratos" />
+                                    <img src="image/contracts-@level" alt="Escolher Contrato" />
                                 </div>
                             }
                             else
@@ -91,11 +91,11 @@
                                             @{
                                                 var prog = Math.Clamp(Contracts.GetContractProgress(Game.CurrentGame, _stage.Id, chosenCon.Id), 0.0, 1.0);
 
-                                                const int steps = 25;
+                                                const int steps = 100;
                                                 int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
                                             }
                                             <div class="contract-progress-bar">
-                                                @for (int i = 0; i < 25; i++)
+                                                @for (int i = 0; i < 100; i++)
                                                 {
                                                     var isFilled = i < filled;
                                                     <div class="chunk @(isFilled ? "is-filled" : null)"></div>
