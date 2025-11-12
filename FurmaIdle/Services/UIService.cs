@@ -148,6 +148,7 @@ namespace FurmaIdle.Services
             new() { Id = "i97", Label = "Achiev",  Unlocked = false },
             new() { Id = "i98", Label = "Out",     Unlocked = false },
             new() { Id = "i99", Label = "Sett",    Unlocked = false },
+            new() { Id = "i100", Label = "Tips",   Unlocked = false },
         };
         public IEnumerable<NavItem> VisibleNav =>
             _nav
@@ -327,8 +328,10 @@ namespace FurmaIdle.Services
 
                     UnlockMenu("i5");
                     UnlockMenu("i99");
+                    UnlockMenu("i100");
 
-                    SetOpenMenu("i5");
+                    SetOpenMenu("i100");
+                    SetNotificationMenu("i5");
                     SetNotificationMenu("i99");
                     break;
                 case "FirstKnowledgePurchase":

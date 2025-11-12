@@ -458,14 +458,20 @@ namespace FurmaIdle.Services
                             break;
                     }
                     break;
-                    #endregion
+                #endregion
 
-                    #region Cap
-                    // ContractLevel e ContractCap estão no ContractService
-                    #endregion
+                #region Offline
+                case EffectSupertype.Offline:
+                    MultMod *= 0.1;
+                    break;
+                #endregion
 
-                    #region Unlock
-                    #endregion
+                #region Cap
+                // ContractLevel e ContractCap estão no ContractService
+                #endregion
+
+                #region Unlock
+                #endregion
             }
 
             return (AddMod, MultMod);

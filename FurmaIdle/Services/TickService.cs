@@ -29,11 +29,13 @@ namespace FurmaIdle.Services
     {
         private readonly ICurrentGameService _game;
         private readonly IUiService _ui;
+        private readonly IOfflineService _offline;
 
-        public TickService(ICurrentGameService game, IUiService ui)
+        public TickService(ICurrentGameService game, IUiService ui, IOfflineService offline)
         {
             _game = game;
             _ui = ui;
+            _offline = offline;
         }
 
         public bool IsRunning { get; private set; }
@@ -155,9 +157,8 @@ namespace FurmaIdle.Services
             var skipped = elapsedRaw - elapsed;
             if (skipped > 0)
             {
-                Console.WriteLine($"[Tick] Catch-up CLAMPED: processando {elapsed:F1}s e ignorando, por enquanto, {skipped:F1}s (placeholder p/ bulk calc).");
-                // TODO: no futuro, armazenar 'skipped' em algum lugar (ex.: g.PendingOfflineSeconds += skipped)
-                //       e fazer um cálculo agregado de renda/contratos sem simular tick-a-tick.
+                Console.WriteLine($"[Tick] Offline catch-up: {skipped}s");
+                await _offline.OfflineIncome(skipped);
             }
 
             // processa em blocos de MaxDt e faz 1 save no final
@@ -180,7 +181,7 @@ namespace FurmaIdle.Services
             // salva ao final do catch-up
             await _game.Mutate(_ => { /* LastTick já foi atualizado no ProcessTickAsync */ }, save: true);
             _ui.RaisePulse();
-            Console.WriteLine($"[Tick] Offline catch-up: {elapsed:F1}s (raw {elapsedRaw:F1}s)");
+            Console.WriteLine($"[Tick] Offline catch-up: {elapsed:F1}s (total {elapsedRaw:F1}s)");
         }
 
         private async Task ProcessTickAsync(double dtSeconds, bool save, bool ui)

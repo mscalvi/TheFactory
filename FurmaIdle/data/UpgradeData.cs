@@ -590,11 +590,11 @@ namespace FurmaIdle.Data
             ["us01"] = new UpgradeModel
             {
                 Id = "us01",
-                Name = "Içar Velas",
+                Name = "Região",
                 Level = 1,
                 Icon = "images/upgrades/us01.jpg",
                 Lore = "",
-                Description = "Libera Stage",
+                Description = "Libera a Região",
                 UnlockId = "x03",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.StageUnlock1,
@@ -800,7 +800,7 @@ namespace FurmaIdle.Data
             ["ue01"] = new UpgradeModel
             {
                 Id = "ue01",
-                Name = "Reestruturar a Guilda: Pesquisas",
+                Name = "Expansão",
                 Level = 1,
                 Icon = "images/upgrades/ue01.jpg",
                 Lore = "",
@@ -819,7 +819,7 @@ namespace FurmaIdle.Data
             ["ue02"] = new UpgradeModel
             {
                 Id = "ue02",
-                Name = "Reestruturar a Guilda: Territórios",
+                Name = "Expansão",
                 Level = 2,
                 Icon = "images/upgrades/ue02.jpg",
                 Lore = "",
@@ -838,7 +838,7 @@ namespace FurmaIdle.Data
             ["ue03"] = new UpgradeModel
             {
                 Id = "ue03",
-                Name = "Reestruturar a Guilda: Alcance",
+                Name = "Expansão",
                 Level = 3,
                 Icon = "images/upgrades/ue03.jpg",
                 Lore = "",

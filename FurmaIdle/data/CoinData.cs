@@ -24,6 +24,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
                 Lore = "",
+                Description = "",
             },
             #endregion
         };
@@ -46,7 +47,8 @@ namespace FurmaIdle.Data
                 State = coin.State,
                 Persistence = coin.Persistence,
                 Modifiers = coin.Modifiers,
-                Lore = coin.Lore
+                Lore = coin.Lore,
+                Description = coin.Description
             };
         }
 

@@ -14,15 +14,16 @@
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
+@inject ISpecialtiesService Specialty;
 
 <div class="menu-root">
 @if (!Game.IsReady || _stage is null)
 {
-    <div class="contracts-placeholder">Stage não Selecionado</div>
-}
-else
-{
-    var game = Game.CurrentGame;
+        <div class="contracts-placeholder">Stage não Selecionado</div>
+    }
+    else
+    {
+        var game = Game.CurrentGame;
 
         var all = OrderedUpgrades(game);
         var heroUpgrade =
@@ -53,11 +54,13 @@ else
             (Uc(u.Id) || Ui(u.Id)) &&
             IsContractUpgradeVisible(game, u.Id))
             .ToList();
-            
+
+        var specActive = IsSpecActive();
+
         <section class="@($"menu-panel {UI.PanelClass("up-objetive")}")">
             @if (heroUpgrade is not null)
             {
-                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id);
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id) && !specActive;
                 <button class="objetive-button"
                         disabled="@(!can)"
                         @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
@@ -290,5 +293,19 @@ else
         {
             return;
         }
+    }
+
+    bool IsSpecActive()
+    {
+        foreach (var spec in Game.CurrentGame.Specialties.Values)
+        {
+            var timer = Specialty.GetSpecialtyTimer(spec);
+            if (timer.Actual > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

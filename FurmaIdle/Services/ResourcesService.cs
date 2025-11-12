@@ -113,6 +113,8 @@ namespace FurmaIdle.Services
 
             long cap = (long)((baseCap + capModifier.AddMod) * capModifier.MultMod);
 
+            resource.RegenActual = regen;
+
             return (regen, cap);
         }
 

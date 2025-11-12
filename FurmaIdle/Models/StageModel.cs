@@ -9,6 +9,7 @@ namespace FurmaIdle.Models
         public string Icon { get; set; }
         public List<string> Images { get; set; }
         public string Description { get; set; }
+        public string Lore { get; set; }
         public string? UnlockId { get; set; }
 
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);

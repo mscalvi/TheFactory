@@ -19,6 +19,7 @@
             Expansion,
             Click,
             Trait,
+            Offline,
         }
     }
 }

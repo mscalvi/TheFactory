@@ -56,6 +56,7 @@
             Time,
             Unlock,
             Cap,
+            Offline,
         }
 
 

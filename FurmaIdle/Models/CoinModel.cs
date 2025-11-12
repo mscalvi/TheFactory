@@ -11,6 +11,7 @@ namespace FurmaIdle.Models
         public string Image { get; set; }
         public string UnlockId { get; set; }
         public string Lore { get; set; }
+        public string Description { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
 

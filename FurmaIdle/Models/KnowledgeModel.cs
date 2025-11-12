@@ -7,6 +7,7 @@ namespace FurmaIdle.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Lore { get; set; }
         public string Icon { get; set; }
         public string Image { get; set; }
 

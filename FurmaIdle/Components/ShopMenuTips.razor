@@ -1,0 +1,75 @@
+﻿@inherits UiHelper
+
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Data
+
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+@inject ILocateService Locate
+@inject IExpeditionService Expedition
+
+<div class="menu-root">
+    @if (!Game.IsReady || _stage is null)
+    {
+        <div class="contracts-placeholder">Stage não Selecionado</div>
+    }
+    else
+    {
+        <section class="@($"menu-panel {UI.PanelClass("tips")}")">
+            <h3 class="title">Instruções</h3>
+            <p>
+                O jogo simula a criação e crescimento de uma Guilda em uma ilha isolada, com exploração de regiões, descoberta de pesquisas
+                e novos tipos de conhecimentos, adição de membros e diferentes tipos de trabalho.
+            </p>
+            <p>
+                Os Contratos são os geradores de moedas automáticos. São limitados pelo número de membros da Guilda trabalhando na região. 
+                Para começar um novo contrato, passe o mouse por cima da área do nível e escolha um. Após escolhido, só é possível trocar
+                com um Reset.
+            </p>
+            <p>
+                As Expedições são o primeiro tipo de Reset, que podem, em algum momento, gerar Conhecimento, que por sua vez é utilizado para realizar
+                Pesquisas, liberando novas melhorias poderosas, além de fornecerem bônus de produção. Resetam todas as melhorias de Expedição,
+                Traços e Especialidades, além de zerarem a Moeda referente à Região na qual ela foi realizada. Cada Região pode ter
+                uma Expedição independente.
+            </p>
+            <p>
+                As Expansões são o segundo tipo de Reset, cada uma liberando novas melhorias, porém consumindo todo o Conhecimento acumulado.
+                Resetam todas as melhorias de Expansão, de Expedição, Traços e Especialidades, além de Moedas e Conhecimentos.
+            </p>
+            <p>
+                Os Personagens possuem Traços, que são habilidades passivas e aplicadas automaticamente conforme ele entra em uma Expedição,
+                e Especialidades, habilidades ativas, que consomem Recursos para serem utilizadas.
+            </p>
+        </section>
+    }
+</div>
+
+@code {
+    private StageModel? _stage;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
+    }
+}

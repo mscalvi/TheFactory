@@ -20,6 +20,7 @@ namespace FurmaIdle.Data
                 Id = "s00",
                 Name = "Ilha de Vera",
                 Description = "",
+                Lore = "",
                 Icon = "icons/stages/s00.jpg",
                 Images = new List<string> {
                     "images/stages/s00_0000.jpg",
@@ -52,6 +53,7 @@ namespace FurmaIdle.Data
                 Id = "s01",
                 Name = "Correntezas",
                 Description = "",
+                Lore = "",
                 Icon = "icons/stages/s01.jpg",
                 Images = new List<string> {
                     "images/stages/s01_0000.jpg",
@@ -94,6 +96,7 @@ namespace FurmaIdle.Data
                 Id = stage.Id,
                 Name = stage.Name,
                 Description = stage.Description,
+                Lore = stage.Lore,
                 Icon = stage.Icon,
                 Images = new List<string>(stage.Images),
                 UnlockId = stage.UnlockId,

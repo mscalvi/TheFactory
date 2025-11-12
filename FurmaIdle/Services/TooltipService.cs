@@ -11,7 +11,7 @@ using System.Text;
 
 namespace FurmaIdle.Services
 {
-    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expansion, Expedition, Knowledge, Coins, Resources }
+    public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expedition, Knowledge, Coins, Resources }
 
     public interface ITooltipService
     {
@@ -68,6 +68,8 @@ namespace FurmaIdle.Services
                 HoverType.Knowledge => BuildKnowledgeHover(id, g),
                 HoverType.Resources => BuildResourcesHover(id, g),
                 HoverType.Coins => BuildCoinsHover(id, g),
+                HoverType.Expedition => BuildExpeditionHover(id, g),
+                HoverType.Stage => BuildStageHover(id, g),
                 _ => new TooltipModel()
             };
         }
@@ -152,73 +154,273 @@ namespace FurmaIdle.Services
             return tooltip;
         }
 
-
         // Upgrade
         private TooltipModel BuildUpgradeHover(string upgradeId, GameModel game)
         {
             var tooltip = new TooltipModel();
 
             var upgrade = _locate.LocateUpgrade(game, upgradeId);
-            var stage = _locate.LocateStage(game, game.SelectedStageId);
+            var stageIn = _locate.LocateStage(game, game.SelectedStageId);
 
             string nome = upgrade.Name;
-            var cost = _cost.ComputeCost(ItemHelper.ItemType.Upgrade, upgrade.Id, stage.Id);
-
-            var coin = _locate.LocateCoin(game, cost.costId);
-            nome += " - " + cost.costValue.ToString() + " " + coin.Name;
-
+            var cost = _cost.ComputeCost(ItemHelper.ItemType.Upgrade, upgrade.Id, stageIn.Id);
 
             string upIdType = upgrade.Id.Length >= 2
-                ? upgrade.Id.Substring(0, 1)
+                ? upgrade.Id.Substring(0, 2)
                 : upgrade.Id;
+
+            var costCoin = new CoinModel();
+            var costResource = new ResourceModel();
+            var costKnowledge = new KnowledgeModel();
+
+            string custo = NumbersHelper.Padronize(cost.costValue);
+
+            if (upIdType == "xx")
+            {
+                costResource = _locate.LocateResource(game, cost.costId);
+                nome += " - " + custo + " " + costResource.Name;
+            }
+            else if (upIdType == "uh")
+            {
+                costKnowledge = _locate.LocateKnowledge(game, cost.costId);
+                nome += " - " + custo + " " + costKnowledge.Name;
+            }
+            else
+            {
+                costCoin = _locate.LocateCoin(game, cost.costId);
+                nome += " - " + custo + " " + costCoin.Name;
+            }
+
+            string tipo = "";
+            string target = "";
+            string valor = "";
+            string operation = "";
+            string intro = "";
 
             switch (upIdType)
             {
                 // Unlocks
                 case "uu": // Contracts
+                    tipo = "Desbloqueio";
+                    var contract = _locate.LocateContract(game, upgrade.TargetId);
+                    target = "para " + contract.Name;
+                    operation = "Desbloqueio de Contrato ";
                     break;
                 case "uk": // Knowledge
+                    tipo = "Desbloqueio";
+                    var knowledge = _locate.LocateKnowledge(game, upgrade.TargetId);
+                    target = "do tipo " + knowledge.Name;
+                    operation = "Desbloqueio de Conhecimento ";
                     break;
                 case "up": // Characters
+                    tipo = "Desbloqueio";
+                    var character = _locate.LocateCharacter(game, upgrade.TargetId);
+                    target = character.Name;
+                    operation = "Desbloqueio do Personagem ";
                     break;
                 case "ul": // Locals
+                    tipo = "Desbloqueio";
+                    var local = _locate.LocateLocal(game, upgrade.TargetId);
+                    target = local.Name;
+                    operation = "Desbloqueio do Local ";
                     break;
                 case "us": // Stages
+                    tipo = "Reset";
+                    var stage = _locate.LocateStage(game, upgrade.TargetId);
+                    target = stage.Name;
+                    operation = "Desbloqueio da Região ";
                     break;
                 case "uh": // Techs
-                    break;
-                case "ue": // Expansions
+                    tipo = "Desbloqueio";
+                    var tech = _locate.LocateTech(game, upgrade.TargetId);
+                    target = tech.Name;
+                    operation = "Desbloqueio para ";
                     break;
                 case "ur": // Resources
+                    tipo = "Desbloqueio";
+                    var resource = _locate.LocateResource(game, upgrade.TargetId);
+                    target = "do tipo " + resource.Name;
+                    operation = "Desbloqueio de Recurso ";
+                    break;
+
+                // Unlocks Diferentes
+                case "ue": // Expansions
+                    var expansion = _locate.LocateExpansion(game, upgrade.TargetId);
+                    tipo = "Reset";
+                    target = expansion.Name;
+                    operation = "Inicia o próximo passo: ";
                     break;
                 case "ua": // Party Size
+                    tipo = "Desbloqueio";
+                    target = stageIn.Name;
+                    operation = "Aumenta o limite de membros ativos da Guilda em ";
                     break;
 
                 // Expeditions
                 case "ui": // Click
+                    tipo = "Melhoria";
+                    target = stageIn.Name;
+                    intro = "Aumenta o ganho do Click em ";
+                    valor = upgrade.EffectValue.ToString("N2");
                     break;
                 case "uc": // Contracts Modifiers
+                    tipo = "Melhoria";
+
+                    if (upgrade.TargetId == "aContracts")
+                    {
+                        target = "todos os Contratos";
+                    } else
+                    {
+                        var contractMod = _locate.LocateContract(game, upgrade.TargetId);
+                        target = contractMod.Name;
+                    }
+
+                    if(upgrade.EffectSupertype == EffectHelper.EffectSupertype.Cost)
+                    {
+                        intro = "Diminui o Custo de ";
+                    }
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Gain)
+                    {
+                        intro = "Aumenta o Ganho de ";
+                    }
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Time)
+                    {
+                        intro = "Diminui o Tempo de ";
+                    }
+
+                    valor = upgrade.EffectValue.ToString("N2");
                     break;
 
                 // Tech Upgrades
                 case "ut": // Target é c ou r
+                    tipo = "Melhoria";
+
+                    if (upgrade.TargetId != "aContracts")
+                    {
+                        if (upgrade.TargetId.StartsWith('c'))
+                        {
+                            var contractMod = _locate.LocateContract(game, upgrade.TargetId);
+                            target = contractMod.Name;
+                        }
+                        if (upgrade.TargetId.StartsWith('r'))
+                        {
+                            var resourceMod = _locate.LocateResource(game, upgrade.TargetId);
+                            target = resourceMod.Name;
+                        }
+                    }
+                    else
+                    {
+                        target = "todos os Contratos";
+                    }
+
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Cost)
+                    {
+                        intro = "Diminui o Custo de ";
+                    }
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Gain)
+                    {
+                        intro = "Aumenta o Ganho de ";
+                    }
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Time)
+                    {
+                        intro = "Diminui o Tempo de ";
+                    }
+
+                    valor = upgrade.EffectValue.ToString("N2");
                     break;
 
                 // Expansions
                 case "um": // ContractCap
+                    tipo = "Melhoria";
+                    intro = "Aumenta o limite de Contratos ";
+                    target = "de todos os Personagens";
+                    valor = upgrade.EffectValue.ToString("N2");
                     break;
                 case "ub": // Contract Level Unlock
+                    tipo = "Melhoria";
+                    operation = "Aumenta o nível máximo dos Contratos em ";
+                    target = stageIn.Name;
                     break;
                 case "ux": // Target pode ser i, r, aResources, aKnowledges, aContracts, 
-                    break;
+                    tipo = "Melhoria";
+                    if (upgrade.TargetId != "aContracts" && upgrade.TargetId != "aKnowledges" && upgrade.TargetId != "aResources")
+                    {
+                        if (upgrade.TargetId.StartsWith("i"))
+                        {
+                            var clickMod = _locate.LocateClick(game, upgrade.TargetId);
+                            var stageMod = _locate.LocateStage(game, clickMod.StageId);
+                            target = "Click em " + stageMod.Name;
+                        }
+                        if (upgrade.TargetId.StartsWith('r'))
+                        {
+                            var resourceMod = _locate.LocateResource(game, upgrade.TargetId);
+                            target = resourceMod.Name;
+                        }
+                    }
+                    else
+                    {
+                        if (upgrade.TargetId == "aContracts")
+                        {
+                            target = "todos os Contratos";
+                        }
+                        if (upgrade.TargetId == "aKnowledges")
+                        {
+                            target = "todos os Conhecimentos";
+                        }
+                        if (upgrade.TargetId == "aResources")
+                        {
+                            target = "todos os Recursos";
+                        }
+                    }
 
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Cost)
+                    {
+                        intro = "Diminui o Custo de ";
+                    }
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Gain)
+                    {
+                        intro = "Aumenta o Ganho de ";
+                    }
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Time)
+                    {
+                        intro = "Diminui o Tempo de ";
+                    }
+
+                    valor = upgrade.EffectValue.ToString("N2");
+                    break;
+            }
+
+            if(operation == "")
+            {
+                if (upgrade.EffectOp == EffectHelper.EffectOperation.Additive)
+                {
+                    operation = "Base +";
+                }
+                if (upgrade.EffectOp == EffectHelper.EffectOperation.Multiplicative)
+                {
+                    operation = "Total x";
+                }
+            }
+
+            // alvo
+            // operação
+            // valor?
+
+            string function = "";
+            if (valor == "")
+            {
+                function = operation + target;
+            } else
+            {
+                function = intro + target + " -> " + operation + valor;
             }
 
             var modifiers = upgrade.Modifiers.Count;
 
-            tooltip.Type = "Melhoria";
+            tooltip.Type = tipo;
             tooltip.Name = nome;
             tooltip.Lore = upgrade.Lore;
+            tooltip.Info.Add("Função", function);
             tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
 
             return tooltip;
@@ -236,7 +438,10 @@ namespace FurmaIdle.Services
             var cost = _cost.ComputeCost(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
 
             var coin = _locate.LocateCoin(game, cost.costId);
-            nome += " - " + cost.costValue.ToString() + " " + coin.Name;
+            string custo = NumbersHelper.Padronize(cost.costValue);
+
+            nome += " - " + custo + " " + coin.Name;
+
 
             string nivel = "";
             switch (contract.Level) 
@@ -309,11 +514,17 @@ namespace FurmaIdle.Services
             return tooltip;
         }
 
-
         // Local
         private TooltipModel BuildLocalHover(string id, GameModel game)
         {
             var tooltip = new TooltipModel();
+
+            var local = _locate.LocateLocal(game, id);
+
+            tooltip.Type = "Lugar";
+            tooltip.Name = local.Name;
+            tooltip.Lore = local.Lore;
+            tooltip.Info.Add("Descrição", local.Description);
 
             return tooltip;
         }
@@ -323,6 +534,40 @@ namespace FurmaIdle.Services
         {
             var tooltip = new TooltipModel();
 
+            var tech = _locate.LocateTech(game, id);
+
+            string know = "";
+
+            string techKnow = tech.Id.Length >= 3
+                ? tech.Id.Substring(0, 2)
+                : tech.Id;
+
+            switch (techKnow)
+            {
+                case "t01":
+                    know = "Cultural";
+                    break;
+                case "t02":
+                    know = "Geográfico";
+                    break;
+                case "t03":
+                    know = "Sobrevivência";
+                    break;
+                case "t04":
+                    know = "Navegação";
+                    break;
+                case "t05":
+                    know = "Caça";
+                    break;
+            }
+
+            tooltip.Type = "Pesquisa";
+            tooltip.Name = tech.Name;
+            tooltip.Lore = tech.Lore;
+            tooltip.Info.Add("Nível", tech.Level.ToString());
+            tooltip.Info.Add("Conhecimento", know);
+            tooltip.Info.Add("Descrição", tech.Description);
+
             return tooltip;
         }
 
@@ -330,6 +575,13 @@ namespace FurmaIdle.Services
         private TooltipModel BuildKnowledgeHover(string id, GameModel game)
         {
             var tooltip = new TooltipModel();
+
+            var knowledge = _locate.LocateKnowledge(game, id);
+
+            tooltip.Type = "Conhecimento";
+            tooltip.Name = knowledge.Name;
+            tooltip.Lore = knowledge.Lore;
+            tooltip.Info.Add("Descrição", knowledge.Description);
 
             return tooltip;
         }
@@ -339,6 +591,107 @@ namespace FurmaIdle.Services
         {
             var tooltip = new TooltipModel();
 
+            var specialty = _locate.LocateSpecialty(game, id);
+            var stageIn = _locate.LocateStage(game, game.SelectedStageId);
+
+            string nome = specialty.Name;
+            var cost = _cost.ComputeCost(ItemHelper.ItemType.Specialty, specialty.Id, stageIn.Id);
+
+            var costResource = new ResourceModel();
+
+            costResource = _locate.LocateResource(game, cost.costId);
+            string custo = NumbersHelper.Padronize(cost.costValue);
+            nome += " - " + custo + " " + costResource.Name;
+
+            string target = "";
+            string valor = "";
+            string operation = "";
+            string intro = "";
+
+            string specTarget = specialty.TargetId.Length >= 2
+                ? specialty.TargetId.Substring(0, 1)
+                : specialty.TargetId;
+
+            switch (specTarget)
+            {
+                case "i": // Click
+                    target = stageIn.Name;
+                    intro = "Aumenta o ganho do Click em ";
+                    valor = specialty.EffectValue.ToString("N2");
+                    break;
+                case "c": // Contracts
+                    var contract = _locate.LocateContract(game, specialty.TargetId);
+                    target = contract.Name;
+
+                    if (specialty.EffectSupertype == EffectHelper.EffectSupertype.Cost)
+                    {
+                        intro = "Diminui o Custo de ";
+                    }
+                    if (specialty.EffectSupertype == EffectHelper.EffectSupertype.Gain)
+                    {
+                        intro = "Aumenta o Ganho de ";
+                    }
+                    if (specialty.EffectSupertype == EffectHelper.EffectSupertype.Time)
+                    {
+                        intro = "Diminui o Tempo de ";
+                    }
+
+                    valor = specialty.EffectValue.ToString("N2");
+                    break;
+                case "a":
+                    if (specialty.TargetId == "aContracts")
+                    {
+                        target = "todos os Contratos";
+                    }
+                    if (specialty.TargetId == "aSpecialties")
+                    {
+                        target = "todas as Especialidades";
+                    }
+                    if (specialty.TargetId == "aResources")
+                    {
+                        target = "todos os Recursos";
+                    }
+
+
+                    if (specialty.EffectSupertype == EffectHelper.EffectSupertype.Cost)
+                    {
+                        intro = "Diminui o Custo de ";
+                    }
+                    if (specialty.EffectSupertype == EffectHelper.EffectSupertype.Gain)
+                    {
+                        intro = "Aumenta o Ganho de ";
+                    }
+                    if (specialty.EffectSupertype == EffectHelper.EffectSupertype.Time)
+                    {
+                        intro = "Diminui o Tempo de ";
+                    }
+
+                    valor = specialty.EffectValue.ToString("N2");
+                    break;
+            }
+
+            if (operation == "")
+            {
+                if (specialty.EffectOp == EffectHelper.EffectOperation.Additive)
+                {
+                    operation = "Base +";
+                }
+                if (specialty.EffectOp == EffectHelper.EffectOperation.Multiplicative)
+                {
+                    operation = "Total x";
+                }
+            }
+
+            string function = intro + target + " -> " + operation + valor;
+
+            var modifiers = specialty.Modifiers.Count;
+
+            tooltip.Type = "Especialidade";
+            tooltip.Name = nome;
+            tooltip.Lore = specialty.Lore;
+            tooltip.Info.Add("Função", function);
+            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
+
             return tooltip;
         }
 
@@ -347,6 +700,13 @@ namespace FurmaIdle.Services
         {
             var tooltip = new TooltipModel();
 
+            var resource = _locate.LocateResource(game, id);
+
+            tooltip.Type = "Recurso";
+            tooltip.Name = resource.Name;
+            tooltip.Lore = resource.Lore;
+            tooltip.Info.Add("Descrição", resource.Description);
+
             return tooltip;
         }
 
@@ -354,6 +714,40 @@ namespace FurmaIdle.Services
         private TooltipModel BuildCoinsHover(string id, GameModel game)
         {
             var tooltip = new TooltipModel();
+
+            var coin = _locate.LocateCoin(game, id);
+
+            tooltip.Type = "Moeda";
+            tooltip.Name = coin.Name;
+            tooltip.Lore = coin.Lore;
+            tooltip.Info.Add("Descrição", coin.Description);
+
+            return tooltip;
+        }
+
+        // Stage
+        private TooltipModel BuildStageHover(string id, GameModel game)
+        {
+            var tooltip = new TooltipModel();
+
+            var stage = _locate.LocateStage(game, id);
+
+            tooltip.Type = "Região";
+            tooltip.Name = stage.Name;
+            tooltip.Lore = stage.Lore;
+            tooltip.Info.Add("Descrição", stage.Description);
+
+            return tooltip;
+        }
+
+        // Expedition
+        private TooltipModel BuildExpeditionHover(string id, GameModel game)
+        {
+            var tooltip = new TooltipModel();
+
+            tooltip.Type = "Reset";
+            tooltip.Name = "Expedição";
+            tooltip.Lore = "Toda aventura precisa terminar.";
 
             return tooltip;
         }
