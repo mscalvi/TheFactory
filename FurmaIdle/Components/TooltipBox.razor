@@ -1,0 +1,51 @@
+﻿@using FurmaIdle.Models
+@using FurmaIdle.Services
+
+@inject ITooltipService Tooltips
+
+<div class="game-area">
+    @if (Tooltips.Current is not null)
+    {
+        TooltipModel Model = Tooltips.Current;
+
+        <div class="tooltip-card">
+
+            <!-- Faixa superior -->
+            <section class="tt-top">
+                <span class="tt-title">@Model.Type: @Model.Name</span>
+            </section>
+
+            <!-- Quadro de informações -->
+            <section class="tt-mid">
+                @if (Model.Info is not null && Model.Info.Count > 0)
+                {
+                    @foreach (var line in Model.Info)
+                    {
+                        <div class="tt-info">
+                            @if (!string.IsNullOrWhiteSpace(line.Key))
+                            {
+                                <span class="tt-info-line"><strong>@line.Key:</strong> @line.Value</span>
+                            }
+                        </div>
+                    }
+                }
+            </section>
+
+            <!-- Quadro com lore -->
+            <section class="tt-bot">
+                <span class="tt-lore">@Model.Lore</span>
+            </section>
+        </div>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Tooltips.Changed += OnChanged;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Tooltips.Changed -= OnChanged;
+}

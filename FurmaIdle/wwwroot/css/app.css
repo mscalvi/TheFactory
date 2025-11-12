@@ -55,7 +55,6 @@ html, body {
     gap: 4px;
 }
 
-/* Área principal (madeira) com aro metálico */
 .game-area {
     border: 1px solid var(--grain-00);
     border-radius: 10px;
@@ -78,7 +77,6 @@ html, body {
     display: grid;
 }
 
-/* Painéis com leve “verniz” e aro de aço */
 .menu-panel {
     border: 1px solid var(--steel-10);
     background: linear-gradient(180deg, var(--wood-01), var(--wood-02));
@@ -106,7 +104,6 @@ html, body {
     justify-items: center;
 }
 
-/* ===== Botões (placa de metal com aro de latão) ===== */
 .icon-button,
 .character-button,
 .contract-button {
@@ -154,7 +151,6 @@ html, body {
     padding: calc(2px * var(--ui-scale));
 }
 
-    /* estados */
     .icon-button:hover,
     .character-button:hover,
     .contract-button:hover {
@@ -179,7 +175,6 @@ html, body {
         box-shadow: none;
     }
 
-/* Botões longos */
 .objetive-button,
 .spec-button {
     min-height: calc(54px * var(--ui-scale));
@@ -225,12 +220,10 @@ html, body {
     height: 100%;
 }
 
-/* seleção de personagem (sutil) */
 .character-button .selected {
     background: rgba(183,154,99,.18);
 }
 
-/* Ícones/recursos */
 .image-resource {
     width: 20px;
     height: 20px;
@@ -247,7 +240,6 @@ html, body {
     object-fit: contain;
 }
 
-/* Tabelas/infos */
 .info-table {
     width: 100%;
     gap: 8px 12px;
@@ -298,7 +290,6 @@ html, body {
     color: var(--metal-ink);
 }
 
-/* Responsividade (mantida) */
 @media (max-width: 1440px) {
     :root {
         --ui-scale: 0.95;

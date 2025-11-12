@@ -4,6 +4,7 @@ using FurmaIdle.Models;
 using FurmaIdle.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -11,14 +12,13 @@ using System.Text;
 namespace FurmaIdle.Services
 {
     public enum HoverType { Character, Specialty, Tech, Local, Upgrade, Contract, Stage, Expansion, Expedition, Knowledge, Coins, Resources }
-    public sealed record HoverTip(string Title, string Body);
 
     public interface ITooltipService
     {
-        HoverTip GetHover(HoverType type, string id, string? stageId = null);
+        TooltipModel GetHover(HoverType type, string id, string? stageId = null);
 
-        HoverTip? Current { get; }
-        void Show(HoverTip tip);
+        TooltipModel? Current { get; }
+        void Show(TooltipModel tip);
         void Clear();
         event Action? Changed;
     }
@@ -30,7 +30,7 @@ namespace FurmaIdle.Services
         private readonly ICostService _cost;
         private readonly IContractsService _contract;
 
-        public HoverTip? Current { get; private set; }
+        public TooltipModel? Current { get; private set; }
         public event Action? Changed;
 
         public TooltipService(ICurrentGameService game, ILocateService locate, ICostService cost, IContractsService contract)
@@ -41,7 +41,7 @@ namespace FurmaIdle.Services
             _contract = contract;
         }
 
-        public void Show(HoverTip tip)
+        public void Show(TooltipModel tip)
         {
             Current = tip;
             Changed?.Invoke();
@@ -54,7 +54,7 @@ namespace FurmaIdle.Services
             Changed?.Invoke();
         }
 
-        public HoverTip GetHover(HoverType type, string id, string? stageId = null)
+        public TooltipModel GetHover(HoverType type, string id, string? stageId = null)
         {
             var g = _game.CurrentGame;
             return type switch
@@ -68,183 +68,294 @@ namespace FurmaIdle.Services
                 HoverType.Knowledge => BuildKnowledgeHover(id, g),
                 HoverType.Resources => BuildResourcesHover(id, g),
                 HoverType.Coins => BuildCoinsHover(id, g),
-                _ => new HoverTip("—", "—")
+                _ => new TooltipModel()
             };
         }
 
         // Character
-        // dentro do TooltipService (ou onde você já faz os builders)
-        private HoverTip BuildCharacterHover(string charId, GameModel g)
+        private TooltipModel BuildCharacterHover(string charId, GameModel game)
         {
-            var ch = _locate.LocateCharacter(g, charId);
+            var tooltip = new TooltipModel();
 
-            // Nomes/descrições vindos do Locate (ajuste os métodos conforme seu LocateService)
-            var spec = !string.IsNullOrWhiteSpace(ch.SpecialtyId) ? _locate.LocateSpecialty(g, ch.SpecialtyId) : null;
-            var trait = !string.IsNullOrWhiteSpace(ch.TraitId) ? _locate.LocateTrait(g, ch.TraitId) : null;
-            var k1 = !string.IsNullOrWhiteSpace(ch.KnowledgeFactor1) ? _locate.LocateKnowledge(g, ch.KnowledgeFactor1) : null;
-            var k2 = !string.IsNullOrWhiteSpace(ch.KnowledgeFactor2) ? _locate.LocateKnowledge(g, ch.KnowledgeFactor2) : null;
+            var character = _locate.LocateCharacter(game, charId);
 
-            // Contratos possíveis (IDs -> nomes)
-            var contracts = new List<string>();
-            if (ch.ContractsIds != null)
+            var spec = _locate.LocateSpecialty(game, character.SpecialtyId);
+            string specialty = spec.Name + " -> "+ spec.Description;
+
+            var trait = _locate.LocateTrait(game, character.TraitId);
+
+            var knowledge = new KnowledgeModel();
+            string knows = "";
+            if(character.KnowledgeFactor2 is not null)
             {
-                foreach (var cid in ch.ContractsIds)
+                knowledge = _locate.LocateKnowledge(game, character.KnowledgeFactor2);
+                knows += "2x " + knowledge.Name + " ";
+            }
+            if(character.KnowledgeFactor1  is not null)
+            {
+                knowledge = _locate.LocateKnowledge(game, character.KnowledgeFactor1);
+                knows += "1x " + knowledge.Name;
+            }
+
+            var contract = new ContractModel();
+            string contracts = "";
+            if (character.ContractsIds != null)
+            {
+                foreach (var contractId in character.ContractsIds)
                 {
-                    var c = _locate.LocateContract(g, cid);
-                    contracts.Add(!string.IsNullOrWhiteSpace(c?.Name) ? c.Name : cid);
+                    if(contractId != null)
+                    {
+                        contract = _locate.LocateContract(game, contractId);
+                        if (contracts == "")
+                        {
+                            contracts += contract.Name;
+                        }
+                        else
+                        {
+                            contracts += " - " + contract.Name;
+                        }
+                    }
                 }
             }
 
-            string body = $@"
-                <div class='tt'>
-                  <div class='tt-name'>{HtmlEncode(ch.Name)}</div>
-                  {(string.IsNullOrWhiteSpace(ch.Lore) ? "" : $"<div class='tt-lore'><em>{HtmlEncode(ch.Lore)}</em></div>")}
+            var stage = new StageModel();
+            string charState = character.Name;
+            if (character.CharState == UnlockHelper.CharState.Blocked)
+            {
+                charState += " - Não Contratado";
+            }
+            if (character.CharState == UnlockHelper.CharState.InLine)
+            {
+                charState += " - Esperando Expedição";
+            }
+            if (character.CharState == UnlockHelper.CharState.InBase)
+            {
+                charState += " - Na Base";
+            }
+            if (character.CharState == UnlockHelper.CharState.InStage)
+            {
+                stage = _locate.LocateStage(game, character.InStageId);
+                charState += " - Trabalhando em " + stage.Name;
+            }
 
-                  <div class='tt-list'>
-                    {(spec is null ? "" : $"<div><strong>{HtmlEncode(spec.Name)}:</strong> {HtmlEncode(spec.Description ?? "")}</div>")}
-                    {(trait is null ? "" : $"<div>{HtmlEncode(trait.Description ?? "")}</div>")}
-                  </div>
+            var modifiers = character.Modifiers.Count;
 
-                  <div class='tt-know'>
-                    {(k1 is null && k2 is null ? "" : $"{HtmlEncode(k1?.Name ?? "")}{(k1 != null && k2 != null ? " — " : "")}{HtmlEncode(k2?.Name ?? "")}")}
-                  </div>
+            tooltip.Type = "Personagem";
+            tooltip.Name = charState;
+            tooltip.Lore = character.Lore;
+            tooltip.Info.Add("Especialidade", specialty);
+            tooltip.Info.Add("Traço", trait.Description);
+            tooltip.Info.Add("Fatores", knows);
+            tooltip.Info.Add("Contratos", contracts);
+            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
 
-                  {(contracts.Count == 0 ? "" : $"<div class='tt-footnote'>{HtmlEncode(string.Join(" • ", contracts))}</div>")}
-                </div>";
-
-            // Title pode ficar só o nome (você queria centralizado/negrito — isso está no HTML do body).
-            return new HoverTip(
-                Title: ch.Name,  // mantém por compatibilidade (não precisa usar visualmente)
-                Body: body
-            );
+            return tooltip;
         }
 
 
         // Upgrade
-        private HoverTip BuildUpgradeHover(string upgradeId, GameModel game)
+        private TooltipModel BuildUpgradeHover(string upgradeId, GameModel game)
         {
-            var up = _locate.LocateUpgrade(game, upgradeId);
+            var tooltip = new TooltipModel();
 
-            var stageId = game.SelectedStageId;
+            var upgrade = _locate.LocateUpgrade(game, upgradeId);
+            var stage = _locate.LocateStage(game, game.SelectedStageId);
 
-            var (costValue, costId) = _cost.ComputeCost(ItemHelper.ItemType.Upgrade, upgradeId, stageId);
+            string nome = upgrade.Name;
+            var cost = _cost.ComputeCost(ItemHelper.ItemType.Upgrade, upgrade.Id, stage.Id);
 
-            string costCoinName = costId;
-            try
+            var coin = _locate.LocateCoin(game, cost.costId);
+            nome += " - " + cost.costValue.ToString() + " " + coin.Name;
+
+
+            string upIdType = upgrade.Id.Length >= 2
+                ? upgrade.Id.Substring(0, 1)
+                : upgrade.Id;
+
+            switch (upIdType)
             {
-                var coin = _locate.LocateCoin(game, costId);
-                if (!string.IsNullOrWhiteSpace(coin?.Name))
-                    costCoinName = coin.Name;
+                // Unlocks
+                case "uu": // Contracts
+                    break;
+                case "uk": // Knowledge
+                    break;
+                case "up": // Characters
+                    break;
+                case "ul": // Locals
+                    break;
+                case "us": // Stages
+                    break;
+                case "uh": // Techs
+                    break;
+                case "ue": // Expansions
+                    break;
+                case "ur": // Resources
+                    break;
+                case "ua": // Party Size
+                    break;
+
+                // Expeditions
+                case "ui": // Click
+                    break;
+                case "uc": // Contracts Modifiers
+                    break;
+
+                // Tech Upgrades
+                case "ut": // Target é c ou r
+                    break;
+
+                // Expansions
+                case "um": // ContractCap
+                    break;
+                case "ub": // Contract Level Unlock
+                    break;
+                case "ux": // Target pode ser i, r, aResources, aKnowledges, aContracts, 
+                    break;
+
             }
-            catch { /* ok manter o id */ }
 
-            string title = up?.Name ?? upgradeId;
-            string lore = up?.Lore ?? "";
-            string desc = up?.Description ?? "";
+            var modifiers = upgrade.Modifiers.Count;
 
-            string costLine = $"{Format(costValue)} {costCoinName}";
+            tooltip.Type = "Melhoria";
+            tooltip.Name = nome;
+            tooltip.Lore = upgrade.Lore;
+            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
 
-            string body = $@"
-                <div class='tt'>
-                  <div class='tt-name'>{HtmlEncode(title)}</div>
-                  {(string.IsNullOrWhiteSpace(lore) ? "" : $"<div class='tt-lore'><em>{HtmlEncode(lore)}</em></div>")}
-                  {(string.IsNullOrWhiteSpace(desc) ? "" : $"<div class='tt-list'><div>{HtmlEncode(desc)}</div></div>")}
-                  {(string.IsNullOrWhiteSpace(up.TargetId) ? "" : $"<div class='tt-list'><div>Afeta: {HtmlEncode(up.TargetId)}</div></div>")}
-                  {(string.IsNullOrWhiteSpace(up.TargetId) ? "" : $"<div class='tt-list'><div>Tipo: {HtmlEncode(up.EffectOp.ToString())} - Valor {HtmlEncode(up.EffectValue.ToString())}</div></div>")}
-                  <div class='tt-know tt-cost'>Custo: {HtmlEncode(costLine)}</div>
-                </div>";
-
-            return new HoverTip(title, body);
+            return tooltip;
         }
 
         // Contract
-        private HoverTip BuildContractHover(string id, GameModel game)
+        private TooltipModel BuildContractHover(string id, GameModel game)
         {
-            game.Contracts.TryGetValue(id, out var contract);
-            if (contract is null)
-                return new HoverTip("Contract (?)", "—");
+            var tooltip = new TooltipModel();
 
+            var contract = _locate.LocateContract(game, id);
             var stage = _locate.LocateStage(game, game.SelectedStageId);
-            var coin = _locate.LocateCoin(game, contract.CoinId);
 
-            var real = _contract.GetContractInfo(contract, stage);
+            string nome = contract.Name;
+            var cost = _cost.ComputeCost(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
 
-            // Lista de Knowledges (filtra nulos)
-            var knows = new List<string>();
-            if (!string.IsNullOrWhiteSpace(contract.KnowledgeFactor1) && game.Knowledges.TryGetValue(contract.KnowledgeFactor1, out var k1) && k1 is not null)
-                knows.Add(k1.Name);
-            if (!string.IsNullOrWhiteSpace(contract.KnowledgeFactor2) && game.Knowledges.TryGetValue(contract.KnowledgeFactor2, out var k2) && k2 is not null)
-                knows.Add(k2.Name);
-            if (!string.IsNullOrWhiteSpace(contract.KnowledgeFactor3) && game.Knowledges.TryGetValue(contract.KnowledgeFactor3, out var k3) && k3 is not null)
-                knows.Add(k3.Name);
+            var coin = _locate.LocateCoin(game, cost.costId);
+            nome += " - " + cost.costValue.ToString() + " " + coin.Name;
 
-            double perSecond = real.CoinsPerCycle / real.SecondsPerCycle;
-            var coinName = coin?.Name ?? contract.CoinId;
-            var title = $"Contrato ({contract.Name})";
-            var body = $"Gera: ~{perSecond:0.##} {coinName}/s"
-                      + (knows.Count > 0 ? $"\nConhecimentos: {knows.ToString()}" : "\nConhecimentos: —");
-
-            return new HoverTip(title, body);
+            string nivel = "";
+            switch (contract.Level) 
+            { 
+                case 1:
+                    nivel = "Trivial";
+                    break;
+                case 2:
+                    nivel = "Aprendiz";
+                    break;
+                case 3:
+                    nivel = "Iniciante";
+                    break;
+                case 4:
+                    nivel = "Profissional";
+                    break;
+                case 5:
+                    nivel = "Mestre";
+                    break;
+                case 6:
+                    nivel = "Especialista";
+                    break;
             }
+
+            double perSec = 0;
+
+            string geraBase = "";
+            var baseInfo = ContractHelper.GetContractBase(contract);
+            perSec = baseInfo.CoinsPerCycle * baseInfo.SecondsPerCycle;
+            geraBase = baseInfo.CoinsPerCycle.ToString("N2") + " " + coin.Name + " a cada " + baseInfo.SecondsPerCycle.ToString("N2") + "s -> " + perSec.ToString("N2") + " " + coin.Name + "/s";
+
+            string geraAtual = "";
+            var actualInfo = _contract.GetContractInfo(contract, stage);
+            perSec = actualInfo.CoinsPerCycle * actualInfo.SecondsPerCycle;
+            geraAtual = actualInfo.CoinsPerCycle.ToString("N2") + " " + coin.Name + " a cada " + actualInfo.SecondsPerCycle.ToString("N2") + "s -> " + perSec.ToString("N2") + " " + coin.Name + "/s";
+
+            var knowledge = new KnowledgeModel();
+            string knows = "";
+            if (contract.KnowledgeFactor3 is not null)
+            {
+                knowledge = _locate.LocateKnowledge(game, contract.KnowledgeFactor3);
+                knows += "3x " + knowledge.Name + " ";
+            }
+            if (contract.KnowledgeFactor2 is not null)
+            {
+                knowledge = _locate.LocateKnowledge(game, contract.KnowledgeFactor2);
+                knows += "2x " + knowledge.Name + " ";
+            }
+            if (contract.KnowledgeFactor1 is not null)
+            {
+                knowledge = _locate.LocateKnowledge(game, contract.KnowledgeFactor1);
+                knows += "1x " + knowledge.Name;
+            }
+            if (knows == "")
+            {
+                knows = "-";
+            }
+
+            var modifiers = contract.Modifiers.Count;
+
+            tooltip.Type = "Contrato";
+            tooltip.Name = nome;
+            tooltip.Lore = contract.Lore;
+            tooltip.Info.Add("Nível", nivel);
+            tooltip.Info.Add("Base", geraBase);
+            tooltip.Info.Add("Atual", geraAtual);
+            tooltip.Info.Add("Fatores", knows);
+            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
+
+            return tooltip;
+        }
 
 
         // Local
-        private HoverTip BuildLocalHover(string id, GameModel game)
+        private TooltipModel BuildLocalHover(string id, GameModel game)
         {
-            game.Locals.TryGetValue(id, out var local);
+            var tooltip = new TooltipModel();
 
-            return new HoverTip($"Local ({local.Name})", $"{local.State}");
+            return tooltip;
         }
 
         // Techs
-        private HoverTip BuildTechHover(string id, GameModel game)
+        private TooltipModel BuildTechHover(string id, GameModel game)
         {
-            game.Techs.TryGetValue(id, out var tech);
+            var tooltip = new TooltipModel();
 
-            return new HoverTip($"Tech ({tech.Name})", $"{tech.State}");
+            return tooltip;
         }
 
-        // Techs
-        private HoverTip BuildKnowledgeHover(string id, GameModel game)
+        // Knowledge
+        private TooltipModel BuildKnowledgeHover(string id, GameModel game)
         {
-            game.Knowledges.TryGetValue(id, out var know);
+            var tooltip = new TooltipModel();
 
-            return new HoverTip($"Knowledge ({know.Name})", $"{know.State}");
+            return tooltip;
         }
 
-        // Techs
-        private HoverTip BuildSpecialtyHover(string id, GameModel game)
+        // Specialty
+        private TooltipModel BuildSpecialtyHover(string id, GameModel game)
         {
-            game.Specialties.TryGetValue(id, out var specialty);
+            var tooltip = new TooltipModel();
 
-            return new HoverTip($"Specialty ({specialty.Name})", $"{specialty.Description}");
+            return tooltip;
         }
 
         // Resources
-        private HoverTip BuildResourcesHover(string id, GameModel game)
+        private TooltipModel BuildResourcesHover(string id, GameModel game)
         {
-            game.Resources.TryGetValue(id, out var resource);
+            var tooltip = new TooltipModel();
 
-            return new HoverTip($"Resource ({resource.Name})", $"{resource.Lore}");
+            return tooltip;
         }
 
         // Coins
-        private HoverTip BuildCoinsHover(string id, GameModel game)
+        private TooltipModel BuildCoinsHover(string id, GameModel game)
         {
-            game.Coins.TryGetValue(id, out var coin);
+            var tooltip = new TooltipModel();
 
-            return new HoverTip($"Coin ({coin.Name})", $"{coin.Lore}");
+            return tooltip;
         }
-
-
-        // Utilitário simples pra escapar (caso seus textos venham “soltos”)
-        private static string HtmlEncode(string? s)
-        {
-            if (string.IsNullOrEmpty(s)) return "";
-            return System.Net.WebUtility.HtmlEncode(s);
-        }
-
-        private static string Format(long v)
-          => v.ToString("N0", CultureInfo.InvariantCulture);
     }
 }

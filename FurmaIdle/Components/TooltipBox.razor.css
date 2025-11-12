@@ -1,0 +1,80 @@
+﻿.tooltip-card {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "tt-top"
+        "tt-mid"
+        "tt-bot";
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 2px;
+    color: var(--metal-ink);
+}
+
+
+.tt-top {
+    grid-area: tt-top;
+    position: relative;
+    padding: calc(2px * var(--ui-scale)) calc(1px * var(--ui-scale)) calc(2px * var(--ui-scale));
+    border-bottom: 0.5px solid var(--muted-line);
+}
+
+.tt-title {
+    display: block;
+    text-align: center;
+    font-weight: 700;
+    font-size: calc(0.9rem * var(--ui-scale));
+    letter-spacing: .2px;
+    line-height: 1.15;
+    color: var(--metal-ink);
+}
+
+.tt-mid {
+    grid-area: tt-mid;
+    position: relative;
+    padding: 1px;
+    border-bottom: 0.5px solid var(--muted-line);
+    overflow: hidden;
+    display: grid;
+    align-content: start;
+    grid-auto-rows: min-content;
+    grid-auto-flow: row dense;
+    gap: 2px 8px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    align-content: start;
+}
+
+.tt-info { /* container de cada linha; pode ficar vazio */
+}
+
+.tt-info-line {
+    display: block;
+    font-size: calc(.78rem * var(--ui-scale));
+    line-height: 1.2; 
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    margin: 0;
+}
+
+    .tt-info-line > strong {
+        font-weight: 650;
+        margin-right: .3ch;
+    }
+
+.tt-bot {
+    grid-area: tt-bot;
+    padding: calc(4px * var(--ui-scale)) 2px;
+}
+
+.tt-lore {
+    display: block;
+    text-align: center;
+    font-style: italic;
+    font-size: calc(.72rem * var(--ui-scale));
+    line-height: 1.2;
+    color: var(--metal-ink-dim);
+    margin: 0;
+}

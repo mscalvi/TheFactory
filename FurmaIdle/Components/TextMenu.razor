@@ -1,0 +1,28 @@
+﻿@inherits UiHelper
+
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+
+@inject ITooltipService Tooltips
+
+<div class="game-area">
+    @if (Tooltips.Current is not null)
+    {
+        <TooltipBox />
+    }
+    else
+    {
+        <TextBox />
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Tooltips.Changed += OnChanged;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Tooltips.Changed -= OnChanged;
+}

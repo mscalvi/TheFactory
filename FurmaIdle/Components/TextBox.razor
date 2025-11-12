@@ -3,16 +3,13 @@
 @using FurmaIdle.Services
 
 @inject IJSRuntime JS
-@inject ITooltipService Tooltips
 @inject IUiLogService UiLog
 
 <div class="game-area">
 <section class="text-box panel" role="status" aria-live="polite">
     <div class="msg-body" @ref="_msgBodyRef">
         <div class="msg-list">
-            @if (Tooltips.Current is null)
-            {
-                if (_msgs.Count == 0)
+                @if (_msgs.Count == 0)
                 {
                     <em>Sem mensagens.</em>
                 }
@@ -26,12 +23,6 @@
                         </div>
                     }
                 }
-            }
-            else
-            {
-                <div class="tip-title">@Tooltips.Current.Title</div>
-                <div class="tip-body">@((MarkupString)Tooltips.Current.Body)</div>
-            }
         </div>
     </div>
 </section>
@@ -77,26 +68,13 @@
         }
 
         UiLog.OnMessage += HandleUiLogMessage;
-
-        Tooltips.Changed += OnTooltipChanged;
     }
 
 
     public void Dispose()
     {
-        Tooltips.Changed -= OnTooltipChanged;
         UiLog.OnMessage -= HandleUiLogMessage;
         base.Dispose();
-    }
-
-    void OnTooltipChanged()
-    {
-        // Se a tooltip sumiu, queremos ir para baixo
-        if (Tooltips.Current is null)
-        {
-            _scrollPending = true;
-            InvokeAsync(StateHasChanged);
-        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
