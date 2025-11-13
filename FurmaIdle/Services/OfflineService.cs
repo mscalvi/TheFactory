@@ -52,29 +52,6 @@ namespace FurmaIdle.Services
 
                 coinsToGenerate.Clear();
             }
-
-            foreach (var resource in _game.CurrentGame.Resources.Values)
-            {
-                if (resource.State != Helpers.UnlockHelper.State.Unlocked) continue;
-
-                var modifiers = _modifiers.GetModifiers(Helpers.ItemHelper.ItemType.Resource, resource.Id, "s00", Helpers.EffectHelper.EffectSupertype.Offline);
-
-                var resourcesGenerated = (resource.RegenActual + modifiers.AddMod) * modifiers.MultMod * time;
-
-                resourceToGenerate.Add(resource.Id, resourcesGenerated);
-
-                foreach (var res in resourceToGenerate)
-                {
-                    if(res.Value > 0.01)
-                    {
-                        var coinInfo = _locate.LocateResource(_game.CurrentGame, res.Key);
-                        _log.Info($"Ganhamos {res.Value.ToString("N0")} {coinInfo.Name} enquanto estavamos distantes.");
-                        await _income.AddAsync(Helpers.ItemHelper.ItemType.Resource, res.Key, res.Value, Helpers.ItemHelper.ItemType.Offline, "s00", "s00");
-                    }
-                }
-
-                resourceToGenerate.Clear();
-            }
         }
     }
 }

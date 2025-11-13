@@ -470,12 +470,12 @@ namespace FurmaIdle.Services
 
             string geraBase = "";
             var baseInfo = ContractHelper.GetContractBase(contract);
-            perSec = baseInfo.CoinsPerCycle * baseInfo.SecondsPerCycle;
+            perSec = baseInfo.CoinsPerCycle / baseInfo.SecondsPerCycle;
             geraBase = baseInfo.CoinsPerCycle.ToString("N2") + " " + coin.Name + " a cada " + baseInfo.SecondsPerCycle.ToString("N2") + "s -> " + perSec.ToString("N2") + " " + coin.Name + "/s";
 
             string geraAtual = "";
             var actualInfo = _contract.GetContractInfo(contract, stage);
-            perSec = actualInfo.CoinsPerCycle * actualInfo.SecondsPerCycle;
+            perSec = actualInfo.CoinsPerCycle / actualInfo.SecondsPerCycle;
             geraAtual = actualInfo.CoinsPerCycle.ToString("N2") + " " + coin.Name + " a cada " + actualInfo.SecondsPerCycle.ToString("N2") + "s -> " + perSec.ToString("N2") + " " + coin.Name + "/s";
 
             var knowledge = new KnowledgeModel();
