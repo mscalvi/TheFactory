@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 24 24"
+   id="Layer_1"
+   data-name="Layer 1"
+   version="1.1"
+   sodipodi:docname="Click - s00.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.00875"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" />
+  <defs
+     id="defs1">
+    <style
+       id="style1">.cls-1{fill:none;stroke:#020202;stroke-miterlimit:10;stroke-width:1.91px;}</style>
+  </defs>
+  <g
+     id="g2"
+     transform="matrix(0.20953362,0,0,0.20953362,0.38152104,1.9626503)">
+    <path
+       class="cls-1"
+       d="M 17.07,20.61 H 9.79 a 2,2 0 0 1 -2,-2 2,2 0 0 1 2,-2 h 1.87 L 5,9.86 A 2,2 0 0 1 4.81,7.21 1.88,1.88 0 0 1 6.28,6.53 1.84,1.84 0 0 1 7.63,7.08 l 4.06,4.06 4.08,-3.06 a 1.91,1.91 0 0 1 2.5,0.18 v 0 A 17.18,17.18 0 0 1 22.42,15 l 0.06,0.19"
+       id="path1" />
+    <path
+       class="cls-1"
+       d="M 10.63,10.12 A 4.73,4.73 0 0 0 11,8.17 4.78,4.78 0 1 0 6.26,13 4.67,4.67 0 0 0 7.81,12.74"
+       id="path2" />
+  </g>
+</svg>
