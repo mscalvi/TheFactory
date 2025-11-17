@@ -123,11 +123,11 @@ namespace FurmaIdle.Helpers
                 [PricingId.ExpansionUnlock0] = new Entry("m01", 500000, 1.0, CostFactor.Level, 6.5),
 
                 // Unlock Tech Know X
-                [PricingId.TechUnlockk01] = new Entry("k01", 1, 1.0, CostFactor.Level, 2.8),
-                [PricingId.TechUnlockk02] = new Entry("k02", 1, 1.0, CostFactor.Level, 2.8),
-                [PricingId.TechUnlockk03] = new Entry("k03", 1, 1.0, CostFactor.Level, 2.8),
-                [PricingId.TechUnlockk04] = new Entry("k04", 1, 1.0, CostFactor.Level, 3.7),
-                [PricingId.TechUnlockk05] = new Entry("k05", 1, 1.0, CostFactor.Level, 4.6),
+                [PricingId.TechUnlockk01] = new Entry("k01", 1, 1.0, CostFactor.Level, 4.9),
+                [PricingId.TechUnlockk02] = new Entry("k02", 1, 1.0, CostFactor.Level, 4.9),
+                [PricingId.TechUnlockk03] = new Entry("k03", 1, 1.0, CostFactor.Level, 4.9),
+                [PricingId.TechUnlockk04] = new Entry("k04", 1, 1.0, CostFactor.Level, 6.2),
+                [PricingId.TechUnlockk05] = new Entry("k05", 1, 1.0, CostFactor.Level, 6.2),
 
                 // Party Stage X
                 [PricingId.PartySize0] = new Entry("m01", 8000, 1, CostFactor.Level, 2.2),
@@ -152,7 +152,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ClickGain0] = new Entry("m01", 50, 2.4, CostFactor.None, 1),
 
                 // Tech Upgrades Stage X
-                [PricingId.TechUpgrade0] = new Entry("m01", 50000, 1.0, CostFactor.Level, 3.3),
+                [PricingId.TechUpgrade0] = new Entry("m01", 25000, 1.0, CostFactor.Level, 2.9),
 
                 // Expansion Upgrades Stage X
                 [PricingId.ExpansionUpgrade0] = new Entry("m01", 5000, 1.0, CostFactor.Level, 2.7),

@@ -16,7 +16,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k01",
                 Name = "Cultural",
-                Image = "image/knowledges/k01.jpg",
+                Image = "image/knowledges/k01.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk01",
@@ -38,7 +38,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k02",
                 Name = "Geográfico",
-                Image = "image/knowledges/k01.jpg",
+                Image = "image/knowledges/k01.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk02",
@@ -60,7 +60,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k03",
                 Name = "Sobrevivência",
-                Image = "image/knowledges/k02.jpg",
+                Image = "image/knowledges/k02.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk03",
@@ -85,7 +85,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k04",
                 Name = "Navegação",
-                Image = "image/knowledges/k03.jpg",
+                Image = "image/knowledges/k03.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk04",
@@ -107,7 +107,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k05",
                 Name = "Caça",
-                Image = "image/knowledges/k04.jpg",
+                Image = "image/knowledges/k04.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk05",

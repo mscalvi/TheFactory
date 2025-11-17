@@ -7,7 +7,7 @@ public static class StageImageHelper
     public static string GetStageImagePath(GameModel game, StageModel stage)
     {
         if (stage?.Id is null || stage.Id.Length == 0)
-            return "images/stages/unknown_0000.jpg";
+            return "images/stages/unknown_0000.svg";
 
         int width = 0;
         List<string> localsOrderForStage = new List<string>();
@@ -21,7 +21,7 @@ public static class StageImageHelper
             .ToList();
 
         if (width == 0)
-            return $"images/stages/{stage.Id}_0000.jpg";
+            return $"images/stages/{stage.Id}_0000.svg";
 
         var sb = new StringBuilder(width);
 
@@ -32,6 +32,6 @@ public static class StageImageHelper
         }
 
         string mask = sb.ToString();
-        return $"images/stages/{stage.Id}_{mask}.jpg";
+        return $"images/stages/{stage.Id}_{mask}.svg";
     }
 }

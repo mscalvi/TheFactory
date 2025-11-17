@@ -54,8 +54,17 @@ else
                             @onmouseleave="Tooltips.Clear"
                             @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
                             @onblur="Tooltips.Clear"
-                            tabindex="0">
-                        @stage.Id
+                                tabindex="0">
+                            @if (!string.IsNullOrWhiteSpace(stage.Icon))
+                            {
+                                <img src="@stage.Icon"
+                                     alt="@stage.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @stage.Id
+                            }
                     </button>
                 }
             </div>

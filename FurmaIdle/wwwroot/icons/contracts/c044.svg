@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="c044.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="3.1523438"
+     inkscape:cx="108.33209"
+     inkscape:cy="125.14498"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Fundo">
+    <rect
+       style="fill:#6a6b6e;fill-opacity:0.6;stroke:#000000"
+       id="rect3"
+       width="240"
+       height="240"
+       x="8"
+       y="8"
+       rx="20.0002"
+       ry="20"
+       inkscape:label="Fundo"
+       sodipodi:insensitive="true" />
+  </g>
+  <!-- Borda externa -->
+  <!-- Borda interna (chanfro / brilho suave) -->
+  <!-- Aqui dentro você desenha o ícone depois -->
+  <!-- <g id="icon"> … </g> -->
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Borda"
+     sodipodi:insensitive="true">
+    <rect
+       x="8"
+       y="8"
+       width="240"
+       height="240"
+       rx="28"
+       ry="28"
+       fill="none"
+       stroke="#2b1a10"
+       stroke-width="8"
+       id="rect1"
+       inkscape:label="Externa" />
+    <rect
+       x="16"
+       y="16"
+       width="224"
+       height="224"
+       rx="22"
+       ry="22"
+       fill="none"
+       stroke="#6b4a32"
+       stroke-width="4"
+       id="rect2"
+       inkscape:label="Interna" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Contract">
+    <g
+       id="g4"
+       transform="matrix(0.38671921,0,0,0.38671921,30.064596,30)">
+      <path
+         class="st0"
+         d="M 148.53,401.579 V 357.32 c -13.082,-4.002 -25.808,-8.723 -37.531,-13.818 V 409.3 c 0,30.626 37.256,61.252 37.256,61.252 l 25.542,-28.079 C 153.35,432.294 148.53,401.579 148.53,401.579 Z"
+         id="path1-7"
+         style="fill:#000000" />
+      <path
+         class="st0"
+         d="m 363.457,401.579 c 0,0 -4.819,30.715 -25.266,40.895 l 25.532,28.079 c 0,0 37.265,-30.626 37.265,-61.252 v -65.798 c -11.724,5.183 -24.538,9.816 -37.531,13.907 z"
+         id="path2-7"
+         style="fill:#000000" />
+      <path
+         class="st0"
+         d="m 312.801,459.628 c -11.84,-24.335 -33.591,-33.635 -56.798,-22.888 -23.216,-10.747 -44.968,-1.447 -56.807,22.888 -13.632,28.018 -44.675,31.682 -44.675,31.682 0,0 6.816,27.023 45.438,19.302 24.334,-4.864 40.548,-24.272 56.044,-37.975 15.486,13.702 31.7,33.111 56.035,37.975 38.622,7.721 45.438,-19.302 45.438,-19.302 0,0 -31.044,-3.664 -44.675,-31.682 z"
+         id="path3-9"
+         style="fill:#000000" />
+      <path
+         class="st0"
+         d="m 398.689,212.353 c 0,0 4.491,14.155 -14.438,34.7 4.295,-51.589 6.38,-144.524 17.234,-188.347 C 411.406,18.672 319.811,0 255.994,0 192.185,0 100.598,18.672 110.52,58.706 c 10.853,43.822 12.93,136.758 17.226,188.347 -18.922,-20.545 -14.44,-34.7 -14.44,-34.7 -62.086,-38.215 -102.697,46.574 -21.672,104.331 37.185,26.526 121.796,46.813 161.688,48.588 v 0.143 c 0.843,0 1.766,-0.018 2.672,-0.045 0.922,0.026 1.836,0.045 2.689,0.045 v -0.143 c 39.882,-1.775 124.494,-22.062 161.688,-48.588 81.016,-57.757 40.414,-142.546 -21.682,-104.331 z"
+         id="path4"
+         style="fill:#000000" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Upgrade" />
+</svg>

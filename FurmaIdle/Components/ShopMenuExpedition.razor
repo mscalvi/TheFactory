@@ -10,6 +10,7 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject IKnowledgeService Knowledge
+@inject ISpecialtiesService Specialty;
 
 <div class="menu-root">
     @if (!Game.IsReady || _stage is null)
@@ -31,13 +32,17 @@
 
         var selectedCount = CountLine();
 
-        var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1;
+        var specActive = IsSpecActive();
+
+        var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1 && !specActive;
 
         var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
+
         var avaliableChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
         && c.CharState == UnlockHelper.CharState.InBase || c.CharState == UnlockHelper.CharState.InLine)
         .OrderBy(c => c.Id)
         .ToList();
+
         var inStageChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
         && c.CharState == UnlockHelper.CharState.InStage && c.InStageId == _stage.Id)
         .OrderBy(c => c.Id)
@@ -46,7 +51,9 @@
         <section class="@($"menu-panel {UI.PanelClass("expedition-toggle")}")">
             <button class="objetive-button"
                     disabled="@( !isActive && !canLaunch )"
-                    @onclick="OnClickToggleExpedition">
+                    @onclick="OnClickToggleExpedition"
+                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Expedition, _stage.Id))"
+                    @onmouseleave="Tooltips.Clear">
                 @(isActive ? "Encerrar Expedição" : "Iniciar Expedição")
             </button>
         </section>
@@ -64,7 +71,16 @@
                                 @onmouseleave="Tooltips.Clear"
                                 @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
                                 @onblur="Tooltips.Clear">
-                            @ch.Id
+                            @if (!string.IsNullOrWhiteSpace(ch.Icon))
+                            {
+                                <img src="@ch.Icon"
+                                     alt="@ch.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @ch.Id
+                            }
                         </button>
                     }
                 </div>
@@ -86,7 +102,16 @@
                                 @onmouseleave="Tooltips.Clear"
                                 @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
                                 @onblur="Tooltips.Clear">
-                            @ch.Id
+                            @if (!string.IsNullOrWhiteSpace(ch.Icon))
+                            {
+                                <img src="@ch.Icon"
+                                     alt="@ch.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @ch.Id
+                            }
                         </button>
                     }
                 </div>
@@ -270,5 +295,19 @@
         }
 
         return line;
+    }
+
+    bool IsSpecActive()
+    {
+        foreach (var spec in Game.CurrentGame.Specialties.Values)
+        {
+            var timer = Specialty.GetSpecialtyTimer(spec);
+            if (timer.Actual > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

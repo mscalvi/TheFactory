@@ -26,10 +26,12 @@
         var game = Game.CurrentGame;
 
         var all = OrderedUpgrades(game);
+
+        // ==== ÁREA 2 — Objetives ====
         var heroUpgrade =
-        all.FirstOrDefault(u =>
-        u.State == UnlockHelper.State.Available &&
-        (Ue(u.Id) || Us(u.Id)));
+            all.FirstOrDefault(u =>
+            u.State == UnlockHelper.State.Available &&
+            (Ue(u.Id) || Us(u.Id)));
 
         // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK, UA, UU) ====
         var permanents =
@@ -66,7 +68,15 @@
                         @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, heroUpgrade.Id, _stage.Id))"
                         @onmouseleave="Tooltips.Clear">
-                    @heroUpgrade.Id
+                    @if (!string.IsNullOrWhiteSpace(heroUpgrade.Icon))
+                    {
+                        <img src="@heroUpgrade.Icon"
+                             alt="@heroUpgrade.Id" />
+                    }
+                    else
+                    {
+                        @heroUpgrade.Id
+                    }
                 </button>
             }
             else
@@ -85,7 +95,16 @@
                             @onclick="() => OnClickBuyUpgrade(u.Id)"
                             @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
                             @onmouseleave="Tooltips.Clear">
-                        @u.Id
+                        @if (!string.IsNullOrWhiteSpace(u.Icon))
+                        {
+                            <img src="@u.Icon"
+                                 alt="@u.Id"
+                                 class="icon-img"/>
+                        }
+                        else
+                        {
+                            @u.Id
+                        }
                     </button>
                 }
             </div>
@@ -101,7 +120,16 @@
                             @onclick="() => OnClickBuyUpgrade(u.Id)"
                             @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
                             @onmouseleave="Tooltips.Clear">
-                        @u.Id
+                        @if (!string.IsNullOrWhiteSpace(u.Icon))
+                        {
+                            <img src="@u.Icon"
+                                 alt="@u.Id"
+                                 class="icon-img" />
+                        }
+                        else
+                        {
+                            @u.Id
+                        }
                     </button>
                 }
             </div>
@@ -117,7 +145,16 @@
                             @onclick="() => OnClickBuyUpgrade(u.Id)"
                             @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
                             @onmouseleave="Tooltips.Clear">
-                        @u.Id
+                        @if (!string.IsNullOrWhiteSpace(u.Icon))
+                        {
+                            <img src="@u.Icon"
+                                 alt="@u.Id"
+                                 class="icon-img" />
+                        }
+                        else
+                        {
+                            @u.Id
+                        }
                     </button>
                 }
             </div>
@@ -285,6 +322,12 @@
             if (StartsWith(upgrade.Id, "ue"))
             {
                 await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
+            }
+
+            if(StartsWith(upgrade.Id, "us"))
+            {
+                // TO DO
+                Log.Lore($"Fim de Jogo.");
             }
 
             freeProcess = true;

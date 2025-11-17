@@ -8,6 +8,7 @@ using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using static FurmaIdle.Helpers.UnlockHelper;
 
 namespace FurmaIdle.Services
 {
@@ -29,16 +30,18 @@ namespace FurmaIdle.Services
         private readonly ILocateService _locate;
         private readonly ICostService _cost;
         private readonly IContractsService _contract;
+        private readonly IExpeditionService _expedition;
 
         public TooltipModel? Current { get; private set; }
         public event Action? Changed;
 
-        public TooltipService(ICurrentGameService game, ILocateService locate, ICostService cost, IContractsService contract)
+        public TooltipService(ICurrentGameService game, ILocateService locate, ICostService cost, IContractsService contract, IExpeditionService expedition)
         {
             _game = game;
             _locate = locate;
             _cost = cost;
             _contract = contract;
+            _expedition = expedition;
         }
 
         public void Show(TooltipModel tip)
@@ -386,7 +389,7 @@ namespace FurmaIdle.Services
                         intro = "Diminui o Tempo de ";
                     }
 
-                    valor = upgrade.EffectValue.ToString("N2");
+                    valor = upgrade.EffectValue.ToString("N3");
                     break;
             }
 
@@ -743,10 +746,23 @@ namespace FurmaIdle.Services
         // Expedition
         private TooltipModel BuildExpeditionHover(string id, GameModel game)
         {
+            var stage = _locate.LocateStage(game, id);
+
             var tooltip = new TooltipModel();
+
+            int countLine = 0;
+            foreach (var characters in _game.CurrentGame.Characters)
+            {
+                if (characters.Value.CharState == CharState.InLine) countLine++;
+            }
+
+            int partyCap = _expedition.GetPartyCap(stage);   
+            
+            string partySize = countLine + " / " + partyCap;
 
             tooltip.Type = "Reset";
             tooltip.Name = "Expedição";
+            tooltip.Info.Add("Membros", partySize);
             tooltip.Lore = "Toda aventura precisa terminar.";
 
             return tooltip;

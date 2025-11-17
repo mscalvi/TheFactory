@@ -18,7 +18,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t011",
                 Name = "Fundação de Guildas",
-                Icon = "icons/techs/t011.jpg",
+                Icon = "icons/techs/t011.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0110",
@@ -34,7 +34,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t021",
                 Name = "Vilas Litorâneas",
-                Icon = "icons/techs/t021.jpg",
+                Icon = "icons/techs/t021.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0210",
@@ -47,7 +47,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t022",
                 Name = "Litorais Rochosos",
-                Icon = "icons/techs/t022.jpg",
+                Icon = "icons/techs/t022.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0220",
@@ -63,7 +63,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t031",
                 Name = "Vida em Muradas",
-                Icon = "icons/techs/t031.jpg",
+                Icon = "icons/techs/t031.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0310",
@@ -76,7 +76,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t032",
                 Name = "Sobrevivência na Selva",
-                Icon = "icons/techs/t032.jpg",
+                Icon = "icons/techs/t032.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0320",
@@ -92,7 +92,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t041",
                 Name = "Construção de Barcos",
-                Icon = "icons/techs/t041.jpg", 
+                Icon = "icons/techs/t041.svg", 
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0410",
@@ -108,7 +108,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t051",
                 Name = "Presas",
-                Icon = "icons/techs/t051.jpg",
+                Icon = "icons/techs/t051.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0510",
@@ -121,7 +121,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t052",
                 Name = "Predadores",
-                Icon = "icons/techs/t052.jpg",
+                Icon = "icons/techs/t052.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0520",
@@ -134,7 +134,7 @@ namespace FurmaIdle.Data
             {
                 Id = "t053",
                 Name = "Criaturas Insanas",
-                Icon = "icons/techs/t053.jpg",
+                Icon = "icons/techs/t053.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uh0530",

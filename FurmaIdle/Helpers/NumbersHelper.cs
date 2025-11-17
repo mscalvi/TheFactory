@@ -18,7 +18,10 @@ namespace FurmaIdle.Helpers
 
             // Até o limite, mostra número "normal"
             if (abs < threshold)
-                return value.ToString("N" + decimals, culture);
+            {
+                var s = value.ToString("N" + decimals, culture);
+                return TrimDecimalZeros(s, culture);
+            }
 
             // Engenharia (expoente múltiplo de 3): XXXeY
             var exp = (int)Math.Floor(Math.Log10(abs));
@@ -30,7 +33,8 @@ namespace FurmaIdle.Helpers
             if (mant >= 1000) { mant /= 1000; e3 += 3; }
 
             var sMant = mant.ToString("N" + decimals, culture);
-            // Sinal
+            sMant = TrimDecimalZeros(sMant, culture);
+
             var sign = value < 0 ? "-" : "";
 
             return $"{sign}{sMant}e{e3}";
@@ -42,6 +46,23 @@ namespace FurmaIdle.Helpers
 
         public static string Padronize(decimal value, int decimals = 2, double threshold = 1e5, CultureInfo? culture = null)
             => Padronize((double)value, decimals, threshold, culture);
+
+        private static string TrimDecimalZeros(string formatted, CultureInfo culture)
+        {
+            var decSep = culture.NumberFormat.NumberDecimalSeparator;
+            var idx = formatted.LastIndexOf(decSep, StringComparison.Ordinal);
+
+            if (idx < 0) return formatted; // não tem parte decimal
+
+            // Verifica se tudo depois do separador são zeros
+            for (int i = idx + decSep.Length; i < formatted.Length; i++)
+            {
+                if (formatted[i] != '0')
+                    return formatted; // tem algum decimal não-zero, mantém
+            }
+
+            // Só zeros: corta a parte decimal inteira
+            return formatted.Substring(0, idx);
+        }
     }
 }
-

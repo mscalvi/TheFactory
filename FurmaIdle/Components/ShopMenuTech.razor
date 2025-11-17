@@ -63,7 +63,16 @@
                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, stage.Id))"
                         @onmouseleave="Tooltips.Clear"
                         @onclick="() => OnClickBuyTech(u.Id)">
-                    @u.Id
+                    @if (!string.IsNullOrWhiteSpace(u.Icon))
+                    {
+                        <img src="@u.Icon"
+                             alt="@u.Id"
+                             class="icon-img" />
+                    }
+                    else
+                    {
+                        @u.Id
+                    }
                 </button>
             }
         </div>
@@ -74,10 +83,20 @@
         <div class="icon-grid">
             @foreach (var t in unlockedTechs)
             {
-                <span class="icon-button" disabled"
+                <span class="icon-button"
+                      disabled="true"
                       @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, t.Id, stage.Id))"
                       @onmouseleave="Tooltips.Clear">
-                    @t.Id
+                    @if (!string.IsNullOrWhiteSpace(t.Icon))
+                    {
+                        <img src="@t.Icon"
+                             alt="@t.Id"
+                             class="icon-img" />
+                    }
+                    else
+                    {
+                        @t.Id
+                    }
                 </span>
             }
         </div>
