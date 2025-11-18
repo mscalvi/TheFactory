@@ -83,8 +83,9 @@
         <div class="icon-grid">
             @foreach (var t in unlockedTechs)
             {
+                var can = false;
                 <span class="icon-button"
-                      disabled="true"
+                      disabled="@(!can)"
                       @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Tech, t.Id, stage.Id))"
                       @onmouseleave="Tooltips.Clear">
                     @if (!string.IsNullOrWhiteSpace(t.Icon))

@@ -96,12 +96,13 @@ html, body {
         margin: 0 0 10px;
         color: var(--metal-ink);
         font-size: 15px;
+        white-space: nowrap;
     }
 
 .icon-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    gap: 1px;
+    gap: 2px;
     justify-items: center;
 }
 

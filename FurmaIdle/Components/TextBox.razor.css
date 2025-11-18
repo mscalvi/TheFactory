@@ -23,7 +23,7 @@
 
 .msg-row {
     display: grid;
-    grid-template-columns: 65px 1fr;
+    grid-template-columns: auto 1fr;
     gap: .5rem;
     align-items: baseline;
 }
@@ -55,7 +55,7 @@
 }
 
 .msg-row.is-lore .msg-text {
-    color: yellow;
+    color: rgb(180, 95, 53);
 }
 
 .msg-row.is-error .msg-text {

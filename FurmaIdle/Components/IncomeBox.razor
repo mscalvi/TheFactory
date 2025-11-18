@@ -7,12 +7,14 @@
 @inject ILocateService Locate
 @inject IContractsService Contracts
 @inject IResourcesService Resource
+@inject ITooltipService Tooltips
 
 <section class="game-area">
     <!-- TOPO: COINS -->
     @{
         var coins = GetCoinTiles();
         var coinCount = coins.Count;
+        var stage = Locate.LocateStage(Game.CurrentGame, Game.CurrentGame.SelectedStageId);
     }
 
     <div class="coins" style="--count:@(coinCount)">
@@ -21,7 +23,9 @@
             <div class="coin-camp">
                 <img class="image-resource" src="@it.Image"
                      alt="@it.Id"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Coins, it.Id))"
+                     @onmouseleave="Tooltips.Clear">
                 <span class="income-total">
                     @it.StageTotal.ToString("N0")
                     @if (it.GamePerSec > 0)
@@ -44,7 +48,9 @@
             <div class="coin-camp">
                 <img class="image-resource" src="@it.Image"
                      alt="@it.Id"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Resources, it.Id))"
+                     @onmouseleave="Tooltips.Clear">
                 <span class="income-total">
                     @it.GameTotal.ToString("N0") / @it.Cap.ToString()
                     @if (it.GamePerSec > 0)

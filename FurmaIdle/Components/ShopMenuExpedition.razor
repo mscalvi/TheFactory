@@ -71,9 +71,9 @@
                                 @onmouseleave="Tooltips.Clear"
                                 @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
                                 @onblur="Tooltips.Clear">
-                            @if (!string.IsNullOrWhiteSpace(ch.Icon))
+                            @if (!string.IsNullOrWhiteSpace(ch.Image))
                             {
-                                <img src="@ch.Icon"
+                                <img src="@ch.Image"
                                      alt="@ch.Id"
                                      class="icon-img" />
                             }
@@ -102,9 +102,9 @@
                                 @onmouseleave="Tooltips.Clear"
                                 @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
                                 @onblur="Tooltips.Clear">
-                            @if (!string.IsNullOrWhiteSpace(ch.Icon))
+                            @if (!string.IsNullOrWhiteSpace(ch.Image))
                             {
-                                <img src="@ch.Icon"
+                                <img src="@ch.Image"
                                      alt="@ch.Id"
                                      class="icon-img" />
                             }

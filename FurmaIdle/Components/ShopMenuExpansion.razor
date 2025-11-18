@@ -113,7 +113,16 @@ else{
                                 @onmouseleave="Tooltips.Clear"
                                 @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
                                 @onblur="Tooltips.Clear">
-                            @id
+                            @if (!string.IsNullOrWhiteSpace(ch.Icon))
+                            {
+                                <img src="@ch.Icon"
+                                     alt="@ch.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @ch.Id
+                            }
                         </button>
                     }
                 </div>
@@ -139,7 +148,16 @@ else{
                                 @onmouseleave="Tooltips.Clear"
                                 @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, id, game.SelectedStageId))"
                                 @onblur="Tooltips.Clear">
-                            @id
+                            @if (!string.IsNullOrWhiteSpace(ch.Icon))
+                            {
+                                <img src="@ch.Icon"
+                                     alt="@ch.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @ch.Id
+                            }
                         </button>
                     }
                 </div>

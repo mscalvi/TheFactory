@@ -70,16 +70,16 @@
 
                                     <div class="contract-card">
                                         <div class="contract-card-top">
-                                            <button class="contract-button @(disabled ? "is-locked" : null)"
+                                            <button class="icon-button @(disabled ? "is-locked" : null)"
                                                     disabled="@disabled"
                                                     @onclick="() => BuyContract(chosenCon.Id)"
                                                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
                                                     @onmouseleave="Tooltips.Clear"
                                                     @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
                                                     @onblur="Tooltips.Clear">
-                                                @if (!string.IsNullOrWhiteSpace(chosenCon.Image))
+                                                @if (!string.IsNullOrWhiteSpace(chosenCon.Icon))
                                                 {
-                                                    <img src="@chosenCon.Image"
+                                                    <img src="@chosenCon.Icon"
                                                          alt="@chosenCon.Id"
                                                          class="icon-img" />
                                                 }

@@ -26,11 +26,11 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 500000,
+                GainCoinBase = 100000,
                 GainCoinCurve = 0.85,
 
                 // Generation Boost
-                GenerationFactor = 0.15,
+                GenerationFactor = 0.1,
                 GenerationPenaltie = 0.65,
                 GenerationCoin = IncomeHelper.CoinBurst.m01,
             },
@@ -38,7 +38,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k02",
                 Name = "Geográfico",
-                Image = "image/knowledges/k01.svg",
+                Image = "image/knowledges/k02.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk02",
@@ -48,11 +48,11 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 500000,
+                GainCoinBase = 100000,
                 GainCoinCurve = 0.85,
 
                 // Generation Boost
-                GenerationFactor = 0.15,
+                GenerationFactor = 0.1,
                 GenerationPenaltie = 0.65,
                 GenerationCoin = IncomeHelper.CoinBurst.m01,
             },
@@ -60,7 +60,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k03",
                 Name = "Sobrevivência",
-                Image = "image/knowledges/k02.svg",
+                Image = "image/knowledges/k03.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk03",
@@ -70,11 +70,11 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 500000,
+                GainCoinBase = 100000,
                 GainCoinCurve = 0.85,
 
                 // Generation Boost
-                GenerationFactor = 0.15,
+                GenerationFactor = 0.1,
                 GenerationPenaltie = 0.65,
                 GenerationCoin = IncomeHelper.CoinBurst.m01,
             },
@@ -85,7 +85,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k04",
                 Name = "Navegação",
-                Image = "image/knowledges/k03.svg",
+                Image = "image/knowledges/k04.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk04",
@@ -95,11 +95,11 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 5000000,
-                GainCoinCurve = 0.84,
+                GainCoinBase = 1000000,
+                GainCoinCurve = 0.82,
 
                 // Generation Boost
-                GenerationFactor = 0.16,
+                GenerationFactor = 0.12,
                 GenerationPenaltie = 0.7,
                 GenerationCoin = IncomeHelper.CoinBurst.m02,
             },
@@ -107,7 +107,7 @@ namespace FurmaIdle.Data
             {
                 Id = "k05",
                 Name = "Caça",
-                Image = "image/knowledges/k04.svg",
+                Image = "image/knowledges/k05.svg",
                 Description = "",
                 Lore = "",
                 UnlockId = "uk05",
@@ -117,11 +117,11 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 50000000,
-                GainCoinCurve = 0.83,
+                GainCoinBase = 10000000,
+                GainCoinCurve = 0.8,
 
                 // Generation Boost
-                GenerationFactor = 0.17,
+                GenerationFactor = 0.15,
                 GenerationPenaltie = 0.75,
                 GenerationCoin = IncomeHelper.CoinBurst.m02,
             }

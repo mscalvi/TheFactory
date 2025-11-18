@@ -26,6 +26,18 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "",
             },
+            ["m02"] = new CoinModel
+            {
+                Id = "m02",
+                Name = "Estranhos",
+                Image = "images/coins/m02.svg",
+                UnlockId = "s01",
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                Modifiers = new List<ModifierModel>(),
+                Lore = "",
+                Description = "",
+            },
             #endregion
         };
 

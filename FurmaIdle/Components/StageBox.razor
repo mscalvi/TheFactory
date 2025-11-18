@@ -75,8 +75,17 @@ else
                                     disabled="@(!canUse)"
                                     @onclick="() => UseSpec(spec)"
                                     @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, spec.Id, _stage!.Id))"
-                                    @onmouseout="Tooltips.Clear">
-                                @spec.Name
+                                        @onmouseout="Tooltips.Clear">
+                                    @if (!string.IsNullOrWhiteSpace(spec.Image))
+                                    {
+                                        <img src="@spec.Image"
+                                             alt="@spec.Name"
+                                             class="icon-img" />
+                                    }
+                                    else
+                                    {
+                                        @spec.Name
+                                    }
                             </button>
                         </div>
 
@@ -225,7 +234,7 @@ else
     {
         await Purchase.Purchase(ItemHelper.ItemType.Specialty, spec.Id, _stage.Id);
 
-        if (spec.Id == "e02" || spec.Id == "e06")
+        if (spec.Id == "e02")
         {
             await Contracts.BurstProduction(spec.EffectValue, _stage.Id, spec.Id);
         }

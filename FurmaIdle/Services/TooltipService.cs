@@ -359,6 +359,11 @@ namespace FurmaIdle.Services
                             var resourceMod = _locate.LocateResource(game, upgrade.TargetId);
                             target = resourceMod.Name;
                         }
+
+                        if (upgrade.Id.StartsWith("ux00"))
+                        {
+                            target += "% dos Talhos gerados por segundo na Região.";
+                        }
                     }
                     else
                     {
@@ -373,6 +378,15 @@ namespace FurmaIdle.Services
                         if (upgrade.TargetId == "aResources")
                         {
                             target = "todos os Recursos";
+                        }
+
+                        if (upgrade.Id.StartsWith("ux01"))
+                        {
+                            target += " por Pesquisa realizada.";
+                        }
+                        if (upgrade.Id.StartsWith("ux02"))
+                        {
+                            target += " por Local encontrado.";
                         }
                     }
 

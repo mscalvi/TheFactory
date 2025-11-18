@@ -97,16 +97,19 @@
                 switch (help) 
                 {
                     case "1":
-                        _log.Lore($"Nosso primero contrato para {contract.Name}. É um começo!");
+                        _log.Lore($"Nosso primero contrato para {contract.Name}. É um começo! Se conseguirmos mais contratos, talvez" +
+                            $"a gente ganhe experiência o suficiente para melhorar o serviço.");
                         break;
-                    case "10":
-                        _log.Lore($"Estamos pegando o jeito em {contract.Name}.");
+                    case "5":
+                        _log.Lore($"Estamos pegando o jeito em {contract.Name}. Aos poucos a gente pode cobrar mais, e terminar mais rápido.");
                         break;
                     case "50":
-                        _log.Lore($"Já somos bons em {contract.Name}.");
+                        _log.Lore($"Já somos bons em {contract.Name}, em? Sem técnicas melhores, esse é o mínimo que vamos gastar para começar" +
+                            $"um novo contrato.");
                         break;
                     case "100":
-                        _log.Lore($"Perfeito, já somos quase mestres em {contract.Name}.");
+                        _log.Lore($"Perfeito, já estamos no nosso limite em {contract.Name}. Agora, vamos ter que estudar para conseguir melhorar" +
+                            $"ainda mais no serviço.");
                         break;
                 }
             }
@@ -114,18 +117,18 @@
 
         public void PurchaseInfo(string itemName, string costValue, string costCoin, string? help = "")
         {
-            switch (help)
-            {
-                case "compra":
-                    _log.Info($"Melhoria: {itemName} - {costValue} {costCoin}.");
-                    break;
-                case "spec":
-                    _log.Info($"Especialidade: {itemName} - {costValue} {costCoin}!");
-                    break;
-                case "contract":
-                    _log.Info($"Contrato: {itemName} - {costValue} {costCoin}.");
-                    break;
-            }
+            //switch (help)
+            //{
+            //    case "compra":
+            //        _log.Info($"Melhoria: {itemName} - {costValue} {costCoin}.");
+            //        break;
+            //    case "spec":
+            //        _log.Info($"Especialidade: {itemName} - {costValue} {costCoin}!");
+            //        break;
+            //    case "contract":
+            //        _log.Info($"Contrato: {itemName} - {costValue} {costCoin}.");
+            //        break;
+            //}
         }
         #endregion
     }

@@ -34,6 +34,7 @@ namespace FurmaIdle.Services
         }
 
         private int contractBuy = 0;
+        private bool busy = false;
 
         // Purchase
         public async Task Purchase(ItemHelper.ItemType type, string itemId, string stageId)
@@ -42,62 +43,49 @@ namespace FurmaIdle.Services
             var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
             var stage = _locate.LocateStage(game, stageId);
 
+            if (busy)
+            {
+                _log.Error($"Uso muito rápido para comprar {itemId}. Você não deveria estar vendo essa mensagem.");
+                return;
+            }
+
+            busy = true;
+
+            var cost = _cost.ComputeCost(type, itemId, stageId);
+            var coinCost = new CoinModel();
+            var resourceCost = new ResourceModel();
+            var knowledgeCost = new KnowledgeModel();
+
+            bool hasFunds = cost.costId[0] switch
+            {
+                'm' => GetOrZero(stage.ExpeditionStats.Coins, cost.costId) >= cost.costValue,
+                'r' => GetOrZero(expansion.ExpansionStats.Resources, cost.costId) >= cost.costValue,
+                'k' => GetOrZero(expansion.ExpansionStats.Knowledge, cost.costId) >= cost.costValue,
+                _ => false
+            };
+
+            switch (cost.costId[0])
+            {
+                case 'm':
+                    coinCost = _locate.LocateCoin(game, cost.costId);
+                    break;
+                case 'r':
+                    resourceCost = _locate.LocateResource(game, cost.costId);
+                    break;
+                case 'k':
+                    knowledgeCost = _locate.LocateKnowledge(game, cost.costId);
+                    break;
+            }
+
+            if (!hasFunds)
+            {
+                _log.Error($"Faltam recursos para comprar/usar {itemId}. Você não deveria estar vendo essa mensagem.");
+                return;
+            }
+
+            // 
             await _game.Mutate(game =>
             {
-                var cost = _cost.ComputeCost(type, itemId, stageId);
-                var coinCost = new CoinModel();
-                var resourceCost = new ResourceModel();
-                var knowledgeCost = new KnowledgeModel();
-
-                bool hasFunds = cost.costId[0] switch
-                {
-                    'm' => GetOrZero(stage.ExpeditionStats.Coins, cost.costId) >= cost.costValue,
-                    'r' => GetOrZero(expansion.ExpansionStats.Resources, cost.costId) >= cost.costValue,
-                    'k' => GetOrZero(expansion.ExpansionStats.Knowledge, cost.costId) >= cost.costValue,
-                    _ => false
-                };
-
-                switch (cost.costId[0])
-                {
-                    case 'm':
-                        coinCost = _locate.LocateCoin(game, cost.costId);
-                        break;
-                    case 'r':
-                        resourceCost = _locate.LocateResource(game, cost.costId);
-                        break;
-                    case 'k':
-                        knowledgeCost = _locate.LocateKnowledge(game, cost.costId);
-                        break;
-                }
-
-                if (!hasFunds)
-                {
-                    _log.Error($"Faltam recursos para comprar/usar {itemId}. Você não deveria estar vendo essa mensagem.");
-                    return;
-                }
-
-                switch (type)
-                {
-                    case ItemHelper.ItemType.Upgrade:
-                        var upInfo = _locate.LocateUpgrade(game, itemId);
-                        if (upInfo.Id.StartsWith("uh"))
-                        {
-                            _lore.PurchaseInfo(upInfo.Name, cost.costValue.ToString("N0"), knowledgeCost.Name, "compra");
-                        } else
-                        {
-                            _lore.PurchaseInfo(upInfo.Name, cost.costValue.ToString("N0"), coinCost.Name, "compra");
-                        }
-                        break;
-                    case ItemHelper.ItemType.Contract:
-                        var conInfo = _locate.LocateContract(game, itemId);
-                        _lore.PurchaseInfo(conInfo.Name, cost.costValue.ToString("N0"), coinCost.Name, "contract");
-                        break;
-                    case ItemHelper.ItemType.Specialty:
-                        var specInfo = _locate.LocateSpecialty(game, itemId);
-                        _lore.PurchaseInfo(specInfo.Name, cost.costValue.ToString("N0"), resourceCost.Name, "spec");
-                        break;
-                }
-
                 if (cost.costId[0] != 'm')
                 {
                     ApplyDebit(expansion.ExpansionStats, cost.costValue, cost.costId);
@@ -107,29 +95,41 @@ namespace FurmaIdle.Services
                     ApplyDebit(stage.ExpeditionStats, cost.costValue, cost.costId);
                 }
 
-                if (type == ItemHelper.ItemType.Contract)
+                switch (type)
                 {
-                    var contract = _locate.LocateContract(game, itemId);
+                    case ItemHelper.ItemType.Upgrade:
+                        //var upgrade = _locate.LocateUpgrade(game, itemId);
+                        break;
 
-                    contract.UseState = UnlockHelper.ContractState.InUse;
-                    stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
-                    stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
+                    case ItemHelper.ItemType.Contract:
+                        var contract = _locate.LocateContract(game, itemId);
 
-                    contractBuy = q + 1;
+                        contract.UseState = UnlockHelper.ContractState.InUse;
+                        stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
+                        stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
 
-                    stage.lockedContractLevel.Add(contract.Level);
-                    if (!expansion.inUseContracts.Contains(contract.Id))
-                    {
-                        expansion.inUseContracts.Add(contract.Id);
-                    }
+                        contractBuy = q + 1;
+
+                        stage.lockedContractLevel.Add(contract.Level);
+                        if (!expansion.inUseContracts.Contains(contract.Id))
+                        {
+                            expansion.inUseContracts.Add(contract.Id);
+                        }
+                        break;
+
+                    case ItemHelper.ItemType.Specialty:
+                        // var spec = _locate.LocateSpecialty(game, itemId);
+                        break;
                 }
 
                 ApplyStats(expansion.ExpansionStats, game.GameStats, cost.costValue, cost.costId);
 
-            }, save: true, ui: false);
+            }, save: false, ui: false);
 
+            // Aplica Efeito
             await _effect.ApplyEffect(type, itemId, stageId);
 
+            // Avisa UI e Salva
             await _game.Mutate(game =>
             {
                 if (game.GameStats.CharactersUnlocked == 2 && itemId.StartsWith("up"))
@@ -161,8 +161,11 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(itemId);
                 }
 
-            }, save: true);
+            }, save: true, ui: true);
+
+            busy = false;
         }
+
         private static void ApplyDebit(StatsModel stats, long cost, string costId)
         {
             char costGroup = costId?[0] ?? '\0';
