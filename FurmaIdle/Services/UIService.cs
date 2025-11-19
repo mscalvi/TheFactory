@@ -140,15 +140,15 @@ namespace FurmaIdle.Services
         }
         private readonly List<NavItem> _nav = new()
         {
-            new() { Id = "i1",  Label = "Expan",   Unlocked = false },
-            new() { Id = "i2",  Label = "Stage",   Unlocked = false },
-            new() { Id = "i3",  Label = "Exped",   Unlocked = false },
-            new() { Id = "i5",  Label = "Up",      Unlocked = false },
-            new() { Id = "i50", Label = "Tech",    Unlocked = false },
-            new() { Id = "i97", Label = "Achiev",  Unlocked = false },
-            new() { Id = "i98", Label = "Out",     Unlocked = false },
-            new() { Id = "i99", Label = "Sett",    Unlocked = false },
-            new() { Id = "i100", Label = "Tips",   Unlocked = false },
+            new() { Id = "i1",  Label = "EXPAN",   Unlocked = false },
+            new() { Id = "i2",  Label = "REGIÃO",   Unlocked = false },
+            new() { Id = "i3",  Label = "EXPED",   Unlocked = false },
+            new() { Id = "i5",  Label = "UPGR",      Unlocked = false },
+            new() { Id = "i50", Label = "PESQ",    Unlocked = false },
+            new() { Id = "i97", Label = "GAME",  Unlocked = false },
+            new() { Id = "i98", Label = "LOJA",     Unlocked = false },
+            new() { Id = "i99", Label = "CONFIG",    Unlocked = false },
+            new() { Id = "i100", Label = "TIPS",   Unlocked = false },
         };
         public IEnumerable<NavItem> VisibleNav =>
             _nav
@@ -283,7 +283,7 @@ namespace FurmaIdle.Services
 
                     SetNotificationMenu("i1");
                     break;
-                case "us00":
+                case "us01":
                     // Libera Menu de Stage e de Outside Market
                     Console.WriteLine("[UI] Stage e Market Menu Liberados");
 
