@@ -7,8 +7,8 @@
     --ui-scale: 1;
     --icon-btn: 65px;
     --char-btn-w: 80px;
-    --char-btn-h: 60px;
-    --contract-btn-w: 60px;
+    --char-btn-h: 65px;
+    --contract-btn-w: 65px;
     --contract-btn-h: 80px;
     --radius: 10px;
     --pad-small: 3px;
@@ -187,7 +187,7 @@ html, body {
 
 .objetive-button,
 .spec-button {
-    min-height: calc(54px * var(--ui-scale));
+    min-height: calc(65px * var(--ui-scale));
     border: 1px solid var(--steel-10);
     padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
     font-size: calc(1rem * var(--ui-scale));
