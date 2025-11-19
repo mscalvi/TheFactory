@@ -19,7 +19,9 @@
 
 .click-pop {
     position: absolute;
-    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 75%;
+    transform: translate(-50%, 0) translate(var(--dx), var(--dy));
     font-weight: 800;
     font-size: clamp(14px, 1.6vw, 18px);
     color: #ffd45e;
@@ -27,28 +29,29 @@
     white-space: nowrap;
     pointer-events: none;
     will-change: transform, opacity;
-    animation: pop-arc var(--dur, 650ms) cubic-bezier(.22,1,.36,1) forwards;
+    animation: click-pop-move var(--dur, 700ms) ease-out forwards;
     opacity: 0;
 }
 
-@keyframes pop-arc {
+@keyframes click-pop-move {
     0% {
-        transform: translate(-50%,-50%) translate(0,0) scale(.9);
+        transform: translate(-50%, 0) translate(0, 0) scale(.9);
         opacity: 0;
     }
 
     10% {
-        transform: translate(-50%,-50%) translate(0,-6px) scale(1);
+        transform: translate(-50%, 0) translate(0, -6px) scale(1);
         opacity: 1;
     }
 
     70% {
-        transform: translate(-50%,-50%) translate(var(--dx, 0), calc(var(--dy, -80px) * .7));
+        transform: translate(-50%, 0) translate(var(--dx, 0), calc(var(--dy, -80px) * .7));
         opacity: 1;
     }
 
     100% {
-        transform: translate(-50%,-50%) translate(var(--dx, 0), var(--dy, -80px));
+        transform: translate(-50%, 0) translate(var(--dx, 0), var(--dy, -80px));
         opacity: 0;
     }
 }
+

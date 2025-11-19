@@ -85,7 +85,7 @@ namespace FurmaIdle.Services
 
                 if (amount > 0)
                 {
-                    _ = _income.AddAsync(ItemType.Resource, res.Id, amount, sourceType: null, sourceId: null, "s00");
+                    _ = _income.AddAsync(ItemType.Resource, res.Id, amount, sourceType: null, sourceId: null, "s01");
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace FurmaIdle.Services
         {
             var resource = _locate.LocateResource(game, resourceId);
 
-            var regenModifier = _modifier.GetModifiers(ItemType.Resource, resourceId, "s00", EffectHelper.EffectSupertype.Gain);
+            var regenModifier = _modifier.GetModifiers(ItemType.Resource, resourceId, "s01", EffectHelper.EffectSupertype.Gain);
 
             var capModifier = GetResourceCap(resource);
 

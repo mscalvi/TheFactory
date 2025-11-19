@@ -470,7 +470,7 @@ namespace FurmaIdle.Services
                     nivel = "Aprendiz";
                     break;
                 case 3:
-                    nivel = "Iniciante";
+                    nivel = "Novato";
                     break;
                 case 4:
                     nivel = "Profissional";

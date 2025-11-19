@@ -11,26 +11,44 @@
 
 <div class="game-area" @ref="_root" @onpointerdown="HandleClick">
     <img class="click-stage-img"
-         src="@StageImagePath()"
+         src="@LocalImagePath()"
          alt="@($"Stage {_stage?.Name ?? _stage?.Id ?? "—"}")"
          draggable="false" />
 
     @foreach (var p in _pops)
     {
         <span class="click-pop"
-              style="left:@p.Xpx; top:@p.Ypx; --dx:@p.Dxpx; --dy:@p.Dypx; --dur:@p.Durms;">
+              style="--dx:@p.Dxpx; --dy:@p.Dypx; --dur:@p.Durms;">
             @p.Text
         </span>
     }
+
 </div>
 
 @code {
     [Inject] IJSRuntime JS { get; set; } = default!;
 
     private StageModel? _stage;
+    private LocalModel? _currentLocal;
+    private bool _clickAnim;
 
-    private string StageImagePath()
-        => StageImageHelper.GetStageImagePath(Game.CurrentGame, _stage!);
+    private string LocalImagePath()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game.CurrentGame.SelectedStageId))
+            return "images/locals/a.svg";
+
+        var stageId = Game.CurrentGame.SelectedStageId;
+
+        // pega o último Local desbloqueado desse stage
+        _currentLocal = Game.CurrentGame.Locals.Values
+            .Where(l => l.StageId == stageId && l.State == UnlockHelper.State.Unlocked)
+            .OrderBy(l => l.Id) // ou Order, Level… o critério que você usa
+            .LastOrDefault();
+
+        return !string.IsNullOrWhiteSpace(_currentLocal?.Image)
+            ? _currentLocal!.Image
+            : "images/locals/a.svg";
+    }
 
     [Parameter] public EventCallback<int> OnClick { get; set; }
     [Parameter] public EventCallback<double> ClickAdd { get; set; }
@@ -72,23 +90,22 @@
 
         await Clicks.Click();
 
-        var pos = await JS.InvokeAsync<Pos>(
-            "ClickArea.getPos",
-            _root,
-            e.ClientX,
-            e.ClientY
-        );
-
-        var originOffsetY = _rng.Next(4, 9);     // 4..8 px acima
-        var originOffsetX = _rng.Next(-5, 6);    // -5..+5 px
-
-        var dx = (_rng.NextDouble() * 40) - 20;  // -20..+20 px
-        var dy = -(_rng.Next(64, 104));          // sobe 64..104 px
+        var dir = _rng.Next(0, 2) == 0 ? -1 : 1;
+        var dxMag = _rng.Next(20, 50);
+        var dx = dir * dxMag;
+        var dy = -(_rng.Next(64, 104));
         var dur = $"{_rng.Next(650, 850)}ms";
 
         var amount = GetClickAmount();
         var id = $"p{++_seq}";
-        var pop = new Pop(id, $"+{amount:0.#}", pos.x + originOffsetX, pos.y - originOffsetY, dx, dy, dur);
+
+        var pop = new Pop(
+            id,
+            $"+{amount:0.#}",
+            dx,
+            dy,
+            dur
+        );
 
         _pops.Add(pop);
         StateHasChanged();
@@ -102,12 +119,8 @@
         catch { /* ignore */ }
     }
 
-    private readonly record struct Pos(double x, double y);
-
-    private sealed record Pop(string Id, string Text, double X, double Y, double Dx, double Dy, string Dur)
+    private sealed record Pop(string Id, string Text, double Dx, double Dy, string Dur)
     {
-        public string Xpx => $"{X}px";
-        public string Ypx => $"{Y}px";
         public string Dxpx => $"{Dx}px";
         public string Dypx => $"{Dy}px";
         public string Durms => Dur;

@@ -21,7 +21,7 @@ namespace FurmaIdle.Data
                 UnlockId = "ux004",
                 RsPerChar = 30,
                 RsPerSecond = 0.0,
-                Icon = "icon/resources/r01.svg",
+                Icon = "icons/resources/r01.svg",
                 Image = "images/resources/r01.svg",
                 Lore = "",
                 Description = "",

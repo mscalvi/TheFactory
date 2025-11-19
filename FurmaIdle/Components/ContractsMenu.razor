@@ -16,8 +16,8 @@
 <section class="game-area">
     @if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage?.Id) || _stage is null || !IsExpeditionActive(_stage))
     {
-        <div class="contracts-empty">
-            <img src="image/contracts-noStage" alt="Sem Expedição Ativa" />
+        <div class="level-noChosen">
+            <img src="@($"images/contracts-noExpedition.svg")" alt="Expedição Inativa" class="no-contract" />
         </div>
     }
     else
@@ -41,7 +41,7 @@
                         @if (level > contractsInfo.ContractsLevel)
                         {
                             <div class="level-noChosen">
-                                <img src="image/contracts-blockedLevel" alt="X" />
+                                <img src="@($"images/contracts-blockedLevel.svg")" alt="Nível Bloqueado" class="no-contract" />
                             </div>
                         }
                         else
@@ -49,7 +49,7 @@
                             @if (ShowOverlay(level))
                             {
                                 <div class="level-noChosen">
-                                    <img src="image/contracts-@level" alt="Escolher Contrato" />
+                                    <img src="@($"images/contractlvl-{level}.svg")" alt="Passe o Mouse para escolher o Contrato" class="no-contract" />
                                 </div>
                             }
                             else
@@ -124,7 +124,7 @@
                                     @if (list.Count == 0)
                                     {
                                         <div class="level-noChosen">
-                                            <img src="image/contracts-noContracts" alt="Nenhum Contrato Desbloqueado" />
+                                            <img src="@($"images/contracts-noContracts.svg")" alt="Nenhum Contrato do Nível foi Desbloqueado" class="no-contract" />
                                         </div>
                                     }
                                     else

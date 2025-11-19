@@ -11,7 +11,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, CharacterModel> All = new()
         {
-            #region s00
+            #region s01
             ["p001"] = new CharacterModel
             {
                 Id = "p001",

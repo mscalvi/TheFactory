@@ -13,7 +13,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, LocalModel> All = new()
         {
-            #region Stage s00
+            #region Stage s01
             ["l00"] = new LocalModel
             {
                 Id = "l00",
@@ -21,25 +21,27 @@ namespace FurmaIdle.Data
                 Description = "",
                 Lore = "",
                 Icon = "icons/locals/l00.svg",
+                Image = "images/locals/l00.svg",
                 Level = null,
                 UnlockId = null,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                StageId = "s00",
+                StageId = "s01",
                 Modifiers = new List<ModifierModel>(),
             },
             ["l01"] = new LocalModel
             {
                 Id = "l01",
-                Name = "Pontes Cantarolantes",
+                Name = "Pontas Cantarolantes",
                 Description = "",
                 Lore = "",
                 Icon = "icons/locals/l01.svg",
+                Image = "images/locals/l01.svg",
                 Level = 1,
                 UnlockId = "ul01",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                StageId = "s00",
+                StageId = "s01",
                 Modifiers = new List<ModifierModel>(),
             },
             ["l02"] = new LocalModel
@@ -49,11 +51,12 @@ namespace FurmaIdle.Data
                 Description = "",
                 Lore = "",
                 Icon = "icons/locals/l02.svg",
+                Image = "images/locals/l02.svg",
                 Level = 1,
                 UnlockId = "ul02",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                StageId = "s00",
+                StageId = "s01",
                 Modifiers = new List<ModifierModel>(),
             },
             ["l03"] = new LocalModel
@@ -63,11 +66,12 @@ namespace FurmaIdle.Data
                 Description = "",
                 Lore = "",
                 Icon = "icons/locals/l03.svg",
+                Image = "images/locals/l03.svg",
                 Level = 1,
                 UnlockId = "ul03",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                StageId = "s00",
+                StageId = "s01",
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -90,6 +94,7 @@ namespace FurmaIdle.Data
                 Description = local.Description,
                 Lore = local.Lore,
                 Icon = local.Icon,
+                Image = local.Image,
                 Level = local.Level,
                 UnlockId = local.UnlockId,
                 State = local.State,

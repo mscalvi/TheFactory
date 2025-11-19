@@ -14,44 +14,36 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, StageModel> All = new()
         {
-            #region Initial Stage (s00)
-            ["s00"] = new StageModel
+            #region A Casa de Ferri (si)
+            ["si"] = new StageModel
             {
-                Id = "s00",
-                Name = "Ilha de Vera",
+                Id = "si",
+                Name = "A Casa de Ferri",
                 Description = "",
                 Lore = "",
-                Icon = "icons/stages/s00.svg",
+                Icon = "icons/stages/si.svg",
                 Images = new List<string> {
-                    "images/stages/s00_0000.svg",
-                    "images/stages/s00_1000.svg",
-                    "images/stages/s00_1100.svg",
-                    "images/stages/s00_1010.svg",
-                    "images/stages/s00_1001.svg",
-                    "images/stages/s00_1110.svg",
-                    "images/stages/s00_1101.svg",
-                    "images/stages/s00_1011.svg",
-                    "images/stages/s00_1111.svg",
+                    "images/stages/si_0000.svg",
+                    "images/stages/si_1000.svg",
                 },
                 UnlockId = null,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StartPartySize = 1,
-                MaxPartySize = 5,
+                MaxPartySize = 1,
                 StartContractLevel = 1,
-                MaxContractLevel = 6,
+                MaxContractLevel = 2,
                 CoinId = "m01",
-                ClickId = "i00",
+                ClickId = "i0i",
                 Modifiers = new List<ModifierModel>(),
                 Expedition = new ExpeditionModel(),
             },
             #endregion
-
-            #region Unlockable Stages (s01)
+            #region Ilha de Vera (s01)
             ["s01"] = new StageModel
             {
                 Id = "s01",
-                Name = "Correntezas",
+                Name = "Ilha de Vera",
                 Description = "",
                 Lore = "",
                 Icon = "icons/stages/s01.svg",
@@ -66,7 +58,40 @@ namespace FurmaIdle.Data
                     "images/stages/s01_1011.svg",
                     "images/stages/s01_1111.svg",
                 },
-                UnlockId = "ux020",
+                UnlockId = null,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                StartPartySize = 1,
+                MaxPartySize = 5,
+                StartContractLevel = 1,
+                MaxContractLevel = 6,
+                CoinId = "m01",
+                ClickId = "i01",
+                Modifiers = new List<ModifierModel>(),
+                Expedition = new ExpeditionModel(),
+            },
+            #endregion
+
+            #region Unlockable Stages (s2)
+            ["s02"] = new StageModel
+            {
+                Id = "s02",
+                Name = "Correntezas",
+                Description = "",
+                Lore = "",
+                Icon = "icons/stages/s02.svg",
+                Images = new List<string> {
+                    "images/stages/s02_0000.svg",
+                    "images/stages/s02_1000.svg",
+                    "images/stages/s02_1100.svg",
+                    "images/stages/s02_1010.svg",
+                    "images/stages/s02_1001.svg",
+                    "images/stages/s02_1110.svg",
+                    "images/stages/s02_1101.svg",
+                    "images/stages/s02_1011.svg",
+                    "images/stages/s02_1111.svg",
+                },
+                UnlockId = "us02",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StartPartySize = 2,
@@ -74,7 +99,7 @@ namespace FurmaIdle.Data
                 StartContractLevel = 4,
                 MaxContractLevel = 6,
                 CoinId = "m02",
-                ClickId = "i00",
+                ClickId = "i02",
                 Modifiers = new List<ModifierModel>(),
                 Expedition = new ExpeditionModel(),
             },
@@ -118,7 +143,7 @@ namespace FurmaIdle.Data
             ShowOrder.Clear();
             IEnumerable<string> keys = All?.Keys.AsEnumerable() ?? Enumerable.Empty<string>();
 
-            // Ordena usando StringComparer.Ordinal (s00, s01, etc.)
+            // Ordena usando StringComparer.Ordinal (s01, s01, etc.)
             ShowOrder.AddRange(keys.OrderBy(k => k, StringComparer.Ordinal));
         }
 

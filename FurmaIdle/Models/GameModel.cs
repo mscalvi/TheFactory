@@ -9,7 +9,7 @@ namespace FurmaIdle.Models
         // Ativo
         public DateTimeOffset StartTime { get; set; }
         public DateTimeOffset LastTick { get; set; }
-        public string SelectedStageId { get; set; } = "s00";
+        public string SelectedStageId { get; set; } = "s01";
         public string CurrentExpansionId { get; set; } = "x00";
 
         // Ui
