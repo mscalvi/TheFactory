@@ -17,7 +17,7 @@ namespace FurmaIdle.Data
             ["x00"] = new ExpansionModel
             {
                 Id = "x00",
-                Name = "Início da História",
+                Name = "Primeiros Recrutas",
                 UnlockId = null,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,

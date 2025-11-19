@@ -45,7 +45,6 @@ namespace FurmaIdle.Services
 
             if (busy)
             {
-                _log.Error($"Uso muito rápido para comprar {itemId}. Você não deveria estar vendo essa mensagem.");
                 return;
             }
 
@@ -79,7 +78,6 @@ namespace FurmaIdle.Services
 
             if (!hasFunds)
             {
-                _log.Error($"Faltam recursos para comprar/usar {itemId}. Você não deveria estar vendo essa mensagem.");
                 return;
             }
 

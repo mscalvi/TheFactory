@@ -991,12 +991,12 @@ namespace FurmaIdle.Data
 
             #region Expedition Upgrades
             #region Stage 0 Misc
-            ["ui00"] = new UpgradeModel
+            ["ui01"] = new UpgradeModel
             {
-                Id = "ui00",
+                Id = "ui01",
                 Name = "Trabalho Árduo",
                 Level = 1,
-                Icon = "icons/upgrades/ui00.svg",
+                Icon = "icons/upgrades/ui01.svg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click",
                 UnlockId = "x00",
@@ -2372,7 +2372,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade0,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "i00",
+                TargetId = "i01",
                 EffectType = EffectHelper.EffectType.ClickGainCent,
                 EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,

@@ -39,6 +39,7 @@ namespace FurmaIdle.Data
                 Expedition = new ExpeditionModel(),
             },
             #endregion
+
             #region Ilha de Vera (s01)
             ["s01"] = new StageModel
             {
