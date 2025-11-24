@@ -33,54 +33,66 @@ else
     var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
 
     TimeSpan gameDuration = DateTime.UtcNow - game.StartTime;
-    
+
+        var totalHours = (int)gameDuration.TotalHours;
+        var durationText = $"{totalHours:00}:{gameDuration.Minutes:00}:{gameDuration.Seconds:00}";
+
         <section class="@($"menu-panel {UI.PanelClass("game-status")}")">
         <h3 class="title">Jogo</h3>
 
             <table class="info-table">
                 <thead>
-                    <tr><th colspan="2">@(gameDuration.ToString("hh\\:mm\\:ss") ?? "--:--:--")</th></tr>
                     <tr><th colspan="2">@expansion.Name</th></tr>
+                    <tr>
+                        <th colspan="2">
+                            @durationText
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
-                    @foreach (var coin in gameStats.CoinsGain)
+                    @foreach (var coinEntry in gameStats.CoinsGain)
                     {
+                        var coin = Locate.LocateCoin(game, coinEntry.Key);
                         <tr class="info-row">
-                            <td class="info-name">@coin.Key</td>
-                            <td class="info-value">@coin.Value.ToString("N0")</td>
+                            <td class="info-name">@coin.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(coinEntry.Value)</td>
                         </tr>
                     }
-                    @foreach (var resource in gameStats.ResourcesGain)
+                    @foreach (var resourceEntry in gameStats.ResourcesGain)
                     {
+                        var resource = Locate.LocateResource(game, resourceEntry.Key);
                         <tr class="info-row">
-                            <td class="info-name">@resource.Key</td>
-                            <td class="info-value">@resource.Value.ToString("N0")</td>
+                            <td class="info-name">@resource.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(resourceEntry.Value)</td>
                         </tr>
                     }
-                    @foreach (var knowledge in gameStats.KnowledgeGain)
+                    @foreach (var knowEntry in gameStats.KnowledgeGain)
                     {
+                        var know = Locate.LocateKnowledge(game, knowEntry.Key);
                         <tr class="info-row">
-                            <td class="info-name">@knowledge.Key</td>
-                            <td class="info-value">@knowledge.Value.ToString("N0")</td>
+                            <td class="info-name">@know.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(knowEntry.Value)</td>
                         </tr>
                     }
-                    @foreach (var click in gameStats.ClicksMade)
+                    @foreach (var clickEntry in gameStats.ClicksMade)
                     {
+                        var click = Locate.LocateClick(game, clickEntry.Key);
+                        var stage = Locate.LocateStage(game, click.StageId);
                         <tr class="info-row">
-                            <td class="info-name">@click.Key</td>
-                            <td class="info-value">@click.Value.ToString("N0")</td>
+                            <td class="info-name">Clicks em @stage.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(clickEntry.Value)</td>
                         </tr>
                     }
-                    <tr class="info-row" colspan="2">Characters Unlocked: @game.GameStats.CharactersUnlocked</tr>
-                    <tr class="info-row" colspan="2">Coins Unlocked: @game.GameStats.CoinsUnlocked</tr>
-                    <tr class="info-row" colspan="2">Contracts Unlocked: @game.GameStats.ContractsUnlocked</tr>
-                    <tr class="info-row" colspan="2">Expansions Unlocked: @game.GameStats.ExpansionsUnlocked</tr>
-                    <tr class="info-row" colspan="2">Knowledges Unlocked: @game.GameStats.KnowledgesUnlocked</tr>
-                    <tr class="info-row" colspan="2">Locals Unlocked: @game.GameStats.LocalsUnlocked</tr>
-                    <tr class="info-row" colspan="2">Stages Unlocked: @game.GameStats.StagesUnlocked</tr>
-                    <tr class="info-row" colspan="2">Techs Unlocked: @game.GameStats.TechUnlocked</tr>
-                    <tr class="info-row" colspan="2">Resources Unlocked: @game.GameStats.ResourcesUnlocked</tr>
-                    <tr class="info-row" colspan="2">Upgrades Unlocked: @game.GameStats.UpgradesUnlocked</tr>
+                    <tr class="info-row" colspan="2">Personagens Contratados: @game.GameStats.CharactersUnlocked / @game.Characters.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Contratos Desbloqueados: @game.GameStats.ContractsUnlocked / @game.Contracts.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Moedas Conhecidas: @game.GameStats.CoinsUnlocked / @game.Coins.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Recursos Conhecidos: @game.GameStats.ResourcesUnlocked / @game.Resources.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Conhecimentos Estudados: @game.GameStats.KnowledgesUnlocked / @game.Knowledges.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Pesquisas Realizadas: @game.GameStats.TechUnlocked / @game.Techs.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Melhorias Completas: @game.GameStats.UpgradesUnlocked / @game.Upgrades.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Locais Explorados: @game.GameStats.LocalsUnlocked / @game.Locals.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Regiões Exploradas: @game.GameStats.StagesUnlocked / @game.Stages.Count.ToString()</tr>
+                    <tr class="info-row" colspan="2">Expansões Feitas: @game.GameStats.ExpansionsUnlocked / @game.Expansions.Count.ToString()</tr>
                 </tbody>
             </table>
     </section>

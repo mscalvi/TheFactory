@@ -154,8 +154,8 @@
     grid-template-columns: repeat(100, 1fr);
     gap: 1px;
     width: 100%;
-    height: clamp(6px, 1.1vh, 16px);
-    min-height: 20px;
+    height: clamp(8px, 1.1vh, 20px);
+    min-height: 8px;
     background: rgba(255,255,255,.08);
     overflow: hidden;
     align-items: end;

@@ -19,17 +19,42 @@
     position: relative;
     padding: calc(2px * var(--ui-scale)) calc(1px * var(--ui-scale)) calc(2px * var(--ui-scale));
     border-bottom: 0.5px solid var(--muted-line);
+    overflow: hidden;
 }
 
 .tt-title {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     text-align: center;
     font-weight: 700;
-    font-size: calc(0.9rem * var(--ui-scale));
+    font-size: clamp(0.6rem, 0.7rem + 0.25vw, 0.9rem);
     letter-spacing: .2px;
-    line-height: 1.15;
+    line-height: 1.1;
     color: var(--metal-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+.tt-cost {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 600;
+}
+
+.tt-cost-icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
 
 .tt-mid {
     grid-area: tt-mid;

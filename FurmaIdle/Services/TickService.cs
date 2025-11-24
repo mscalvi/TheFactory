@@ -88,11 +88,45 @@ namespace FurmaIdle.Services
 
             try
             {
+                //while (await _timer!.WaitForNextTickAsync(ct))
+                //{
+                //    var dt = ComputeDtSeconds();
+                //    if (dt <= 0) continue;
+                //    if (dt > MaxDt) dt = MaxDt;
+
+                //    _saveAcc += dt;
+                //    _uiAcc += dt;
+
+                //    var doSave = _saveAcc >= SaveEvery;
+                //    if (doSave) _saveAcc = 0;
+
+                //    var doUi = _uiAcc >= UiEvery;
+                //    if (doUi) _uiAcc = 0;
+
+                //    await ProcessTickAsync(dt, doSave, doUi);
+                //}
+
                 while (await _timer!.WaitForNextTickAsync(ct))
                 {
-                    var dt = ComputeDtSeconds();
-                    if (dt <= 0) continue;
-                    if (dt > MaxDt) dt = MaxDt;
+                    var rawDt = ComputeDtSeconds();
+                    if (rawDt <= 0) continue;
+
+                    var dt = rawDt;
+
+                    // Se o delta real foi muito maior que o que queremos simular por tick,
+                    // tratamos o "excedente" como tempo offline.
+                    if (dt > MaxDt)
+                    {
+                        var offlineSeconds = dt - MaxDt;
+
+                        // evita chamar para micro diferenciazinhas
+                        if (offlineSeconds > 1.0)
+                        {
+                            await _offline.OfflineIncome(offlineSeconds);
+                        }
+
+                        dt = MaxDt;
+                    }
 
                     _saveAcc += dt;
                     _uiAcc += dt;
@@ -105,6 +139,7 @@ namespace FurmaIdle.Services
 
                     await ProcessTickAsync(dt, doSave, doUi);
                 }
+
             }
             catch (OperationCanceledException) { /* normal */ }
             finally

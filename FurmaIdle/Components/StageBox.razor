@@ -80,7 +80,7 @@ else
                                     {
                                         <img src="@spec.Image"
                                              alt="@spec.Name"
-                                             class="icon-img" />
+                                             class="spec-img" />
                                     }
                                     else
                                     {
@@ -101,14 +101,12 @@ else
 
                                 int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
 
-                                <div class="specialty-selected is-compact" aria-hidden="true">
                                     <div class="specialty-steps">
                                         @for (int j = 0; j < steps; j++)
                                         {
                                             <span class="step @(j < filled ? "is-on" : null)"></span>
                                         }
                                     </div>
-                                </div>
                             }
                         </div>
                     </div>

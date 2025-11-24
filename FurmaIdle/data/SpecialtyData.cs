@@ -53,7 +53,7 @@ namespace FurmaIdle.Data
                 Description = "Aumenta o ganho por Click",
                 Lore = "",
                 Image = "images/specialties/e03.svg",
-                TargetId = "i00",
+                TargetId = "i01",
                 EffectValue = 3.0,
                 EffectType = EffectHelper.EffectType.ClickGain,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,

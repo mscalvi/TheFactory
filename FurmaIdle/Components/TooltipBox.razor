@@ -12,7 +12,22 @@
 
             <!-- Faixa superior -->
             <section class="tt-top">
-                <span class="tt-title">@Model.Type: @Model.Name</span>
+                <span class="tt-title">
+                    @Model.Type: @Model.Name - 
+                    @if (!string.IsNullOrWhiteSpace(Model.CostAmount))
+                    {
+                        <span class="tt-cost">
+                            @Model.CostAmount
+
+                            @if (!string.IsNullOrWhiteSpace(Model.CostIcon))
+                            {
+                                <img src="@Model.CostIcon"
+                                     alt="@Model.CostName"
+                                     class="tt-cost-icon" />
+                            }
+                        </span>
+                    }
+                </span>
             </section>
 
             <!-- Quadro de informações -->

@@ -20,7 +20,7 @@ namespace FurmaIdle.Data
             ["uu110"] = new UpgradeModel
             {
                 Id = "uu110",
-                Name = "Contrato para Varrer o Chão",
+                Name = "Serviços de Varrer o Chão",
                 Level = 1,
                 Icon = "icons/upgrades/uu110.svg",
                 Lore = "",
@@ -39,7 +39,7 @@ namespace FurmaIdle.Data
             ["uu120"] = new UpgradeModel
             {
                 Id = "uu120",
-                Name = "Contrato para Carregar o Barco",
+                Name = "Serviços de Carregar o Barco",
                 Level = 1,
                 Icon = "icons/upgrades/uu120.svg",
                 Lore = "",
@@ -60,7 +60,7 @@ namespace FurmaIdle.Data
             ["uu210"] = new UpgradeModel
             {
                 Id = "uu210",
-                Name = "Contrato para Servir Bebidas",
+                Name = "Serviços de Servir Bebidas",
                 Level = 2,
                 Icon = "icons/upgrades/uu210.svg",
                 Lore = "",
@@ -79,7 +79,7 @@ namespace FurmaIdle.Data
             ["uu220"] = new UpgradeModel
             {
                 Id = "uu220",
-                Name = "Contrato para Limpar Peixes",
+                Name = "Serviços de Limpar Peixes",
                 Level = 2,
                 Icon = "icons/upgrades/uu220.svg",
                 Lore = "",
@@ -98,7 +98,7 @@ namespace FurmaIdle.Data
             ["uu230"] = new UpgradeModel
             {
                 Id = "uu230",
-                Name = "Contrato para Lavar Figurinos",
+                Name = "Serviços de Lavar Figurinos",
                 Level = 2,
                 Icon = "icons/upgrades/uu230.svg",
                 Lore = "",
@@ -119,7 +119,7 @@ namespace FurmaIdle.Data
             ["uu310"] = new UpgradeModel
             {
                 Id = "uu310",
-                Name = "Contrato para Ajudar na Cozinha",
+                Name = "Serviços de Ajudar na Cozinha",
                 Level = 3,
                 Icon = "icons/upgrades/uu310.svg",
                 Lore = "",
@@ -138,7 +138,7 @@ namespace FurmaIdle.Data
             ["uu320"] = new UpgradeModel
             {
                 Id = "uu320",
-                Name = "Contrato para Organizar Ferramentas",
+                Name = "Serviços de Organizar Ferramentas",
                 Level = 3,
                 Icon = "icons/upgrades/uu320.svg",
                 Lore = "",
@@ -157,7 +157,7 @@ namespace FurmaIdle.Data
             ["uu330"] = new UpgradeModel
             {
                 Id = "uu330",
-                Name = "Contrato para Preparar Armas",
+                Name = "Serviços de Preparar Armas",
                 Level = 3,
                 Icon = "icons/upgrades/uu330.svg",
                 Lore = "",
@@ -176,7 +176,7 @@ namespace FurmaIdle.Data
             ["uu340"] = new UpgradeModel
             {
                 Id = "uu340",
-                Name = "Contrato para Ajudar no Ensaio",
+                Name = "Serviços de Ajudar no Ensaio",
                 Level = 3,
                 Icon = "icons/upgrades/uu340.svg",
                 Lore = "",
@@ -197,7 +197,7 @@ namespace FurmaIdle.Data
             ["uu410"] = new UpgradeModel
             {
                 Id = "uu410",
-                Name = "Contrato para Cozinhar",
+                Name = "Serviços de Cozinhar",
                 Level = 4,
                 Icon = "icons/upgrades/uu410.svg",
                 Lore = "",
@@ -216,7 +216,7 @@ namespace FurmaIdle.Data
             ["uu420"] = new UpgradeModel
             {
                 Id = "uu420",
-                Name = "Contrato para Entalhar",
+                Name = "Serviços de Entalhar",
                 Level = 4,
                 Icon = "icons/upgrades/uu420.svg",
                 Lore = "",
@@ -235,7 +235,7 @@ namespace FurmaIdle.Data
             ["uu430"] = new UpgradeModel
             {
                 Id = "uu430",
-                Name = "Contrato para Pescar",
+                Name = "Serviços de Pescar",
                 Level = 4,
                 Icon = "icons/upgrades/uu430.svg",
                 Lore = "",
@@ -254,7 +254,7 @@ namespace FurmaIdle.Data
             ["uu440"] = new UpgradeModel
             {
                 Id = "uu440",
-                Name = "Contrato para Apresentar",
+                Name = "Serviços de Apresentar",
                 Level = 4,
                 Icon = "icons/upgrades/uu440.svg",
                 Lore = "",
@@ -273,7 +273,7 @@ namespace FurmaIdle.Data
             ["uu450"] = new UpgradeModel
             {
                 Id = "uu450",
-                Name = "Contrato para Caçar",
+                Name = "Serviços de Caçar",
                 Level = 4,
                 Icon = "icons/upgrades/uu450.svg",
                 Lore = "",
@@ -778,11 +778,11 @@ namespace FurmaIdle.Data
             ["ur01"] = new UpgradeModel
             {
                 Id = "ur01",
-                Name = "Queimar Energias",
+                Name = "Mantimentos",
                 Level = 1,
                 Icon = "icons/upgrades/ur01.svg",
                 Lore = "",
-                Description = "Libera Recursos",
+                Description = "Libera o Recurso",
                 UnlockId = "x00",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ResourceUnlock01,
@@ -804,7 +804,7 @@ namespace FurmaIdle.Data
             ["ua01"] = new UpgradeModel
             {
                 Id = "ua01",
-                Name = "Primeiro Companheiro",
+                Name = "2 Membros Ativos",
                 Level = 1,
                 Icon = "icons/upgrades/ua01.svg",
                 Lore = "",
@@ -823,7 +823,7 @@ namespace FurmaIdle.Data
             ["ua02"] = new UpgradeModel
             {
                 Id = "ua02",
-                Name = "Segundo Companheiro",
+                Name = "3 Membros Ativos",
                 Level = 2,
                 Icon = "icons/upgrades/ua02.svg",
                 Lore = "",
@@ -842,7 +842,7 @@ namespace FurmaIdle.Data
             ["ua03"] = new UpgradeModel
             {
                 Id = "ua03",
-                Name = "Terceiro Companheiro",
+                Name = "4 Membros Ativos",
                 Level = 3,
                 Icon = "icons/upgrades/ua03.svg",
                 Lore = "",
@@ -861,7 +861,7 @@ namespace FurmaIdle.Data
             ["ua04"] = new UpgradeModel
             {
                 Id = "ua04",
-                Name = "Quarto Companheiro",
+                Name = "5 Membros Ativos",
                 Level = 4,
                 Icon = "icons/upgrades/ua04.svg",
                 Lore = "",
@@ -888,8 +888,8 @@ namespace FurmaIdle.Data
                 Id = "us01",
                 Name = "Região",
                 Level = 1,
-                Icon = "icons/objetives/us01.svg",
-                Image = "images/objetives/us01.svg",
+                Icon = "icons/upgrades/us01.svg",
+                Image = "images/upgrades/us01.svg",
                 Lore = "",
                 Description = "Libera a Região",
                 UnlockId = "x03",
@@ -908,8 +908,8 @@ namespace FurmaIdle.Data
                 Id = "us02",
                 Name = "Região",
                 Level = 1,
-                Icon = "icons/objetives/us02.svg",
-                Image = "images/objetives/us02.svg",
+                Icon = "icons/upgrades/us02.svg",
+                Image = "images/upgrades/us02.svg",
                 Lore = "",
                 Description = "Libera a Região",
                 UnlockId = "x03",
@@ -931,8 +931,8 @@ namespace FurmaIdle.Data
                 Id = "ue01",
                 Name = "Expansão",
                 Level = 1,
-                Icon = "icons/objetives/ue01.svg",
-                Image = "images/objetives/ue01.svg",
+                Icon = "icons/upgrades/ue01.svg",
+                Image = "images/upgrades/ue01.svg",
                 Lore = "",
                 Description = "Libera Expansão",
                 UnlockId = "x00",
@@ -951,8 +951,8 @@ namespace FurmaIdle.Data
                 Id = "ue02",
                 Name = "Expansão",
                 Level = 2,
-                Icon = "icons/objetives/ue02.svg",
-                Image = "images/objetives/ue02.svg",
+                Icon = "icons/upgrades/ue02.svg",
+                Image = "images/upgrades/ue02.svg",
                 Lore = "",
                 Description = "Libera Expansão",
                 UnlockId = "x01",
@@ -971,8 +971,8 @@ namespace FurmaIdle.Data
                 Id = "ue03",
                 Name = "Expansão",
                 Level = 3,
-                Icon = "icons/objetives/ue03.svg",
-                Image = "images/objetives/ue03.svg",
+                Icon = "icons/upgrades/ue03.svg",
+                Image = "images/upgrades/ue03.svg",
                 Lore = "",
                 Description = "Libera Expansão",
                 UnlockId = "x02",
@@ -994,14 +994,33 @@ namespace FurmaIdle.Data
             ["ui01"] = new UpgradeModel
             {
                 Id = "ui01",
-                Name = "Trabalho Árduo",
+                Name = "Pequenos Frutos do Trabalho",
                 Level = 1,
                 Icon = "icons/upgrades/ui01.svg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click",
                 UnlockId = "x00",
-                MaxBuy = 4,
-                PricingId = PricingHelper.PricingId.ClickGain0,
+                MaxBuy = 20,
+                PricingId = PricingHelper.PricingId.ClickGainS0,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpedition,
+                TargetId = "s01",
+                EffectType = EffectHelper.EffectType.ClickGain,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 1,
+            },
+            ["ui02"] = new UpgradeModel
+            {
+                Id = "ui02",
+                Name = "Trabalho Árduo",
+                Level = 1,
+                Icon = "icons/upgrades/ui02.svg",
+                Lore = "",
+                Description = "Aumenta o ganho por Click",
+                UnlockId = "x00",
+                MaxBuy = 3,
+                PricingId = PricingHelper.PricingId.ClickGainM0,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpedition,
                 TargetId = "s01",

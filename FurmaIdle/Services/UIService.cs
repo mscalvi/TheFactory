@@ -127,8 +127,8 @@ namespace FurmaIdle.Services
         }
         #endregion
 
-        public string? OpenMenuId { get; private set; } = "i5";
-        public string? PreviousMenuId { get; private set; } = "i5";
+        public string? OpenMenuId { get; private set; } = "i100";
+        public string? PreviousMenuId { get; private set; } = "i100";
         public sealed class NavItem
         {
             public required string Id { get; init; } = "";
@@ -188,7 +188,7 @@ namespace FurmaIdle.Services
             }
             else
             {
-                OpenMenuId = "i5";
+                OpenMenuId = "i100";
                 g.Ui.OpenMenuId = OpenMenuId;
             }
 
@@ -326,12 +326,10 @@ namespace FurmaIdle.Services
                         HidePanel(panel);
                     }
 
-                    UnlockMenu("i5");
                     UnlockMenu("i99");
                     UnlockMenu("i100");
 
                     SetOpenMenu("i100");
-                    SetNotificationMenu("i5");
                     SetNotificationMenu("i99");
                     break;
                 case "FirstKnowledgePurchase":
@@ -366,6 +364,11 @@ namespace FurmaIdle.Services
                     SetNotificationMenu("i97");
                     break;
                 case "c011":
+                    if (!IsMenuUnlocked("i5"))
+                    {
+                        UnlockMenu("i5");
+                        SetOpenMenu("i5");
+                    }
                     if (IsHidden("up-expansion"))
                     {
                         _lore.LoreTrigger("FirstContractPurchase");

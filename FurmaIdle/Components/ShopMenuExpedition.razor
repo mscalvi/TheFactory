@@ -24,7 +24,20 @@
         var expeditionStats = _stage.ExpeditionStats;
 
         var started = expedition.StartedAt;
-        var duration = started.HasValue ? (DateTimeOffset.UtcNow - started.Value) : (TimeSpan?)null;
+
+        string durationText;
+
+        if (started.HasValue)
+        {
+            var expDuration = DateTimeOffset.UtcNow - started.Value;
+
+            var totalHours = (int)expDuration.TotalHours;
+            durationText = $"{totalHours:00}:{expDuration.Minutes:00}:{expDuration.Seconds:00}";
+        }
+        else
+        {
+            durationText = "--:--:--";
+        }
 
         var isActive = isExpActive(_stage);
         var partySize = Expedition.GetPartyCap(_stage);
@@ -75,7 +88,7 @@
                             {
                                 <img src="@ch.Image"
                                      alt="@ch.Id"
-                                     class="icon-img" />
+                                     class="objetive-img" />
                             }
                             else
                             {
@@ -121,63 +134,43 @@
         <section class="@($"menu-panel {UI.PanelClass("expedition-status")}")">
             @if (expedition.ExpeditionState != UnlockHelper.ExpeditionState.Active)
             {
-                <h3 class="title">Expedição Atual</h3>
-                <table class="info-table">
-                    <thead>
-                        <tr><th colspan="2">--:--:--</th></tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var coin in expeditionStats.CoinsGain)
-                        {
-                            <tr class="info-row">
-                                <td class="info-name">@coin.Key</td>
-                                <td class="info-value">-</td>
-                            </tr>
-                        }
-                        @foreach (var resource in expeditionStats.ResourcesGain)
-                        {
-                            <tr class="info-row">
-                                <td class="info-name">@resource.Key</td>
-                                <td class="info-value">-</td>
-                            </tr>
-                        }
-                        @foreach (var click in expeditionStats.ClicksMade)
-                        {
-                            <tr class="info-row">
-                                <td class="info-name">@click.Key</td>
-                                <td class="info-value">-</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                <h3 class="title">Expedição Inativa</h3>
             }
             else
             {
                 <h3 class="title">Expedição Atual</h3>
                 <table class="info-table">
                     <thead>
-                        <tr><th colspan="2">@(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</th></tr>
+                        <tr>
+                            <th colspan="2">
+                                @durationText
+                            </th>
+                        </tr>
                     </thead>
                     <tbody>
-                        @foreach (var coin in expeditionStats.CoinsGain)
+                        @foreach (var coinEntry in expeditionStats.CoinsGain)
                         {
+                            var coin = Locate.LocateCoin(game, coinEntry.Key);
                             <tr class="info-row">
-                                <td class="info-name">@coin.Key</td>
-                                <td class="info-value">@coin.Value.ToString("N0")</td>
+                                <td class="info-name">@coin.Name</td>
+                                <td class="info-value">@NumbersHelper.Padronize(coinEntry.Value)</td>
                             </tr>
                         }
-                        @foreach (var resource in expeditionStats.ResourcesGain)
+                        @foreach (var resourceEntry in expeditionStats.ResourcesGain)
                         {
+                            var resource = Locate.LocateResource(game, resourceEntry.Key);
                             <tr class="info-row">
-                                <td class="info-name">@resource.Key</td>
-                                <td class="info-value">@resource.Value.ToString("N0")</td>
+                                <td class="info-name">@resource.Name</td>
+                                <td class="info-value">@NumbersHelper.Padronize(resourceEntry.Value)</td>
                             </tr>
                         }
-                        @foreach (var click in expeditionStats.ClicksMade)
+                        @foreach (var clickEntry in expeditionStats.ClicksMade)
                         {
+                            var click = Locate.LocateClick(game, clickEntry.Key);
+                            var stage = Locate.LocateStage(game, click.StageId);
                             <tr class="info-row">
-                                <td class="info-name">@click.Key</td>
-                                <td class="info-value">@click.Value.ToString("N0")</td>
+                                <td class="info-name">Clicks em @stage.Name</td>
+                                <td class="info-value">@NumbersHelper.Padronize(clickEntry.Value)</td>
                             </tr>
                         }
                     </tbody>
@@ -195,13 +188,13 @@
                 if (kPreview.Count > 0)
                 {
                     <table class="info-table">
-                        <thead class="info-line"><tr>@(duration?.ToString("hh\\:mm\\:ss") ?? "--:--:--")</tr></thead>
                         <tbody>
-                            @foreach (var know in kPreview.OrderByDescending(x => x.Value))
+                            @foreach (var knowEntry in kPreview.OrderByDescending(x => x.Value))
                             {
+                                var know = Locate.LocateKnowledge(game, knowEntry.Key);
                                 <tr class="info-row">
-                                    <td class="info-name">@know.Key</td>
-                                    <td class="info-value">@know.Value.ToString("N2")</td>
+                                    <td class="info-name">Conhecimento: @know.Name</td>
+                                    <td class="info-value">@NumbersHelper.Padronize(knowEntry.Value)</td>
                                 </tr>
                             }
                         </tbody>

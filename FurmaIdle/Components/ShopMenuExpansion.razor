@@ -14,80 +14,100 @@
 <div class="menu-root">
 @if (!Game.IsReady || _stage is null)
 {
-    <div class="contracts-placeholder">Stage não Selecionado</div>
-}
-else{
-    var game = Game.CurrentGame;
+        <div class="contracts-placeholder">Stage não Selecionado</div>
+    }
+    else{
+        var game = Game.CurrentGame;
 
-    ExpansionModel expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
+        ExpansionModel expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
 
-    var expansionStats = expansion.ExpansionStats;
+        var expansionStats = expansion.ExpansionStats;
 
-    var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
+        var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
-    TimeSpan? expDuration = null;
-    if (expansion.StartedAt is DateTimeOffset startedAt)
-        expDuration = DateTimeOffset.UtcNow - startedAt;
+        var started = expansion.StartedAt;
 
-    var inBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
-                               && c.CharState == UnlockHelper.CharState.InBase)
-                      .OrderBy(c => c.Id)
-                      .ToList();
+        string durationText;
 
-    var inStage = chars.Where(c => c.State == UnlockHelper.State.Unlocked
-                                && c.CharState == UnlockHelper.CharState.InStage)
-                       .OrderBy(c => c.Id)
-                       .ToList();
+        if (started.HasValue)
+        {
+            var expDuration = DateTimeOffset.UtcNow - started.Value;
 
-    var unlockedUpgrades = OrderedUpgrades(game)
-            .Where(u => u?.Id != null
-                    && !u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("uk", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("ue", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("us", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("ur", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("uc", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("uu", StringComparison.OrdinalIgnoreCase)
-                    && !u.Id.StartsWith("ua", StringComparison.OrdinalIgnoreCase)
-                    && u.State == UnlockHelper.State.Unlocked);
+            var totalHours = (int)expDuration.TotalHours;
+            durationText = $"{totalHours:00}:{expDuration.Minutes:00}:{expDuration.Seconds:00}";
+        }
+        else
+        {
+            durationText = "--:--:--";
+        }
 
+        var inBase = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+                                   && c.CharState == UnlockHelper.CharState.InBase)
+                          .OrderBy(c => c.Id)
+                          .ToList();
+
+        var inStage = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+                                    && c.CharState == UnlockHelper.CharState.InStage)
+                           .OrderBy(c => c.Id)
+                           .ToList();
+
+        var unlockedUpgrades = OrderedUpgrades(game)
+                .Where(u => u?.Id != null
+                        && !u.Id.StartsWith("up", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("uh", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("uk", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("ue", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("us", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("ur", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("uc", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("uu", StringComparison.OrdinalIgnoreCase)
+                        && !u.Id.StartsWith("ua", StringComparison.OrdinalIgnoreCase)
+                        && u.State == UnlockHelper.State.Unlocked);
 
         <section class="@($"menu-panel {UI.PanelClass("expansion-status")}")">
             <h3 class="title">Expansão Atual</h3>
             <table class="info-table">
                 <thead>
                     <tr><th colspan="2">@expansion.Name</th></tr>
-                    <tr><th colspan="2">@((expDuration?.ToString("hh\\:mm\\:ss")) ?? "--:--:--")</th></tr>
+                    <tr>
+                        <th colspan="2">
+                            @durationText
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
-                    @foreach (var coin in expansionStats.CoinsGain)
+                    @foreach (var coinEntry in expansionStats.CoinsGain)
                     {
+                        var coin = Locate.LocateCoin(game, coinEntry.Key);
                         <tr class="info-row">
-                            <td class="info-name">@coin.Key</td>
-                            <td class="info-value">@coin.Value.ToString("N0")</td>
+                            <td class="info-name">@coin.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(coinEntry.Value)</td>
                         </tr>
                     }
-                    @foreach (var resource in expansionStats.ResourcesGain)
+                    @foreach (var resourceEntry in expansionStats.ResourcesGain)
                     {
+                        var resource = Locate.LocateResource(game, resourceEntry.Key);
                         <tr class="info-row">
-                            <td class="info-name">@resource.Key</td>
-                            <td class="info-value">@resource.Value.ToString("N0")</td>
+                            <td class="info-name">@resource.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(resourceEntry.Value)</td>
                         </tr>
                     }
-                    @foreach (var know in expansionStats.KnowledgeGain)
+                    @foreach (var knowEntry in expansionStats.KnowledgeGain)
                     {
+                        var know = Locate.LocateKnowledge(game, knowEntry.Key);
                         <tr class="info-row">
-                            <td class="info-name">@know.Key</td>
-                            <td class="info-value">@know.Value.ToString("N0")</td>
+                            <td class="info-name">@know.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(knowEntry.Value)</td>
                         </tr>
                     }
-                    @foreach (var click in expansionStats.ClicksMade)
+                    @foreach (var clickEntry in expansionStats.ClicksMade)
                     {
+                        var click = Locate.LocateClick(game, clickEntry.Key);
+                        var stage = Locate.LocateStage(game, click.StageId);
                         <tr class="info-row">
-                            <td class="info-name">@click.Key</td>
-                            <td class="info-value">@click.Value.ToString("N0")</td>
+                            <td class="info-name">Clicks em @stage.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(clickEntry.Value)</td>
                         </tr>
                     }
                 </tbody>

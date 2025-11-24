@@ -27,7 +27,7 @@
                      @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Coins, it.Id))"
                      @onmouseleave="Tooltips.Clear">
                 <span class="income-total">
-                    @it.StageTotal.ToString("N0")
+                     @NumbersHelper.Padronize(it.GameTotal)
                     @if (it.GamePerSec > 0)
                     {
                         <text> +@it.StagePerSec.ToString("N2")/s</text>
@@ -52,7 +52,7 @@
                      @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Resources, it.Id))"
                      @onmouseleave="Tooltips.Clear">
                 <span class="income-total">
-                    @it.GameTotal.ToString("N0") / @it.Cap.ToString()
+                     @NumbersHelper.Padronize(it.GameTotal) / @NumbersHelper.Padronize(it.Cap)
                     @if (it.GamePerSec > 0)
                     {
                         <text> +@it.GamePerSec.ToString("N2")/s</text>

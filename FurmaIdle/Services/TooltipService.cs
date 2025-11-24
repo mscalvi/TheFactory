@@ -77,85 +77,7 @@ namespace FurmaIdle.Services
             };
         }
 
-        // Character
-        private TooltipModel BuildCharacterHover(string charId, GameModel game)
-        {
-            var tooltip = new TooltipModel();
 
-            var character = _locate.LocateCharacter(game, charId);
-
-            var spec = _locate.LocateSpecialty(game, character.SpecialtyId);
-            string specialty = spec.Name + " -> "+ spec.Description;
-
-            var trait = _locate.LocateTrait(game, character.TraitId);
-
-            var knowledge = new KnowledgeModel();
-            string knows = "";
-            if(character.KnowledgeFactor2 is not null)
-            {
-                knowledge = _locate.LocateKnowledge(game, character.KnowledgeFactor2);
-                knows += "2x " + knowledge.Name + " ";
-            }
-            if(character.KnowledgeFactor1  is not null)
-            {
-                knowledge = _locate.LocateKnowledge(game, character.KnowledgeFactor1);
-                knows += "1x " + knowledge.Name;
-            }
-
-            var contract = new ContractModel();
-            string contracts = "";
-            if (character.ContractsIds != null)
-            {
-                foreach (var contractId in character.ContractsIds)
-                {
-                    if(contractId != null)
-                    {
-                        contract = _locate.LocateContract(game, contractId);
-                        if (contracts == "")
-                        {
-                            contracts += contract.Name;
-                        }
-                        else
-                        {
-                            contracts += " - " + contract.Name;
-                        }
-                    }
-                }
-            }
-
-            var stage = new StageModel();
-            string charState = character.Name;
-            if (character.CharState == UnlockHelper.CharState.Blocked)
-            {
-                charState += " - Não Contratado";
-            }
-            if (character.CharState == UnlockHelper.CharState.InLine)
-            {
-                charState += " - Esperando Expedição";
-            }
-            if (character.CharState == UnlockHelper.CharState.InBase)
-            {
-                charState += " - Na Base";
-            }
-            if (character.CharState == UnlockHelper.CharState.InStage)
-            {
-                stage = _locate.LocateStage(game, character.InStageId);
-                charState += " - Trabalhando em " + stage.Name;
-            }
-
-            var modifiers = character.Modifiers.Count;
-
-            tooltip.Type = "Personagem";
-            tooltip.Name = charState;
-            tooltip.Lore = character.Lore;
-            tooltip.Info.Add("Especialidade", specialty);
-            tooltip.Info.Add("Traço", trait.Description);
-            tooltip.Info.Add("Fatores", knows);
-            tooltip.Info.Add("Contratos", contracts);
-            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
-
-            return tooltip;
-        }
 
         // Upgrade
         private TooltipModel BuildUpgradeHover(string upgradeId, GameModel game)
@@ -165,7 +87,7 @@ namespace FurmaIdle.Services
             var upgrade = _locate.LocateUpgrade(game, upgradeId);
             var stageIn = _locate.LocateStage(game, game.SelectedStageId);
 
-            string nome = upgrade.Name;
+            tooltip.Name = upgrade.Name;
             var cost = _cost.ComputeCost(ItemHelper.ItemType.Upgrade, upgrade.Id, stageIn.Id);
 
             string upIdType = upgrade.Id.Length >= 2
@@ -181,17 +103,23 @@ namespace FurmaIdle.Services
             if (upIdType == "xx")
             {
                 costResource = _locate.LocateResource(game, cost.costId);
-                nome += " - " + custo + " " + costResource.Name;
+                tooltip.CostAmount = custo;
+                tooltip.CostIcon = costResource.Image;
+                tooltip.CostName = costResource.Name;
             }
             else if (upIdType == "uh")
             {
                 costKnowledge = _locate.LocateKnowledge(game, cost.costId);
-                nome += " - " + custo + " " + costKnowledge.Name;
+                tooltip.CostAmount = custo;
+                tooltip.CostIcon = costKnowledge.Image;
+                tooltip.CostName = costKnowledge.Name;
             }
             else
             {
                 costCoin = _locate.LocateCoin(game, cost.costId);
-                nome += " - " + custo + " " + costCoin.Name;
+                tooltip.CostAmount = custo;
+                tooltip.CostIcon = costCoin.Image;
+                tooltip.CostName = costCoin.Name;
             }
 
             string tipo = "";
@@ -272,13 +200,14 @@ namespace FurmaIdle.Services
                     if (upgrade.TargetId == "aContracts")
                     {
                         target = "todos os Contratos";
-                    } else
+                    }
+                    else
                     {
                         var contractMod = _locate.LocateContract(game, upgrade.TargetId);
                         target = contractMod.Name;
                     }
 
-                    if(upgrade.EffectSupertype == EffectHelper.EffectSupertype.Cost)
+                    if (upgrade.EffectSupertype == EffectHelper.EffectSupertype.Cost)
                     {
                         intro = "Diminui o Custo de ";
                     }
@@ -407,7 +336,7 @@ namespace FurmaIdle.Services
                     break;
             }
 
-            if(operation == "")
+            if (operation == "")
             {
                 if (upgrade.EffectOp == EffectHelper.EffectOperation.Additive)
                 {
@@ -419,15 +348,12 @@ namespace FurmaIdle.Services
                 }
             }
 
-            // alvo
-            // operação
-            // valor?
-
             string function = "";
             if (valor == "")
             {
                 function = operation + target;
-            } else
+            }
+            else
             {
                 function = intro + target + " -> " + operation + valor;
             }
@@ -435,10 +361,8 @@ namespace FurmaIdle.Services
             var modifiers = upgrade.Modifiers.Count;
 
             tooltip.Type = tipo;
-            tooltip.Name = nome;
             tooltip.Lore = upgrade.Lore;
             tooltip.Info.Add("Função", function);
-            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
 
             return tooltip;
         }
@@ -451,18 +375,18 @@ namespace FurmaIdle.Services
             var contract = _locate.LocateContract(game, id);
             var stage = _locate.LocateStage(game, game.SelectedStageId);
 
-            string nome = contract.Name;
             var cost = _cost.ComputeCost(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
 
             var coin = _locate.LocateCoin(game, cost.costId);
             string custo = NumbersHelper.Padronize(cost.costValue);
 
-            nome += " - " + custo + " " + coin.Name;
-
+            tooltip.CostAmount = custo;
+            tooltip.CostIcon = coin.Image;
+            tooltip.CostName = coin.Name;
 
             string nivel = "";
-            switch (contract.Level) 
-            { 
+            switch (contract.Level)
+            {
                 case 1:
                     nivel = "Trivial";
                     break;
@@ -520,85 +444,12 @@ namespace FurmaIdle.Services
             var modifiers = contract.Modifiers.Count;
 
             tooltip.Type = "Contrato";
-            tooltip.Name = nome;
+            tooltip.Name = contract.Name;
             tooltip.Lore = contract.Lore;
             tooltip.Info.Add("Nível", nivel);
             tooltip.Info.Add("Base", geraBase);
             tooltip.Info.Add("Atual", geraAtual);
             tooltip.Info.Add("Fatores", knows);
-            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
-
-            return tooltip;
-        }
-
-        // Local
-        private TooltipModel BuildLocalHover(string id, GameModel game)
-        {
-            var tooltip = new TooltipModel();
-
-            var local = _locate.LocateLocal(game, id);
-
-            tooltip.Type = "Lugar";
-            tooltip.Name = local.Name;
-            tooltip.Lore = local.Lore;
-            tooltip.Info.Add("Descrição", local.Description);
-
-            return tooltip;
-        }
-
-        // Techs
-        private TooltipModel BuildTechHover(string id, GameModel game)
-        {
-            var tooltip = new TooltipModel();
-
-            var tech = _locate.LocateTech(game, id);
-
-            string know = "";
-
-            string techKnow = tech.Id.Length >= 3
-                ? tech.Id.Substring(0, 2)
-                : tech.Id;
-
-            switch (techKnow)
-            {
-                case "t01":
-                    know = "Cultural";
-                    break;
-                case "t02":
-                    know = "Geográfico";
-                    break;
-                case "t03":
-                    know = "Sobrevivência";
-                    break;
-                case "t04":
-                    know = "Navegação";
-                    break;
-                case "t05":
-                    know = "Caça";
-                    break;
-            }
-
-            tooltip.Type = "Pesquisa";
-            tooltip.Name = tech.Name;
-            tooltip.Lore = tech.Lore;
-            tooltip.Info.Add("Nível", tech.Level.ToString());
-            tooltip.Info.Add("Conhecimento", know);
-            tooltip.Info.Add("Descrição", tech.Description);
-
-            return tooltip;
-        }
-
-        // Knowledge
-        private TooltipModel BuildKnowledgeHover(string id, GameModel game)
-        {
-            var tooltip = new TooltipModel();
-
-            var knowledge = _locate.LocateKnowledge(game, id);
-
-            tooltip.Type = "Conhecimento";
-            tooltip.Name = knowledge.Name;
-            tooltip.Lore = knowledge.Lore;
-            tooltip.Info.Add("Descrição", knowledge.Description);
 
             return tooltip;
         }
@@ -611,14 +462,16 @@ namespace FurmaIdle.Services
             var specialty = _locate.LocateSpecialty(game, id);
             var stageIn = _locate.LocateStage(game, game.SelectedStageId);
 
-            string nome = specialty.Name;
             var cost = _cost.ComputeCost(ItemHelper.ItemType.Specialty, specialty.Id, stageIn.Id);
 
             var costResource = new ResourceModel();
 
             costResource = _locate.LocateResource(game, cost.costId);
             string custo = NumbersHelper.Padronize(cost.costValue);
-            nome += " - " + custo + " " + costResource.Name;
+
+            tooltip.CostAmount = custo;
+            tooltip.CostIcon = costResource.Image;
+            tooltip.CostName = costResource.Name;
 
             string target = "";
             string valor = "";
@@ -704,13 +557,165 @@ namespace FurmaIdle.Services
             var modifiers = specialty.Modifiers.Count;
 
             tooltip.Type = "Especialidade";
-            tooltip.Name = nome;
+            tooltip.Name = specialty.Name;
             tooltip.Lore = specialty.Lore;
             tooltip.Info.Add("Função", function);
-            tooltip.Info.Add("Modificadores Ativos", modifiers.ToString());
 
             return tooltip;
         }
+
+
+        // Character
+        private TooltipModel BuildCharacterHover(string charId, GameModel game)
+        {
+            var tooltip = new TooltipModel();
+
+            var character = _locate.LocateCharacter(game, charId);
+
+            var spec = _locate.LocateSpecialty(game, character.SpecialtyId);
+            string specialty = spec.Name + " -> "+ spec.Description;
+
+            var trait = _locate.LocateTrait(game, character.TraitId);
+
+            var knowledge = new KnowledgeModel();
+            string knows = "";
+            if(character.KnowledgeFactor2 is not null)
+            {
+                knowledge = _locate.LocateKnowledge(game, character.KnowledgeFactor2);
+                knows += "2x " + knowledge.Name + " ";
+            }
+            if(character.KnowledgeFactor1  is not null)
+            {
+                knowledge = _locate.LocateKnowledge(game, character.KnowledgeFactor1);
+                knows += "1x " + knowledge.Name;
+            }
+
+            var contract = new ContractModel();
+            string contracts = "";
+            if (character.ContractsIds != null)
+            {
+                foreach (var contractId in character.ContractsIds)
+                {
+                    if(contractId != null)
+                    {
+                        contract = _locate.LocateContract(game, contractId);
+                        if (contracts == "")
+                        {
+                            contracts += contract.Name;
+                        }
+                        else
+                        {
+                            contracts += " - " + contract.Name;
+                        }
+                    }
+                }
+            }
+
+            var stage = new StageModel();
+            string charState = character.Name;
+            if (character.CharState == UnlockHelper.CharState.Blocked)
+            {
+                charState += " - Não Contratado";
+            }
+            if (character.CharState == UnlockHelper.CharState.InLine)
+            {
+                charState += " - Esperando Expedição";
+            }
+            if (character.CharState == UnlockHelper.CharState.InBase)
+            {
+                charState += " - Na Base";
+            }
+            if (character.CharState == UnlockHelper.CharState.InStage)
+            {
+                stage = _locate.LocateStage(game, character.InStageId);
+                charState += " - Trabalhando em " + stage.Name;
+            }
+
+            var modifiers = character.Modifiers.Count;
+
+            tooltip.Type = "Personagem";
+            tooltip.Name = charState;
+            tooltip.Lore = character.Lore;
+            tooltip.Info.Add("Especialidade", specialty);
+            tooltip.Info.Add("Traço", trait.Description);
+            tooltip.Info.Add("Fatores", knows);
+            tooltip.Info.Add("Contratos", contracts);
+
+            return tooltip;
+        }
+
+        // Local
+        private TooltipModel BuildLocalHover(string id, GameModel game)
+        {
+            var tooltip = new TooltipModel();
+
+            var local = _locate.LocateLocal(game, id);
+
+            tooltip.Type = "Lugar";
+            tooltip.Name = local.Name;
+            tooltip.Lore = local.Lore;
+            tooltip.Info.Add("Descrição", local.Description);
+
+            return tooltip;
+        }
+
+        // Techs
+        private TooltipModel BuildTechHover(string id, GameModel game)
+        {
+            var tooltip = new TooltipModel();
+
+            var tech = _locate.LocateTech(game, id);
+
+            string know = "";
+
+            string techKnow = tech.Id.Length >= 3
+                ? tech.Id.Substring(0, 2)
+                : tech.Id;
+
+            switch (techKnow)
+            {
+                case "t01":
+                    know = "Cultural";
+                    break;
+                case "t02":
+                    know = "Geográfico";
+                    break;
+                case "t03":
+                    know = "Sobrevivência";
+                    break;
+                case "t04":
+                    know = "Navegação";
+                    break;
+                case "t05":
+                    know = "Caça";
+                    break;
+            }
+
+            tooltip.Type = "Pesquisa";
+            tooltip.Name = tech.Name;
+            tooltip.Lore = tech.Lore;
+            tooltip.Info.Add("Nível", tech.Level.ToString());
+            tooltip.Info.Add("Conhecimento", know);
+            tooltip.Info.Add("Descrição", tech.Description);
+
+            return tooltip;
+        }
+
+        // Knowledge
+        private TooltipModel BuildKnowledgeHover(string id, GameModel game)
+        {
+            var tooltip = new TooltipModel();
+
+            var knowledge = _locate.LocateKnowledge(game, id);
+
+            tooltip.Type = "Conhecimento";
+            tooltip.Name = knowledge.Name;
+            tooltip.Lore = knowledge.Lore;
+            tooltip.Info.Add("Descrição", knowledge.Description);
+
+            return tooltip;
+        }
+
 
         // Resources
         private TooltipModel BuildResourcesHover(string id, GameModel game)

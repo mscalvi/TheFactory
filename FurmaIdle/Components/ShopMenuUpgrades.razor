@@ -68,10 +68,11 @@
                         @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, heroUpgrade.Id, _stage.Id))"
                         @onmouseleave="Tooltips.Clear">
-                    @if (!string.IsNullOrWhiteSpace(heroUpgrade.Icon))
+                    @if (!string.IsNullOrWhiteSpace(heroUpgrade.Image))
                     {
-                        <img src="@heroUpgrade.Icon"
-                             alt="@heroUpgrade.Id" />
+                        <img src="@heroUpgrade.Image"
+                             alt="@heroUpgrade.Id" 
+                             class="objetive-img"/>
                     }
                     else
                     {
