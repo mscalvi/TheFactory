@@ -42,7 +42,7 @@ namespace FurmaIdle.Services
 
                 foreach (var coin in coinsToGenerate)
                 {
-                    if (coin.Value > 0.01)
+                    if (coin.Value > 1)
                     {
                         var coinInfo = _locate.LocateCoin(_game.CurrentGame, coin.Key);
                         _log.Info($"Ganhamos {coin.Value.ToString("N0")} {coinInfo.Name} enquanto estavamos distantes.");

@@ -20,6 +20,14 @@ namespace FurmaIdle.Services
         event Action? Pulse;
 
         void RaisePulse();
+
+        bool IsBusy { get; }
+        string? BusyMessage { get; }
+
+        event Action? BusyChanged;
+
+        void SetBusy(string? message);
+        void ClearBusy();
     }
 
     public sealed class UiService : IUiService
@@ -261,8 +269,6 @@ namespace FurmaIdle.Services
                 // First Unlocks
                 case "FirstCharacterPurchase":
                     // Libera Menu de Expansion
-                    Console.WriteLine("[UI] Expansion Menu Liberado");
-
                     UnlockMenu("i1");
                     if (IsHidden("expansion-basechars"))
                     {
@@ -285,42 +291,14 @@ namespace FurmaIdle.Services
                     break;
                 case "us01":
                     // Libera Menu de Stage e de Outside Market
-                    Console.WriteLine("[UI] Stage e Market Menu Liberados");
-
                     UnlockMenu("i2");
                     UnlockMenu("i98");
 
                     SetNotificationMenu("i98");
                     SetOpenMenu("i2");
                     break;
-                case "ua01":
-                    // Libera Menu de Expedition
-                    Console.WriteLine("[UI] Expedition Menu Liberado");
-
-                    UnlockMenu("i3");
-                    if (IsHidden("expedition-gain"))
-                    {
-                        ShowPanel("expedition-gain");
-                    }
-                    if (IsHidden("expedition-status"))
-                    {
-                        ShowPanel("expedition-status");
-                    }
-                    if (IsHidden("expedition-party"))
-                    {
-                        ShowPanel("expedition-party");
-                    }
-                    if (IsHidden("expedition-toggle"))
-                    {
-                        ShowPanel("expedition-toggle");
-                    }
-
-                    SetNotificationMenu("i3");
-                    break;
                 case "GameStart":
                     // Libera Menu de Updates e de Settings
-                    Console.WriteLine("[UI] Updates e Settings Menu Liberados");
-
                     foreach(var panel in GamePanels)
                     {
                         HidePanel(panel);
@@ -333,7 +311,6 @@ namespace FurmaIdle.Services
                     SetNotificationMenu("i99");
                     break;
                 case "FirstKnowledgePurchase":
-                    Console.WriteLine("[UI] Tech Menu Liberado");
                     // Libera Menu de Tech
 
                     if (IsHidden("tech-knowledge"))
@@ -352,8 +329,6 @@ namespace FurmaIdle.Services
                     break;
                 case "ue01":
                     // Libera Menu de Archievments
-                    Console.WriteLine("[UI] Game Stats Menu Liberado");
-
                     if (IsHidden("game-status"))
                     {
                         ShowPanel("game-status");
@@ -374,7 +349,15 @@ namespace FurmaIdle.Services
                         _lore.LoreTrigger("FirstContractPurchase");
                         ShowPanel("up-expansion");
                     }
-                    if(help == "2")
+                    if(help == "5")
+                    {
+                        if (IsHidden("up-expedition"))
+                        {
+                            _lore.LoreTrigger("FirstCapPurchase");
+                            ShowPanel("up-expedition");
+                        }
+                    }
+                    if (help == "10")
                     {
                         if (IsHidden("up-permanents"))
                         {
@@ -382,20 +365,13 @@ namespace FurmaIdle.Services
                             ShowPanel("up-permanents");
                         }
                     }
-                    if (help == "10")
+                    if (help == "15")
                     {
                         if (IsHidden("up-objetive"))
                         {
                             _lore.LoreTrigger("ObjetiveUnlock");
                             ShowPanel("up-objetive");
                         }
-                    }
-                    break;
-                case "um01":
-                    if (IsHidden("up-expedition"))
-                    {
-                        _lore.LoreTrigger("FirstCapPurchase");
-                        ShowPanel("up-expedition");
                     }
                     break;
                 case "FirstTechPurchase":
@@ -407,25 +383,46 @@ namespace FurmaIdle.Services
 
                 // Gerais
                 case "ExpeditionStart":
-                    Console.WriteLine("[UI] Expedition Start");
 
                     UnlockMenu("i5");
 
                     SetOpenMenu("i5");
+
+                    LockMenu("i3");
                     break;
                 case "ExpeditionEnd":
-                    Console.WriteLine("[UI] Expedition End");
-
                     SetOpenMenu("i3");
 
                     LockMenu("i5");
                     break;
                 case "ExpansionEnd":
-                    Console.WriteLine("[UI] Expansion End");
-
                     SetOpenMenu("i3");
 
                     LockMenu("i5");
+                    break;
+                case "UnlockExpedition":
+                    if (!IsMenuUnlocked("i3"))
+                    {
+                        UnlockMenu("i3");
+                        if (IsHidden("expedition-gain"))
+                        {
+                            ShowPanel("expedition-gain");
+                        }
+                        if (IsHidden("expedition-status"))
+                        {
+                            ShowPanel("expedition-status");
+                        }
+                        if (IsHidden("expedition-party"))
+                        {
+                            ShowPanel("expedition-party");
+                        }
+                        if (IsHidden("expedition-toggle"))
+                        {
+                            ShowPanel("expedition-toggle");
+                        }
+                    }
+
+                    SetNotificationMenu("i3");
                     break;
 
                 default: break;
@@ -452,6 +449,27 @@ namespace FurmaIdle.Services
             item.Notification = false;
             RaiseChanged();
             return true;
+        }
+        #endregion
+
+        #region Busy
+        public bool IsBusy { get; private set; }
+        public string? BusyMessage { get; private set; }
+
+        public event Action? BusyChanged;
+
+        public void SetBusy(string? message)
+        {
+            IsBusy = true;
+            BusyMessage = message;
+            BusyChanged?.Invoke();
+        }
+
+        public void ClearBusy()
+        {
+            IsBusy = false;
+            BusyMessage = null;
+            BusyChanged?.Invoke();
         }
         #endregion
     }

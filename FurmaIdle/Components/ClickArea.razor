@@ -8,29 +8,19 @@
 @inject ILocateService Locate
 @inject IIncomeService Income
 @inject IClickService Clicks
+@inject IJSRuntime JS
 
 <div class="game-area" @ref="_root" @onpointerdown="HandleClick">
     <img class="click-stage-img"
          src="@LocalImagePath()"
          alt="@($"Stage {_stage?.Name ?? _stage?.Id ?? "—"}")"
          draggable="false" />
-
-    @foreach (var p in _pops)
-    {
-        <span class="click-pop"
-              style="--dx:@p.Dxpx; --dy:@p.Dypx; --dur:@p.Durms;">
-            @p.Text
-        </span>
-    }
-
 </div>
 
 @code {
-    [Inject] IJSRuntime JS { get; set; } = default!;
-
     private StageModel? _stage;
     private LocalModel? _currentLocal;
-    private bool _clickAnim;
+    private ElementReference _root;
 
     private string LocalImagePath()
     {
@@ -49,11 +39,6 @@
             ? _currentLocal!.Image
             : "images/locals/a.svg";
     }
-
-    [Parameter] public EventCallback<int> OnClick { get; set; }
-    [Parameter] public EventCallback<double> ClickAdd { get; set; }
-
-    private ElementReference _root;
 
     protected override void OnInitialized()
     {
@@ -90,43 +75,18 @@
 
         await Clicks.Click();
 
-        var dir = _rng.Next(0, 2) == 0 ? -1 : 1;
-        var dxMag = _rng.Next(20, 50);
-        var dx = dir * dxMag;
-        var dy = -(_rng.Next(64, 104));
-        var dur = $"{_rng.Next(650, 850)}ms";
-
         var amount = GetClickAmount();
-        var id = $"p{++_seq}";
+        var text = $"+{amount:0.#}";
 
-        var pop = new Pop(
-            id,
-            $"+{amount:0.#}",
-            dx,
-            dy,
-            dur
+        var coin = Locate.LocateCoin(Game.CurrentGame, _stage.CoinId);
+        var iconPath = coin.Image;
+
+        await JS.InvokeVoidAsync(
+            "ClickPops.spawn",
+            _root,                     // <<–– agora vai o elemento, não a string
+            text,
+            new { durationMs = 800, icon = iconPath }
         );
-
-        _pops.Add(pop);
-        StateHasChanged();
-
-        try
-        {
-            await Task.Delay(1000);
-            var i = _pops.FindIndex(p => p.Id == id);
-            if (i >= 0) { _pops.RemoveAt(i); await InvokeAsync(StateHasChanged); }
-        }
-        catch { /* ignore */ }
     }
 
-    private sealed record Pop(string Id, string Text, double Dx, double Dy, string Dur)
-    {
-        public string Dxpx => $"{Dx}px";
-        public string Dypx => $"{Dy}px";
-        public string Durms => Dur;
-    }
-
-    private readonly List<Pop> _pops = new();
-    private int _seq;
-    private readonly Random _rng = new();
 }

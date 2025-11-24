@@ -358,15 +358,83 @@ html, body {
     color: var(--metal-ink);
 }
 
-@media (max-width: 1200px) {
-    :root {
-        --ui-scale: 0.90;
+
+.click-stage-img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    user-select: none;
+}
+
+.click-pop {
+    position: absolute;
+    left: 50%;
+    top: 75%;
+    transform: translate(-50%, 0);
+    pointer-events: none;
+    animation: click-pop-move var(--dur, 700ms) ease-out forwards;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+.click-pop-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 800;
+    font-size: clamp(14px, 1.6vw, 18px);
+    color: #ffd45e;
+    text-shadow: 0 1px 2px rgba(0,0,0,.6);
+    white-space: nowrap;
+}
+
+.click-pop-icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+@keyframes click-pop-move {
+    0% {
+        transform: translate(-50%, 0) translate(0, 0) scale(.9);
+        opacity: 0;
+    }
+
+    10% {
+        transform: translate(-50%, 0) translate(0, -6px) scale(1);
+        opacity: 1;
+    }
+
+    70% {
+        transform: translate(-50%, 0) translate(var(--dx, 0), calc(var(--dy, -80px) * .7));
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, 0) translate(var(--dx, 0), var(--dy, -80px));
+        opacity: 0;
     }
 }
 
-@media (max-width: 1100px) {
+
+@media (max-width: 1400px) {
     :root {
-        --ui-scale: 0.90;
+        --ui-scale: 0.9;
+    }
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --ui-scale: 0.85;
     }
 }
 
@@ -376,14 +444,14 @@ html, body {
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 800px) {
     :root {
-        --ui-scale: 0.70;
+        --ui-scale: 0.75;
     }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
     :root {
-        --ui-scale: 0.60;
+        --ui-scale: 0.70;
     }
 }

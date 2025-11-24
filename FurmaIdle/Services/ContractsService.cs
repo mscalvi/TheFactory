@@ -55,14 +55,18 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly IModifierService _modifier;
         private readonly IKnowledgeService _knowledge;
-        public ContractsService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier, IKnowledgeService knowledge)
+        private readonly IUiService _ui;
+        public ContractsService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier, IKnowledgeService knowledge, IUiService ui)
         {
             _locate = locate;
             _income = income;
             _game = game;
             _modifier = modifier;
             _knowledge = knowledge;
+            _ui = ui;
         }
+
+        bool ExpeditionUnlocked = false;
 
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
         {
@@ -179,8 +183,25 @@ namespace FurmaIdle.Services
                 contractsCap += stageCap;
             }
 
+            if (contractsUsed >= 50)
+            {
+                if (ExpeditionUnlocked == false)
+                {
+                    _ui.NavMenuControl("UnlockExpedition");
+                    ExpeditionUnlocked = true;
+                }
+                else
+                {
+                    if (contractsUsed < 50)
+                    {
+                        ExpeditionUnlocked = false;
+                    }
+                }
+            }
+
             return (contractsCap, contractsUsed, contractsLevel, contractsMaxLevel);
         }
+
         public IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId)
         {
             if (game is null) return Array.Empty<string>();

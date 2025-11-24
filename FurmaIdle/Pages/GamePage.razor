@@ -61,6 +61,13 @@
         Console.WriteLine("[GP] Jogo iniciado");
     }
 
+    protected override void OnInitialized()
+    {
+        Ui.BusyChanged += OnBusyChanged;
+        Game.GameChanged += OnGameChanged;
+        Ticks.RunningChanged += OnSignalsChanged;
+    }
+
     private void OnSignalsChanged()
     {
         RecomputeReady();
@@ -86,8 +93,11 @@
         }
     }
 
+    private void OnBusyChanged() => InvokeAsync(StateHasChanged);
+
     public void Dispose()
     {
+        Ui.BusyChanged -= OnBusyChanged;
         _ = Ticks.StopAsync();
         Game.GameChanged -= OnGameChanged;
     }
@@ -96,50 +106,70 @@
 
 @if (!_ready)
 {
-    <p>Iniciando Jogo</p>
+    <div class="app-loading-screen">
+        <div class="app-loading-card">
+            <div class="app-loading-title">Exploradores de Furma</div>
+            <div class="app-loading-subtitle">Carregando anotações da Guilda...</div>
+            <div class="app-loading-spinner"></div>
+        </div>
+    </div>
 }
 else
 {
-    <div class="game-grid">
-        <!-- Navegador -->
-        <aside class="nav-menu">
-            <NavMenu />
-        </aside>
+    if (Ui.IsBusy)
+    {
+        <div class="app-loading-screen">
+            <div class="app-loading-card">
+                <div class="app-loading-title">Exploradores de Furma</div>
+                <div class="app-loading-subtitle">@Ui.BusyMessage</div>
+                <div class="app-loading-spinner"></div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="game-grid">
+            <!-- Navegador -->
+            <aside class="nav-menu">
+                <NavMenu />
+            </aside>
 
-        <section class="text-box">
-            <TextMenu />
-        </section>
+            <section class="text-box">
+                <TextMenu />
+            </section>
 
-        <!-- Shop -->
-        <section class="shop-menu">
-            <ShopMenu />
-        </section>
+            <!-- Shop -->
+            <section class="shop-menu">
+                <ShopMenu />
+            </section>
 
-        <!-- Título -->
-        <header class="title-box">
-            <TitleBox />
-        </header>
+            <!-- Título -->
+            <header class="title-box">
+                <TitleBox />
+            </header>
 
-        <!-- Stage/Área -->
-        <section class="stage-box">
-            <StageBox />
-        </section>
+            <!-- Stage/Área -->
+            <section class="stage-box">
+                <StageBox />
+            </section>
 
-        <!-- Click -->
-        <main class="click-area">
-            <ClickArea />
-        </main>
+            <!-- Click -->
+            <main class="click-area">
+                <ClickArea />
+            </main>
 
-        <!-- Income -->
-        <section class="income-box">
-            <IncomeBox />
-        </section>
+            <!-- Income -->
+            <section class="income-box">
+                <IncomeBox />
+            </section>
 
-        <!-- Contratos -->
-        <section class="contracts-menu">
-            <ContractsMenu />
-        </section>
+            <!-- Contratos -->
+            <section class="contracts-menu">
+                <ContractsMenu />
+            </section>
 
-    </div>
+        </div>
+        
+    }
 }
 

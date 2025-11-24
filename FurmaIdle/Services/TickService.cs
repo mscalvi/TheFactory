@@ -120,7 +120,7 @@ namespace FurmaIdle.Services
                         var offlineSeconds = dt - MaxDt;
 
                         // evita chamar para micro diferenciazinhas
-                        if (offlineSeconds > 1.0)
+                        if (offlineSeconds > 60.0)
                         {
                             await _offline.OfflineIncome(offlineSeconds);
                         }

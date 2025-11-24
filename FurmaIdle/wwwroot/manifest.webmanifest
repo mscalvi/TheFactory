@@ -10,7 +10,7 @@
   "icons": [
     {
       "src": "icons/gameicon.svg",
-      "type": "image/jpg",
+      "type": "image/svg",
       "sizes": "512x512"
     }
   ]

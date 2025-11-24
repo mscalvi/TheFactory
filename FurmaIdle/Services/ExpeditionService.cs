@@ -225,6 +225,8 @@ namespace FurmaIdle.Services
 
         public async Task EndExpedition(StageModel stage)
         {
+            _ui.SetBusy("Encerrando a Expansão, organizando os relatórios e revendo o aprendizado...");
+
             // transforma coins em Knowledge
             long cTotal = 0;
             foreach (var coins in stage.ExpeditionStats.CoinsGain)
@@ -344,10 +346,14 @@ namespace FurmaIdle.Services
                 }
             }, save: true);
 
+            _ui.ClearBusy();
+
         }
 
         public async Task EndExpansion(string expansionId)
         {
+            _ui.SetBusy("Convocando todos os membros da Guilda, hora de expandirmos nossos negócios...");
+
             foreach (var stage in _game.CurrentGame.Stages.Values)
             {
                 if (stage.State != State.Unlocked) continue;
@@ -498,6 +504,8 @@ namespace FurmaIdle.Services
                 _lore.LoreTrigger("ExpansionEnd");
 
             }, save: true);
+
+            _ui.ClearBusy();
         }
 
         private static void ScrubExpeditionMods(List<ModifierModel> list)

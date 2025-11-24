@@ -28,10 +28,10 @@
                      @onmouseleave="Tooltips.Clear">
                 <span class="income-total">
                      @NumbersHelper.Padronize(it.GameTotal)
-                    @if (it.GamePerSec > 0)
+@*                     @if (it.GamePerSec > 0)
                     {
                         <text> +@it.StagePerSec.ToString("N2")/s</text>
-                    }
+                    } *@
                 </span>
             </div>
         }
@@ -53,10 +53,10 @@
                      @onmouseleave="Tooltips.Clear">
                 <span class="income-total">
                      @NumbersHelper.Padronize(it.GameTotal) / @NumbersHelper.Padronize(it.Cap)
-                    @if (it.GamePerSec > 0)
+@*                     @if (it.GamePerSec > 0)
                     {
                         <text> +@it.GamePerSec.ToString("N2")/s</text>
-                    }
+                    } *@
                 </span>
             </div>
         }
