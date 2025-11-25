@@ -304,11 +304,11 @@ namespace FurmaIdle.Services
                             target = "todos os Recursos";
                         }
 
-                        if (upgrade.Id.StartsWith("ux01"))
+                        if (upgrade.Id.StartsWith("ux11"))
                         {
                             target += " por Pesquisa realizada.";
                         }
-                        if (upgrade.Id.StartsWith("ux02"))
+                        if (upgrade.Id.StartsWith("ux12"))
                         {
                             target += " por Local encontrado.";
                         }
@@ -329,7 +329,7 @@ namespace FurmaIdle.Services
 
                     valor = upgrade.EffectValue.ToString("N3");
 
-                    if (upgrade.Id == "ux001")
+                    if (upgrade.Id == "ux101")
                     {
                         valor += "% da média de Talhos por segundo.";
                     }

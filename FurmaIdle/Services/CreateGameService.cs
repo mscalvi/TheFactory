@@ -17,15 +17,17 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly IUnlockService _unlock;
         private readonly IExpeditionService _expedition;
-        public GameModel NewGame { get; private set; } = new();
+        private readonly IGameMigrationService _migration;
 
-        public CreateGameService(IGameStore store, ICurrentGameService current, IUnlockService unlock, IExpeditionService expedition)
+        public CreateGameService(IGameStore store, ICurrentGameService current, IUnlockService unlock, IExpeditionService expedition, IGameMigrationService migration)
         {
             _store = store;
             _game = current;
             _unlock = unlock;
             _expedition = expedition;
+            _migration = migration;
         }
+        public GameModel NewGame { get; private set; } = new();
 
         public async Task<GameModel> InitAsync()
         {
@@ -34,9 +36,8 @@ namespace FurmaIdle.Services
             var loaded = await _store.LoadAsync("main");
 
             bool invalid = loaded is null
-            || loaded.SchemaVersion <= 0
-            || loaded.Stages is null
-            || loaded.Stages.Count == 0;
+                || loaded.Stages is null
+                || loaded.Stages.Count == 0;
 
             if (invalid)
             {
@@ -44,11 +45,11 @@ namespace FurmaIdle.Services
 
                 var model = new GameModel
                 {
-                    SchemaVersion = 1,
+                    SchemaVersion = VersionHelper.Current,
                     StartTime = DateTime.Now,
                     LastTick = DateTime.UtcNow,
                     GameStats = new StatsModel(),
-                    CurrentExpansionId = "x00",
+                    CurrentExpansionId = "x10",
                     Ui = new UiState(),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),
@@ -81,7 +82,7 @@ namespace FurmaIdle.Services
             }
             else
             {
-                var changed = BackfillLoad(loaded);
+                var changed = _migration.Migrate(loaded);
 
                 _game.Attach(loaded);
                 Console.WriteLine("[CGS] Jogo carregado e anexado");
@@ -89,7 +90,7 @@ namespace FurmaIdle.Services
                 if (changed)
                 {
                     await _store.SaveAsync(loaded, "main");
-                    Console.WriteLine("[CGS] Jogo atualizado (backfill) e salvo");
+                    Console.WriteLine("[CGS] Jogo atualizado e salvo");
                 }
 
                 return loaded;
@@ -109,12 +110,6 @@ namespace FurmaIdle.Services
             {
                 throw;
             }
-        }
-
-        private static bool BackfillLoad(GameModel g)
-        {
-            // TO DO
-            return false;
         }
     }
 }

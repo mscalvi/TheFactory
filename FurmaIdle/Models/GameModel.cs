@@ -10,7 +10,7 @@ namespace FurmaIdle.Models
         public DateTimeOffset StartTime { get; set; }
         public DateTimeOffset LastTick { get; set; }
         public string SelectedStageId { get; set; } = "s01";
-        public string CurrentExpansionId { get; set; } = "x00";
+        public string CurrentExpansionId { get; set; } = "x10";
 
         // Ui
         public UiState Ui { get; set; } = new();
@@ -36,7 +36,7 @@ namespace FurmaIdle.Models
     {
         public HashSet<string> UnlockedMenus { get; set; } = new(StringComparer.OrdinalIgnoreCase);
         public HashSet<string> HiddenPanels { get; set; } = new(StringComparer.Ordinal);
-        public string? OpenMenuId { get; set; }        // qual menu estava aberto
+        public string? OpenMenuId { get; set; }
 
 
         // guarde um buffer curto pra não inchar o save

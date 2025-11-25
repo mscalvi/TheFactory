@@ -18,7 +18,7 @@ namespace FurmaIdle.Data
             {
                 Id = "r01",
                 Name = "Mantimentos",
-                UnlockId = "ux004",
+                UnlockId = "ux104",
                 RsPerChar = 30,
                 RsPerSecond = 0.0,
                 Icon = "icons/resources/r01.svg",
@@ -55,6 +55,7 @@ namespace FurmaIdle.Data
                 Persistence = resource.Persistence,
                 State = resource.State,
                 Modifiers= resource.Modifiers,
+                UseState = resource.UseState,
             };
         }
 

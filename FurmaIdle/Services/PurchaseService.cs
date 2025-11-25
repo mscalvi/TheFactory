@@ -39,16 +39,16 @@ namespace FurmaIdle.Services
         // Purchase
         public async Task Purchase(ItemHelper.ItemType type, string itemId, string stageId)
         {
-            var game = _game.CurrentGame;
-            var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
-            var stage = _locate.LocateStage(game, stageId);
-
             if (busy)
             {
                 return;
             }
 
             busy = true;
+
+            var game = _game.CurrentGame;
+            var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
+            var stage = _locate.LocateStage(game, stageId);
 
             var cost = _cost.ComputeCost(type, itemId, stageId);
             var coinCost = new CoinModel();
@@ -81,7 +81,6 @@ namespace FurmaIdle.Services
                 return;
             }
 
-            // 
             await _game.Mutate(game =>
             {
                 if (cost.costId[0] != 'm')
@@ -102,7 +101,7 @@ namespace FurmaIdle.Services
                     case ItemHelper.ItemType.Contract:
                         var contract = _locate.LocateContract(game, itemId);
 
-                        contract.UseState = UnlockHelper.ContractState.InUse;
+                        contract.GameUseState = UnlockHelper.ContractState.InUse;
                         stage.ActiveContracts ??= new Dictionary<string, int>(StringComparer.Ordinal);
                         stage.ActiveContracts[contract.Id] = (stage.ActiveContracts.TryGetValue(contract.Id, out var q) ? q : 0) + 1;
 

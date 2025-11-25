@@ -56,6 +56,7 @@ namespace FurmaIdle.Data
                 StageId = click.StageId,
                 BaseGain = click.BaseGain,
                 Modifiers = click.Modifiers,
+                UseState = click.UseState,
             };
         }
 

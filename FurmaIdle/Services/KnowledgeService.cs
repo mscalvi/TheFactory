@@ -11,6 +11,7 @@ namespace FurmaIdle.Services
 
         Dictionary<string, double> KnowledgeGain(StageModel stage, long coins);
         double GetKnowledgeBurst(GameModel game, string coinId, ExpansionModel expansion);
+        Dictionary<string, double> GetKnowFactor(StageModel stage);
     }
 
     public sealed class KnowledgeService : IKnowledgeService
@@ -92,7 +93,7 @@ namespace FurmaIdle.Services
             return result;
         }
 
-        private Dictionary<string, double> GetKnowFactor(StageModel stage)
+        public Dictionary<string, double> GetKnowFactor(StageModel stage)
         {
             Dictionary<string, int> kCounters = new Dictionary<string, int>();
             Dictionary<string, double> kFactors = new Dictionary<string, double>();
@@ -100,7 +101,7 @@ namespace FurmaIdle.Services
             foreach (var know in _game.CurrentGame.Knowledges)
             {
                 int counter = 0;
-                if (know.Value.State == Helpers.UnlockHelper.State.Unlocked)
+                if (know.Value.State == UnlockHelper.State.Unlocked)
                 {
                     foreach (var characterId in stage.Expedition.PartyIds)
                     {

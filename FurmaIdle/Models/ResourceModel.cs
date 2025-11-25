@@ -13,6 +13,7 @@ namespace FurmaIdle.Models
         public string Description { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
         public UnlockHelper.State State { get; set; }
+        public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         public double RsPerSecond { get; set; }
         public int RsPerChar { get; set; }

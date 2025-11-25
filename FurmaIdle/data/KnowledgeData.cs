@@ -155,6 +155,7 @@ namespace FurmaIdle.Data
                 GenerationPenaltie = knowledge.GenerationPenaltie,
                 GenerationCoin = knowledge.GenerationCoin,
                 Modifiers = knowledge.Modifiers,
+                UseState = knowledge.UseState,
             };
         }
 

@@ -167,6 +167,7 @@ namespace FurmaIdle.Data
                 State = tech.State,
                 Persistence = tech.Persistence,
                 Modifiers = tech.Modifiers,
+                UseState = tech.UseState,
             };
         }
 

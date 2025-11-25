@@ -183,19 +183,19 @@ namespace FurmaIdle.Services
                 contractsCap += stageCap;
             }
 
-            if (contractsUsed >= 50)
+            if (ExpeditionUnlocked == false)
             {
-                if (ExpeditionUnlocked == false)
+                if (contractsUsed >= 30)
                 {
                     _ui.NavMenuControl("UnlockExpedition");
                     ExpeditionUnlocked = true;
                 }
-                else
+            }
+            else
+            {
+                if (contractsUsed < 30)
                 {
-                    if (contractsUsed < 50)
-                    {
-                        ExpeditionUnlocked = false;
-                    }
+                    ExpeditionUnlocked = false;
                 }
             }
 

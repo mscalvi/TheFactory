@@ -14,7 +14,6 @@
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
-@inject ISpecialtiesService Specialty;
 
 <div class="menu-root">
 @if (!Game.IsReady || _stage is null)
@@ -57,12 +56,10 @@
             IsContractUpgradeVisible(game, u.Id))
             .ToList();
 
-        var specActive = IsSpecActive();
-
         <section class="@($"menu-panel {UI.PanelClass("up-objetive")}")">
             @if (heroUpgrade is not null)
             {
-                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id) && !specActive;
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id);
                 <button class="objetive-button"
                         disabled="@(!can)"
                         @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
@@ -231,16 +228,9 @@
                     var nextBuy = Math.Max(1, (up.ActualBuy) + 1);
                     var maxBuy = up.MaxBuy <= 0 ? int.MaxValue : up.MaxBuy;
 
-                    var step = up.EffectType switch
-                    {
-                        EffectHelper.EffectType.ContractCost => 25,
-                        EffectHelper.EffectType.ContractGain => 5,
-                        EffectHelper.EffectType.ContractTime => 5,
-                        _ => 0
-                    };
-                    if (step <= 0) return true;
+                    var needed = GetContractNeeded(up.EffectType, nextBuy);
+                    if (needed <= 0) return true;
 
-                    var needed = step * nextBuy;
                     return qty >= needed;
                 }
             }
@@ -299,19 +289,9 @@
             if (!(_stage.ActiveContracts?.TryGetValue(upgrade.TargetId, out var qty) ?? false) || qty <= 0)
                 return;
 
-            var step = upgrade.EffectType switch
-            {
-                EffectHelper.EffectType.ContractCost => 25,
-                EffectHelper.EffectType.ContractGain => 5,
-                EffectHelper.EffectType.ContractTime => 5,
-                _ => 0
-            };
-
-            if (step > 0)
-            {
-                var needed = step * nextBuy;
-                if (qty < needed) return;
-            }
+            var needed = GetContractNeeded(upgrade.EffectType, nextBuy);
+            if (needed > 0 && qty < needed)
+                return;
         }
 
         if (freeProcess)
@@ -327,8 +307,14 @@
 
             if(StartsWith(upgrade.Id, "us"))
             {
-                // TO DO
+                await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
                 Log.Lore($"Fim de Jogo.");
+            }
+
+            if (_stage is not null)
+            {
+                var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, _stage.Id);
+                Tooltips.Show(hover);
             }
 
             freeProcess = true;
@@ -339,17 +325,17 @@
         }
     }
 
-    bool IsSpecActive()
+    private static int GetContractNeeded(EffectHelper.EffectType effectType, int nextBuy)
     {
-        foreach (var spec in Game.CurrentGame.Specialties.Values)
+        return effectType switch
         {
-            var timer = Specialty.GetSpecialtyTimer(spec);
-            if (timer.Actual > 0)
-            {
-                return true;
-            }
-        }
+            EffectHelper.EffectType.ContractCost => 25 * nextBuy,
 
-        return false;
+            EffectHelper.EffectType.ContractGain => 10 * nextBuy - 5,
+
+            EffectHelper.EffectType.ContractTime => 10 * nextBuy,
+
+            _ => 0
+        };
     }
 }

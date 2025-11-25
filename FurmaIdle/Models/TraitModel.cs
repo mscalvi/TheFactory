@@ -6,6 +6,7 @@ namespace FurmaIdle.Models
     {
         public string Id { get; set; }
         public string Description { get; set; }
+        public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         // Effect
         public string? TargetId { get; set; }

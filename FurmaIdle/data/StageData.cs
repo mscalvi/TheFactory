@@ -15,16 +15,16 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, StageModel> All = new()
         {
             #region A Casa de Ferri (si)
-            ["si"] = new StageModel
+            ["s00"] = new StageModel
             {
-                Id = "si",
+                Id = "s00",
                 Name = "A Casa de Ferri",
                 Description = "",
                 Lore = "",
-                Icon = "icons/stages/si.svg",
+                Icon = "icons/stages/s00.svg",
                 Images = new List<string> {
-                    "images/stages/si_0000.svg",
-                    "images/stages/si_1000.svg",
+                    "images/stages/s00_0000.svg",
+                    "images/stages/s00_1000.svg",
                 },
                 UnlockId = null,
                 State = UnlockHelper.State.Blocked,
@@ -63,7 +63,7 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StartPartySize = 1,
-                MaxPartySize = 5,
+                MaxPartySize = 4,
                 StartContractLevel = 1,
                 MaxContractLevel = 6,
                 CoinId = "m01",
@@ -136,6 +136,7 @@ namespace FurmaIdle.Data
                 CoinId = stage.CoinId,
                 ClickId = stage.ClickId,
                 Modifiers = stage.Modifiers,
+                UseState = stage.UseState,
             };
         }
 

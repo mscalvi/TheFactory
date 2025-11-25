@@ -19,6 +19,7 @@ namespace FurmaIdle.Models
 
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
+        public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         public StatsModel ExpeditionStats { get; set; } = new();
 

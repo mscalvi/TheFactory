@@ -12,12 +12,13 @@ namespace FurmaIdle.Models
         public string Image { get; set; }
         public string Lore { get; set; } = "";
         public PricingHelper.PricingId PricingId { get; set; }
+        public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         // Stats
         public string UnlockId { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
         public UnlockHelper.State State { get; set; }
-        public UnlockHelper.ContractState UseState { get; set; }
+        public UnlockHelper.ContractState GameUseState { get; set; }
 
         // Modifiers
         public List<ModifierModel> Modifiers { get; set; }

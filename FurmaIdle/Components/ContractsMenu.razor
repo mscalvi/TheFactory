@@ -220,6 +220,12 @@
 
         await Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id);
 
+        if (_stage is not null)
+        {
+            var hover = Tooltips.GetHover(HoverType.Contract, contractId, _stage.Id);
+            Tooltips.Show(hover);
+        }
+
         StateHasChanged();
     }
 

@@ -36,9 +36,9 @@ namespace FurmaIdle.Services
         {
             await UnlockStage("s01");
 
-            await UnlockExpansion("x00");
+            await UnlockExpansion("x10");
 
-            await UnlockLocal("l00");
+            await UnlockLocal("l10");
 
             await UnlockCharacter("p001");
 

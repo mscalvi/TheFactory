@@ -60,7 +60,8 @@ namespace FurmaIdle.Data
                 Persistence = coin.Persistence,
                 Modifiers = coin.Modifiers,
                 Lore = coin.Lore,
-                Description = coin.Description
+                Description = coin.Description,
+                UseState = coin.UseState,
             };
         }
 

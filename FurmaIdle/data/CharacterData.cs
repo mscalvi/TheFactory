@@ -33,15 +33,15 @@ namespace FurmaIdle.Data
                 SpecialtyId = "e01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["p002"] = new CharacterModel
+            ["p102"] = new CharacterModel
             {
-                Id = "p002",
+                Id = "p102",
                 Name = "Maik Monhang",
                 Description = "Artesão",
                 Lore = "",
-                Icon = "icons/characters/p002.svg",
-                Image = "images/characters/p002.svg",
-                UnlockId = "up002",
+                Icon = "icons/characters/p102.svg",
+                Image = "images/characters/p102.svg",
+                UnlockId = "up102",
                 State = UnlockHelper.State.Blocked,
                 CharState = UnlockHelper.CharState.InBase,
                 InStageId = null,
@@ -54,15 +54,15 @@ namespace FurmaIdle.Data
                 SpecialtyId = "e02",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["p003"] = new CharacterModel
+            ["p103"] = new CharacterModel
             {
-                Id = "p003",
+                Id = "p103",
                 Name = "Claimi Eky",
                 Description = "Pescador",
                 Lore = "",
-                Icon = "icons/characters/p003.svg",
-                Image = "images/characters/p003.svg",
-                UnlockId = "up003",
+                Icon = "icons/characters/p103.svg",
+                Image = "images/characters/p103.svg",
+                UnlockId = "up103",
                 State = UnlockHelper.State.Blocked,
                 CharState = UnlockHelper.CharState.InBase,
                 InStageId = null,
@@ -75,15 +75,15 @@ namespace FurmaIdle.Data
                 SpecialtyId = "e03",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["p004"] = new CharacterModel
+            ["p104"] = new CharacterModel
             {
-                Id = "p004",
+                Id = "p104",
                 Name = "Alan Nhengar",
                 Description = "Bardo",
                 Lore = "",
-                Icon = "icons/characters/p004.svg",
-                Image = "images/characters/p004.svg",
-                UnlockId = "up004",
+                Icon = "icons/characters/p104.svg",
+                Image = "images/characters/p104.svg",
+                UnlockId = "up104",
                 State = UnlockHelper.State.Blocked,
                 CharState = UnlockHelper.CharState.Blocked,
                 InStageId = null,
@@ -96,20 +96,20 @@ namespace FurmaIdle.Data
                 SpecialtyId = "e04",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["p011"] = new CharacterModel
+            ["p111"] = new CharacterModel
             {
-                Id = "p011",
+                Id = "p111",
                 Name = "Jaime Boor",
                 Description = "Explorador",
                 Lore = "",
-                Icon = "icons/characters/p011.svg",
-                Image = "images/characters/p011.svg",
-                UnlockId = "up011",
+                Icon = "icons/characters/p111.svg",
+                Image = "images/characters/p111.svg",
+                UnlockId = "up111",
                 State = UnlockHelper.State.Blocked,
                 CharState = UnlockHelper.CharState.Blocked,
                 InStageId = null,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                ContractCap = 2,
+                ContractCap = 1,
                 KnowledgeFactor2 = "k02",
                 KnowledgeFactor1 = "k04",
                 ContractsIds = new() { "c012", "c022", "c032", "c045" },
@@ -117,20 +117,20 @@ namespace FurmaIdle.Data
                 SpecialtyId = "e05",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["p021"] = new CharacterModel
+            ["p121"] = new CharacterModel
             {
-                Id = "p021",
+                Id = "p121",
                 Name = "Yg Iepora",
                 Description = "Caçador",
                 Lore = "",
-                Icon = "icons/characters/p021.svg",
-                Image = "images/characters/p021.svg",
-                UnlockId = "up021",
+                Icon = "icons/characters/p121.svg",
+                Image = "images/characters/p121.svg",
+                UnlockId = "up121",
                 State = UnlockHelper.State.Blocked,
                 CharState = UnlockHelper.CharState.Blocked,
                 InStageId = null,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                ContractCap = 2,
+                ContractCap = 1,
                 KnowledgeFactor2 = "k03",
                 KnowledgeFactor1 = "k05",
                 ContractsIds = new() { "c011", "c022", "c033", "c045" },
@@ -164,6 +164,7 @@ namespace FurmaIdle.Data
                 TraitId = chara.TraitId,
                 SpecialtyId = chara.SpecialtyId,
                 Modifiers = chara.Modifiers,
+                UseState = chara.UseState,
             };
         }
 
@@ -206,6 +207,7 @@ namespace FurmaIdle.Data
                     TraitId = chara.TraitId,
                     SpecialtyId = chara.SpecialtyId,
                     Modifiers = chara.Modifiers,
+                    UseState = chara.UseState,
                 };
             }
             return dict;

@@ -14,6 +14,7 @@ namespace FurmaIdle.Models
         public int? Level { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
+        public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
         public string StageId { get; set; }
 
         // Modifier

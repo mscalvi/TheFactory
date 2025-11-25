@@ -10,7 +10,6 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject IKnowledgeService Knowledge
-@inject ISpecialtiesService Specialty;
 
 <div class="menu-root">
     @if (!Game.IsReady || _stage is null)
@@ -45,9 +44,7 @@
 
         var selectedCount = CountLine();
 
-        var specActive = IsSpecActive();
-
-        var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1 && !specActive;
+        var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1;
 
         var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
@@ -138,6 +135,7 @@
             }
             else
             {
+                var knowFactor = Knowledge.GetKnowFactor(_stage);
                 <h3 class="title">Expedição Atual</h3>
                 <table class="info-table">
                     <thead>
@@ -148,6 +146,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach (var factor in knowFactor)
+                        {
+                            var knowledge = Locate.LocateKnowledge(game, factor.Key);
+                            <tr class="info-row">
+                                <td class="info-name">Fator de @knowledge.Name</td>
+                                <td class="info-value">@NumbersHelper.Padronize(factor.Value)</td>
+                            </tr>
+                        }
                         @foreach (var coinEntry in expeditionStats.CoinsGain)
                         {
                             var coin = Locate.LocateCoin(game, coinEntry.Key);
@@ -179,7 +185,7 @@
         </section>
 
         <section class="@($"menu-panel {UI.PanelClass("expedition-gain")}")">
-            <h3 class="title">Ganhos ao Encerrar</h3>
+            <h3 class="title">Conhecimentos ao Encerrar</h3>
             @{
                 long cTotal = 0L;
                 if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
@@ -192,9 +198,11 @@
                             @foreach (var knowEntry in kPreview.OrderByDescending(x => x.Value))
                             {
                                 var know = Locate.LocateKnowledge(game, knowEntry.Key);
+                                var knowGain = Math.Floor(knowEntry.Value);
+
                                 <tr class="info-row">
-                                    <td class="info-name">Conhecimento: @know.Name</td>
-                                    <td class="info-value">@NumbersHelper.Padronize(knowEntry.Value)</td>
+                                    <td class="info-name">@know.Name</td>
+                                    <td class="info-value">@NumbersHelper.Padronize(knowGain)</td>
                                 </tr>
                             }
                         </tbody>
@@ -288,19 +296,5 @@
         }
 
         return line;
-    }
-
-    bool IsSpecActive()
-    {
-        foreach (var spec in Game.CurrentGame.Specialties.Values)
-        {
-            var timer = Specialty.GetSpecialtyTimer(spec);
-            if (timer.Actual > 0)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -17,6 +17,7 @@ namespace FurmaIdle.Models
         public PricingHelper.PricingId PricingId { get; set; }
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
+        public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         // Efeito
         public string TargetId { get; set; }

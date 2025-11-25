@@ -15,10 +15,27 @@ namespace FurmaIdle.Data
             ["e01"] = new SpecialtyModel
             {
                 Id = "e01",
+                Name = "Gorjetas",
+                Description = "Produz instantaneamente a média de Moedas por segundo dos Contratos da Expedição",
+                Lore = "",
+                Image = "images/specialties/e01.svg",
+                TargetId = "aContracts",
+                EffectValue = 20.0,
+                EffectType = EffectHelper.EffectType.BurstCoinGain,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                Duration = 0.2,
+                Cost = 10,
+                PricingId = "r01",
+                Modifiers = new List<ModifierModel>(),
+            },
+            ["e02"] = new SpecialtyModel
+            {
+                Id = "e02",
                 Name = "Cobrar um Extra",
                 Description = "Aumenta o ganho dos Contratos da Expedição",
                 Lore = "",
-                Image = "images/specialties/e01.svg",
+                Image = "images/specialties/e02.svg",
                 TargetId = "aContracts",
                 EffectValue = 2.0,
                 EffectType = EffectHelper.EffectType.ContractGain,
@@ -26,23 +43,6 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Duration = 20,
                 Cost = 30,
-                PricingId = "r01",
-                Modifiers = new List<ModifierModel>(),
-            },
-            ["e02"] = new SpecialtyModel
-            {
-                Id = "e02",
-                Name = "Gorjetas",
-                Description = "Produz instantaneamente a média de Moedas por segundo dos Contratos da Expedição",
-                Lore = "",
-                Image = "images/specialties/e02.svg",
-                TargetId = "aContracts",
-                EffectValue = 20.0,
-                EffectType = EffectHelper.EffectType.BurstCoinGain,
-                EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                Duration = 1,
-                Cost = 10,
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
             },
@@ -66,16 +66,16 @@ namespace FurmaIdle.Data
             ["e04"] = new SpecialtyModel
             {
                 Id = "e04",
-                Name = "Uso Consciente",
+                Name = "Empolgar",
                 Description = "Diminui o custo das Especialidades da Expedição",
                 Lore = "",
                 Image = "images/specialties/e04.svg",
                 TargetId = "aSpecialties",
-                EffectValue = 0.8,
+                EffectValue = 0.3,
                 EffectType = EffectHelper.EffectType.SpecialtyCost,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
-                Duration = 20,
+                Duration = 10,
                 Cost = 50,
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
@@ -86,7 +86,7 @@ namespace FurmaIdle.Data
                 Name = "Produção Eficiente",
                 Description = "Aumenta a geração de Recursos de toda a Guilda",
                 Lore = "",
-                Image = "images/specialties/e02.svg",
+                Image = "images/specialties/e05.svg",
                 TargetId = "aResources",
                 EffectValue = 1.2,
                 EffectType = EffectHelper.EffectType.ResourceGain,
@@ -109,7 +109,7 @@ namespace FurmaIdle.Data
                 EffectType = EffectHelper.EffectType.ContractTime,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
-                Duration = 30,
+                Duration = 5,
                 Cost = 80,
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
@@ -141,6 +141,7 @@ namespace FurmaIdle.Data
                 PricingId = specialty.PricingId,
                 Modifiers = specialty.Modifiers,
                 Persistence = UnlockHelper.Persistence.untilTimer,
+                UseState = specialty.UseState,
             };
         }
 
@@ -177,6 +178,7 @@ namespace FurmaIdle.Data
                     PricingId = specialty.PricingId,
                     Modifiers = specialty.Modifiers,
                     Persistence = UnlockHelper.Persistence.untilTimer,
+                    UseState = specialty.UseState,
                 };
             }
             return dict;

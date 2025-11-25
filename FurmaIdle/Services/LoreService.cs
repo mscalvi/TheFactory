@@ -49,13 +49,13 @@
                     _log.Lore("Agora sim estamos montando uma Guilda!");
                     break;
                 case "FirstContractPurchase":
-                    _log.Lore("Vou precisar de bem mais Talhos do que isso...");
+                    _log.Lore("Vou precisar de bem mais dinheiro do que ganho com isso...");
                     break;
                 case "FirstCapPurchase":
-                    _log.Lore("E vou precisar ser bem melhor em ganhar Talhos do que isso...");
+                    _log.Lore("Vou precisar ser bem melhor em ganhar dinheiro do que isso...");
                     break;
                 case "SecondContractPurchase":
-                    _log.Lore("E, provavelmente, vou precisar aprender muita coisa nova...");
+                    _log.Lore("E vou precisar aprender muita coisa nova...");
                     break;
                 case "ObjetiveUnlock":
                     _log.Lore("Bom, o primeiro passo é fazer a Murada acreditar em mim!");
@@ -69,22 +69,19 @@
                 case "ua03":
                     _log.Lore("Talvez seja hora de chamar reforços.");
                     break;
-                case "ua04":
-                    _log.Lore("Talvez seja hora de chamar reforços.");
-                    break;
-                case "up002":
+                case "up102":
                     _log.Lore("Ótimo! Maik, o Artesão, entrou para a Guilda.");
                     break;
-                case "up003":
+                case "up103":
                     _log.Lore("Ótimo! Claimi, a Pescadora, entrou para a Guilda.");
                     break;
-                case "up004":
+                case "up104":
                     _log.Lore("Ótimo! Alan, o Bardo, entrou para a Guilda.");
                     break;
-                case "up011":
+                case "up111":
                     _log.Lore("Ótimo! Jaime, o Explorador, entrou para a Guilda.");
                     break;
-                case "up021":
+                case "up121":
                     _log.Lore("Ótimo! Yg, o Caçador, entrou para a Guilda.");
                     break;
                 default: break;
@@ -97,18 +94,18 @@
                 switch (help) 
                 {
                     case "1":
-                        _log.Lore($"Nosso primero contrato para {contract.Name}. É um começo! Se conseguirmos mais contratos, talvez" +
+                        _log.Info($"Nosso primero contrato para {contract.Name}. É um começo! Se conseguirmos mais contratos, talvez" +
                             $" a gente ganhe experiência o suficiente para melhorar o serviço.");
                         break;
                     case "5":
-                        _log.Lore($"Estamos pegando o jeito em {contract.Name}. Aos poucos a gente pode cobrar mais, e terminar mais rápido.");
+                        _log.Info($"Estamos pegando o jeito em {contract.Name}. Aos poucos a gente pode cobrar mais, e terminar mais rápido.");
                         break;
                     case "50":
-                        _log.Lore($"Já somos bons em {contract.Name}, em? Sem técnicas melhores, esse é o mínimo que vamos gastar para começar" +
+                        _log.Info($"Já somos bons em {contract.Name}, em? Sem técnicas melhores, esse é o mínimo que vamos gastar para começar" +
                             $" um novo contrato.");
                         break;
                     case "100":
-                        _log.Lore($"Perfeito, já estamos no nosso limite em {contract.Name}. Agora, vamos ter que estudar para conseguir melhorar" +
+                        _log.Info($"Perfeito, tudo o que sabemos sobre {contract.Name}. Agora, vamos ter que estudar para conseguir melhorar" +
                             $" ainda mais no serviço.");
                         break;
                 }

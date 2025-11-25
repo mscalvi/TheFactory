@@ -13,43 +13,43 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, ExpansionModel> All = new()
         {
-            #region Expansion Levels (x00 - x03)
-            ["x00"] = new ExpansionModel
+            #region Expansion Levels (x10 - x13)
+            ["x10"] = new ExpansionModel
             {
-                Id = "x00",
+                Id = "x10",
                 Name = "Primeiros Recrutas",
                 UnlockId = null,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x01",
+                NextExpansion = "x11",
             },
-            ["x01"] = new ExpansionModel
+            ["x11"] = new ExpansionModel
             {
-                Id = "x01",
+                Id = "x11",
                 Name = "Apoiando a Murada Cairu",
                 UnlockId = "ue01",
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x02",
+                NextExpansion = "x12",
             },
-            ["x02"] = new ExpansionModel
+            ["x12"] = new ExpansionModel
             {
-                Id = "x02",
+                Id = "x12",
                 Name = "Mestres da Ilha de Vera",
                 UnlockId = "ue02",
                 Level = 2,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x03",
+                NextExpansion = "x13",
             },
-            ["x03"] = new ExpansionModel
+            ["x13"] = new ExpansionModel
             {
-                Id = "x03",
+                Id = "x13",
                 Name = "Correntezas de Vera",
                 UnlockId = "ue03",
                 Level = 3,
@@ -83,6 +83,7 @@ namespace FurmaIdle.Data
                 Modifiers = expansion.Modifiers,
                 ExpansionStats = new StatsModel(),
                 NextExpansion = expansion.NextExpansion,
+                UseState = expansion.UseState,
             };
         }
 
@@ -91,7 +92,7 @@ namespace FurmaIdle.Data
             ShowOrder.Clear();
             IEnumerable<string> keys = All?.Keys.AsEnumerable() ?? Enumerable.Empty<string>();
 
-            // Ordena usando StringComparer.Ordinal (x01, x02, x03, etc.)
+            // Ordena usando StringComparer.Ordinal (x11, x12, x13, etc.)
             ShowOrder.AddRange(keys.OrderBy(k => k, StringComparer.Ordinal));
         }
 

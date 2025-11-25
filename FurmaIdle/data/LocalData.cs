@@ -14,14 +14,14 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, LocalModel> All = new()
         {
             #region Stage s01
-            ["l00"] = new LocalModel
+            ["l10"] = new LocalModel
             {
-                Id = "l00",
+                Id = "l10",
                 Name = "Murada Cairu",
                 Description = "",
                 Lore = "",
-                Icon = "icons/locals/l00.svg",
-                Image = "images/locals/l00.svg",
+                Icon = "icons/locals/l10.svg",
+                Image = "images/locals/l10.svg",
                 Level = null,
                 UnlockId = null,
                 State = UnlockHelper.State.Blocked,
@@ -29,46 +29,46 @@ namespace FurmaIdle.Data
                 StageId = "s01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["l01"] = new LocalModel
+            ["l11"] = new LocalModel
             {
-                Id = "l01",
+                Id = "l11",
                 Name = "Pontas Cantarolantes",
                 Description = "",
                 Lore = "",
-                Icon = "icons/locals/l01.svg",
-                Image = "images/locals/l01.svg",
+                Icon = "icons/locals/l11.svg",
+                Image = "images/locals/l11.svg",
                 Level = 1,
-                UnlockId = "ul01",
+                UnlockId = "ul11",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["l02"] = new LocalModel
+            ["l12"] = new LocalModel
             {
-                Id = "l02",
+                Id = "l12",
                 Name = "Coração da Ilha",
                 Description = "",
                 Lore = "",
-                Icon = "icons/locals/l02.svg",
-                Image = "images/locals/l02.svg",
+                Icon = "icons/locals/l12.svg",
+                Image = "images/locals/l12.svg",
                 Level = 1,
-                UnlockId = "ul02",
+                UnlockId = "ul12",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["l03"] = new LocalModel
+            ["l13"] = new LocalModel
             {
-                Id = "l03",
+                Id = "l13",
                 Name = "Bosque da Raposa",
                 Description = "",
                 Lore = "",
-                Icon = "icons/locals/l03.svg",
-                Image = "images/locals/l03.svg",
+                Icon = "icons/locals/l13.svg",
+                Image = "images/locals/l13.svg",
                 Level = 1,
-                UnlockId = "ul03",
+                UnlockId = "ul13",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s01",
@@ -101,6 +101,7 @@ namespace FurmaIdle.Data
                 Persistence = local.Persistence,
                 StageId = local.StageId,
                 Modifiers = local.Modifiers,
+                UseState = local.UseState,
             };
         }
 
@@ -109,7 +110,7 @@ namespace FurmaIdle.Data
             ShowOrder.Clear();
             IEnumerable<string> keys = All?.Keys.AsEnumerable() ?? Enumerable.Empty<string>();
 
-            // Ordena usando StringComparer.Ordinal (l00, l01, l02, l03, etc.)
+            // Ordena usando StringComparer.Ordinal (l10, l11, l12, l13, etc.)
             ShowOrder.AddRange(keys.OrderBy(k => k, StringComparer.Ordinal));
         }
 
