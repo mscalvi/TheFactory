@@ -18,6 +18,7 @@ namespace FurmaIdle.Data
             {
                 Id = "x10",
                 Name = "Primeiros Recrutas",
+                Icon = "icons/expansions/x10.svg",
                 UnlockId = null,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -29,6 +30,7 @@ namespace FurmaIdle.Data
             {
                 Id = "x11",
                 Name = "Apoiando a Murada Cairu",
+                Icon = "icons/expansions/x11.svg",
                 UnlockId = "ue01",
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -40,6 +42,7 @@ namespace FurmaIdle.Data
             {
                 Id = "x12",
                 Name = "Mestres da Ilha de Vera",
+                Icon = "icons/expansions/x12.svg",
                 UnlockId = "ue02",
                 Level = 2,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -51,6 +54,7 @@ namespace FurmaIdle.Data
             {
                 Id = "x13",
                 Name = "Correntezas de Vera",
+                Icon = "icons/expansions/x13.svg",
                 UnlockId = "ue03",
                 Level = 3,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -75,6 +79,7 @@ namespace FurmaIdle.Data
             {
                 Id = expansion.Id,
                 Name = expansion.Name,
+                Icon = expansion.Icon,
                 UnlockId = expansion.UnlockId,
                 PricingId = expansion.PricingId,
                 Level = expansion.Level,

@@ -20,14 +20,16 @@ namespace FurmaIdle.Services
         private readonly ILocateService _locate;
         private readonly IUiLogService _log;
         private readonly ISpecialtiesService _specialty;
+        private readonly IModifierService _modifier;
 
-        public EffectService(ICurrentGameService Game, IUnlockService Unlock, IUiLogService Log, ILocateService Locate, ISpecialtiesService Specialties)
+        public EffectService(ICurrentGameService Game, IUnlockService Unlock, IUiLogService Log, ILocateService Locate, ISpecialtiesService Specialties, IModifierService modifier)
         {
             _game = Game;
             _unlock = Unlock;
             _locate = Locate;
             _log = Log;
             _specialty = Specialties;
+            _modifier = modifier;
         }
 
         public async Task ApplyEffect(ItemHelper.ItemType type, string itemId, string stageId)
@@ -768,7 +770,9 @@ namespace FurmaIdle.Services
                         }
                     }
 
-                    _specialty.ActivateSpecialtyTimer(spec.Id, spec.Duration);
+                    var timerModifiers = _modifier.GetModifiers(ItemHelper.ItemType.Specialty, spec.Id, stage.Id, EffectSupertype.Time);
+                    double duration = (spec.Duration + timerModifiers.AddMod) * timerModifiers.MultMod;
+                    _specialty.ActivateSpecialtyTimer(spec.Id, duration);
                 }, save: true);
 
             }

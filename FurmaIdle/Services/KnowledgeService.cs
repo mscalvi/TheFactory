@@ -129,10 +129,6 @@ namespace FurmaIdle.Services
                             {
                                 counter += 2;
                             }
-                            if (contract.KnowledgeFactor3 == know.Value.Id)
-                            {
-                                counter += 3;
-                            }
                         }
                     }
 

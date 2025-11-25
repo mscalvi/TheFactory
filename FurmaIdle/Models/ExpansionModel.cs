@@ -6,6 +6,7 @@ namespace FurmaIdle.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string Icon { get; set; }
         public PricingHelper.PricingId PricingId { get; set; }
         public string? UnlockId { get; set; }
         public int Level { get; set; }

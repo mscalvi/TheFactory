@@ -17,6 +17,7 @@ namespace FurmaIdle.Data
                 Id = "i0i",
                 StageId = "si",
                 BaseGain = 1,
+                Icon = "icons/clicks/i0i.svg",
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -26,6 +27,7 @@ namespace FurmaIdle.Data
                 Id = "i01",
                 StageId = "s01",
                 BaseGain = 1,
+                Icon = "icons/clicks/i01.svg",
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -35,6 +37,7 @@ namespace FurmaIdle.Data
                 Id = "i02",
                 StageId = "s02",
                 BaseGain = 1,
+                Icon = "icons/clicks/i02.svg",
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -57,6 +60,7 @@ namespace FurmaIdle.Data
                 BaseGain = click.BaseGain,
                 Modifiers = click.Modifiers,
                 UseState = click.UseState,
+                Icon = click.Icon,
             };
         }
 

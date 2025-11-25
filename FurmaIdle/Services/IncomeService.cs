@@ -83,59 +83,33 @@ namespace FurmaIdle.Services
             if (type == ItemType.Coin)
             {
                 long extra = 0;
-                if(stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
-                {
-                    // ---- trabalhar em centavos (0..99) ----
-                    stage.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
-                    int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
+                // ---- trabalhar em centavos (0..99) ----
+                stage.ExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
+                int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
 
-                    int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
-                    int totalCents = restCents + addCents;
+                int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
+                int totalCents = restCents + addCents;
 
-                    extra = totalCents / 100;          // carry em unidades inteiras
-                    int newRestCents = totalCents % 100;    // 0..99
+                extra = totalCents / 100;          // carry em unidades inteiras
+                int newRestCents = totalCents % 100;    // 0..99
 
-                    double newRestDouble = newRestCents / 100.0;
+                double newRestDouble = newRestCents / 100.0;
 
-                    // ---- acumula moedas ----
-                    stage.ExpeditionStats.Coins.TryGetValue(id, out var coin);
-                    coin = coin + gain + extra;
+                // ---- acumula moedas ----
+                stage.ExpeditionStats.Coins.TryGetValue(id, out var coin);
+                coin = coin + gain + extra;
 
-                    stage.ExpeditionStats.CoinsGain.TryGetValue(id, out var coinExpe);
-                    coinExpe = coinExpe + gain + extra;
+                stage.ExpeditionStats.CoinsGain.TryGetValue(id, out var coinExpe);
+                coinExpe = coinExpe + gain + extra;
 
-                    // ---- persistir ----
-                    stage.ExpeditionStats.Coins[id] = coin;
-                    stage.ExpeditionStats.CoinsGain[id] = coinExpe;
-                    stage.ExpeditionStats.CoinsFrac[id] = newRestDouble;
-                }
-                else
-                {
-                    // ---- trabalhar em centavos (0..99) ----
-                    game.NoExpeditionStats.CoinsFrac.TryGetValue(id, out var restDouble);
-                    int restCents = (int)Math.Round(restDouble * 100, MidpointRounding.AwayFromZero);
+                // ---- persistir ----
+                stage.ExpeditionStats.Coins[id] = coin;
+                stage.ExpeditionStats.CoinsGain[id] = coinExpe;
+                stage.ExpeditionStats.CoinsFrac[id] = newRestDouble;
 
-                    int addCents = (int)Math.Round(frac * 100, MidpointRounding.AwayFromZero);
-                    int totalCents = restCents + addCents;
-
-                    extra = totalCents / 100;          // carry em unidades inteiras
-                    int newRestCents = totalCents % 100;    // 0..99
-
-                    double newRestDouble = newRestCents / 100.0;
-
-                    // ---- acumula moedas ----
-                    game.NoExpeditionStats.Coins.TryGetValue(id, out var coin);
-                    coin = coin + gain + extra;
-
-                    game.NoExpeditionStats.CoinsGain.TryGetValue(id, out var coinExpe);
-                    coinExpe = coinExpe + gain + extra;
-
-                    // ---- persistir ----
-                    game.NoExpeditionStats.Coins[id] = coin;
-                    game.NoExpeditionStats.CoinsGain[id] = coinExpe;
-                    game.NoExpeditionStats.CoinsFrac[id] = newRestDouble;
-                }
-
+                expansion.ExpansionStats.Coins.TryGetValue(id, out var allCoins);
+                allCoins = allCoins + gain + extra;
+                expansion.ExpansionStats.Coins[id] = allCoins;
                 expansion.ExpansionStats.CoinsGain.TryGetValue(id, out var coinExpa);
                 coinExpa = coinExpa + gain + extra;
                 expansion.ExpansionStats.CoinsGain[id] = coinExpa;

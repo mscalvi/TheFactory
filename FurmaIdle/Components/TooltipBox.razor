@@ -13,7 +13,7 @@
             <!-- Faixa superior -->
             <section class="tt-top">
                 <span class="tt-title">
-                    @Model.Type: @Model.Name - 
+                    @Model.Name - 
                     @if (!string.IsNullOrWhiteSpace(Model.CostAmount))
                     {
                         <span class="tt-cost">
@@ -27,6 +27,9 @@
                             }
                         </span>
                     }
+                </span>
+                <span class="tt-title">
+                    @Model.Description
                 </span>
             </section>
 

@@ -30,7 +30,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c012"] = new ContractModel
@@ -49,7 +48,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -71,7 +69,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c022"] = new ContractModel
@@ -90,7 +87,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c023"] = new ContractModel
@@ -109,7 +105,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -131,7 +126,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c032"] = new ContractModel
@@ -150,7 +144,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c033"] = new ContractModel
@@ -169,7 +162,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c034"] = new ContractModel
@@ -188,7 +180,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = "k01",
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -210,7 +201,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c042"] = new ContractModel
@@ -229,7 +219,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = "k01",
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c043"] = new ContractModel
@@ -248,7 +237,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = "k02",
                 KnowledgeFactor2 = "k03",
-                KnowledgeFactor3 = null,
                 Modifiers = new List<ModifierModel>(),
             },
             ["c044"] = new ContractModel
@@ -267,7 +255,6 @@ namespace FurmaIdle.Data
                 CoinId = "m01",
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
-                KnowledgeFactor3 = "k01",
                 Modifiers = new List<ModifierModel>(),
             },
             ["c045"] = new ContractModel
@@ -285,8 +272,7 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 CoinId = "m01",
                 KnowledgeFactor1 = "k02",
-                KnowledgeFactor2 = null,
-                KnowledgeFactor3 = "k05",
+                KnowledgeFactor2 = "k05",
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -319,7 +305,6 @@ namespace FurmaIdle.Data
                 CoinId = contract.CoinId,
                 KnowledgeFactor1 = contract.KnowledgeFactor1,
                 KnowledgeFactor2 = contract.KnowledgeFactor2,
-                KnowledgeFactor3 = contract.KnowledgeFactor3,
                 Modifiers = contract.Modifiers,
                 UseState = contract.UseState,
             };
