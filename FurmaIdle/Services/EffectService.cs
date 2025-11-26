@@ -415,7 +415,7 @@ namespace FurmaIdle.Services
                     var dur = Math.Max(0.001, spec.Duration);
                     var now = DateTimeOffset.UtcNow;
 
-                    if (itemId != "e02")
+                    if (itemId != "e01")
                     {
                         switch (targetTypeId)
                         {

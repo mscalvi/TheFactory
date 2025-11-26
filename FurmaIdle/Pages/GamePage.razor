@@ -31,34 +31,40 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
-        {
             return;
-        }
-        Console.WriteLine($"[GP] Iniciando FurmaIdle");
 
-        if (Nav.Uri.Contains("reset=1", StringComparison.OrdinalIgnoreCase))
+        // 1. Detecta o reset SÓ neste primeiro render
+        var uri = Nav.Uri;
+        var reseted = uri.Contains("reset=1", StringComparison.OrdinalIgnoreCase);
+
+        if (reseted)
         {
             await Store.ClearAsync("main");
             Console.WriteLine("[BOOT] Reset solicitado: removido 'main'");
         }
 
-        // 1) carrega/cria (pode importar módulo JS aqui sem erro)
+        // 3. Fluxo normal de boot
         await Start.InitAsync();
-        Console.WriteLine($"[GP] Finalizado Load/Create");
+        Console.WriteLine("[GP] Finalizado Load/Create");
 
         Game.MarkReady();
         Console.WriteLine("[GP] Jogo marcado como Pronto");
 
-        // 2) inicia ticks
         Ticks.Start();
         Console.WriteLine("[GP] Ticks iniciados");
 
-        // 3) marca pronto e re-renderiza
         Ui.SyncMenusFromGame(Game.CurrentGame);
         RecomputeReady();
         StateHasChanged();
 
         Console.WriteLine("[GP] Jogo iniciado");
+
+        if (reseted)
+        {
+            Console.WriteLine("[BOOT] Reset terminado, url limpa");
+
+            Nav.NavigateTo("/", forceLoad: false);
+        }
     }
 
     protected override void OnInitialized()

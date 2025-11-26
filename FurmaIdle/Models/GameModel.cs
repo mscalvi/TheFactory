@@ -5,6 +5,7 @@ namespace FurmaIdle.Models
     public class GameModel
     {
         public int SchemaVersion { get; set; }
+        public string? BuildVersion { get; set; }
 
         // Ativo
         public DateTimeOffset StartTime { get; set; }

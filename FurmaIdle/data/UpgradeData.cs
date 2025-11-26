@@ -14,6 +14,33 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, UpgradeModel> All = new()
         {
+            // ua - Unlock Party Size
+            // ub - Unlock Contract Level
+            // uc - Upgrade Contract
+            // ud - Upgrade Expansion Resource
+            // ue - Unlock Expansion
+            // uf -
+            // ug -
+            // uh - Unlock Tech
+            // ui - Upgrade Expedition Click
+            // uj -
+            // uk - Unlock Knowledge
+            // ul - Unlock Local
+            // um - Upgrade Contract Cap
+            // un -
+            // uo -
+            // up - Unlock Character
+            // uq -
+            // ur - Unlock Resource
+            // us - Unlock Stage
+            // ut -
+            // uu - Unlock Contract
+            // uv -
+            // uw -
+            // ux - Upgrade Expansion Unique
+            // uy -
+            // uz -
+
             #region Unlock
             #region Desbloqueio de Contratos (Contracts Unlock)
             #region Stage 0 Level 1
@@ -933,13 +960,13 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Expedition Upgrades
-            #region Stage 0 Misc
-            ["ui01"] = new UpgradeModel
+            #region Stage 1 Misc
+            ["ui011"] = new UpgradeModel
             {
-                Id = "ui01",
+                Id = "ui011",
                 Name = "Pequenos Frutos do Trabalho",
                 Level = 1,
-                Icon = "icons/upgrades/ui01.svg",
+                Icon = "icons/upgrades/ui011.svg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click",
                 UnlockId = "x10",
@@ -953,12 +980,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1,
             },
-            ["ui02"] = new UpgradeModel
+            ["ui012"] = new UpgradeModel
             {
-                Id = "ui02",
+                Id = "ui012",
                 Name = "Trabalho Árduo",
                 Level = 1,
-                Icon = "icons/upgrades/ui02.svg",
+                Icon = "icons/upgrades/ui012.svg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click",
                 UnlockId = "x10",
@@ -2317,6 +2344,25 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1,
+            },
+            ["ud011"] = new UpgradeModel
+            {
+                Id = "ud011",
+                Name = "Levar um Lanche",
+                Level = 1,
+                Icon = "icons/upgrades/ud011.svg",
+                Lore = "",
+                Description = "Aumenta o ganho de Mantimentos",
+                UnlockId = "ur01",
+                MaxBuy = 5,
+                PricingId = PricingHelper.PricingId.ResourceGain011,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpansion,
+                TargetId = "r01",
+                EffectType = EffectHelper.EffectType.ResourceGain,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 0.05,
             },
             #endregion
 

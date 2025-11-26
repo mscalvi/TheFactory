@@ -349,29 +349,20 @@ namespace FurmaIdle.Services
                         _lore.LoreTrigger("FirstContractPurchase");
                         ShowPanel("up-expansion");
                     }
-                    if(help == "5")
+                    if (IsHidden("up-expedition"))
                     {
-                        if (IsHidden("up-expedition"))
-                        {
-                            _lore.LoreTrigger("FirstCapPurchase");
-                            ShowPanel("up-expedition");
-                        }
+                        _lore.LoreTrigger("FirstCapPurchase");
+                        ShowPanel("up-expedition");
                     }
-                    if (help == "10")
+                    if (IsHidden("up-permanents"))
                     {
-                        if (IsHidden("up-permanents"))
-                        {
-                            _lore.LoreTrigger("SecondContractPurchase");
-                            ShowPanel("up-permanents");
-                        }
+                        _lore.LoreTrigger("SecondContractPurchase");
+                        ShowPanel("up-permanents");
                     }
-                    if (help == "15")
+                    if (IsHidden("up-objetive"))
                     {
-                        if (IsHidden("up-objetive"))
-                        {
-                            _lore.LoreTrigger("ObjetiveUnlock");
-                            ShowPanel("up-objetive");
-                        }
+                        _lore.LoreTrigger("ObjetiveUnlock");
+                        ShowPanel("up-objetive");
                     }
                     break;
                 case "FirstTechPurchase":

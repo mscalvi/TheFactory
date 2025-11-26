@@ -84,8 +84,6 @@ namespace FurmaIdle.Services
             };
         }
 
-
-
         // Upgrade
         private TooltipModel BuildUpgradeHover(string upgradeId, GameModel game)
         {
@@ -261,7 +259,7 @@ namespace FurmaIdle.Services
             tooltip.Info.Add("Tipo", type);
             tooltip.Info.Add("Alvo", target);
             tooltip.Info.Add("Valor", value);
-            tooltip.Info.Add("Duração", permanence);
+            tooltip.Info.Add("Permanência", permanence);
             tooltip.Lore = upgrade.Lore;
 
             return tooltip;
@@ -491,7 +489,7 @@ namespace FurmaIdle.Services
             tooltip.Info.Add("Tipo", type);
             tooltip.Info.Add("Alvo", target);
             tooltip.Info.Add("Valor", value);
-            tooltip.Info.Add("Tempo", specDuration);
+            tooltip.Info.Add("Duração", specDuration);
             tooltip.Lore = specialty.Lore;
 
             return tooltip;
@@ -720,11 +718,11 @@ namespace FurmaIdle.Services
 
             var stageGain = _contract.GetStageContractsPerSecond(game, stage.Id);
             stageGain.TryGetValue(id, out var gainS);
-            string gainStage = NumbersHelper.Padronize(gainS);
+            string gainStage = NumbersHelper.Padronize(gainS) + "/s";
 
             var gameGain = _contract.GetGameContractsPerSecond(game);
             gameGain.TryGetValue(id, out var gainT);
-            string gainTotal = NumbersHelper.Padronize(gainT);
+            string gainTotal = NumbersHelper.Padronize(gainT) + "/s";
 
             stage.ExpeditionStats.Coins.TryGetValue(id, out var amountS);
             var amountStage = NumbersHelper.Padronize(amountS);
@@ -737,9 +735,9 @@ namespace FurmaIdle.Services
             tooltip.CostIcon = "";
             tooltip.CostName = "";
             tooltip.Description = coin.Description;
-            tooltip.Info.Add("Região", amountStage);
+            tooltip.Info.Add("Na Região", amountStage);
             tooltip.Info.Add("Ganho Região", gainStage);
-            tooltip.Info.Add("Total", amountTotal);
+            tooltip.Info.Add("No Total", amountTotal);
             tooltip.Info.Add("Ganho Total", gainTotal);
             tooltip.Lore = coin.Lore;
 

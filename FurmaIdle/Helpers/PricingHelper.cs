@@ -47,6 +47,9 @@ namespace FurmaIdle.Helpers
             ClickGainS1,             // Click Gain Soma Stage 1
             ClickGainM1,             // Click Gain Multi Stage 1
 
+            // Resource Gain Expedition
+            ResourceGain011,        // Resource 01 Stage 1
+
             // Contract Purchase
             ContractPurchase11,          // Purchase Contract Stage 1 Level 1
             ContractPurchase12,          // Purchase Contract Stage 1 Level 2
@@ -152,6 +155,9 @@ namespace FurmaIdle.Helpers
                 // Click Gain Stage X
                 [PricingId.ClickGainS1] = new Entry("m01", 50, 2.4, CostFactor.None, 1),
                 [PricingId.ClickGainM1] = new Entry("m01", 600, 3.6, CostFactor.None, 1),
+
+                // Resource X Gain Stage X
+                [PricingId.ResourceGain011] = new Entry("m01", 500, 2.4, CostFactor.None, 1),
 
                 // Tech Upgrades Stage X
                 [PricingId.TechUpgrade1] = new Entry("m01", 25000, 1.0, CostFactor.Level, 2.9),

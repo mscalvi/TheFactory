@@ -46,6 +46,7 @@ namespace FurmaIdle.Services
                 var model = new GameModel
                 {
                     SchemaVersion = VersionHelper.Current,
+                    BuildVersion = VersionHelper.Display,
                     StartTime = DateTime.Now,
                     LastTick = DateTime.UtcNow,
                     GameStats = new StatsModel(),

@@ -16,21 +16,30 @@ namespace FurmaIdle.Helpers
 
             var abs = Math.Abs(value);
 
-            // Até o limite, mostra número "normal"
-            if (abs < threshold)
+            // Limite mínimo para ainda valer a pena mostrar em formato "normal"
+            // Ex: decimals = 2 => minNormal = 10^-2 = 0.01
+            var minNormal = Math.Pow(10, -decimals);
+
+            // Se estiver dentro do range "visível" com 'decimals' casas, mostra normal
+            if (abs >= minNormal && abs < threshold)
             {
                 var s = value.ToString("N" + decimals, culture);
                 return TrimDecimalZeros(s, culture);
             }
 
+            // Fora desse range (muito grande OU muito pequeno) -> notação de engenharia
             // Engenharia (expoente múltiplo de 3): XXXeY
             var exp = (int)Math.Floor(Math.Log10(abs));
-            var e3 = exp - (exp % 3);                 // múltiplo de 3
+            var e3 = exp - (exp % 3);   // múltiplo de 3
             if (e3 == -0) e3 = 0;
 
             var mant = abs / Math.Pow(10, e3);
             // Mantissa em [1, 1000)
-            if (mant >= 1000) { mant /= 1000; e3 += 3; }
+            if (mant >= 1000)
+            {
+                mant /= 1000;
+                e3 += 3;
+            }
 
             var sMant = mant.ToString("N" + decimals, culture);
             sMant = TrimDecimalZeros(sMant, culture);

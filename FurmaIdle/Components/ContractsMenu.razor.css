@@ -25,11 +25,30 @@
 
 .contracts-capbar {
     grid-area: contract-cap;
-    place-items: center;
     padding: 2px;
-    justify-content: center;
     border: none;
     font-size: clamp(.86rem, .9vw, .98rem);
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "selectbuy cap";
+}
+
+    .contracts-capbar .cap {
+        grid-area: cap;
+        text-align: center;
+    }
+
+    .contracts-capbar .selectbuy {
+        grid-area: selectbuy;
+    }
+
+.contract-button.select-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
 }
 

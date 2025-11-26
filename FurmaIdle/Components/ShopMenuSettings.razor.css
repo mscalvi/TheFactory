@@ -1,0 +1,9 @@
+﻿.config-button.danger {
+    background: #5c1f1f;
+    border-color: #b44;
+    color: #f9e5e5;
+}
+
+    .config-button.danger:hover {
+        background: #7a2525;
+    }

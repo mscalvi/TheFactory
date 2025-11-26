@@ -40,11 +40,11 @@
             IsContractUpgradeVisible(game, u.Id))
             .ToList();
 
-        // ==== ÁREA 3 — Avanços da Expansão (UT, UX, UM, UB) ====
+        // ==== ÁREA 3 — Avanços da Expansão (UT, UX, UM, UB, UD) ====
         var expansionUps =
             all.Where(u =>
             u.State == UnlockHelper.State.Available &&
-            (Ut(u.Id) || Ux(u.Id) || Um(u.Id) || Ub(u.Id)) &&
+            (Ut(u.Id) || Ux(u.Id) || Um(u.Id) || Ub(u.Id) || Ud(u.Id)) &&
             IsContractUpgradeVisible(game, u.Id))
             .ToList();
 
@@ -197,20 +197,22 @@
     static bool StartsWith(string? id, string prefix)
         => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
 
-    static bool Ue(string? id) => StartsWith(id, "ue");
-    static bool Us(string? id) => StartsWith(id, "us");
-    static bool Up(string? id) => StartsWith(id, "up");
-    static bool Ul(string? id) => StartsWith(id, "ul");
-    static bool Ur(string? id) => StartsWith(id, "ur");
-    static bool Uk(string? id) => StartsWith(id, "uk");
-    static bool Ut(string? id) => StartsWith(id, "ut");
-    static bool Ux(string? id) => StartsWith(id, "ux");
-    static bool Uc(string? id) => StartsWith(id, "uc");
-    static bool Ui(string? id) => StartsWith(id, "ui");
-    static bool Um(string? id) => StartsWith(id, "um");
     static bool Ua(string? id) => StartsWith(id, "ua");
     static bool Ub(string? id) => StartsWith(id, "ub");
+    static bool Uc(string? id) => StartsWith(id, "uc");
+    static bool Ud(string? id) => StartsWith(id, "ud");
+    static bool Ue(string? id) => StartsWith(id, "ue");
+    static bool Uh(string? id) => StartsWith(id, "uh");
+    static bool Ui(string? id) => StartsWith(id, "ui");
+    static bool Uk(string? id) => StartsWith(id, "uk");
+    static bool Ul(string? id) => StartsWith(id, "ul");
+    static bool Um(string? id) => StartsWith(id, "um");
+    static bool Up(string? id) => StartsWith(id, "up");
+    static bool Ur(string? id) => StartsWith(id, "ur");
+    static bool Us(string? id) => StartsWith(id, "us");
+    static bool Ut(string? id) => StartsWith(id, "ut");
     static bool Uu(string? id) => StartsWith(id, "uu");
+    static bool Ux(string? id) => StartsWith(id, "ux");
 
     private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {

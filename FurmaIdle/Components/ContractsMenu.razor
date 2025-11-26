@@ -26,8 +26,16 @@
 
         <div class="contracts-layout" style="--levels:@_stage.MaxContractLevel">
             <div class="contracts-capbar">
-                <strong>Contratos:</strong>
-                <span>@contractsInfo.ContractsUsed / @contractsInfo.ContractsCap</span>
+                <div class="selectbuy">
+                    <button class="contract-button select-toggle"
+                            @onclick="ToggleBuyMode">
+                        @BuyModeLabel
+                    </button>
+                </div>
+                <div class="cap">
+                    <strong>Contratos:</strong>
+                    <span>@contractsInfo.ContractsUsed / @contractsInfo.ContractsCap</span>
+                </div>
             </div>
 
             <div class="contracts-grid" style="--levels:@_stage.MaxContractLevel">
@@ -62,7 +70,7 @@
 
                                     var hasCapacity = HasCapacity(_stage);
                                     var canBuy = CanPurchase(chosenCon, _stage!);
-                                    var disabled = !hasCapacity || !canBuy;
+                                    var disabled = !CanBuyCurrentMode(chosenCon, _stage!);
 
                                     var rp = Contracts.GetContractInfo(chosenCon, _stage);
                                     var coin = Locate.LocateCoin(Game.CurrentGame, rp.CoinId);
@@ -211,23 +219,97 @@
     private static bool IsExpeditionActive(StageModel? st)
         => st?.Expedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
 
+    private enum BuyMode
+    {
+        X1,
+        X10,
+        Max
+    }
+
+    private BuyMode _buyMode = BuyMode.X1;
+
+    private string BuyModeLabel => _buyMode switch
+    {
+        BuyMode.X1 => "Comprar x1",
+        BuyMode.X10 => "Comprar x10",
+        BuyMode.Max => "Comprar MAX",
+        _ => "Comprar x1"
+    };
+
+    private void ToggleBuyMode()
+    {
+        _buyMode = _buyMode switch
+        {
+            BuyMode.X1 => BuyMode.X10,
+            BuyMode.X10 => BuyMode.Max,
+            BuyMode.Max => BuyMode.X1,
+            _ => BuyMode.X1
+        };
+    }
+
+    private int GetBuyQuantity()
+        => _buyMode switch
+        {
+            BuyMode.X1 => 1,
+            BuyMode.X10 => 10,
+            BuyMode.Max => -1,
+            _ => 1
+        };
     private async Task BuyContract(string contractId)
     {
-        var contract = Locate.LocateContract(Game.CurrentGame, contractId);
+        if (_stage is null) return;
+
+        var game = Game.CurrentGame;
+        var contract = Locate.LocateContract(game, contractId);
+
+        // Se nem 1 dá pra comprar, sai
         if (!CanPurchase(contract, _stage)) return;
 
-        if (!HasCapacity(_stage)) return;
+        var contractsInfo = Contracts.GetStageInfo(game, _stage.Id);
+        var capLeft = contractsInfo.ContractsCap - contractsInfo.ContractsUsed;
+        if (capLeft <= 0) return;
 
-        await Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id);
+        // Quantidade atual desse contrato no estágio
+        var currentQty = 0;
+        _stage.ActiveContracts?.TryGetValue(contractId, out currentQty);
+        var isFirst = currentQty <= 0;
 
-        if (_stage is not null)
+        var modeQty = GetBuyQuantity();
+        int qtyToBuy;
+
+        if (isFirst)
         {
-            var hover = Tooltips.GetHover(HoverType.Contract, contractId, _stage.Id);
-            Tooltips.Show(hover);
+            // Primeira compra SEMPRE x1, independente do modo
+            qtyToBuy = Math.Min(1, capLeft);
         }
+        else
+        {
+            if (modeQty > 0)
+            {
+                // x1 ou x10
+                qtyToBuy = Math.Min(modeQty, capLeft);
+            }
+            else
+            {
+                // MAX: quanto dinheiro dá + limite de slots
+                var (maxAffordable, _, _) =
+                    Cost.ComputeMaxAffordable(ItemHelper.ItemType.Contract, contractId, _stage.Id);
+
+                qtyToBuy = Math.Min(maxAffordable, capLeft);
+            }
+        }
+
+        if (qtyToBuy <= 0) return;
+
+        await Purchase.Purchase(ItemHelper.ItemType.Contract, contractId, _stage.Id, qtyToBuy);
+
+        // Atualiza tooltip depois de comprar
+        var hover = Tooltips.GetHover(HoverType.Contract, contractId, _stage.Id);
+        Tooltips.Show(hover);
 
         StateHasChanged();
     }
+
 
     private bool CanPurchase(ContractModel contract, StageModel stage)
         => Cost.CanAfford(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
@@ -239,6 +321,44 @@
 
         return capacity;
     }
+
+    private bool CanBuyCurrentMode(ContractModel contract, StageModel stage)
+    {
+        var game = Game.CurrentGame;
+        var info = Contracts.GetStageInfo(game, stage.Id);
+        var capLeft = info.ContractsCap - info.ContractsUsed;
+        if (capLeft <= 0) return false;
+
+        // Quantidade atual
+        var currentQty = 0;
+        stage.ActiveContracts?.TryGetValue(contract.Id, out currentQty);
+        var isFirst = currentQty <= 0;
+
+        if (isFirst)
+        {
+            // Primeira compra: só precisa saber se dá pra pagar 1
+            return capLeft > 0 &&
+                   Cost.CanAfford(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
+        }
+
+        var modeQty = GetBuyQuantity();
+
+        if (modeQty > 0)
+        {
+            var qty = Math.Min(modeQty, capLeft);
+            return qty > 0 &&
+                   Cost.CanAfford(ItemHelper.ItemType.Contract, contract.Id, stage.Id, qty);
+        }
+        else
+        {
+            var (maxAffordable, _, _) =
+                Cost.ComputeMaxAffordable(ItemHelper.ItemType.Contract, contract.Id, stage.Id);
+
+            var qty = Math.Min(maxAffordable, capLeft);
+            return qty > 0;
+        }
+    }
+
 
     private ContractModel? ChosenContract(int level)
     {

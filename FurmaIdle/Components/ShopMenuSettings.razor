@@ -1,0 +1,39 @@
+﻿@* Components/ShopMenuExpansion.razor *@
+@inherits UiHelper
+
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Data
+
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<div class="menu-root">
+    <section class="menu-panel">
+        <button class="config-button danger"
+                @onclick="HardResetAsync">
+            Apagar Progresso Permanentemente
+        </button>
+    </section>
+
+    <section class="menu-panel">
+        <div class="config-version">
+            Versão do jogo: @VersionHelper.Display
+        </div>
+    </section>
+</div>
+
+@code {
+    private async Task HardResetAsync()
+    {
+        var ok = await JS.InvokeAsync<bool>(
+            "confirm",
+            "Isso vai apagar TODO o progresso deste save.\nTem certeza que deseja continuar?"
+        );
+
+        if (!ok) return;
+
+        Nav.NavigateTo("/?reset=1", forceLoad: true);
+    }
+}

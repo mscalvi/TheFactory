@@ -8,16 +8,21 @@
     {
         TooltipModel Model = Tooltips.Current;
 
+        var infoEntries = (Model.Info ?? new Dictionary<string, string>())
+            .Where(kv => !string.IsNullOrWhiteSpace(kv.Key))
+            .Take(4)
+            .ToList();
+
         <div class="tooltip-card">
 
             <!-- Faixa superior -->
             <section class="tt-top">
                 <span class="tt-title">
-                    @Model.Name - 
+                    @Model.Name
                     @if (!string.IsNullOrWhiteSpace(Model.CostAmount))
                     {
                         <span class="tt-cost">
-                            @Model.CostAmount
+                            - @Model.CostAmount
 
                             @if (!string.IsNullOrWhiteSpace(Model.CostIcon))
                             {
@@ -28,26 +33,52 @@
                         </span>
                     }
                 </span>
-                <span class="tt-title">
+            </section>
+
+            <section class="tt-desc">
+                <span class="tt-description">
                     @Model.Description
                 </span>
             </section>
 
             <!-- Quadro de informações -->
             <section class="tt-mid">
-                @if (Model.Info is not null && Model.Info.Count > 0)
+                @for (int i = 0; i < 4; i++)
                 {
-                    @foreach (var line in Model.Info)
+                    if (i < infoEntries.Count)
                     {
+                        var line = infoEntries[i];
                         <div class="tt-info">
-                            @if (!string.IsNullOrWhiteSpace(line.Key))
-                            {
-                                <span class="tt-info-line"><strong>@line.Key:</strong> @line.Value</span>
-                            }
+                            <div class="tt-info-title">
+                                <strong>@line.Key</strong>
+                            </div>
+                            <div class="tt-info-item">
+                                @if (!string.IsNullOrWhiteSpace(line.Value) &&
+                                                    line.Value.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <div class="tt-icon">
+
+                                        <img src="@line.Value"
+                                             alt="S/I"
+                                             class="tt-img" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="tt-item">
+                                        @line.Value
+                                    </span>
+                                }
+                            </div>
                         </div>
+                    }
+                    else
+                    {
+                        <div class="tt-info tt-info-empty"></div>
                     }
                 }
             </section>
+
 
             <!-- Quadro com lore -->
             <section class="tt-bot">

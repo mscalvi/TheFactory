@@ -258,6 +258,8 @@ namespace FurmaIdle.Services
 
             try
             {
+                var expansion = _locate.LocateExpansion(_game.CurrentGame, _game.CurrentGame.CurrentExpansionId);
+
                 // transforma coins em Knowledge
                 long cTotal = 0;
                 foreach (var coins in stage.ExpeditionStats.CoinsGain)
@@ -266,6 +268,12 @@ namespace FurmaIdle.Services
                     {
                         cTotal += coins.Value;
                     }
+
+                    if (expansion.ExpansionStats.Coins.TryGetValue(coins.Key, out var expanCoin))
+                    {
+                        expanCoin -= cTotal;
+                        expansion.ExpansionStats.Coins[coins.Key] = expanCoin;
+                    }                    
                 }
 
                 stage.ExpeditionStats.Coins.Clear();

@@ -317,12 +317,23 @@ namespace FurmaIdle.Services
                 }
             }
 
-            await _game.Mutate(g => { 
+            await _game.Mutate(game => {
+
+                foreach (var upgrade in game.Upgrades)
+                {
+                    if (string.Equals(upgrade.Value.UnlockId, up.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (upgrade.Value.State != UnlockHelper.State.Blocked) continue;
+                        upgrade.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {upgrade.Value.Id}: {upgrade.Value.State}");
+                    }
+                }
+
                 up.State = UnlockHelper.State.Unlocked;
 
                 Console.WriteLine($"[Unlock] Upgrade {up.Id}: {up.State}");
                 
-                g.GameStats.UpgradesUnlocked++;
+                game.GameStats.UpgradesUnlocked++;
 
             }, save: true);
         }
