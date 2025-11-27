@@ -570,7 +570,7 @@ namespace FurmaIdle.Services
             tooltip.CostAmount = "";
             tooltip.CostIcon = "";
             tooltip.CostName = "";
-            tooltip.Description = character.Description + trait.Description;
+            tooltip.Description = character.Description + " " + trait.Description;
             tooltip.Info.Add("Estado", state);
             tooltip.Info.Add("Fatores", knows);
             tooltip.Info.Add("Especialidade", specialty.Icon);
