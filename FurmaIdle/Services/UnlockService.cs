@@ -34,20 +34,21 @@ namespace FurmaIdle.Services
         #region Initial State
         public async Task UnlockInitialState()
         {
-            await UnlockStage("s01");
+            await UnlockStage("s00");
 
-            await UnlockExpansion("x10");
+            await UnlockExpansion("x00");
 
-            await UnlockLocal("l10");
+            await UnlockLocal("l00");
 
             await UnlockCharacter("p001");
 
-            await UnlockContract("c011");
+            await UnlockContract("c001");
 
             await _game.Mutate(g =>
             {
-                g.SelectedStageId ??= "s01";
+                g.SelectedStageId ??= "s00";
             }, save: true);
+
         }
         #endregion
 

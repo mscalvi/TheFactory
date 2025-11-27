@@ -10,8 +10,10 @@ namespace FurmaIdle.Helpers
             // Unlock
             CharacterUnlock1,       // Unlock Character Stage 1
 
+            ContractUnlock0,       // Unlock Contract Stage 0
             ContractUnlock1,       // Unlock Contract Stage 1
 
+            ContractLevelUnlock0,   // Unlock Contract Level Stage 0
             ContractLevelUnlock1,   // Unlock Contract Level Stage 1
 
             KnowledgeUnlock1,       // Unlock Knowledge Stage 1
@@ -20,7 +22,8 @@ namespace FurmaIdle.Helpers
 
             ResourceUnlock01,       // Unlock Resource 01
 
-            StageUnlock1,           // Unlock Stage -> 1
+            StageUnlock0,           // Unlock Stage -> 1
+            StageUnlock1,           // Unlock Stage -> 2
 
             ExpansionUnlock1,       // Unlock Expansion Stage 1
 
@@ -31,19 +34,25 @@ namespace FurmaIdle.Helpers
             TechUnlockk05,          // Unlock Tech Know 05
 
             // Party
+            ContractCapUnlock0,     // Contract Cap Increase Stage 0
             PartySize1,             // Party Size Increase Stage 1
             ContractCapUnlock1,     // Contract Cap Increase Stage 1
 
             // Contract Cost Expedition
+            ContractCost0,         // Contract Cost Stage 0
             ContractCost1,         // Contract Cost Stage 1
 
             // Contract Gain Expedition
+            ContractGain0,         // Contract Gain Stage 0
             ContractGain1,         // Contract Gain Stage 1
 
             // Contract Time Expedition
+            ContractTime0,         // Contract Time Stage 0
             ContractTime1,         // Contract Time Stage 1
 
             // Click Gain Expedition
+            ClickGainS0,             // Click Gain Soma Stage 0
+            ClickGainM0,             // Click Gain Multi Stage 0
             ClickGainS1,             // Click Gain Soma Stage 1
             ClickGainM1,             // Click Gain Multi Stage 1
 
@@ -51,10 +60,11 @@ namespace FurmaIdle.Helpers
             ResourceGain011,        // Resource 01 Stage 1
 
             // Contract Purchase
-            ContractPurchase11,          // Purchase Contract Stage 1 Level 1
-            ContractPurchase12,          // Purchase Contract Stage 1 Level 2
-            ContractPurchase13,          // Purchase Contract Stage 1 Level 3
-            ContractPurchase14,          // Purchase Contract Stage 1 Level 4
+            ContractPurchase0,          // Purchase Contract Level 0
+            ContractPurchase1,          // Purchase Contract Level 1
+            ContractPurchase2,          // Purchase Contract Level 2
+            ContractPurchase3,          // Purchase Contract Level 3
+            ContractPurchase4,          // Purchase Contract Level 4
 
             // Tech Upgrades
             TechUpgrade1,           // Tech Upgrade Stage 1
@@ -106,9 +116,11 @@ namespace FurmaIdle.Helpers
                 [PricingId.CharacterUnlock1] = new Entry("m01", 1, 1.0, CostFactor.CharactersUnlocked, 9.0),
 
                 // Unlock Contract Stage X Level X
+                [PricingId.ContractUnlock0] = new Entry("m01", 500, 3.0, CostFactor.Level, 7),
                 [PricingId.ContractUnlock1] = new Entry("m01", 5, 3.0, CostFactor.Level, 7),
 
                 // Unlock Contract Level Stage X
+                [PricingId.ContractLevelUnlock0] = new Entry("m01", 10, 5.7, CostFactor.None, 1),
                 [PricingId.ContractLevelUnlock1] = new Entry("m01", 1000, 4.0, CostFactor.None, 1),
 
                 // Unlock Knowledge Stage X
@@ -120,7 +132,8 @@ namespace FurmaIdle.Helpers
                 // Unlock Resource X
                 [PricingId.ResourceUnlock01] = new Entry("m01", 1500, 1.0, CostFactor.None, 1),
 
-                // Unlock Stage -> X
+                // Unlock Stage X -> X+1
+                [PricingId.StageUnlock0] = new Entry("m01", 5000, 1.0, CostFactor.None, 1),
                 [PricingId.StageUnlock1] = new Entry("m01", 1000000000000, 1.0, CostFactor.None, 1),
 
                 // Unlock Expansion Stage X
@@ -134,25 +147,32 @@ namespace FurmaIdle.Helpers
                 [PricingId.TechUnlockk05] = new Entry("k05", 1, 1.0, CostFactor.Level, 6.2),
 
                 // Party Stage X
+                [PricingId.ContractCapUnlock0] = new Entry("m01", 10, 1.8, CostFactor.Level, 8.8),
                 [PricingId.PartySize1] = new Entry("m01", 8000, 1, CostFactor.Level, 2.2),
                 [PricingId.ContractCapUnlock1] = new Entry("m01", 10, 3.3, CostFactor.Level, 8.8),
 
-                // Contract Cost Stage X Contract Level X
+                // Contract Cost Stage X
+                [PricingId.ContractCost0] = new Entry("m01", 50, 4.0, CostFactor.Level, 3),
                 [PricingId.ContractCost1] = new Entry("m01", 200, 4.0, CostFactor.Level, 3),
 
-                // Contract Gain Stage X Contract Level X
+                // Contract Gain Stage X
+                [PricingId.ContractGain0] = new Entry("m01", 15, 1.6, CostFactor.Level, 3),
                 [PricingId.ContractGain1] = new Entry("m01", 50, 1.6, CostFactor.Level, 3),
 
-                // Contract Time Stage X Contract Level X
+                // Contract Time Stage X
+                [PricingId.ContractTime0] = new Entry("m01", 50, 1.8, CostFactor.Level, 4),
                 [PricingId.ContractTime1] = new Entry("m01", 200, 1.8, CostFactor.Level, 4),
 
                 // Purchase Contract Stage X Level X
-                [PricingId.ContractPurchase11] = new Entry("m01", 10, 1.13, CostFactor.None, 1),
-                [PricingId.ContractPurchase12] = new Entry("m01", 100, 1.14, CostFactor.None, 1),
-                [PricingId.ContractPurchase13] = new Entry("m01", 1000, 1.15, CostFactor.None, 1),
-                [PricingId.ContractPurchase14] = new Entry("m01", 10000, 1.16, CostFactor.None, 1),
+                [PricingId.ContractPurchase0] = new Entry("m01", 10, 1.11, CostFactor.None, 1),
+                [PricingId.ContractPurchase1] = new Entry("m01", 10, 1.13, CostFactor.None, 1),
+                [PricingId.ContractPurchase2] = new Entry("m01", 100, 1.14, CostFactor.None, 1),
+                [PricingId.ContractPurchase3] = new Entry("m01", 1000, 1.15, CostFactor.None, 1),
+                [PricingId.ContractPurchase4] = new Entry("m01", 10000, 1.16, CostFactor.None, 1),
 
                 // Click Gain Stage X
+                [PricingId.ClickGainS0] = new Entry("m01", 20, 2.2, CostFactor.None, 1),
+                [PricingId.ClickGainM0] = new Entry("m01", 350, 3.6, CostFactor.None, 1),
                 [PricingId.ClickGainS1] = new Entry("m01", 50, 2.4, CostFactor.None, 1),
                 [PricingId.ClickGainM1] = new Entry("m01", 600, 3.6, CostFactor.None, 1),
 

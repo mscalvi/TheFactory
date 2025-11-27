@@ -43,9 +43,29 @@
             Console.WriteLine("[BOOT] Reset solicitado: removido 'main'");
         }
 
-        // 3. Fluxo normal de boot
+        // 2. Fluxo normal de boot
         await Start.InitAsync();
         Console.WriteLine("[GP] Finalizado Load/Create");
+
+        if (Start.LoadedFromOlderVersion)
+        {
+            var confirmed = await JS.InvokeAsync<bool>("confirm",
+                "Uma nova versão de Exploradores Idle está disponível.\n\n" +
+                "Para ver todas as mudanças desta atualização, é necessário fazer um reset completo do save atual.\n\n" +
+                "Pressione OK para resetar agora.\nPressione Cancelar para continuar com este save (sem ver todo o conteúdo novo).");
+
+            if (confirmed)
+            {
+                Console.WriteLine("[GP] Confirmação de Reset pelo Usuário");
+
+                Nav.NavigateTo("/?reset=1", forceLoad: true);
+                return;
+            }
+            else
+            {
+                Console.WriteLine("[GP] Reset Negado pelo Usuário");
+            }
+        }
 
         Game.MarkReady();
         Console.WriteLine("[GP] Jogo marcado como Pronto");
@@ -173,9 +193,7 @@ else
             <section class="contracts-menu">
                 <ContractsMenu />
             </section>
-
-        </div>
-        
+        </div>        
     }
 }
 

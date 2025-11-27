@@ -13,7 +13,22 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, ExpansionModel> All = new()
         {
-            #region Expansion Levels (x10 - x13)
+            #region Expansions Stage 0 (x00)
+            ["x00"] = new ExpansionModel
+            {
+                Id = "x00",
+                Name = "As Necessidades do Povo",
+                Icon = "icons/expansions/x00.svg",
+                UnlockId = null,
+                Level = 1,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                State = UnlockHelper.State.Blocked,
+                Modifiers = new List<ModifierModel>(),
+                NextExpansion = "x10",
+            },
+            #endregion
+
+            #region Expansions Stage 1 (x10 - x13)
             ["x10"] = new ExpansionModel
             {
                 Id = "x10",

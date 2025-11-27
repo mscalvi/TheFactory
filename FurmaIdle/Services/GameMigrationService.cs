@@ -23,7 +23,7 @@ namespace FurmaIdle.Services
             }
 
             // 2) Migrações por versão (1 -> 2 -> 3...)
-            while (g.SchemaVersion < VersionHelper.Current)
+            while (g.SchemaVersion < VersionHelper.SchemaVersion)
             {
                 switch (g.SchemaVersion)
                 {
@@ -34,7 +34,7 @@ namespace FurmaIdle.Services
                         break;
 
                     default:
-                        Console.WriteLine("Erro de versão. Forçar HardReset manual pelo Application/Storage/ClearData.");
+                        Console.WriteLine("[GMS] Erro de versão. Forçar HardReset manual pelo Application/Storage/ClearData.");
                         return changed;
                 }
             }

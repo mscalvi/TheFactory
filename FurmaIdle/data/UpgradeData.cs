@@ -43,7 +43,7 @@ namespace FurmaIdle.Data
 
             #region Unlock
             #region Desbloqueio de Contratos (Contracts Unlock)
-            #region Stage 0 Level 1
+            #region Stage 1 Level 1
             ["uu110"] = new UpgradeModel
             {
                 Id = "uu110",
@@ -52,9 +52,9 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/uu110.svg",
                 Lore = "",
                 Description = "Libera o Contrato",
-                UnlockId = null,
+                UnlockId = "p001",
                 MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.ContractUnlock1,
+                PricingId = PricingHelper.PricingId.ContractUnlock0,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "c011",
@@ -83,7 +83,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0,
             },
             #endregion
-            #region Stage 0 Level 2
+            #region Stage 1 Level 2
             ["uu210"] = new UpgradeModel
             {
                 Id = "uu210",
@@ -142,7 +142,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0,
             },
             #endregion
-            #region Stage 0 Level 3
+            #region Stage 1 Level 3
             ["uu310"] = new UpgradeModel
             {
                 Id = "uu310",
@@ -220,7 +220,7 @@ namespace FurmaIdle.Data
                 EffectValue = 0,
             },
             #endregion
-            #region Stage 0 Level 4
+            #region Stage 1 Level 4
             ["uu410"] = new UpgradeModel
             {
                 Id = "uu410",
@@ -856,15 +856,15 @@ namespace FurmaIdle.Data
             ["us01"] = new UpgradeModel
             {
                 Id = "us01",
-                Name = "Região",
+                Name = "Nova Região",
                 Level = 1,
                 Icon = "icons/upgrades/us01.svg",
                 Image = "images/upgrades/us01.svg",
                 Lore = "",
-                Description = "Libera a Região",
-                UnlockId = "x13",
+                Description = "Libera a Região da Ilha de Vera",
+                UnlockId = "x00",
                 MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.StageUnlock1,
+                PricingId = PricingHelper.PricingId.StageUnlock0,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "s01",
@@ -876,12 +876,12 @@ namespace FurmaIdle.Data
             ["us02"] = new UpgradeModel
             {
                 Id = "us02",
-                Name = "Região",
+                Name = "Nova Região",
                 Level = 1,
                 Icon = "icons/upgrades/us02.svg",
                 Image = "images/upgrades/us02.svg",
                 Lore = "",
-                Description = "Libera a Região",
+                Description = "Libera a Região de Entrilhas",
                 UnlockId = "x13",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.StageUnlock1,
@@ -960,6 +960,47 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Expedition Upgrades
+            #region Stage 0 Misc
+            ["ui0i1"] = new UpgradeModel
+            {
+                Id = "ui0i1",
+                Name = "Pequenos Frutos do Trabalho",
+                Level = 1,
+                Icon = "icons/upgrades/ui0i1.svg",
+                Lore = "",
+                Description = "Aumenta o ganho por Click na Casa de Ferri",
+                UnlockId = "x00",
+                MaxBuy = 5,
+                PricingId = PricingHelper.PricingId.ClickGainS0,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpedition,
+                TargetId = "i0i",
+                EffectType = EffectHelper.EffectType.ClickGain,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 1,
+            },
+            ["ui0i2"] = new UpgradeModel
+            {
+                Id = "ui0i2",
+                Name = "Trabalho Árduo",
+                Level = 1,
+                Icon = "icons/upgrades/ui0i2.svg",
+                Lore = "",
+                Description = "Aumenta o ganho por Click na Casa de Ferri",
+                UnlockId = "x00",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.ClickGainM0,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpedition,
+                TargetId = "i0i",
+                EffectType = EffectHelper.EffectType.ClickGain,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 2,
+            },
+            #endregion
+
             #region Stage 1 Misc
             ["ui011"] = new UpgradeModel
             {
@@ -1001,7 +1042,67 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Contracts Stage 0 Level 1
+            #region Contracts Level 0
+            ["uc011"] = new UpgradeModel
+            {
+                Id = "uc011",
+                Name = "Qualidade ao Estudar",
+                Level = 1,
+                Icon = "icons/upgrades/uc011.svg",
+                Lore = "",
+                Description = "Aumenta o ganho do Contrato",
+                UnlockId = "c001",
+                MaxBuy = 10,
+                PricingId = PricingHelper.PricingId.ContractGain1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpedition,
+                TargetId = "c001",
+                EffectType = EffectHelper.EffectType.ContractGain,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 1.1,
+            },
+            ["uc012"] = new UpgradeModel
+            {
+                Id = "uc012",
+                Name = "Experiência em Estudar",
+                Level = 1,
+                Icon = "icons/upgrades/uc012.svg",
+                Lore = "",
+                Description = "Diminui o tempo para concluir o Contrato",
+                UnlockId = "c001",
+                MaxBuy = 10,
+                PricingId = PricingHelper.PricingId.ContractTime1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpedition,
+                TargetId = "c001",
+                EffectType = EffectHelper.EffectType.ContractTime,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Time,
+                EffectValue = 0.95,
+            },
+            ["uc013"] = new UpgradeModel
+            {
+                Id = "uc013",
+                Name = "Habilidade ao Estudar",
+                Level = 1,
+                Icon = "icons/upgrades/uc013.svg",
+                Lore = "",
+                Description = "Diminui o custo para comprar um Contrato",
+                UnlockId = "c001",
+                MaxBuy = 2,
+                PricingId = PricingHelper.PricingId.ContractCost1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpedition,
+                TargetId = "c001",
+                EffectType = EffectHelper.EffectType.ContractCost,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Cost,
+                EffectValue = 0.70,
+            },
+            #endregion
+
+            #region Contracts Level 1
             ["uc111"] = new UpgradeModel
             {
                 Id = "uc111",
@@ -1118,7 +1219,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Contracts Stage 0 Level 2
+            #region Contracts Level 2
             ["uc211"] = new UpgradeModel
             {
                 Id = "uc211",
@@ -1292,7 +1393,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Contracts Stage 0 Level 3
+            #region Contracts Level 3
             ["uc311"] = new UpgradeModel
             {
                 Id = "uc311",
@@ -1523,7 +1624,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Contracts Stage 0 Level 4
+            #region Contracts Level 4
             ["uc411"] = new UpgradeModel
             {
                 Id = "uc411",
@@ -2306,7 +2407,48 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Expansion Upgrades
-            #region Misc x10
+            #region Misc s00 x00
+            ["um00"] = new UpgradeModel
+            {
+                Id = "um00",
+                Name = "Aumentar o Esforço",
+                Level = 1,
+                Icon = "icons/upgrades/um00.svg",
+                Lore = "",
+                Description = "Aumenta o limite de Contratos de Ferri",
+                UnlockId = "x00",
+                MaxBuy = 12,
+                PricingId = PricingHelper.PricingId.ContractCapUnlock0,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpansion,
+                TargetId = "aCharacters",
+                EffectType = EffectHelper.EffectType.ContractCapUnlock,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 2,
+            },
+            ["ub00"] = new UpgradeModel
+            {
+                Id = "ub00",
+                Name = "Procurando Objetivos",
+                Level = 1,
+                Icon = "icons/upgrades/ub00.svg",
+                Lore = "",
+                Description = "Libera começar o próximo nível de Contratos",
+                UnlockId = "x00",
+                MaxBuy = 2,
+                PricingId = PricingHelper.PricingId.ContractLevelUnlock0,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.untilExpansion,
+                TargetId = "s00",
+                EffectType = EffectHelper.EffectType.ContractLevelUnlock,
+                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 1,
+            },
+            #endregion
+
+            #region Misc s01 x10
             ["um01"] = new UpgradeModel
             {
                 Id = "um01",
@@ -2366,7 +2508,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Upgrades de Expansão x10
+            #region Upgrades de Expansão s01 x10
             ["ux101"] = new UpgradeModel
             {
                 Id = "ux101",
@@ -2406,8 +2548,8 @@ namespace FurmaIdle.Data
                 EffectValue = 0.25,
             },
             #endregion
-            
-            #region Misc x11
+
+            #region Misc s01 x11
             ["um02"] = new UpgradeModel
             {
                 Id = "um02",
@@ -2448,7 +2590,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Upgrades de Expansão x11
+            #region Upgrades de Expansão s01 x11
             ["ux111"] = new UpgradeModel
             {
                 Id = "ux111",
@@ -2489,7 +2631,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Misc x12
+            #region Misc s01 x12
             ["um03"] = new UpgradeModel
             {
                 Id = "um03",
@@ -2511,7 +2653,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Upgrades de Expansão x12
+            #region Upgrades de Expansão s01 x12
             ["ux121"] = new UpgradeModel
             {
                 Id = "ux121",
@@ -2571,7 +2713,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Upgrades de Expansão x11
+            #region Upgrades de Expansão s01 x11
             ["ux111"] = new UpgradeModel
             {
                 Id = "ux111",

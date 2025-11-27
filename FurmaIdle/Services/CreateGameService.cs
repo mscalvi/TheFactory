@@ -9,6 +9,9 @@ namespace FurmaIdle.Services
     {
         GameModel NewGame { get; }
         Task<GameModel> InitAsync();
+
+        bool LoadedFromOlderSchema { get; }
+        bool LoadedFromOlderVersion { get; }
     }
     public sealed class CreateGameService : ICreateGameService
     {
@@ -29,6 +32,12 @@ namespace FurmaIdle.Services
         }
         public GameModel NewGame { get; private set; } = new();
 
+        private bool _loadedFromOlderSchema;
+        public bool LoadedFromOlderSchema => _loadedFromOlderSchema;
+
+        private bool _loadedFromOlderVersion;
+        public bool LoadedFromOlderVersion => _loadedFromOlderVersion;
+
         public async Task<GameModel> InitAsync()
         {
             Console.WriteLine("[CGS] Iniciando Load/Create");
@@ -45,12 +54,14 @@ namespace FurmaIdle.Services
 
                 var model = new GameModel
                 {
-                    SchemaVersion = VersionHelper.Current,
-                    BuildVersion = VersionHelper.Display,
+                    SchemaVersion = VersionHelper.SchemaVersion,
+                    GameVersion = VersionHelper.GameVersion,
+                    BuildVersion = VersionHelper.BuildVersion,
                     StartTime = DateTime.Now,
                     LastTick = DateTime.UtcNow,
                     GameStats = new StatsModel(),
-                    CurrentExpansionId = "x10",
+                    SelectedStageId = "s00",
+                    CurrentExpansionId = "x00",
                     Ui = new UiState(),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),
@@ -79,10 +90,19 @@ namespace FurmaIdle.Services
                 await _store.SaveAsync(model, "main");
                 Console.WriteLine("[CGS] Jogo salvo");
 
+                _loadedFromOlderSchema = false;
+                _loadedFromOlderVersion = false;
+
                 return model;
             }
             else
             {
+                var originalSchema = loaded.SchemaVersion <= 0 ? 1 : loaded.SchemaVersion;
+                var originalVersion = loaded.GameVersion <= 0 ? 1 : loaded.GameVersion;
+
+                _loadedFromOlderSchema = originalSchema < VersionHelper.SchemaVersion;
+                _loadedFromOlderVersion = originalVersion < VersionHelper.GameVersion;
+
                 var changed = _migration.Migrate(loaded);
 
                 _game.Attach(loaded);

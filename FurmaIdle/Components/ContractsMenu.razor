@@ -27,7 +27,7 @@
         <div class="contracts-layout" style="--levels:@_stage.MaxContractLevel">
             <div class="contracts-capbar">
                 <div class="selectbuy">
-                    <button class="contract-button select-toggle"
+                    <button class="contract-button select-toggle" disabled = "_stage.Id == s00"
                             @onclick="ToggleBuyMode">
                         @BuyModeLabel
                     </button>
@@ -38,119 +38,120 @@
                 </div>
             </div>
 
-            <div class="contracts-grid" style="--levels:@_stage.MaxContractLevel">
-                @for (int lvl = 1; lvl <= _stage.MaxContractLevel; lvl++)
+            <div class="contracts-grid" style="--levels:@_stage.MaxContractLevel-@_stage.StartContractLevel">
+                @for (int lvl = _stage.StartContractLevel; lvl <= _stage.MaxContractLevel; lvl++)
                 {
                     var level = lvl;
 
-                    <div class="contracts-level"
-                         @onmouseenter="() => OnEnterLevel(level)"
-                         @onmouseleave="() => OnLeaveLevel(level)">
-                        @if (level > contractsInfo.ContractsLevel)
-                        {
-                            <div class="level-noChosen">
-                                <img src="@($"images/contracts-blockedLevel.svg")" alt="Nível Bloqueado" class="no-contract" />
-                            </div>
-                        }
-                        else
-                        {
-                            @if (ShowOverlay(level))
+                    if (lvl >= 0)
+                    {
+                        <div class="contracts-level"
+                             @onmouseenter="() => OnEnterLevel(level)"
+                             @onmouseleave="() => OnLeaveLevel(level)">
+                            @if (level > contractsInfo.ContractsLevel)
                             {
                                 <div class="level-noChosen">
-                                    <img src="@($"images/contractlvl-{level}.svg")" alt="Passe o Mouse para escolher o Contrato" class="no-contract" />
+                                    <img src="@($"images/contracts-blockedLevel.svg")" alt="Nível Bloqueado" class="no-contract" />
                                 </div>
                             }
                             else
                             {
-
-                                @if (HasChosen(level))
+                                @if (ShowOverlay(level))
                                 {
-                                    var chosenCon = ChosenContract(level);
-                                    var qty = _stage.ActiveContracts?.TryGetValue(chosenCon.Id, out var q) == true ? q : 0;
-
-                                    var hasCapacity = HasCapacity(_stage);
-                                    var canBuy = CanPurchase(chosenCon, _stage!);
-                                    var disabled = !CanBuyCurrentMode(chosenCon, _stage!);
-
-                                    var rp = Contracts.GetContractInfo(chosenCon, _stage);
-                                    var coin = Locate.LocateCoin(Game.CurrentGame, rp.CoinId);
-                                    var (costTotal, costCoinName) = CostOf(chosenCon.Id);
-
-                                    <div class="contract-card">
-                                        <div class="contract-card-top">
-                                            <button class="icon-button @(disabled ? "is-locked" : null)"
-                                                    disabled="@disabled"
-                                                    @onclick="() => BuyContract(chosenCon.Id)"
-                                                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
-                                                    @onmouseleave="Tooltips.Clear"
-                                                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
-                                                    @onblur="Tooltips.Clear">
-                                                @if (!string.IsNullOrWhiteSpace(chosenCon.Icon))
-                                                {
-                                                    <img src="@chosenCon.Icon"
-                                                         alt="@chosenCon.Id"
-                                                         class="icon-img" />
-                                                }
-                                                else
-                                                {
-                                                    @chosenCon.Id
-                                                }
-                                            </button>
-
-                                            <div class="contract-info">
-                                                <div class="cc-name">x<strong>@qty</strong> contratos para @chosenCon.Name</div>
-                                                <div class="cc-cycle">@NumbersHelper.Padronize(rp.CoinsPerCycle * qty) @coin.Name</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="contract-card-bottom">
-                                            @{
-                                                var prog = Math.Clamp(Contracts.GetContractProgress(Game.CurrentGame, _stage.Id, chosenCon.Id), 0.0, 1.0);
-
-                                                const int steps = 100;
-                                                int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
-                                            }
-                                            <div class="contract-progress-bar">
-                                                @for (int i = 0; i < 100; i++)
-                                                {
-                                                    var isFilled = i < filled;
-                                                    <div class="chunk @(isFilled ? "is-filled" : null)"></div>
-                                                }
-                                            </div>
-                                        </div>
+                                    <div class="level-noChosen">
+                                        <img src="@($"images/contractlvl-{level}.svg")" alt="Passe o Mouse para escolher o Contrato" class="no-contract" />
                                     </div>
-
                                 }
                                 else
                                 {
-                                    var ids = Contracts.AvaliableContracts(Game.CurrentGame, _stage.Id);
-                                    var list = ids
-                                    .Select(id => Locate.LocateContract(Game.CurrentGame, id))
-                                    .Where(c => c is not null && c.Level == level)
-                                    .ToList();
-
-                                    @if (list.Count == 0)
+                                    @if (HasChosen(level))
                                     {
-                                        <div class="level-noChosen">
-                                            <img src="@($"images/contracts-noContracts.svg")" alt="Nenhum Contrato do Nível foi Desbloqueado" class="no-contract" />
+                                        var chosenCon = ChosenContract(level);
+                                        var qty = _stage.ActiveContracts?.TryGetValue(chosenCon.Id, out var q) == true ? q : 0;
+
+                                        var hasCapacity = HasCapacity(_stage);
+                                        var canBuy = CanPurchase(chosenCon, _stage!);
+                                        var disabled = !CanBuyCurrentMode(chosenCon, _stage!);
+
+                                        var rp = Contracts.GetContractInfo(chosenCon, _stage);
+                                        var coin = Locate.LocateCoin(Game.CurrentGame, rp.CoinId);
+                                        var (costTotal, costCoinName) = CostOf(chosenCon.Id);
+
+                                        <div class="contract-card">
+                                            <div class="contract-card-top">
+                                                <button class="icon-button @(disabled ? "is-locked" : null)"
+                                                        disabled="@disabled"
+                                                        @onclick="() => BuyContract(chosenCon.Id)"
+                                                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
+                                                        @onmouseleave="Tooltips.Clear"
+                                                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, chosenCon.Id, _stage.Id))"
+                                                        @onblur="Tooltips.Clear">
+                                                    @if (!string.IsNullOrWhiteSpace(chosenCon.Icon))
+                                                    {
+                                                        <img src="@chosenCon.Icon"
+                                                             alt="@chosenCon.Id"
+                                                             class="icon-img" />
+                                                    }
+                                                    else
+                                                    {
+                                                        @chosenCon.Id
+                                                    }
+                                                </button>
+
+                                                <div class="contract-info">
+                                                    <div class="cc-name">x<strong>@qty</strong> contratos para @chosenCon.Name</div>
+                                                    <div class="cc-cycle">@NumbersHelper.Padronize(rp.CoinsPerCycle * qty) @coin.Name</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="contract-card-bottom">
+                                                @{
+                                                    var prog = Math.Clamp(Contracts.GetContractProgress(Game.CurrentGame, _stage.Id, chosenCon.Id), 0.0, 1.0);
+
+                                                    const int steps = 100;
+                                                    int filled = Math.Clamp((int)Math.Ceiling(prog * steps), 0, steps);
+                                                }
+                                                <div class="contract-progress-bar">
+                                                    @for (int i = 0; i < 100; i++)
+                                                    {
+                                                        var isFilled = i < filled;
+                                                        <div class="chunk @(isFilled ? "is-filled" : null)"></div>
+                                                    }
+                                                </div>
+                                            </div>
                                         </div>
+
                                     }
                                     else
                                     {
-                                        <div class="icon-grid">
-                                            @foreach (var c in list)
-                                            {
-                                                var hasCapacity = HasCapacity(_stage);
-                                                var canBuy = CanPurchase(c, _stage);
-                                                var disabled = !hasCapacity || !canBuy;
+                                        var ids = Contracts.AvaliableContracts(Game.CurrentGame, _stage.Id);
+                                        var list = ids
+                                        .Select(id => Locate.LocateContract(Game.CurrentGame, id))
+                                        .Where(c => c is not null && c.Level == level)
+                                        .ToList();
 
-                                                <button class="icon-button @(disabled ? "is-locked" : null)"
-                                                        disabled="@disabled"
-                                                        @onclick="() => BuyContract(c.Id)"
-                                                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, _stage.Id))"
-                                                        @onmouseleave="Tooltips.Clear"
-                                                        @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, _stage.Id))"
-                                                        @onblur="Tooltips.Clear">
+                                        @if (list.Count == 0)
+                                        {
+                                            <div class="level-noChosen">
+                                                <img src="@($"images/contracts-noContracts.svg")" alt="Nenhum Contrato do Nível foi Desbloqueado" class="no-contract" />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="icon-grid">
+                                                @foreach (var c in list)
+                                                {
+                                                    var hasCapacity = HasCapacity(_stage);
+                                                    var canBuy = CanPurchase(c, _stage);
+                                                    var disabled = !hasCapacity || !canBuy;
+
+                                                    <button class="icon-button @(disabled ? "is-locked" : null)"
+                                                            disabled="@disabled"
+                                                            @onclick="() => BuyContract(c.Id)"
+                                                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, _stage.Id))"
+                                                            @onmouseleave="Tooltips.Clear"
+                                                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Contract, c.Id, _stage.Id))"
+                                                            @onblur="Tooltips.Clear">
                                                         @if (!string.IsNullOrWhiteSpace(c.Icon))
                                                         {
                                                             <img src="@c.Icon"
@@ -161,14 +162,15 @@
                                                         {
                                                             @c.Id
                                                         }
-                                                </button>
-                                            }
-                                        </div>
+                                                    </button>
+                                                }
+                                            </div>
+                                        }
                                     }
                                 }
                             }
-                        }
-                    </div>
+                        </div>
+                    }
                 }
             </div>
         </div>

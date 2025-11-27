@@ -12,6 +12,7 @@ namespace FurmaIdle.Helpers
 
         public static readonly Dictionary<int, ContractHelper> m01ByLevel = new()
         {
+            [0] = new() {CoinsPerCycle = 1, SecondsPerCycle = 5 },
             [1] = new() {CoinsPerCycle = 2, SecondsPerCycle = 3 },
             [2] = new() {CoinsPerCycle = 50, SecondsPerCycle = 10 },
             [3] = new() {CoinsPerCycle = 300, SecondsPerCycle = 20 },

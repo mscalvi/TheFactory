@@ -13,6 +13,24 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, LocalModel> All = new()
         {
+            #region Stage s00
+            ["l00"] = new LocalModel
+            {
+                Id = "l00",
+                Name = "Escrivaninha das Ideias",
+                Description = "",
+                Lore = "",
+                Icon = "icons/locals/l00.svg",
+                Image = "images/locals/l00.svg",
+                Level = null,
+                UnlockId = null,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                StageId = "s00",
+                Modifiers = new List<ModifierModel>(),
+            },
+            #endregion
+
             #region Stage s01
             ["l10"] = new LocalModel
             {

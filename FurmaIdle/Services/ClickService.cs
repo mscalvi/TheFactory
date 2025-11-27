@@ -18,22 +18,37 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly IModifierService _modifier;
         private readonly IKnowledgeService _knowledge;
-        public ClickService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier, IKnowledgeService knowledge)
+        private readonly IUiService _ui;
+        public ClickService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier, IKnowledgeService knowledge, IUiService ui)
         {
             _locate = locate;
             _income = income;
             _game = game;
             _modifier = modifier;
             _knowledge = knowledge;
+            _ui = ui;
         }
 
         public int ClickGain { get; private set; } = 1;
+
+        private int Clicks = 0;
 
         public async Task Click()
         {
             var game = _game.CurrentGame;
             var stageId = game?.SelectedStageId;
             var stage = _locate.LocateStage(game, stageId);
+
+            if (stage.Id == "s00")
+            {
+                Clicks++;
+
+                if (Clicks == 10)
+                {
+                    _ui.NavMenuControl("FirstClicks");
+                }
+            }
+
             var click = _locate.LocateStageClick(game, stage.Id);
 
             var modifier = _modifier.GetModifiers(ItemHelper.ItemType.Click, click.Id, stage.Id, EffectHelper.EffectSupertype.Gain);

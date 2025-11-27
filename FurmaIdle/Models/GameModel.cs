@@ -5,13 +5,14 @@ namespace FurmaIdle.Models
     public class GameModel
     {
         public int SchemaVersion { get; set; }
+        public int GameVersion { get; set; }
         public string? BuildVersion { get; set; }
 
         // Ativo
         public DateTimeOffset StartTime { get; set; }
         public DateTimeOffset LastTick { get; set; }
-        public string SelectedStageId { get; set; } = "s01";
-        public string CurrentExpansionId { get; set; } = "x10";
+        public string SelectedStageId { get; set; } = "s00";
+        public string CurrentExpansionId { get; set; } = "x00";
 
         // Ui
         public UiState Ui { get; set; } = new();

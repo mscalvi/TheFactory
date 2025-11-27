@@ -155,20 +155,35 @@ namespace FurmaIdle.Services
             {
                 if (g.GameStats.CharactersUnlocked == 2 && itemId.StartsWith("up"))
                 {
-                    _ui.NavMenuControl("FirstCharacterPurchase");
-                    _lore.LoreTrigger("FirstCharacterPurchase");
+                    _ui.NavMenuControl("FirstCharacterUnlock");
+                    _lore.LoreTrigger("FirstCharacterUnlock");
+                    _lore.LoreTrigger(itemId);
+                }
+                else if (g.GameStats.ContractsUnlocked == 1 && itemId.StartsWith("c"))
+                {
+                    if(contractBuy == 1)
+                    {
+                        _ui.NavMenuControl("FirstContractPurchase");
+                        _lore.LoreTrigger("FirstContractPurchase");
+                        _lore.LoreTrigger(itemId);
+                    }
+                }
+                else if (g.GameStats.ContractsUnlocked == 2 && itemId.StartsWith("uu"))
+                {
+                    _ui.NavMenuControl("FirstContractUnlock");
+                    _lore.LoreTrigger("FirstContractUnlock");
                     _lore.LoreTrigger(itemId);
                 }
                 else if (g.GameStats.KnowledgesUnlocked == 1 && itemId.StartsWith("uk"))
                 {
-                    _ui.NavMenuControl("FirstKnowledgePurchase");
-                    _lore.LoreTrigger("FirstKnowledgePurchase");
+                    _ui.NavMenuControl("FirstKnowledgeUnlock");
+                    _lore.LoreTrigger("FirstKnowledgeUnlock");
                     _lore.LoreTrigger(itemId);
                 }
                 else if (g.GameStats.TechUnlocked == 1 && itemId.StartsWith("uh"))
                 {
-                    _ui.NavMenuControl("FirstTechPurchase");
-                    _lore.LoreTrigger("FirstTechPurchase");
+                    _ui.NavMenuControl("FirstTechUnlock");
+                    _lore.LoreTrigger("FirstTechUnlock");
                     _lore.LoreTrigger(itemId);
                 }
                 else if (itemId.StartsWith("c"))

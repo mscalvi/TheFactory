@@ -2,9 +2,10 @@
 {
     public class VersionHelper
     {
-        public const int Current = 1;
+        public const int SchemaVersion = 1;
+        public const int GameVersion = 1;
 
-        public const string Display = "0.1.0";
+        public const string BuildVersion = "1.1.0";
 
         public enum UseState
         {

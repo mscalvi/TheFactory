@@ -28,7 +28,7 @@ namespace FurmaIdle.Data
                 ContractCap = 1,
                 KnowledgeFactor2 = "k02",
                 KnowledgeFactor1 = "k03",
-                ContractsIds = new() { "c011", "c021", "c031", "c041" },
+                ContractsIds = new() { "c001", "c011", "c021", "c031", "c041" },
                 TraitId = "o01",
                 SpecialtyId = "e01",
                 Modifiers = new List<ModifierModel>(),

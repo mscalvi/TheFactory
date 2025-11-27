@@ -12,7 +12,7 @@ namespace FurmaIdle.Services
         string? OpenMenuId { get; }
         IEnumerable<NavItem> VisibleNav {  get; }
         void SetOpenMenu(string? id);
-        void NavMenuControl(string itemId, string? help = "");
+        void NavMenuControl(string controlItem, string? itemId = "", string? help = "", int? helpQuant = 0);
         void SyncMenusFromGame(GameModel g);
         string PanelClass(string classId);
 
@@ -126,7 +126,6 @@ namespace FurmaIdle.Services
             return g?.Ui?.HiddenPanels?.Contains(id) == true;
         }
 
-
         public string PanelClass(string id)
         {
             var cls = "menu-panel";
@@ -146,6 +145,7 @@ namespace FurmaIdle.Services
             public int SortKey =>
                 int.TryParse(Id.AsSpan(1), out var n) ? n : int.MaxValue;
         }
+
         private readonly List<NavItem> _nav = new()
         {
             new() { Id = "i1",  Label = "EXPAN",   Unlocked = false },
@@ -158,6 +158,7 @@ namespace FurmaIdle.Services
             new() { Id = "i99", Label = "CONFIG",    Unlocked = false },
             new() { Id = "i100", Label = "TIPS",   Unlocked = false },
         };
+
         public IEnumerable<NavItem> VisibleNav =>
             _nav
                 .Where(item => item.Unlocked)
@@ -257,88 +258,14 @@ namespace FurmaIdle.Services
             return item is not null && item.Unlocked;
         }
 
-        public void NavMenuControl(string itemId, string? help = "")
+        public void NavMenuControl(string controlItem, string? itemId = "", string? help = "", int? helpQuant = 0)
         {
-            string itemType1 = itemId.Substring(0, 1);
-            string itemType2 = itemId.Substring(0, 2);
-
             var game = _game.CurrentGame;
 
-            switch (itemId) 
+            switch (controlItem)
             {
-                // First Unlocks
-                case "FirstCharacterPurchase":
-                    // Libera Menu de Expansion
-                    UnlockMenu("i1");
-                    if (IsHidden("expansion-basechars"))
-                    {
-                        ShowPanel("expansion-basechars");
-                    }
-                    if (IsHidden("expansion-stagechars"))
-                    {
-                        ShowPanel("expansion-stagechars");
-                    }
-                    if (IsHidden("expansion-upgrades"))
-                    {
-                        ShowPanel("expansion-upgrades");
-                    }
-                    if (IsHidden("expansion-status"))
-                    {
-                        ShowPanel("expansion-status");
-                    }
-
-                    SetNotificationMenu("i1");
-                    break;
-                case "us01":
-                    // Libera Menu de Stage e de Outside Market
-                    UnlockMenu("i2");
-                    UnlockMenu("i98");
-
-                    SetNotificationMenu("i98");
-                    SetOpenMenu("i2");
-                    break;
-                case "GameStart":
-                    // Libera Menu de Updates e de Settings
-                    foreach(var panel in GamePanels)
-                    {
-                        HidePanel(panel);
-                    }
-
-                    UnlockMenu("i99");
-                    UnlockMenu("i100");
-
-                    SetOpenMenu("i100");
-                    SetNotificationMenu("i99");
-                    break;
-                case "FirstKnowledgePurchase":
-                    // Libera Menu de Tech
-
-                    if (IsHidden("tech-knowledge"))
-                    {
-                        ShowPanel("tech-knowledge");
-                    }
-
-                    if (IsHidden("tech-available"))
-                    {
-                        ShowPanel("tech-available");
-                    }
-
-                    UnlockMenu("i50");
-
-                    SetNotificationMenu("i50");
-                    break;
-                case "ue01":
-                    // Libera Menu de Archievments
-                    if (IsHidden("game-status"))
-                    {
-                        ShowPanel("game-status");
-                    }
-
-                    UnlockMenu("i97");
-
-                    SetNotificationMenu("i97");
-                    break;
-                case "c011":
+                // Purchases
+                case "FirstClicks":
                     if (!IsMenuUnlocked("i5"))
                     {
                         UnlockMenu("i5");
@@ -365,7 +292,65 @@ namespace FurmaIdle.Services
                         ShowPanel("up-objetive");
                     }
                     break;
-                case "FirstTechPurchase":
+                case "FirstCharacterUnlock":
+                    // Libera Menu de Expansion
+                    UnlockMenu("i1");
+                    if (IsHidden("expansion-basechars"))
+                    {
+                        ShowPanel("expansion-basechars");
+                    }
+                    if (IsHidden("expansion-stagechars"))
+                    {
+                        ShowPanel("expansion-stagechars");
+                    }
+                    if (IsHidden("expansion-upgrades"))
+                    {
+                        ShowPanel("expansion-upgrades");
+                    }
+                    if (IsHidden("expansion-status"))
+                    {
+                        ShowPanel("expansion-status");
+                    }
+
+                    SetNotificationMenu("i1");
+                    break;
+                case "FirstStageUnlock":
+                    // Libera Menu de Stage e de Outside Market
+                    UnlockMenu("i2");
+                    UnlockMenu("i98");
+
+                    SetNotificationMenu("i98");
+                    SetOpenMenu("i2");
+                    break;
+                case "FirstKnowledgeUnlock":
+                    // Libera Menu de Tech
+
+                    if (IsHidden("tech-knowledge"))
+                    {
+                        ShowPanel("tech-knowledge");
+                    }
+
+                    if (IsHidden("tech-available"))
+                    {
+                        ShowPanel("tech-available");
+                    }
+
+                    UnlockMenu("i50");
+
+                    SetNotificationMenu("i50");
+                    break;
+                case "FirstExpansionUnlock":
+                    // Libera Menu de Archievments
+                    if (IsHidden("game-status"))
+                    {
+                        ShowPanel("game-status");
+                    }
+
+                    UnlockMenu("i97");
+
+                    SetNotificationMenu("i97");
+                    break;
+                case "FirstTechUnlock":
                     if (IsHidden("tech-done"))
                     {
                         ShowPanel("tech-done");
@@ -373,6 +358,19 @@ namespace FurmaIdle.Services
                     break;
 
                 // Gerais
+                case "GameStart":
+                    // Libera Menu de Updates e de Settings
+                    foreach (var panel in GamePanels)
+                    {
+                        HidePanel(panel);
+                    }
+
+                    UnlockMenu("i99");
+                    UnlockMenu("i100");
+
+                    SetOpenMenu("i100");
+                    SetNotificationMenu("i99");
+                    break;
                 case "ExpeditionStart":
 
                     UnlockMenu("i5");
