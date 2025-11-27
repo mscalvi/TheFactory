@@ -5,7 +5,7 @@ namespace FurmaIdle.Models
     public class GameModel
     {
         public int SchemaVersion { get; set; }
-        public int GameVersion { get; set; }
+        public int GameVersion { get; set; } = 1;
         public string? BuildVersion { get; set; }
 
         // Ativo
@@ -16,6 +16,7 @@ namespace FurmaIdle.Models
 
         // Ui
         public UiState Ui { get; set; } = new();
+        public Dictionary<string, bool> LoreTriggers { get; set; } = new();
 
         // Total
         public StatsModel NoExpeditionStats { get; set; } = new();

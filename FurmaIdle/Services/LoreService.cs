@@ -2,8 +2,7 @@
 {
     public interface ILoreService
     {
-        void LoreTrigger(string itemId, string? help = "");
-        void PurchaseInfo(string itemId, string costValue, string costCoin, string? help = "");
+        void LoreTrigger(string loreId);
     }
     public sealed class LoreService : ILoreService
     {
@@ -19,113 +18,76 @@
         }
 
         #region Lore
-        public void LoreTrigger(string itemId, string? help = "")
+        public void LoreTrigger(string loreId)
         {
-            string itemType1 = itemId.Substring(0, 1);
-            string itemType2 = itemId.Substring(0, 2);
+            var game = _game.CurrentGame;
 
-            switch (itemId)
+            game.LoreTriggers ??= new Dictionary<string, bool>();
+
+            if (game.LoreTriggers.TryGetValue(loreId, out var seen) && seen)
+                return;
+
+            game.LoreTriggers[loreId] = true;
+
+            switch (loreId)
             {
-                case "GameStart":
-                    _log.Unlock("Ferri se levanta, animado para começar a trabalhar. É hora de montar a Guilda.");
+                // Stage 0
+                case "GameCreation":
+                    _log.Lore("Isolados no meio do mar, cercados pela poderosa correnteza Entrilhas, os habitantes da Ilha de " +
+                        "Vera se protegem dos perigos da mata na pequena Murada Cairu. Lá fora, uma criatura insana aguarda que " +
+                        "qualquer um deles fique desesperado o suficiente para sair. E vire a janta.");
+                    _log.Lore("Ferri Karu não consegue se conformar.");
+                    _log.Info("Clique na imagem central para conseguir Talhos, a moeda corrente na Ilha de Vera.");
+                    _log.Ferri("Sozinho não tenho nenhuma chance, mas talvez eu consiga ajuda... Se antes eu conseguir dinheiro.");
                     break;
-                case "ExpeditionStart":
-                    _log.Lore("Hora de partir!");
+                case "FirstClick":
+                    _log.Ferri("Se eu me esforçar, posso conseguir juntar alguma coisa e comprar equipamentos para viagem.");
                     break;
-                case "ExpeditionEnd":
-                    if (help == "aprendeu")
-                    {
-                        _log.Lore("Se aprendemos algo, já valeu a pena.");
-                    }
-                    else
-                    {
-                        _log.Lore("Voltar pra casa sem aprender nada é tão... Cansativo.");
-                    }
+                case "10thClick":
+                    _log.Info("Compre Melhorias para conseguir ganhar mais moedas.");
+                    _log.Ferri("Acho que consigo ganhar mais Talhos, só preciso melhorar minha técnica.");
                     break;
-                case "ExpansionEnd":
-                    _log.Lore("Hora de treinarmos os novos recrutas.");
+                case "20thClick":
+                    _log.Info("Existem diferentes tipos de Melhorias, divididas em categorias de Permanência.");
+                    _log.Ferri("Preciso de uma forma mais eficiente de conseguir Talhos. Talvez eu devesse procurar trabalhos maiores," +
+                        " ou reabrir a antiga taberna de meu pai...");
                     break;
-                case "FirstCharacterPurchase":
-                    _log.Lore("Agora sim estamos montando uma Guilda!");
+                case "ContractLevel0Unlock":
+                    _log.Info("Contratos são formas de gerar Moedas automaticamente. São divididos em níveis, onde cada um garante mais" +
+                        " moedas que o anterior.");
+                    _log.Ferri("Vou fazer um acordo, comigo mesmo. Só vou descansar quando tiver resolvido a situação da Murada. Vou estudar " +
+                        "tudo o que tiver para conhecer, tudo o que puder me ajudar.");
                     break;
-                case "FirstContractPurchase":
-                    _log.Lore("Vou precisar de bem mais dinheiro do que ganho com isso...");
+                case "FirstContract0Purchase":
+                    _log.Info("Após escolhido um Contrato de determinado nível, não será possível trocá-lo tão cedo.");
+                    _log.Info("Só é possível fechar Contratos até atingir o limite, que pode ser aumentado de várias maneiras," +
+                        " como Melhorias.");
                     break;
-                case "FirstCapPurchase":
-                    _log.Lore("Vou precisar ser bem melhor em ganhar dinheiro do que isso...");
+                case "5xContract0Purchase":
+                    _log.Info("Atingir determinadas quantidades de um Contrato pode liberar Melhorias para ele.");
+                    _log.Ferri("Acho que consigo ficar um pouco melhor. Quanto mais eu me dedicar à Estudar, mais consigo " +
+                        "melhorar os resultados do Contrato.");
                     break;
-                case "SecondContractPurchase":
-                    _log.Lore("E vou precisar aprender muita coisa nova...");
+                case "ContractLevel1Unlock":
+                    _log.Info("É possível desbloquear novos tipos de Contratos para todos os níveis. Eles recebem melhorias diferentes," +
+                        " além de influenciarem outros aspectos futuros no jogo.");
                     break;
-                case "ObjetiveUnlock":
-                    _log.Lore("Bom, o primeiro passo é fazer a Murada acreditar em mim!");
+                case "FirstContractUnlock":
+                    _log.Info("Melhorias de desbloqueio são permanentes, e só são compradas uma vez ao longo do jogo.");
                     break;
-                case "ua01":
-                    _log.Lore("Talvez seja hora de chamar reforços.");
+                case "FirstContract1Purchase":
+                    _log.Info("Os Objetivos, disponíveis na parte superior do menu de Melhorias, permitem desbloquear a próxima parte" +
+                        "da história, quer seja na mesma Região, ou em uma próxima.");
+                    _log.Info("Após comprados, os Objetivos causam um Soft Reset de Expansão, reiniciando o progresso e liberando novos" +
+                        "recursos.");
+                    _log.Ferri("Agora, é só questão de tempo. Vou reabrir a taberna, e vou recrutar uma equipe. Está na hora de fundar" +
+                        " a Guilda da Ilha de Vera.");
                     break;
-                case "ua02":
-                    _log.Lore("Talvez seja hora de chamar reforços.");
-                    break;
-                case "ua03":
-                    _log.Lore("Talvez seja hora de chamar reforços.");
-                    break;
-                case "up102":
-                    _log.Lore("Ótimo! Maik, o Artesão, entrou para a Guilda.");
-                    break;
-                case "up103":
-                    _log.Lore("Ótimo! Claimi, a Pescadora, entrou para a Guilda.");
-                    break;
-                case "up104":
-                    _log.Lore("Ótimo! Alan, o Bardo, entrou para a Guilda.");
-                    break;
-                case "up111":
-                    _log.Lore("Ótimo! Jaime, o Explorador, entrou para a Guilda.");
-                    break;
-                case "up121":
-                    _log.Lore("Ótimo! Yg, o Caçador, entrou para a Guilda.");
-                    break;
+
+                // Stage 1
+
                 default: break;
             }
-
-            if(itemType1 == "c")
-            {
-                var contract = _locate.LocateContract(_game.CurrentGame, itemId);
-
-                switch (help) 
-                {
-                    case "1":
-                        _log.Info($"Nosso primero contrato para {contract.Name}. É um começo! Se conseguirmos mais contratos, talvez" +
-                            $" a gente ganhe experiência o suficiente para melhorar o serviço.");
-                        break;
-                    case "5":
-                        _log.Info($"Estamos pegando o jeito em {contract.Name}. Aos poucos a gente pode cobrar mais, e terminar mais rápido.");
-                        break;
-                    case "50":
-                        _log.Info($"Já somos bons em {contract.Name}, em? Sem técnicas melhores, esse é o mínimo que vamos gastar para começar" +
-                            $" um novo contrato.");
-                        break;
-                    case "100":
-                        _log.Info($"Perfeito, tudo o que sabemos sobre {contract.Name}. Agora, vamos ter que estudar para conseguir melhorar" +
-                            $" ainda mais no serviço.");
-                        break;
-                }
-            }
-        }
-
-        public void PurchaseInfo(string itemName, string costValue, string costCoin, string? help = "")
-        {
-            //switch (help)
-            //{
-            //    case "compra":
-            //        _log.Info($"Melhoria: {itemName} - {costValue} {costCoin}.");
-            //        break;
-            //    case "spec":
-            //        _log.Info($"Especialidade: {itemName} - {costValue} {costCoin}!");
-            //        break;
-            //    case "contract":
-            //        _log.Info($"Contrato: {itemName} - {costValue} {costCoin}.");
-            //        break;
-            //}
         }
         #endregion
     }

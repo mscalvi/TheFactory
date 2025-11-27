@@ -19,7 +19,9 @@ namespace FurmaIdle.Services
         private readonly IModifierService _modifier;
         private readonly IKnowledgeService _knowledge;
         private readonly IUiService _ui;
-        public ClickService(ILocateService locate, IIncomeService income, ICurrentGameService game, IModifierService modifier, IKnowledgeService knowledge, IUiService ui)
+
+        public ClickService(ILocateService locate, IIncomeService income, ICurrentGameService game, 
+            IModifierService modifier, IKnowledgeService knowledge, IUiService ui)
         {
             _locate = locate;
             _income = income;
@@ -42,10 +44,17 @@ namespace FurmaIdle.Services
             if (stage.Id == "s00")
             {
                 Clicks++;
-
+                if (Clicks == 1)
+                {
+                    _ui.NavMenuControl("FirstClick");
+                }
                 if (Clicks == 10)
                 {
-                    _ui.NavMenuControl("FirstClicks");
+                    _ui.NavMenuControl("10thClick");
+                }
+                if (Clicks == 20)
+                {
+                    _ui.NavMenuControl("20thClick");
                 }
             }
 

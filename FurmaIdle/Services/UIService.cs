@@ -257,41 +257,125 @@ namespace FurmaIdle.Services
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, id, StringComparison.OrdinalIgnoreCase));
             return item is not null && item.Unlocked;
         }
+        private bool SetNotificationMenu(string menuId)
+        {
+            var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
+            if (item is null) return false;
+            if (item.Notification) return false;
 
+            item.Notification = true;
+            RaiseChanged();
+            return true;
+        }
+        public bool ClearNotificationMenu(string menuId)
+        {
+            var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
+            if (item is null) return false;
+            if (!item.Notification) return false;
+
+            item.Notification = false;
+            RaiseChanged();
+            return true;
+        }
+        #endregion
+
+        #region Menu Control
         public void NavMenuControl(string controlItem, string? itemId = "", string? help = "", int? helpQuant = 0)
         {
             var game = _game.CurrentGame;
 
             switch (controlItem)
             {
-                // Purchases
-                case "FirstClicks":
+                // Stage 0
+                case "GameCreation":
+                    foreach (var panel in GamePanels)
+                    {
+                        HidePanel(panel);
+                    }
+
+                    // Configurações
+                    UnlockMenu("i99");
+                    // Tips
+                    UnlockMenu("i100");
+
+                    SetOpenMenu("i100");
+                    SetNotificationMenu("i99");
+
+                    _lore.LoreTrigger(controlItem);
+
+                    // Animation: piscar imagem central e o marcador de moedas.
+                    // Tips: Introdução
+                    // Tips: Conceito do Jogo
+                    // Tips: Clicks
+                    break;
+                case "FirstClick":
+                    _lore.LoreTrigger(controlItem);
+
+                    // Tips: Moedas
+                    break;
+                case "10thClick":
                     if (!IsMenuUnlocked("i5"))
                     {
                         UnlockMenu("i5");
-                        SetOpenMenu("i5");
-                    }
-                    if (IsHidden("up-expansion"))
-                    {
-                        _lore.LoreTrigger("FirstContractPurchase");
-                        ShowPanel("up-expansion");
                     }
                     if (IsHidden("up-expedition"))
                     {
-                        _lore.LoreTrigger("FirstCapPurchase");
                         ShowPanel("up-expedition");
                     }
+
+                    SetOpenMenu("i5");
+
+                    _lore.LoreTrigger(controlItem);
+
+                    // Animation: piscar o upgrade menu e o expedition panel
+                    // Tips: Melhorias
+                    break;
+                case "20thClick":
+                    if (IsHidden("up-expansion"))
+                    {
+                        ShowPanel("up-expansion");
+                    }
+
+                    _lore.LoreTrigger(controlItem);
+
+                    // Animation: piscar painel de expansion upgrades
+                    // Tips: Permanência
+                    break;
+                case "ContractLevel0Unlock":
+                    _lore.LoreTrigger(controlItem);
+
+                    // Animation: piscar o Contract Menu e o Nível 0
+                    // Tips: Contract Level
+                    break;
+                case "FirstContract0Purchase":
+                    _lore.LoreTrigger(controlItem);
+
+                    // Tips: Contratos
+                    break;
+                case "5xContract0Purchase":
+                    _lore.LoreTrigger(controlItem);
+
+                    // Tips: Contract Cap
+                    break;
+                case "ContractLevel1Unlock":
                     if (IsHidden("up-permanents"))
                     {
-                        _lore.LoreTrigger("SecondContractPurchase");
                         ShowPanel("up-permanents");
                     }
+                    _lore.LoreTrigger(controlItem);
+                    break;
+                case "FirstContractUnlock":
+                    _lore.LoreTrigger(controlItem);
+                    break;
+                case "FirstContract1Purchase":
                     if (IsHidden("up-objetive"))
                     {
-                        _lore.LoreTrigger("ObjetiveUnlock");
                         ShowPanel("up-objetive");
                     }
+                    _lore.LoreTrigger(controlItem);
                     break;
+
+                // Stage 1
                 case "FirstCharacterUnlock":
                     // Libera Menu de Expansion
                     UnlockMenu("i1");
@@ -358,19 +442,6 @@ namespace FurmaIdle.Services
                     break;
 
                 // Gerais
-                case "GameStart":
-                    // Libera Menu de Updates e de Settings
-                    foreach (var panel in GamePanels)
-                    {
-                        HidePanel(panel);
-                    }
-
-                    UnlockMenu("i99");
-                    UnlockMenu("i100");
-
-                    SetOpenMenu("i100");
-                    SetNotificationMenu("i99");
-                    break;
                 case "ExpeditionStart":
 
                     UnlockMenu("i5");
@@ -417,28 +488,6 @@ namespace FurmaIdle.Services
                 default: break;
             }
         }
-
-        private bool SetNotificationMenu(string menuId)
-        {
-            var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
-            if (item is null) return false;
-            if (item.Notification) return false;      
-
-            item.Notification = true;
-            RaiseChanged();                          
-            return true;
-        }
-
-        public bool ClearNotificationMenu(string menuId)
-        {
-            var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
-            if (item is null) return false;
-            if (!item.Notification) return false;
-
-            item.Notification = false;
-            RaiseChanged();
-            return true;
-        }
         #endregion
 
         #region Busy
@@ -463,7 +512,7 @@ namespace FurmaIdle.Services
         #endregion
     }
 
-    public enum UiLogKind { Info, Lore, Error, Unlock }
+    public enum UiLogKind { Error, Info, Lore, Ferri, }
     public sealed class UiLogMessage
     {
         public DateTime Time { get; init; } = DateTime.Now;
@@ -476,7 +525,7 @@ namespace FurmaIdle.Services
         void Info(string text);
         void Lore(string text);
         void Error(string text);
-        void Unlock(string text);
+        void Ferri(string text);
     }
     public sealed class UiLogService : IUiLogService
     {
@@ -507,6 +556,6 @@ namespace FurmaIdle.Services
         public void Info(string text) => Emit(text, UiLogKind.Info);
         public void Lore(string text) => Emit(text, UiLogKind.Lore);
         public void Error(string text) => Emit(text, UiLogKind.Error);
-        public void Unlock(string text) => Emit(text, UiLogKind.Unlock);
+        public void Ferri(string text) => Emit(text, UiLogKind.Ferri);
     }
 }

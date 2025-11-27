@@ -36,17 +36,17 @@ namespace FurmaIdle.Services
         private readonly IEffectService _effect;
         private readonly IKnowledgeService _knowledge;
         private readonly IUiService _ui;
-        private readonly ILoreService _lore;
 
-        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IKnowledgeService knowledge, IUiService ui, ILoreService lore)
+        public ExpeditionService(ILocateService locate, ICurrentGameService game, IEffectService effect, IKnowledgeService knowledge, IUiService ui)
         {
             _locate = locate;
             _game = game;
             _effect = effect;
             _knowledge = knowledge;
             _ui = ui;
-            _lore = lore;
         }
+
+        private bool Tutorial = true;
 
         public int GetPartyCap(StageModel stage)
         {
@@ -128,7 +128,14 @@ namespace FurmaIdle.Services
         public async Task FirstExpeditionStart()
         {
             var game = _game.CurrentGame;
-            var stage = _locate.LocateStage(game, game.SelectedStageId);
+            string stageId = game.SelectedStageId;
+
+            if (!Tutorial)
+            {
+                stageId = "s01";
+            }
+
+            var stage = _locate.LocateStage(game, stageId);
             var expedition = stage?.Expedition;
 
             await _game.Mutate(game =>
@@ -173,8 +180,9 @@ namespace FurmaIdle.Services
                 await _effect.ApplyEffect(ItemHelper.ItemType.Trait, traitId, stage.Id);
             }
 
-            _ui.NavMenuControl("GameStart");
-            _lore.LoreTrigger("GameStart");
+            _ui.NavMenuControl("GameCreation");
+
+            Tutorial = false;
         }
 
         public async Task LaunchExpedition(StageModel stage)
@@ -223,7 +231,6 @@ namespace FurmaIdle.Services
                     expedition.FinishedAt = null;
 
                     _ui.NavMenuControl("ExpeditionStart");
-                    _lore.LoreTrigger("ExpeditionStart");
 
                 }, save: true);
 
@@ -333,7 +340,6 @@ namespace FurmaIdle.Services
                     expedition.ExpeditionState = UnlockHelper.ExpeditionState.Idle;
 
                     _ui.NavMenuControl("ExpeditionEnd");
-                    _lore.LoreTrigger("ExpeditionEnd", "aprendeu");
 
                 }, save: true);
 
@@ -564,7 +570,6 @@ namespace FurmaIdle.Services
                     game.CurrentExpansionId = expansion.NextExpansion;
 
                     _ui.NavMenuControl("ExpansionEnd");
-                    _lore.LoreTrigger("ExpansionEnd");
 
                 }, save: true);
             }            

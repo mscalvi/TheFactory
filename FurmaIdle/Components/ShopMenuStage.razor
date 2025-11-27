@@ -25,7 +25,7 @@ else
     var game = Game.CurrentGame;
 
     var unlockedStages = OrderedStages(game)
-        .Where(s => s.State == UnlockHelper.State.Unlocked)
+        .Where(s => s.State == UnlockHelper.State.Unlocked || s.Id != "s00")
         .ToList();
 
     var unlockedLocalsInStage = OrderedLocals(game)

@@ -14,30 +14,24 @@ namespace FurmaIdle.Services
     {
         private readonly ICurrentGameService _game;
         private readonly ILocateService _locate;
-        private readonly IUiLogService _log;
         private readonly IEffectService _effect;
         private readonly IUiService _ui;
         private readonly ICostService _cost;
-        private readonly ILoreService _lore;
         private readonly ITooltipService _tooltip;
 
         public PurchaseService(
             ICurrentGameService Game,
-            IUiLogService Log,
             ILocateService Locate,
             IEffectService effect,
             IUiService ui,
             ICostService cost,
-            ILoreService lore,
             ITooltipService tooltip)
         {
             _game = Game;
             _locate = Locate;
-            _log = Log;
             _effect = effect;
             _ui = ui;
             _cost = cost;
-            _lore = lore;
             _tooltip = tooltip;
         }
 
@@ -153,48 +147,49 @@ namespace FurmaIdle.Services
 
             await _game.Mutate(g =>
             {
-                if (g.GameStats.CharactersUnlocked == 2 && itemId.StartsWith("up"))
+                if(stage.Id == "s00")
                 {
-                    _ui.NavMenuControl("FirstCharacterUnlock");
-                    _lore.LoreTrigger("FirstCharacterUnlock");
-                    _lore.LoreTrigger(itemId);
-                }
-                else if (g.GameStats.ContractsUnlocked == 1 && itemId.StartsWith("c"))
-                {
-                    if(contractBuy == 1)
+                    // Contract Level Unlock Stage 0
+                    if (itemId == "ub00")
                     {
-                        _ui.NavMenuControl("FirstContractPurchase");
-                        _lore.LoreTrigger("FirstContractPurchase");
-                        _lore.LoreTrigger(itemId);
+                        var upgrade = _locate.LocateUpgrade(game, itemId);
+                        if (upgrade.ActualBuy == 1)
+                        {
+                            _ui.NavMenuControl("ContractLevel0Unlock");
+                        }
+                        if (upgrade.ActualBuy == 2)
+                        {
+                            _ui.NavMenuControl("ContractLevel1Unlock");
+                        }
                     }
-                }
-                else if (g.GameStats.ContractsUnlocked == 2 && itemId.StartsWith("uu"))
-                {
-                    _ui.NavMenuControl("FirstContractUnlock");
-                    _lore.LoreTrigger("FirstContractUnlock");
-                    _lore.LoreTrigger(itemId);
-                }
-                else if (g.GameStats.KnowledgesUnlocked == 1 && itemId.StartsWith("uk"))
-                {
-                    _ui.NavMenuControl("FirstKnowledgeUnlock");
-                    _lore.LoreTrigger("FirstKnowledgeUnlock");
-                    _lore.LoreTrigger(itemId);
-                }
-                else if (g.GameStats.TechUnlocked == 1 && itemId.StartsWith("uh"))
-                {
-                    _ui.NavMenuControl("FirstTechUnlock");
-                    _lore.LoreTrigger("FirstTechUnlock");
-                    _lore.LoreTrigger(itemId);
-                }
-                else if (itemId.StartsWith("c"))
-                {
-                    _ui.NavMenuControl(itemId, contractBuy.ToString());
-                    _lore.LoreTrigger(itemId, contractBuy.ToString());
-                }
-                else
-                {
-                    _ui.NavMenuControl(itemId);
-                    _lore.LoreTrigger(itemId);
+
+                    // Contract Level 0 Purchase Stage 0
+                    if (itemId == "c001")
+                    {
+                        if (contractBuy == 1)
+                        {
+                            _ui.NavMenuControl("FirstContract0Purchase");
+                        }
+                        if (contractBuy == 5)
+                        {
+                            _ui.NavMenuControl("5xContract0Purchase");
+                        }
+                    }
+
+                    // Contract Unlock Stage 0
+                    if (itemId == "uu001")
+                    {
+                        _ui.NavMenuControl("FirstContractUnlock");                       
+                    }
+
+                    // Contract Level 1 Purchase Stage 0
+                    if (itemId == "c011")
+                    {
+                        if (contractBuy == 1)
+                        {
+                            _ui.NavMenuControl("FirstContract1Purchase");
+                        }
+                    }
                 }
 
             }, save: true, ui: true);
@@ -276,13 +271,6 @@ namespace FurmaIdle.Services
 
             // Aplica efeitos baseada no estado final
             await _effect.ApplyEffect(ItemHelper.ItemType.Contract, contractId, stageId);
-
-            // UI / Lore uma vez só
-            await _game.Mutate(g =>
-            {
-                _ui.NavMenuControl(contractId, contractBuy.ToString());
-                _lore.LoreTrigger(contractId, contractBuy.ToString());
-            }, save: true, ui: true);
         }
 
         // -------- helpers de débito / stats / leitura --------

@@ -310,7 +310,11 @@
             if(StartsWith(upgrade.Id, "us"))
             {
                 await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
-                Log.Lore($"Fim de Jogo.");
+
+                if (upgrade.Id == "us01")
+                {
+                    await Expedition.FirstExpeditionStart();
+                }
             }
 
             if (_stage is not null)

@@ -970,7 +970,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Aumenta o ganho por Click na Casa de Ferri",
                 UnlockId = "x00",
-                MaxBuy = 5,
+                MaxBuy = 4,
                 PricingId = PricingHelper.PricingId.ClickGainS0,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpedition,
