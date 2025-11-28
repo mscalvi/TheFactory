@@ -7,27 +7,25 @@ namespace FurmaIdle.Services
 
     public interface IUiService
     {
-        Task LoadStage(string stageId);
-
         string? OpenMenuId { get; }
+        bool IsBusy { get; }
+        bool NotFirstExpedition { get; }
+        string? BusyMessage { get; }
         IEnumerable<NavItem> VisibleNav {  get; }
+
+        Task LoadStage(string stageId);
         void SetOpenMenu(string? id);
         void NavMenuControl(string controlItem, string? itemId = "", string? help = "", int? helpQuant = 0);
         void SyncMenusFromGame(GameModel g);
         string PanelClass(string classId);
+        void RaisePulse();
+        void SetBusy(string? message);
+        void ClearBusy();
 
         event Action? Changed;
         event Action? Pulse;
-
-        void RaisePulse();
-
-        bool IsBusy { get; }
-        string? BusyMessage { get; }
-
         event Action? BusyChanged;
 
-        void SetBusy(string? message);
-        void ClearBusy();
     }
 
     public sealed class UiService : IUiService
@@ -280,6 +278,8 @@ namespace FurmaIdle.Services
         #endregion
 
         #region Menu Control
+        public bool NotFirstExpedition { get; private set; } = false;
+
         public void NavMenuControl(string controlItem, string? itemId = "", string? help = "", int? helpQuant = 0)
         {
             var game = _game.CurrentGame;
@@ -376,6 +376,13 @@ namespace FurmaIdle.Services
                     break;
 
                 // Stage 1
+                case "Stage1Start":
+                    UnlockMenu("i5");
+
+                    SetOpenMenu("i5");
+
+                    _lore.LoreTrigger(controlItem);
+                    break;
                 case "FirstCharacterUnlock":
                     // Libera Menu de Expansion
                     UnlockMenu("i1");
@@ -387,28 +394,32 @@ namespace FurmaIdle.Services
                     {
                         ShowPanel("expansion-stagechars");
                     }
-                    if (IsHidden("expansion-upgrades"))
-                    {
-                        ShowPanel("expansion-upgrades");
-                    }
-                    if (IsHidden("expansion-status"))
-                    {
-                        ShowPanel("expansion-status");
-                    }
 
                     SetNotificationMenu("i1");
-                    break;
-                case "FirstStageUnlock":
-                    // Libera Menu de Stage e de Outside Market
-                    UnlockMenu("i2");
-                    UnlockMenu("i98");
 
-                    SetNotificationMenu("i98");
-                    SetOpenMenu("i2");
+                    _lore.LoreTrigger(controlItem);
+
+                    // Animation: piscar o Expansion Menu e (se tiver aberto) os Resources
+                    // Tips: Characters
+                    // Tips: Traits
+                    break;
+                case "FirstResourceUnlock":
+                    _lore.LoreTrigger(controlItem);
+
+                    // Animation: piscar os Recursos e as Specialties
+                    // Tips: Resources
+                    // Tips: Specialties
+                    break;
+                case "FirstExpeditionUnlock":
+                    NotFirstExpedition = true;
+
+                    _lore.LoreTrigger(controlItem);
+
+                    // Animation: piscar ExpeditonMenu
+                    // Tips: Expedition
                     break;
                 case "FirstKnowledgeUnlock":
                     // Libera Menu de Tech
-
                     if (IsHidden("tech-knowledge"))
                     {
                         ShowPanel("tech-knowledge");
@@ -422,9 +433,20 @@ namespace FurmaIdle.Services
                     UnlockMenu("i50");
 
                     SetNotificationMenu("i50");
+
+                    _lore.LoreTrigger(controlItem);
                     break;
                 case "FirstExpansionUnlock":
                     // Libera Menu de Archievments
+                    if (IsHidden("expansion-upgrades"))
+                    {
+                        ShowPanel("expansion-upgrades");
+                    }
+                    if (IsHidden("expansion-status"))
+                    {
+                        ShowPanel("expansion-status");
+                    }
+
                     if (IsHidden("game-status"))
                     {
                         ShowPanel("game-status");
@@ -433,17 +455,31 @@ namespace FurmaIdle.Services
                     UnlockMenu("i97");
 
                     SetNotificationMenu("i97");
+
+                    _lore.LoreTrigger(controlItem);
                     break;
                 case "FirstTechUnlock":
                     if (IsHidden("tech-done"))
                     {
                         ShowPanel("tech-done");
                     }
+
+                    _lore.LoreTrigger(controlItem);
                     break;
+                case "FirstStageUnlock":
+                    // Libera Menu de Stage e de Outside Market
+                    UnlockMenu("i2");
+                    UnlockMenu("i98");
+
+                    SetNotificationMenu("i98");
+                    SetOpenMenu("i2");
+
+                    _lore.LoreTrigger(controlItem);
+                    break;
+                // Adicionar Lore nos Locals, progressão da Guild
 
                 // Gerais
                 case "ExpeditionStart":
-
                     UnlockMenu("i5");
 
                     SetOpenMenu("i5");

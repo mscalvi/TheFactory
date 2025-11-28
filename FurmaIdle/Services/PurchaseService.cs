@@ -191,6 +191,34 @@ namespace FurmaIdle.Services
                         }
                     }
                 }
+                if(stage.Id == "s01")
+                {
+                    if (StartsWith(itemId, "up"))
+                    { 
+                        int chars = 0;
+
+                        foreach (var character in game.Characters)
+                        {
+                            if (character.Value.State == UnlockHelper.State.Unlocked)
+                            {
+                                chars++;
+                            }
+                        }
+
+                        if(chars == 2)
+                        {
+                            _ui.NavMenuControl("FirstCharacterUnlock");
+                        }
+                    }
+                    if (itemId == "ur01")
+                    {
+                        _ui.NavMenuControl("FirstResourceUnlock");
+                    }
+                    if (itemId == "ua011")
+                    {
+                        _ui.NavMenuControl("FirstExpeditionUnlock");
+                    }
+                }
 
             }, save: true, ui: true);
 
@@ -329,5 +357,7 @@ namespace FurmaIdle.Services
 
         private static long GetOrZero(Dictionary<string, long> dict, string id)
             => dict is not null && dict.TryGetValue(id, out var v) ? v : 0L;
+        static bool StartsWith(string? id, string prefix)
+            => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
     }
 }

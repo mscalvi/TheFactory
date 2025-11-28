@@ -300,31 +300,39 @@
         {
             freeProcess = false;
 
-            await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
-
-            if (StartsWith(upgrade.Id, "ue"))
+            try
             {
-                await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
-            }
-
-            if(StartsWith(upgrade.Id, "us"))
-            {
-                await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
-
-                if (upgrade.Id == "us01")
+                if (StartsWith(upgrade.Id, "ue") || StartsWith(upgrade.Id, "us"))
                 {
-                    await Expedition.FirstExpeditionStart();
-                    await UI.LoadStage("s01");
+                    UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
                 }
-            }
 
-            if (_stage is not null)
+                await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
+
+                if (StartsWith(upgrade.Id, "ue") || StartsWith(upgrade.Id, "us"))
+                {
+                    await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
+
+                    if (upgrade.Id == "us01")
+                    {
+                        await Expedition.SecondExpeditionStart();
+                        await UI.LoadStage("s01");
+                    }
+
+                    UI.ClearBusy();
+                }
+
+                if (_stage is not null)
+                {
+                    var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, _stage.Id);
+                    Tooltips.Show(hover);
+                }
+
+            }
+            finally
             {
-                var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, _stage.Id);
-                Tooltips.Show(hover);
+                freeProcess = true;
             }
-
-            freeProcess = true;
         }
         else
         {

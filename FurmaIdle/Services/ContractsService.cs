@@ -67,6 +67,7 @@ namespace FurmaIdle.Services
         }
 
         bool ExpeditionUnlocked = false;
+        bool NotFirstExpedition = false;
 
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
         {
@@ -185,7 +186,7 @@ namespace FurmaIdle.Services
 
             if (ExpeditionUnlocked == false)
             {
-                if (contractsUsed >= 30)
+                if (contractsUsed >= 30 && _ui.NotFirstExpedition)
                 {
                     _ui.NavMenuControl("UnlockExpedition");
                     ExpeditionUnlocked = true;

@@ -23,6 +23,7 @@ namespace FurmaIdle.Services
         List<CharacterModel> GetInExpCharacters(ExpeditionModel expedition);
 
         Task FirstExpeditionStart();
+        Task SecondExpeditionStart();
         Task LaunchExpedition(StageModel stage);
         Task EndExpedition(StageModel stage);
 
@@ -130,11 +131,6 @@ namespace FurmaIdle.Services
             var game = _game.CurrentGame;
             string stageId = game.SelectedStageId;
 
-            if (!Tutorial)
-            {
-                stageId = "s01";
-            }
-
             var stage = _locate.LocateStage(game, stageId);
             var expedition = stage?.Expedition;
 
@@ -181,8 +177,58 @@ namespace FurmaIdle.Services
             }
 
             _ui.NavMenuControl("GameCreation");
+        }
 
-            Tutorial = false;
+        public async Task SecondExpeditionStart()
+        {
+            var game = _game.CurrentGame;
+
+            var stage = _locate.LocateStage(game, "s01");
+            var expedition = stage?.Expedition;
+
+            await _game.Mutate(game =>
+            {
+                if (expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
+                {
+                    return;
+                }
+                else
+                {
+                    expedition = new ExpeditionModel();
+                    stage.Expedition = expedition;
+                }
+
+                stage.ExpeditionStats = new StatsModel();
+
+                expedition.PartyIds.Clear();
+
+                foreach (var character in game.Characters)
+                {
+                    if (character.Value.State == State.Unlocked)
+                    {
+                        expedition.PartyIds.Add(character.Key);
+                        character.Value.CharState = CharState.InStage;
+                        character.Value.InStageId = stage.Id;
+                    }
+                }
+
+                expedition.StageId = stage.Id;
+                expedition.ExpeditionState = UnlockHelper.ExpeditionState.Active;
+                expedition.StartedAt = DateTimeOffset.UtcNow;
+
+                expedition.FinishedAt = null;
+
+            }, save: true);
+
+            foreach (var characterId in expedition.PartyIds)
+            {
+
+                var character = _locate.LocateCharacter(game, characterId);
+                var traitId = character.TraitId;
+                await _effect.ApplyEffect(ItemHelper.ItemType.Trait, traitId, stage.Id);
+            }
+
+            _ui.NavMenuControl("Stage1Start");
         }
 
         public async Task LaunchExpedition(StageModel stage)

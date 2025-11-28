@@ -85,6 +85,41 @@
                     break;
 
                 // Stage 1
+                case "Stage1Start":
+                    // info.Contexto
+                    //ferri.procurando emprego
+                    break;
+                case "FirstCharacterUnlock":
+                    // info.personagens na base
+                    // ferri - 
+                    // personagem - 
+                    break;
+                case "FirstResourceUnlock":
+                    // info.resources
+                    // ferri.
+                    // personagem na base.
+                    break;
+                case "FirstExpeditionUnlock":
+                    // info.expedition e reset
+                    // personagem na base pedindo pra entrar
+                    break;
+                case "FirstKnowledgeUnlock":
+                    // info.knowledge
+                    // ferri.falando que estudar rende conhecimento
+                    break;
+                case "FirstExpansionUnlock":
+                    // info.expansions
+                    // outro personagem.falando que mais gente pode ir junto
+                    break;
+                case "FirstTechUnlock":
+                    // info.tech
+                    // ferri.conhecimentos especificos
+                    break;
+                case "FirstStageUnlock":
+                    // info.stages
+                    // lore.reconquista da ilha
+                    // ferri.buscar prosperidade
+                    break;
 
                 default: break;
             }

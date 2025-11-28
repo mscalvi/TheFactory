@@ -790,12 +790,12 @@ namespace FurmaIdle.Data
 
             #region Desbloqueio de Party Size (PartyCapUnlock)
             #region s01
-            ["ua01"] = new UpgradeModel
+            ["ua011"] = new UpgradeModel
             {
-                Id = "ua01",
+                Id = "ua011",
                 Name = "2 Membros Ativos",
                 Level = 1,
-                Icon = "icons/upgrades/ua01.svg",
+                Icon = "icons/upgrades/ua011.svg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região",
                 UnlockId = "x10",
@@ -809,12 +809,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1,
             },
-            ["ua02"] = new UpgradeModel
+            ["ua012"] = new UpgradeModel
             {
-                Id = "ua02",
+                Id = "ua012",
                 Name = "3 Membros Ativos",
                 Level = 2,
-                Icon = "icons/upgrades/ua02.svg",
+                Icon = "icons/upgrades/ua012.svg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região",
                 UnlockId = "x11",
@@ -828,12 +828,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1,
             },
-            ["ua03"] = new UpgradeModel
+            ["ua013"] = new UpgradeModel
             {
-                Id = "ua03",
+                Id = "ua013",
                 Name = "4 Membros Ativos",
                 Level = 3,
-                Icon = "icons/upgrades/ua03.svg",
+                Icon = "icons/upgrades/ua013.svg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Região",
                 UnlockId = "x12",
