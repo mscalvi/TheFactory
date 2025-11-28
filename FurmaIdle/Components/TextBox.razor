@@ -6,39 +6,61 @@
 @inject IUiLogService UiLog
 
 <div class="game-area">
-<section class="text-box panel" role="status" aria-live="polite">
-    <div class="msg-body" @ref="_msgBodyRef">
-        <div class="msg-list">
-                @if (_msgs.Count == 0)
+    <section class="text-box panel" role="status" aria-live="polite">
+        <!-- Barra de filtros -->
+        <header class="msg-filters">
+            <span class="msg-filters-label">Mostrar:</span>
+
+            <label class="msg-filter">
+                <input type="checkbox" @bind="_showLore" />
+                <span>História</span>
+            </label>
+
+            <label class="msg-filter">
+                <input type="checkbox" @bind="_showInfo" />
+                <span>Sistema</span>
+            </label>
+        </header>
+
+        <!-- Lista de mensagens -->
+        <div class="msg-body" @ref="_msgBodyRef">
+            <div class="msg-list">
+                @if (!_msgs.Any(m => PassesFilter(m)))
                 {
-                    <em>Sem mensagens.</em>
+                    <em>Sem mensagens visíveis.</em>
                 }
                 else
                 {
-                    @foreach (var m in _msgs)
+                    @foreach (var m in _msgs.Where(PassesFilter))
                     {
                         <div class="msg-row @Css(m.Kind)">
                             <span class="msg-time">@m.Time.ToString("HH:mm:ss: ")</span>
-                            <span class="msg-text">@m.Text</span>
+                            <span class="msg-text">@DisplayText(m)</span>
                         </div>
                     }
                 }
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 </div>
 
 @code {
     ElementReference _msgBodyRef;
     bool _scrollPending;
 
-    enum MsgKind { Info, Lore, Error, Unlock }
+    // filtros (ligados por padrão)
+    bool _showLore = true; // Lore + personagens
+    bool _showInfo = true; // Info + Erros
+
+    enum MsgKind { Error, Info, Lore, Ferri }
+
     sealed class UiMessage
     {
         public DateTime Time { get; init; } = DateTime.Now;
         public string Text { get; init; } = "";
         public MsgKind Kind { get; init; } = MsgKind.Info;
     }
+
     readonly List<UiMessage> _msgs = new();
 
     protected override void OnInitialized()
@@ -58,7 +80,7 @@
                     {
                         UiLogKind.Lore => MsgKind.Lore,
                         UiLogKind.Error => MsgKind.Error,
-                        UiLogKind.Unlock => MsgKind.Unlock,
+                        UiLogKind.Ferri => MsgKind.Ferri,
                         _ => MsgKind.Info
                     }
                 });
@@ -69,7 +91,6 @@
 
         UiLog.OnMessage += HandleUiLogMessage;
     }
-
 
     public void Dispose()
     {
@@ -96,18 +117,38 @@
             {
                 UiLogKind.Lore => MsgKind.Lore,
                 UiLogKind.Error => MsgKind.Error,
-                UiLogKind.Unlock => MsgKind.Unlock,
+                UiLogKind.Ferri => MsgKind.Ferri,
                 _ => MsgKind.Info
             }
         });
+
+        _scrollPending = true;
         InvokeAsync(StateHasChanged);
     }
+
+    // História = Lore + Ferri (e outros personagens no futuro)
+    // Sistema  = Info + Error
+    bool PassesFilter(UiMessage m) => m.Kind switch
+    {
+        MsgKind.Lore => _showLore,
+        MsgKind.Ferri => _showLore,
+        MsgKind.Info => _showInfo,
+        MsgKind.Error => _showInfo,
+        _ => true
+    };
+
+    // Nome do personagem na frente (por enquanto só Ferri)
+    string DisplayText(UiMessage m) => m.Kind switch
+    {
+        MsgKind.Ferri => $"Ferri — {m.Text}",
+        _ => m.Text
+    };
 
     string Css(MsgKind k) => k switch
     {
         MsgKind.Lore => "is-lore",
         MsgKind.Error => "is-error",
-        MsgKind.Unlock => "is-unlock",
+        MsgKind.Ferri => "is-ferri",
         _ => "is-info"
     };
 }

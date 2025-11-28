@@ -48,11 +48,11 @@ namespace FurmaIdle.Services
                 {
                     _ui.NavMenuControl("FirstClick");
                 }
-                if (Clicks == 10)
+                if (Clicks == 20)
                 {
                     _ui.NavMenuControl("10thClick");
                 }
-                if (Clicks == 20)
+                if (Clicks == 50)
                 {
                     _ui.NavMenuControl("20thClick");
                 }

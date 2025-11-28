@@ -1,6 +1,6 @@
-﻿.text-box{
+﻿.text-box {
     display: grid;
-    grid-template-rows: 1fr;
+    grid-template-rows: auto 1fr; /* filtros + log */
     height: 100%;
     width: 100%;
     overflow: hidden;
@@ -49,6 +49,37 @@
     line-height: 1.25;
 }
 
+.msg-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.75rem;
+    user-select: none;
+}
+
+.msg-filters-label {
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+}
+
+.msg-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+}
+
+    .msg-filter input[type="checkbox"] {
+        width: 11px;
+        height: 11px;
+        margin: 0;
+    }
+
+
 /* cores por tipo */
 .msg-row.is-info .msg-text {
     color: whitesmoke;
@@ -62,6 +93,7 @@
     color: darkred;
 }
 
-.msg-row.is-unlock .msg-text {
+.msg-row.is-ferri .msg-text {
     color: forestgreen;
 }
+

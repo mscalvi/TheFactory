@@ -314,6 +314,7 @@
                 if (upgrade.Id == "us01")
                 {
                     await Expedition.FirstExpeditionStart();
+                    await UI.LoadStage("s01");
                 }
             }
 

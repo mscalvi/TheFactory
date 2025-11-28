@@ -17,7 +17,7 @@ namespace FurmaIdle.Data
             ["c001"] = new ContractModel
             {
                 Id = "c001",
-                Name = "Varrer o Chão",
+                Name = "Estudar",
                 Description = "",
                 Lore = "",
                 Icon = "icons/contracts/c001.svg",

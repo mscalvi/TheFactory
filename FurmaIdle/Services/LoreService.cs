@@ -79,7 +79,7 @@
                     _log.Info("Os Objetivos, disponíveis na parte superior do menu de Melhorias, permitem desbloquear a próxima parte" +
                         "da história, quer seja na mesma Região, ou em uma próxima.");
                     _log.Info("Após comprados, os Objetivos causam um Soft Reset de Expansão, reiniciando o progresso e liberando novos" +
-                        "recursos.");
+                        " recursos.");
                     _log.Ferri("Agora, é só questão de tempo. Vou reabrir a taberna, e vou recrutar uma equipe. Está na hora de fundar" +
                         " a Guilda da Ilha de Vera.");
                     break;

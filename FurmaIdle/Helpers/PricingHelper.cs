@@ -133,7 +133,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ResourceUnlock01] = new Entry("m01", 1500, 1.0, CostFactor.None, 1),
 
                 // Unlock Stage X -> X+1
-                [PricingId.StageUnlock0] = new Entry("m01", 5000, 1.0, CostFactor.None, 1),
+                [PricingId.StageUnlock0] = new Entry("m01", 2000, 1.0, CostFactor.None, 1),
                 [PricingId.StageUnlock1] = new Entry("m01", 1000000000000, 1.0, CostFactor.None, 1),
 
                 // Unlock Expansion Stage X

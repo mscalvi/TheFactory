@@ -6,7 +6,15 @@
 @inject ITooltipService Tooltips
 
 <div class="game-area">
-    <TextBox />
+    @if (Tooltips.Current is not null)
+    {
+        <TooltipBox />
+    }
+    else
+    {
+        <p>Placeholder </p>
+        // <LogoBox />
+    }
 </div>
 
 @code {
