@@ -28,6 +28,7 @@ namespace FurmaIdle.Models
         public string CoinId { get; set; }
         public string? KnowledgeFactor1 { get; set; } = "";
         public string? KnowledgeFactor2 { get; set; } = "";
+        public ContractHelper.Context Context { get; set; }
 
     }
 }

@@ -34,8 +34,13 @@ namespace FurmaIdle.Data
                 MaxContractLevel = 1,
                 CoinId = "m01",
                 ClickId = "i0i",
+                Influence = 100,
                 Modifiers = new List<ModifierModel>(),
                 Expedition = new ExpeditionModel(),
+                VisibleFrom = new List<string> {
+                    "s00",
+                },
+                Context = ContractHelper.Context.UrbanSmall,
             },
             #endregion
 
@@ -67,8 +72,13 @@ namespace FurmaIdle.Data
                 MaxContractLevel = 6,
                 CoinId = "m01",
                 ClickId = "i01",
+                Influence = 100,
                 Modifiers = new List<ModifierModel>(),
                 Expedition = new ExpeditionModel(),
+                VisibleFrom = new List<string> {
+                    "s00",
+                },
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.WildNormal,
             },
             #endregion
 
@@ -100,8 +110,13 @@ namespace FurmaIdle.Data
                 MaxContractLevel = 6,
                 CoinId = "m02",
                 ClickId = "i02",
+                Influence = 10,
                 Modifiers = new List<ModifierModel>(),
                 Expedition = new ExpeditionModel(),
+                VisibleFrom = new List<string> {
+                    "s01",
+                },
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.WildNormal,
             },
             #endregion
         };
@@ -134,8 +149,11 @@ namespace FurmaIdle.Data
                 Expedition = stage.Expedition,
                 CoinId = stage.CoinId,
                 ClickId = stage.ClickId,
+                Influence = stage.Influence,
                 Modifiers = stage.Modifiers,
                 UseState = stage.UseState,
+                VisibleFrom = stage.VisibleFrom,
+                Context = stage.Context,
             };
         }
 

@@ -34,6 +34,7 @@ namespace FurmaIdle.Helpers
             TechUnlockk05,          // Unlock Tech Know 05
 
             ShipUnlock1,             // Unlock Ship Stage 1
+            RouteUnlock1,            // Unlock Route Stage 1
 
             // Party
             ContractCapUnlock0,     // Contract Cap Increase Stage 0
@@ -149,6 +150,9 @@ namespace FurmaIdle.Helpers
                 [PricingId.TechUnlockk05] = new Entry("k05", 1, 1.0, CostFactor.Level, 6.2),
 
                 // Unlock Ship Stage X Level X
+                [PricingId.ShipUnlock1] = new Entry("m01", 10000000000, 1.0, CostFactor.Level, 4.2),
+
+                // Unlock Route Stage X Level X
                 [PricingId.ShipUnlock1] = new Entry("m01", 10000000000, 1.0, CostFactor.Level, 4.2),
 
                 // Party Stage X

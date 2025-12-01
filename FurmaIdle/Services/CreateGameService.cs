@@ -71,6 +71,8 @@ namespace FurmaIdle.Services
                     Knowledges = Seed("[CGS] Knowledges", () => KnowledgeData.CreateInitialStates()),
                     Locals = Seed("[CGS] Locals", () => LocalData.CreateInitialStates()),
                     Resources = Seed("[CGS] Resources", () => ResourceData.CreateInitialStates()),
+                    Routes = Seed("[CGS] Routes", () => RouteData.CreateInitialStates()),
+                    Ships = Seed("[CGS] Ships", () => ShipData.CreateInitialStates()),
                     Specialties = Seed("[CGS] Specialties", () => SpecialtyData.CreateInitialStates()),
                     Stages = Seed("[CGS] Stages", () => StageData.CreateInitialStates()),
                     Techs = Seed("[CGS] Techs", () => TechData.CreateInitialStates()),

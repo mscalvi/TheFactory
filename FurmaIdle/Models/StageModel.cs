@@ -1,4 +1,5 @@
 ﻿using FurmaIdle.Helpers;
+using System.Runtime.InteropServices;
 
 namespace FurmaIdle.Models
 {
@@ -15,14 +16,16 @@ namespace FurmaIdle.Models
         public Dictionary<string, int>? ActiveContracts { get; set; } = new(StringComparer.Ordinal);
         public Dictionary<string, double> ActiveContractsProgress { get; set; } = new Dictionary<string, double>();
         public List<int> lockedContractLevel { get; set; } = new();
-        public ExpeditionModel Expedition { get; set; } = new ExpeditionModel();
 
+        // Status
+        public ExpeditionModel Expedition { get; set; } = new ExpeditionModel();
         public UnlockHelper.State State { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; }
         public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         public StatsModel ExpeditionStats { get; set; } = new();
 
+        // Atributes
         public int StartPartySize { get; set; }
         public int MaxPartySize { get; set; }
 
@@ -31,6 +34,10 @@ namespace FurmaIdle.Models
 
         public string CoinId { get; set; }
         public string ClickId { get; set; }
+
+        public double Influence { get; set; }
+        public List<string> VisibleFrom { get; set; }
+        public ContractHelper.Context Context { get; set; }
 
         // Modifier
         public List<ModifierModel> Modifiers { get; set; } = new List<ModifierModel> ();

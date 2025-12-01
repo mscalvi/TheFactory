@@ -14,6 +14,34 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, UpgradeModel> All = new()
         {
+            #region Definições de Nomenclatura
+            // a - 
+            // b - 
+            // c - Contracts
+            // d - 
+            // e - Specialties
+            // f - 
+            // g - 
+            // h - 
+            // i - Clicks
+            // j - 
+            // k - Knowledges
+            // l - Locals
+            // m - Coins
+            // n - Ships
+            // o - Traits
+            // p - Characters
+            // q - 
+            // r - Resources
+            // s - Stages
+            // t - Techs
+            // u - Upgrades
+            // v - 
+            // w - 
+            // x - Expansions
+            // y - 
+            // z - Routes
+
             // ua - Unlock Party Size
             // ub - Unlock Contract Level
             // uc - Upgrade Contract
@@ -39,7 +67,8 @@ namespace FurmaIdle.Data
             // uw -
             // ux - Upgrade Expansion Unique
             // uy -
-            // uz -
+            // uz - Unlock Route
+            #endregion
 
             #region Unlock
             #region Desbloqueio de Contratos (Contracts Unlock)
@@ -797,7 +826,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/un01.svg",
                 Lore = "",
                 Description = "Libera o Navio",
-                UnlockId = "x13",
+                UnlockId = "uz12",
                 StageId = "s01",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ShipUnlock1,
@@ -805,6 +834,29 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "n01",
                 EffectType = EffectHelper.EffectType.ShipUnlock,
+                EffectOp = EffectHelper.EffectOperation.Unlock,
+                EffectSupertype = EffectHelper.EffectSupertype.Unlock,
+                EffectValue = 0,
+            },
+            #endregion
+
+            #region Desbloqueio de Rotas (Route Unlock)
+            ["uz12"] = new UpgradeModel
+            {
+                Id = "uz12",
+                Name = "Rota entre Ilha de Vera e ZZZ",
+                Level = 1,
+                Icon = "icons/upgrades/uz12.svg",
+                Lore = "",
+                Description = "Libera a Rota",
+                UnlockId = "l11",
+                StageId = "s01",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.RouteUnlock1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "z12",
+                EffectType = EffectHelper.EffectType.RouteUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,

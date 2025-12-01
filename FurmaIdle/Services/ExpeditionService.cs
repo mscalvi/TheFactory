@@ -361,7 +361,7 @@ namespace FurmaIdle.Services
                         {
                             var contract = _locate.LocateContract(game, contracts.Key);
                             expansion.inUseContracts.Remove(contracts.Key);
-                            contract.GameUseState = UnlockHelper.ContractState.Avaliable;
+                            contract.GameUseState = UnlockHelper.ContractState.Available;
                         }
                     }
 
@@ -520,7 +520,7 @@ namespace FurmaIdle.Services
                             {
                                 var contract = _locate.LocateContract(game, contracts.Key);
                                 expansion.inUseContracts.Remove(contracts.Key);
-                                contract.GameUseState = UnlockHelper.ContractState.Avaliable;
+                                contract.GameUseState = UnlockHelper.ContractState.Available;
                             }
                         }
 

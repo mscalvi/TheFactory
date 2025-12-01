@@ -125,7 +125,7 @@
                                     }
                                     else
                                     {
-                                        var ids = Contracts.AvaliableContracts(Game.CurrentGame, _stage.Id);
+                                        var ids = Contracts.AvailableContracts(Game.CurrentGame, _stage.Id);
                                         var list = ids
                                         .Select(id => Locate.LocateContract(Game.CurrentGame, id))
                                         .Where(c => c is not null && c.Level == level)

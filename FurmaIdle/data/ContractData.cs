@@ -322,7 +322,7 @@ namespace FurmaIdle.Data
                 UnlockId = contract.UnlockId,
                 Persistence = contract.Persistence,
                 State = contract.State,
-                GameUseState = UnlockHelper.ContractState.Avaliable,
+                GameUseState = UnlockHelper.ContractState.Available,
                 CoinId = contract.CoinId,
                 KnowledgeFactor1 = contract.KnowledgeFactor1,
                 KnowledgeFactor2 = contract.KnowledgeFactor2,

@@ -2,7 +2,7 @@
 
 namespace FurmaIdle.Models
 {
-    public class ShipModel
+    public class RouteModel
     {
         // Basics
         public string Id { get; set; }
@@ -19,14 +19,12 @@ namespace FurmaIdle.Models
         // Status
         public string UnlockId { get; set; }
         public UnlockHelper.State State { get; set; }
-        public UnlockHelper.ShipState ShipState { get; set; }
-        public string? InStageId { get; set; }
-        public string? InRouteId { get; set; }
-        public double TravelProgress { get; set; }
+        public UnlockHelper.RouteState RouteState { get; set; }
         public UnlockHelper.Persistence Persistence { get; set; } = UnlockHelper.Persistence.Permanent;
 
         // Atributes
-        public double Speed { get; set; }
-        public int MaxTripulation { get; set; }
+        public string PointA { get; set; }
+        public string PointB { get; set; }
+        public double Distance { get; set; }
     }
 }

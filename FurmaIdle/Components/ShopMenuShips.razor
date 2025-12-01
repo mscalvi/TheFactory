@@ -8,20 +8,118 @@
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
+@inject IShipService Ships
 
-<div class="menu-root">
+<div class="menu-root ships-root">
     @if (!Game.IsReady || _stage is null)
     {
-        <div class="contracts-placeholder">Stage não Selecionado</div>
+        <div class="contracts-placeholder">Stage não selecionado.</div>
     }
     else
     {
-        <p>Placeholder Ships</p>
+        @if (_ships.Count == 0)
+        {
+            <div class="ships-empty">
+                <p>Nenhum navio atracado neste porto.</p>
+                <p class="ships-empty-hint">Construa um navio e traga-o para esta região para começar a explorá-la.</p>
+            </div>
+        }
+        else
+        {
+            <div class="ships-scroll">
+                @foreach (var ship in _ships)
+                {
+                    var selectedRouteId = GetSelectedRouteId(ship.Id);
+                    var routesFromHere = _routesFromStage;
+
+                    <article class="ship-card">
+                        <header class="ship-header">
+                            <div class="ship-icon">
+                                @if (!string.IsNullOrWhiteSpace(ship.Icon))
+                                {
+                                    <img src="@ship.Icon" alt="@ship.Name" />
+                                }
+                                else
+                                {
+                                    <div class="ship-icon-fallback">@ship.Id</div>
+                                }
+                            </div>
+                            <div class="ship-header-text">
+                                <div class="ship-name">@ship.Name</div>
+                                <div class="ship-sub">
+                                    @ShipStateLabel(ship)
+                                </div>
+                            </div>
+                        </header>
+
+                        <section class="ship-body">
+                            <div class="ship-field">
+                                <label for="@($"route-select-{ship.Id}")" class="ship-label">
+                                    Rota:
+                                </label>
+                                <select id="@($"route-select-{ship.Id}")"
+                                        class="ship-select"
+                                        @onchange="e => OnRouteSelected(ship.Id, e.Value?.ToString())">
+                                    <option value="">Selecione uma rota...</option>
+                                    @foreach (var routeFrom in routesFromHere)
+                                    {
+                                        <option value="@routeFrom.Id"
+                                                selected="@(routeFrom.Id == selectedRouteId)">
+                                            @routeFrom.Name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(selectedRouteId))
+                            {
+                                var routeSelected = FindRoute(selectedRouteId);
+                                if (routeSelected is not null)
+                                {
+                                    <div class="ship-route-info">
+                                        <div class="ship-route-label">@RouteActionLabel(routeSelected)</div>
+                                        <div class="ship-route-meta">
+                                            Distância: @routeSelected.Distance
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </section>
+
+                        <footer class="ship-actions">
+                            @{
+                                bool hasRoute = !string.IsNullOrWhiteSpace(selectedRouteId);
+                                var route = hasRoute ? FindRoute(selectedRouteId!) : null;
+                                bool canStart = hasRoute && route is not null && CanStartVoyage(ship, route);
+                            }
+
+                            <button class="btn ship-start-button @(canStart ? null : "is-locked")"
+                                    disabled="@( !canStart )"
+                                    @onclick="() => StartVoyage(ship, route)">
+                                @if (route is null)
+                                {
+                                    <span>Escolha uma rota</span>
+                                }
+                                else
+                                {
+                                    <span>@RouteButtonLabel(ship, route)</span>
+                                }
+                            </button>
+                        </footer>
+                    </article>
+                }
+            </div>
+        }
     }
 </div>
 
 @code {
     private StageModel? _stage;
+    private readonly List<ShipModel> _ships = new();
+    private readonly List<RouteModel> _routesFromStage = new();
+
+    // shipId -> routeId selecionada na UI
+    private readonly Dictionary<string, string?> _selectedRouteByShip = new();
 
     protected override void OnInitialized()
     {
@@ -36,6 +134,9 @@
 
     private void RefreshStage()
     {
+        _ships.Clear();
+        _routesFromStage.Clear();
+
         if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
@@ -43,7 +144,136 @@
         }
 
         var g = Game.CurrentGame;
-        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        if (!g.Stages.TryGetValue(Game.CurrentGame.SelectedStageId, out var st))
+        {
+            _stage = null;
+            return;
+        }
+
         _stage = st;
+
+        // Carrega navios atracados neste stage e desbloqueados
+        if (g.Ships is not null)
+        {
+            foreach (var ship in g.Ships.Values)
+            {
+                if (ship is null) continue;
+                if (ship.State != UnlockHelper.State.Unlocked)
+                    continue;
+                if (!string.Equals(ship.InStageId, _stage.Id, StringComparison.Ordinal))
+                    continue;
+
+                _ships.Add(ship);
+            }
+        }
+
+        // Carrega rotas que saem deste stage
+        if (g.Routes is not null)
+        {
+            foreach (var route in g.Routes.Values)
+            {
+                if (route is null) continue;
+                if (!string.Equals(route.PointA, _stage.Id, StringComparison.Ordinal))
+                    continue;
+
+                // aqui você pode filtrar por RouteState se quiser:
+                // if (route.RouteState == UnlockHelper.RouteState.Blocked) continue;
+
+                _routesFromStage.Add(route);
+            }
+        }
+
+        // Ordena para visual estável
+        _ships.Sort((a, b) => string.Compare(a.Id, b.Id, StringComparison.Ordinal));
+        _routesFromStage.Sort((a, b) => string.Compare(a.Id, b.Id, StringComparison.Ordinal));
+    }
+
+    private string? GetSelectedRouteId(string shipId)
+    {
+        if (_selectedRouteByShip.TryGetValue(shipId, out var id))
+            return id;
+        return null;
+    }
+
+    private void OnRouteSelected(string shipId, string? routeId)
+    {
+        if (string.IsNullOrWhiteSpace(routeId))
+        {
+            _selectedRouteByShip[shipId] = null;
+        }
+        else
+        {
+            _selectedRouteByShip[shipId] = routeId;
+        }
+
+        StateHasChanged();
+    }
+
+    private RouteModel? FindRoute(string routeId)
+    {
+        var g = Game.CurrentGame;
+        if (g?.Routes is null) return null;
+
+        g.Routes.TryGetValue(routeId, out var route);
+        return route;
+    }
+
+    private string ShipStateLabel(ShipModel ship)
+    {
+        return ship.ShipState switch
+        {
+            UnlockHelper.ShipState.InDiscovery => "Em viagem de descoberta",
+            UnlockHelper.ShipState.InRoute => "Em rota",
+            UnlockHelper.ShipState.InStage => "Atracado",
+            _ => "Indefinido"
+        };
+    }
+
+    private string RouteActionLabel(RouteModel route)
+    {
+        if (IsRouteKnown(route))
+            return "Melhorar relações com esta região.";
+        else
+            return "Descobrir essa rota marítima.";
+    }
+
+    private string RouteButtonLabel(ShipModel ship, RouteModel route)
+    {
+        if (ship.ShipState == UnlockHelper.ShipState.InDiscovery ||
+            ship.ShipState == UnlockHelper.ShipState.InRoute)
+        {
+            return "Viagem em andamento...";
+        }
+
+        return IsRouteKnown(route)
+            ? "Iniciar rota para melhorar relações"
+            : "Iniciar viagem de descoberta";
+    }
+
+    private bool CanStartVoyage(ShipModel ship, RouteModel route)
+    {
+        // Delega para o serviço, que conhece todas as regras.
+        return Ships.CanStartVoyage(ship, route);
+    }
+
+    private bool IsRouteKnown(RouteModel route)
+    {
+        return route.RouteState == UnlockHelper.RouteState.Known;
+    }
+
+    private void StartVoyage(ShipModel ship, RouteModel? route)
+    {
+        if (route is null) return;
+
+        var ok = Ships.StartVoyage(ship.Id, route.Id);
+
+        if (!ok)
+        {
+            Log.Error($"[Navios] Não foi possível iniciar a viagem de {ship.Name} para {route.Name}.");
+        }
+
+        // O Mutate do ShipService deve disparar GameChanged e chamar RefreshStage via OnGameChanged,
+        // então não é obrigatório chamar RefreshStage aqui. Mas não faz mal reforçar:
+        // RefreshStage();
     }
 }

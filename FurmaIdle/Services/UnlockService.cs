@@ -410,5 +410,30 @@ namespace FurmaIdle.Services
             }, save: true);
         }
         #endregion
+
+        #region Route Unlock
+        public async Task Unlockroute(string routeId)
+        {
+            await _game.Mutate(game =>
+            {
+                var route = _locate.LocateRoute(game, routeId);
+
+                foreach (var up in game.Upgrades)
+                {
+                    if (string.Equals(up.Value.UnlockId, route.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
+                        up.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
+                    }
+                }
+
+                route.State = UnlockHelper.State.Unlocked;
+                route.RouteState = UnlockHelper.RouteState.Available;
+                Console.WriteLine($"[Unlock] Route {route.Id}: {route.State}");
+                game.GameStats.RoutesUnlocked++;
+            }, save: true);
+        }
+        #endregion
     }
 }

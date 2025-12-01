@@ -19,6 +19,8 @@ builder.Services.AddSingleton<IContractsService, ContractsService>();
 builder.Services.AddSingleton<ContractsTickSink>();
 builder.Services.AddSingleton<IResourcesService, ResourcesService>();
 builder.Services.AddSingleton<ResourcesTickSink>();
+builder.Services.AddSingleton<IShipService, ShipService>();
+builder.Services.AddSingleton<ShipTickSink>();
 builder.Services.AddSingleton<ISpecialtiesService, SpecialtiesService>();
 builder.Services.AddSingleton<SpecialtiesTickSink>();
 

@@ -16,6 +16,7 @@
             untilExpedition,
             untilTimer,
         }
+
         public enum CharState
         {
             Blocked,
@@ -23,24 +24,36 @@
             InStage,
             InLine
         }
+
         public enum ContractState
         {
             InUse,
-            Avaliable,
+            Available,
             Blocked,
         }
+
         public enum ExpeditionState
         {
             Active,
             Idle,
         }
+
         public enum ShipState
         {
             Blocked,
             InBase,
             InStage,
             InLine,
-            InTrip,
+            InDiscovery,
+            InRoute,
+        }
+
+        public enum RouteState
+        {
+            Blocked,
+            Available,
+            Known,
+            Discovering,
         }
     }
 }

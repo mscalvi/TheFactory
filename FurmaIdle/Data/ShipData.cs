@@ -24,8 +24,12 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 ShipState = UnlockHelper.ShipState.Blocked,
                 InStageId = null,
+                InRouteId = null,
+                TravelProgress = 0,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
+                MaxTripulation = 2,
+                Speed = 10,
             },
             #endregion
         };
@@ -45,9 +49,13 @@ namespace FurmaIdle.Data
                 State = ship.State,
                 ShipState = ship.ShipState,
                 InStageId = ship.InStageId,
+                InRouteId = ship.InRouteId,
+                TravelProgress = ship.TravelProgress,
                 Persistence = ship.Persistence,
                 Modifiers = ship.Modifiers,
                 UseState = ship.UseState,
+                MaxTripulation = ship.MaxTripulation,
+                Speed = ship.Speed,
             };
         }
 
@@ -83,9 +91,13 @@ namespace FurmaIdle.Data
                     State = ship.State,
                     ShipState = ship.ShipState,
                     InStageId = ship.InStageId,
+                    InRouteId = ship.InRouteId,
+                    TravelProgress = ship.TravelProgress,
                     Persistence = ship.Persistence,
                     Modifiers = ship.Modifiers,
                     UseState = ship.UseState,
+                    MaxTripulation = ship.MaxTripulation,
+                    Speed = ship.Speed,
                 };
             }
             return dict;

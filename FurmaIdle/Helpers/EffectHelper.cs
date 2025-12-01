@@ -42,6 +42,7 @@
             LocalUnlock,
             StageUnlock,
             ShipUnlock,
+            RouteUnlock,
 
             // Others
             ContractLevelUnlock,

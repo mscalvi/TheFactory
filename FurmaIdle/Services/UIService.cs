@@ -4,7 +4,6 @@ using static FurmaIdle.Services.UiService;
 
 namespace FurmaIdle.Services
 {
-
     public interface IUiService
     {
         string? OpenMenuId { get; }

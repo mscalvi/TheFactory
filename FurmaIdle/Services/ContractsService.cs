@@ -10,7 +10,7 @@ namespace FurmaIdle.Services
         void TickContracts(GameModel game, string stageId, double dtSeconds);
 
         (int ContractsCap, int ContractsUsed, int ContractsLevel, int ContractsMaxLevel) GetStageInfo(GameModel game, string stageId);
-        IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId);
+        IReadOnlyList<string> AvailableContracts(GameModel game, string stageId);
         string GetChosenContractIdForLevel(GameModel game, string stageId, int level);
 
         (string CoinId, double CoinsPerCycle, double SecondsPerCycle, double TotalPerCycle, double TotalPerSecond) GetContractInfo(ContractModel contract, StageModel stage);
@@ -203,7 +203,7 @@ namespace FurmaIdle.Services
             return (contractsCap, contractsUsed, contractsLevel, contractsMaxLevel);
         }
 
-        public IReadOnlyList<string> AvaliableContracts(GameModel game, string stageId)
+        public IReadOnlyList<string> AvailableContracts(GameModel game, string stageId)
         {
             if (game is null) return Array.Empty<string>();
 
