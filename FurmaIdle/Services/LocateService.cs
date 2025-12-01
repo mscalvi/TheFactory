@@ -20,6 +20,7 @@ namespace FurmaIdle.Services
         SpecialtyModel LocateSpecialty(GameModel game, string specialtyId);
         ClickModel LocateStageClick(GameModel game, string stageId);
         TraitModel LocateTrait(GameModel game, string traitId);
+        ShipModel LocateShip(GameModel game, string shipId);
     }
 
     public sealed class LocateService : ILocateService
@@ -160,6 +161,15 @@ namespace FurmaIdle.Services
             }
 
             throw new KeyNotFoundException($"Click do Stage '{stageId}' não encontrado no jogo atual.");
+        }
+
+        public ShipModel LocateShip(GameModel game, string shipId)
+        {
+            if (string.IsNullOrWhiteSpace(shipId))
+                throw new ArgumentException("shipId inválido.", nameof(shipId));
+
+            if (game.Ships.TryGetValue(shipId, out var c)) return c;
+            throw new KeyNotFoundException($"Ship '{shipId}' não encontrado no jogo atual.");
         }
     }
 }

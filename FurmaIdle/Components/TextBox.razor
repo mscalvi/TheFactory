@@ -52,7 +52,7 @@
     bool _showLore = true; // Lore + personagens
     bool _showInfo = true; // Info + Erros
 
-    enum MsgKind { Error, Info, Lore, Ferri }
+    enum MsgKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan}
 
     sealed class UiMessage
     {
@@ -81,6 +81,9 @@
                         UiLogKind.Lore => MsgKind.Lore,
                         UiLogKind.Error => MsgKind.Error,
                         UiLogKind.Ferri => MsgKind.Ferri,
+                        UiLogKind.Maik => MsgKind.Maik,
+                        UiLogKind.Claimi => MsgKind.Claimi,
+                        UiLogKind.Alan => MsgKind.Alan,
                         _ => MsgKind.Info
                     }
                 });
@@ -118,6 +121,9 @@
                 UiLogKind.Lore => MsgKind.Lore,
                 UiLogKind.Error => MsgKind.Error,
                 UiLogKind.Ferri => MsgKind.Ferri,
+                UiLogKind.Maik => MsgKind.Maik,
+                UiLogKind.Claimi => MsgKind.Claimi,
+                UiLogKind.Alan => MsgKind.Alan,
                 _ => MsgKind.Info
             }
         });
@@ -132,15 +138,20 @@
     {
         MsgKind.Lore => _showLore,
         MsgKind.Ferri => _showLore,
+        MsgKind.Maik => _showLore,
+        MsgKind.Claimi => _showLore,
+        MsgKind.Alan => _showLore,
         MsgKind.Info => _showInfo,
         MsgKind.Error => _showInfo,
         _ => true
     };
 
-    // Nome do personagem na frente (por enquanto só Ferri)
     string DisplayText(UiMessage m) => m.Kind switch
     {
         MsgKind.Ferri => $"Ferri — {m.Text}",
+        MsgKind.Maik => $"Maik — {m.Text}",
+        MsgKind.Claimi => $"Claimi — {m.Text}",
+        MsgKind.Alan => $"Alan — {m.Text}",
         _ => m.Text
     };
 
@@ -149,6 +160,9 @@
         MsgKind.Lore => "is-lore",
         MsgKind.Error => "is-error",
         MsgKind.Ferri => "is-ferri",
+        MsgKind.Maik => "is-maik",
+        MsgKind.Claimi => "is-claimi",
+        MsgKind.Alan => "is-alan",
         _ => "is-info"
     };
 }

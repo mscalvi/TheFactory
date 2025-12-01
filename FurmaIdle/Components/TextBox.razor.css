@@ -94,6 +94,17 @@
 }
 
 .msg-row.is-ferri .msg-text {
-    color: forestgreen;
+    color: darkgoldenrod;
 }
 
+.msg-row.is-maik .msg-text {
+    color: burlywood;
+}
+
+.msg-row.is-claimi .msg-text {
+    color: darkblue;
+}
+
+.msg-row.is-alan .msg-text {
+    color: darkmagenta;
+}

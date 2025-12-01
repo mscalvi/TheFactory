@@ -34,7 +34,7 @@ namespace FurmaIdle.Data
                 Id = "x10",
                 Name = "Primeiros Recrutas",
                 Icon = "icons/expansions/x10.svg",
-                UnlockId = null,
+                UnlockId = "s01",
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
@@ -76,6 +76,21 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
                 NextExpansion = "x04",
+            },
+            #endregion
+
+            #region Expansions Stage 2 (x20 - x2?)
+            ["x20"] = new ExpansionModel
+            {
+                Id = "x20",
+                Name = "Primeiro Contato",
+                Icon = "icons/expansions/x20.svg",
+                UnlockId = "s02",
+                Level = 1,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                State = UnlockHelper.State.Blocked,
+                Modifiers = new List<ModifierModel>(),
+                NextExpansion = "x21",
             },
             #endregion
         };

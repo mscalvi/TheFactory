@@ -14,9 +14,9 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, TraitModel> All = new()
         {
             #region Traits
-            ["o02"] = new TraitModel
+            ["o01"] = new TraitModel
             {
-                Id = "o02",
+                Id = "o01",
                 Description = "Diminui o Tempo para Servir Bebidas",
                 TargetId = "c021",
                 EffectValue = 0.80,
@@ -25,9 +25,9 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["o01"] = new TraitModel
+            ["o02"] = new TraitModel
             {
-                Id = "o01",
+                Id = "o02",
                 Description = "Diminui o Tempo para Organizar Ferramentas",
                 TargetId = "c032",
                 EffectValue = 0.80,

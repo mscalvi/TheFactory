@@ -115,7 +115,14 @@
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-basechars")}")">
-            <h3 class="title">Personagens na Base</h3>
+            @if (_stage.Id == "s00")
+            {
+                <h3 class="title">Personagens Esperando</h3>
+            }
+            else
+            {
+                <h3 class="title">Personagens na Base</h3>
+            }
             @if (inBase.Count == 0)
             {
                 <div>Ninguém na base.</div>
@@ -150,7 +157,14 @@
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-stagechars")}")">
-            <h3 class="title">Personagens em Expedição</h3>
+            @if (_stage.Id == "s00")
+            {
+                <h3 class="title">Personagens Ocupados</h3>
+            }
+            else
+            {
+                <h3 class="title">Personagens em Expedição</h3>
+            }
             @if (inStage.Count == 0)
             {
                 <div>Ninguém em Expedição.</div>

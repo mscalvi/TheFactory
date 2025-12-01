@@ -19,7 +19,7 @@ namespace FurmaIdle.Data
             // uc - Upgrade Contract
             // ud - Upgrade Expansion Resource
             // ue - Unlock Expansion
-            // uf -
+            // uf -  
             // ug -
             // uh - Unlock Tech
             // ui - Upgrade Expedition Click
@@ -27,7 +27,7 @@ namespace FurmaIdle.Data
             // uk - Unlock Knowledge
             // ul - Unlock Local
             // um - Upgrade Contract Cap
-            // un -
+            // un - Unlock Ship
             // uo -
             // up - Unlock Character
             // uq -
@@ -788,6 +788,29 @@ namespace FurmaIdle.Data
             #region Desbloqueio de Moeda (Coin Unlock)
             #endregion
 
+            #region Desbloqueio de Navios (Ship Unlock)
+            ["un01"] = new UpgradeModel
+            {
+                Id = "un01",
+                Name = "Barco 1",
+                Level = 1,
+                Icon = "icons/upgrades/un01.svg",
+                Lore = "",
+                Description = "Libera o Navio",
+                UnlockId = "x13",
+                StageId = "s01",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.ShipUnlock1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "n01",
+                EffectType = EffectHelper.EffectType.ShipUnlock,
+                EffectOp = EffectHelper.EffectOperation.Unlock,
+                EffectSupertype = EffectHelper.EffectSupertype.Unlock,
+                EffectValue = 0,
+            },
+            #endregion
+
             #region Desbloqueio de Party Size (PartyCapUnlock)
             #region s01
             ["ua011"] = new UpgradeModel
@@ -856,7 +879,7 @@ namespace FurmaIdle.Data
             ["us01"] = new UpgradeModel
             {
                 Id = "us01",
-                Name = "Nova Região",
+                Name = "A Ilha de Vera",
                 Level = 1,
                 Icon = "icons/upgrades/us01.svg",
                 Image = "images/upgrades/us01.svg",
@@ -881,7 +904,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/us02.svg",
                 Image = "images/upgrades/us02.svg",
                 Lore = "",
-                Description = "Libera a Região de Entrilhas",
+                Description = "Libera a Ilha de ZZZ",
                 UnlockId = "x13",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.StageUnlock1,
@@ -975,6 +998,7 @@ namespace FurmaIdle.Data
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpedition,
                 TargetId = "i0i",
+                StageId = "s00",
                 EffectType = EffectHelper.EffectType.ClickGain,
                 EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
@@ -989,6 +1013,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Aumenta o ganho por Click na Casa de Ferri",
                 UnlockId = "x00",
+                StageId = "s00",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ClickGainM0,
                 State = UnlockHelper.State.Blocked,
@@ -1011,6 +1036,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Aumenta o ganho por Click na Ilha de Vera",
                 UnlockId = "x10",
+                StageId = "s01",
                 MaxBuy = 10,
                 PricingId = PricingHelper.PricingId.ClickGainS1,
                 State = UnlockHelper.State.Blocked,
@@ -1030,6 +1056,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Aumenta o ganho por Click",
                 UnlockId = "x10",
+                StageId = "s01",
                 MaxBuy = 3,
                 PricingId = PricingHelper.PricingId.ClickGainM1,
                 State = UnlockHelper.State.Blocked,
@@ -2417,6 +2444,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Aumenta o limite de Contratos de Ferri",
                 UnlockId = "x00",
+                StageId = "s00",
                 MaxBuy = 12,
                 PricingId = PricingHelper.PricingId.ContractCapUnlock0,
                 State = UnlockHelper.State.Blocked,
@@ -2436,6 +2464,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Libera começar o próximo nível de Contratos",
                 UnlockId = "x00",
+                StageId = "s00",
                 MaxBuy = 2,
                 PricingId = PricingHelper.PricingId.ContractLevelUnlock0,
                 State = UnlockHelper.State.Blocked,
@@ -2475,8 +2504,9 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/ub01.svg",
                 Lore = "",
-                Description = "Libera começar o próximo nível de Contratos",
+                Description = "Libera começar o próximo nível de Contratos na Ilha de Vera",
                 UnlockId = "x10",
+                StageId = "s01",
                 MaxBuy = 2,
                 PricingId = PricingHelper.PricingId.ContractLevelUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -2576,8 +2606,9 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/ub02.svg",
                 Lore = "",
-                Description = "Libera começar o próximo nível de Contratos",
+                Description = "Libera começar o próximo nível de Contratos na Ilha de Vera",
                 UnlockId = "x12",
+                StageId = "s01",
                 MaxBuy = 3,
                 PricingId = PricingHelper.PricingId.ContractLevelUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -2600,6 +2631,7 @@ namespace FurmaIdle.Data
                 Lore = "",
                 Description = "Aumenta o ganho base do Click de acordo com o ganho de Talhos",
                 UnlockId = "x11",
+                StageId = "s01",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
@@ -2713,13 +2745,13 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Upgrades de Expansão s01 x11
-            ["ux111"] = new UpgradeModel
+            #region Upgrades de Expansão s01 x13
+            ["ux131"] = new UpgradeModel
             {
-                Id = "ux111",
+                Id = "ux131",
                 Name = "Disseminar Conhecimento",
                 Level = 4,
-                Icon = "icons/upgrades/ux111.svg",
+                Icon = "icons/upgrades/ux131.svg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Contratos por Tech desbloqueada",
                 UnlockId = "x13",
@@ -2733,12 +2765,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.01,
             },
-            ["ux112"] = new UpgradeModel
+            ["ux132"] = new UpgradeModel
             {
-                Id = "ux112",
+                Id = "ux132",
                 Name = "Estudo Coletivo",
                 Level = 4,
-                Icon = "icons/upgrades/ux112.svg",
+                Icon = "icons/upgrades/ux132.svg",
                 Lore = "",
                 Description = "Aumenta o ganho de todos os Conhecimentos por Tech desbloqueada",
                 UnlockId = "x13",
@@ -2752,12 +2784,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.01,
             },
-            ["ux113"] = new UpgradeModel
+            ["ux133"] = new UpgradeModel
             {
                 Id = "ux113",
                 Name = "Eficiência da Base",
                 Level = 4,
-                Icon = "icons/upgrades/ux113.svg",
+                Icon = "icons/upgrades/ux133.svg",
                 Lore = "",
                 Description = "Aumenta a geração de Recursos por Tech desbloqueada",
                 UnlockId = "x13",
@@ -2795,6 +2827,7 @@ namespace FurmaIdle.Data
                 Lore = upgrade.Lore,
                 Description = upgrade.Description,
                 UnlockId = upgrade.UnlockId,
+                StageId = upgrade.StageId,
                 MaxBuy = upgrade.MaxBuy,
                 ActualBuy = upgrade.ActualBuy,
                 PricingId = upgrade.PricingId,

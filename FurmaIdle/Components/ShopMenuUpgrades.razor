@@ -29,15 +29,16 @@
         // ==== ÁREA 2 — Objetives ====
         var heroUpgrade =
             all.FirstOrDefault(u =>
-            u.State == UnlockHelper.State.Available &&
-            (Ue(u.Id) || Us(u.Id)));
+            u.State == UnlockHelper.State.Available && ((Us(u.Id) && _stage.Id == "s00") || 
+                ((Ue(u.Id) && (u.StageId == _stage.Id || u.StageId == "all")))));
 
-        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK, UA, UU) ====
+
+        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK, UA, UU, UN) ====
         var permanents =
             all.Where(u =>
             u.State == UnlockHelper.State.Available &&
-            (Up(u.Id) || Ul(u.Id) || Ur(u.Id) || Uk(u.Id) || Ua(u.Id) || Uu(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id))
+            (Up(u.Id) || Ul(u.Id) || Ur(u.Id) || Uk(u.Id) || Ua(u.Id) || Uu(u.Id) || Un(u.Id)) &&
+            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
             .ToList();
 
         // ==== ÁREA 3 — Avanços da Expansão (UT, UX, UM, UB, UD) ====
@@ -45,7 +46,7 @@
             all.Where(u =>
             u.State == UnlockHelper.State.Available &&
             (Ut(u.Id) || Ux(u.Id) || Um(u.Id) || Ub(u.Id) || Ud(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id))
+            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
             .ToList();
 
         // ==== ÁREA 4 — Avanços da Expedição (UC, UI) ====
@@ -53,7 +54,7 @@
             all.Where(u =>
             u.State == UnlockHelper.State.Available &&
             (Uc(u.Id) || Ui(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id))
+            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
             .ToList();
 
         <section class="@($"menu-panel {UI.PanelClass("up-objetive")}")">
@@ -84,7 +85,14 @@
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("up-expedition")}")">
-            <h3 class="title">Melhorias da Expedição</h3>
+            @if(_stage.Id == "s00")
+            {
+                <h3 class="title">Melhorias Rápidas</h3>
+            }
+            else
+            {
+                <h3 class="title">Melhorias da Expedição</h3>
+            }
             <div class="icon-grid">
                 @foreach (var u in expeditionUps)
                 {
@@ -109,7 +117,14 @@
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("up-expansion")}")">
-            <h3 class="title">Melhorias da Expansão</h3>
+            @if (_stage.Id == "s00")
+            {
+                <h3 class="title">Melhorias Longas</h3>
+            }
+            else
+            {
+                <h3 class="title">Melhorias da Expansão</h3>
+            }
             <div class="icon-grid">
                 @foreach (var u in expansionUps)
                 {
@@ -134,7 +149,7 @@
         </section>
         
         <section class="@($"menu-panel menu-section {UI.PanelClass("up-permanents")}")">
-            <h3 class="title">Desbloqueios Permanentes</h3>
+            <h3 class="title">Melhorias Permanentes</h3>
             <div class="icon-grid">
                 @foreach (var u in permanents)
                 {
@@ -207,6 +222,7 @@
     static bool Uk(string? id) => StartsWith(id, "uk");
     static bool Ul(string? id) => StartsWith(id, "ul");
     static bool Um(string? id) => StartsWith(id, "um");
+    static bool Un(string? id) => StartsWith(id, "un");
     static bool Up(string? id) => StartsWith(id, "up");
     static bool Ur(string? id) => StartsWith(id, "ur");
     static bool Us(string? id) => StartsWith(id, "us");

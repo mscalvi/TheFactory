@@ -37,6 +37,7 @@
         public int TechUnlocked { get; set; } = 0;
         public int ResourcesUnlocked { get; set; } = 0;
         public int UpgradesUnlocked { get; set; } = 0;
+        public int ShipsUnlocked { get; set; } = 0;
 
 
         public TimeOnly TimeSpent { get; set; }

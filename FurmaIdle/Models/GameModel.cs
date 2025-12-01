@@ -34,6 +34,7 @@ namespace FurmaIdle.Models
         public Dictionary<string, ExpansionModel> Expansions { get; set; } = new();
         public Dictionary<string, SpecialtyModel> Specialties { get; set; } = new();
         public Dictionary<string, TraitModel> Traits { get; set; } = new();
+        public Dictionary<string, ShipModel> Ships { get; set; } = new();
     }
     public sealed class UiState
     {

@@ -41,6 +41,7 @@
             TechUnlock,
             LocalUnlock,
             StageUnlock,
+            ShipUnlock,
 
             // Others
             ContractLevelUnlock,

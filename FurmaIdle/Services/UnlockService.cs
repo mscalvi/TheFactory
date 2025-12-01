@@ -18,6 +18,7 @@ namespace FurmaIdle.Services
         Task UnlockTech(string techId);
         Task UnlockResource(string resourceId);
         Task UnlockUpgrade(string upgradeId);
+        Task UnlockShip(string shipId);
     }
 
     public sealed class UnlockService : IUnlockService
@@ -151,6 +152,8 @@ namespace FurmaIdle.Services
                 expansion.State = UnlockHelper.State.Unlocked;
                 Console.WriteLine($"[Unlock] Expansion {expansion.Id}: {expansion.State} -> {expansion.StartedAt}");
                 game.GameStats.ExpansionsUnlocked++;
+                game.CurrentExpansionId = expansion.Id;
+
             }, save: true);
         }
         #endregion
@@ -199,6 +202,12 @@ namespace FurmaIdle.Services
             bool newCoin = false;
             string newCoinId = "";
 
+            bool newLocal = false;
+            string newLocalId = "";
+
+            bool newExpansion = false;
+            string newExpansionId = "";
+
             await _game.Mutate(game =>
             {
                 var stage = _locate.LocateStage(game, stageId);
@@ -212,6 +221,30 @@ namespace FurmaIdle.Services
                         newCoin = true;
                         newCoinId = coin.Value.Id;
                         Console.WriteLine($"[Unlock] Coin {coin.Value.Id}: {coin.Value.State}");
+                    }
+                }
+
+                foreach (var local in game.Locals)
+                {
+                    if (string.Equals(local.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (local.Value.State != UnlockHelper.State.Blocked) continue;
+                        local.Value.State = UnlockHelper.State.Available;
+                        newLocal = true;
+                        newLocalId = local.Value.Id;
+                        Console.WriteLine($"[Unlock] Local {local.Value.Id}: {local.Value.State}");
+                    }
+                }
+
+                foreach (var expansion in game.Expansions)
+                {
+                    if (string.Equals(expansion.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (expansion.Value.State != UnlockHelper.State.Blocked) continue;
+                        expansion.Value.State = UnlockHelper.State.Available;
+                        newExpansion = true;
+                        newExpansionId = expansion.Value.Id;
+                        Console.WriteLine($"[Unlock] Expansion {expansion.Value.Id}: {expansion.Value.State}");
                     }
                 }
 
@@ -234,6 +267,16 @@ namespace FurmaIdle.Services
             if (newCoin)
             {
                 await UnlockCoin(newCoinId);
+            }
+
+            if (newLocal)
+            {
+                await UnlockLocal(newLocalId);
+            }
+
+            if (newExpansion)
+            {
+                await UnlockExpansion(newExpansionId);
             }
         }
         #endregion
@@ -312,6 +355,9 @@ namespace FurmaIdle.Services
                     case EffectHelper.EffectType.CoinUnlock:
                         await UnlockCoin(up.TargetId);
                         break;
+                    case EffectHelper.EffectType.ShipUnlock:
+                        await UnlockShip(up.TargetId);
+                        break;
 
                     default:
                         break;
@@ -336,6 +382,31 @@ namespace FurmaIdle.Services
                 
                 game.GameStats.UpgradesUnlocked++;
 
+            }, save: true);
+        }
+        #endregion
+
+        #region Ship Unlock
+        public async Task UnlockShip(string shipId)
+        {
+            await _game.Mutate(game =>
+            {
+                var ship = _locate.LocateShip(game, shipId);
+
+                foreach (var up in game.Upgrades)
+                {
+                    if (string.Equals(up.Value.UnlockId, ship.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (up.Value.State != UnlockHelper.State.Blocked) continue;
+                        up.Value.State = UnlockHelper.State.Available;
+                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
+                    }
+                }
+
+                ship.State = UnlockHelper.State.Unlocked;
+                ship.ShipState = UnlockHelper.ShipState.InBase;
+                Console.WriteLine($"[Unlock] Ship {ship.Id}: {ship.State}");
+                game.GameStats.ShipsUnlocked++;
             }, save: true);
         }
         #endregion

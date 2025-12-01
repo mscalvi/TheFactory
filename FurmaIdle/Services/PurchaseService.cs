@@ -81,6 +81,8 @@ namespace FurmaIdle.Services
             var resourceCost = new ResourceModel();
             var knowledgeCost = new KnowledgeModel();
 
+            string helper = "";
+
             bool hasFunds = cost.costId[0] switch
             {
                 'm' => GetOrZero(stage.ExpeditionStats.Coins, cost.costId) >= cost.costValue,
@@ -112,7 +114,8 @@ namespace FurmaIdle.Services
                 switch (type)
                 {
                     case ItemHelper.ItemType.Upgrade:
-                        // var upgrade = _locate.LocateUpgrade(g, itemId);
+                        var upgrade = _locate.LocateUpgrade(g, itemId);
+                        helper = upgrade.TargetId;
                         break;
 
                     case ItemHelper.ItemType.Contract:
@@ -191,6 +194,7 @@ namespace FurmaIdle.Services
                         }
                     }
                 }
+
                 if(stage.Id == "s01")
                 {
                     if (StartsWith(itemId, "up"))
@@ -207,16 +211,82 @@ namespace FurmaIdle.Services
 
                         if(chars == 2)
                         {
-                            _ui.NavMenuControl("FirstCharacterUnlock");
+                            _ui.NavMenuControl("FirstCharacterUnlock", helper);
                         }
                     }
                     if (itemId == "ur01")
                     {
-                        _ui.NavMenuControl("FirstResourceUnlock");
+                        foreach (var character in game.Characters)
+                        {
+                            if (character.Value.State == UnlockHelper.State.Unlocked && character.Value.CharState == UnlockHelper.CharState.InBase)
+                            {
+                                helper = character.Value.Id;
+                            }
+                        }
+
+                        _ui.NavMenuControl("FirstResourceUnlock", helper);
                     }
                     if (itemId == "ua011")
                     {
-                        _ui.NavMenuControl("FirstExpeditionUnlock");
+                        foreach (var character in game.Characters)
+                        {
+                            if (character.Value.State == UnlockHelper.State.Unlocked && character.Value.CharState == UnlockHelper.CharState.InBase)
+                            {
+                                helper = character.Value.Id;
+                            }
+                        }
+
+                        _ui.NavMenuControl("FirstExpeditionUnlock", helper);
+                    }
+                    if (StartsWith(itemId, "uk"))
+                    {
+                        int knows = 0;
+
+                        foreach (var know in game.Knowledges)
+                        {
+                            if (know.Value.State == UnlockHelper.State.Unlocked)
+                            {
+                                knows++;
+                            }
+                        }
+
+                        if (knows == 1)
+                        {
+                            _ui.NavMenuControl("FirstKnowledgeUnlock");
+                        }
+                    }
+                    if (itemId == "ue01")
+                    {
+                        _ui.NavMenuControl("FirstExpansionUnlock");
+                    }
+                    if (StartsWith(itemId, "uh"))
+                    {
+                        int techs = 0;
+
+                        foreach (var tech in game.Techs)
+                        {
+                            if (tech.Value.State == UnlockHelper.State.Unlocked)
+                            {
+                                techs++;
+                            }
+                        }
+
+                        if (techs == 1)
+                        {
+                            _ui.NavMenuControl("FirstTechUnlock");
+                        }
+                    }
+                    if (StartsWith(itemId, "ul"))
+                    {
+                        _ui.NavMenuControl("LocalUnlock", helper);
+                    }
+                    if (StartsWith(itemId, "un01"))
+                    {
+                        _ui.NavMenuControl("FirstShipUnlock", helper);
+                    }
+                    if (itemId == "us02")
+                    {
+                        _ui.NavMenuControl("FirstStageUnlock");
                     }
                 }
 

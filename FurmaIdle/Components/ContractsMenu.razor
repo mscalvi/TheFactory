@@ -23,8 +23,9 @@
     else
     {
         var contractsInfo = Contracts.GetStageInfo(Game.CurrentGame, _stage.Id);
+        var levelsCount = _stage.MaxContractLevel - _stage.StartContractLevel + 1;
 
-        <div class="contracts-layout" style="--levels:@_stage.MaxContractLevel">
+        <div class="contracts-layout">
             <div class="contracts-capbar">
                 <div class="selectbuy">
                     <button class="contract-button select-toggle" disabled = "_stage.Id == s00"
@@ -38,7 +39,7 @@
                 </div>
             </div>
 
-            <div class="contracts-grid" style="--levels:@_stage.MaxContractLevel-@_stage.StartContractLevel">
+            <div class="contracts-grid" style="--levels:@levelsCount">
                 @for (int lvl = _stage.StartContractLevel; lvl <= _stage.MaxContractLevel; lvl++)
                 {
                     var level = lvl;
@@ -335,6 +336,20 @@
         var currentQty = 0;
         stage.ActiveContracts?.TryGetValue(contract.Id, out currentQty);
         var isFirst = currentQty <= 0;
+
+        if (stage.Id == "s00")
+        {
+            if (contract.Id == "c001" && currentQty >= 14)
+            {
+                int c011qnt = 0;
+                stage.ActiveContracts?.TryGetValue("c011", out c011qnt);
+
+                if(c011qnt <= 0)
+                {
+                    return false;
+                }
+            }
+        }
 
         if (isFirst)
         {

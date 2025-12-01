@@ -41,7 +41,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/locals/l10.svg",
                 Image = "images/locals/l10.svg",
                 Level = null,
-                UnlockId = null,
+                UnlockId = "s01",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StageId = "s01",

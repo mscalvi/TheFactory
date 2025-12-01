@@ -15,7 +15,7 @@ namespace FurmaIdle.Services
 
         Task LoadStage(string stageId);
         void SetOpenMenu(string? id);
-        void NavMenuControl(string controlItem, string? itemId = "", string? help = "", int? helpQuant = 0);
+        void NavMenuControl(string controlItem,string? helper = "");
         void SyncMenusFromGame(GameModel g);
         string PanelClass(string classId);
         void RaisePulse();
@@ -150,6 +150,7 @@ namespace FurmaIdle.Services
             new() { Id = "i2",  Label = "REGIÃO",   Unlocked = false },
             new() { Id = "i3",  Label = "EXPED",   Unlocked = false },
             new() { Id = "i5",  Label = "UPGR",      Unlocked = false },
+            new() { Id = "i6",  Label = "SHIP",      Unlocked = false },
             new() { Id = "i50", Label = "PESQ",    Unlocked = false },
             new() { Id = "i97", Label = "GAME",  Unlocked = false },
             new() { Id = "i98", Label = "LOJA",     Unlocked = false },
@@ -280,7 +281,7 @@ namespace FurmaIdle.Services
         #region Menu Control
         public bool NotFirstExpedition { get; private set; } = false;
 
-        public void NavMenuControl(string controlItem, string? itemId = "", string? help = "", int? helpQuant = 0)
+        public void NavMenuControl(string controlItem, string? helper = "")
         {
             var game = _game.CurrentGame;
 
@@ -381,7 +382,7 @@ namespace FurmaIdle.Services
 
                     SetOpenMenu("i5");
 
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
                     break;
                 case "FirstCharacterUnlock":
                     // Libera Menu de Expansion
@@ -397,14 +398,14 @@ namespace FurmaIdle.Services
 
                     SetNotificationMenu("i1");
 
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
 
                     // Animation: piscar o Expansion Menu e (se tiver aberto) os Resources
                     // Tips: Characters
                     // Tips: Traits
                     break;
                 case "FirstResourceUnlock":
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
 
                     // Animation: piscar os Recursos e as Specialties
                     // Tips: Resources
@@ -413,7 +414,7 @@ namespace FurmaIdle.Services
                 case "FirstExpeditionUnlock":
                     NotFirstExpedition = true;
 
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
 
                     // Animation: piscar ExpeditonMenu
                     // Tips: Expedition
@@ -434,7 +435,7 @@ namespace FurmaIdle.Services
 
                     SetNotificationMenu("i50");
 
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
                     break;
                 case "FirstExpansionUnlock":
                     // Libera Menu de Archievments
@@ -456,7 +457,14 @@ namespace FurmaIdle.Services
 
                     SetNotificationMenu("i97");
 
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    // Tips: Expansion
+                    break;
+                case "LocalUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    // Tips: Locals
                     break;
                 case "FirstTechUnlock":
                     if (IsHidden("tech-done"))
@@ -464,7 +472,17 @@ namespace FurmaIdle.Services
                         ShowPanel("tech-done");
                     }
 
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    // Tips: Techs
+                    break;
+                case "FirstShipUnlock":
+                    // Libera Menu Ships
+                    UnlockMenu("i6");
+
+                    SetNotificationMenu("i6");
+
+                    _lore.LoreTrigger(controlItem, helper);
                     break;
                 case "FirstStageUnlock":
                     // Libera Menu de Stage e de Outside Market
@@ -474,9 +492,10 @@ namespace FurmaIdle.Services
                     SetNotificationMenu("i98");
                     SetOpenMenu("i2");
 
-                    _lore.LoreTrigger(controlItem);
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    // Tips: Stages
                     break;
-                // Adicionar Lore nos Locals, progressão da Guild
 
                 // Gerais
                 case "ExpeditionStart":
@@ -548,7 +567,7 @@ namespace FurmaIdle.Services
         #endregion
     }
 
-    public enum UiLogKind { Error, Info, Lore, Ferri, }
+    public enum UiLogKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan }
     public sealed class UiLogMessage
     {
         public DateTime Time { get; init; } = DateTime.Now;
@@ -561,8 +580,14 @@ namespace FurmaIdle.Services
         void Info(string text);
         void Lore(string text);
         void Error(string text);
+
+        // Characters
         void Ferri(string text);
+        void Maik(string text);
+        void Claimi(string text);
+        void Alan(string text);
     }
+
     public sealed class UiLogService : IUiLogService
     {
         public event Action<UiLogMessage>? OnMessage;
@@ -593,5 +618,8 @@ namespace FurmaIdle.Services
         public void Lore(string text) => Emit(text, UiLogKind.Lore);
         public void Error(string text) => Emit(text, UiLogKind.Error);
         public void Ferri(string text) => Emit(text, UiLogKind.Ferri);
+        public void Maik(string text) => Emit(text, UiLogKind.Maik);
+        public void Claimi(string text) => Emit(text, UiLogKind.Claimi);
+        public void Alan(string text) => Emit(text, UiLogKind.Alan);
     }
 }

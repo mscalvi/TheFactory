@@ -34,5 +34,13 @@
             Active,
             Idle,
         }
+        public enum ShipState
+        {
+            Blocked,
+            InBase,
+            InStage,
+            InLine,
+            InTrip,
+        }
     }
 }
