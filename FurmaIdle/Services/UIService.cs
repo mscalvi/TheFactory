@@ -8,7 +8,6 @@ namespace FurmaIdle.Services
     {
         string? OpenMenuId { get; }
         bool IsBusy { get; }
-        bool NotFirstExpedition { get; }
         string? BusyMessage { get; }
         IEnumerable<NavItem> VisibleNav {  get; }
 
@@ -278,7 +277,6 @@ namespace FurmaIdle.Services
         #endregion
 
         #region Menu Control
-        public bool NotFirstExpedition { get; private set; } = false;
 
         public void NavMenuControl(string controlItem, string? helper = "")
         {
@@ -411,8 +409,6 @@ namespace FurmaIdle.Services
                     // Tips: Specialties
                     break;
                 case "FirstExpeditionUnlock":
-                    NotFirstExpedition = true;
-
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Animation: piscar ExpeditonMenu
@@ -501,8 +497,6 @@ namespace FurmaIdle.Services
                     UnlockMenu("i5");
 
                     SetOpenMenu("i5");
-
-                    LockMenu("i3");
                     break;
                 case "ExpeditionEnd":
                     SetOpenMenu("i3");

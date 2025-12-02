@@ -17,18 +17,24 @@
     @if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage?.Id) || _stage is null || !IsExpeditionActive(_stage))
     {
         <div class="level-noChosen">
-            <img src="@($"images/contracts-noExpedition.svg")" alt="Expedição Inativa" class="no-contract" />
+            <img src="@($"images/contracts-noExpedition.svg")" alt="Expedição Inativa" class="no-contract"/>
         </div>
     }
     else
     {
         var contractsInfo = Contracts.GetStageInfo(Game.CurrentGame, _stage.Id);
         var levelsCount = _stage.MaxContractLevel - _stage.StartContractLevel + 1;
+        var stageTutorial = _stage.Id == "s00";
+
+        if(_stage.Id == "s00")
+        {
+            levelsCount = 2;
+        }
 
         <div class="contracts-layout">
             <div class="contracts-capbar">
                 <div class="selectbuy">
-                    <button class="contract-button select-toggle" disabled = "_stage.Id == s00"
+                    <button class="buy-button select-toggle" disabled = "@stageTutorial"
                             @onclick="ToggleBuyMode">
                         @BuyModeLabel
                     </button>

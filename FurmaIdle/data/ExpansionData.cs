@@ -75,7 +75,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x04",
+                NextExpansion = "x20",
             },
             #endregion
 

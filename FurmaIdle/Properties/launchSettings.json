@@ -15,7 +15,8 @@
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "http://localhost:5038",
-      "launchUrl": "exploradoresidle",
+      //"launchUrl": "exploradoresidle",
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -26,7 +27,8 @@
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "https://localhost:7228;http://localhost:5038",
-      "launchUrl": "exploradoresidle",
+      //"launchUrl": "exploradoresidle",
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

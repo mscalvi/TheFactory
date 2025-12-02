@@ -30,7 +30,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StartPartySize = 1,
                 MaxPartySize = 1,
-                StartContractLevel = 0,
+                StartContractLevel = -1,
                 MaxContractLevel = 1,
                 CoinId = "m01",
                 ClickId = "i0i",

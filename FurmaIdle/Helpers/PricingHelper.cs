@@ -119,11 +119,11 @@ namespace FurmaIdle.Helpers
                 [PricingId.CharacterUnlock1] = new Entry("m01", 1, 1.0, CostFactor.CharactersUnlocked, 9.0),
 
                 // Unlock Contract Stage X Level X
-                [PricingId.ContractUnlock0] = new Entry("m01", 500, 3.0, CostFactor.Level, 7),
+                [PricingId.ContractUnlock0] = new Entry("m01", 300, 3.0, CostFactor.Level, 7),
                 [PricingId.ContractUnlock1] = new Entry("m01", 5, 3.0, CostFactor.Level, 7),
 
                 // Unlock Contract Level Stage X
-                [PricingId.ContractLevelUnlock0] = new Entry("m01", 10, 5.7, CostFactor.None, 1),
+                [PricingId.ContractLevelUnlock0] = new Entry("m01", 10, 4.1, CostFactor.None, 1),
                 [PricingId.ContractLevelUnlock1] = new Entry("m01", 1000, 4.0, CostFactor.None, 1),
 
                 // Unlock Knowledge Stage X
@@ -136,7 +136,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ResourceUnlock01] = new Entry("m01", 1500, 1.0, CostFactor.None, 1),
 
                 // Unlock Stage X -> X+1
-                [PricingId.StageUnlock0] = new Entry("m01", 2000, 1.0, CostFactor.None, 1),
+                [PricingId.StageUnlock0] = new Entry("m01", 1000, 1.0, CostFactor.None, 1),
                 [PricingId.StageUnlock1] = new Entry("m01", 1000000000000, 1.0, CostFactor.None, 1),
 
                 // Unlock Expansion Stage X

@@ -66,9 +66,6 @@ namespace FurmaIdle.Services
             _ui = ui;
         }
 
-        bool ExpeditionUnlocked = false;
-        bool NotFirstExpedition = false;
-
         public void TickContracts(GameModel game, string stageId, double dtSeconds)
         {
             if (game is null || string.IsNullOrWhiteSpace(stageId) || dtSeconds <= 0) return;
@@ -182,22 +179,6 @@ namespace FurmaIdle.Services
                 }
 
                 contractsCap += stageCap;
-            }
-
-            if (ExpeditionUnlocked == false)
-            {
-                if (contractsUsed >= 30 && _ui.NotFirstExpedition)
-                {
-                    _ui.NavMenuControl("UnlockExpedition");
-                    ExpeditionUnlocked = true;
-                }
-            }
-            else
-            {
-                if (contractsUsed < 30)
-                {
-                    ExpeditionUnlocked = false;
-                }
             }
 
             return (contractsCap, contractsUsed, contractsLevel, contractsMaxLevel);
