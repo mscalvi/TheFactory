@@ -92,6 +92,7 @@
     height: 100%;
     overflow: hidden;
     padding: 2px;
+    min-height: 0;
     border: 1px dashed rgb(9, 48, 16, .55);
     border-radius: 10px;
     justify-content: center;

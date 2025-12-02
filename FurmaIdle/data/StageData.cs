@@ -30,7 +30,7 @@ namespace FurmaIdle.Data
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StartPartySize = 1,
                 MaxPartySize = 1,
-                StartContractLevel = -1,
+                StartContractLevel = 0,
                 MaxContractLevel = 1,
                 CoinId = "m01",
                 ClickId = "i0i",
@@ -78,7 +78,7 @@ namespace FurmaIdle.Data
                 VisibleFrom = new List<string> {
                     "s00",
                 },
-                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.WildNormal,
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.Wild,
             },
             #endregion
 
@@ -116,7 +116,7 @@ namespace FurmaIdle.Data
                 VisibleFrom = new List<string> {
                     "s01",
                 },
-                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.WildNormal,
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.Wild,
             },
             #endregion
         };
