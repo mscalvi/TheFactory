@@ -31,7 +31,7 @@
 
             switch (loreId)
             {
-                // Stage 0
+                #region Stage 0
                 case "GameCreation":
                     _log.Lore("Isolados no meio do mar, cercados pela poderosa correnteza Entrilhas, os habitantes da Ilha de" +
                         " Vera se protegem dos perigos da mata na pequena Murada Cairu. Lá fora, uma criatura insana aguarda que" +
@@ -83,8 +83,13 @@
                     _log.Ferri("Agora, é só questão de tempo. Vou reabrir a taberna, e vou recrutar uma equipe. Está na hora de fundar" +
                         " a Guilda da Ilha de Vera.");
                     break;
+                case "14Contract1Purchase":
+                    _log.Info("Começe um Contrato para Varrer o Chão para continuar.");
+                    _log.Ferri("Melhor fazer algo um pouco mais lucrativo, pra variar.");
+                    break;
+                #endregion
 
-                // Stage 1
+                #region Stage 1
                 case "Stage1Start":
                     _log.Lore("Ferri gasta suas economias para voltar a ser taberneiro, e começa sua jornada atrás de companheiros" +
                         " para retomar a Ilha de Vera.");
@@ -114,7 +119,6 @@
                         _log.Ferri("A ilha, o mundo é grande demais.");
                         _log.Alan("Por enquanto, Ferri, por enquanto.");
                     }
-
                     break;
                 case "FirstResourceUnlock":
                     _log.Info("Recursos são um importante artifício para conseguir vantagens, utilizando as Especialidades dos Personagens," +
@@ -185,24 +189,8 @@
                         " Custam Conhecimento, mas não diminuem o bônus total garantido por ele.");
                     _log.Ferri("Tanta coisa pra saber, e eu achei que ia ser só juntar um pessoal e limpar a ilha...");
                     break;
-                case "LocalUnlock":
-                    if (helper == "l12")
-                    {
-                        _log.Info("Explorar Locais permite conhecer a Região com maiores detalhes, aprendendo com ela. É possível encontrar" +
-                            " novas Pesquisas e novos Personagens ao desbloquear um Local.");
-                        _log.Lore("A pequena Guilda avança até as Pontas Cantarolantes, contornando a Ilha de Vera pela praia." +
-                            " Uma subida perigosa, onde qualquer deslize pode ser fatal.");
-                    }
-                    if (helper == "l13")
-                    {
-                        _log.Lore("A Guilda avança até o Coração da Ilha, a região das nascentes que garantem água limpa à Murada Cairu." +
-                            " A mata fechada é perigosa, e qualquer animal pode estar infectado.");
-                    }
-                    if (helper == "l14")
-                    {
-                        _log.Lore("Com todo seu poder, a Guilda entra no Bosque da Raposa, pronta para caçar a maior besta Insana da Ilha." +
-                            " Matá-la, e impedir que os esporos se espalhem, pode significar a tão aguardada reconquista.");
-                    }
+                case "FirstShipUnlock":
+                    _log.Error("NAVIO DESBLOQUEADO");
                     break;
                 case "FirstStageUnlock":
                     _log.Info("Cada Região possui a própria Expedição, e pode precisar ou garantir coisas únicas, como Moedas, Recursos," +
@@ -213,7 +201,30 @@
                     _log.Ferri("Cumpri com minha promessa. A Ilha é nossa novamente. Mas... O oceano é tão vasto. Sinto que podemos vencer" +
                         " a Entrilhas, podemos conhecer novas ilhas, novas pessoas... Por que parar agora?");
                     break;
+                #endregion
 
+                #region Geral
+
+                case "LocalUnlock":
+                    if (helper == "l11")
+                    {
+                        _log.Info("Explorar Locais permite conhecer a Região com maiores detalhes, aprendendo com ela. É possível encontrar" +
+                            " novas Pesquisas e novos Personagens ao desbloquear um Local.");
+                        _log.Lore("A pequena Guilda avança até as Pontas Cantarolantes, contornando a Ilha de Vera pela praia." +
+                            " Uma subida perigosa, onde qualquer deslize pode ser fatal.");
+                    }
+                    if (helper == "l12")
+                    {
+                        _log.Lore("A Guilda avança até o Coração da Ilha, a região das nascentes que garantem água limpa à Murada Cairu." +
+                            " A mata fechada é perigosa, e qualquer animal pode estar infectado.");
+                    }
+                    if (helper == "l13")
+                    {
+                        _log.Lore("Com todo seu poder, a Guilda entra no Bosque da Raposa, pronta para caçar a maior besta Insana da Ilha." +
+                            " Matá-la, e impedir que os esporos se espalhem, pode significar a tão aguardada reconquista.");
+                    }
+                    break;
+                #endregion
                 default: break;
             }
         }

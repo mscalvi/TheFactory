@@ -613,8 +613,6 @@ namespace FurmaIdle.Services
 
                     expansion.FinishedAt = DateTimeOffset.UtcNow;
 
-                    game.CurrentExpansionId = expansion.NextExpansion;
-
                     _ui.NavMenuControl("ExpansionEnd");
 
                 }, save: true);

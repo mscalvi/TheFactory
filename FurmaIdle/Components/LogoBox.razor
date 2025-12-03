@@ -1,0 +1,58 @@
+﻿@inherits UiHelper
+
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Helpers
+
+@inject ILocateService Locate
+
+
+<div class="game-area">
+    @if (!Game.IsReady || _stage is null)
+    {
+        <div class="contracts-placeholder">Stage não Selecionado</div>
+    }
+    else
+    {
+        var g = Game.CurrentGame;
+
+        if (!string.IsNullOrWhiteSpace(g.SelectedStageId))
+            g.Stages.TryGetValue(g.SelectedStageId, out _stage);
+
+        var expansion = Locate.LocateExpansion(g, g.CurrentExpansionId);
+        var expansionName = expansion.Name;
+
+        <div class="title-strip">
+            <div class="t-line t-title ellipsis">Exploradores de Furma</div>
+            <div class="t-line t-locals ellipsis">@expansionName</div>
+        </div>
+    }
+</div>
+
+@code {
+    private StageModel? _stage;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
+    }
+}

@@ -17,99 +17,102 @@
     }
     else
     {
-        @if (_ships.Count == 0)
-        {
-            <div class="ships-empty">
-                <p>Nenhum navio atracado neste porto.</p>
-                <p class="ships-empty-hint">Construa um navio e traga-o para esta região para começar a explorá-la.</p>
-            </div>
-        }
-        else
-        {
-            <div class="ships-scroll">
-                @foreach (var ship in _ships)
-                {
-                    var selectedRouteId = GetSelectedRouteId(ship.Id);
-                    var routesFromHere = _routesFromStage;
+        <div class="menu-panel">
+            @if (_ships.Count == 0)
+            {
+                <div class="ships-empty">
+                    <p>Nenhum navio atracado neste porto.</p>
+                    <p class="ships-empty-hint">Construa um navio e traga-o para esta região para começar a explorá-la.</p>
+                </div>
+            }
+            else
+            {
+                <div class="ships-scroll">
+                    @foreach (var ship in _ships)
+                    {
+                        var selectedRouteId = GetSelectedRouteId(ship.Id);
+                        var routesFromHere = _routesFromStage;
 
-                    <article class="ship-card">
-                        <header class="ship-header">
-                            <div class="ship-icon">
-                                @if (!string.IsNullOrWhiteSpace(ship.Icon))
-                                {
-                                    <img src="@ship.Icon" alt="@ship.Name" />
-                                }
-                                else
-                                {
-                                    <div class="ship-icon-fallback">@ship.Id</div>
-                                }
-                            </div>
-                            <div class="ship-header-text">
-                                <div class="ship-name">@ship.Name</div>
-                                <div class="ship-sub">
-                                    @ShipStateLabel(ship)
-                                </div>
-                            </div>
-                        </header>
-
-                        <section class="ship-body">
-                            <div class="ship-field">
-                                <label for="@($"route-select-{ship.Id}")" class="ship-label">
-                                    Rota:
-                                </label>
-                                <select id="@($"route-select-{ship.Id}")"
-                                        class="ship-select"
-                                        @onchange="e => OnRouteSelected(ship.Id, e.Value?.ToString())">
-                                    <option value="">Selecione uma rota...</option>
-                                    @foreach (var routeFrom in routesFromHere)
+                        <article class="ship-card">
+                            <header class="ship-header">
+                                <div class="ship-icon">
+                                    @if (!string.IsNullOrWhiteSpace(ship.Icon))
                                     {
-                                        <option value="@routeFrom.Id"
-                                                selected="@(routeFrom.Id == selectedRouteId)">
-                                            @routeFrom.Name
-                                        </option>
+                                        <img src="@ship.Icon" alt="@ship.Name" />
                                     }
-                                </select>
-                            </div>
-
-                            @if (!string.IsNullOrWhiteSpace(selectedRouteId))
-                            {
-                                var routeSelected = FindRoute(selectedRouteId);
-                                if (routeSelected is not null)
-                                {
-                                    <div class="ship-route-info">
-                                        <div class="ship-route-label">@RouteActionLabel(routeSelected)</div>
-                                        <div class="ship-route-meta">
-                                            Distância: @routeSelected.Distance
-                                        </div>
+                                    else
+                                    {
+                                        <div class="ship-icon-fallback">@ship.Id</div>
+                                    }
+                                </div>
+                                <div class="ship-header-text">
+                                    <div class="ship-name">@ship.Name</div>
+                                    <div class="ship-sub">
+                                        @ShipStateLabel(ship)
                                     </div>
-                                }
-                            }
-                        </section>
+                                </div>
+                            </header>
 
-                        <footer class="ship-actions">
-                            @{
-                                bool hasRoute = !string.IsNullOrWhiteSpace(selectedRouteId);
-                                var route = hasRoute ? FindRoute(selectedRouteId!) : null;
-                                bool canStart = hasRoute && route is not null && CanStartVoyage(ship, route);
-                            }
+                            <section class="ship-body">
+                                <div class="ship-field">
+                                    <label for="@($"route-select-{ship.Id}")" class="ship-label">
+                                        Rota:
+                                    </label>
+                                    <select id="@($"route-select-{ship.Id}")"
+                                            class="ship-select"
+                                            @onchange="e => OnRouteSelected(ship.Id, e.Value?.ToString())">
+                                        <option value="">Selecione uma rota...</option>
+                                        @foreach (var routeFrom in routesFromHere)
+                                        {
+                                            <option value="@routeFrom.Id"
+                                                    selected="@(routeFrom.Id == selectedRouteId)">
+                                                @routeFrom.Name
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
 
-                            <button class="btn ship-start-button @(canStart ? null : "is-locked")"
-                                    disabled="@( !canStart )"
-                                    @onclick="() => StartVoyage(ship, route)">
-                                @if (route is null)
+                                @if (!string.IsNullOrWhiteSpace(selectedRouteId))
                                 {
-                                    <span>Escolha uma rota</span>
+                                    var routeSelected = FindRoute(selectedRouteId);
+                                    if (routeSelected is not null)
+                                    {
+                                        <div class="ship-route-info">
+                                            <div class="ship-route-label">@RouteActionLabel(routeSelected)</div>
+                                            <div class="ship-route-meta">
+                                                Distância: @routeSelected.Distance
+                                            </div>
+                                        </div>
+                                    }
                                 }
-                                else
-                                {
-                                    <span>@RouteButtonLabel(ship, route)</span>
+                            </section>
+
+                            <footer class="ship-actions">
+                                @{
+                                    bool hasRoute = !string.IsNullOrWhiteSpace(selectedRouteId);
+                                    var route = hasRoute ? FindRoute(selectedRouteId!) : null;
+                                    bool canStart = hasRoute && route is not null && CanStartVoyage(ship, route);
                                 }
-                            </button>
-                        </footer>
-                    </article>
-                }
-            </div>
+
+                                <button class="btn ship-start-button @(canStart ? null : "is-locked")"
+                                        disabled="@( !canStart )"
+                                        @onclick="() => StartVoyage(ship, route)">
+                                    @if (route is null)
+                                    {
+                                        <span>Escolha uma rota</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@RouteButtonLabel(ship, route)</span>
+                                    }
+                                </button>
+                            </footer>
+                        </article>
+                    }
+                </div>
+            }
         }
+    </div>
     }
 </div>
 

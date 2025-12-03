@@ -39,8 +39,6 @@ namespace FurmaIdle.Services
 
             await UnlockExpansion("x00");
 
-            await UnlockLocal("l00");
-
             await UnlockCharacter("p001");
 
             await UnlockContract("c001");
@@ -139,7 +137,9 @@ namespace FurmaIdle.Services
                     if (string.Equals(nextExpansion.Value.UnlockId, expansion.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         if (nextExpansion.Value.State != UnlockHelper.State.Blocked) continue;
+
                         nextExpansion.Value.State = UnlockHelper.State.Available;
+
                         Console.WriteLine($"[Unlock] Expansion {nextExpansion.Value.Id}: {nextExpansion.Value.State}");
                     }
                 }
@@ -153,6 +153,7 @@ namespace FurmaIdle.Services
                 Console.WriteLine($"[Unlock] Expansion {expansion.Id}: {expansion.State} -> {expansion.StartedAt}");
                 game.GameStats.ExpansionsUnlocked++;
                 game.CurrentExpansionId = expansion.Id;
+                Console.WriteLine($"[Unlock] Current Expansion: {game.CurrentExpansionId} - {expansion.Name}");
 
             }, save: true);
         }
@@ -205,9 +206,6 @@ namespace FurmaIdle.Services
             bool newLocal = false;
             string newLocalId = "";
 
-            bool newExpansion = false;
-            string newExpansionId = "";
-
             await _game.Mutate(game =>
             {
                 var stage = _locate.LocateStage(game, stageId);
@@ -233,18 +231,6 @@ namespace FurmaIdle.Services
                         newLocal = true;
                         newLocalId = local.Value.Id;
                         Console.WriteLine($"[Unlock] Local {local.Value.Id}: {local.Value.State}");
-                    }
-                }
-
-                foreach (var expansion in game.Expansions)
-                {
-                    if (string.Equals(expansion.Value.UnlockId, stage.Id, StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (expansion.Value.State != UnlockHelper.State.Blocked) continue;
-                        expansion.Value.State = UnlockHelper.State.Available;
-                        newExpansion = true;
-                        newExpansionId = expansion.Value.Id;
-                        Console.WriteLine($"[Unlock] Expansion {expansion.Value.Id}: {expansion.Value.State}");
                     }
                 }
 
@@ -274,9 +260,9 @@ namespace FurmaIdle.Services
                 await UnlockLocal(newLocalId);
             }
 
-            if (newExpansion)
+            if(stageId == "s01")
             {
-                await UnlockExpansion(newExpansionId);
+                await UnlockExpansion("x10");
             }
         }
         #endregion

@@ -63,7 +63,7 @@ namespace FurmaIdle.Data
                     "images/stages/s01_1011.svg",
                     "images/stages/s01_1111.svg",
                 },
-                UnlockId = null,
+                UnlockId = "us01",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 StartPartySize = 1,
@@ -78,7 +78,7 @@ namespace FurmaIdle.Data
                 VisibleFrom = new List<string> {
                     "s00",
                 },
-                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.Wild,
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.Wild | ContractHelper.Context.Port,
             },
             #endregion
 

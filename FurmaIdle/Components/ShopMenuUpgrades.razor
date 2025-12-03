@@ -32,12 +32,11 @@
             u.State == UnlockHelper.State.Available && ((Us(u.Id) && _stage.Id == "s00") || 
                 ((Ue(u.Id) && (u.StageId == _stage.Id || u.StageId == "all")))));
 
-
-        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK, UA, UU, UN) ====
+        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK, UA, UU, UN, UZ) ====
         var permanents =
             all.Where(u =>
             u.State == UnlockHelper.State.Available &&
-            (Up(u.Id) || Ul(u.Id) || Ur(u.Id) || Uk(u.Id) || Ua(u.Id) || Uu(u.Id) || Un(u.Id)) &&
+            (Up(u.Id) || Ul(u.Id) || Ur(u.Id) || Uk(u.Id) || Ua(u.Id) || Uu(u.Id) || Un(u.Id) || Uz(u.Id) || Us(u.Id)) &&
             IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
             .ToList();
 
@@ -229,6 +228,7 @@
     static bool Ut(string? id) => StartsWith(id, "ut");
     static bool Uu(string? id) => StartsWith(id, "uu");
     static bool Ux(string? id) => StartsWith(id, "ux");
+    static bool Uz(string? id) => StartsWith(id, "uz");
 
     private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {
@@ -325,7 +325,7 @@
 
                 await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
 
-                if (StartsWith(upgrade.Id, "ue") || StartsWith(upgrade.Id, "us"))
+                if (StartsWith(upgrade.Id, "ue") || upgrade.Id == "us01")
                 {
                     await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
 

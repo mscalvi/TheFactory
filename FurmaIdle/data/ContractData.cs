@@ -31,6 +31,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             #endregion
 
@@ -52,6 +53,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             ["c012"] = new ContractModel
             {
@@ -70,6 +72,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.Port | ContractHelper.Context.River,
             },
             #endregion
 
@@ -91,6 +94,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             ["c022"] = new ContractModel
             {
@@ -109,6 +113,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanLarge | ContractHelper.Context.River | ContractHelper.Context.Port,
             },
             ["c023"] = new ContractModel
             {
@@ -127,6 +132,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             #endregion
 
@@ -148,6 +154,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             ["c032"] = new ContractModel
             {
@@ -166,6 +173,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge | ContractHelper.Context.Wild,
             },
             ["c033"] = new ContractModel
             {
@@ -184,6 +192,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.WarZone | ContractHelper.Context.Wild,
             },
             ["c034"] = new ContractModel
             {
@@ -202,6 +211,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = "k01",
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             #endregion
 
@@ -223,6 +233,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k03",
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.Wild | ContractHelper.Context.UrbanLarge,
             },
             ["c042"] = new ContractModel
             {
@@ -241,6 +252,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k01",
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             ["c043"] = new ContractModel
             {
@@ -259,6 +271,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 KnowledgeFactor2 = "k03",
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.Port | ContractHelper.Context.River,
             },
             ["c044"] = new ContractModel
             {
@@ -277,6 +290,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = null,
                 KnowledgeFactor2 = null,
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.UrbanLarge,
             },
             ["c045"] = new ContractModel
             {
@@ -295,6 +309,7 @@ namespace FurmaIdle.Data
                 KnowledgeFactor1 = "k02",
                 KnowledgeFactor2 = "k05",
                 Modifiers = new List<ModifierModel>(),
+                Context = ContractHelper.Context.Infected | ContractHelper.Context.Wild,
             },
             #endregion
         };

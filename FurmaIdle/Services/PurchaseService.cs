@@ -195,10 +195,10 @@ namespace FurmaIdle.Services
                     }
                 }
 
-                if(stage.Id == "s01")
+                if (stage.Id == "s01")
                 {
                     if (StartsWith(itemId, "up"))
-                    { 
+                    {
                         int chars = 0;
 
                         foreach (var character in game.Characters)
@@ -209,7 +209,7 @@ namespace FurmaIdle.Services
                             }
                         }
 
-                        if(chars == 2)
+                        if (chars == 2)
                         {
                             _ui.NavMenuControl("FirstCharacterUnlock", helper);
                         }
@@ -276,10 +276,6 @@ namespace FurmaIdle.Services
                             _ui.NavMenuControl("FirstTechUnlock");
                         }
                     }
-                    if (StartsWith(itemId, "ul"))
-                    {
-                        _ui.NavMenuControl("LocalUnlock", helper);
-                    }
                     if (StartsWith(itemId, "un01"))
                     {
                         _ui.NavMenuControl("FirstShipUnlock", helper);
@@ -288,6 +284,11 @@ namespace FurmaIdle.Services
                     {
                         _ui.NavMenuControl("FirstStageUnlock");
                     }
+                }
+
+                if (StartsWith(itemId, "ul"))
+                {
+                    _ui.NavMenuControl("LocalUnlock", helper);
                 }
 
             }, save: true, ui: true);

@@ -17,7 +17,7 @@ namespace FurmaIdle.Data
             ["x00"] = new ExpansionModel
             {
                 Id = "x00",
-                Name = "As Necessidades do Povo",
+                Name = "Necessidade de Liderança",
                 Icon = "icons/expansions/x00.svg",
                 UnlockId = null,
                 Level = 1,
@@ -34,7 +34,7 @@ namespace FurmaIdle.Data
                 Id = "x10",
                 Name = "Primeiros Recrutas",
                 Icon = "icons/expansions/x10.svg",
-                UnlockId = "s01",
+                UnlockId = null,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
@@ -56,7 +56,7 @@ namespace FurmaIdle.Data
             ["x12"] = new ExpansionModel
             {
                 Id = "x12",
-                Name = "Mestres da Ilha de Vera",
+                Name = "Exploradores da Ilha de Vera",
                 Icon = "icons/expansions/x12.svg",
                 UnlockId = "ue02",
                 Level = 2,
@@ -68,7 +68,7 @@ namespace FurmaIdle.Data
             ["x13"] = new ExpansionModel
             {
                 Id = "x13",
-                Name = "Correntezas de Vera",
+                Name = "Defensores da Ilha de Vera",
                 Icon = "icons/expansions/x13.svg",
                 UnlockId = "ue03",
                 Level = 3,
