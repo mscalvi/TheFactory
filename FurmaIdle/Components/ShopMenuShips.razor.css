@@ -1,124 +1,63 @@
-﻿.ships-root {
-    height: 100%;
+﻿.ships-layout {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
 }
 
-.ships-empty {
-    padding: 4px;
-    text-align: center;
-    font-size: 0.8rem;
-    opacity: 0.9;
-}
-
-.ships-empty-hint {
-    font-size: 0.75rem;
-    opacity: 0.75;
-}
-
-.ships-scroll {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 2px;
+.ship-top-nav {
     display: grid;
-    gap: 4px;
-}
-
-.ship-card {
-    display: grid;
-    grid-template-rows: auto auto auto;
-    gap: 4px;
-    padding: 4px;
-    border-radius: 8px;
-    background: var(--panel-bg, rgba(255,255,255,.03));
-    border: 1px solid var(--panel-border, rgba(255,255,255,.08));
-    font-size: clamp(.7rem, .8vw, .9rem);
-}
-
-.ship-header {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 4px;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
-.ship-icon img {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    border-radius: 6px;
+.ship-nav-btn {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
 }
 
-.ship-icon-fallback {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    display: grid;
-    place-items: center;
-    background: rgba(255,255,255,.06);
-    font-size: 0.7rem;
-}
-
-.ship-header-text {
-    display: grid;
-    gap: 2px;
-}
-
-.ship-name {
-    font-weight: 600;
-}
-
-.ship-sub {
-    font-size: 0.72rem;
-    opacity: 0.8;
-}
-
-.ship-body {
-    display: grid;
-    gap: 4px;
-}
-
-.ship-field {
-    display: grid;
-    gap: 2px;
-}
-
-.ship-label {
-    font-size: 0.72rem;
-    opacity: 0.85;
-}
-
-.ship-select {
-    width: 100%;
-    font-size: 0.75rem;
-    padding: 2px 4px;
-}
-
-.ship-route-info {
-    font-size: 0.75rem;
-    display: grid;
-    gap: 2px;
-}
-
-.ship-route-label {
-    opacity: 0.9;
-}
-
-.ship-route-meta {
-    opacity: 0.7;
-}
-
-.ship-actions {
+.ship-top-current {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
 }
 
-.ship-start-button {
-    font-size: 0.75rem;
-    padding: 3px 8px;
+.ship-middle {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 0.75rem;
 }
 
-    .ship-start-button.is-locked {
-        opacity: 0.5;
-        cursor: default;
-    }
+.ship-info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ship-info-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ship-routes-section {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ship-routes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 0.5rem;
+}
+
+.ship-route-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.25rem;
+}

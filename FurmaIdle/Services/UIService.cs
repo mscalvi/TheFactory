@@ -548,7 +548,7 @@ namespace FurmaIdle.Services
                         ShowPanel("up-permanents");
                     }
 
-                    SetNotificationMenu("i5");
+                    SetOpenMenu("i5");
                     break;
                 case "ExpeditionEnd":
                     SetOpenMenu("i3");

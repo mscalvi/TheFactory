@@ -356,8 +356,6 @@ namespace FurmaIdle.Services
 
             }, save: false, ui: false);
 
-            // Aplica efeitos baseada no estado final
-            await _effect.ApplyEffect(ItemHelper.ItemType.Contract, contractId, stageId);
         }
 
         // -------- helpers de débito / stats / leitura --------

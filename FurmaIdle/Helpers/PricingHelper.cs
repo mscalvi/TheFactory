@@ -155,7 +155,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ShipUnlock1] = new Entry("m01", 10000000000, 1.0, CostFactor.Level, 4.2),
 
                 // Unlock Route Stage X Level X
-                [PricingId.RouteUnlock1] = new Entry("m01", 75000000000, 1.0, CostFactor.Level, 4.2),
+                [PricingId.RouteUnlock1] = new Entry("m01", 750000000, 1.0, CostFactor.Level, 4.2),
 
                 // Party Stage X
                 [PricingId.ContractCapUnlock0] = new Entry("m01", 10, 1.8, CostFactor.Level, 8.8),

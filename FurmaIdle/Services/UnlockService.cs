@@ -19,6 +19,7 @@ namespace FurmaIdle.Services
         Task UnlockResource(string resourceId);
         Task UnlockUpgrade(string upgradeId);
         Task UnlockShip(string shipId);
+        Task UnlockRoute(string shipId);
     }
 
     public sealed class UnlockService : IUnlockService
@@ -153,6 +154,7 @@ namespace FurmaIdle.Services
                 Console.WriteLine($"[Unlock] Expansion {expansion.Id}: {expansion.State} -> {expansion.StartedAt}");
                 game.GameStats.ExpansionsUnlocked++;
                 game.CurrentExpansionId = expansion.Id;
+
                 Console.WriteLine($"[Unlock] Current Expansion: {game.CurrentExpansionId} - {expansion.Name}");
 
             }, save: true);
@@ -344,6 +346,9 @@ namespace FurmaIdle.Services
                     case EffectHelper.EffectType.ShipUnlock:
                         await UnlockShip(up.TargetId);
                         break;
+                    case EffectHelper.EffectType.RouteUnlock:
+                        await UnlockRoute(up.TargetId);
+                        break;
 
                     default:
                         break;
@@ -390,15 +395,16 @@ namespace FurmaIdle.Services
                 }
 
                 ship.State = UnlockHelper.State.Unlocked;
-                ship.ShipState = UnlockHelper.ShipState.InBase;
-                Console.WriteLine($"[Unlock] Ship {ship.Id}: {ship.State}");
+                ship.ShipState = UnlockHelper.ShipState.InStage;
+                ship.InStageId = "s01";
+                Console.WriteLine($"[Unlock] Ship {ship.Id}: {ship.State} -> Stage {ship.InStageId}");
                 game.GameStats.ShipsUnlocked++;
             }, save: true);
         }
         #endregion
 
         #region Route Unlock
-        public async Task Unlockroute(string routeId)
+        public async Task UnlockRoute(string routeId)
         {
             await _game.Mutate(game =>
             {

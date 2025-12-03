@@ -1,7 +1,6 @@
 ﻿@* Components/SpecialtyBox.razor *@
 @inherits UiHelper
 
-@using System.Linq
 @using FurmaIdle.Helpers
 @using FurmaIdle.Models
 @using FurmaIdle.Data
@@ -217,18 +216,5 @@ else
             
         }
         return resTotal;
-    }
-
-    // Teclado
-    public async Task UseSpecSlotAsync(int slot)
-    {
-        if (slot < 1) return;
-
-        var specs = GetOrderedSpecs();
-        if (slot > specs.Count) return;
-
-        var spec = specs[slot - 1];
-        if (CanUseSpec(spec))
-            await UseSpec(spec);
     }
 }

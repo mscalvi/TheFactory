@@ -27,26 +27,24 @@ namespace FurmaIdle.Helpers
                 return TrimDecimalZeros(s, culture);
             }
 
-            // Fora desse range (muito grande OU muito pequeno) -> notação de engenharia
-            // Engenharia (expoente múltiplo de 3): XXXeY
-            var exp = (int)Math.Floor(Math.Log10(abs));
-            var e3 = exp - (exp % 3);   // múltiplo de 3
-            if (e3 == -0) e3 = 0;
+            // Fora desse range (muito grande OU muito pequeno) -> notação científica
+            // Uma casa antes da vírgula, duas depois: x,xxey
+            var exp = (int)Math.Floor(Math.Log10(abs));     // expoente base 10
+            var mant = abs / Math.Pow(10, exp);             // mantissa em [1,10)
 
-            var mant = abs / Math.Pow(10, e3);
-            // Mantissa em [1, 1000)
-            if (mant >= 1000)
+            // Arredonda mantissa para 2 casas; se virar 10.00, ajusta expoente
+            mant = Math.Round(mant, 2);
+            if (mant >= 10.0)
             {
-                mant /= 1000;
-                e3 += 3;
+                mant /= 10.0;
+                exp += 1;
             }
 
-            var sMant = mant.ToString("N" + decimals, culture);
-            sMant = TrimDecimalZeros(sMant, culture);
-
+            const int sciDecimals = 2; // sempre duas casas depois da vírgula na notação científica
+            var sMant = mant.ToString("F" + sciDecimals, culture);
             var sign = value < 0 ? "-" : "";
 
-            return $"{sign}{sMant}e{e3}";
+            return $"{sign}{sMant}e{exp}";
         }
 
         // Overloads convenientes

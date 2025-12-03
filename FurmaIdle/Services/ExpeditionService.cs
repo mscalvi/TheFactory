@@ -490,24 +490,23 @@ namespace FurmaIdle.Services
                 {
                     if (stage.State != State.Unlocked) continue;
 
-                    //// transforma coins em Knowledge
-                    //long cTotal = 0;
+                    long cTotal = 0;
 
-                    //var stats = stage.ExpeditionStats;
-                    //if (stats?.CoinsGain != null)
-                    //{
-                    //    foreach (var coins in stage.ExpeditionStats.CoinsGain)
-                    //    {
-                    //        if (coins.Key == stage.CoinId)
-                    //        {
-                    //            cTotal += coins.Value;
-                    //        }
-                    //    }
+                    var stats = stage.ExpeditionStats;
+                    if (stats?.CoinsGain != null)
+                    {
+                        foreach (var coins in stage.ExpeditionStats.CoinsGain)
+                        {
+                            if (coins.Key == stage.CoinId)
+                            {
+                                cTotal += coins.Value;
+                            }
+                        }
 
-                    //    stats.Coins.Clear();
-                    //}
+                        stats.Coins.Clear();
+                    }
 
-                    //_game.CurrentGame.NoExpeditionStats = new StatsModel();
+                    _game.CurrentGame.NoExpeditionStats = new StatsModel();
 
                     //await _knowledge.EndExpeditionKnowGain(stage, cTotal);
 
@@ -517,20 +516,6 @@ namespace FurmaIdle.Services
                         if (stage is null || expedition is null) return;
 
                         var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
-
-                        expansion.ExpansionStats.Knowledge.Clear();
-                        expansion.ExpansionStats.KnowledgeGain.Clear();
-                        expansion.ExpansionStats.KnowledgeSpent.Clear();
-                        expansion.ExpansionStats.Coins.Clear();
-                        expansion.ExpansionStats.CoinsGain.Clear();
-                        expansion.ExpansionStats.CoinsSpent.Clear();
-                        expansion.ExpansionStats.Resources.Clear();
-                        expansion.ExpansionStats.ResourcesGain.Clear();
-                        expansion.ExpansionStats.ResourcesSpent.Clear();
-
-                        game.GameStats.Coins.Clear();
-                        game.GameStats.Resources.Clear();
-                        game.GameStats.Knowledge.Clear();
 
                         // devolver personagens para a base
                         if (expedition.PartyIds is not null && expedition.PartyIds.Count > 0)
@@ -645,6 +630,22 @@ namespace FurmaIdle.Services
                     var expansion = _locate.LocateExpansion(game, expansionId);
 
                     expansion.FinishedAt = DateTimeOffset.UtcNow;
+
+                    var expansionStarting = _locate.LocateExpansion(game, game.CurrentExpansionId);
+
+                    expansionStarting.ExpansionStats.Knowledge.Clear();
+                    expansionStarting.ExpansionStats.KnowledgeGain.Clear();
+                    expansionStarting.ExpansionStats.KnowledgeSpent.Clear();
+                    expansionStarting.ExpansionStats.Coins.Clear();
+                    expansionStarting.ExpansionStats.CoinsGain.Clear();
+                    expansionStarting.ExpansionStats.CoinsSpent.Clear();
+                    expansionStarting.ExpansionStats.Resources.Clear();
+                    expansionStarting.ExpansionStats.ResourcesGain.Clear();
+                    expansionStarting.ExpansionStats.ResourcesSpent.Clear();
+
+                    game.GameStats.Coins.Clear();
+                    game.GameStats.Resources.Clear();
+                    game.GameStats.Knowledge.Clear();
 
                     _ui.NavMenuControl("ExpansionEnd");
 

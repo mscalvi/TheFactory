@@ -26,8 +26,6 @@
     private bool _ready = false;
     public bool NeedsSave { get; set; }
 
-    private SpecialtyBox? _specialtyBox;
-
     void OnGameChanged() => InvokeAsync(StateHasChanged);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -130,35 +128,6 @@
         Game.GameChanged -= OnGameChanged;
     }
     #endregion
-
-    private async Task HandleGlobalKey(KeyboardEventArgs e)
-    {
-        if (!_ready || Ui.IsBusy) return; // se quiser bloquear durante overlay
-
-        int slot = ParseDigitKey(e.Key);
-        if (slot < 1) return;
-
-        if (_specialtyBox is not null)
-        {
-            await _specialtyBox.UseSpecSlotAsync(slot);
-        }
-    }
-
-    private static int ParseDigitKey(string key)
-    {
-        if (string.IsNullOrEmpty(key)) return 0;
-
-        if (key.StartsWith("Numpad", StringComparison.OrdinalIgnoreCase))
-            key = key.Substring("Numpad".Length);
-
-        if (key.Length == 1 && char.IsDigit(key[0]))
-        {
-            if (key == "0") return 10;
-            return key[0] - '0';
-        }
-
-        return 0;
-    }
 }
 
 @if (!_ready)
@@ -185,8 +154,7 @@ else
     }
     else
     {
-        <div class="game-grid"
-             @onkeydown:document="HandleGlobalKey">
+        <div class="game-grid">
             <!-- Navegador -->
             <aside class="nav-menu">
                 <NavMenu />
@@ -208,7 +176,7 @@ else
 
             <!-- Stage/Área -->
             <section class="stage-box">
-                <SpecialtyBox @ref="_specialtyBox" />
+                <SpecialtyBox />
             </section>
 
             <!-- Click -->

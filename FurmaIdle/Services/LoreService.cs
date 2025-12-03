@@ -190,7 +190,9 @@
                     _log.Ferri("Tanta coisa pra saber, e eu achei que ia ser só juntar um pessoal e limpar a ilha...");
                     break;
                 case "FirstShipUnlock":
-                    _log.Error("NAVIO DESBLOQUEADO");
+                    _log.Info("Navios permitem conhecer novas Regiões, através de uma longa exploração, que possibilitam expandir" +
+                        " a Guilda para novos horizontes.");
+                    _log.Claimi("Finalmente!");
                     break;
                 case "FirstStageUnlock":
                     _log.Info("Cada Região possui a própria Expedição, e pode precisar ou garantir coisas únicas, como Moedas, Recursos," +
@@ -209,7 +211,7 @@
                     if (helper == "l11")
                     {
                         _log.Info("Explorar Locais permite conhecer a Região com maiores detalhes, aprendendo com ela. É possível encontrar" +
-                            " novas Pesquisas e novos Personagens ao desbloquear um Local.");
+                            " novas Pesquisas, novos Personagens, e até novas Rotas para Navios ao desbloquear um Local.");
                         _log.Lore("A pequena Guilda avança até as Pontas Cantarolantes, contornando a Ilha de Vera pela praia." +
                             " Uma subida perigosa, onde qualquer deslize pode ser fatal.");
                     }
