@@ -1,0 +1,58 @@
+﻿@inherits UiHelper
+
+@inject IUiService Ui
+
+@using System.Linq
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+
+<div class="game-area nav-menu">
+    <div class="nav-col">
+        @foreach (var it in Ui.VisibleNav)
+        {
+            var isSelected = string.Equals(Ui.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
+            var hasNotif = it.Notification;
+
+            <button class="@($"nav-button{(isSelected ? " is-selected" : "")}{(hasNotif ? " has-notif" : "")}")"
+                    title="@it.Label"
+                    aria-label="@it.Label"
+                    aria-pressed="@isSelected"
+                    @onclick="() => Select(it.Id)">
+                <span class="nav-glyph">@it.Label</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback<string> OnSelect { get; set; }
+    [Parameter] public string IconBasePath { get; set; } = "/icons/nav-menu";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Ui.Changed += OnUiChanged;
+        Ui.Pulse += OnUiPulse;
+    }
+
+    private void OnUiChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnGameChanged()
+    {
+        base.OnGameChanged();
+    }
+
+    private async Task Select(string id)
+    {
+        UI.SetOpenMenu(id);
+        if (OnSelect.HasDelegate) await OnSelect.InvokeAsync(id);
+    }
+
+    private string GetIconPath(string id)
+        => $"{IconBasePath}/{id}.svg";
+}

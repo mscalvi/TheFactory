@@ -76,23 +76,6 @@ namespace FurmaIdle.Services
         #region Menu Panels
         private readonly HashSet<string> _hidden = new(StringComparer.Ordinal);
         private static readonly string[] AllPanels = {
-            "tech-knowledge",
-            "tech-available",
-            "tech-done",
-            "up-objetive",
-            "up-expansion",
-            "up-expedition",
-            "up-permanents",
-            "expedition-toggle",
-            "expedition-gain",
-            "expedition-status",
-            "expedition-party",
-            "expansion-status",
-            "expansion-basechars",
-            "expansion-stagechars",
-            "expansion-upgrades",
-            "game-status",
-            "game-upgrades",
         };
 
         private readonly List<string> GamePanels = new(AllPanels);
@@ -131,8 +114,8 @@ namespace FurmaIdle.Services
         }
         #endregion
 
-        public string? OpenMenuId { get; private set; } = "i100";
-        public string? PreviousMenuId { get; private set; } = "i100";
+        public string? OpenMenuId { get; private set; } = "i3";
+        public string? PreviousMenuId { get; private set; } = "i3";
         public sealed class NavItem
         {
             public required string Id { get; init; } = "";
@@ -145,16 +128,11 @@ namespace FurmaIdle.Services
 
         private readonly List<NavItem> _nav = new()
         {
-            new() { Id = "i1",  Label = "EXPAN",   Unlocked = false },
-            new() { Id = "i2",  Label = "REGIÃO",   Unlocked = false },
-            new() { Id = "i3",  Label = "EXPED",   Unlocked = false },
-            new() { Id = "i5",  Label = "UPGR",      Unlocked = false },
-            new() { Id = "i6",  Label = "SHIP",      Unlocked = false },
-            new() { Id = "i50", Label = "PESQ",    Unlocked = false },
-            new() { Id = "i97", Label = "GAME",  Unlocked = false },
-            new() { Id = "i98", Label = "LOJA",     Unlocked = false },
-            new() { Id = "i99", Label = "CONFIG",    Unlocked = false },
-            new() { Id = "i100", Label = "TIPS",   Unlocked = false },
+            new() { Id = "i1",  Label = "GUILD",   Unlocked = true },
+            new() { Id = "i2",  Label = "WORLD",   Unlocked = true },
+            new() { Id = "i3",  Label = "GAME",   Unlocked = true },
+            new() { Id = "i5",  Label = "STORE",      Unlocked = true },
+            new() { Id = "i6",  Label = "SETTING",      Unlocked = true },
         };
 
         public IEnumerable<NavItem> VisibleNav =>
@@ -195,7 +173,7 @@ namespace FurmaIdle.Services
             }
             else
             {
-                OpenMenuId = "i100";
+                OpenMenuId = "i3";
                 g.Ui.OpenMenuId = OpenMenuId;
             }
 
@@ -291,13 +269,9 @@ namespace FurmaIdle.Services
                         HidePanel(panel);
                     }
 
-                    // Configurações
-                    UnlockMenu("i99");
-                    // Tips
-                    UnlockMenu("i100");
-
-                    SetOpenMenu("i100");
-                    SetNotificationMenu("i99");
+                    // Menu: Settings
+                    // Menu: Game > Tips
+                    // Menu: Game > Info
 
                     _lore.LoreTrigger(controlItem);
 
@@ -311,17 +285,8 @@ namespace FurmaIdle.Services
 
                     // Tips: Moedas
                     break;
-                case "10thClick":
-                    if (!IsMenuUnlocked("i5"))
-                    {
-                        UnlockMenu("i5");
-                    }
-                    if (IsHidden("up-expedition"))
-                    {
-                        ShowPanel("up-expedition");
-                    }
-
-                    SetOpenMenu("i5");
+                case "10thClick":                    
+                    // Menus: Guild > Guild Hall
 
                     _lore.LoreTrigger(controlItem);
 
@@ -329,11 +294,8 @@ namespace FurmaIdle.Services
                     // Tips: Melhorias
                     break;
                 case "20thClick":
-                    if (IsHidden("up-expansion"))
-                    {
-                        ShowPanel("up-expansion");
-                    }
-
+                    // Menus: Guild > Gerência
+                    
                     _lore.LoreTrigger(controlItem);
 
                     // Animation: piscar painel de expansion upgrades
@@ -356,20 +318,14 @@ namespace FurmaIdle.Services
                     // Tips: Contract Cap
                     break;
                 case "ContractLevel1Unlock":
-                    if (IsHidden("up-permanents"))
-                    {
-                        ShowPanel("up-permanents");
-                    }
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "FirstContractUnlock":
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "FirstContract1Purchase":
-                    if (IsHidden("up-objetive"))
-                    {
-                        ShowPanel("up-objetive");
-                    }
+                    // Menu: Guild > Expansão
+
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "14Contract1Purchase":
@@ -379,25 +335,12 @@ namespace FurmaIdle.Services
 
                 #region Stage 1
                 case "Stage1Start":
-                    UnlockMenu("i5");
-
-                    SetOpenMenu("i5");
+                    // Menu: Game > Archievments
 
                     _lore.LoreTrigger(controlItem, helper);
                     break;
                 case "FirstCharacterUnlock":
-                    // Libera Menu de Expansion
-                    UnlockMenu("i1");
-                    if (IsHidden("expansion-basechars"))
-                    {
-                        ShowPanel("expansion-basechars");
-                    }
-                    if (IsHidden("expansion-stagechars"))
-                    {
-                        ShowPanel("expansion-stagechars");
-                    }
-
-                    SetNotificationMenu("i1");
+                    // Menu: Guild > Guild Info
 
                     _lore.LoreTrigger(controlItem, helper);
 
@@ -413,100 +356,35 @@ namespace FurmaIdle.Services
                     // Tips: Specialties
                     break;
                 case "FirstExpeditionUnlock":
-                    UnlockMenu("i3");
+                    // Menu: Mundo > Expedição
 
-                    if (IsHidden("expedition-toggle"))
-                    {
-                        ShowPanel("expedition-toggle");
-                    }
-                    if (IsHidden("expedition-gain"))
-                    {
-                        ShowPanel("expedition-gain");
-                    }
-                    if (IsHidden("expedition-status"))
-                    {
-                        ShowPanel("expedition-status");
-                    }
-                    if (IsHidden("expedition-party"))
-                    {
-                        ShowPanel("expedition-party");
-                    }
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Animation: piscar ExpeditonMenu
                     // Tips: Expedition
                     break;
                 case "FirstKnowledgeUnlock":
-                    // Libera Menu de Tech
-                    if (IsHidden("tech-knowledge"))
-                    {
-                        ShowPanel("tech-knowledge");
-                    }
-
-                    if (IsHidden("tech-available"))
-                    {
-                        ShowPanel("tech-available");
-                    }
-
-                    UnlockMenu("i50");
-
-                    SetNotificationMenu("i50");
+                    // Menu: Mundo > Laboratório
 
                     _lore.LoreTrigger(controlItem, helper);
                     break;
                 case "FirstExpansionUnlock":
-                    // Libera Menu de Archievments
-                    if (IsHidden("expansion-upgrades"))
-                    {
-                        ShowPanel("expansion-upgrades");
-                    }
-                    if (IsHidden("expansion-status"))
-                    {
-                        ShowPanel("expansion-status");
-                    }
-
-                    UnlockMenu("i97");
-
-                    if (IsHidden("game-status"))
-                    {
-                        ShowPanel("game-status");
-                    }
-                    if (IsHidden("game-upgrades"))
-                    {
-                        ShowPanel("game-upgrades");
-                    }
-
-                    SetNotificationMenu("i97");
-
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Expansion
                     break;
                 case "FirstTechUnlock":
-                    if (IsHidden("tech-done"))
-                    {
-                        ShowPanel("tech-done");
-                    }
-
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Techs
                     break;
                 case "FirstShipUnlock":
-                    // Libera Menu Ships
-                    UnlockMenu("i6");
-
-                    SetNotificationMenu("i6");
+                    // Menu: Mundo > Doca
 
                     _lore.LoreTrigger(controlItem, helper);
                     break;
                 case "FirstStageUnlock":
-                    // Libera Menu de Stage e de Outside Market
-                    UnlockMenu("i2");
-                    UnlockMenu("i98");
-
-                    SetNotificationMenu("i98");
-                    SetOpenMenu("i2");
+                    // Menu: Mundo > Mapa
 
                     _lore.LoreTrigger(controlItem, helper);
 
@@ -529,36 +407,10 @@ namespace FurmaIdle.Services
 
                     break;
                 case "ExpeditionStart":
-                    UnlockMenu("i5");
-
-                    if (IsHidden("up-objetive"))
-                    {
-                        ShowPanel("up-objetive");
-                    }
-                    if (IsHidden("up-expansion"))
-                    {
-                        ShowPanel("up-expansion");
-                    }
-                    if (IsHidden("up-expedition"))
-                    {
-                        ShowPanel("up-expedition");
-                    }
-                    if (IsHidden("up-permanents"))
-                    {
-                        ShowPanel("up-permanents");
-                    }
-
-                    SetOpenMenu("i5");
                     break;
                 case "ExpeditionEnd":
-                    SetOpenMenu("i3");
-
-                    LockMenu("i5");
                     break;
                 case "ExpansionEnd":
-                    SetOpenMenu("i3");
-
-                    LockMenu("i5");
                     break;
                 #endregion
                 default: break;
@@ -588,13 +440,6 @@ namespace FurmaIdle.Services
         #endregion
     }
 
-    public enum UiLogKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan, Jaime, Yg }
-    public sealed class UiLogMessage
-    {
-        public DateTime Time { get; init; } = DateTime.Now;
-        public string Text { get; init; } = "";
-        public UiLogKind Kind { get; init; } = UiLogKind.Info;
-    }
     public interface IUiLogService
     {
         event Action<UiLogMessage>? OnMessage;
@@ -610,7 +455,13 @@ namespace FurmaIdle.Services
         void Jaime (string text);
         void Yg(string text);
     }
-
+    public enum UiLogKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan, Jaime, Yg }
+    public sealed class UiLogMessage
+    {
+        public DateTime Time { get; init; } = DateTime.Now;
+        public string Text { get; init; } = "";
+        public UiLogKind Kind { get; init; } = UiLogKind.Info;
+    }
     public sealed class UiLogService : IUiLogService
     {
         public event Action<UiLogMessage>? OnMessage;

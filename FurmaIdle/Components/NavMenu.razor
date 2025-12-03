@@ -1,58 +1,109 @@
-﻿@inherits UiHelper
+﻿@* ShopMenu.razor *@
 
-@inject IUiService Ui
+@inherits UiHelper
 
-@using System.Linq
-@using FurmaIdle.Helpers
 @using FurmaIdle.Models
-@using FurmaIdle.Services
 
-<div class="game-area nav-menu">
-    <div class="nav-col">
-        @foreach (var it in Ui.VisibleNav)
-        {
-            var isSelected = string.Equals(Ui.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
-            var hasNotif = it.Notification;
+<div class="game-area">
+@if (!Game.IsReady || _stage is null || string.IsNullOrWhiteSpace(_stage.Id))
+{
+    <div class="contracts-placeholder">Stage não Selecionado</div>
+}
+else
+{
+    @switch (SelectedMenuId)
+    {
+        case "i1":
+            @* (1) Expansion — Current Expansion Stats / inBase Characters / inStageCharacters *@
+            <ShopMenuExpansion />
+            break;
 
-            <button class="@($"nav-button{(isSelected ? " is-selected" : "")}{(hasNotif ? " has-notif" : "")}")"
-                    title="@it.Label"
-                    aria-label="@it.Label"
-                    aria-pressed="@isSelected"
-                    @onclick="() => Select(it.Id)">
-                <span class="nav-glyph">@it.Label</span>
-            </button>
-        }
-    </div>
+        case "i2":
+            @* (2) Stage — Available Stages / SelectedStage* / Unlocked Locals* / Available Locals* *@
+            <ShopMenuStage />
+            break;
+
+        case "i3":
+            @* (3) Expedition — Expedition Toggle* / Current Expedition Stats* / End Expedition Gains* *@
+            <ShopMenuExpedition />
+            break;
+
+        case "i5":
+            @* (5) Upgrades — Available Expedition Upgrades* / Available Expansion Upgrades / Unlocked Upgrades *@
+            <ShopMenuUpgrades />
+                break;
+
+        case "i6":
+            @* (6) Ships —  *@
+            <ShopMenuShips />
+            break;
+
+        case "i50":
+            @* (50) Tech — Knowledge / Available Techs / Unlocked Techs *@
+            <ShopMenuTech />
+            break;
+
+        case "i97":
+            @* () Achievements — Game Statistics / Unlocked / Locked *@
+            <ShopMenuGame />
+            break;
+
+        case "i98":
+            @* () Outside — Real Money Shop? *@
+            <div>Outside panel (placeholder)</div>
+            break;
+
+        case "i99":
+            @* () Settings *@
+            <ShopMenuSettings />
+            break;
+
+        case "i100":
+            @* () Instructions *@
+            <ShopMenuTips />
+            break;
+
+        default:
+            <div>Selecione um painel do menu.</div>
+            break;
+    }
+}
 </div>
 
+
 @code {
-    [Parameter] public EventCallback<string> OnSelect { get; set; }
-    [Parameter] public string IconBasePath { get; set; } = "/icons/nav-menu";
+    private StageModel? _stage;
+    private string? SelectedMenuId;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-
-        Ui.Changed += OnUiChanged;
-        Ui.Pulse += OnUiPulse;
-    }
-
-    private void OnUiChanged()
-    {
-        InvokeAsync(StateHasChanged);
+        UI.Changed += OnUiChanged;
+        SelectedMenuId = UI.OpenMenuId;
+        RefreshStage();
     }
 
     protected override void OnGameChanged()
     {
-        base.OnGameChanged();
+        RefreshStage();
     }
 
-    private async Task Select(string id)
+    private void OnUiChanged()
     {
-        UI.SetOpenMenu(id);
-        if (OnSelect.HasDelegate) await OnSelect.InvokeAsync(id);
+        SelectedMenuId = UI.OpenMenuId;
+        InvokeAsync(StateHasChanged);
     }
 
-    private string GetIconPath(string id)
-        => $"{IconBasePath}/{id}.svg";
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
+    }
 }

@@ -1,6 +1,6 @@
 ﻿.game-grid {
     grid-template-columns: 66px minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
-    grid-template-rows: 76px 76px minmax(0, 1fr) clamp(140px, 22vh, 260px);
+    grid-template-rows: 70px 70px minmax(0, 1fr) clamp(140px, 22vh, 260px);
     grid-template-areas:
         "nav tt title income"
         "nav tt stage income"
