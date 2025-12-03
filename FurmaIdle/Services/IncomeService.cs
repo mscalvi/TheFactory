@@ -46,16 +46,8 @@ namespace FurmaIdle.Services
 
                 if (sourceType == ItemHelper.ItemType.Click)
                 {
-                    if (stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
-                    {
-                        stage.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var prevExp);
-                        stage.ExpeditionStats.ClicksMade[sourceId] = prevExp + 1;
-                    }
-                    else
-                    {
-                        game.NoExpeditionStats.ClicksMade.TryGetValue(sourceId, out var prevExp);
-                        game.NoExpeditionStats.ClicksMade[sourceId] = prevExp + 1;
-                    }
+                    stage.ExpeditionStats.ClicksMade.TryGetValue(sourceId, out var prevExp);
+                    stage.ExpeditionStats.ClicksMade[sourceId] = prevExp + 1;
 
                     expansion.ExpansionStats.ClicksMade.TryGetValue(sourceId, out var prevExpa);
                     expansion.ExpansionStats.ClicksMade[sourceId] = prevExpa + 1;

@@ -52,7 +52,7 @@
     bool _showLore = true; // Lore + personagens
     bool _showInfo = true; // Info + Erros
 
-    enum MsgKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan}
+    enum MsgKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan, Jaime, Yg}
 
     sealed class UiMessage
     {
@@ -84,6 +84,8 @@
                         UiLogKind.Maik => MsgKind.Maik,
                         UiLogKind.Claimi => MsgKind.Claimi,
                         UiLogKind.Alan => MsgKind.Alan,
+                        UiLogKind.Jaime => MsgKind.Jaime,
+                        UiLogKind.Yg => MsgKind.Yg,
                         _ => MsgKind.Info
                     }
                 });
@@ -124,6 +126,8 @@
                 UiLogKind.Maik => MsgKind.Maik,
                 UiLogKind.Claimi => MsgKind.Claimi,
                 UiLogKind.Alan => MsgKind.Alan,
+                UiLogKind.Jaime => MsgKind.Jaime,
+                UiLogKind.Yg => MsgKind.Yg,
                 _ => MsgKind.Info
             }
         });
@@ -141,6 +145,8 @@
         MsgKind.Maik => _showLore,
         MsgKind.Claimi => _showLore,
         MsgKind.Alan => _showLore,
+        MsgKind.Jaime => _showLore,
+        MsgKind.Yg => _showLore,
         MsgKind.Info => _showInfo,
         MsgKind.Error => _showInfo,
         _ => true
@@ -148,10 +154,12 @@
 
     string DisplayText(UiMessage m) => m.Kind switch
     {
-        MsgKind.Ferri => $"Ferri — {m.Text}",
-        MsgKind.Maik => $"Maik — {m.Text}",
-        MsgKind.Claimi => $"Claimi — {m.Text}",
-        MsgKind.Alan => $"Alan — {m.Text}",
+        MsgKind.Ferri => $"Ferri: {m.Text}",
+        MsgKind.Maik => $"Maik: {m.Text}",
+        MsgKind.Claimi => $"Claimi: {m.Text}",
+        MsgKind.Alan => $"Alan: {m.Text}",
+        MsgKind.Jaime => $"Jaime: {m.Text}",
+        MsgKind.Yg => $"Yg: {m.Text}",
         _ => m.Text
     };
 
@@ -163,6 +171,8 @@
         MsgKind.Maik => "is-maik",
         MsgKind.Claimi => "is-claimi",
         MsgKind.Alan => "is-alan",
+        MsgKind.Jaime => "is-jaime",
+        MsgKind.Yg => "is-yg",
         _ => "is-info"
     };
 }

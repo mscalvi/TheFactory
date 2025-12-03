@@ -76,14 +76,14 @@
         await Clicks.Click();
 
         var amount = GetClickAmount();
-        var text = $"+{amount:0.#}";
+        var text = $"+{NumbersHelper.Padronize(amount)}";
 
         var coin = Locate.LocateCoin(Game.CurrentGame, _stage.CoinId);
         var iconPath = coin.Image;
 
         await JS.InvokeVoidAsync(
             "ClickPops.spawn",
-            _root,                     // <<–– agora vai o elemento, não a string
+            _root,
             text,
             new { durationMs = 800, icon = iconPath }
         );

@@ -125,14 +125,14 @@ namespace FurmaIdle.Helpers
 
                 // Unlock Contract Level X-X+2
                 [PricingId.ContractLevelUnlock0] = new Entry("m01", 10, 4.1, CostFactor.None, 1),
-                [PricingId.ContractLevelUnlock1] = new Entry("m01", 1000, 4.0, CostFactor.None, 1),
-                [PricingId.ContractLevelUnlock2] = new Entry("m01", 500000, 4.0, CostFactor.None, 1),
+                [PricingId.ContractLevelUnlock1] = new Entry("m01", 600, 4.0, CostFactor.None, 1),
+                [PricingId.ContractLevelUnlock2] = new Entry("m01", 400000, 4.0, CostFactor.None, 1),
 
                 // Unlock Knowledge Stage X
                 [PricingId.KnowledgeUnlock1] = new Entry("m01", 100000, 1.0, CostFactor.KnowledgesUnlocked, 5.9),
 
                 // Unlock Local Stage X
-                [PricingId.LocalUnlock1] = new Entry("m01", 140000, 1.0, CostFactor.LocalsUnlocked, 5.2),
+                [PricingId.LocalUnlock1] = new Entry("m01", 140000, 1.0, CostFactor.LocalsUnlocked, 7.2),
 
                 // Unlock Resource X
                 [PricingId.ResourceUnlock01] = new Entry("m01", 1500, 1.0, CostFactor.None, 1),
@@ -155,7 +155,7 @@ namespace FurmaIdle.Helpers
                 [PricingId.ShipUnlock1] = new Entry("m01", 10000000000, 1.0, CostFactor.Level, 4.2),
 
                 // Unlock Route Stage X Level X
-                [PricingId.ShipUnlock1] = new Entry("m01", 10000000000, 1.0, CostFactor.Level, 4.2),
+                [PricingId.RouteUnlock1] = new Entry("m01", 75000000000, 1.0, CostFactor.Level, 4.2),
 
                 // Party Stage X
                 [PricingId.ContractCapUnlock0] = new Entry("m01", 10, 1.8, CostFactor.Level, 8.8),

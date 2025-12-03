@@ -248,7 +248,7 @@ namespace FurmaIdle.Services
         }
         #endregion
 
-        #region Núcleo de cálculo: ComputeCostForStep
+        #region ComputeCostForStep
         private (long costValue, string costId) ComputeCostForStep(
             ItemHelper.ItemType type,
             string itemId,

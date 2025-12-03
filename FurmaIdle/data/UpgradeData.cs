@@ -2847,7 +2847,7 @@ namespace FurmaIdle.Data
             },
             ["ux133"] = new UpgradeModel
             {
-                Id = "ux113",
+                Id = "ux133",
                 Name = "Eficiência da Base",
                 Level = 4,
                 Icon = "icons/upgrades/ux133.svg",

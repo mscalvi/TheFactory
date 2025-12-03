@@ -108,3 +108,11 @@
 .msg-row.is-alan .msg-text {
     color: darkmagenta;
 }
+
+.msg-row.is-jaime .msg-text {
+    color: aquamarine;
+}
+
+.msg-row.is-yg .msg-text {
+    color: indianred;
+}

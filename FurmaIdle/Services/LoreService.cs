@@ -224,6 +224,54 @@
                             " Matá-la, e impedir que os esporos se espalhem, pode significar a tão aguardada reconquista.");
                     }
                     break;
+                case "CharacterUnlock":
+                    if (helper == "p102")
+                    {
+                        _log.Maik("Um prazer estar aqui. Sou Maik, aprendiz de Artesão na Murada Cairu.");
+                    }
+                    if (helper == "p103")
+                    {
+                        _log.Claimi("Deixa de moleza, quero sair logo daqui!");
+                    }
+                    if (helper == "p104")
+                    {
+                        _log.Alan("Encantado, meus queridos. Será uma obra maravilhosa a que juntos criaremos.");
+                    }
+                    if (helper == "p111")
+                    {
+                        _log.Jaime("E eu nem achava que teria gente nessa ilha. Prazer, sou Jaime, ao seu dispor.");
+                    }
+                    if (helper == "p121")
+                    {
+                        _log.Lore("Yg encara o resto da Guilda. E acena com a cabeça.");
+                    }
+                    break;
+                case "SpecialtyUsed":
+                    if (helper == "e01")
+                    {
+                        _log.Ferri("Colaborem com a recuperação da ilha! Pela Guilda da Illha de Vera!");
+                    }
+                    if (helper == "e02")
+                    {
+                        _log.Maik("Deixe-me mostrar meu talento.");
+                    }
+                    if (helper == "e03")
+                    {
+                        _log.Claimi("Sou bem mais forte do que pareço, fiquem tranquilos.");
+                    }
+                    if (helper == "e04")
+                    {
+                        _log.Alan("Um toque de inspiração.");
+                    }
+                    if (helper == "e05")
+                    {
+                        _log.Jaime("Se usar direito, dura muito mais.");
+                    }
+                    if (helper == "e06")
+                    {
+                        _log.Yg("No momento certo.");
+                    }
+                    break;
                 #endregion
                 default: break;
             }

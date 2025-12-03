@@ -9,70 +9,100 @@
 @inject IResourcesService Resource
 @inject ITooltipService Tooltips
 
+@implements IDisposable
+
 <section class="game-area">
-    <!-- TOPO: COINS -->
-    @{
+    @if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage?.Id) || _stage is null)
+    {
+        <p>Stage não encontrado.</p>
+    }
+    else
+    {
+        <!-- TOPO: COINS -->
         var coins = GetCoinTiles();
         var coinCount = coins.Count;
         var stage = Locate.LocateStage(Game.CurrentGame, Game.CurrentGame.SelectedStageId);
-    }
 
-    <div class="coins" style="--count:@(coinCount)">
-        @foreach (var it in coins)
-        {
-            <div class="coin-camp">
-                <img class="image-resource" src="@it.Image"
-                     alt="@it.Id"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Coins, it.Id))"
-                     @onmouseleave="Tooltips.Clear">
-                <span class="income-total">
-                     @NumbersHelper.Padronize(it.GameTotal)
-@*                     @if (it.GamePerSec > 0)
-                    {
-                        <text> +@it.StagePerSec.ToString("N2")/s</text>
-                    } *@
-                </span>
-            </div>
-        }
-    </div>
 
-    <!-- BASE: RESOURCES -->
-    @{
+        <div class="coins" style="--count:@(coinCount)">
+            @foreach (var it in coins)
+            {
+                <div class="coin-camp">
+                    <img class="image-resource" src="@it.Image"
+                         alt="@it.Id"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Coins, it.Id))"
+                         @onmouseleave="Tooltips.Clear">
+                    <span class="income-total">
+                        @NumbersHelper.Padronize(it.GameTotal)
+                    </span>
+                </div>
+            }
+        </div>
+
+        <!-- BASE: RESOURCES -->
         var res = GetResourceTiles();
         var resCount = res.Count;
+
+        <div class="resources" style="--count:@(resCount)">
+            @foreach (var it in res)
+            {
+                <div class="coin-camp">
+                    <img class="image-resource" src="@it.Image"
+                         alt="@it.Id"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                         @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Resources, it.Id))"
+                         @onmouseleave="Tooltips.Clear">
+                    <span class="income-total">
+                        @NumbersHelper.Padronize(it.GameTotal) / @NumbersHelper.Padronize(it.Cap)
+                    </span>
+                </div>
+            }
+        </div>
     }
-    <div class="resources" style="--count:@(resCount)">
-        @foreach (var it in res)
-        {
-            <div class="coin-camp">
-                <img class="image-resource" src="@it.Image"
-                     alt="@it.Id"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Resources, it.Id))"
-                     @onmouseleave="Tooltips.Clear">
-                <span class="income-total">
-                     @NumbersHelper.Padronize(it.GameTotal) / @NumbersHelper.Padronize(it.Cap)
-@*                     @if (it.GamePerSec > 0)
-                    {
-                        <text> +@it.GamePerSec.ToString("N2")/s</text>
-                    } *@
-                </span>
-            </div>
-        }
-    </div>
+
 </section>
 
 
 @code {
+    private StageModel? _stage;
+
+    private string? _lastStageId;
+    private bool _lastActive;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        RefreshStage();
     }
 
     protected override void OnGameChanged()
     {
         base.OnGameChanged();
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        var game = Game.CurrentGame;
+
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(game.SelectedStageId))
+        {
+            _stage = null;
+            _lastStageId = null;
+            _lastActive = false;
+            return;
+        }
+
+        game.Stages.TryGetValue(game.SelectedStageId, out var st);
+        _stage = st;
+
+        var activeNow = IsExpeditionActive(st);
+        var stageChanged = !string.Equals(_lastStageId, game.SelectedStageId, StringComparison.Ordinal);
+        var activeDropped = _lastActive && !activeNow;
+
+        _lastStageId = game.SelectedStageId;
+        _lastActive = activeNow;
     }
 
     private sealed record TileVM(string Id, string Image, long GameTotal, long StageTotal, long Cap, double GamePerSec, double StagePerSec);
@@ -145,4 +175,7 @@
 
         return list;
     }
+
+    private static bool IsExpeditionActive(StageModel? st)
+        => st?.Expedition?.ExpeditionState == UnlockHelper.ExpeditionState.Active;
 }

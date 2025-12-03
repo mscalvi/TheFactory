@@ -398,8 +398,9 @@ namespace FurmaIdle.Services
                                 break;
                         }
                     }
-                }, save: true);
+                }, save: false);
             }
+
             if (type == ItemHelper.ItemType.Specialty)
             {
                 var spec = _locate.LocateSpecialty(_game.CurrentGame, itemId);
@@ -410,13 +411,15 @@ namespace FurmaIdle.Services
                     ? spec.TargetId.Substring(0, 1)
                     : spec.TargetId;
 
-                await _game.Mutate(g =>
-                {
-                    var dur = Math.Max(0.001, spec.Duration);
-                    var now = DateTimeOffset.UtcNow;
 
-                    if (itemId != "e01")
+                if (itemId != "e01")
+                {
+                    await _game.Mutate(g =>
                     {
+                        var dur = Math.Max(0.001, spec.Duration);
+                        var now = DateTimeOffset.UtcNow;
+
+
                         switch (targetTypeId)
                         {
                             case "a": // All of a Kind
@@ -768,14 +771,15 @@ namespace FurmaIdle.Services
                                 resource.Modifiers.Add(rmod);
                                 break;
                         }
-                    }
 
-                    var timerModifiers = _modifier.GetModifiers(ItemHelper.ItemType.Specialty, spec.Id, stage.Id, EffectSupertype.Time);
-                    double duration = (spec.Duration + timerModifiers.AddMod) * timerModifiers.MultMod;
-                    _specialty.ActivateSpecialtyTimer(spec.Id, duration);
-                }, save: true);
 
+                        var timerModifiers = _modifier.GetModifiers(ItemHelper.ItemType.Specialty, spec.Id, stage.Id, EffectSupertype.Time);
+                        double duration = (spec.Duration + timerModifiers.AddMod) * timerModifiers.MultMod;
+                        _specialty.ActivateSpecialtyTimer(spec.Id, duration);
+                    }, save: false);
+                }
             }
+
             if (type == ItemHelper.ItemType.Trait)
             {
                 await _game.Mutate(g =>

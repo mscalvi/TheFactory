@@ -74,7 +74,7 @@ namespace FurmaIdle.Data
                 Id = "o06",
                 Description = "Aumenta o Ganho para Caçar",
                 TargetId = "c045",
-                EffectValue = 1.5,
+                EffectValue = 1.25,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.ContractGain,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,

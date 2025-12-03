@@ -186,8 +186,11 @@ namespace FurmaIdle.Services
             var stage = _locate.LocateStage(game, "s01");
             var expedition = stage?.Expedition;
 
+
             await _game.Mutate(game =>
             {
+                game.SelectedStageId = stage.Id;
+
                 if (expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
                 {
                     return;
@@ -217,6 +220,15 @@ namespace FurmaIdle.Services
                 expedition.StartedAt = DateTimeOffset.UtcNow;
 
                 expedition.FinishedAt = null;
+
+                var tutorialStage = _locate.LocateStage(game, "s00");
+                if (tutorialStage is not null)
+                {
+                    tutorialStage.State = State.Blocked;
+                    tutorialStage.ExpeditionStats = new StatsModel();
+                    tutorialStage.Expedition.ExpeditionState = ExpeditionState.Idle;
+                    tutorialStage.Expedition.PartyIds.Clear();
+                }
 
             }, save: true);
 
@@ -307,7 +319,7 @@ namespace FurmaIdle.Services
             const int minBusyMs = 2000;
             var sw = Stopwatch.StartNew();
 
-            _ui.SetBusy("Encerrando a Expansão, organizando os relatórios e revendo o aprendizado...");
+            _ui.SetBusy("Encerrando a Expedição, organizando os relatórios e revendo o aprendizado...");
 
             try
             {
@@ -315,21 +327,25 @@ namespace FurmaIdle.Services
 
                 // transforma coins em Knowledge
                 long cTotal = 0;
+                long cDiscount = 0;
                 foreach (var coins in stage.ExpeditionStats.CoinsGain)
                 {
                     if (coins.Key == stage.CoinId)
                     {
                         cTotal += coins.Value;
+                        cDiscount += stage.ExpeditionStats.Coins[coins.Key];
                     }
 
                     if (expansion.ExpansionStats.Coins.TryGetValue(coins.Key, out var expanCoin))
                     {
-                        expanCoin -= cTotal;
+                        expanCoin -= cDiscount;
                         expansion.ExpansionStats.Coins[coins.Key] = expanCoin;
                     }                    
                 }
 
                 stage.ExpeditionStats.Coins.Clear();
+                stage.ExpeditionStats.CoinsGain.Clear();
+                stage.ExpeditionStats.CoinsSpent.Clear();
 
                 await _knowledge.EndExpeditionKnowGain(stage, cTotal);
 
@@ -387,7 +403,7 @@ namespace FurmaIdle.Services
 
                     _ui.NavMenuControl("ExpeditionEnd");
 
-                }, save: true);
+                }, save: false, ui: false);
 
                 await _game.Mutate(game =>
                 {
@@ -437,7 +453,7 @@ namespace FurmaIdle.Services
                     {
                         ScrubExpeditionMods(upgrade.Value.Modifiers);
                     }
-                }, save: true);
+                }, save: true, ui: true);
             }
             finally
             {
@@ -457,10 +473,16 @@ namespace FurmaIdle.Services
 
         public async Task EndExpansion(string expansionId)
         {
+            bool normalExpansion = false;
+
             const int minBusyMs = 3000;
             var sw = Stopwatch.StartNew();
 
-            _ui.SetBusy("Convocando todos os membros da Guilda, hora de expandirmos nossos negócios...");
+            if (!_ui.IsBusy)
+            {
+                _ui.SetBusy("Convocando todos os membros da Guilda, hora de expandirmos nossos negócios...");
+                normalExpansion = true;
+            }
 
             try
             {
@@ -468,26 +490,26 @@ namespace FurmaIdle.Services
                 {
                     if (stage.State != State.Unlocked) continue;
 
-                    // transforma coins em Knowledge
-                    long cTotal = 0;
+                    //// transforma coins em Knowledge
+                    //long cTotal = 0;
 
-                    var stats = stage.ExpeditionStats;
-                    if (stats?.CoinsGain != null)
-                    {
-                        foreach (var coins in stage.ExpeditionStats.CoinsGain)
-                        {
-                            if (coins.Key == stage.CoinId)
-                            {
-                                cTotal += coins.Value;
-                            }
-                        }
+                    //var stats = stage.ExpeditionStats;
+                    //if (stats?.CoinsGain != null)
+                    //{
+                    //    foreach (var coins in stage.ExpeditionStats.CoinsGain)
+                    //    {
+                    //        if (coins.Key == stage.CoinId)
+                    //        {
+                    //            cTotal += coins.Value;
+                    //        }
+                    //    }
 
-                        stats.Coins.Clear();
-                    }
+                    //    stats.Coins.Clear();
+                    //}
 
-                    _game.CurrentGame.NoExpeditionStats = new StatsModel();
+                    //_game.CurrentGame.NoExpeditionStats = new StatsModel();
 
-                    await _knowledge.EndExpeditionKnowGain(stage, cTotal);
+                    //await _knowledge.EndExpeditionKnowGain(stage, cTotal);
 
                     await _game.Mutate(game =>
                     {
@@ -497,7 +519,18 @@ namespace FurmaIdle.Services
                         var expansion = _locate.LocateExpansion(game, game.CurrentExpansionId);
 
                         expansion.ExpansionStats.Knowledge.Clear();
+                        expansion.ExpansionStats.KnowledgeGain.Clear();
+                        expansion.ExpansionStats.KnowledgeSpent.Clear();
+                        expansion.ExpansionStats.Coins.Clear();
+                        expansion.ExpansionStats.CoinsGain.Clear();
+                        expansion.ExpansionStats.CoinsSpent.Clear();
                         expansion.ExpansionStats.Resources.Clear();
+                        expansion.ExpansionStats.ResourcesGain.Clear();
+                        expansion.ExpansionStats.ResourcesSpent.Clear();
+
+                        game.GameStats.Coins.Clear();
+                        game.GameStats.Resources.Clear();
+                        game.GameStats.Knowledge.Clear();
 
                         // devolver personagens para a base
                         if (expedition.PartyIds is not null && expedition.PartyIds.Count > 0)
@@ -554,7 +587,7 @@ namespace FurmaIdle.Services
                                 }
                             }
                         }
-                    }, save: true);
+                    }, save: false, ui: false);
                 }
 
                 await _game.Mutate(game =>
@@ -605,7 +638,7 @@ namespace FurmaIdle.Services
                         ScrubExpansionMods(upgrade.Value.Modifiers);
                     }
 
-                }, save: true);
+                }, save: false, ui: false);
 
                 await _game.Mutate(game =>
                 {
@@ -615,20 +648,23 @@ namespace FurmaIdle.Services
 
                     _ui.NavMenuControl("ExpansionEnd");
 
-                }, save: true);
+                }, save: true, ui: true);
             }            
             finally
             {
-                sw.Stop();
-                var elapsed = (int)sw.ElapsedMilliseconds;
-                var remaining = minBusyMs - elapsed;
-
-                if (remaining > 0)
+                if (normalExpansion)
                 {
-                    await Task.Delay(remaining);
-                }
+                    sw.Stop();
+                    var elapsed = (int)sw.ElapsedMilliseconds;
+                    var remaining = minBusyMs - elapsed;
 
-                _ui.ClearBusy();
+                    if (remaining > 0)
+                    {
+                        await Task.Delay(remaining);
+                    }
+
+                    _ui.ClearBusy();
+                }
             }
         }
 

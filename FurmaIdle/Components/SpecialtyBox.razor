@@ -1,4 +1,4 @@
-﻿@* Components/StageBox.razor *@
+﻿@* Components/SpecialtyBox.razor *@
 @inherits UiHelper
 
 @using System.Linq
@@ -48,9 +48,7 @@ else
     <!-- ========= Party grid (PartySizeMax slots) ========= -->
     <section class="party-grid panel"
              style="--slots:@Expedition.GetPartyCap(_stage)"
-             tabindex="0"
-             @ref="_host"
-             @onkeydown="HandleKey">
+             @ref="_host">
         @for (var i = 0; i < Expedition.GetPartyCap(_stage); i++)
         {
             if (i < activeChars.Count)
@@ -136,7 +134,7 @@ else
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender && !_focusedOnce)
+        if (_stage is not null && !_focusedOnce)
         {
             _focusedOnce = true;
             try { await _host.FocusAsync(); } catch { /* ignore */ }
@@ -159,12 +157,14 @@ else
         if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
+            _focusedOnce = false;
             return;
         }
 
         var g = Game.CurrentGame;
         g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
         _stage = st;
+        _focusedOnce = false;
     }
 
     private List<SpecialtyModel> GetOrderedSpecs()
@@ -180,36 +180,6 @@ else
         return activeChars
             .Select(c => Locate.LocateSpecialty(g, c.SpecialtyId))
             .ToList();
-    }
-
-    private async Task HandleKey(KeyboardEventArgs e)
-    {
-        var key = e.Key;             
-        int slot = ParseDigitKey(key);
-        if (slot < 1) return;        
-
-        var specs = GetOrderedSpecs();
-        if (slot > specs.Count) return;
-
-        var spec = specs[slot - 1];
-        if (CanUseSpec(spec))
-            await UseSpec(spec);
-    }
-
-    private static int ParseDigitKey(string key)
-    {
-        if (string.IsNullOrEmpty(key)) return 0;
-
-        if (key.StartsWith("Numpad", StringComparison.OrdinalIgnoreCase))
-            key = key.Substring("Numpad".Length);
-
-        if (key.Length == 1 && char.IsDigit(key[0]))
-        {
-            if (key == "0") return 10;           
-            return (key[0] - '0');               
-        }
-
-        return 0;
     }
 
     bool IsSpecActive(SpecialtyModel spec)
@@ -249,6 +219,16 @@ else
         return resTotal;
     }
 
-    private static string CharImg(string id) => $"images/characters/{id}.png";
+    // Teclado
+    public async Task UseSpecSlotAsync(int slot)
+    {
+        if (slot < 1) return;
 
+        var specs = GetOrderedSpecs();
+        if (slot > specs.Count) return;
+
+        var spec = specs[slot - 1];
+        if (CanUseSpec(spec))
+            await UseSpec(spec);
+    }
 }

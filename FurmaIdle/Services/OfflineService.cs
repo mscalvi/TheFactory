@@ -1,4 +1,5 @@
-﻿using FurmaIdle.Models;
+﻿using FurmaIdle.Helpers;
+using FurmaIdle.Models;
 
 namespace FurmaIdle.Services
 {
@@ -45,7 +46,7 @@ namespace FurmaIdle.Services
                     if (coin.Value > 1)
                     {
                         var coinInfo = _locate.LocateCoin(_game.CurrentGame, coin.Key);
-                        _log.Info($"Ganhamos {coin.Value.ToString("N0")} {coinInfo.Name} enquanto estavamos distantes.");
+                        _log.Info($"Ganhamos {NumbersHelper.Padronize(coin.Value)} {coinInfo.Name} na {stage.Name} enquanto estavamos distantes.");
                         await _income.AddAsync(Helpers.ItemHelper.ItemType.Coin, coin.Key, coin.Value, Helpers.ItemHelper.ItemType.Offline, stage.Id, stage.Id);
                     }
                 }

@@ -376,6 +376,7 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(controlItem);
                     break;
                 #endregion
+
                 #region Stage 1
                 case "Stage1Start":
                     UnlockMenu("i5");
@@ -422,9 +423,9 @@ namespace FurmaIdle.Services
                     {
                         ShowPanel("expedition-gain");
                     }
-                    if (IsHidden("expedition-stage"))
+                    if (IsHidden("expedition-status"))
                     {
-                        ShowPanel("expedition-stage");
+                        ShowPanel("expedition-status");
                     }
                     if (IsHidden("expedition-party"))
                     {
@@ -517,7 +518,15 @@ namespace FurmaIdle.Services
                 case "LocalUnlock":
                     _lore.LoreTrigger(controlItem, helper);
 
-                    // Tips: Locals
+                    // tips: Locals
+                    break;
+                case "CharacterUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    break;
+                case "SpecialtyUsed":
+                    _lore.LoreTrigger(controlItem, helper);
+
                     break;
                 case "ExpeditionStart":
                     UnlockMenu("i5");
@@ -579,7 +588,7 @@ namespace FurmaIdle.Services
         #endregion
     }
 
-    public enum UiLogKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan }
+    public enum UiLogKind { Error, Info, Lore, Ferri, Maik, Claimi, Alan, Jaime, Yg }
     public sealed class UiLogMessage
     {
         public DateTime Time { get; init; } = DateTime.Now;
@@ -598,6 +607,8 @@ namespace FurmaIdle.Services
         void Maik(string text);
         void Claimi(string text);
         void Alan(string text);
+        void Jaime (string text);
+        void Yg(string text);
     }
 
     public sealed class UiLogService : IUiLogService
@@ -633,5 +644,7 @@ namespace FurmaIdle.Services
         public void Maik(string text) => Emit(text, UiLogKind.Maik);
         public void Claimi(string text) => Emit(text, UiLogKind.Claimi);
         public void Alan(string text) => Emit(text, UiLogKind.Alan);
+        public void Jaime(string text) => Emit(text, UiLogKind.Jaime);
+        public void Yg(string text) => Emit(text, UiLogKind.Yg);
     }
 }

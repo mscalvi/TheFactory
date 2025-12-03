@@ -38,11 +38,9 @@ namespace FurmaIdle.Services
         private int contractBuy = 0;
         private bool busy = false;
 
-        // --- API antiga: continua igual, só delega pra quantity = 1 ---
         public Task Purchase(ItemHelper.ItemType type, string itemId, string stageId)
             => Purchase(type, itemId, stageId, 1);
 
-        // --- Nova API: suporta quantidade ---
         public async Task Purchase(ItemHelper.ItemType type, string itemId, string stageId, int quantity)
         {
             if (busy || quantity <= 0)
@@ -58,7 +56,6 @@ namespace FurmaIdle.Services
                 }
                 else
                 {
-                    // Upgrades, Specialties, etc → 1x como sempre
                     await PurchaseCore(type, itemId, stageId);
                 }
             }
@@ -68,7 +65,6 @@ namespace FurmaIdle.Services
             }
         }
 
-        // Compra "unitária" (uso interno ou para tipos que não tem bulk)
         private async Task<bool> PurchaseCore(ItemHelper.ItemType type, string itemId, string stageId)
         {
             var game = _game.CurrentGame;
@@ -76,10 +72,6 @@ namespace FurmaIdle.Services
             var stage = _locate.LocateStage(game, stageId);
 
             var cost = _cost.ComputeCost(type, itemId, stageId);
-
-            var coinCost = new CoinModel();
-            var resourceCost = new ResourceModel();
-            var knowledgeCost = new KnowledgeModel();
 
             string helper = "";
 
@@ -90,19 +82,6 @@ namespace FurmaIdle.Services
                 'k' => GetOrZero(expansion.ExpansionStats.Knowledge, cost.costId) >= cost.costValue,
                 _ => false
             };
-
-            switch (cost.costId[0])
-            {
-                case 'm':
-                    coinCost = _locate.LocateCoin(game, cost.costId);
-                    break;
-                case 'r':
-                    resourceCost = _locate.LocateResource(game, cost.costId);
-                    break;
-                case 'k':
-                    knowledgeCost = _locate.LocateKnowledge(game, cost.costId);
-                    break;
-            }
 
             if (!hasFunds)
                 return false;
@@ -138,7 +117,8 @@ namespace FurmaIdle.Services
                         break;
 
                     case ItemHelper.ItemType.Specialty:
-                        // var spec = _locate.LocateSpecialty(g, itemId);
+                        var specialty = _locate.LocateSpecialty(g, itemId);
+                        helper = specialty.Id;
                         break;
                 }
 
@@ -146,7 +126,10 @@ namespace FurmaIdle.Services
 
             }, save: false, ui: false);
 
-            await _effect.ApplyEffect(type, itemId, stageId);
+            if (itemId != "e01")
+            {
+                await _effect.ApplyEffect(type, itemId, stageId);
+            }
 
             await _game.Mutate(g =>
             {
@@ -289,6 +272,11 @@ namespace FurmaIdle.Services
                 if (StartsWith(itemId, "ul"))
                 {
                     _ui.NavMenuControl("LocalUnlock", helper);
+                }
+
+                if (StartsWith(itemId, "e"))
+                {
+                    _ui.NavMenuControl("SpecialtyUsed", helper);
                 }
 
             }, save: true, ui: true);
