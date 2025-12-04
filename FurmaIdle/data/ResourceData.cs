@@ -13,12 +13,12 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, ResourceModel> All = new()
         {
-            #region Initial Resources
+            #region Resources
             ["r01"] = new ResourceModel
             {
                 Id = "r01",
                 Name = "Mantimentos",
-                UnlockId = "ux104",
+                UnlockId = "ur01",
                 RsPerChar = 30,
                 RsPerSecond = 0.0,
                 Icon = "icons/resources/r01.svg",

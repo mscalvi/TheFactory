@@ -16,87 +16,77 @@
     }
     else
     {
-        var game = Game.CurrentGame;
-        var expedition = _stage.Expedition;
-        var expeditionStats = _stage.ExpeditionStats;
+        var item = _items[_currentItemIndex];
 
-        var isActive = isExpActive(_stage);
-        var partySize = Expedition.GetPartyCap(_stage);
-        var partyIds = expedition.PartyIds;
+        <!-- Seletor -->
+        <section class="@($"menu-panel nav-panel {UI.PanelClass("guildinfo-nav")}")">
+            <button class="nav-selector-button"
+                    disabled="@(_currentItemIndex <= 0)"
+                    @onclick="PrevItem">
+                ‹
+            </button>
 
-        var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
+            <div class="selector-icon">
+                <img class="selector-icon-img" src="@item.Icon" alt="@item.Id" />
+            </div>
 
-        var avaliableChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
-        && c.CharState == UnlockHelper.CharState.InBase || c.CharState == UnlockHelper.CharState.InLine)
-        .OrderBy(c => c.Id)
-        .ToList();
+            <button class="nav-selector-button"
+                    disabled="@(_currentItemIndex >= _items.Count - 1)"
+                    @onclick="NextItem">
+                ›
+            </button>
+        </section>
 
-        var inStageChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
-        && c.CharState == UnlockHelper.CharState.InStage && c.InStageId == _stage.Id)
-        .OrderBy(c => c.Id)
-        .ToList();
+        <!-- Informações -->
+        <section class="@($"menu-panel info-panel {UI.PanelClass("guildinfo-character")}")">
+            <div class="guildinfo-top">
+                <h3 class="guildinfo-name">@item.Name</h3>
 
-        <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">
-            @if (_stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
-            {
-                <h3 class="title">Personagens na Expedição</h3>
-                <div class="image-grid">
-                    @foreach (var ch in inStageChars)
-                    {
-                        <button class="character-button"
-                                disabled
-                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
-                                @onmouseleave="Tooltips.Clear"
-                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
-                                @onblur="Tooltips.Clear">
-                            @if (!string.IsNullOrWhiteSpace(ch.Image))
-                            {
-                                <img src="@ch.Image"
-                                     alt="@ch.Id"
-                                     class="icon-img" />
-                            }
-                            else
-                            {
-                                @ch.Id
-                            }
-                        </button>
-                    }
+                <div class="guildinfo-row">
+                    <span class="guildinfo-label">Classe</span>
+                    <span class="guildinfo-value">@item.Id</span>
                 </div>
-            }
-            else
-            {
-                <h3 class="title">Personagens na Base</h3>
-                <div class="image-grid">
-                    @foreach (var ch in avaliableChars)
-                    {
-                        var selected = ch.CharState == UnlockHelper.CharState.InLine;
 
-                        <button type="button"
-                                class="character-button @(selected ? "selected" : null)"
-                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
-                                @onmouseleave="Tooltips.Clear"
-                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
-                                @onblur="Tooltips.Clear">
-                            @if (!string.IsNullOrWhiteSpace(ch.Image))
-                            {
-                                <img src="@ch.Image"
-                                     alt="@ch.Id"
-                                     class="icon-img" />
-                            }
-                            else
-                            {
-                                @ch.Id
-                            }
-                        </button>
-                    }
+                <div class="guildinfo-row">
+                    <span class="guildinfo-label">Traço</span>
+                    <span class="guildinfo-value">@item.TraitId</span>
                 </div>
-            }
+
+                <div class="guildinfo-row">
+                    <span class="guildinfo-label">Especialidade</span>
+                    <span class="guildinfo-value">@item.SpecialtyId</span>
+                </div>
+
+                <div class="guildinfo-row guildinfo-row--multiline">
+                    <span class="guildinfo-label">Descrição</span>
+                    <p class="guildinfo-text">
+                        @item.Description
+                    </p>
+                </div>
+
+                <div class="guildinfo-row guildinfo-row--multiline">
+                    <span class="guildinfo-label">Lore</span>
+                    <p class="guildinfo-text guildinfo-text--lore">
+                        @item.Lore
+                    </p>
+                </div>
+            </div>
+
+            <div class="guildinfo-botton">
+                <div class="guildinfo-bigimage">
+                    <img src="@item.Image"
+                         alt="@item.Id"
+                         class="guildinfo-bigimage-img" />
+                </div>
+            </div>
         </section>
     }
 </div>
 
 @code {
     private StageModel? _stage;
+    private readonly List<CharacterModel> _items = new();
+    private int _currentItemIndex = 0;
 
     protected override void OnInitialized()
     {
@@ -114,25 +104,59 @@
         if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
+            _items.Clear();
+            _currentItemIndex = 0;
             return;
         }
 
-        var g = Game.CurrentGame;
-        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        var game = Game.CurrentGame;
+        game.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
         _stage = st;
+
+        _items.Clear();
+
+        if (game.Characters is not null)
+        {
+            foreach (var character in game.Characters.Values)
+            {
+                if (character is null) continue;
+                if (character.State != UnlockHelper.State.Unlocked) continue;
+
+                _items.Add(character);
+            }
+
+            _items.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+        }
+
+        if (_items.Count == 0)
+        {
+            _currentItemIndex = 0;
+        }
+        else if (_currentItemIndex >= _items.Count)
+        {
+            _currentItemIndex = _items.Count - 1;
+        }
+        else if (_currentItemIndex < 0)
+        {
+            _currentItemIndex = 0;
+        }
     }
 
-    private bool isExpActive(StageModel stage)
+    private void PrevItem()
     {
-        var expedition = stage.Expedition;
-
-        if (expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
+        if (_currentItemIndex > 0)
         {
-            return true;
+            _currentItemIndex--;
+            StateHasChanged();
         }
-        else
+    }
+
+    private void NextItem()
+    {
+        if (_currentItemIndex < _items.Count - 1)
         {
-            return false;
+            _currentItemIndex++;
+            StateHasChanged();
         }
     }
 

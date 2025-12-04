@@ -7,10 +7,13 @@ namespace FurmaIdle.Models
         // Basics
         public string Id { get; set; }
         public string Name { get; set; }
+        public string Class { get; set; }
         public string Description { get; set; }
         public string Lore { get; set; }
         public string Icon { get; set; }
+        public string NavIcon { get; set; }
         public string Image { get; set; }
+        public string BigImage { get; set; }
         public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         // Modifier

@@ -412,7 +412,7 @@ namespace FurmaIdle.Services
                     : spec.TargetId;
 
 
-                if (itemId != "e01")
+                if (itemId != "e0001")
                 {
                     await _game.Mutate(g =>
                     {

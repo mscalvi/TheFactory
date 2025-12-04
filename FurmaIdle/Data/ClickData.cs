@@ -11,13 +11,13 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, ClickModel> All = new()
         {
-            #region Murada Cairu (s00)
-            ["i0i"] = new ClickModel
+            #region Casa de Ferri (s00)
+            ["i00"] = new ClickModel
             {
-                Id = "i0i",
+                Id = "i00",
                 StageId = "s00",
                 BaseGain = 1,
-                Icon = "icons/clicks/i0i.svg",
+                Icon = "icons/clicks/i00.svg",
                 Modifiers = new List<ModifierModel>(),
             },
             #endregion
@@ -33,7 +33,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Entrilhas (s02)
+            #region  (s02)
             ["i02"] = new ClickModel
             {
                 Id = "i02",

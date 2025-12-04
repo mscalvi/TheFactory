@@ -1,0 +1,15 @@
+﻿/* ===== ROOT ===== */
+.menu-root {
+    grid-template-rows: 55px 1fr;
+    grid-template-areas:
+        "guildinfo-nav"
+        "guildinfo-char";
+}
+
+.guildinfo-nav {
+    grid-area: guildinfo-nav;
+}
+
+.guildinfo-character {
+    grid-area: guildinfo-char;
+}

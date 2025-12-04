@@ -100,19 +100,19 @@
                         " em uma Expedição.");
                     _log.Ferri("Ótimo, já consigo ver a Guilda se formando.");
 
-                    if(helper == "p102")
+                    if(helper == "p0101")
                     {
                         // Maik
                         _log.Maik("Ferramentas preparadas. Quero saber o que mais essa ilha pode oferecer, além de areia e conchas riscadas.");
                     }
 
-                    if(helper == "p103")
+                    if(helper == "p0102")
                     {
                         // Claimi
                         _log.Claimi("Já estava cansada de pescar aqui na Murada, vamos viajar!");
                     }
 
-                    if (helper == "p104")
+                    if (helper == "p0103")
                     {
                         // Alan
                         _log.Alan("Nem eu aguento mais as minhas histórias, hora de conhecer o mundo.");
@@ -127,19 +127,19 @@
                         " para serem conseguidas.");
                     _log.Ferri("Não dá pra carregar muita comida de uma vez...");
                     // personagem na base.
-                    if (helper == "p102")
+                    if (helper == "p0101")
                     {
                         // Maik
                         _log.Maik("Mas, mesmo da Base, consigo ajudar a gerir.");
                     }
 
-                    if (helper == "p103")
+                    if (helper == "p0102")
                     {
                         // Claimi
                         _log.Claimi("Sem problemas, eu fico aqui pescando enquanto você passeiam...");
                     }
 
-                    if (helper == "p104")
+                    if (helper == "p0103")
                     {
                         // Alan
                         _log.Alan("Que experiência formidável, garantir comida enquanto os outros se aventuram.");
@@ -152,19 +152,19 @@
                     _log.Info("Por serem um Reset, todas as Moedas daquela Região são consumidas ao encerrar a Expedição, e todas" +
                         " as Melhorias de Expedição são desligadas e voltam ao início.");
                     // personagem na base pedindo pra entrar
-                    if (helper == "p102")
+                    if (helper == "p0101")
                     {
                         // Maik
                         _log.Maik("Ferri, amigo, acho que posso ajudar bem mais se eu for com você.");
                     }
 
-                    if (helper == "p103")
+                    if (helper == "p0102")
                     {
                         // Claimi
                         _log.Claimi("Se me deixar aqui mais um pouco, vou eu mesma virar um peixe.");
                     }
 
-                    if (helper == "p104")
+                    if (helper == "p0103")
                     {
                         // Alan
                         _log.Alan("Deixe-me mostrar o quão valiosa é minha companhia.");
@@ -227,49 +227,49 @@
                     }
                     break;
                 case "CharacterUnlock":
-                    if (helper == "p102")
+                    if (helper == "p0101")
                     {
                         _log.Maik("Um prazer estar aqui. Sou Maik, aprendiz de Artesão na Murada Cairu.");
                     }
-                    if (helper == "p103")
+                    if (helper == "p0102")
                     {
                         _log.Claimi("Deixa de moleza, quero sair logo daqui!");
                     }
-                    if (helper == "p104")
+                    if (helper == "p0103")
                     {
                         _log.Alan("Encantado, meus queridos. Será uma obra maravilhosa a que juntos criaremos.");
                     }
-                    if (helper == "p111")
+                    if (helper == "p0111")
                     {
                         _log.Jaime("E eu nem achava que teria gente nessa ilha. Prazer, sou Jaime, ao seu dispor.");
                     }
-                    if (helper == "p121")
+                    if (helper == "p0121")
                     {
                         _log.Lore("Yg encara o resto da Guilda. E acena com a cabeça.");
                     }
                     break;
                 case "SpecialtyUsed":
-                    if (helper == "e01")
+                    if (helper == "e0001")
                     {
                         _log.Ferri("Colaborem com a recuperação da ilha! Pela Guilda da Illha de Vera!");
                     }
-                    if (helper == "e02")
+                    if (helper == "e0101")
                     {
                         _log.Maik("Deixe-me mostrar meu talento.");
                     }
-                    if (helper == "e03")
+                    if (helper == "e01002")
                     {
                         _log.Claimi("Sou bem mais forte do que pareço, fiquem tranquilos.");
                     }
-                    if (helper == "e04")
+                    if (helper == "e0103")
                     {
                         _log.Alan("Um toque de inspiração.");
                     }
-                    if (helper == "e05")
+                    if (helper == "e0111")
                     {
                         _log.Jaime("Se usar direito, dura muito mais.");
                     }
-                    if (helper == "e06")
+                    if (helper == "e0121")
                     {
                         _log.Yg("No momento certo.");
                     }

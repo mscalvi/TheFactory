@@ -126,7 +126,7 @@ namespace FurmaIdle.Services
 
             }, save: false, ui: false);
 
-            if (itemId != "e01")
+            if (itemId != "e0001")
             {
                 await _effect.ApplyEffect(type, itemId, stageId);
             }
@@ -169,7 +169,7 @@ namespace FurmaIdle.Services
                     }
 
                     // Contract Level 1 Purchase Stage 0
-                    if (itemId == "c011")
+                    if (itemId == "c101")
                     {
                         if (contractBuy == 1)
                         {
@@ -238,7 +238,7 @@ namespace FurmaIdle.Services
                             _ui.NavMenuControl("FirstKnowledgeUnlock");
                         }
                     }
-                    if (itemId == "ue01")
+                    if (itemId == "ue0001")
                     {
                         _ui.NavMenuControl("FirstExpansionUnlock");
                     }

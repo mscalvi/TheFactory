@@ -40,7 +40,7 @@ namespace FurmaIdle.Services
 
             await UnlockExpansion("x00");
 
-            await UnlockCharacter("p001");
+            await UnlockCharacter("p0001");
 
             await UnlockContract("c001");
 

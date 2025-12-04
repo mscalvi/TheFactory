@@ -11,7 +11,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, KnowledgeModel> All = new()
         {
-            #region Initial Knowledge (Unlocked)
+            #region s01
             ["k01"] = new KnowledgeModel
             {
                 Id = "k01",
@@ -78,9 +78,6 @@ namespace FurmaIdle.Data
                 GenerationPenaltie = 0.65,
                 GenerationCoin = IncomeHelper.CoinBurst.m01,
             },
-            #endregion
-
-            #region Unlockable Knowledge (Blocked)
             ["k04"] = new KnowledgeModel
             {
                 Id = "k04",
@@ -95,7 +92,7 @@ namespace FurmaIdle.Data
 
                 // Knowledge Gain
                 GainCoinId = "m01",
-                GainCoinBase = 1000000,
+                GainCoinBase = 10000000,
                 GainCoinCurve = 0.82,
 
                 // Generation Boost

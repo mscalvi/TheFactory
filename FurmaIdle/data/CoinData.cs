@@ -13,7 +13,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, CoinModel> All = new()
         {
-            #region Initial Coins
+            #region Coins
             ["m01"] = new CoinModel
             {
                 Id = "m01",

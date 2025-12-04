@@ -42,14 +42,7 @@
             .ToList();
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("hall-expansion")}")">
-            @if (_stage.Id == "s00")
-            {
                 <h3 class="title">Personagens, Recursos e Expansão</h3>
-            }
-            else
-            {
-                <h3 class="title">Personagens, Recursos e Expansão</h3>
-            }
             <div class="icon-grid">
                 @foreach (var u in expansionUps)
                 {

@@ -14,43 +14,43 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, TraitModel> All = new()
         {
             #region Traits
-            ["o01"] = new TraitModel
+            ["a0001"] = new TraitModel
             {
-                Id = "o01",
-                Description = "Diminui o Tempo para Servir Bebidas",
-                TargetId = "c021",
+                Id = "a0001",
+                Description = "Diminui o tempo para Servir Bebidas.",
+                TargetId = "c201",
                 EffectValue = 0.80,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.ContractTime,
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["o02"] = new TraitModel
+            ["a0101"] = new TraitModel
             {
-                Id = "o02",
-                Description = "Diminui o Tempo para Organizar Ferramentas",
-                TargetId = "c032",
+                Id = "a0101",
+                Description = "Diminui o tempo para Organizar Ferramentas.",
+                TargetId = "c302",
                 EffectValue = 0.80,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.ContractTime,
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["o03"] = new TraitModel
+            ["a0102"] = new TraitModel
             {
-                Id = "o03",
-                Description = "Diminui o Tempo para Carregar o Barco",
-                TargetId = "c012",
+                Id = "a0102",
+                Description = "Diminui o tempo para Carregar o Barco.",
+                TargetId = "c102",
                 EffectValue = 0.75,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.ContractTime,
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["o04"] = new TraitModel
+            ["a0103"] = new TraitModel
             {
-                Id = "o04",
-                Description = "Diminui o custo das Especialidades",
+                Id = "a0103",
+                Description = "Diminui o custo das Especialidades da Guilda.",
                 TargetId = "aSpecialties",
                 EffectValue = 0.9,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
@@ -58,10 +58,10 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["o05"] = new TraitModel
+            ["a0111"] = new TraitModel
             {
-                Id = "o05",
-                Description = "Aumenta a geração de Mantimentos",
+                Id = "a0111",
+                Description = "Aumenta a geração de Mantimentos da Guilda.",
                 TargetId = "r01",
                 EffectValue = 0.75,
                 EffectOp = EffectHelper.EffectOperation.Additive,
@@ -69,11 +69,11 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["o06"] = new TraitModel
+            ["a0121"] = new TraitModel
             {
-                Id = "o06",
-                Description = "Aumenta o Ganho para Caçar",
-                TargetId = "c045",
+                Id = "a0121",
+                Description = "Aumenta o ganho de Caçar.",
+                TargetId = "c405",
                 EffectValue = 1.25,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.ContractGain,

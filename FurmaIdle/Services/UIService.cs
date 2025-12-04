@@ -260,13 +260,14 @@ namespace FurmaIdle.Services
 
         #region Menu Sub Panels
         private static readonly string[] AllPanels = {
-            "expansion-info",
-            "expansion-history",
-            "expansion-objetive",
             "expedition-toggle",
             "expedition-party",
             "expedition-status",
             "expedition-gain",
+            "info-chars",
+            "expansion-info",
+            "expansion-history",
+            "expansion-objetive",
             "hall-permanents",
             "hall-expansion",
         };
@@ -283,7 +284,7 @@ namespace FurmaIdle.Services
                 case "GameCreation":
                     foreach (var panel in GamePanels)
                     {
-                        HidePanel(panel);
+                        // HidePanel(panel);
                     }
 
                     // Menu: Settings

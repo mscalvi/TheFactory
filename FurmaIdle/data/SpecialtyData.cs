@@ -12,14 +12,14 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, SpecialtyModel> All = new()
         {
             #region Specialties
-            ["e01"] = new SpecialtyModel
+            ["e0001"] = new SpecialtyModel
             {
-                Id = "e01",
+                Id = "e0001",
                 Name = "Gorjetas",
-                Description = "Produz instantaneamente a média de Moedas por segundo dos Contratos da Expedição",
+                Description = "Recebe Moedas proporcionais ao ganho da Expedição.",
                 Lore = "",
-                Image = "images/specialties/e01.svg",
-                Icon = "icons/specialties/e01.svg",
+                Image = "images/specialties/e0001.svg",
+                Icon = "icons/specialties/e0001.svg",
                 TargetId = "aContracts",
                 EffectValue = 20.0,
                 EffectType = EffectHelper.EffectType.BurstCoinGain,
@@ -30,14 +30,14 @@ namespace FurmaIdle.Data
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["e02"] = new SpecialtyModel
+            ["e0101"] = new SpecialtyModel
             {
-                Id = "e02",
+                Id = "e0101",
                 Name = "Cobrar um Extra",
-                Description = "Aumenta o ganho dos Contratos da Expedição",
+                Description = "Aumenta o ganho dos Contratos da Expedição.",
                 Lore = "",
-                Image = "images/specialties/e02.svg",
-                Icon = "icons/specialties/e02.svg",
+                Image = "images/specialties/e0101.svg",
+                Icon = "icons/specialties/e0101.svg",
                 TargetId = "aContracts",
                 EffectValue = 2.0,
                 EffectType = EffectHelper.EffectType.ContractGain,
@@ -48,14 +48,14 @@ namespace FurmaIdle.Data
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["e03"] = new SpecialtyModel
+            ["e01002"] = new SpecialtyModel
             {
-                Id = "e03",
+                Id = "e01002",
                 Name = "Força de Pescador",
-                Description = "Aumenta o ganho por Click",
+                Description = "Aumenta o ganho por Click da Expedição.",
                 Lore = "",
-                Image = "images/specialties/e03.svg",
-                Icon = "icons/specialties/e03.svg",
+                Image = "images/specialties/e01002.svg",
+                Icon = "icons/specialties/e01002.svg",
                 TargetId = "i01",
                 EffectValue = 3.0,
                 EffectType = EffectHelper.EffectType.ClickGain,
@@ -66,14 +66,14 @@ namespace FurmaIdle.Data
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["e04"] = new SpecialtyModel
+            ["e0103"] = new SpecialtyModel
             {
-                Id = "e04",
+                Id = "e0103",
                 Name = "Empolgar",
-                Description = "Diminui o custo das Especialidades da Expedição",
+                Description = "Diminui o custo das Especialidades da Guilda.",
                 Lore = "",
-                Image = "images/specialties/e04.svg",
-                Icon = "icons/specialties/e04.svg",
+                Image = "images/specialties/e0103.svg",
+                Icon = "icons/specialties/e0103.svg",
                 TargetId = "aSpecialties",
                 EffectValue = 0.5,
                 EffectType = EffectHelper.EffectType.SpecialtyCost,
@@ -84,14 +84,14 @@ namespace FurmaIdle.Data
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["e05"] = new SpecialtyModel
+            ["e0111"] = new SpecialtyModel
             {
-                Id = "e05",
+                Id = "e0111",
                 Name = "Produção Eficiente",
-                Description = "Aumenta a geração de Recursos de toda a Guilda",
+                Description = "Aumenta a geração de Recursos de toda a Guilda.",
                 Lore = "",
-                Image = "images/specialties/e05.svg",
-                Icon = "icons/specialties/e05.svg",
+                Image = "images/specialties/e0111.svg",
+                Icon = "icons/specialties/e0111.svg",
                 TargetId = "aResources",
                 EffectValue = 1.2,
                 EffectType = EffectHelper.EffectType.ResourceGain,
@@ -102,15 +102,15 @@ namespace FurmaIdle.Data
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["e06"] = new SpecialtyModel
+            ["e0121"] = new SpecialtyModel
             {
-                Id = "e06",
+                Id = "e0121",
                 Name = "Caça Rápida",
                 Description = "Diminui o Tempo de Caçar",
                 Lore = "",
-                Image = "images/specialties/e06.svg",
-                Icon = "icons/specialties/e06.svg",
-                TargetId = "c045",
+                Image = "images/specialties/e0121.svg",
+                Icon = "icons/specialties/e0121.svg",
+                TargetId = "c405",
                 EffectValue = 0.1,
                 EffectType = EffectHelper.EffectType.ContractTime,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,

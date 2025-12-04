@@ -25,7 +25,7 @@
                         <GuildExpeditionArea />
                         break;
 
-                    case "info":
+                    case "guildinfo":
                         <GuildInfoArea />
                         break;
 
@@ -48,7 +48,7 @@
                 @switch (_worldTab)
                 {
                     case "expansion":
-                        <WorldExpansionnArea />
+                        <WorldExpansionArea />
                         break;
 
                     case "dock":
@@ -64,7 +64,7 @@
                         break;
 
                     default:
-                        <WorldExpansionnArea />
+                        <WorldExpansionArea />
                         break;
                 }
             }
@@ -117,7 +117,7 @@
     private StageModel? _stage;
     private string? SelectedMenuId;
 
-    private string _guildTab = "info";
+    private string _guildTab = "manager";
     private string _worldTab = "expansion";
     private string _gameTab = "info";
 
@@ -159,13 +159,13 @@
             @if (SelectedMenuId == "i1")
                 {
                 <div class="submenu-tabs">
-                    <button class="@SubTabClass(_guildTab, "expansion")"
-                            @onclick="@(() => _guildTab = "expansion")">
-                        Expansão
+                    <button class="@SubTabClass(_guildTab, "expedition")"
+                            @onclick="@(() => _guildTab = "expedition")">
+                        Expedição
                     </button>
 
-                    <button class="@SubTabClass(_guildTab, "info")"
-                            @onclick="@(() => _guildTab = "info")">
+                    <button class="@SubTabClass(_guildTab, "guildinfo")"
+                            @onclick="@(() => _guildTab = "guildinfo")">
                         Guild Info
                     </button>
 
@@ -184,9 +184,9 @@
                 else if (SelectedMenuId == "i2")
                 {
                 <div class="submenu-tabs">
-                    <button class="@SubTabClass(_worldTab, "expedition")"
-                            @onclick="@(() => _worldTab = "expedition")">
-                        Expedição
+                    <button class="@SubTabClass(_worldTab, "expansion")"
+                            @onclick="@(() => _worldTab = "expansion")">
+                        Expansão
                     </button>
 
                     <button class="@SubTabClass(_worldTab, "dock")"

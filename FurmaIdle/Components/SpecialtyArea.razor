@@ -201,7 +201,7 @@ else
     {
         await Purchase.Purchase(ItemHelper.ItemType.Specialty, spec.Id, _stage.Id);
 
-        if (spec.Id == "e01")
+        if (spec.Id == "e0001")
         {
             await Contracts.BurstProduction(spec.EffectValue, _stage.Id, spec.Id);
         }

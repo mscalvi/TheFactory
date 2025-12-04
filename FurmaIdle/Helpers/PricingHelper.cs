@@ -38,8 +38,8 @@ namespace FurmaIdle.Helpers
             RouteUnlock1,            // Unlock Route Stage 1
 
             // Party
-            ContractCapUnlock0,     // Contract Cap Increase Stage 0
             PartySize1,             // Party Size Increase Stage 1
+            ContractCapUnlock0,     // Contract Cap Increase Stage 0
             ContractCapUnlock1,     // Contract Cap Increase Stage 1
 
             // Contract Cost Expedition
@@ -158,8 +158,8 @@ namespace FurmaIdle.Helpers
                 [PricingId.RouteUnlock1] = new Entry("m01", 750000000, 1.0, CostFactor.Level, 4.2),
 
                 // Party Stage X
-                [PricingId.ContractCapUnlock0] = new Entry("m01", 10, 1.8, CostFactor.Level, 8.8),
                 [PricingId.PartySize1] = new Entry("m01", 8000, 1, CostFactor.Level, 2.2),
+                [PricingId.ContractCapUnlock0] = new Entry("m01", 10, 1.8, CostFactor.Level, 8.8),
                 [PricingId.ContractCapUnlock1] = new Entry("m01", 10, 3.3, CostFactor.Level, 8.8),
 
                 // Contract Cost Stage X

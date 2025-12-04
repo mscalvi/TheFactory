@@ -14,7 +14,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, StageModel> All = new()
         {
-            #region A Casa de Ferri (si)
+            #region A Casa de Ferri (s00)
             ["s00"] = new StageModel
             {
                 Id = "s00",
@@ -22,6 +22,8 @@ namespace FurmaIdle.Data
                 Description = "",
                 Lore = "",
                 Icon = "icons/stages/s00.svg",
+                NavIcon = "icons/nav/s00.svg",
+                BigImage = "images/big/s00.svg",
                 Images = new List<string> {
                     "images/stages/s00_0000.svg",
                 },
@@ -33,7 +35,7 @@ namespace FurmaIdle.Data
                 StartContractLevel = -1,
                 MaxContractLevel = 1,
                 CoinId = "m01",
-                ClickId = "i0i",
+                ClickId = "i00",
                 Influence = 100,
                 Modifiers = new List<ModifierModel>(),
                 Expedition = new ExpeditionModel(),
@@ -52,6 +54,8 @@ namespace FurmaIdle.Data
                 Description = "",
                 Lore = "",
                 Icon = "icons/stages/s01.svg",
+                NavIcon = "icons/nav/s01.svg",
+                BigImage = "images/big/s01.svg",
                 Images = new List<string> {
                     "images/stages/s01_0000.svg",
                     "images/stages/s01_1000.svg",
@@ -90,6 +94,8 @@ namespace FurmaIdle.Data
                 Description = "",
                 Lore = "",
                 Icon = "icons/stages/s02.svg",
+                NavIcon = "icons/nav/s02.svg",
+                BigImage = "images/big/s02.svg",
                 Images = new List<string> {
                     "images/stages/s02_0000.svg",
                     "images/stages/s02_1000.svg",
@@ -138,6 +144,8 @@ namespace FurmaIdle.Data
                 Description = stage.Description,
                 Lore = stage.Lore,
                 Icon = stage.Icon,
+                NavIcon = stage.NavIcon,
+                BigImage = stage.BigImage,
                 Images = new List<string>(stage.Images),
                 UnlockId = stage.UnlockId,
                 State = stage.State,

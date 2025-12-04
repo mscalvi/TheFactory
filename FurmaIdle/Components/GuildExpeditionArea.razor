@@ -70,7 +70,7 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">
             @if (_stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
             {
-                <h3 class="title">Personagens na Expedição</h3>
+                <h3 class="title">Personagens na Expedição em @_stage.Name</h3>
                 <div class="image-grid">
                     @foreach (var ch in inStageChars)
                     {

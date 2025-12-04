@@ -11,6 +11,8 @@ namespace FurmaIdle.Models
         public string Lore { get; set; }
         public string Icon { get; set; }
         public string Image { get; set; }
+        public string NavIcon { get; set; }
+        public string BigImage { get; set; }
         public VersionHelper.UseState UseState { get; set; } = VersionHelper.UseState.InUse;
 
         // Modifier
