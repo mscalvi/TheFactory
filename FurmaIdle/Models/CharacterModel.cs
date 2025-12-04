@@ -6,8 +6,10 @@ namespace FurmaIdle.Models
     {
         // Basics
         public string Id { get; set; }
+        public ItemHelper.ItemType ItemType { get; set; } = ItemHelper.ItemType.Character;
+        public ItemHelper.CharacterType CharacterType { get; set; } = ItemHelper.CharacterType.None;
         public string Name { get; set; }
-        public string Class { get; set; }
+        public ItemHelper.CharacterClass Class { get; set; }
         public string Description { get; set; }
         public string Lore { get; set; }
         public string Icon { get; set; }

@@ -6,6 +6,7 @@ namespace FurmaIdle.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public ItemHelper.ItemType ItemType { get; set; } = ItemHelper.ItemType.Resource;
         public string UnlockId { get; set; }
         public string Icon { get; set; }
         public string Image { get; set; }

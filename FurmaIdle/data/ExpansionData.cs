@@ -14,83 +14,83 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, ExpansionModel> All = new()
         {
             #region Expansions Stage 0 (x00)
-            ["x00"] = new ExpansionModel
+            ["x000"] = new ExpansionModel
             {
-                Id = "x00",
+                Id = "x000",
                 Name = "Início da História",
-                Icon = "icons/expansions/x00.svg",
+                Icon = "icons/expansions/x000.svg",
                 UnlockId = null,
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x10",
+                NextExpansion = "x010",
             },
             #endregion
 
             #region Expansions Stage 1 (x10 - x13)
-            ["x10"] = new ExpansionModel
+            ["x010"] = new ExpansionModel
             {
-                Id = "x10",
+                Id = "x010",
                 Name = "Primeiros Recrutas",
-                Icon = "icons/expansions/x10.svg",
+                Icon = "icons/expansions/x010.svg",
                 UnlockId = "s01",
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x11",
+                NextExpansion = "x011",
             },
-            ["x11"] = new ExpansionModel
+            ["x011"] = new ExpansionModel
             {
-                Id = "x11",
+                Id = "x011",
                 Name = "Apoiando a Murada Cairu",
-                Icon = "icons/expansions/x11.svg",
-                UnlockId = "ux11",
+                Icon = "icons/expansions/x011.svg",
+                UnlockId = "ux011",
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x12",
+                NextExpansion = "x012",
             },
-            ["x12"] = new ExpansionModel
+            ["x012"] = new ExpansionModel
             {
-                Id = "x12",
+                Id = "x012",
                 Name = "Exploradores da Ilha de Vera",
-                Icon = "icons/expansions/x12.svg",
-                UnlockId = "ux12",
+                Icon = "icons/expansions/x012.svg",
+                UnlockId = "ux012",
                 Level = 2,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x13",
+                NextExpansion = "x013",
             },
-            ["x13"] = new ExpansionModel
+            ["x013"] = new ExpansionModel
             {
                 Id = "x13",
                 Name = "Mestres da Ilha de Vera",
-                Icon = "icons/expansions/x13.svg",
-                UnlockId = "ux13",
+                Icon = "icons/expansions/x013.svg",
+                UnlockId = "ux013",
                 Level = 3,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x20",
+                NextExpansion = "x021",
             },
             #endregion
 
             #region Expansions Stage 2 (x20 - x2?)
-            ["x20"] = new ExpansionModel
+            ["x021"] = new ExpansionModel
             {
-                Id = "x20",
+                Id = "x021",
                 Name = "Primeiro Contato",
-                Icon = "icons/expansions/x20.svg",
-                UnlockId = "ux20",
+                Icon = "icons/expansions/x021.svg",
+                UnlockId = "ux021",
                 Level = 1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,
                 Modifiers = new List<ModifierModel>(),
-                NextExpansion = "x21",
+                NextExpansion = "x022",
             },
             #endregion
         };
@@ -109,6 +109,7 @@ namespace FurmaIdle.Data
             {
                 Id = expansion.Id,
                 Name = expansion.Name,
+                ItemType = expansion.ItemType,
                 Icon = expansion.Icon,
                 UnlockId = expansion.UnlockId,
                 PricingId = expansion.PricingId,

@@ -7,6 +7,7 @@ namespace FurmaIdle.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public ItemHelper.ItemType ItemType { get; set; } = ItemHelper.ItemType.Stage;
         public string Icon { get; set; }
         public List<string> Images { get; set; }
         public string NavIcon { get; set; }

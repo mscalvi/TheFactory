@@ -45,6 +45,7 @@ namespace FurmaIdle.Data
             {
                 Id = resource.Id,
                 Name = resource.Name,
+                ItemType = resource.ItemType,
                 UnlockId = resource.UnlockId,
                 RsPerChar = resource.RsPerChar,
                 RsPerSecond = resource.RsPerSecond,

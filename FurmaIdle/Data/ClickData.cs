@@ -58,6 +58,7 @@ namespace FurmaIdle.Data
             return new ClickModel
             {
                 Id = click.Id,
+                ItemType = click.ItemType,
                 StageId = click.StageId,
                 BaseGain = click.BaseGain,
                 Modifiers = click.Modifiers,

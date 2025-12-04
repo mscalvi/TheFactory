@@ -95,6 +95,7 @@ namespace FurmaIdle.Data
             return new TraitModel
             {
                 Id = trait.Id,
+                ItemType = trait.ItemType,
                 Description = trait.Description,
                 TargetId = trait.TargetId,
                 EffectValue = trait.EffectValue,

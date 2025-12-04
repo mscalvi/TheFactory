@@ -43,6 +43,7 @@ namespace FurmaIdle.Data
             {
                 Id = ship.Id,
                 Name = ship.Name,
+                ItemType = ship.ItemType,
                 Description = ship.Description,
                 Lore = ship.Lore,
                 Icon = ship.Icon,
@@ -87,6 +88,7 @@ namespace FurmaIdle.Data
                 {
                     Id = ship.Id,
                     Name = ship.Name,
+                    ItemType = ship.ItemType,
                     Description = ship.Description,
                     Lore = ship.Lore,
                     Icon = ship.Icon,

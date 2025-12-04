@@ -141,6 +141,7 @@ namespace FurmaIdle.Data
             {
                 Id = stage.Id,
                 Name = stage.Name,
+                ItemType = stage.ItemType,
                 Description = stage.Description,
                 Lore = stage.Lore,
                 Icon = stage.Icon,

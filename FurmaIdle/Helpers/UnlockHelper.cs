@@ -41,7 +41,6 @@
         public enum ShipState
         {
             Blocked,
-            InBase,
             InStage,
             InLine,
             InDiscovery,

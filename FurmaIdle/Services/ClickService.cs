@@ -60,7 +60,7 @@ namespace FurmaIdle.Services
 
             var click = _locate.LocateStageClick(game, stage.Id);
 
-            var modifier = _modifier.GetModifiers(ItemHelper.ItemType.Click, click.Id, stage.Id, EffectHelper.EffectSupertype.Gain);
+            var modifier = _modifier.GetModifiers(click.ItemType, click.Id, stage.Id, EffectHelper.EffectSupertype.Gain);
 
             var expansion = _locate.LocateExpansion(_game.CurrentGame, _game.CurrentGame.CurrentExpansionId);
 

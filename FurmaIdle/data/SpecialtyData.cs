@@ -134,6 +134,7 @@ namespace FurmaIdle.Data
             {
                 Id = specialty.Id,
                 Name = specialty.Name,
+                ItemType = specialty.ItemType,
                 Description = specialty.Description,
                 Lore = specialty.Lore,
                 Image = specialty.Image,
@@ -173,6 +174,7 @@ namespace FurmaIdle.Data
                 {
                     Id = specialty.Id,
                     Name = specialty.Name,
+                    ItemType = specialty.ItemType,
                     Description = specialty.Description,
                     Image = specialty.Image,
                     TargetId = specialty.TargetId,

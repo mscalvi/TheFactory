@@ -109,6 +109,7 @@ namespace FurmaIdle.Data
             {
                 Id = local.Id,
                 Name = local.Name,
+                ItemType = local.ItemType,
                 Description = local.Description,
                 Lore = local.Lore,
                 Icon = local.Icon,

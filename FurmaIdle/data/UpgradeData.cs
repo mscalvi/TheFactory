@@ -46,7 +46,7 @@ namespace FurmaIdle.Data
             // ub - Unlock Contract Level
             // uc - Upgrade Expedition Contracts
             // ud - Upgrade Expansion Resources
-            // ue - Unlock Expansion
+            // ue - Upgrade Expansion Unique
             // uf -  
             // ug -
             // uh - Unlock Tech
@@ -65,7 +65,7 @@ namespace FurmaIdle.Data
             // uu - Unlock Contract
             // uv -
             // uw -
-            // ux - Upgrade Expansion Unique
+            // ux - Unlock Expansion
             // uy -
             // uz - 
             #endregion
@@ -73,15 +73,16 @@ namespace FurmaIdle.Data
             #region Unlock
             #region Desbloqueio de Contratos (Contracts Unlock)
             #region Stage 1 Level 1
-            ["uu110"] = new UpgradeModel
+            ["uu101"] = new UpgradeModel
             {
-                Id = "uu110",
-                Name = "Serviços de Varrer o Chão",
+                Id = "uu101",
+                Name = "Licença para Varrer o Chão",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 1,
-                Icon = "icons/upgrades/uu110.svg",
+                Icon = "icons/upgrades/uu101.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0001",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l00",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock0,
                 State = UnlockHelper.State.Blocked,
@@ -92,15 +93,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu120"] = new UpgradeModel
+            ["uu102"] = new UpgradeModel
             {
-                Id = "uu120",
-                Name = "Serviços de Carregar o Barco",
+                Id = "uu102",
+                Name = "Licença para Carregar o Barco",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 1,
-                Icon = "icons/upgrades/uu120.svg",
+                Icon = "icons/upgrades/uu102.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0102",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l10",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -113,15 +115,16 @@ namespace FurmaIdle.Data
             },
             #endregion
             #region Stage 1 Level 2
-            ["uu210"] = new UpgradeModel
+            ["uu201"] = new UpgradeModel
             {
-                Id = "uu210",
-                Name = "Serviços de Servir Bebidas",
+                Id = "uu201",
+                Name = "Licença para Servir Bebidas",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 2,
-                Icon = "icons/upgrades/uu210.svg",
+                Icon = "icons/upgrades/uu201.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0001",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l10",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -132,15 +135,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu220"] = new UpgradeModel
+            ["uu202"] = new UpgradeModel
             {
-                Id = "uu220",
-                Name = "Serviços de Limpar Peixes",
+                Id = "uu202",
+                Name = "Licença para Limpar Peixes",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 2,
-                Icon = "icons/upgrades/uu220.svg",
+                Icon = "icons/upgrades/uu202.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0102",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l10",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -151,15 +155,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu230"] = new UpgradeModel
+            ["uu203"] = new UpgradeModel
             {
-                Id = "uu230",
-                Name = "Serviços de Lavar Figurinos",
+                Id = "uu203",
+                Name = "Licença para Lavar Figurinos",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 2,
-                Icon = "icons/upgrades/uu230.svg",
+                Icon = "icons/upgrades/uu203.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0103",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l10",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -172,15 +177,16 @@ namespace FurmaIdle.Data
             },
             #endregion
             #region Stage 1 Level 3
-            ["uu310"] = new UpgradeModel
+            ["uu301"] = new UpgradeModel
             {
-                Id = "uu310",
-                Name = "Serviços de Ajudar na Cozinha",
+                Id = "uu301",
+                Name = "Licença para Ajudar na Cozinha",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 3,
-                Icon = "icons/upgrades/uu310.svg",
+                Icon = "icons/upgrades/uu301.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0001",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l10",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -191,15 +197,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu320"] = new UpgradeModel
+            ["uu302"] = new UpgradeModel
             {
-                Id = "uu320",
-                Name = "Serviços de Organizar Ferramentas",
+                Id = "uu302",
+                Name = "Licença para Organizar Ferramentas",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 3,
-                Icon = "icons/upgrades/uu320.svg",
+                Icon = "icons/upgrades/uu302.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0101",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l11",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -210,15 +217,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu330"] = new UpgradeModel
+            ["uu303"] = new UpgradeModel
             {
-                Id = "uu330",
-                Name = "Serviços de Preparar Armas",
+                Id = "uu303",
+                Name = "Licença para Preparar Armas",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 3,
-                Icon = "icons/upgrades/uu330.svg",
+                Icon = "icons/upgrades/uu303.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0121",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l11",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -229,15 +237,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu340"] = new UpgradeModel
+            ["uu304"] = new UpgradeModel
             {
-                Id = "uu340",
-                Name = "Serviços de Ajudar no Ensaio",
+                Id = "uu304",
+                Name = "Licença para Ajudar no Ensaio",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 3,
-                Icon = "icons/upgrades/uu340.svg",
+                Icon = "icons/upgrades/uu304.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0102",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l11",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -250,15 +259,16 @@ namespace FurmaIdle.Data
             },
             #endregion
             #region Stage 1 Level 4
-            ["uu410"] = new UpgradeModel
+            ["uu401"] = new UpgradeModel
             {
-                Id = "uu410",
-                Name = "Serviços de Cozinhar",
+                Id = "uu401",
+                Name = "Licença para Cozinhar",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 4,
-                Icon = "icons/upgrades/uu410.svg",
+                Icon = "icons/upgrades/uu401.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0001",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l11",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -269,15 +279,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu420"] = new UpgradeModel
+            ["uu402"] = new UpgradeModel
             {
-                Id = "uu420",
-                Name = "Serviços de Entalhar",
+                Id = "uu402",
+                Name = "Licença para Entalhar",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 4,
-                Icon = "icons/upgrades/uu420.svg",
+                Icon = "icons/upgrades/uu402.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0101",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l11",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -288,15 +299,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu430"] = new UpgradeModel
+            ["uu403"] = new UpgradeModel
             {
-                Id = "uu430",
-                Name = "Serviços de Pescar",
+                Id = "uu403",
+                Name = "Licença para Pescar",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 4,
-                Icon = "icons/upgrades/uu430.svg",
+                Icon = "icons/upgrades/uu403.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0102",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l12",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -307,15 +319,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu440"] = new UpgradeModel
+            ["uu404"] = new UpgradeModel
             {
-                Id = "uu440",
-                Name = "Serviços de Apresentar",
+                Id = "uu404",
+                Name = "Licença para Apresentar",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 4,
-                Icon = "icons/upgrades/uu440.svg",
+                Icon = "icons/upgrades/uu404.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0103",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l11",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -326,15 +339,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["uu450"] = new UpgradeModel
+            ["uu405"] = new UpgradeModel
             {
-                Id = "uu450",
-                Name = "Serviços de Caçar",
+                Id = "uu405",
+                Name = "Licença para Caçar",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockContract,
                 Level = 4,
-                Icon = "icons/upgrades/uu450.svg",
+                Icon = "icons/upgrades/uu405.svg",
                 Lore = "",
-                Description = "Libera o Contrato",
-                UnlockId = "p0121",
+                Description = "Permite começar um novo tipo de Contrato.",
+                UnlockId = "l13",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ContractUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -353,11 +367,12 @@ namespace FurmaIdle.Data
             {
                 Id = "uk01",
                 Name = "Aprender sobre Cultura",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockKnowledge,
                 Level = 1,
                 Icon = "icons/upgrades/uk01.svg",
                 Lore = "",
-                Description = "Libera o Conhecimento",
-                UnlockId = "x10",
+                Description = "Libera o Conhecimento.",
+                UnlockId = "p0101",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.KnowledgeUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -372,11 +387,12 @@ namespace FurmaIdle.Data
             {
                 Id = "uk02",
                 Name = "Aprender sobre Geografia",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockKnowledge,
                 Level = 1,
                 Icon = "icons/upgrades/uk02.svg",
                 Lore = "",
-                Description = "Libera o Conhecimento",
-                UnlockId = "x11",
+                Description = "Libera o Conhecimento.",
+                UnlockId = "p0001",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.KnowledgeUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -391,11 +407,12 @@ namespace FurmaIdle.Data
             {
                 Id = "uk03",
                 Name = "Aprender sobre Sobrevivência",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockKnowledge,
                 Level = 1,
                 Icon = "icons/upgrades/uk03.svg",
                 Lore = "",
-                Description = "Libera o Conhecimento",
-                UnlockId = "x11",
+                Description = "Libera o Conhecimento.",
+                UnlockId = "p0102",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.KnowledgeUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -410,11 +427,12 @@ namespace FurmaIdle.Data
             {
                 Id = "uk04",
                 Name = "Aprender sobre Navegação",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockKnowledge,
                 Level = 1,
                 Icon = "icons/upgrades/uk04.svg",
                 Lore = "",
-                Description = "Libera o Conhecimento",
-                UnlockId = "x13",
+                Description = "Libera o Conhecimento.",
+                UnlockId = "p0111",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.KnowledgeUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -429,11 +447,12 @@ namespace FurmaIdle.Data
             {
                 Id = "uk05",
                 Name = "Aprender sobre Caça",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockKnowledge,
                 Level = 1,
                 Icon = "icons/upgrades/uk05.svg",
                 Lore = "",
-                Description = "Libera o Conhecimento",
-                UnlockId = "x12",
+                Description = "Libera o Conhecimento.",
+                UnlockId = "p0121",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.KnowledgeUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -454,7 +473,8 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/up0101.svg",
                 Lore = "",
-                Description = "Contrata o Personagem e o envia para a Base",
+                Description = "Contrata o aventureiro e o envia para a Base.",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockCharacter,
                 UnlockId = "l10",
                 StageId = "s01",
                 MaxBuy = 1,
@@ -474,7 +494,8 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/up0102.svg",
                 Lore = "",
-                Description = "Contrata o Personagem e o envia para a Base",
+                Description = "Contrata o aventureiro e o envia para a Base.",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockCharacter,
                 UnlockId = "l10",
                 StageId = "s01",
                 MaxBuy = 1,
@@ -494,7 +515,8 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/up0111.svg",
                 Lore = "",
-                Description = "Contrata o Personagem e o envia para a Base",
+                Description = "Contrata o aventureiro e o envia para a Base.",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockCharacter,
                 UnlockId = "l10",
                 StageId = "s01",
                 MaxBuy = 1,
@@ -514,7 +536,8 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/up0111.svg",
                 Lore = "",
-                Description = "Contrata o Personagem e o envia para a Base",
+                Description = "Contrata o aventureiro e o envia para a Base.",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockCharacter,
                 UnlockId = "l11",
                 StageId = "s01",
                 MaxBuy = 1,
@@ -534,7 +557,8 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/up0121.svg",
                 Lore = "",
-                Description = "Contrata o Personagem e o envia para a Base",
+                Description = "Contrata o aventureiro e o envia para a Base.",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockCharacter,
                 UnlockId = "l12",
                 StageId = "s01",
                 MaxBuy = 1,
@@ -549,6 +573,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
+            // Parei aqui
             #region Desbloqueio de Locais (Local Unlock)
             ["ul11"] = new UpgradeModel
             {
@@ -980,61 +1005,64 @@ namespace FurmaIdle.Data
 
             #region Objetives
             #region Desbloqueio de Expansão (Expansion Unlock)
-            ["ue0001"] = new UpgradeModel
+            ["ux011"] = new UpgradeModel
             {
-                Id = "ue0001",
-                Name = "Apoiando a Murada Cairu",
+                Id = "ux011",
+                Name = "Apoiar a Murada Cairu",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockExpansion,
                 Level = 1,
-                Icon = "icons/upgrades/ue0001.svg",
-                Image = "images/upgrades/ue0001.svg",
+                Icon = "icons/upgrades/ux011.svg",
+                Image = "images/upgrades/ux011.svg",
                 Lore = "",
-                Description = "Reseta a Expansão e libera progressão da história.",
-                UnlockId = "x10",
+                Description = "Reseta a Expansão e progride na história.",
+                UnlockId = "x010",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUnlock1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "x11",
+                TargetId = "x011",
                 EffectType = EffectHelper.EffectType.ExpansionUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["ue0101"] = new UpgradeModel
+            ["ux012"] = new UpgradeModel
             {
-                Id = "ue0101",
-                Name = "Exploradores da Ilha de Vera",
+                Id = "ux012",
+                Name = "Explorar a Ilha",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockExpansion,
                 Level = 2,
-                Icon = "icons/upgrades/ue0101.svg",
-                Image = "images/upgrades/ue0101.svg",
+                Icon = "icons/upgrades/ux012.svg",
+                Image = "images/upgrades/ux012.svg",
                 Lore = "",
-                Description = "Reseta a Expansão e libera progressão da história.",
-                UnlockId = "x11",
+                Description = "Reseta a Expansão e progride na história.",
+                UnlockId = "x011",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUnlock1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "x12",
+                TargetId = "x012",
                 EffectType = EffectHelper.EffectType.ExpansionUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            ["ue01002"] = new UpgradeModel
+            ["ux013"] = new UpgradeModel
             {
-                Id = "ue01002",
-                Name = "Defensores da Ilha de Vera",
+                Id = "ux013",
+                Name = "Reconquistar a Ilha",
+                UpgradeType = ItemHelper.UpgradeSubType.UnlockExpansion,
                 Level = 3,
-                Icon = "icons/upgrades/ue01002.svg",
-                Image = "images/upgrades/ue01002.svg",
+                Icon = "icons/upgrades/ux013.svg",
+                Image = "images/upgrades/ux013.svg",
                 Lore = "",
-                Description = "Reseta a Expansão e libera progressão da história.",
-                UnlockId = "x12",
+                Description = "Reseta a Expansão e progride na história.",
+                UnlockId = "x012",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUnlock1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "x13",
+                TargetId = "x013",
                 EffectType = EffectHelper.EffectType.ExpansionUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -2882,6 +2910,8 @@ namespace FurmaIdle.Data
             {
                 Id = upgrade.Id,
                 Name = upgrade.Name,
+                ItemType = upgrade.ItemType,
+                UpgradeType = upgrade.UpgradeType,
                 Level = upgrade.Level,
                 Icon = upgrade.Icon,
                 Image = upgrade.Image,

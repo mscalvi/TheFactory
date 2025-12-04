@@ -8,6 +8,7 @@ namespace FurmaIdle.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public ItemHelper.ItemType ItemType { get; set; } = ItemHelper.ItemType.Coin;
         public string Image { get; set; }
         public string Icon { get; set; }
         public string UnlockId { get; set; }

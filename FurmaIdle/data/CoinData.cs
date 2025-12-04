@@ -56,6 +56,7 @@ namespace FurmaIdle.Data
             {
                 Id = coin.Id,
                 Name = coin.Name,
+                ItemType = coin.ItemType,
                 Image = coin.Image,
                 Icon = coin.Icon,
                 UnlockId = coin.UnlockId,

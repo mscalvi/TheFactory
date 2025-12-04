@@ -139,6 +139,7 @@ namespace FurmaIdle.Data
             {
                 Id = knowledge.Id,
                 Name = knowledge.Name,
+                ItemType = knowledge.ItemType,
                 Image = knowledge.Image,
                 Description = knowledge.Description,
                 Lore = knowledge.Lore,

@@ -328,6 +328,7 @@ namespace FurmaIdle.Data
             {
                 Id = contract.Id,
                 Name = contract.Name,
+                ItemType = contract.ItemType,
                 Description = contract.Description,
                 Lore = contract.Lore,
                 Icon = contract.Icon,

@@ -11,7 +11,7 @@ namespace FurmaIdle.Data
 
         internal static readonly Dictionary<string, RouteModel> All = new()
         {
-            #region A Casa de Ferri (si)
+            #region Ilha de Vera (s01)
             ["z12"] = new RouteModel
             {
                 Id = "z12",
@@ -46,6 +46,7 @@ namespace FurmaIdle.Data
             {
                 Id = route.Id,
                 Name = route.Name,
+                ItemType = route.ItemType,
                 Description = route.Description,
                 Lore = route.Lore,
                 Icon = route.Icon,

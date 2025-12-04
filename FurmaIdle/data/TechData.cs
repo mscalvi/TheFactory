@@ -159,6 +159,7 @@ namespace FurmaIdle.Data
             {
                 Id = tech.Id,
                 Name = tech.Name,
+                ItemType = tech.ItemType,
                 Icon = tech.Icon,
                 Description = tech.Description,
                 Lore = tech.Lore,
