@@ -44,24 +44,24 @@ namespace FurmaIdle.Data
 
             // ua - Unlock Party Size
             // ub - Unlock Contract Level
-            // uc - Upgrade Contract
-            // ud - Upgrade Expansion Resource
+            // uc - Upgrade Expedition Contract
+            // ud - Upgrade Expansion Resources
             // ue - Unlock Expansion
             // uf -  
             // ug -
             // uh - Unlock Tech
             // ui - Upgrade Expedition Click
-            // uj -
+            // uj - Upgrade Expansion Characters
             // uk - Unlock Knowledge
             // ul - Unlock Local
-            // um - Upgrade Contract Cap
+            // um - Upgrade Expansion Contract Cap
             // un - Unlock Ship
             // uo -
             // up - Unlock Character
             // uq -
             // ur - Unlock Resource
             // us - Unlock Stage
-            // ut -
+            // ut - Upgrades Tech
             // uu - Unlock Contract
             // uv -
             // uw -

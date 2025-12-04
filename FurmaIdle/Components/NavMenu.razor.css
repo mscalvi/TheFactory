@@ -1,0 +1,68 @@
+﻿.shop-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.shop-header {
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.shop-body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.submenu-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 100%;
+    padding: 4px 6px;
+}
+
+.subnav-button {
+    min-height: 35px;
+    min-width: 65px;
+    height: 35px;
+    width: 65px;
+    padding: 0 8px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #3a4057;
+    background: #141824;
+    color: rgb(131, 57, 25);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    font: 600 12px/1 system-ui, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+    .subnav-button:hover {
+        background: #1b2131;
+    }
+
+    .subnav-button.is-selected {
+        background: rgba(255,255,255,.08);
+        border-color: rgba(255,255,255,.35);
+        box-shadow: 0 0 0 2px rgba(106,160,255,.25);
+    }
+
+    /* opcional: se quiser também “bolinha” de notif em subtab no futuro */
+    .subnav-button.has-notif::after {
+        content: "";
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #C87A3D;
+        box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+    }

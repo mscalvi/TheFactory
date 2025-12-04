@@ -1,0 +1,139 @@
+﻿@inherits UiHelper
+
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+
+@inject ILocateService Locate
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+@inject IExpeditionService Expedition
+
+<div class="menu-root">
+    @if (!Game.IsReady || _stage is null)
+    {
+        <div class="contracts-placeholder">Stage não Selecionado</div>
+    }
+    else
+    {
+        var game = Game.CurrentGame;
+        var expedition = _stage.Expedition;
+        var expeditionStats = _stage.ExpeditionStats;
+
+        var isActive = isExpActive(_stage);
+        var partySize = Expedition.GetPartyCap(_stage);
+        var partyIds = expedition.PartyIds;
+
+        var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
+
+        var avaliableChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+        && c.CharState == UnlockHelper.CharState.InBase || c.CharState == UnlockHelper.CharState.InLine)
+        .OrderBy(c => c.Id)
+        .ToList();
+
+        var inStageChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
+        && c.CharState == UnlockHelper.CharState.InStage && c.InStageId == _stage.Id)
+        .OrderBy(c => c.Id)
+        .ToList();
+
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">
+            @if (_stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
+            {
+                <h3 class="title">Personagens na Expedição</h3>
+                <div class="image-grid">
+                    @foreach (var ch in inStageChars)
+                    {
+                        <button class="character-button"
+                                disabled
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
+                                @onblur="Tooltips.Clear">
+                            @if (!string.IsNullOrWhiteSpace(ch.Image))
+                            {
+                                <img src="@ch.Image"
+                                     alt="@ch.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @ch.Id
+                            }
+                        </button>
+                    }
+                </div>
+            }
+            else
+            {
+                <h3 class="title">Personagens na Base</h3>
+                <div class="image-grid">
+                    @foreach (var ch in avaliableChars)
+                    {
+                        var selected = ch.CharState == UnlockHelper.CharState.InLine;
+
+                        <button type="button"
+                                class="character-button @(selected ? "selected" : null)"
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
+                                @onblur="Tooltips.Clear">
+                            @if (!string.IsNullOrWhiteSpace(ch.Image))
+                            {
+                                <img src="@ch.Image"
+                                     alt="@ch.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @ch.Id
+                            }
+                        </button>
+                    }
+                </div>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    private StageModel? _stage;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
+    }
+
+    private bool isExpActive(StageModel stage)
+    {
+        var expedition = stage.Expedition;
+
+        if (expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+}

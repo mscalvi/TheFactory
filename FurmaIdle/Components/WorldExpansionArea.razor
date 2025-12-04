@@ -1,0 +1,241 @@
+﻿@inherits UiHelper
+
+@using FurmaIdle.Helpers
+@using FurmaIdle.Models
+@using FurmaIdle.Services
+@using FurmaIdle.Data
+
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+@inject ILocateService Locate
+@inject IExpeditionService Expedition
+@inject ICostService Cost
+@inject IPurchaseService Purchase
+
+<div class="menu-root">
+    @if (!Game.IsReady || _stage is null)
+    {
+        <div class="contracts-placeholder">Stage não Selecionado</div>
+    }
+    else
+    {
+        var game = Game.CurrentGame;
+
+        ExpansionModel expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
+
+        var expansionStats = expansion.ExpansionStats;
+
+        var started = expansion.StartedAt;
+
+        string durationText;
+
+        var all = OrderedUpgrades(game);
+
+        var heroUpgrade =
+        all.FirstOrDefault(u =>
+        u.State == UnlockHelper.State.Available && ((Us(u.Id) && _stage.Id == "s00") ||
+        ((Ue(u.Id) && (u.StageId == _stage.Id || u.StageId == "all")))));
+
+        if (started.HasValue)
+        {
+            var expDuration = DateTimeOffset.UtcNow - started.Value;
+
+            var totalHours = (int)expDuration.TotalHours;
+            durationText = $"{totalHours:00}:{expDuration.Minutes:00}:{expDuration.Seconds:00}";
+        }
+        else
+        {
+            durationText = "--:--:--";
+        }
+
+        <section class="@($"menu-panel {UI.PanelClass("expansion-info")}")">
+            <h3 class="title">Expansão Atual</h3>
+            <table class="info-table">
+                <thead>
+                    <tr><th colspan="2">@expansion.Name</th></tr>
+                    <tr>
+                        <th colspan="2">
+                            @durationText
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var coinEntry in expansionStats.CoinsGain)
+                    {
+                        var coin = Locate.LocateCoin(game, coinEntry.Key);
+                        <tr class="info-row">
+                            <td class="info-name">@coin.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(coinEntry.Value)</td>
+                        </tr>
+                    }
+                    @foreach (var resourceEntry in expansionStats.ResourcesGain)
+                    {
+                        var resource = Locate.LocateResource(game, resourceEntry.Key);
+                        <tr class="info-row">
+                            <td class="info-name">@resource.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(resourceEntry.Value)</td>
+                        </tr>
+                    }
+                    @foreach (var knowEntry in expansionStats.KnowledgeGain)
+                    {
+                        var know = Locate.LocateKnowledge(game, knowEntry.Key);
+                        <tr class="info-row">
+                            <td class="info-name">@know.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(knowEntry.Value)</td>
+                        </tr>
+                    }
+                    @foreach (var clickEntry in expansionStats.ClicksMade)
+                    {
+                        var click = Locate.LocateClick(game, clickEntry.Key);
+                        var stage = Locate.LocateStage(game, click.StageId);
+                        <tr class="info-row">
+                            <td class="info-name">Clicks em @stage.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(clickEntry.Value)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+        <section class="@($"menu-panel {UI.PanelClass("expansion-history")}")">
+            <h3 class="title">História</h3>
+        </section>
+        <section class="@($"menu-panel {UI.PanelClass("expansion-objetive")}")">
+            @if (heroUpgrade is not null)
+            {
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id);
+                <button class="objetive-button"
+                        disabled="@(!can)"
+                        @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, heroUpgrade.Id, _stage.Id))"
+                        @onmouseleave="Tooltips.Clear">
+                    @if (!string.IsNullOrWhiteSpace(heroUpgrade.Image))
+                    {
+                        <img src="@heroUpgrade.Image"
+                             alt="@heroUpgrade.Id"
+                             class="objetive-img" />
+                    }
+                    else
+                    {
+                        @heroUpgrade.Id
+                    }
+                </button>
+            }
+            else
+            {
+                <div style="text-align:center; opacity:.75;">Fim de Jogo - por enquanto</div>
+            }
+        </section>
+    }
+
+</div>
+
+@code {
+    private StageModel? _stage;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshStage();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
+        _stage = st;
+    }
+
+    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
+        => g.Upgrades.Values
+            .OrderBy(u => u.Id);
+
+    static bool StartsWith(string? id, string prefix)
+        => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
+
+    static bool Ua(string? id) => StartsWith(id, "ua");
+    static bool Ub(string? id) => StartsWith(id, "ub");
+    static bool Uc(string? id) => StartsWith(id, "uc");
+    static bool Ud(string? id) => StartsWith(id, "ud");
+    static bool Ue(string? id) => StartsWith(id, "ue");
+    static bool Uh(string? id) => StartsWith(id, "uh");
+    static bool Ui(string? id) => StartsWith(id, "ui");
+    static bool Uk(string? id) => StartsWith(id, "uk");
+    static bool Ul(string? id) => StartsWith(id, "ul");
+    static bool Um(string? id) => StartsWith(id, "um");
+    static bool Un(string? id) => StartsWith(id, "un");
+    static bool Up(string? id) => StartsWith(id, "up");
+    static bool Ur(string? id) => StartsWith(id, "ur");
+    static bool Us(string? id) => StartsWith(id, "us");
+    static bool Ut(string? id) => StartsWith(id, "ut");
+    static bool Uu(string? id) => StartsWith(id, "uu");
+    static bool Ux(string? id) => StartsWith(id, "ux");
+    static bool Uz(string? id) => StartsWith(id, "uz");
+
+    private bool freeProcess = true;
+
+    private async Task OnClickBuyUpgrade(string upgradeId)
+    {
+        var game = Game.CurrentGame;
+        var upgrade = Locate.LocateUpgrade(game, upgradeId);
+
+        if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgrade.Id, _stage.Id))
+        {
+            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            return;
+        }
+
+        if (freeProcess)
+        {
+            freeProcess = false;
+
+            try
+            {
+                if (StartsWith(upgrade.Id, "ue") || StartsWith(upgrade.Id, "us"))
+                {
+                    UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
+                }
+
+                await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
+
+                if (StartsWith(upgrade.Id, "ue") || upgrade.Id == "us01")
+                {
+                    await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
+
+                    if (upgrade.Id == "us01")
+                    {
+                        await Expedition.SecondExpeditionStart();
+                        await UI.LoadStage("s01");
+                    }
+
+                    UI.ClearBusy();
+                }
+
+                if (_stage is not null)
+                {
+                    var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, _stage.Id);
+                    Tooltips.Show(hover);
+                }
+
+            }
+            finally
+            {
+                freeProcess = true;
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+}

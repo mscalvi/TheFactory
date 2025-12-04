@@ -4,76 +4,122 @@
 
 @using FurmaIdle.Models
 
-<div class="game-area">
-@if (!Game.IsReady || _stage is null || string.IsNullOrWhiteSpace(_stage.Id))
-{
-    <div class="contracts-placeholder">Stage não Selecionado</div>
-}
-else
-{
-    @switch (SelectedMenuId)
+<div class="game-area shop-shell">
+    @if (!Game.IsReady || _stage is null || string.IsNullOrWhiteSpace(_stage.Id))
     {
-        case "i1":
-            @* (1) Expansion — Current Expansion Stats / inBase Characters / inStageCharacters *@
-            <ShopMenuExpansion />
-            break;
-
-        case "i2":
-            @* (2) Stage — Available Stages / SelectedStage* / Unlocked Locals* / Available Locals* *@
-            <ShopMenuStage />
-            break;
-
-        case "i3":
-            @* (3) Expedition — Expedition Toggle* / Current Expedition Stats* / End Expedition Gains* *@
-            <ShopMenuExpedition />
-            break;
-
-        case "i5":
-            @* (5) Upgrades — Available Expedition Upgrades* / Available Expansion Upgrades / Unlocked Upgrades *@
-            <ShopMenuUpgrades />
-                break;
-
-        case "i6":
-            @* (6) Ships —  *@
-            <ShopMenuShips />
-            break;
-
-        case "i50":
-            @* (50) Tech — Knowledge / Available Techs / Unlocked Techs *@
-            <ShopMenuTech />
-            break;
-
-        case "i97":
-            @* () Achievements — Game Statistics / Unlocked / Locked *@
-            <ShopMenuGame />
-            break;
-
-        case "i98":
-            @* () Outside — Real Money Shop? *@
-            <div>Outside panel (placeholder)</div>
-            break;
-
-        case "i99":
-            @* () Settings *@
-            <ShopMenuSettings />
-            break;
-
-        case "i100":
-            @* () Instructions *@
-            <ShopMenuTips />
-            break;
-
-        default:
-            <div>Selecione um painel do menu.</div>
-            break;
+        <div class="contracts-placeholder">Stage não Selecionado</div>
     }
-}
+    else
+    {
+        <div class="shop-header">
+            @RenderSubNav()
+        </div>
+
+        <div class="shop-body">
+            @if (SelectedMenuId == "i1")
+            {
+                @* MENU GUILD *@
+                @switch (_guildTab)
+                {
+                    case "expedition":
+                        <GuildExpeditionArea />
+                        break;
+
+                    case "info":
+                        <GuildInfoArea />
+                        break;
+
+                    case "hall":
+                        <GuildHallArea />
+                        break;
+
+                    case "manage":
+                        <GuildManagerArea />
+                        break;
+
+                    default:
+                        <GuildExpeditionArea />
+                        break;
+                }
+            }
+            else if (SelectedMenuId == "i2")
+            {
+                @* MENU WORLD *@
+                @switch (_worldTab)
+                {
+                    case "expansion":
+                        <WorldExpansionnArea />
+                        break;
+
+                    case "dock":
+                        <WorldShipsArea />
+                        break;
+
+                    case "map":
+                        <WorldMapArea />
+                        break;
+
+                    case "lab":
+                        <WorldTechArea />
+                        break;
+
+                    default:
+                        <WorldExpansionnArea />
+                        break;
+                }
+            }
+            else if (SelectedMenuId == "i3")
+            {
+                @* MENU GAME *@
+                @switch (_gameTab)
+                {
+                    case "info":
+                        <GameInfoArea />
+                        break;
+
+                    case "arch":
+                        <GameArchArea />
+                        break;
+
+                    case "tips":
+                        <GameTipsArea />
+                        break;
+
+                    default:
+                        <GameInfoArea />
+                        break;
+                }
+            }
+            else
+            {
+                @* MENUS SEM SUBTABS *@
+                @switch (SelectedMenuId)
+                {
+                    case "i5":
+                        <StoreArea />
+                        break;
+
+                    case "i6":
+                        <SettingsArea />
+                        break;
+
+                    default:
+                        <SettingsArea />
+                        break;
+                }
+            }
+        </div>
+    }
 </div>
 
 
 @code {
     private StageModel? _stage;
     private string? SelectedMenuId;
+
+    private string _guildTab = "info";
+    private string _worldTab = "expansion";
+    private string _gameTab = "info";
 
     protected override void OnInitialized()
     {
@@ -106,4 +152,87 @@ else
         g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
         _stage = st;
     }
+
+    private RenderFragment RenderSubNav() => 
+        @<div>
+            @* GUILD (i1) *@
+            @if (SelectedMenuId == "i1")
+                {
+                <div class="submenu-tabs">
+                    <button class="@SubTabClass(_guildTab, "expansion")"
+                            @onclick="@(() => _guildTab = "expansion")">
+                        Expansão
+                    </button>
+
+                    <button class="@SubTabClass(_guildTab, "info")"
+                            @onclick="@(() => _guildTab = "info")">
+                        Guild Info
+                    </button>
+
+                    <button class="@SubTabClass(_guildTab, "hall")"
+                            @onclick="@(() => _guildTab = "hall")">
+                        Guild Hall
+                    </button>
+
+                    <button class="@SubTabClass(_guildTab, "manage")"
+                            @onclick="@(() => _guildTab = "manage")">
+                        Gerência
+                    </button>
+                </div>
+                }
+            @* WORLD (i2) *@
+                else if (SelectedMenuId == "i2")
+                {
+                <div class="submenu-tabs">
+                    <button class="@SubTabClass(_worldTab, "expedition")"
+                            @onclick="@(() => _worldTab = "expedition")">
+                        Expedição
+                    </button>
+
+                    <button class="@SubTabClass(_worldTab, "dock")"
+                            @onclick="@(() => _worldTab = "dock")">
+                        Doca
+                    </button>
+
+                    <button class="@SubTabClass(_worldTab, "map")"
+                            @onclick="@(() => _worldTab = "map")">
+                        Mapa
+                    </button>
+
+                    <button class="@SubTabClass(_worldTab, "lab")"
+                            @onclick="@(() => _worldTab = "lab")">
+                        Lab
+                    </button>
+                </div>
+                }
+            @* WORLD (i3) *@
+                else if (SelectedMenuId == "i3")
+                {
+                <div class="submenu-tabs">
+                    <button class="@SubTabClass(_gameTab, "info")"
+                    @onclick="@(() => _gameTab = "info")">
+                        Informações
+                    </button>
+
+            <button class="@SubTabClass(_gameTab, "arch")"
+                    @onclick="@(() => _gameTab = "arch")">
+                        Archievments
+                    </button>
+
+            <button class="@SubTabClass(_gameTab, "tips")"
+                    @onclick="@(() => _gameTab = "tips")">
+                        Manual
+                    </button>
+                </div>
+                }
+                else
+                {
+            @* Menus que não têm sub-abas (Game, Store, Settings...) *@
+                <div class="submenu-tabs submenu-tabs--empty"></div>
+                }
+        </div>;
+
+        private string SubTabClass(string current, string id)
+         => "subnav-button" + (current == id ? " is-selected" : "");
+
 }

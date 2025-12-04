@@ -1,4 +1,5 @@
 ﻿using FurmaIdle.Models;
+using System.IO;
 using System.Threading.Tasks;
 using static FurmaIdle.Services.UiService;
 
@@ -39,6 +40,33 @@ namespace FurmaIdle.Services
             _lore = lore;
         }
 
+        #region Ui Control
+
+        public string? OpenMenuId { get; private set; } = "i3";
+        public string? PreviousMenuId { get; private set; } = "i3";
+        public sealed class NavItem
+        {
+            public required string Id { get; init; } = "";
+            public required string Label { get; init; } = "";
+            public bool Unlocked { get; set; } = true;
+            public bool Notification { get; set; } = false;
+            public int SortKey =>
+                int.TryParse(Id.AsSpan(1), out var n) ? n : int.MaxValue;
+        }
+
+        public IEnumerable<NavItem> VisibleNav =>
+            _nav
+                .Where(item => item.Unlocked)
+                .OrderBy(item => item.SortKey);
+        private readonly HashSet<string> _hidden = new(StringComparer.Ordinal);
+        private readonly List<string> GamePanels = new(AllPanels);
+        public bool IsBusy { get; private set; }
+        public string? BusyMessage { get; private set; }
+
+        public event Action? BusyChanged;
+        public event Action? Changed;
+        public event Action? Pulse;
+
         public async Task LoadStage(string stageId)
         {
             await _game.Mutate(g =>
@@ -57,89 +85,26 @@ namespace FurmaIdle.Services
 
             RaisePulse();
         }
-
-        public event Action? Changed;
-        public event Action? Pulse;
-
         public void RaisePulse()
         {
             Pulse?.Invoke();
         }
-
         private void RaiseChanged()
         {
             Changed?.Invoke();
         }
-
-
-        #region Menu
-        #region Menu Panels
-        private readonly HashSet<string> _hidden = new(StringComparer.Ordinal);
-        private static readonly string[] AllPanels = {
-        };
-
-        private readonly List<string> GamePanels = new(AllPanels);
-
-        public void HidePanel(string id)
+        public void SetBusy(string? message)
         {
-            _ = _game.Mutate(g =>
-            {
-                g.Ui ??= new UiState();
-                g.Ui.HiddenPanels.Add(id);
-            }, save: true);
-            RaiseChanged();
+            IsBusy = true;
+            BusyMessage = message;
+            BusyChanged?.Invoke();
         }
-
-        public void ShowPanel(string id)
+        public void ClearBusy()
         {
-            _ = _game.Mutate(g =>
-            {
-                g.Ui ??= new UiState();
-                g.Ui.HiddenPanels.Remove(id);
-            }, save: true);
-            RaiseChanged();
+            IsBusy = false;
+            BusyMessage = null;
+            BusyChanged?.Invoke();
         }
-
-        public bool IsHidden(string id)
-        {
-            var g = _game.CurrentGame;
-            return g?.Ui?.HiddenPanels?.Contains(id) == true;
-        }
-
-        public string PanelClass(string id)
-        {
-            var cls = "menu-panel";
-            if (IsHidden(id)) cls += " is-hidden";
-            return cls;
-        }
-        #endregion
-
-        public string? OpenMenuId { get; private set; } = "i3";
-        public string? PreviousMenuId { get; private set; } = "i3";
-        public sealed class NavItem
-        {
-            public required string Id { get; init; } = "";
-            public required string Label { get; init; } = "";
-            public bool Unlocked { get; set; } = true;
-            public bool Notification { get; set; } = false;
-            public int SortKey =>
-                int.TryParse(Id.AsSpan(1), out var n) ? n : int.MaxValue;
-        }
-
-        private readonly List<NavItem> _nav = new()
-        {
-            new() { Id = "i1",  Label = "GUILD",   Unlocked = true },
-            new() { Id = "i2",  Label = "WORLD",   Unlocked = true },
-            new() { Id = "i3",  Label = "GAME",   Unlocked = true },
-            new() { Id = "i5",  Label = "STORE",      Unlocked = true },
-            new() { Id = "i6",  Label = "SETTING",      Unlocked = true },
-        };
-
-        public IEnumerable<NavItem> VisibleNav =>
-            _nav
-                .Where(item => item.Unlocked)
-                .OrderBy(item => item.SortKey);
-
         public void SyncMenusFromGame(GameModel g)
         {
             g.Ui ??= new UiState();
@@ -180,7 +145,6 @@ namespace FurmaIdle.Services
             PreviousMenuId = OpenMenuId;
             RaiseChanged();
         }
-
         public void SetOpenMenu(string? id)
         {
             if (OpenMenuId == id)
@@ -195,7 +159,6 @@ namespace FurmaIdle.Services
             _ = _game.Mutate(g => g.Ui.OpenMenuId = id, save: true);
             RaiseChanged();
         }
-
         private void LockMenu(string id)
         {
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, id, StringComparison.OrdinalIgnoreCase));
@@ -253,6 +216,60 @@ namespace FurmaIdle.Services
             RaiseChanged();
             return true;
         }
+        public void HidePanel(string id)
+        {
+            _ = _game.Mutate(g =>
+            {
+                g.Ui ??= new UiState();
+                g.Ui.HiddenPanels.Add(id);
+            }, save: true);
+            RaiseChanged();
+        }
+        public void ShowPanel(string id)
+        {
+            _ = _game.Mutate(g =>
+            {
+                g.Ui ??= new UiState();
+                g.Ui.HiddenPanels.Remove(id);
+            }, save: true);
+            RaiseChanged();
+        }
+        public bool IsPanelHidden(string id)
+        {
+            var g = _game.CurrentGame;
+            return g?.Ui?.HiddenPanels?.Contains(id) == true;
+        }
+        public string PanelClass(string id)
+        {
+            var cls = "menu-panel";
+            if (IsPanelHidden(id)) cls += " is-hidden";
+            return cls;
+        }
+        #endregion
+
+        #region Nav Tabs
+        private readonly List<NavItem> _nav = new()
+        {
+            new() { Id = "i1",  Label = "GUILD",   Unlocked = true },
+            new() { Id = "i2",  Label = "WORLD",   Unlocked = true },
+            new() { Id = "i3",  Label = "GAME",   Unlocked = true },
+            new() { Id = "i98",  Label = "STORE",      Unlocked = true },
+            new() { Id = "i99",  Label = "SETTING",      Unlocked = true },
+        };
+        #endregion
+
+        #region Menu Sub Panels
+        private static readonly string[] AllPanels = {
+            "expansion-info",
+            "expansion-history",
+            "expansion-objetive",
+            "expedition-toggle",
+            "expedition-party",
+            "expedition-status",
+            "expedition-gain",
+            "hall-permanents",
+            "hall-expansion",
+        };
         #endregion
 
         #region Menu Control
@@ -415,27 +432,6 @@ namespace FurmaIdle.Services
                 #endregion
                 default: break;
             }
-        }
-        #endregion
-
-        #region Busy
-        public bool IsBusy { get; private set; }
-        public string? BusyMessage { get; private set; }
-
-        public event Action? BusyChanged;
-
-        public void SetBusy(string? message)
-        {
-            IsBusy = true;
-            BusyMessage = message;
-            BusyChanged?.Invoke();
-        }
-
-        public void ClearBusy()
-        {
-            IsBusy = false;
-            BusyMessage = null;
-            BusyChanged?.Invoke();
         }
         #endregion
     }

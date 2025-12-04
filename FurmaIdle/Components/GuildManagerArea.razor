@@ -1,5 +1,4 @@
-﻿@* Components/ShopMenuUpgrades.razor *@
-@inherits UiHelper
+﻿@inherits UiHelper
 
 @using System.Linq
 @using FurmaIdle.Models
@@ -16,8 +15,8 @@
 @inject IUiLogService Log
 
 <div class="menu-root">
-@if (!Game.IsReady || _stage is null)
-{
+    @if (!Game.IsReady || _stage is null)
+    {
         <div class="contracts-placeholder">Stage não Selecionado</div>
     }
     else
@@ -26,65 +25,33 @@
 
         var all = OrderedUpgrades(game);
 
-        // ==== ÁREA 2 — Objetives ====
-        var heroUpgrade =
-            all.FirstOrDefault(u =>
-            u.State == UnlockHelper.State.Available && ((Us(u.Id) && _stage.Id == "s00") || 
-                ((Ue(u.Id) && (u.StageId == _stage.Id || u.StageId == "all")))));
-
-        // ==== ÁREA 2 — Permanentes (UP, UL, UR, UK, UA, UU, UN, UZ) ====
+        // ==== Permanentes (UU - Contracts) ====
         var permanents =
-            all.Where(u =>
-            u.State == UnlockHelper.State.Available &&
-            (Up(u.Id) || Ul(u.Id) || Ur(u.Id) || Uk(u.Id) || Ua(u.Id) || Uu(u.Id) || Un(u.Id) || Uz(u.Id) || Us(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-            .ToList();
+        all.Where(u =>
+        u.State == UnlockHelper.State.Available &&
+        (Uu(u.Id)) &&
+        IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
+        .ToList();
 
-        // ==== ÁREA 3 — Avanços da Expansão (UT, UX, UM, UB, UD) ====
+        // ==== Expansão (UM - Contract Cap, UB - Contract Level) ====
         var expansionUps =
-            all.Where(u =>
-            u.State == UnlockHelper.State.Available &&
-            (Ut(u.Id) || Ux(u.Id) || Um(u.Id) || Ub(u.Id) || Ud(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-            .ToList();
+        all.Where(u =>
+        u.State == UnlockHelper.State.Available &&
+        (Um(u.Id) || Ub(u.Id)) &&
+        IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
+        .ToList();
 
-        // ==== ÁREA 4 — Avanços da Expedição (UC, UI) ====
+        // ==== Expedição (UC - Contracts, UI - Clicks) ====
         var expeditionUps =
-            all.Where(u =>
-            u.State == UnlockHelper.State.Available &&
-            (Uc(u.Id) || Ui(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-            .ToList();
+        all.Where(u =>
+        u.State == UnlockHelper.State.Available &&
+        (Uc(u.Id) || Ui(u.Id)) &&
+        IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
+        .ToList();
 
-        <section class="@($"menu-panel {UI.PanelClass("up-objetive")}")">
-            @if (heroUpgrade is not null)
-            {
-                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id);
-                <button class="objetive-button"
-                        disabled="@(!can)"
-                        @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, heroUpgrade.Id, _stage.Id))"
-                        @onmouseleave="Tooltips.Clear">
-                    @if (!string.IsNullOrWhiteSpace(heroUpgrade.Image))
-                    {
-                        <img src="@heroUpgrade.Image"
-                             alt="@heroUpgrade.Id" 
-                             class="objetive-img"/>
-                    }
-                    else
-                    {
-                        @heroUpgrade.Id
-                    }
-                </button>
-            }
-            else
-            {
-                <div style="text-align:center; opacity:.75;">Fim de Jogo - por enquanto</div>
-            }
-        </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("up-expedition")}")">
-            @if(_stage.Id == "s00")
+            @if (_stage.Id == "s00")
             {
                 <h3 class="title">Melhorias Rápidas</h3>
             }
@@ -104,7 +71,7 @@
                         {
                             <img src="@u.Icon"
                                  alt="@u.Id"
-                                 class="icon-img"/>
+                                 class="icon-img" />
                         }
                         else
                         {
@@ -146,7 +113,7 @@
                 }
             </div>
         </section>
-        
+
         <section class="@($"menu-panel menu-section {UI.PanelClass("up-permanents")}")">
             <h3 class="title">Melhorias Permanentes</h3>
             <div class="icon-grid">
@@ -171,7 +138,7 @@
                 }
             </div>
         </section>
-}
+    }
 </div>
 
 @code {
@@ -233,7 +200,7 @@
     private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {
         // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
-        if (!StartsWith(upgradeId, "uc") && !StartsWith(upgradeId,"uu") && !StartsWith(upgradeId,"ut")) return true;
+        if (!StartsWith(upgradeId, "uc") && !StartsWith(upgradeId, "uu") && !StartsWith(upgradeId, "ut")) return true;
 
         var up = Locate.LocateUpgrade(game, upgradeId);
 
@@ -262,7 +229,8 @@
             if (upgrade.Level > stageInfo.ContractsLevel)
             {
                 return false;
-            } else
+            }
+            else
             {
                 return true;
             }
