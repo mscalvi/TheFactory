@@ -25,11 +25,12 @@
 
         var all = OrderedUpgrades(game);
 
-        // ==== Permanentes (UU - Contracts) ====
-        var permanents =
+
+        // ==== Expedição (UC - Contracts, UI - Clicks) ====
+        var expeditionUps =
         all.Where(u =>
         u.State == UnlockHelper.State.Available &&
-        (Uu(u.Id)) &&
+        (Uc(u.Id) || Ui(u.Id)) &&
         IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
         .ToList();
 
@@ -41,11 +42,11 @@
         IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
         .ToList();
 
-        // ==== Expedição (UC - Contracts, UI - Clicks) ====
-        var expeditionUps =
+        // ==== Permanentes (UU - Contracts, US01 - End Tutorial) ====
+        var permanents =
         all.Where(u =>
         u.State == UnlockHelper.State.Available &&
-        (Uc(u.Id) || Ui(u.Id)) &&
+        (Uu(u.Id) || u.Id == "us01") &&
         IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
         .ToList();
 
@@ -178,29 +179,16 @@
     static bool StartsWith(string? id, string prefix)
         => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
 
-    static bool Ua(string? id) => StartsWith(id, "ua");
     static bool Ub(string? id) => StartsWith(id, "ub");
     static bool Uc(string? id) => StartsWith(id, "uc");
-    static bool Ud(string? id) => StartsWith(id, "ud");
-    static bool Ue(string? id) => StartsWith(id, "ue");
-    static bool Uh(string? id) => StartsWith(id, "uh");
     static bool Ui(string? id) => StartsWith(id, "ui");
-    static bool Uk(string? id) => StartsWith(id, "uk");
-    static bool Ul(string? id) => StartsWith(id, "ul");
     static bool Um(string? id) => StartsWith(id, "um");
-    static bool Un(string? id) => StartsWith(id, "un");
-    static bool Up(string? id) => StartsWith(id, "up");
-    static bool Ur(string? id) => StartsWith(id, "ur");
-    static bool Us(string? id) => StartsWith(id, "us");
-    static bool Ut(string? id) => StartsWith(id, "ut");
     static bool Uu(string? id) => StartsWith(id, "uu");
-    static bool Ux(string? id) => StartsWith(id, "ux");
-    static bool Uz(string? id) => StartsWith(id, "uz");
 
     private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {
         // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
-        if (!StartsWith(upgradeId, "uc") && !StartsWith(upgradeId, "uu") && !StartsWith(upgradeId, "ut")) return true;
+        if (!StartsWith(upgradeId, "uc") && !StartsWith(upgradeId, "uu"))return true;
 
         var up = Locate.LocateUpgrade(game, upgradeId);
 
@@ -232,23 +220,23 @@
             }
             else
             {
-                return true;
-            }
-        }
-        else if (StartsWith(upgradeId, "ut"))
-        {
-            var isContractTarget = up.TargetId?.StartsWith("c", StringComparison.OrdinalIgnoreCase) ?? false;
-            if (!isContractTarget) return true;
-
-            if (_stage.ActiveContracts.TryGetValue(up.TargetId, out var qty))
-            {
-                if (qty > 0)
+                // e se algum personagem tiver ele
+                foreach (var characterId in _stage.Expedition.PartyIds)
                 {
-                    return true;
+                    var character = Locate.LocateCharacter(game, characterId);
+
+                    if (character.ContractsIds.Contains(upgrade.TargetId))
+                    {
+                        return true; 
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
-            return false;
         }
+
         return true;
     }
 

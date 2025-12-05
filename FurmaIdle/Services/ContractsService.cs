@@ -122,23 +122,6 @@ namespace FurmaIdle.Services
             int contractsLevel = stage.StartContractLevel;
             int contractsMaxLevel = stage.MaxContractLevel;
 
-            foreach (var modifier in stage.Modifiers)
-            {
-                if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock)
-                {
-                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
-                    {
-                        contractsCap += (int)modifier.Value;
-                    }
-                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
-                    {
-                        contractsCap *= (int)modifier.Value;
-                    }
-                }
-            }
-
-            contractsCap *= stage.Expedition.PartyIds.Count;
-
             foreach (var contract in stage.ActiveContracts)
             {
                 contractsUsed += contract.Value;
@@ -173,6 +156,8 @@ namespace FurmaIdle.Services
 
                 contractsCap += stageCap;
             }
+
+            contractsCap *= stage.Expedition.PartyIds.Count;
 
             stage.ActualContractLevel = contractsLevel;
 

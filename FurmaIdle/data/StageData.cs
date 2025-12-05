@@ -156,6 +156,7 @@ namespace FurmaIdle.Data
                 Persistence = stage.Persistence,
                 StartPartySize = stage.StartPartySize,
                 MaxPartySize = stage.MaxPartySize,
+                ContractCap = stage.ContractCap,
                 StartContractLevel = stage.StartContractLevel,
                 ActualContractLevel = stage.StartContractLevel,
                 MaxContractLevel = stage.MaxContractLevel,

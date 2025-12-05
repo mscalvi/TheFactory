@@ -125,7 +125,7 @@ namespace FurmaIdle.Helpers
 
                 // Unlock Contract Level X-X+2
                 [PricingId.ContractLevelUnlock00] = new Entry("m01", 10, 4.1, CostFactor.None, 1),
-                [PricingId.ContractLevelUnlock01] = new Entry("m01", 600, 4.0, CostFactor.Level, 2.3),
+                [PricingId.ContractLevelUnlock01] = new Entry("m01", 600, 2.7, CostFactor.Level, 4.3),
 
                 // Unlock Knowledge Stage X
                 [PricingId.KnowledgeUnlock1] = new Entry("m01", 60000, 1.0, CostFactor.KnowledgesUnlocked, 5.9),
