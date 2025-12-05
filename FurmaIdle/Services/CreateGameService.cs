@@ -61,7 +61,7 @@ namespace FurmaIdle.Services
                     LastTick = DateTime.UtcNow,
                     GameStats = new StatsModel(),
                     SelectedStageId = "s00",
-                    CurrentExpansionId = "x00",
+                    CurrentExpansionId = "x000",
                     Ui = new UiState(),
                     Characters = Seed("[CGS] Characters", () => CharacterData.CreateInitialStates()),
                     Clicks = Seed("[CGS] Clicks", () => ClickData.CreateInitialStates()),

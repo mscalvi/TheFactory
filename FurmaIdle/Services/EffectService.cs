@@ -62,14 +62,36 @@ namespace FurmaIdle.Services
                 {
                     if (upgrade.EffectOp != EffectOperation.Unlock)
                     {
-                        switch (targetTypeId)
+                        if(upgrade.TargetId.StartsWith("wild"))
                         {
-                            case "a": // All of a Kind
-                                if (upgrade.TargetId == "aContracts")
+                            foreach (var contract in game.Contracts.Values)
+                            {
+                                if (contract.Context.HasFlag(ContractHelper.Context.Wild))
                                 {
-                                    foreach (var acontract in game.Contracts)
+                                    var contractNewMod = new ModifierModel
                                     {
-                                        var aNewMod = new ModifierModel
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
+
+                                    contract.Modifiers.Add(contractNewMod);
+                                }
+                            }
+                        } 
+                        else if (upgrade.TargetId.StartsWith("stage"))
+                        {
+                            switch (upgrade.TargetId) 
+                            {
+                                case "stageContracts":
+                                    foreach (var contracts in stage.ActiveContracts.Keys)
+                                    {
+                                        var contract = _locate.LocateContract(game, contracts);
+
+                                        var contractNewMod = new ModifierModel
                                         {
                                             ApplyerId = upgrade.Id,
                                             Type = upgrade.EffectType,
@@ -79,15 +101,32 @@ namespace FurmaIdle.Services
                                             Supertype = upgrade.EffectSupertype,
                                         };
 
-                                        acontract.Value.Modifiers.Add(aNewMod);
+                                        contract.Modifiers.Add(contractNewMod);
                                     }
-                                }
-                                if (upgrade.TargetId == "aKnowledges")
-                                {
-                                    foreach (var aknow in game.Knowledges)
-                                    {
+                                    break;
+                                case "stageClicks":
+                                    var click = _locate.LocateStageClick(game, stage.Id);
 
-                                        var aNewMod = new ModifierModel
+                                    var clickNewMod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
+
+                                    click.Modifiers.Add(clickNewMod);
+                                    break;
+                                case "stageSpecialties":
+                                    foreach (var characters in stage.Expedition.PartyIds)
+                                    {
+                                        var character = _locate.LocateCharacter(game, characters);
+
+                                        var specialty = _locate.LocateSpecialty(game, character.SpecialtyId);
+
+                                        var specNewMod = new ModifierModel
                                         {
                                             ApplyerId = upgrade.Id,
                                             Type = upgrade.EffectType,
@@ -97,305 +136,318 @@ namespace FurmaIdle.Services
                                             Supertype = upgrade.EffectSupertype,
                                         };
 
-                                        aknow.Value.Modifiers.Add(aNewMod);
+                                        specialty.Modifiers.Add(specNewMod);
                                     }
-                                }
-                                if (upgrade.TargetId == "aCoins")
-                                {
-                                    foreach (var acoin in game.Coins)
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (targetTypeId)
+                            {
+                                case "a": // All of a Kind
+                                    if (upgrade.TargetId == "allContracts")
                                     {
-                                        var aNewMod = new ModifierModel
+                                        foreach (var acontract in game.Contracts)
                                         {
-                                            ApplyerId = upgrade.Id,
-                                            Type = upgrade.EffectType,
-                                            Scope = upgrade.Persistence,
-                                            Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue,
-                                            Supertype = upgrade.EffectSupertype,
-                                        };
+                                            var aNewMod = new ModifierModel
+                                            {
+                                                ApplyerId = upgrade.Id,
+                                                Type = upgrade.EffectType,
+                                                Scope = upgrade.Persistence,
+                                                Operation = upgrade.EffectOp,
+                                                Value = upgrade.EffectValue,
+                                                Supertype = upgrade.EffectSupertype,
+                                            };
 
-                                        acoin.Value.Modifiers.Add(aNewMod);
+                                            acontract.Value.Modifiers.Add(aNewMod);
+                                        }
                                     }
-                                }
-                                if (upgrade.TargetId == "aResources")
-                                {
-                                    foreach (var aresource in game.Resources)
+                                    if (upgrade.TargetId == "allKnowledges")
                                     {
-                                        var aNewMod = new ModifierModel
+                                        foreach (var aknow in game.Knowledges)
                                         {
-                                            ApplyerId = upgrade.Id,
-                                            Type = upgrade.EffectType,
-                                            Scope = upgrade.Persistence,
-                                            Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue,
-                                            Supertype = upgrade.EffectSupertype,
-                                        };
 
-                                        aresource.Value.Modifiers.Add(aNewMod);
+                                            var aNewMod = new ModifierModel
+                                            {
+                                                ApplyerId = upgrade.Id,
+                                                Type = upgrade.EffectType,
+                                                Scope = upgrade.Persistence,
+                                                Operation = upgrade.EffectOp,
+                                                Value = upgrade.EffectValue,
+                                                Supertype = upgrade.EffectSupertype,
+                                            };
+
+                                            aknow.Value.Modifiers.Add(aNewMod);
+                                        }
                                     }
-                                }
-                                if (upgrade.TargetId == "aClicks")
-                                {
-                                    foreach (var aclick in game.Clicks)
+                                    if (upgrade.TargetId == "allCoins")
                                     {
-                                        var aNewMod = new ModifierModel
+                                        foreach (var acoin in game.Coins)
                                         {
-                                            ApplyerId = upgrade.Id,
-                                            Type = upgrade.EffectType,
-                                            Scope = upgrade.Persistence,
-                                            Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue,
-                                            Supertype = upgrade.EffectSupertype,
-                                        };
+                                            var aNewMod = new ModifierModel
+                                            {
+                                                ApplyerId = upgrade.Id,
+                                                Type = upgrade.EffectType,
+                                                Scope = upgrade.Persistence,
+                                                Operation = upgrade.EffectOp,
+                                                Value = upgrade.EffectValue,
+                                                Supertype = upgrade.EffectSupertype,
+                                            };
 
-                                        aclick.Value.Modifiers.Add(aNewMod);
+                                            acoin.Value.Modifiers.Add(aNewMod);
+                                        }
                                     }
-                                }
-                                if (upgrade.TargetId == "aCharacters")
-                                {
-                                    foreach (var acharacters in game.Characters)
+                                    if (upgrade.TargetId == "allResources")
                                     {
-                                        var aNewMod = new ModifierModel
+                                        foreach (var aresource in game.Resources)
                                         {
-                                            ApplyerId = upgrade.Id,
-                                            Type = upgrade.EffectType,
-                                            Scope = upgrade.Persistence,
-                                            Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue,
-                                            Supertype = upgrade.EffectSupertype,
-                                        };
+                                            var aNewMod = new ModifierModel
+                                            {
+                                                ApplyerId = upgrade.Id,
+                                                Type = upgrade.EffectType,
+                                                Scope = upgrade.Persistence,
+                                                Operation = upgrade.EffectOp,
+                                                Value = upgrade.EffectValue,
+                                                Supertype = upgrade.EffectSupertype,
+                                            };
 
-                                        acharacters.Value.Modifiers.Add(aNewMod);
+                                            aresource.Value.Modifiers.Add(aNewMod);
+                                        }
                                     }
-                                }
-                                if (upgrade.TargetId == "aUpgrades")
-                                {
-                                    foreach (var aupgrades in game.Upgrades)
+                                    if (upgrade.TargetId == "allClicks")
                                     {
-                                        var aNewMod = new ModifierModel
+                                        foreach (var aclick in game.Clicks)
                                         {
-                                            ApplyerId = upgrade.Id,
-                                            Type = upgrade.EffectType,
-                                            Scope = upgrade.Persistence,
-                                            Operation = upgrade.EffectOp,
-                                            Value = upgrade.EffectValue,
-                                            Supertype = upgrade.EffectSupertype,
-                                        };
+                                            var aNewMod = new ModifierModel
+                                            {
+                                                ApplyerId = upgrade.Id,
+                                                Type = upgrade.EffectType,
+                                                Scope = upgrade.Persistence,
+                                                Operation = upgrade.EffectOp,
+                                                Value = upgrade.EffectValue,
+                                                Supertype = upgrade.EffectSupertype,
+                                            };
 
-                                        aupgrades.Value.Modifiers.Add(aNewMod);
+                                            aclick.Value.Modifiers.Add(aNewMod);
+                                        }
                                     }
-                                }
-                                break;
-                            case "m": // Coins
-                                var coins = _locate.LocateCoin(game, upgrade.TargetId);
+                                    if (upgrade.TargetId == "allCharacters")
+                                    {
+                                        foreach (var acharacters in game.Characters)
+                                        {
+                                            var aNewMod = new ModifierModel
+                                            {
+                                                ApplyerId = upgrade.Id,
+                                                Type = upgrade.EffectType,
+                                                Scope = upgrade.Persistence,
+                                                Operation = upgrade.EffectOp,
+                                                Value = upgrade.EffectValue,
+                                                Supertype = upgrade.EffectSupertype,
+                                            };
 
-                                var mMod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                            acharacters.Value.Modifiers.Add(aNewMod);
+                                        }
+                                    }
+                                    if (upgrade.TargetId == "allUpgrades")
+                                    {
+                                        foreach (var aupgrades in game.Upgrades)
+                                        {
+                                            var aNewMod = new ModifierModel
+                                            {
+                                                ApplyerId = upgrade.Id,
+                                                Type = upgrade.EffectType,
+                                                Scope = upgrade.Persistence,
+                                                Operation = upgrade.EffectOp,
+                                                Value = upgrade.EffectValue,
+                                                Supertype = upgrade.EffectSupertype,
+                                            };
 
-                                coins.Modifiers.Add(mMod);
-                                break;
-                            case "p": // Characters
-                                var character = _locate.LocateCharacter(game, upgrade.TargetId);
+                                            aupgrades.Value.Modifiers.Add(aNewMod);
+                                        }
+                                    }
+                                    break;
+                                case "m": // Coins
+                                    var coins = _locate.LocateCoin(game, upgrade.TargetId);
 
-                                var pMod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var mMod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                character.Modifiers.Add(pMod);
-                                break;
-                            case "k": // Knowledge
-                                var knowledge = _locate.LocateKnowledge(game, upgrade.TargetId);
+                                    coins.Modifiers.Add(mMod);
+                                    break;
+                                case "p": // Characters
+                                    var character = _locate.LocateCharacter(game, upgrade.TargetId);
 
-                                var kMod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var pMod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                knowledge.Modifiers.Add(kMod);
-                                break;
-                            case "t": // Techs
-                                var tech = _locate.LocateTech(game, upgrade.TargetId);
+                                    character.Modifiers.Add(pMod);
+                                    break;
+                                case "k": // Knowledge
+                                    var knowledge = _locate.LocateKnowledge(game, upgrade.TargetId);
 
-                                var tmod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var kMod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                tech.Modifiers.Add(tmod);
-                                break;
-                            case "u": // Upgrades
-                                var targetupgrade = _locate.LocateUpgrade(game, upgrade.TargetId);
+                                    knowledge.Modifiers.Add(kMod);
+                                    break;
+                                case "t": // Techs
+                                    var tech = _locate.LocateTech(game, upgrade.TargetId);
 
-                                var umod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var tmod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                targetupgrade.Modifiers.Add(umod);
-                                break;
-                            case "l": // Locals
-                                var local = _locate.LocateLocal(game, upgrade.TargetId);
+                                    tech.Modifiers.Add(tmod);
+                                    break;
+                                case "u": // Upgrades
+                                    var targetupgrade = _locate.LocateUpgrade(game, upgrade.TargetId);
 
-                                var lmod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var umod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                local.Modifiers.Add(lmod);
-                                break;
-                            case "s": // Stages
-                                var targetstage = _locate.LocateStage(game, upgrade.TargetId);
+                                    targetupgrade.Modifiers.Add(umod);
+                                    break;
+                                case "l": // Locals
+                                    var local = _locate.LocateLocal(game, upgrade.TargetId);
 
-                                var smod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var lmod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                targetstage.Modifiers.Add(smod);
-                                break;
-                            case "x": // Expansions
-                                var expansion = _locate.LocateExpansion(game, upgrade.TargetId);
+                                    local.Modifiers.Add(lmod);
+                                    break;
+                                case "s": // Stages
+                                    var targetstage = _locate.LocateStage(game, upgrade.TargetId);
 
-                                var xmod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var smod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                expansion.Modifiers.Add(xmod);
-                                break;
-                            case "d": // Expeditions
-                                var expedition = _locate.LocateExpedition(game, upgrade.TargetId);
+                                    targetstage.Modifiers.Add(smod);
+                                    break;
+                                case "x": // Expansions
+                                    var expansion = _locate.LocateExpansion(game, upgrade.TargetId);
 
-                                var dmod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var xmod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                expedition.Modifiers.Add(dmod);
-                                break;
-                            case "o": // Traits
-                                var trait = _locate.LocateTrait(game, upgrade.TargetId);
+                                    expansion.Modifiers.Add(xmod);
+                                    break;
+                                case "e": // Specialty
+                                    var speciality = _locate.LocateSpecialty(game, upgrade.TargetId);
 
-                                var omod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var emod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                trait.Modifiers.Add(omod);
-                                break;
-                            case "e": // Specialty
-                                var speciality = _locate.LocateSpecialty(game, upgrade.TargetId);
+                                    speciality.Modifiers.Add(emod);
+                                    break;
+                                case "c": // Contracts
+                                    var contract = _locate.LocateContract(game, upgrade.TargetId);
 
-                                var emod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var cmod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                speciality.Modifiers.Add(emod);
-                                break;
-                            case "c": // Contracts
-                                var contract = _locate.LocateContract(game, upgrade.TargetId);
+                                    contract.Modifiers.Add(cmod);
+                                    break;
+                                case "i": // Clicks
+                                    var click = _locate.LocateClick(game, upgrade.TargetId);
 
-                                var cmod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var imod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                contract.Modifiers.Add(cmod);
-                                break;
-                            case "i": // Clicks
-                                var click = _locate.LocateClick(game, upgrade.TargetId);
+                                    click.Modifiers.Add(imod);
+                                    break;
+                                case "r": // Resources
+                                    var resource = _locate.LocateResource(game, upgrade.TargetId);
 
-                                var imod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
+                                    var rmod = new ModifierModel
+                                    {
+                                        ApplyerId = upgrade.Id,
+                                        Type = upgrade.EffectType,
+                                        Scope = upgrade.Persistence,
+                                        Operation = upgrade.EffectOp,
+                                        Value = upgrade.EffectValue,
+                                        Supertype = upgrade.EffectSupertype,
+                                    };
 
-                                click.Modifiers.Add(imod);
-                                break;
-                            case "r": // Resources
-                                var resource = _locate.LocateResource(game, upgrade.TargetId);
-
-                                var rmod = new ModifierModel
-                                {
-                                    ApplyerId = upgrade.Id,
-                                    Type = upgrade.EffectType,
-                                    Scope = upgrade.Persistence,
-                                    Operation = upgrade.EffectOp,
-                                    Value = upgrade.EffectValue,
-                                    Supertype = upgrade.EffectSupertype,
-                                };
-
-                                resource.Modifiers.Add(rmod);
-                                break;
+                                    resource.Modifiers.Add(rmod);
+                                    break;
+                            }
                         }
                     }
                 }, save: false);
@@ -423,7 +475,7 @@ namespace FurmaIdle.Services
                         switch (targetTypeId)
                         {
                             case "a": // All of a Kind
-                                if (spec.TargetId == "aContracts")
+                                if (spec.TargetId == "allContracts")
                                 {
                                     foreach (var acontract in game.Contracts)
                                     {
@@ -440,7 +492,7 @@ namespace FurmaIdle.Services
                                         acontract.Value.Modifiers.Add(amod);
                                     }
                                 }
-                                if (spec.TargetId == "aKnowledges")
+                                if (spec.TargetId == "allKnowledges")
                                 {
                                     foreach (var aknow in game.Knowledges)
                                     {
@@ -457,7 +509,7 @@ namespace FurmaIdle.Services
                                         aknow.Value.Modifiers.Add(amod);
                                     }
                                 }
-                                if (spec.TargetId == "aCoins")
+                                if (spec.TargetId == "allCoins")
                                 {
                                     foreach (var acoin in game.Coins)
                                     {
@@ -474,7 +526,7 @@ namespace FurmaIdle.Services
                                         acoin.Value.Modifiers.Add(amod);
                                     }
                                 }
-                                if (spec.TargetId == "aResources")
+                                if (spec.TargetId == "allResources")
                                 {
                                     foreach (var aresource in game.Resources)
                                     {
@@ -491,7 +543,7 @@ namespace FurmaIdle.Services
                                         aresource.Value.Modifiers.Add(amod);
                                     }
                                 }
-                                if (spec.TargetId == "aClicks")
+                                if (spec.TargetId == "allClicks")
                                 {
                                     foreach (var aclick in game.Clicks)
                                     {
@@ -508,7 +560,7 @@ namespace FurmaIdle.Services
                                         aclick.Value.Modifiers.Add(amod);
                                     }
                                 }
-                                if (spec.TargetId == "aCharacters")
+                                if (spec.TargetId == "allCharacters")
                                 {
                                     foreach (var acharacters in game.Characters)
                                     {
@@ -525,7 +577,7 @@ namespace FurmaIdle.Services
                                         acharacters.Value.Modifiers.Add(amod);
                                     }
                                 }
-                                if (spec.TargetId == "aUpgrades")
+                                if (spec.TargetId == "allUpgrades")
                                 {
                                     foreach (var aupgrades in game.Upgrades)
                                     {
@@ -542,7 +594,7 @@ namespace FurmaIdle.Services
                                         aupgrades.Value.Modifiers.Add(amod);
                                     }
                                 }
-                                if (spec.TargetId == "aSpecialties")
+                                if (spec.TargetId == "allSpecialties")
                                 {
                                     foreach (var aspecialties in game.Specialties)
                                     {
@@ -792,7 +844,7 @@ namespace FurmaIdle.Services
                     switch (targetTypeId)
                     {
                         case "a": // All of a Kind
-                            if (trait.TargetId == "aContracts")
+                            if (trait.TargetId == "allContracts")
                             {
                                 foreach (var acontract in game.Contracts)
                                 {
@@ -809,7 +861,7 @@ namespace FurmaIdle.Services
                                     acontract.Value.Modifiers.Add(amod);
                                 }
                             }
-                            if (trait.TargetId == "aKnowledges")
+                            if (trait.TargetId == "allKnowledges")
                             {
                                 foreach (var aknow in game.Knowledges)
                                 {
@@ -826,7 +878,7 @@ namespace FurmaIdle.Services
                                     aknow.Value.Modifiers.Add(amod);
                                 }
                             }
-                            if (trait.TargetId == "aCoins")
+                            if (trait.TargetId == "allCoins")
                             {
                                 foreach (var acoin in game.Coins)
                                 {
@@ -843,7 +895,7 @@ namespace FurmaIdle.Services
                                     acoin.Value.Modifiers.Add(amod);
                                 }
                             }
-                            if (trait.TargetId == "aResources")
+                            if (trait.TargetId == "allResources")
                             {
                                 foreach (var aresource in game.Resources)
                                 {
@@ -860,7 +912,7 @@ namespace FurmaIdle.Services
                                     aresource.Value.Modifiers.Add(amod);
                                 }
                             }
-                            if (trait.TargetId == "aClicks")
+                            if (trait.TargetId == "allClicks")
                             {
                                 foreach (var aclick in game.Clicks)
                                 {
@@ -877,7 +929,7 @@ namespace FurmaIdle.Services
                                     aclick.Value.Modifiers.Add(amod);
                                 }
                             }
-                            if (trait.TargetId == "aCharacters")
+                            if (trait.TargetId == "allCharacters")
                             {
                                 foreach (var acharacters in game.Characters)
                                 {
@@ -894,7 +946,7 @@ namespace FurmaIdle.Services
                                     acharacters.Value.Modifiers.Add(amod);
                                 }
                             }
-                            if (trait.TargetId == "aUpgrades")
+                            if (trait.TargetId == "allUpgrades")
                             {
                                 foreach (var aupgrades in game.Upgrades)
                                 {
@@ -911,7 +963,7 @@ namespace FurmaIdle.Services
                                     aupgrades.Value.Modifiers.Add(amod);
                                 }
                             }
-                            if (trait.TargetId == "aSpecialties")
+                            if (trait.TargetId == "allSpecialties")
                             {
                                 foreach (var aspecialties in game.Specialties)
                                 {

@@ -157,6 +157,7 @@ namespace FurmaIdle.Data
                 StartPartySize = stage.StartPartySize,
                 MaxPartySize = stage.MaxPartySize,
                 StartContractLevel = stage.StartContractLevel,
+                ActualContractLevel = stage.StartContractLevel,
                 MaxContractLevel = stage.MaxContractLevel,
                 Expedition = stage.Expedition,
                 CoinId = stage.CoinId,

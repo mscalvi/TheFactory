@@ -116,42 +116,42 @@ namespace FurmaIdle.Services
                     switch (targetTypeId)
                     {
                         case "a": // All of a Kind
-                            if (spec.TargetId == "aContracts")
+                            if (spec.TargetId == "allContracts")
                             {
                                 foreach (var it in g.Contracts.Values)
                                     Scrub(it.Modifiers, specId);
                             }
-                            if (spec.TargetId == "aKnowledges")
+                            if (spec.TargetId == "allKnowledges")
                             {
                                 foreach (var it in g.Knowledges.Values)
                                     Scrub(it.Modifiers, specId);
                             }
-                            if (spec.TargetId == "aCoins")
+                            if (spec.TargetId == "allCoins")
                             {
                                 foreach (var it in g.Coins.Values)
                                     Scrub(it.Modifiers, specId);
                             }
-                            if (spec.TargetId == "aResources")
+                            if (spec.TargetId == "allResources")
                             {
                                 foreach (var it in g.Resources.Values)
                                     Scrub(it.Modifiers, specId);
                             }
-                            if (spec.TargetId == "aClicks")
+                            if (spec.TargetId == "allClicks")
                             {
                                 foreach (var it in g.Clicks.Values)
                                     Scrub(it.Modifiers, specId);
                             }
-                            if (spec.TargetId == "aCharacters")
+                            if (spec.TargetId == "allCharacters")
                             {
                                 foreach (var it in g.Characters.Values)
                                     Scrub(it.Modifiers, specId);
                             }
-                            if (spec.TargetId == "aUpgrades")
+                            if (spec.TargetId == "allUpgrades")
                             {
                                 foreach (var it in g.Upgrades.Values)
                                     Scrub(it.Modifiers, specId);
                             }
-                            if (spec.TargetId == "aSpecialties")
+                            if (spec.TargetId == "allSpecialties")
                             {
                                 foreach (var it in g.Specialties.Values)
                                     Scrub(it.Modifiers, specId);

@@ -117,34 +117,27 @@ namespace FurmaIdle.Services
         {
             var stage = _locate.LocateStage(game, stageId);
 
-            int contractsCap = 0;
+            int contractsCap = stage.ContractCap;
             int contractsUsed = 0;
             int contractsLevel = stage.StartContractLevel;
             int contractsMaxLevel = stage.MaxContractLevel;
 
-            foreach (var characterId in stage.Expedition.PartyIds)
+            foreach (var modifier in stage.Modifiers)
             {
-                int characterCap = 0;
-                var character = _locate.LocateCharacter(game, characterId);
-                characterCap += character.ContractCap;
-
-                foreach (var modifier in character.Modifiers)
+                if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock)
                 {
-                    if (modifier.Type == EffectHelper.EffectType.ContractCapUnlock)
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
                     {
-                        if (modifier.Operation == EffectHelper.EffectOperation.Additive)
-                        {
-                            characterCap += (int)modifier.Value;
-                        }
-                        if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
-                        {
-                            characterCap *= (int)modifier.Value;
-                        }
+                        contractsCap += (int)modifier.Value;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        contractsCap *= (int)modifier.Value;
                     }
                 }
-
-                contractsCap += characterCap;
             }
+
+            contractsCap *= stage.Expedition.PartyIds.Count;
 
             foreach (var contract in stage.ActiveContracts)
             {
@@ -180,6 +173,8 @@ namespace FurmaIdle.Services
 
                 contractsCap += stageCap;
             }
+
+            stage.ActualContractLevel = contractsLevel;
 
             return (contractsCap, contractsUsed, contractsLevel, contractsMaxLevel);
         }

@@ -188,10 +188,10 @@ namespace FurmaIdle.Helpers
                 [PricingId.ClickGainM1] = new Entry("m01", 600, 3.6, CostFactor.None, 1),
 
                 // Resource X Gain Stage X
-                [PricingId.ResourceGain0101] = new Entry("m01", 500, 2.4, CostFactor.None, 1),
+                [PricingId.ResourceGain0101] = new Entry("m01", 500, 1.9, CostFactor.None, 1),
 
                 // Tech Upgrades Stage X
-                [PricingId.TechUpgrade1] = new Entry("m01", 25000, 1.0, CostFactor.Level, 2.9),
+                [PricingId.TechUpgrade1] = new Entry("m01", 15000, 1.0, CostFactor.Level, 3.3),
 
                 // Expansion Upgrades Stage X
                 [PricingId.ExpansionUpgrade1] = new Entry("m01", 10000, 1.0, CostFactor.Level, 3.2),

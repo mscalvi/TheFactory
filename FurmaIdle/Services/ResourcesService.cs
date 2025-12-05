@@ -96,7 +96,7 @@ namespace FurmaIdle.Services
 
             var regenModifier = _modifier.GetModifiers(ItemType.Resource, resourceId, "s01", EffectHelper.EffectSupertype.Gain);
 
-            var capModifier = GetResourceCap(resource);
+            var capModifier = GetResourceCap(game, resource);
 
             var regen = (resource.RsPerSecond + regenModifier.AddMod) * regenModifier.MultMod;
             if (regen < 0) regen = 0;
@@ -118,7 +118,7 @@ namespace FurmaIdle.Services
             return (regen, cap);
         }
 
-        private static (double AddMod, double MultMod) GetResourceCap(ResourceModel resource)
+        private static (double AddMod, double MultMod) GetResourceCap(GameModel game, ResourceModel resource)
         {
             double AddMod = 0;
             double MultMod = 1;
@@ -134,6 +134,28 @@ namespace FurmaIdle.Services
                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                     {
                         MultMod *= modifier.Value;
+                    }
+                }
+
+                if (modifier.Type == EffectHelper.EffectType.ResourceCapPerUnlockedContract)
+                {
+                    int activeContracts = 0;
+
+                    foreach (var contract in game.Contracts.Values)
+                    {
+                        if (contract.State == UnlockHelper.State.Unlocked)
+                        {
+                            activeContracts++;
+                        }
+                    }
+
+                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                    {
+                        AddMod += modifier.Value * activeContracts;
+                    }
+                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                    {
+                        MultMod *= Math.Pow(modifier.Value, activeContracts);
                     }
                 }
             }

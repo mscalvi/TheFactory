@@ -7,6 +7,8 @@
             // Gain
             ContractGainPerTech,
             ContractGainPerLocal,
+            ContractGainPerCharacter,
+            ContractGainPerExpeditionTime,
             ContractGain,
             KnowledgeGain,
             KnowledgeGainPerTech,
@@ -15,8 +17,13 @@
             ResourceGainPerTech,
             ResourceGainPerLocal,
             BurstCoinGain,
+
             ClickGain,
             ClickGainCent,
+            ClickGainPerLocal,
+            ClickGainPerCharacterInBase,
+            ClickGainPerContractLevel,
+
             CoinGain,
 
             // Cost
@@ -30,6 +37,7 @@
 
             // Time
             ContractTime,
+            ContractTimePerExpansionTime,
 
             // Unlock
             ContractUnlock,
@@ -43,11 +51,15 @@
             StageUnlock,
             ShipUnlock,
             RouteUnlock,
+            UpgradeUnlock,
 
             // Others
             ContractLevelUnlock,
             ContractCapUnlock,
+
             ResourceCap,
+            ResourceCapPerUnlockedContract,
+
             PartyCapSize,
         }
 
@@ -61,6 +73,7 @@
             ContractLevel,
             Offline,
             PartySize,
+            ResourceCap,
         }
 
 

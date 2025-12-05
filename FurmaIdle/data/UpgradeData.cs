@@ -651,7 +651,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk01,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t011",
+                TargetId = "t0101",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -673,7 +673,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk02,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t021",
+                TargetId = "t0201",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -692,7 +692,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk02,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t022",
+                TargetId = "t0202",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -714,7 +714,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk03,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t031",
+                TargetId = "t0301",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -733,7 +733,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk03,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t032",
+                TargetId = "t0302",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -755,7 +755,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk04,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t041",
+                TargetId = "t0401",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -764,7 +764,7 @@ namespace FurmaIdle.Data
             ["uh0402"] = new UpgradeModel
             {
                 Id = "uh0402",
-                Name = "Pesquisar a Construção de Pequenos Barcos",
+                Name = "Pesquisar a Construção de Pequenas Embarcações",
                 Level = 2,
                 Icon = "icons/upgrades/uh0402.svg",
                 Lore = "",
@@ -774,7 +774,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk04,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t042",
+                TargetId = "t0402",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -796,45 +796,7 @@ namespace FurmaIdle.Data
                 PricingId = PricingHelper.PricingId.TechUnlockk05,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t051",
-                EffectType = EffectHelper.EffectType.TechUnlock,
-                EffectOp = EffectHelper.EffectOperation.Unlock,
-                EffectSupertype = EffectHelper.EffectSupertype.Unlock,
-                EffectValue = 0,
-            },
-            ["uh0502"] = new UpgradeModel
-            {
-                Id = "uh0502",
-                Name = "Pesquisar a Caça de Grandes Herbívoros",
-                Level = 2,
-                Icon = "icons/upgrades/uh0502.svg",
-                Lore = "",
-                Description = "Realiza a Pesquisa e libera Melhorias especiais.",
-                UnlockId = "l012",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUnlockk05,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t052",
-                EffectType = EffectHelper.EffectType.TechUnlock,
-                EffectOp = EffectHelper.EffectOperation.Unlock,
-                EffectSupertype = EffectHelper.EffectSupertype.Unlock,
-                EffectValue = 0,
-            },
-            ["uh0503"] = new UpgradeModel
-            {
-                Id = "uh0503",
-                Name = "Pesquisar a Caça de Pequenos Predadores",
-                Level = 3,
-                Icon = "icons/upgrades/uh0503.svg",
-                Lore = "",
-                Description = "Realiza a Pesquisa e libera Melhorias especiais.",
-                UnlockId = "l013",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUnlockk05,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.Permanent,
-                TargetId = "t053",
+                TargetId = "t0501",
                 EffectType = EffectHelper.EffectType.TechUnlock,
                 EffectOp = EffectHelper.EffectOperation.Unlock,
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
@@ -924,7 +886,7 @@ namespace FurmaIdle.Data
                 Image = "images/upgrades/us01.svg",
                 Lore = "",
                 Description = "Libera a Região da Ilha de Vera.",
-                UnlockId = "x00",
+                UnlockId = "x000",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.StageUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -1054,12 +1016,12 @@ namespace FurmaIdle.Data
 
             #region Expedition Upgrades
             #region Contracts Level 0
-            ["uc101"] = new UpgradeModel
+            ["uc0011"] = new UpgradeModel
             {
-                Id = "uc101",
+                Id = "uc0011",
                 Name = "Qualidade ao Estudar",
                 Level = 1,
-                Icon = "icons/upgrades/uc101.svg",
+                Icon = "icons/upgrades/uc0011.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c001",
@@ -1073,12 +1035,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc102"] = new UpgradeModel
+            ["uc0012"] = new UpgradeModel
             {
-                Id = "uc102",
+                Id = "uc0012",
                 Name = "Experiência em Estudar",
                 Level = 1,
-                Icon = "icons/upgrades/uc102.svg",
+                Icon = "icons/upgrades/uc0012.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c001",
@@ -1091,35 +1053,16 @@ namespace FurmaIdle.Data
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
-            },
-            ["uc013"] = new UpgradeModel
-            {
-                Id = "uc013",
-                Name = "Habilidade ao Estudar",
-                Level = 1,
-                Icon = "icons/upgrades/uc013.svg",
-                Lore = "",
-                Description = "Diminui o custo para comprar um Contrato",
-                UnlockId = "c001",
-                MaxBuy = 2,
-                PricingId = PricingHelper.PricingId.ContractCost1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpedition,
-                TargetId = "c001",
-                EffectType = EffectHelper.EffectType.ContractCost,
-                EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Cost,
-                EffectValue = 0.70,
             },
             #endregion
 
             #region Contracts Level 1
-            ["uc111"] = new UpgradeModel
+            ["uc1011"] = new UpgradeModel
             {
-                Id = "uc111",
+                Id = "uc1011",
                 Name = "Qualidade ao Varrer o Chão",
                 Level = 1,
-                Icon = "icons/upgrades/uc111.svg",
+                Icon = "icons/upgrades/uc1011.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c101",
@@ -1133,12 +1076,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc112"] = new UpgradeModel
+            ["uc1012"] = new UpgradeModel
             {
-                Id = "uc112",
+                Id = "uc1012",
                 Name = "Experiência em Varrer o Chão",
                 Level = 1,
-                Icon = "icons/upgrades/uc112.svg",
+                Icon = "icons/upgrades/uc1012.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c101",
@@ -1152,12 +1095,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc113"] = new UpgradeModel
+            ["uc1013"] = new UpgradeModel
             {
-                Id = "uc113",
+                Id = "uc1013",
                 Name = "Habilidade ao Varrer o Chão",
                 Level = 1,
-                Icon = "icons/upgrades/uc113.svg",
+                Icon = "icons/upgrades/uc1013.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c101",
@@ -1171,12 +1114,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc121"] = new UpgradeModel
+            ["uc1021"] = new UpgradeModel
             {
-                Id = "uc121",
+                Id = "uc1021",
                 Name = "Qualidade ao Carregar o Barco",
                 Level = 1,
-                Icon = "icons/upgrades/uc121.svg",
+                Icon = "icons/upgrades/uc1021.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c102",
@@ -1190,12 +1133,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc122"] = new UpgradeModel
+            ["uc1022"] = new UpgradeModel
             {
-                Id = "uc122",
+                Id = "uc1022",
                 Name = "Experiência em Carregar o Barco",
                 Level = 1,
-                Icon = "icons/upgrades/uc122.svg",
+                Icon = "icons/upgrades/uc1022.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c102",
@@ -1209,12 +1152,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc123"] = new UpgradeModel
+            ["uc1023"] = new UpgradeModel
             {
-                Id = "uc123",
+                Id = "uc1023",
                 Name = "Habilidade ao Carregar o Barco",
                 Level = 1,
-                Icon = "icons/upgrades/uc123.svg",
+                Icon = "icons/upgrades/uc1023.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c102",
@@ -1231,12 +1174,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Contracts Level 2
-            ["uc211"] = new UpgradeModel
+            ["uc2011"] = new UpgradeModel
             {
-                Id = "uc211",
+                Id = "uc2011",
                 Name = "Qualidade ao Servir Bebidas",
                 Level = 2,
-                Icon = "icons/upgrades/uc211.svg",
+                Icon = "icons/upgrades/uc2011.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c201",
@@ -1250,12 +1193,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc212"] = new UpgradeModel
+            ["uc2012"] = new UpgradeModel
             {
-                Id = "uc212",
+                Id = "uc2012",
                 Name = "Experiência em Servir Bebidas",
                 Level = 2,
-                Icon = "icons/upgrades/uc212.svg",
+                Icon = "icons/upgrades/uc2012.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c201",
@@ -1269,12 +1212,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc213"] = new UpgradeModel
+            ["uc2013"] = new UpgradeModel
             {
-                Id = "uc213",
+                Id = "uc2013",
                 Name = "Habilidade ao Servir Bebidas",
                 Level = 2,
-                Icon = "icons/upgrades/uc213.svg",
+                Icon = "icons/upgrades/uc2013.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c201",
@@ -1288,12 +1231,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc221"] = new UpgradeModel
+            ["uc2021"] = new UpgradeModel
             {
-                Id = "uc221",
+                Id = "uc2021",
                 Name = "Qualidade ao Limpar Peixes",
                 Level = 2,
-                Icon = "icons/upgrades/uc221.svg",
+                Icon = "icons/upgrades/uc2021.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c202",
@@ -1307,12 +1250,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc222"] = new UpgradeModel
+            ["uc2022"] = new UpgradeModel
             {
-                Id = "uc222",
+                Id = "uc2022",
                 Name = "Experiência em Limpar Peixes",
                 Level = 2,
-                Icon = "icons/upgrades/uc222.svg",
+                Icon = "icons/upgrades/uc2022.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c202",
@@ -1326,12 +1269,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc223"] = new UpgradeModel
+            ["uc2023"] = new UpgradeModel
             {
-                Id = "uc223",
+                Id = "uc2023",
                 Name = "Habilidade ao Limpar Peixes",
                 Level = 2,
-                Icon = "icons/upgrades/uc223.svg",
+                Icon = "icons/upgrades/uc2023.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c202",
@@ -1345,12 +1288,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc231"] = new UpgradeModel
+            ["uc2031"] = new UpgradeModel
             {
-                Id = "uc231",
+                Id = "uc2031",
                 Name = "Qualidade ao Lavar Figurino",
                 Level = 2,
-                Icon = "icons/upgrades/uc231.svg",
+                Icon = "icons/upgrades/uc2031.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c203",
@@ -1364,12 +1307,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc232"] = new UpgradeModel
+            ["uc2032"] = new UpgradeModel
             {
-                Id = "uc232",
+                Id = "uc2032",
                 Name = "Experiência em Lavar Figurino",
                 Level = 2,
-                Icon = "icons/upgrades/uc232.svg",
+                Icon = "icons/upgrades/uc2032.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c203",
@@ -1383,12 +1326,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc233"] = new UpgradeModel
+            ["uc2033"] = new UpgradeModel
             {
-                Id = "uc233",
+                Id = "uc2033",
                 Name = "Habilidade ao Lavar Figurino",
                 Level = 2,
-                Icon = "icons/upgrades/uc233.svg",
+                Icon = "icons/upgrades/uc2033.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c203",
@@ -1405,12 +1348,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Contracts Level 3
-            ["uc311"] = new UpgradeModel
+            ["uc3011"] = new UpgradeModel
             {
-                Id = "uc311",
+                Id = "uc3011",
                 Name = "Qualidade ao Ajudar na Cozinha",
                 Level = 3,
-                Icon = "icons/upgrades/uc311.svg",
+                Icon = "icons/upgrades/uc3011.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c301",
@@ -1424,12 +1367,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc312"] = new UpgradeModel
+            ["uc3012"] = new UpgradeModel
             {
-                Id = "uc312",
+                Id = "uc3012",
                 Name = "Experiência em Ajudar na Cozinha",
                 Level = 3,
-                Icon = "icons/upgrades/uc312.svg",
+                Icon = "icons/upgrades/uc3012.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c301",
@@ -1443,12 +1386,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc313"] = new UpgradeModel
+            ["uc3013"] = new UpgradeModel
             {
-                Id = "uc313",
+                Id = "uc3013",
                 Name = "Habilidade ao Ajudar na Cozinha",
                 Level = 3,
-                Icon = "icons/upgrades/uc313.svg",
+                Icon = "icons/upgrades/uc3013.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c301",
@@ -1462,12 +1405,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc321"] = new UpgradeModel
+            ["uc3021"] = new UpgradeModel
             {
-                Id = "uc321",
+                Id = "uc3021",
                 Name = "Qualidade ao Organizar Ferramentas",
                 Level = 3,
-                Icon = "icons/upgrades/uc321.svg",
+                Icon = "icons/upgrades/uc3021.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c302",
@@ -1481,12 +1424,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc322"] = new UpgradeModel
+            ["uc3022"] = new UpgradeModel
             {
-                Id = "uc322",
+                Id = "uc3022",
                 Name = "Experiência em Organizar Ferramentas",
                 Level = 3,
-                Icon = "icons/upgrades/uc322.svg",
+                Icon = "icons/upgrades/uc3022.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c302",
@@ -1500,12 +1443,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc323"] = new UpgradeModel
+            ["uc3023"] = new UpgradeModel
             {
-                Id = "uc323",
+                Id = "uc3023",
                 Name = "Habilidade ao Organizar Ferramentas",
                 Level = 3,
-                Icon = "icons/upgrades/uc323.svg",
+                Icon = "icons/upgrades/uc3023.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c302",
@@ -1519,12 +1462,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc331"] = new UpgradeModel
+            ["uc3031"] = new UpgradeModel
             {
-                Id = "uc331",
+                Id = "uc3031",
                 Name = "Qualidade ao Preparar Armas",
                 Level = 3,
-                Icon = "icons/upgrades/uc331.svg",
+                Icon = "icons/upgrades/uc3031.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c303",
@@ -1538,12 +1481,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc332"] = new UpgradeModel
+            ["uc3032"] = new UpgradeModel
             {
-                Id = "uc332",
+                Id = "uc3032",
                 Name = "Experiência em Preparar Armas",
                 Level = 3,
-                Icon = "icons/upgrades/uc332.svg",
+                Icon = "icons/upgrades/uc3032.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c303",
@@ -1557,12 +1500,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc333"] = new UpgradeModel
+            ["uc3033"] = new UpgradeModel
             {
-                Id = "uc333",
+                Id = "uc3033",
                 Name = "Habilidade ao Preparar Armas",
                 Level = 3,
-                Icon = "icons/upgrades/uc333.svg",
+                Icon = "icons/upgrades/uc3033.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c303",
@@ -1576,12 +1519,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc341"] = new UpgradeModel
+            ["uc3041"] = new UpgradeModel
             {
-                Id = "uc341",
+                Id = "uc3041",
                 Name = "Qualidade ao Ajudar no Ensaio",
                 Level = 3,
-                Icon = "icons/upgrades/uc341.svg",
+                Icon = "icons/upgrades/uc3041.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c304",
@@ -1595,12 +1538,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc342"] = new UpgradeModel
+            ["uc3042"] = new UpgradeModel
             {
-                Id = "uc342",
+                Id = "uc3042",
                 Name = "Experiência em Ajudar no Ensaio",
                 Level = 3,
-                Icon = "icons/upgrades/uc342.svg",
+                Icon = "icons/upgrades/uc3042.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c304",
@@ -1614,12 +1557,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc343"] = new UpgradeModel
+            ["uc3043"] = new UpgradeModel
             {
-                Id = "uc343",
+                Id = "uc3043",
                 Name = "Habilidade ao Ajudar no Ensaio",
                 Level = 3,
-                Icon = "icons/upgrades/uc343.svg",
+                Icon = "icons/upgrades/uc3043.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c304",
@@ -1636,12 +1579,12 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Contracts Level 4
-            ["uc411"] = new UpgradeModel
+            ["uc4011"] = new UpgradeModel
             {
-                Id = "uc411",
+                Id = "uc4011",
                 Name = "Qualidade ao Cozinhar",
                 Level = 4,
-                Icon = "icons/upgrades/uc411.svg",
+                Icon = "icons/upgrades/uc4011.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c401",
@@ -1655,12 +1598,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc412"] = new UpgradeModel
+            ["uc4012"] = new UpgradeModel
             {
-                Id = "uc412",
+                Id = "uc4012",
                 Name = "Experiência em Cozinhar",
                 Level = 4,
-                Icon = "icons/upgrades/uc412.svg",
+                Icon = "icons/upgrades/uc4012.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c401",
@@ -1674,12 +1617,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc413"] = new UpgradeModel
+            ["uc4013"] = new UpgradeModel
             {
-                Id = "uc413",
+                Id = "uc4013",
                 Name = "Habilidade ao Cozinhar",
                 Level = 4,
-                Icon = "icons/upgrades/uc413.svg",
+                Icon = "icons/upgrades/uc4013.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c401",
@@ -1693,12 +1636,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc421"] = new UpgradeModel
+            ["uc4021"] = new UpgradeModel
             {
-                Id = "uc421",
+                Id = "uc4021",
                 Name = "Qualidade ao Entalhar",
                 Level = 4,
-                Icon = "icons/upgrades/uc421.svg",
+                Icon = "icons/upgrades/uc4021.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c402",
@@ -1712,12 +1655,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc422"] = new UpgradeModel
+            ["uc4022"] = new UpgradeModel
             {
-                Id = "uc422",
+                Id = "uc4022",
                 Name = "Experiência em Entalhar",
                 Level = 4,
-                Icon = "icons/upgrades/uc422.svg",
+                Icon = "icons/upgrades/uc4022.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c402",
@@ -1731,12 +1674,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc423"] = new UpgradeModel
+            ["uc4023"] = new UpgradeModel
             {
-                Id = "uc423",
+                Id = "uc4023",
                 Name = "Habilidade ao Entalhar",
                 Level = 4,
-                Icon = "icons/upgrades/uc423.svg",
+                Icon = "icons/upgrades/uc4023.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c402",
@@ -1750,12 +1693,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc431"] = new UpgradeModel
+            ["uc4031"] = new UpgradeModel
             {
-                Id = "uc431",
+                Id = "uc4031",
                 Name = "Qualidade ao Pescar",
                 Level = 4,
-                Icon = "icons/upgrades/uc431.svg",
+                Icon = "icons/upgrades/uc4031.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c403",
@@ -1769,12 +1712,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc432"] = new UpgradeModel
+            ["uc4032"] = new UpgradeModel
             {
-                Id = "uc432",
+                Id = "uc4032",
                 Name = "Experiência em Pescar",
                 Level = 4,
-                Icon = "icons/upgrades/uc432.svg",
+                Icon = "icons/upgrades/uc4032.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c403",
@@ -1788,12 +1731,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc433"] = new UpgradeModel
+            ["uc4033"] = new UpgradeModel
             {
-                Id = "uc433",
+                Id = "uc4033",
                 Name = "Habilidade ao Pescar",
                 Level = 4,
-                Icon = "icons/upgrades/uc433.svg",
+                Icon = "icons/upgrades/uc4033.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c403",
@@ -1807,12 +1750,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc441"] = new UpgradeModel
+            ["uc4041"] = new UpgradeModel
             {
-                Id = "uc441",
+                Id = "uc4041",
                 Name = "Qualidade ao Apresentar",
                 Level = 4,
-                Icon = "icons/upgrades/uc441.svg",
+                Icon = "icons/upgrades/uc4041.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c404",
@@ -1826,12 +1769,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc442"] = new UpgradeModel
+            ["uc4042"] = new UpgradeModel
             {
-                Id = "uc442",
+                Id = "uc4042",
                 Name = "Experiência em Apresentar",
                 Level = 4,
-                Icon = "icons/upgrades/uc442.svg",
+                Icon = "icons/upgrades/uc4042.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c404",
@@ -1845,12 +1788,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc443"] = new UpgradeModel
+            ["uc4043"] = new UpgradeModel
             {
-                Id = "uc443",
+                Id = "uc4043",
                 Name = "Habilidade ao Apresentar",
                 Level = 4,
-                Icon = "icons/upgrades/uc443.svg",
+                Icon = "icons/upgrades/uc4043.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c404",
@@ -1864,12 +1807,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Cost,
                 EffectValue = 0.70,
             },
-            ["uc451"] = new UpgradeModel
+            ["uc4051"] = new UpgradeModel
             {
-                Id = "uc451",
+                Id = "uc4051",
                 Name = "Qualidade ao Caçar",
                 Level = 4,
-                Icon = "icons/upgrades/uc451.svg",
+                Icon = "icons/upgrades/uc4051.svg",
                 Lore = "",
                 Description = "Aumenta o ganho do Contrato",
                 UnlockId = "c405",
@@ -1883,12 +1826,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.1,
             },
-            ["uc452"] = new UpgradeModel
+            ["uc4052"] = new UpgradeModel
             {
-                Id = "uc452",
+                Id = "uc4052",
                 Name = "Experiência em Caçar",
                 Level = 4,
-                Icon = "icons/upgrades/uc452.svg",
+                Icon = "icons/upgrades/uc4052.svg",
                 Lore = "",
                 Description = "Diminui o tempo para concluir o Contrato",
                 UnlockId = "c405",
@@ -1902,12 +1845,12 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Time,
                 EffectValue = 0.95,
             },
-            ["uc453"] = new UpgradeModel
+            ["uc4053"] = new UpgradeModel
             {
-                Id = "uc453",
+                Id = "uc4053",
                 Name = "Habilidade ao Caçar",
                 Level = 4,
-                Icon = "icons/upgrades/uc453.svg",
+                Icon = "icons/upgrades/uc4053.svg",
                 Lore = "",
                 Description = "Diminui o custo para comprar um Contrato",
                 UnlockId = "c405",
@@ -1925,495 +1868,206 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Tech Upgrades
-            // c1/2 -> lvl 1, c3/4 -> lvl 2, c5/6 -> lvl 3
-            #region Upgrades de Tecnologia T011
-            ["ut0111"] = new UpgradeModel
+            #region k01 - Cultural
+            #region t0101 - Fundação de Guildas
+            ["ut01011"] = new UpgradeModel
             {
-                Id = "ut0111",
-                Name = "Utensílios da Guilda",
+                Id = "ut01011",
+                Name = "Estudar os Sinais das Guildas",
                 Level = 1,
-                Icon = "icons/upgrades/ut0111.svg",
+                Icon = "icons/upgrades/ut01011.svg",
                 Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t011",
+                Description = "Diminui o tempo para concluir Contratos em Regiões Selvagens.",
+                UnlockId = "t0101",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c101",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.7,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "wildStages",
+                EffectType = EffectHelper.EffectType.ContractTime,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Time,
+                EffectValue = 0.75,
             },
-            ["ut0112"] = new UpgradeModel
+            #endregion
+            #endregion
+
+            #region k02 - Geografia
+            #region t0201 - Vilas Litorâneas
+            ["ut02011"] = new UpgradeModel
             {
-                Id = "ut0112",
-                Name = "Códigos da Guilda",
-                Level = 2,
-                Icon = "icons/upgrades/ut0112.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t011",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c201",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 15,
-            },
-            ["ut0113"] = new UpgradeModel
-            {
-                Id = "ut0113",
-                Name = "Brasão da Guilda",
-                Level = 4,
-                Icon = "icons/upgrades/ut0113.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t011",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c404",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1225,
-            },
-            ["ut0114"] = new UpgradeModel
-            {
-                Id = "ut0114",
-                Name = "Disciplina da Guilda",
+                Id = "ut02011",
+                Name = "Estudar a Nutrição em Viagens",
                 Level = 1,
-                Icon = "icons/upgrades/ut0114.svg",
+                Icon = "icons/upgrades/ut02011.svg",
                 Lore = "",
-                Description = "Aumenta a geração do Recurso",
-                UnlockId = "t011",
+                Description = "Permite liberar e utilizar Recursos.",
+                UnlockId = "t0201",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "allUpgrades",
+                EffectType = EffectHelper.EffectType.UpgradeUnlock,
+                EffectOp = EffectHelper.EffectOperation.Unlock,
+                EffectSupertype = EffectHelper.EffectSupertype.Unlock,
+                EffectValue = 0,
+            },
+            ["ut02012"] = new UpgradeModel
+            {
+                Id = "ut02012",
+                Name = "Estudar os Mantimentos Salgados",
+                Level = 1,
+                Icon = "icons/upgrades/ut02012.svg",
+                Lore = "",
+                Description = "Aumenta a geração de Mantimentos da Guilda.",
+                UnlockId = "t0201",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.TechUpgrade1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "r01",
                 EffectType = EffectHelper.EffectType.ResourceGain,
                 EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1,
-            },
-            ["ut0115"] = new UpgradeModel
-            {
-                Id = "ut0115",
-                Name = "Recepção da Guilda",
-                Level = 3,
-                Icon = "icons/upgrades/ut0115.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t011",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c201",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 30,
+                EffectValue = 2,
             },
             #endregion
-
-            #region Upgrades de Tecnologia T021
-            ["ut0211"] = new UpgradeModel
+            #region t0202 - Litorais Rochosos
+            ["ut02021"] = new UpgradeModel
             {
-                Id = "ut0211",
-                Name = "Facas de Escamar",
+                Id = "ut02021",
+                Name = "Estudar a Alta das Marés",
                 Level = 2,
-                Icon = "icons/upgrades/ut0211.svg",
+                Icon = "icons/upgrades/ut02021.svg",
                 Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t021",
+                Description = "Diminui o tempo para terminar o Contrato de Carregar o Barco.",
+                UnlockId = "t0202",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c202",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 15,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "c102",
+                EffectType = EffectHelper.EffectType.ContractTime,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Time,
+                EffectValue = 0.5,
             },
-            ["ut0212"] = new UpgradeModel
+            #endregion
+            #endregion
+
+            #region k03 - Sobrevivência
+            #region t0301 - Vida em Muradas
+            ["ut03011"] = new UpgradeModel
             {
-                Id = "ut0212",
-                Name = "Reservas de Escambo",
+                Id = "ut03011",
+                Name = "Estudar o Horário do Toque de Recolher",
                 Level = 1,
-                Icon = "icons/upgrades/ut0212.svg",
+                Icon = "icons/upgrades/ut03011.svg",
                 Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t021",
+                Description = "Aumenta o ganho do Contrato de Organizar Ferramentas.",
+                UnlockId = "t0301",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c102",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.7,
-            },
-            ["ut0213"] = new UpgradeModel
-            {
-                Id = "ut0213",
-                Name = "Cordas Grossas",
-                Level = 2,
-                Icon = "icons/upgrades/ut0213.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t021",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c102",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1.3,
-            },
-            ["ut0214"] = new UpgradeModel
-            {
-                Id = "ut0214",
-                Name = "Água Aproveitada",
-                Level = 2,
-                Icon = "icons/upgrades/ut0214.svg",
-                Lore = "",
-                Description = "Diminui o tempo para concluir o Contrato",
-                UnlockId = "t021",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c203",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 15,
-            },
-            ["ut0215"] = new UpgradeModel
-            {
-                Id = "ut0215",
-                Name = "Armazéns Salinos",
-                Level = 1,
-                Icon = "icons/upgrades/ut0215.svg",
-                Lore = "",
-                Description = "Diminui o tempo para concluir o Contrato",
-                UnlockId = "t021",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c102",
-                EffectType = EffectHelper.EffectType.ContractTime,
-                EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Time,
-                EffectValue = 0.75,
-            },
-            #endregion
-
-            #region Upgrades de Tecnologia T022
-            ["ut0221"] = new UpgradeModel
-            {
-                Id = "ut0221",
-                Name = "Lascas Naturais",
-                Level = 3,
-                Icon = "icons/upgrades/ut0221.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t022",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c202",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 30,
-            },
-            ["ut0222"] = new UpgradeModel
-            {
-                Id = "ut0222",
-                Name = "Piscinas Naturais",
-                Level = 5,
-                Icon = "icons/upgrades/ut0222.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t022",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c403",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 2275,
-            },
-            ["ut0223"] = new UpgradeModel
-            {
-                Id = "ut0223",
-                Name = "Cascas Comestíveis",
-                Level = 4,
-                Icon = "icons/upgrades/ut0223.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t022",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c401",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1225,
-            },
-            ["ut0224"] = new UpgradeModel
-            {
-                Id = "ut0224",
-                Name = "Água Forte",
-                Level = 2,
-                Icon = "icons/upgrades/ut0224.svg",
-                Lore = "",
-                Description = "Diminui o tempo para concluir o Contrato",
-                UnlockId = "t022",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c203",
-                EffectType = EffectHelper.EffectType.ContractTime,
-                EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Time,
-                EffectValue = 0.75,
-            },
-            ["ut0225"] = new UpgradeModel
-            {
-                Id = "ut0225",
-                Name = "Boias de Segurança",
-                Level = 4,
-                Icon = "icons/upgrades/ut0225.svg",
-                Lore = "",
-                Description = "Diminui o tempo para concluir o Contrato",
-                UnlockId = "t022",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c403",
-                EffectType = EffectHelper.EffectType.ContractTime,
-                EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Time,
-                EffectValue = 0.75,
-            },
-            #endregion
-
-            #region Upgrades de Tecnologia T031
-            ["ut0311"] = new UpgradeModel
-            {
-                Id = "ut0311",
-                Name = "Manutenção Coletiva",
-                Level = 4,
-                Icon = "icons/upgrades/ut0311.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t031",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "c302",
                 EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 156,
-            },
-            ["ut0312"] = new UpgradeModel
-            {
-                Id = "ut0312",
-                Name = "Rotina Rígida",
-                Level = 3,
-                Icon = "icons/upgrades/ut0312.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t031",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c301",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 84,
-            },
-            ["ut0313"] = new UpgradeModel
-            {
-                Id = "ut0313",
-                Name = "Necessidades Ocultas",
-                Level = 3,
-                Icon = "icons/upgrades/ut0313.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t031",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c303",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 84,
-            },
-            ["ut0314"] = new UpgradeModel
-            {
-                Id = "ut0314",
-                Name = "União de Moradores",
-                Level = 2,
-                Icon = "icons/upgrades/ut0314.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t031",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c101",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1.3,
-            },
-            ["ut0315"] = new UpgradeModel
-            {
-                Id = "ut0315",
-                Name = "Vigilância Constante",
-                Level = 4,
-                Icon = "icons/upgrades/ut0315.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t031",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c303",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 156,
+                EffectValue = 1.25,
             },
             #endregion
-
-            #region Upgrades de Tecnologia T032
-            ["ut0321"] = new UpgradeModel
+            #region t0302 - Sobrevivência nas Selvas
+            ["ut03021"] = new UpgradeModel
             {
-                Id = "ut0321",
-                Name = "Ingredientes Frescos",
-                Level = 5,
-                Icon = "icons/upgrades/ut0321.svg",
+                Id = "ut03021",
+                Name = "Estudar o Aproveitamento de Alimentos",
+                Level = 2,
+                Icon = "icons/upgrades/ut03021.svg",
                 Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t032",
+                Description = "Aumenta o ganho do Contrato de Cozinhar.",
+                UnlockId = "t0302",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
                 State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
+                Persistence = UnlockHelper.Persistence.Permanent,
                 TargetId = "c401",
                 EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 2275,
-            },
-            ["ut0322"] = new UpgradeModel
-            {
-                Id = "ut0322",
-                Name = "Caça de Cerdos",
-                Level = 5,
-                Icon = "icons/upgrades/ut0322.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t032",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c405",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 2275,
-            },
-            ["ut0323"] = new UpgradeModel
-            {
-                Id = "ut0323",
-                Name = "Cintos Utilitários",
-                Level = 4,
-                Icon = "icons/upgrades/ut0323.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t032",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c402",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1225,
-            },
-            ["ut0324"] = new UpgradeModel
-            {
-                Id = "ut0324",
-                Name = "Armadilhas para Grandes Presas",
-                Level = 4,
-                Icon = "icons/upgrades/ut0324.svg",
-                Lore = "",
-                Description = "Aumenta o ganho do Contrato",
-                UnlockId = "t032",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c405",
-                EffectType = EffectHelper.EffectType.ContractGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1225,
-            },
-            ["ut0325"] = new UpgradeModel
-            {
-                Id = "ut0325",
-                Name = "Rotina de Caça",
-                Level = 4,
-                Icon = "icons/upgrades/ut0325.svg",
-                Lore = "",
-                Description = "Diminui o tempo para concluir o Contrato",
-                UnlockId = "t032",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.TechUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "c405",
-                EffectType = EffectHelper.EffectType.ContractTime,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Time,
-                EffectValue = 0.75,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 1.25,
             },
+            #endregion
+            #endregion
+
+            #region k04 - Navegação
+            #region t0401 - Fluxo das Correntezas
+            ["ut04011"] = new UpgradeModel
+            {
+                Id = "ut04011",
+                Name = "Estudar as Correntezas da Ilha de Vera",
+                Level = 1,
+                Icon = "icons/upgrades/ut04011.svg",
+                Lore = "",
+                Description = "Permite encontrar Rotas pela Entrilhas saindo da Ilha de Vera.",
+                UnlockId = "t0401",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.TechUpgrade1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "allUpgrades",
+                EffectType = EffectHelper.EffectType.UpgradeUnlock,
+                EffectOp = EffectHelper.EffectOperation.Unlock,
+                EffectSupertype = EffectHelper.EffectSupertype.Unlock,
+                EffectValue = 0,
+            },
+            #endregion
+            #region t0402 - Construção de Pequenas Embarcações
+            ["ut04021"] = new UpgradeModel
+            {
+                Id = "ut04021",
+                Name = "Estudar as Embarcações para Correntezas",
+                Level = 2,
+                Icon = "icons/upgrades/ut04021.svg",
+                Lore = "",
+                Description = "Permite construir Barcos para correntezas.",
+                UnlockId = "t0402",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.TechUpgrade1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "allUpgrades",
+                EffectType = EffectHelper.EffectType.UpgradeUnlock,
+                EffectOp = EffectHelper.EffectOperation.Unlock,
+                EffectSupertype = EffectHelper.EffectSupertype.Unlock,
+                EffectValue = 0,
+            },
+            #endregion
+            #endregion
+
+            #region k05 - Caça
+            #region t0501 - Caça de Pequenos Animais
+            ["ut05011"] = new UpgradeModel
+            {
+                Id = "ut05011",
+                Name = "Estudar as Tocas dos Roedores",
+                Level = 1,
+                Icon = "icons/upgrades/ut05011.svg",
+                Lore = "",
+                Description = "Aumenta o ganho do Contrato de Varrer o Chão.",
+                UnlockId = "t0501",
+                MaxBuy = 1,
+                PricingId = PricingHelper.PricingId.TechUpgrade1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                TargetId = "c101",
+                EffectType = EffectHelper.EffectType.ContractGain,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
+                EffectSupertype = EffectHelper.EffectSupertype.Gain,
+                EffectValue = 1.25,
+            },
+            #endregion
             #endregion
             #endregion
 
@@ -2426,14 +2080,14 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/um001.svg",
                 Lore = "",
-                Description = "Aumenta o limite de Contratos de Ferri",
-                UnlockId = "x00",
+                Description = "Aumenta o limite de Contratos na Casa de Ferri",
+                UnlockId = "x000",
                 StageId = "s00",
                 MaxBuy = 12,
                 PricingId = PricingHelper.PricingId.ContractCapUnlock0,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "p0001",
+                TargetId = "s00",
                 EffectType = EffectHelper.EffectType.ContractCapUnlock,
                 EffectOp = EffectHelper.EffectOperation.Additive,
                 EffectSupertype = EffectHelper.EffectSupertype.ContractCap,
@@ -2447,7 +2101,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ub001.svg",
                 Lore = "",
                 Description = "Libera começar o próximo nível de Contratos na Casa de Ferri.",
-                UnlockId = "x00",
+                UnlockId = "x000",
                 StageId = "s00",
                 MaxBuy = 2,
                 PricingId = PricingHelper.PricingId.ContractLevelUnlock00,
@@ -2467,7 +2121,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ui001.svg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click na Casa de Ferri.",
-                UnlockId = "x00",
+                UnlockId = "x000",
                 MaxBuy = 4,
                 PricingId = PricingHelper.PricingId.ClickGainS0,
                 State = UnlockHelper.State.Blocked,
@@ -2510,7 +2164,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/um011.svg",
                 Lore = "",
                 Description = "Aumenta o limite de Contratos na Ilha de Vera.",
-                UnlockId = "x10",
+                UnlockId = "x010",
                 MaxBuy = 11,
                 PricingId = PricingHelper.PricingId.ContractCapUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -2548,7 +2202,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/um013.svg",
                 Lore = "",
                 Description = "Aumenta o limite de Contratos na Ilha de Vera.",
-                UnlockId = "x12",
+                UnlockId = "um012",
                 MaxBuy = 5,
                 PricingId = PricingHelper.PricingId.ContractCapUnlock1,
                 State = UnlockHelper.State.Blocked,
@@ -2567,7 +2221,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ub011.svg",
                 Lore = "",
                 Description = "Libera começar o próximo nível de Contratos na Ilha de Vera.",
-                UnlockId = "x10",
+                UnlockId = "x010",
                 StageId = "s01",
                 MaxBuy = 2,
                 PricingId = PricingHelper.PricingId.ContractLevelUnlock01,
@@ -2607,7 +2261,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ua011.svg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Ilha de Vera.",
-                UnlockId = "x10",
+                UnlockId = "x010",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize1,
                 State = UnlockHelper.State.Blocked,
@@ -2626,7 +2280,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ua012.svg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Ilha de Vera.",
-                UnlockId = "x11",
+                UnlockId = "x011",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize1,
                 State = UnlockHelper.State.Blocked,
@@ -2645,7 +2299,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ua013.svg",
                 Lore = "",
                 Description = "Aumenta o número de personagens trabalhando na Ilha de Vera.",
-                UnlockId = "x12",
+                UnlockId = "x012",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.PartySize1,
                 State = UnlockHelper.State.Blocked,
@@ -2664,7 +2318,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ui011.svg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click na Ilha de Vera.",
-                UnlockId = "x10",
+                UnlockId = "x010",
                 StageId = "s01",
                 MaxBuy = 10,
                 PricingId = PricingHelper.PricingId.ClickGainS1,
@@ -2703,20 +2357,20 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Expansion Upgrades
-            #region x00
+            #region x000
             #endregion
 
-            #region x10
-            ["ux1001"] = new UpgradeModel
+            #region x010
+            ["ue0101"] = new UpgradeModel
             {
-                Id = "ux1001",
+                Id = "ue0101",
                 Name = "Lanche Saudável",
                 Level = 1,
-                Icon = "icons/upgrades/ux1001.svg",
+                Icon = "icons/upgrades/ue0101.svg",
                 Lore = "",
                 Description = "Aumenta a geração de Mantimentos da Guilda.",
                 UnlockId = "ur01",
-                MaxBuy = 5,
+                MaxBuy = 10,
                 PricingId = PricingHelper.PricingId.ResourceGain0101,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
@@ -2726,209 +2380,167 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 0.05,
             },
-            #endregion
-
-            #region Upgrades de Expansão s01 x10
-
-            ["ux101"] = new UpgradeModel
+            ["ue0102"] = new UpgradeModel
             {
-                Id = "ux101",
-                Name = "Esforço Recompensado",
+                Id = "ue0102",
+                Name = "Mãos na Obra",
                 Level = 1,
-                Icon = "icons/upgrades/ux101.svg",
+                Icon = "icons/upgrades/ue0102.svg",
                 Lore = "",
-                Description = "Aumenta o ganho base do Click de acordo com o ganho de Talhos",
-                UnlockId = "x10",
+                Description = "Aumenta o ganho dos Contratos de acordo com o número de membros da Guilda.",
+                UnlockId = "x010",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "i01",
-                EffectType = EffectHelper.EffectType.ClickGainCent,
-                EffectOp = EffectHelper.EffectOperation.Additive,
+                TargetId = "allContracts",
+                EffectType = EffectHelper.EffectType.ContractGainPerCharacter,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.001,
+                EffectValue = 1.005,
             },
-            ["ux102"] = new UpgradeModel
+            ["ue0103"] = new UpgradeModel
             {
-                Id = "ux102",
-                Name = "Planejamento de Aventura",
+                Id = "ue0103",
+                Name = "Esforço Coletivo",
                 Level = 1,
-                Icon = "icons/upgrades/ux102.svg",
+                Icon = "icons/upgrades/ue0103.svg",
                 Lore = "",
-                Description = "Aumenta o ganho de Mantimentos",
-                UnlockId = "x10",
+                Description = "Aumenta o ganho dos Clicks de acordo com o número de membros da Base.",
+                UnlockId = "x010",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "r01",
-                EffectType = EffectHelper.EffectType.ResourceGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
+                TargetId = "allClicks",
+                EffectType = EffectHelper.EffectType.ClickGainPerCharacterInBase,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.25,
+                EffectValue = 1.01,
             },
             #endregion
 
-            #region Upgrades de Expansão s01 x11
-            ["ux111"] = new UpgradeModel
+            #region x011
+            ["ue0111"] = new UpgradeModel
             {
-                Id = "ux111",
-                Name = "Esforço Duplamente Recompensado",
-                Level = 1,
-                Icon = "icons/upgrades/ux111.svg",
+                Id = "ue0111",
+                Name = "Apoio dos Parceiros",
+                Level = 2,
+                Icon = "icons/upgrades/ue0111.svg",
                 Lore = "",
-                Description = "Aumenta o ganho base do Click de acordo com o ganho de Talhos",
-                UnlockId = "x11",
+                Description = "Aumenta a capacidade de armazenar Mantimentos de acordo com o total de Contratos conhecidos.",
+                UnlockId = "x011",
                 StageId = "s01",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "i01",
-                EffectType = EffectHelper.EffectType.ClickGainCent,
+                TargetId = "r01",
+                EffectType = EffectHelper.EffectType.ResourceCapPerUnlockedContract,
                 EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.001,
+                EffectSupertype = EffectHelper.EffectSupertype.ResourceCap,
+                EffectValue = 5,
             },
-            ["ux112"] = new UpgradeModel
+            ["ue0112"] = new UpgradeModel
             {
-                Id = "ux112",
-                Name = "Planejamento Preciso de Aventura",
-                Level = 1,
-                Icon = "icons/upgrades/ux112.svg",
+                Id = "ue0112",
+                Name = "Trabalho Eficaz",
+                Level = 2,
+                Icon = "icons/upgrades/ue0112.svg",
                 Lore = "",
-                Description = "Aumenta o ganho de Mantimentos",
+                Description = "Aumenta o ganho por Click de acordo com o nível dos Contratos.",
                 UnlockId = "x11",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "r01",
-                EffectType = EffectHelper.EffectType.ResourceGain,
-                EffectOp = EffectHelper.EffectOperation.Additive,
+                TargetId = "allClicks",
+                EffectType = EffectHelper.EffectType.ClickGainPerContractLevel,
+                EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.25,
+                EffectValue = 1.008,
             },
             #endregion
 
-            #region Upgrades de Expansão s01 x12
-            ["ux121"] = new UpgradeModel
+            #region x012
+            ["ue0121"] = new UpgradeModel
             {
-                Id = "ux121",
+                Id = "ue0121",
                 Name = "Conhecer os Métodos Locais",
                 Level = 3,
-                Icon = "icons/upgrades/ux121.svg",
+                Icon = "icons/upgrades/ue0121.svg",
                 Lore = "",
-                Description = "Aumenta o ganho de todos os Contratos por Local desbloqueado",
-                UnlockId = "x12",
+                Description = "Aumenta o ganho de todos os Contratos por Local explorado.",
+                UnlockId = "x012",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "aContracts",
+                TargetId = "allContracts",
                 EffectType = EffectHelper.EffectType.ContractGainPerLocal,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
                 EffectValue = 1.01,
             },
-            ["ux122"] = new UpgradeModel
+            ["ue0122"] = new UpgradeModel
             {
-                Id = "ux122",
+                Id = "ue0122",
                 Name = "Conhecer a Área",
                 Level = 3,
-                Icon = "icons/upgrades/ux122.svg",
+                Icon = "icons/upgrades/ue0122.svg",
                 Lore = "",
-                Description = "Aumenta o ganho de todos os Conhecimentos por Local desbloqueado",
-                UnlockId = "x12",
+                Description = "Aumenta o ganho do Click por Local explorado.",
+                UnlockId = "x012",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "aKnowledges",
-                EffectType = EffectHelper.EffectType.KnowledgeGainPerLocal,
+                TargetId = "allClicks",
+                EffectType = EffectHelper.EffectType.ClickGainPerLocal,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1.01,
-            },
-            ["ux123"] = new UpgradeModel
-            {
-                Id = "ux123",
-                Name = "Conexão com a Base",
-                Level = 3,
-                Icon = "icons/upgrades/ux123.svg",
-                Lore = "",
-                Description = "Aumenta o ganho de todos os Recursos por Local desbloqueado",
-                UnlockId = "x12",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "aResources",
-                EffectType = EffectHelper.EffectType.ResourceGainPerLocal,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.01,
+                EffectValue = 1.002,
             },
             #endregion
 
-            #region Upgrades de Expansão s01 x13
-            ["ux131"] = new UpgradeModel
+            #region x013
+            ["ue0131"] = new UpgradeModel
             {
-                Id = "ux131",
-                Name = "Disseminar Conhecimento",
+                Id = "ue0131",
+                Name = "Prática Acumulada",
                 Level = 4,
-                Icon = "icons/upgrades/ux131.svg",
+                Icon = "icons/upgrades/ue0131.svg",
                 Lore = "",
-                Description = "Aumenta o ganho de todos os Contratos por Tech desbloqueada",
-                UnlockId = "x13",
+                Description = "Aumenta o ganho de todos os Contratos por tempo de Expedição.",
+                UnlockId = "x013",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "aContracts",
-                EffectType = EffectHelper.EffectType.ContractGainPerTech,
+                TargetId = "allContracts",
+                EffectType = EffectHelper.EffectType.ContractGainPerExpeditionTime,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1.01,
+                EffectValue = 1.00001,
             },
-            ["ux132"] = new UpgradeModel
+            ["ue0132"] = new UpgradeModel
             {
-                Id = "ux132",
-                Name = "Estudo Coletivo",
+                Id = "ue0132",
+                Name = "Habilidade Aperfeiçoada",
                 Level = 4,
-                Icon = "icons/upgrades/ux132.svg",
+                Icon = "icons/upgrades/ue0132.svg",
                 Lore = "",
-                Description = "Aumenta o ganho de todos os Conhecimentos por Tech desbloqueada",
-                UnlockId = "x13",
+                Description = "Diminui o tempo para concluir os Contratos por tempo de Expansão.",
+                UnlockId = "x013",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "aKnowledges",
-                EffectType = EffectHelper.EffectType.KnowledgeGainPerTech,
+                TargetId = "allContracts",
+                EffectType = EffectHelper.EffectType.ContractTimePerExpansionTime,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1.01,
-            },
-            ["ux133"] = new UpgradeModel
-            {
-                Id = "ux133",
-                Name = "Eficiência da Base",
-                Level = 4,
-                Icon = "icons/upgrades/ux133.svg",
-                Lore = "",
-                Description = "Aumenta a geração de Recursos por Tech desbloqueada",
-                UnlockId = "x13",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "aResources",
-                EffectType = EffectHelper.EffectType.ResourceGainPerTech,
-                EffectOp = EffectHelper.EffectOperation.Additive,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 0.01,
+                EffectSupertype = EffectHelper.EffectSupertype.Time,
+                EffectValue = 0.999995,
             },
             #endregion
             #endregion

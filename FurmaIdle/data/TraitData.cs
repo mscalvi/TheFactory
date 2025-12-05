@@ -51,7 +51,7 @@ namespace FurmaIdle.Data
             {
                 Id = "a0103",
                 Description = "Diminui o custo das Especialidades da Guilda.",
-                TargetId = "aSpecialties",
+                TargetId = "allSpecialties",
                 EffectValue = 0.9,
                 EffectOp = EffectHelper.EffectOperation.Multiplicative,
                 EffectType = EffectHelper.EffectType.SpecialtyCost,

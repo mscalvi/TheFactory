@@ -38,7 +38,7 @@ namespace FurmaIdle.Services
         {
             await UnlockStage("s00");
 
-            await UnlockExpansion("x00");
+            await UnlockExpansion("x000");
 
             await UnlockCharacter("p0001");
 
@@ -264,7 +264,7 @@ namespace FurmaIdle.Services
 
             if(stageId == "s01")
             {
-                await UnlockExpansion("x10");
+                await UnlockExpansion("x010");
             }
         }
         #endregion

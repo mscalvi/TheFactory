@@ -140,8 +140,14 @@ namespace FurmaIdle.Services
                 case EffectHelper.EffectSupertype.Unlock:
                     type = "icons/tooltip/types/unlock.svg";
                     break;
-                case EffectHelper.EffectSupertype.Cap:
-                    type = "icons/tooltip/types/cap.svg";
+                case EffectHelper.EffectSupertype.ResourceCap:
+                    type = "icons/tooltip/types/resourcecap.svg";
+                    break;
+                case EffectHelper.EffectSupertype.ContractCap:
+                    type = "icons/tooltip/types/contractcap.svg";
+                    break;
+                case EffectHelper.EffectSupertype.ContractLevel:
+                    type = "icons/tooltip/types/contractlevel.svg";
                     break;
             }
 
@@ -156,19 +162,19 @@ namespace FurmaIdle.Services
                 case "a":
                     switch (upgrade.TargetId)
                     {
-                        case "aCharacters":
+                        case "allCharacters":
                             target = "icons/tooltip/targets/characters.svg";
                             break;
-                        case "aContracts":
+                        case "allContracts":
                             target = "icons/tooltip/targets/contracts.svg";
                             break;
-                        case "aSpecialties":
+                        case "allSpecialties":
                             target = "icons/tooltip/targets/specialties.svg";
                             break;
-                        case "aKnowledges":
+                        case "allKnowledges":
                             target = "icons/tooltip/targets/knowledges.svg";
                             break;
-                        case "aResources":
+                        case "allResources":
                             target = "icons/tooltip/targets/resources.svg";
                             break;
                     }
@@ -378,19 +384,19 @@ namespace FurmaIdle.Services
                 case "a":
                     switch (specialty.TargetId)
                     {
-                        case "aCharacters":
+                        case "allCharacters":
                             target = "icons/tooltip/targets/characters.svg";
                             break;
-                        case "aContracts":
+                        case "allContracts":
                             target = "icons/tooltip/targets/contracts.svg";
                             break;
-                        case "aSpecialties":
+                        case "allSpecialties":
                             target = "icons/tooltip/targets/specialties.svg";
                             break;
-                        case "aKnowledges":
+                        case "allKnowledges":
                             target = "icons/tooltip/targets/knowledges.svg";
                             break;
-                        case "aResources":
+                        case "allResources":
                             target = "icons/tooltip/targets/resources.svg";
                             break;
                     }
@@ -470,8 +476,14 @@ namespace FurmaIdle.Services
                 case EffectHelper.EffectSupertype.Unlock:
                     type = "icons/tooltip/types/unlock.svg";
                     break;
-                case EffectHelper.EffectSupertype.Cap:
-                    type = "icons/tooltip/types/cap.svg";
+                case EffectHelper.EffectSupertype.ResourceCap:
+                    type = "icons/tooltip/types/resourcecap.svg";
+                    break;
+                case EffectHelper.EffectSupertype.ContractCap:
+                    type = "icons/tooltip/types/contractcap.svg";
+                    break;
+                case EffectHelper.EffectSupertype.ContractLevel:
+                    type = "icons/tooltip/types/contractlevel.svg";
                     break;
             }
 

@@ -38,7 +38,8 @@ namespace FurmaIdle.Services
             if(type != ItemType.Expedition)
             {
                 expedition = _locate.LocateExpedition(game, stage.Id);
-            } else
+            } 
+            else
             {
                 expedition = _locate.LocateExpedition(game, itemId);
             }
@@ -276,19 +277,52 @@ namespace FurmaIdle.Services
                                         MultMod *= Math.Pow(modifier.Value, 1);
                                     }
                                 }
-                            }
 
-                            foreach (var modifier in stage.Modifiers)
-                            {
-                                if (modifier.Type == EffectHelper.EffectType.ClickGain)
+                                if (modifier.Type == EffectHelper.EffectType.ClickGainPerCharacterInBase)
                                 {
+                                    int baseChar = 0;
+
+                                    foreach (var character in game.Characters)
+                                    {
+                                        if (character.Value.CharState == CharState.InBase)
+                                        {
+                                            baseChar++;
+                                        }
+                                    }
+
                                     if (modifier.Operation == EffectHelper.EffectOperation.Additive)
                                     {
-                                        AddMod += modifier.Value;
+                                        AddMod += modifier.Value * baseChar;
                                     }
                                     if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
                                     {
-                                        MultMod *= modifier.Value;
+                                        MultMod *= Math.Pow(modifier.Value, baseChar);
+                                    }
+                                }
+
+                                if (modifier.Type == EffectHelper.EffectType.ClickGainPerContractLevel)
+                                {
+                                    int contractActualLevel = stage.ActualContractLevel;
+
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * contractActualLevel;
+                                    }
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= Math.Pow(modifier.Value, contractActualLevel);
+                                    }
+                                }
+
+                                if (modifier.Type == EffectHelper.EffectType.ClickGainPerLocal)
+                                {
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * game.GameStats.LocalsUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectHelper.EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
                                     }
                                 }
                             }
@@ -327,6 +361,7 @@ namespace FurmaIdle.Services
                                         MultMod *= modifier.Value;
                                     }
                                 }
+
                                 if (modifier.Type == EffectType.ContractGainPerTech)
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
@@ -338,6 +373,7 @@ namespace FurmaIdle.Services
                                         MultMod *= Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                 }
+
                                 if (modifier.Type == EffectType.ContractGainPerLocal)
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
@@ -347,6 +383,34 @@ namespace FurmaIdle.Services
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
                                         MultMod *= Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
+                                    }
+                                }
+
+                                if (modifier.Type == EffectType.ContractGainPerCharacter)
+                                {
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * game.GameStats.CharactersUnlocked;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= Math.Pow(modifier.Value, game.GameStats.LocalsUnlocked);
+                                    }
+                                }
+
+                                if (modifier.Type == EffectType.ContractGainPerExpeditionTime)
+                                {
+                                    var started = expedition.StartedAt.GetValueOrDefault(DateTime.UtcNow);
+                                    var elapsed = DateTime.UtcNow - started;
+                                    int elapsedSeconds = (int)elapsed.TotalSeconds;
+
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * elapsedSeconds;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value * elapsedSeconds;
                                     }
                                 }
                             }
@@ -407,6 +471,7 @@ namespace FurmaIdle.Services
                                         MultMod *= modifier.Value;
                                     }
                                 }
+
                                 if (modifier.Type == EffectType.ResourceGainPerTech)
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
@@ -418,6 +483,7 @@ namespace FurmaIdle.Services
                                         MultMod *= Math.Pow(modifier.Value, game.GameStats.TechUnlocked);
                                     }
                                 }
+
                                 if (modifier.Type == EffectType.ResourceGainPerLocal)
                                 {
                                     if (modifier.Operation == EffectOperation.Additive)
@@ -452,6 +518,22 @@ namespace FurmaIdle.Services
                                     if (modifier.Operation == EffectOperation.Multiplicative)
                                     {
                                         MultMod *= modifier.Value;
+                                    }
+                                }
+
+                                if (modifier.Type == EffectType.ContractTimePerExpansionTime)
+                                {
+                                    var started = expansion.StartedAt.GetValueOrDefault(DateTime.UtcNow);
+                                    var elapsed = DateTime.UtcNow - started;
+                                    int elapsedSeconds = (int)elapsed.TotalSeconds;
+
+                                    if (modifier.Operation == EffectOperation.Additive)
+                                    {
+                                        AddMod += modifier.Value * elapsedSeconds;
+                                    }
+                                    if (modifier.Operation == EffectOperation.Multiplicative)
+                                    {
+                                        MultMod *= modifier.Value *elapsedSeconds;
                                     }
                                 }
                             }

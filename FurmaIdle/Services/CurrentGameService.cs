@@ -4,7 +4,6 @@ using FurmaIdle.Storage;
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Channels;
-using static FurmaIdle.Helpers.LogHelper;
 
 namespace FurmaIdle.Services
 {

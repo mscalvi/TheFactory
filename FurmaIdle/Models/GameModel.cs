@@ -12,7 +12,7 @@ namespace FurmaIdle.Models
         public DateTimeOffset StartTime { get; set; }
         public DateTimeOffset LastTick { get; set; }
         public string SelectedStageId { get; set; } = "s00";
-        public string CurrentExpansionId { get; set; } = "x00";
+        public string CurrentExpansionId { get; set; } = "x000";
 
         // Ui
         public UiState Ui { get; set; } = new();

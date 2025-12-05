@@ -35,6 +35,7 @@ namespace FurmaIdle.Models
         public int MaxPartySize { get; set; }
 
         public int StartContractLevel { get; set; }
+        public int ActualContractLevel { get; set; }
         public int MaxContractLevel { get; set; }
 
         public string CoinId { get; set; }
