@@ -29,6 +29,8 @@ namespace FurmaIdle.Models
         public StatsModel ExpeditionStats { get; set; } = new();
 
         // Atributes
+        public int ContractCap { get; set; }
+
         public int StartPartySize { get; set; }
         public int MaxPartySize { get; set; }
 

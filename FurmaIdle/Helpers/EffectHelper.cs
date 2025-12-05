@@ -57,8 +57,10 @@
             Gain,
             Time,
             Unlock,
-            Cap,
+            ContractCap,
+            ContractLevel,
             Offline,
+            PartySize,
         }
 
 

@@ -15,8 +15,8 @@ namespace FurmaIdle.Data
             ["n01"] = new ShipModel
             {
                 Id = "n01",
-                Name = "Barco 01",
-                Description = "",
+                Name = "Bote de Exploração",
+                Description = "Um pequeno bote para duas pessoas, próprio para correntezas fortes.",
                 Lore = "",
                 Icon = "icons/ships/n01.svg",
                 NavIcon = "icons/nav/n01.svg",

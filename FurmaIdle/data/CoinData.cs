@@ -33,7 +33,7 @@ namespace FurmaIdle.Data
                 Name = "Estranhos",
                 Image = "images/coins/m02.svg",
                 Icon = "icons/coins/m02.svg",
-                UnlockId = "s02",
+                UnlockId = "s03",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),

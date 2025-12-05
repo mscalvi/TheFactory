@@ -33,7 +33,7 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region  (s02)
+            #region  Ilha Maravasta (s02)
             ["i02"] = new ClickModel
             {
                 Id = "i02",

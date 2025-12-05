@@ -30,6 +30,7 @@ namespace FurmaIdle.Data
                 UnlockId = null,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                ContractCap = 1,
                 StartPartySize = 1,
                 MaxPartySize = 1,
                 StartContractLevel = -1,
@@ -70,6 +71,7 @@ namespace FurmaIdle.Data
                 UnlockId = "us01",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                ContractCap = 1,
                 StartPartySize = 1,
                 MaxPartySize = 4,
                 StartContractLevel = 1,
@@ -86,11 +88,11 @@ namespace FurmaIdle.Data
             },
             #endregion
 
-            #region Unlockable Stages (s2)
+            #region Ilha Maravasta (s2)
             ["s02"] = new StageModel
             {
                 Id = "s02",
-                Name = "Correntezas",
+                Name = "Ilha Maravasta",
                 Description = "",
                 Lore = "",
                 Icon = "icons/stages/s02.svg",
@@ -110,19 +112,20 @@ namespace FurmaIdle.Data
                 UnlockId = "us02",
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
+                ContractCap = 1,
                 StartPartySize = 2,
                 MaxPartySize = 3,
                 StartContractLevel = 4,
                 MaxContractLevel = 6,
-                CoinId = "m02",
+                CoinId = "m01",
                 ClickId = "i02",
-                Influence = 10,
+                Influence = 1,
                 Modifiers = new List<ModifierModel>(),
                 Expedition = new ExpeditionModel(),
                 VisibleFrom = new List<string> {
                     "s01",
                 },
-                Context = ContractHelper.Context.UrbanSmall | ContractHelper.Context.Wild,
+                Context = ContractHelper.Context.River | ContractHelper.Context.Wild,
             },
             #endregion
         };

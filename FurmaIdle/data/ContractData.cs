@@ -45,7 +45,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/contracts/c101.svg",
                 Image = "images/contracts/c101.svg",
                 Level = 1,
-                UnlockId = "uc101",
+                UnlockId = "uu101",
                 PricingId = PricingHelper.PricingId.ContractPurchase1,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 State = UnlockHelper.State.Blocked,

@@ -12,15 +12,15 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, RouteModel> All = new()
         {
             #region Ilha de Vera (s01)
-            ["z12"] = new RouteModel
+            ["z0102"] = new RouteModel
             {
-                Id = "z12",
-                Name = "Ilha de Vera x ZZZ",
+                Id = "z0102",
+                Name = "Ilha de Vera - Ilha Maravasta",
                 Description = "",
                 Lore = "",
-                Icon = "icons/routes/z12.svg",
+                Icon = "icons/routes/z0102.svg",
                 Image = "",
-                UnlockId = "",
+                UnlockId = "uz0102",
                 State = UnlockHelper.State.Blocked,
                 RouteState = UnlockHelper.RouteState.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,

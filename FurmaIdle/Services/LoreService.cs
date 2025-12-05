@@ -208,19 +208,19 @@
                 #region Geral
 
                 case "LocalUnlock":
-                    if (helper == "l11")
+                    if (helper == "l011")
                     {
                         _log.Info("Explorar Locais permite conhecer a Região com maiores detalhes, aprendendo com ela. É possível encontrar" +
                             " novas Pesquisas, novos Personagens, e até novas Rotas para Navios ao desbloquear um Local.");
                         _log.Lore("A pequena Guilda avança até as Pontas Cantarolantes, contornando a Ilha de Vera pela praia." +
                             " Uma subida perigosa, onde qualquer deslize pode ser fatal.");
                     }
-                    if (helper == "l12")
+                    if (helper == "l012")
                     {
                         _log.Lore("A Guilda avança até o Coração da Ilha, a região das nascentes que garantem água limpa à Murada Cairu." +
                             " A mata fechada é perigosa, e qualquer animal pode estar infectado.");
                     }
-                    if (helper == "l13")
+                    if (helper == "l013")
                     {
                         _log.Lore("Com todo seu poder, a Guilda entra no Bosque da Raposa, pronta para caçar a maior besta Insana da Ilha." +
                             " Matá-la, e impedir que os esporos se espalhem, pode significar a tão aguardada reconquista.");

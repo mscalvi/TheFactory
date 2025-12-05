@@ -14,14 +14,14 @@ namespace FurmaIdle.Data
         internal static readonly Dictionary<string, TechModel> All = new()
         {
             #region Cultural (k01)
-            ["t0111"] = new TechModel
+            ["t011"] = new TechModel
             {
-                Id = "t0111",
+                Id = "t011",
                 Name = "Fundação de Guildas",
-                Icon = "icons/techs/t0111.svg",
+                Icon = "icons/techs/t011.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0110",
+                UnlockId = "uh0101",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -30,27 +30,27 @@ namespace FurmaIdle.Data
             #endregion
 
             #region Geográfico (k02)
-            ["t0211"] = new TechModel
+            ["t021"] = new TechModel
             {
-                Id = "t0211",
+                Id = "t021",
                 Name = "Vilas Litorâneas",
-                Icon = "icons/techs/t0211.svg",
+                Icon = "icons/techs/t021.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0210",
+                UnlockId = "uh0201",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["t0221"] = new TechModel
+            ["t022"] = new TechModel
             {
-                Id = "t0221",
+                Id = "t022",
                 Name = "Litorais Rochosos",
-                Icon = "icons/techs/t0221.svg",
+                Icon = "icons/techs/t022.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0220",
+                UnlockId = "uh0202",
                 Level = 2,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -59,27 +59,27 @@ namespace FurmaIdle.Data
             #endregion
 
             #region T03x - Sobrevivência (k03)
-            ["t0311"] = new TechModel
+            ["t031"] = new TechModel
             {
-                Id = "t0311",
+                Id = "t031",
                 Name = "Vida em Muradas",
-                Icon = "icons/techs/t0311.svg",
+                Icon = "icons/techs/t031.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0310",
+                UnlockId = "uh0301",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["t0321"] = new TechModel
+            ["t032"] = new TechModel
             {
-                Id = "t0321",
+                Id = "t032",
                 Name = "Sobrevivência na Selva",
-                Icon = "icons/techs/t0321.svg",
+                Icon = "icons/techs/t032.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0320",
+                UnlockId = "uh0302",
                 Level = 2,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
@@ -88,15 +88,28 @@ namespace FurmaIdle.Data
             #endregion
 
             #region T04x - Navegação (k04)
-            ["t0411"] = new TechModel
+            ["t041"] = new TechModel
             {
-                Id = "t0411",
-                Name = "Construção de Barcos",
-                Icon = "icons/techs/t0411.svg", 
+                Id = "t041",
+                Name = "Fluxo das Correntezas",
+                Icon = "icons/techs/t041.svg", 
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0410",
+                UnlockId = "uh0401",
                 Level = 1,
+                State = UnlockHelper.State.Blocked,
+                Persistence = UnlockHelper.Persistence.Permanent,
+                Modifiers = new List<ModifierModel>(),
+            },
+            ["t042"] = new TechModel
+            {
+                Id = "t042",
+                Name = "Construção de Pequenos Barcos",
+                Icon = "icons/techs/t042.svg",
+                Description = "",
+                Lore = "",
+                UnlockId = "uh0402",
+                Level = 2,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
@@ -104,40 +117,40 @@ namespace FurmaIdle.Data
             #endregion
 
             #region T05x - Caça (k05)
-            ["t0511"] = new TechModel
+            ["t051"] = new TechModel
             {
-                Id = "t0511",
+                Id = "t051",
                 Name = "Caça de Pequenos Animais",
-                Icon = "icons/techs/t0511.svg",
+                Icon = "icons/techs/t051.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0510",
+                UnlockId = "uh0501",
                 Level = 1,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["t0521"] = new TechModel
+            ["t052"] = new TechModel
             {
-                Id = "t0521",
+                Id = "t052",
                 Name = "Caça de Grandes Herbívoros",
-                Icon = "icons/techs/t0521.svg",
+                Icon = "icons/techs/t052.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0520",
+                UnlockId = "uh0502",
                 Level = 2,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,
                 Modifiers = new List<ModifierModel>(),
             },
-            ["t0531"] = new TechModel
+            ["t053"] = new TechModel
             {
-                Id = "t0531",
+                Id = "t053",
                 Name = "Caça de Pequenos Predadores",
-                Icon = "icons/techs/t0531.svg",
+                Icon = "icons/techs/t053.svg",
                 Description = "",
                 Lore = "",
-                UnlockId = "uh0530",
+                UnlockId = "uh0503",
                 Level = 3,
                 State = UnlockHelper.State.Blocked,
                 Persistence = UnlockHelper.Persistence.Permanent,

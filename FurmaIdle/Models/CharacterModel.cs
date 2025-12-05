@@ -29,7 +29,6 @@ namespace FurmaIdle.Models
         public UnlockHelper.Persistence Persistence { get; set; } = UnlockHelper.Persistence.Permanent;
 
         // Contracts
-        public int ContractCap { get; set; }
         public List<string> ContractsIds { get; set; }
 
         // Knowledge
