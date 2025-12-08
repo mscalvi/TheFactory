@@ -31,10 +31,36 @@
 
         var all = OrderedUpgrades(game);
 
-        var heroUpgrade =
+        var expansionPurchase =
         all.FirstOrDefault(u =>
-        u.State == UnlockHelper.State.Available && ((Us(u.Id) && _stage.Id == "s00") ||
-        ((Ue(u.Id) && (u.StageId == _stage.Id || u.StageId == "all")))));
+        u.State == UnlockHelper.State.Available && (((Ux(u.Id) && (u.StageId == _stage.Id || u.StageId == "all")))));
+
+        <section class="@($"menu-panel {UI.PanelClass("expansion-objetive")}")">
+            @if (expansionPurchase is not null)
+            {
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, expansionPurchase.Id, _stage.Id);
+                <button class="objetive-button"
+                        disabled="@(!can)"
+                        @onclick="() => OnClickBuy(expansionPurchase.Id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, expansionPurchase.Id, _stage.Id))"
+                        @onmouseleave="Tooltips.Clear">
+                    @if (!string.IsNullOrWhiteSpace(expansionPurchase.Image))
+                    {
+                        <img src="@expansionPurchase.Image"
+                             alt="@expansionPurchase.Id"
+                             class="objetive-img" />
+                    }
+                    else
+                    {
+                        @expansionPurchase.Id
+                    }
+                </button>
+            }
+            else
+            {
+                <div style="text-align:center; opacity:.75;">Fim de Jogo - por enquanto</div>
+            }
+        </section>
 
         if (started.HasValue)
         {
@@ -99,32 +125,6 @@
         <section class="@($"menu-panel {UI.PanelClass("expansion-history")}")">
             <h3 class="title">História</h3>
         </section>
-        <section class="@($"menu-panel {UI.PanelClass("expansion-objetive")}")">
-            @if (heroUpgrade is not null)
-            {
-                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, heroUpgrade.Id, _stage.Id);
-                <button class="objetive-button"
-                        disabled="@(!can)"
-                        @onclick="() => OnClickBuyUpgrade(heroUpgrade.Id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, heroUpgrade.Id, _stage.Id))"
-                        @onmouseleave="Tooltips.Clear">
-                    @if (!string.IsNullOrWhiteSpace(heroUpgrade.Image))
-                    {
-                        <img src="@heroUpgrade.Image"
-                             alt="@heroUpgrade.Id"
-                             class="objetive-img" />
-                    }
-                    else
-                    {
-                        @heroUpgrade.Id
-                    }
-                </button>
-            }
-            else
-            {
-                <div style="text-align:center; opacity:.75;">Fim de Jogo - por enquanto</div>
-            }
-        </section>
     }
 
 </div>
@@ -184,7 +184,7 @@
 
     private bool freeProcess = true;
 
-    private async Task OnClickBuyUpgrade(string upgradeId)
+    private async Task OnClickBuy(string upgradeId)
     {
         var game = Game.CurrentGame;
         var upgrade = Locate.LocateUpgrade(game, upgradeId);
@@ -201,14 +201,14 @@
 
             try
             {
-                if (StartsWith(upgrade.Id, "ue") || StartsWith(upgrade.Id, "us"))
+                if (StartsWith(upgrade.Id, "ux") || StartsWith(upgrade.Id, "us"))
                 {
                     UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
                 }
 
                 await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
 
-                if (StartsWith(upgrade.Id, "ue") || upgrade.Id == "us01")
+                if (StartsWith(upgrade.Id, "ux") || upgrade.Id == "us01")
                 {
                     await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
 

@@ -1,0 +1,127 @@
+﻿@* Components/ShopMenuTech.razor *@
+@inherits UiHelper
+
+@using System.Linq
+@using FurmaIdle.Models
+@using FurmaIdle.Data
+@using FurmaIdle.Helpers
+@using FurmaIdle.Services
+
+@inject IPurchaseService Purchase
+@inject ICostService Cost
+@inject ILocateService Locate
+@inject ITooltipService Tooltips
+@inject IUiLogService Log
+
+<div class="menu-root">
+    @{
+        var game = Game.CurrentGame;
+        var stage = Locate.LocateStage(game, game.SelectedStageId);
+
+        var availableLocals = game is null ? Enumerable.Empty<UpgradeModel>() :
+        game.Upgrades.Values
+        .Where(u => u?.Id != null
+        && u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase)
+        && u.State == UnlockHelper.State.Available);
+
+        var unavailableLocals = game is null ? Enumerable.Empty<UpgradeModel>() :
+        game.Upgrades.Values
+        .Where(u => u?.Id != null
+        && u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase)
+        && u.State == UnlockHelper.State.Blocked
+        && u.StageId == stage.Id);
+    }
+
+    <section class="@($"menu-panel menu-section {UI.PanelClass("locals-locals")}")">
+        <h3 class="title">Locais para Explorar na Região</h3>
+        <div class="icon-grid">
+            @foreach (var u in availableLocals)
+            {
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, stage.Id);
+                <button class="icon-button"
+                        disabled="@(!can)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, stage.Id))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onclick="() => OnClickBuy(u.Id)">
+                    @if (!string.IsNullOrWhiteSpace(u.Icon))
+                    {
+                        <img src="@u.Icon"
+                             alt="@u.Id"
+                             class="icon-img" />
+                    }
+                    else
+                    {
+                        @u.Id
+                    }
+                </button>
+            }
+        </div>
+    </section>
+
+    <section class="@($"menu-panel menu-section {UI.PanelClass("locals-locals")}")">
+        <h3 class="title">Locais Distantes</h3>
+        <div class="icon-grid">
+            @foreach (var u in unavailableLocals)
+            {
+                var can = true;
+                <button class="icon-button"
+                        disabled="@(can)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, stage.Id))"
+                        @onmouseleave="Tooltips.Clear"
+                        @onclick="() => OnClickBuy(u.Id)">
+                    @if (!string.IsNullOrWhiteSpace(u.Icon))
+                    {
+                        <img src="@u.Icon"
+                             alt="@u.Id"
+                             class="icon-img" />
+                    }
+                    else
+                    {
+                        @u.Id
+                    }
+                </button>
+            }
+        </div>
+    </section>
+</div>
+
+@code {
+    private bool freeProcess = true;
+
+    private (long atual, long total) Total(string kId)
+    {
+        long total = 0;
+        long atual = 0;
+
+        var game = Game.CurrentGame;
+        var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
+
+        expansion.ExpansionStats.Knowledge.TryGetValue(kId, out var value);
+        atual = value;
+
+        expansion.ExpansionStats.KnowledgeGain.TryGetValue(kId, out var tot);
+        total = tot;
+
+        return (atual, total);
+    }
+
+    private async Task OnClickBuy(string upgradeId)
+    {
+        if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId))
+        {
+            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
+            return;
+        }
+
+        if (freeProcess)
+        {
+            freeProcess = false;
+            await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId);
+            freeProcess = true;
+        }
+        else
+        {
+            return;
+        }
+    }
+}

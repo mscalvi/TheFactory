@@ -5,7 +5,7 @@
 }
 
 .shop-header {
-    height: 40px;
+    height: 45px;
     flex-shrink: 0;
 }
 
@@ -25,13 +25,12 @@
 }
 
 .subnav-button {
-    min-height: 35px;
+    min-height: 45px;
     min-width: 65px;
-    height: 35px;
+    height: 45px;
     width: 65px;
     padding: 0 8px;
     display: grid;
-    place-items: center;
     border: 1px solid #3a4057;
     background: #141824;
     color: rgb(131, 57, 25);

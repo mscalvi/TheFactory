@@ -25,30 +25,30 @@
 
         var all = OrderedUpgrades(game);
 
-        // ==== Permanentes (UP - Characters, UR - Resources) ====
+        // ==== Permanentes (UP - Characters, UR - Resources, UA - Party Cap, UU - Contracts) ====
         var permanents =
-            all.Where(u =>
-            u.State == UnlockHelper.State.Available &&
-            (Up(u.Id) || Ur(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-            .ToList();
+        all.Where(u =>
+        u.State == UnlockHelper.State.Available &&
+        (Up(u.Id) || Ur(u.Id) || Ua(u.Id) || Uu(u.Id)) &&
+        IsUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
+        .ToList();
 
-        // ==== Expansão (UX - Expansions, UD - Resources, UJ - Characters) ====
+        // ==== Expansão (UE - Expansions, UD - Resources, UJ - Characters) ====
         var expansionUps =
-            all.Where(u =>
-            u.State == UnlockHelper.State.Available &&
-            (Ux(u.Id) || Ud(u.Id) || Uj(u.Id)) &&
-            IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-            .ToList();
+        all.Where(u =>
+        u.State == UnlockHelper.State.Available &&
+        (Ue(u.Id) || Ud(u.Id) || Uj(u.Id)) &&
+        IsUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
+        .ToList();
 
-        <section class="@($"menu-panel menu-section {UI.PanelClass("hall-expansion")}")">
-                <h3 class="title">Personagens, Recursos e Expansão</h3>
+        <section class="@($"menu-panel menu-section {UI.PanelClass("hall-permanents")}")">
+            <h3 class="title">Desenvolvimento Permanente</h3>
             <div class="icon-grid">
-                @foreach (var u in expansionUps)
+                @foreach (var u in permanents)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button" disabled="@(!can)"
-                            @onclick="() => OnClickBuyUpgrade(u.Id)"
+                            @onclick="() => OnClickBuy(u.Id)"
                             @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
                             @onmouseleave="Tooltips.Clear">
                         @if (!string.IsNullOrWhiteSpace(u.Icon))
@@ -66,14 +66,14 @@
             </div>
         </section>
 
-        <section class="@($"menu-panel menu-section {UI.PanelClass("hall-permanents")}")">
-            <h3 class="title">Unlock de Personagens e Recursos</h3>
+        <section class="@($"menu-panel menu-section {UI.PanelClass("hall-expansion")}")">
+                <h3 class="title">Impulsos Temporários</h3>
             <div class="icon-grid">
-                @foreach (var u in permanents)
+                @foreach (var u in expansionUps)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button" disabled="@(!can)"
-                            @onclick="() => OnClickBuyUpgrade(u.Id)"
+                            @onclick="() => OnClickBuy(u.Id)"
                             @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
                             @onmouseleave="Tooltips.Clear">
                         @if (!string.IsNullOrWhiteSpace(u.Icon))
@@ -131,50 +131,18 @@
         => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
 
     static bool Ua(string? id) => StartsWith(id, "ua");
-    static bool Ub(string? id) => StartsWith(id, "ub");
-    static bool Uc(string? id) => StartsWith(id, "uc");
     static bool Ud(string? id) => StartsWith(id, "ud");
     static bool Ue(string? id) => StartsWith(id, "ue");
-    static bool Uh(string? id) => StartsWith(id, "uh");
-    static bool Ui(string? id) => StartsWith(id, "ui");
     static bool Uj(string? id) => StartsWith(id, "uj");
-    static bool Uk(string? id) => StartsWith(id, "uk");
-    static bool Ul(string? id) => StartsWith(id, "ul");
-    static bool Um(string? id) => StartsWith(id, "um");
-    static bool Un(string? id) => StartsWith(id, "un");
     static bool Up(string? id) => StartsWith(id, "up");
     static bool Ur(string? id) => StartsWith(id, "ur");
-    static bool Us(string? id) => StartsWith(id, "us");
-    static bool Ut(string? id) => StartsWith(id, "ut");
     static bool Uu(string? id) => StartsWith(id, "uu");
-    static bool Ux(string? id) => StartsWith(id, "ux");
-    static bool Uz(string? id) => StartsWith(id, "uz");
 
-    private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
+    private bool IsUpgradeVisible(GameModel game, string upgradeId)
     {
-        // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
-        if (!StartsWith(upgradeId, "uc") && !StartsWith(upgradeId,"uu") && !StartsWith(upgradeId,"ut")) return true;
-
         var up = Locate.LocateUpgrade(game, upgradeId);
 
-        if (StartsWith(upgradeId, "uc"))
-        {
-            if (_stage.ActiveContracts.TryGetValue(up.TargetId, out var qty))
-            {
-                if (qty > 0)
-                {
-                    var nextBuy = Math.Max(1, (up.ActualBuy) + 1);
-                    var maxBuy = up.MaxBuy <= 0 ? int.MaxValue : up.MaxBuy;
-
-                    var needed = GetContractNeeded(up.EffectType, nextBuy);
-                    if (needed <= 0) return true;
-
-                    return qty >= needed;
-                }
-            }
-            return false;
-        }
-        else if (StartsWith(upgradeId, "uu"))
+        if (StartsWith(upgradeId, "uu"))
         {
             // “uu”: visível se o nível atual de contrato for >= nível do upgrade
             var stageInfo = Contracts.GetStageInfo(game, _stage.Id);
@@ -187,25 +155,12 @@
                 return true;
             }
         }
-        else if (StartsWith(upgradeId, "ut"))
-        {
-            var isContractTarget = up.TargetId?.StartsWith("c", StringComparison.OrdinalIgnoreCase) ?? false;
-            if (!isContractTarget) return true;
 
-            if (_stage.ActiveContracts.TryGetValue(up.TargetId, out var qty))
-            {
-                if (qty > 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
         return true;
     }
 
     // ===== Ações =====
-    private async Task OnClickBuyUpgrade(string upgradeId)
+    private async Task OnClickBuy(string upgradeId)
     {
         var game = Game.CurrentGame;
         var upgrade = Locate.LocateUpgrade(game, upgradeId);
@@ -216,47 +171,13 @@
             return;
         }
 
-        if (StartsWith(upgrade.Id, "uc"))
-        {
-            if (upgrade is null || string.IsNullOrWhiteSpace(upgrade.TargetId)) return;
-
-            var nextBuy = Math.Max(1, upgrade.ActualBuy + 1);
-            var maxBuy = upgrade.MaxBuy <= 0 ? int.MaxValue : upgrade.MaxBuy;
-            if (nextBuy > maxBuy) return;
-
-            if (!(_stage.ActiveContracts?.TryGetValue(upgrade.TargetId, out var qty) ?? false) || qty <= 0)
-                return;
-
-            var needed = GetContractNeeded(upgrade.EffectType, nextBuy);
-            if (needed > 0 && qty < needed)
-                return;
-        }
-
         if (freeProcess)
         {
             freeProcess = false;
 
             try
             {
-                if (StartsWith(upgrade.Id, "ue") || StartsWith(upgrade.Id, "us"))
-                {
-                    UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
-                }
-
                 await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
-
-                if (StartsWith(upgrade.Id, "ue") || upgrade.Id == "us01")
-                {
-                    await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
-
-                    if (upgrade.Id == "us01")
-                    {
-                        await Expedition.SecondExpeditionStart();
-                        await UI.LoadStage("s01");
-                    }
-
-                    UI.ClearBusy();
-                }
 
                 if (_stage is not null)
                 {
@@ -274,19 +195,5 @@
         {
             return;
         }
-    }
-
-    private static int GetContractNeeded(EffectHelper.EffectType effectType, int nextBuy)
-    {
-        return effectType switch
-        {
-            EffectHelper.EffectType.ContractCost => 25 * nextBuy,
-
-            EffectHelper.EffectType.ContractGain => 10 * nextBuy - 5,
-
-            EffectHelper.EffectType.ContractTime => 10 * nextBuy,
-
-            _ => 0
-        };
     }
 }

@@ -47,7 +47,7 @@ namespace FurmaIdle.Services
             _ui = ui;
         }
 
-        private bool Tutorial = true;
+        private bool firstExpeditionSet = true;
 
         public int GetPartyCap(StageModel stage)
         {
@@ -288,7 +288,14 @@ namespace FurmaIdle.Services
 
                     expedition.FinishedAt = null;
 
-                    _ui.NavMenuControl("ExpeditionStart");
+                    if (!firstExpeditionSet)
+                    {
+                        _ui.NavMenuControl("ExpeditionStart");
+                    } else
+                    {
+                        firstExpeditionSet = false;
+                        _ui.NavMenuControl("FirstExpeditionComplete");
+                    }
 
                 }, save: true);
 

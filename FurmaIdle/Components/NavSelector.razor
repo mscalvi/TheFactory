@@ -9,7 +9,7 @@
 
 <div class="game-area nav-menu">
     <div class="nav-col">
-        @foreach (var it in Ui.VisibleNav)
+        @foreach (var it in Ui.VisibleMenu)
         {
             var isSelected = string.Equals(Ui.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
             var hasNotif = it.Notification;

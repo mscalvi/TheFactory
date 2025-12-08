@@ -136,7 +136,7 @@ namespace FurmaIdle.Services
                 if(stage.Id == "s00")
                 {
                     // Contract Level Unlock Stage 0
-                    if (itemId == "ub00")
+                    if (itemId == "ub001")
                     {
                         var upgrade = _locate.LocateUpgrade(game, itemId);
                         if (upgrade.ActualBuy == 1)

@@ -1,6 +1,4 @@
-﻿@* ShopMenu.razor *@
-
-@inherits UiHelper
+﻿@inherits UiHelper
 
 @using FurmaIdle.Models
 
@@ -12,114 +10,93 @@
     else
     {
         <div class="shop-header">
-            @RenderSubNav()
+            <div class="submenu-tabs">
+                @foreach (var tab in UI.VisibleTabs(SelectedMenuId))
+                {
+                    var isSelected = IsTabSelected(tab.Id);
+                    var hasNotif = tab.Notification;
+
+                    <button class="@SubTabClass(isSelected, hasNotif)"
+                            @onclick="@(() => SelectTab(tab.Id))">
+                        @tab.Label
+                    </button>
+                }
+
+            </div>
         </div>
 
-        <div class="shop-body">
-            @if (SelectedMenuId == "i1")
+        <div class="shop-content">
+
+            @if (SelectedMenuId == "i99")
             {
-                @* MENU GUILD *@
-                @switch (_guildTab)
-                {
-                    case "expedition":
-                        <GuildExpeditionArea />
-                        break;
-
-                    case "guildinfo":
-                        <GuildInfoArea />
-                        break;
-
-                    case "hall":
-                        <GuildHallArea />
-                        break;
-
-                    case "manage":
-                        <GuildManagerArea />
-                        break;
-
-                    default:
-                        <GuildExpeditionArea />
-                        break;
-                }
+                <NavSettingsArea />
             }
-            else if (SelectedMenuId == "i2")
+            else if (SelectedMenuId == "i98")
             {
-                @* MENU WORLD *@
-                @switch (_worldTab)
-                {
-                    case "expansion":
-                        <WorldExpansionArea />
-                        break;
-
-                    case "dock":
-                        <WorldShipsArea />
-                        break;
-
-                    case "map":
-                        <WorldMapArea />
-                        break;
-
-                    case "lab":
-                        <WorldTechArea />
-                        break;
-
-                    default:
-                        <WorldExpansionArea />
-                        break;
-                }
-            }
-            else if (SelectedMenuId == "i3")
-            {
-                @* MENU GAME *@
-                @switch (_gameTab)
-                {
-                    case "info":
-                        <GameInfoArea />
-                        break;
-
-                    case "arch":
-                        <GameArchArea />
-                        break;
-
-                    case "tips":
-                        <GameTipsArea />
-                        break;
-
-                    default:
-                        <GameInfoArea />
-                        break;
-                }
+                <NavStoreArea />
             }
             else
             {
-                @* MENUS SEM SUBTABS *@
-                @switch (SelectedMenuId)
+                switch (ActiveTabId)
                 {
-                    case "i5":
-                        <StoreArea />
+                    case "guild-hall":
+                        <NavGuildHallArea />
+                        break;
+                    case "guild-contracts":
+                        <NavGuildContractsArea />
+                        break;
+                    case "guild-lab":
+                        <NavGuildLabArea />
+                        break;
+                    case "guild-members":
+                        <NavGuildMembersArea />
                         break;
 
-                    case "i6":
-                        <SettingsArea />
+                    case "stage-expedition":
+                        <NavStageExpeditionArea />
+                        break;
+                    case "stage-dock":
+                        <NavStageDockArea />
+                        break;
+                    case "stage-locals":
+                        <NavStageLocalsArea />
+                        break;
+
+                    case "world-expansion":
+                        <NavWorldExpansionArea />
+                        break;
+                    case "world-ships":
+                        <NavWorldShipsArea />
+                        break;
+                    case "world-map":
+                        <NavWorldMapArea />
+                        break;
+                    case "world-influence":
+                        <NavWorldInfluenceArea />
+                        break;
+
+                    case "game-info":
+                        <NavGameInfoArea />
+                        break;
+                    case "game-arch":
+                        <NavGameArchArea />
+                        break;
+                    case "game-tips":
+                        <NavGameTipsArea />
                         break;
 
                     default:
-                        <SettingsArea />
+                        <div class="tab-placeholder">Selecione uma Aba.</div>
                         break;
-                }
+                }  
             }
         </div>
     }
 </div>
 
-
 @code {
     private StageModel? _stage;
     private string? SelectedMenuId;
-
-    private string _guildTab = "manager";
-    private string _worldTab = "expansion";
-    private string _gameTab = "info";
 
     protected override void OnInitialized()
     {
@@ -153,86 +130,56 @@
         _stage = st;
     }
 
-    private RenderFragment RenderSubNav() => 
-        @<div>
-            @* GUILD (i1) *@
-            @if (SelectedMenuId == "i1")
-                {
-                <div class="submenu-tabs">
-                    <button class="@SubTabClass(_guildTab, "expedition")"
-                            @onclick="@(() => _guildTab = "expedition")">
-                        Expedição
-                    </button>
+    private string _guildTab = "guild-contracts";
+    private string _stageTab = "stage-expedition";
+    private string _worldTab = "world-expansion";
+    private string _gameTab = "game-info";
 
-                    <button class="@SubTabClass(_guildTab, "guildinfo")"
-                            @onclick="@(() => _guildTab = "guildinfo")">
-                        Guild Info
-                    </button>
+    private string? ActiveTabId => SelectedMenuId switch
+    {
+        "i1" => _guildTab,
+        "i2" => _stageTab,
+        "i3" => _worldTab,
+        "i4" => _gameTab,
+        _ => null
+    };
 
-                    <button class="@SubTabClass(_guildTab, "hall")"
-                            @onclick="@(() => _guildTab = "hall")">
-                        Guild Hall
-                    </button>
+    private bool IsTabSelected(string tabId)
+        => tabId switch
+        {
+            "guild-hall" or "guild-contracts" or "guild-members" or "guild-lab"
+                => _guildTab == tabId,
 
-                    <button class="@SubTabClass(_guildTab, "manage")"
-                            @onclick="@(() => _guildTab = "manage")">
-                        Gerência
-                    </button>
-                </div>
-                }
-            @* WORLD (i2) *@
-                else if (SelectedMenuId == "i2")
-                {
-                <div class="submenu-tabs">
-                    <button class="@SubTabClass(_worldTab, "expansion")"
-                            @onclick="@(() => _worldTab = "expansion")">
-                        Expansão
-                    </button>
+            "stage-expedition" or "stage-locals" or "stage-dock"
+                => _stageTab == tabId,
 
-                    <button class="@SubTabClass(_worldTab, "dock")"
-                            @onclick="@(() => _worldTab = "dock")">
-                        Doca
-                    </button>
+            "world-expansion" or "world-influence" or "world-ships" or "world-map"
+                => _worldTab == tabId,
 
-                    <button class="@SubTabClass(_worldTab, "map")"
-                            @onclick="@(() => _worldTab = "map")">
-                        Mapa
-                    </button>
+            "game-info" or "game-arch" or "game-tips"
+                => _gameTab == tabId,
 
-                    <button class="@SubTabClass(_worldTab, "lab")"
-                            @onclick="@(() => _worldTab = "lab")">
-                        Lab
-                    </button>
-                </div>
-                }
-            @* WORLD (i3) *@
-                else if (SelectedMenuId == "i3")
-                {
-                <div class="submenu-tabs">
-                    <button class="@SubTabClass(_gameTab, "info")"
-                    @onclick="@(() => _gameTab = "info")">
-                        Informações
-                    </button>
+            _ => false
+        };
 
-            <button class="@SubTabClass(_gameTab, "arch")"
-                    @onclick="@(() => _gameTab = "arch")">
-                        Archievments
-                    </button>
+    private void SelectTab(string tabId)
+    {
+        if (tabId.StartsWith("guild-"))
+            _guildTab = tabId;
+        else if (tabId.StartsWith("stage-"))
+            _stageTab = tabId;
+        else if (tabId.StartsWith("world-"))
+            _worldTab = tabId;
+        else if (tabId.StartsWith("game-"))
+            _gameTab = tabId;
 
-            <button class="@SubTabClass(_gameTab, "tips")"
-                    @onclick="@(() => _gameTab = "tips")">
-                        Manual
-                    </button>
-                </div>
-                }
-                else
-                {
-            @* Menus que não têm sub-abas (Game, Store, Settings...) *@
-                <div class="submenu-tabs submenu-tabs--empty"></div>
-                }
-        </div>;
+        UI.SetOpenTab(tabId);
 
-        private string SubTabClass(string current, string id)
-         => "subnav-button" + (current == id ? " is-selected" : "");
+        StateHasChanged();
+    }
 
+    private string SubTabClass(bool isSelected, bool hasNotif)
+        => "subnav-button"
+           + (isSelected ? " is-selected" : "")
+           + (hasNotif ? " has-notif" : "");
 }

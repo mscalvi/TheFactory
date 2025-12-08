@@ -70,29 +70,35 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">
             @if (_stage.Expedition.ExpeditionState == UnlockHelper.ExpeditionState.Active)
             {
-                <h3 class="title">Personagens na Expedição em @_stage.Name</h3>
-                <div class="image-grid">
-                    @foreach (var ch in inStageChars)
-                    {
-                        <button class="character-button"
-                                disabled
-                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
-                                @onmouseleave="Tooltips.Clear"
-                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Character, ch.Id, _stage.Id))"
-                                @onblur="Tooltips.Clear">
-                            @if (!string.IsNullOrWhiteSpace(ch.Image))
+                <h3 class="title">Conhecimentos ao Encerrar</h3>
+                long cTotal = 0L;
+                if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
+                    cTotal = v;
+                var kPreview = Knowledge.KnowledgeGain(_stage, cTotal);
+
+                if (kPreview.Count > 0)
+                {
+                    <table class="info-table">
+                        <tbody>
+                            @foreach (var knowEntry in kPreview.OrderByDescending(x => x.Value))
                             {
-                                <img src="@ch.Image"
-                                     alt="@ch.Id"
-                                     class="icon-img" />
+                                var know = Locate.LocateKnowledge(game, knowEntry.Key);
+                                var knowGain = Math.Floor(knowEntry.Value);
+
+                                <tr class="info-row">
+                                    <td class="info-name">@know.Name</td>
+                                    <td class="info-value">@NumbersHelper.Padronize(knowGain)</td>
+                                </tr>
                             }
-                            else
-                            {
-                                @ch.Id
-                            }
-                        </button>
-                    }
-                </div>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="info-entry">
+                        <div class="info-line">-</div>
+                    </div>
+                }
             }
             else
             {
@@ -180,40 +186,6 @@
                         }
                     </tbody>
                 </table>
-            }       
-        </section>
-
-        <section class="@($"menu-panel {UI.PanelClass("expedition-gain")}")">
-            <h3 class="title">Conhecimentos ao Encerrar</h3>
-            @{
-                long cTotal = 0L;
-                if (_stage?.ExpeditionStats?.CoinsGain?.TryGetValue(_stage.CoinId, out var v) == true)
-                    cTotal = v;
-                var kPreview = Knowledge.KnowledgeGain(_stage, cTotal);
-                if (kPreview.Count > 0)
-                {
-                    <table class="info-table">
-                        <tbody>
-                            @foreach (var knowEntry in kPreview.OrderByDescending(x => x.Value))
-                            {
-                                var know = Locate.LocateKnowledge(game, knowEntry.Key);
-                                var knowGain = Math.Floor(knowEntry.Value);
-
-                                <tr class="info-row">
-                                    <td class="info-name">@know.Name</td>
-                                    <td class="info-value">@NumbersHelper.Padronize(knowGain)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div class="info-entry">
-                        <div class="info-line">-</div>
-                    </div>
-                }
-        
             }
         </section>
     }

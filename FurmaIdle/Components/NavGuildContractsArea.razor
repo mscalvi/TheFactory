@@ -38,20 +38,12 @@
         var expansionUps =
         all.Where(u =>
         u.State == UnlockHelper.State.Available &&
-        (Um(u.Id) || Ub(u.Id)) &&
-        IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-        .ToList();
-
-        // ==== Permanentes (UU - Contracts, US01 - End Tutorial) ====
-        var permanents =
-        all.Where(u =>
-        u.State == UnlockHelper.State.Available &&
-        (Uu(u.Id) || u.Id == "us01") &&
+        (Um(u.Id) || Ub(u.Id) || u.Id == "us01") &&
         IsContractUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
         .ToList();
 
 
-        <section class="@($"menu-panel menu-section {UI.PanelClass("up-expedition")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("guild-contracts-fast")}")">
             @if (_stage.Id == "s00")
             {
                 <h3 class="title">Melhorias Rápidas</h3>
@@ -83,7 +75,7 @@
             </div>
         </section>
 
-        <section class="@($"menu-panel menu-section {UI.PanelClass("up-expansion")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("guild-contracts-long")}")">
             @if (_stage.Id == "s00")
             {
                 <h3 class="title">Melhorias Longas</h3>
@@ -94,31 +86,6 @@
             }
             <div class="icon-grid">
                 @foreach (var u in expansionUps)
-                {
-                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
-                    <button class="icon-button" disabled="@(!can)"
-                            @onclick="() => OnClickBuyUpgrade(u.Id)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear">
-                        @if (!string.IsNullOrWhiteSpace(u.Icon))
-                        {
-                            <img src="@u.Icon"
-                                 alt="@u.Id"
-                                 class="icon-img" />
-                        }
-                        else
-                        {
-                            @u.Id
-                        }
-                    </button>
-                }
-            </div>
-        </section>
-
-        <section class="@($"menu-panel menu-section {UI.PanelClass("up-permanents")}")">
-            <h3 class="title">Melhorias Permanentes</h3>
-            <div class="icon-grid">
-                @foreach (var u in permanents)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button" disabled="@(!can)"
@@ -183,12 +150,10 @@
     static bool Uc(string? id) => StartsWith(id, "uc");
     static bool Ui(string? id) => StartsWith(id, "ui");
     static bool Um(string? id) => StartsWith(id, "um");
-    static bool Uu(string? id) => StartsWith(id, "uu");
 
     private bool IsContractUpgradeVisible(GameModel game, string upgradeId)
     {
-        // uc/uu tem visibilidade condicionada ao estado do contrato no Stage selecionado
-        if (!StartsWith(upgradeId, "uc") && !StartsWith(upgradeId, "uu"))return true;
+        if (!StartsWith(upgradeId, "uc"))return true;
 
         var up = Locate.LocateUpgrade(game, upgradeId);
 
@@ -209,38 +174,10 @@
             }
             return false;
         }
-        else if (StartsWith(upgradeId, "uu"))
-        {
-            // “uu”: visível se o nível atual de contrato for >= nível do upgrade
-            var stageInfo = Contracts.GetStageInfo(game, _stage.Id);
-            var upgrade = Locate.LocateUpgrade(game, upgradeId);
-            if (upgrade.Level > stageInfo.ContractsLevel)
-            {
-                return false;
-            }
-            else
-            {
-                // e se algum personagem tiver ele
-                foreach (var characterId in _stage.Expedition.PartyIds)
-                {
-                    var character = Locate.LocateCharacter(game, characterId);
-
-                    if (character.ContractsIds.Contains(upgrade.TargetId))
-                    {
-                        return true; 
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
 
         return true;
     }
 
-    // ===== Ações =====
     private async Task OnClickBuyUpgrade(string upgradeId)
     {
         var game = Game.CurrentGame;
@@ -274,22 +211,20 @@
 
             try
             {
-                if (StartsWith(upgrade.Id, "ue") || StartsWith(upgrade.Id, "us"))
+                if (upgrade.Id == "us01")
                 {
                     UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
                 }
 
                 await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
 
-                if (StartsWith(upgrade.Id, "ue") || upgrade.Id == "us01")
+                if (upgrade.Id == "us01")
                 {
                     await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
 
-                    if (upgrade.Id == "us01")
-                    {
-                        await Expedition.SecondExpeditionStart();
-                        await UI.LoadStage("s01");
-                    }
+                    await Expedition.SecondExpeditionStart();
+                        
+                    await UI.LoadStage("s01");
 
                     UI.ClearBusy();
                 }

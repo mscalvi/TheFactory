@@ -136,7 +136,7 @@
                     if (helper == "p0102")
                     {
                         // Claimi
-                        _log.Claimi("Sem problemas, eu fico aqui pescando enquanto você passeiam...");
+                        _log.Claimi("Sem problemas, eu fico aqui pescando enquanto vocês passeiam...");
                     }
 
                     if (helper == "p0103")

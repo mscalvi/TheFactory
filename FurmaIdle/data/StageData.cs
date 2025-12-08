@@ -75,7 +75,7 @@ namespace FurmaIdle.Data
                 StartPartySize = 1,
                 MaxPartySize = 4,
                 StartContractLevel = 1,
-                MaxContractLevel = 6,
+                MaxContractLevel = 4,
                 CoinId = "m01",
                 ClickId = "i01",
                 Influence = 100,

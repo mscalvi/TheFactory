@@ -40,8 +40,11 @@ namespace FurmaIdle.Models
     public sealed class UiState
     {
         public HashSet<string> UnlockedMenus { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+        public HashSet<string> UnlockedTabs { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        public HashSet<string> TabsWithNotification { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         public HashSet<string> HiddenPanels { get; set; } = new(StringComparer.Ordinal);
         public string? OpenMenuId { get; set; }
+        public string? OpenTabId { get; set; }
 
 
         // guarde um buffer curto pra não inchar o save

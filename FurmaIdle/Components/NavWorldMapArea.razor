@@ -22,7 +22,14 @@
 }
 else
 {
-    var game = Game.CurrentGame;
+        var game = Game.CurrentGame;
+
+        var availableLocals = game is null ? Enumerable.Empty<UpgradeModel>() :
+        game.Upgrades.Values
+        .Where(u => u?.Id != null
+        && u.Id.StartsWith("ul", StringComparison.OrdinalIgnoreCase)
+        && u.State == UnlockHelper.State.Available
+        && u.StageId == _stage.Id);
 
     var unlockedStages = OrderedStages(game)
         .Where(s => s.State == UnlockHelper.State.Unlocked || s.Id != "s00")
@@ -33,27 +40,27 @@ else
                      && l.State == UnlockHelper.State.Unlocked);
 
         <section class="@($"menu-panel {UI.PanelClass("stage-select")}")">
-        <h3 class="title">Unlocked Stages</h3>
-        @if (!unlockedStages.Any())
-        {
-            <div>Nenhuma Stage desbloqueada.</div>
-        }
-        else
-        {
-            <div>
-                @foreach (var stage in unlockedStages)
-                {
-                    var isSelected = string.Equals(_stage.Id, stage.Id, StringComparison.OrdinalIgnoreCase);
+            <h3 class="title">Unlocked Stages</h3>
+            @if (!unlockedStages.Any())
+            {
+                <div>Nenhuma Stage desbloqueada.</div>
+            }
+            else
+            {
+                <div>
+                    @foreach (var stage in unlockedStages)
+                    {
+                        var isSelected = string.Equals(_stage.Id, stage.Id, StringComparison.OrdinalIgnoreCase);
 
-                    <button type="button"
-                            class="character-button"
-                            disabled="@(isSelected)"
-                            aria-pressed="@(isSelected)"
-                            @onclick="() => SelectStage(stage.Id)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
-                            @onblur="Tooltips.Clear"
+                        <button type="button"
+                                class="character-button"
+                                disabled="@(isSelected)"
+                                aria-pressed="@(isSelected)"
+                                @onclick="() => SelectStage(stage.Id)"
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
+                                @onblur="Tooltips.Clear"
                                 tabindex="0">
                             @if (!string.IsNullOrWhiteSpace(stage.Icon))
                             {
@@ -65,11 +72,37 @@ else
                             {
                                 @stage.Id
                             }
+                        </button>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="@($"menu-panel menu-section {UI.PanelClass("stage-locals")}")">
+            <h3 class="title">Pesquisas Disponíveis</h3>
+            <div class="icon-grid">
+                @foreach (var u in availableLocals)
+                {
+                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                    <button class="icon-button"
+                            disabled="@(!can)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onclick="() => OnClickBuyLocalUpgrade(u.Id)">
+                        @if (!string.IsNullOrWhiteSpace(u.Icon))
+                        {
+                            <img src="@u.Icon"
+                                 alt="@u.Id"
+                                 class="icon-img" />
+                        }
+                        else
+                        {
+                            @u.Id
+                        }
                     </button>
                 }
             </div>
-        }
-    </section>
+        </section>
 }
 
 </div>

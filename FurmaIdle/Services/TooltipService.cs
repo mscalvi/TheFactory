@@ -414,8 +414,25 @@ namespace FurmaIdle.Services
                     target = click.Icon;
                     break;
                 case "s":
-                    var stage = _locate.LocateStage(game, specialty.TargetId);
-                    target = stage.Icon;
+                    if (specialty.TargetId.StartsWith("stage"))
+                    {
+                        switch (specialty.TargetId)
+                        {
+                            case "stageCharacters":
+                                target = "icons/tooltip/targets/stageCharacters.svg";
+                                break;
+                            case "stageContracts":
+                                target = "icons/tooltip/targets/stageContracts.svg";
+                                break;
+                            case "stageClick":
+                                target = "icons/tooltip/targets/stageClicks.svg";
+                                break;
+                        }
+                    } else
+                    {
+                        var stage = _locate.LocateStage(game, specialty.TargetId);
+                        target = stage.Icon;
+                    }
                     break;
                 case "l":
                     var local = _locate.LocateLocal(game, specialty.TargetId);
