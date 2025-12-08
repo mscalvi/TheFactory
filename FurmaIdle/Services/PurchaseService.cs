@@ -18,6 +18,7 @@ namespace FurmaIdle.Services
         private readonly IUiService _ui;
         private readonly ICostService _cost;
         private readonly ITooltipService _tooltip;
+        private readonly INotificationService _notifications;
 
         public PurchaseService(
             ICurrentGameService Game,
@@ -25,7 +26,8 @@ namespace FurmaIdle.Services
             IEffectService effect,
             IUiService ui,
             ICostService cost,
-            ITooltipService tooltip)
+            ITooltipService tooltip,
+            INotificationService notifications)
         {
             _game = Game;
             _locate = Locate;
@@ -33,6 +35,7 @@ namespace FurmaIdle.Services
             _ui = ui;
             _cost = cost;
             _tooltip = tooltip;
+            _notifications = notifications;
         }
 
         private int contractBuy = 0;
@@ -95,6 +98,7 @@ namespace FurmaIdle.Services
                     case ItemHelper.ItemType.Upgrade:
                         var upgrade = _locate.LocateUpgrade(g, itemId);
                         helper = upgrade.TargetId;
+                        _notifications.NotificationAtualize(itemId, stageId);
                         break;
 
                     case ItemHelper.ItemType.Contract:
@@ -242,7 +246,7 @@ namespace FurmaIdle.Services
                     {
                         _ui.NavMenuControl("FirstExpansionUnlock");
                     }
-                    if (StartsWith(itemId, "uh"))
+                    if(StartsWith(itemId, "uh"))
                     {
                         int techs = 0;
 
@@ -259,9 +263,17 @@ namespace FurmaIdle.Services
                             _ui.NavMenuControl("FirstTechUnlock");
                         }
                     }
-                    if (StartsWith(itemId, "un01"))
+                    if(itemId == "un01")
                     {
                         _ui.NavMenuControl("FirstShipUnlock", helper);
+                    }
+                    if(itemId == "ue0102")
+                    {
+                        _ui.NavMenuControl("GuildTip");
+                    }
+                    if (itemId == "ue01023")
+                    {
+                        _ui.NavMenuControl("BaseTip", helper);
                     }
                     if (itemId == "us02")
                     {
@@ -284,7 +296,7 @@ namespace FurmaIdle.Services
             if (type == ItemHelper.ItemType.Upgrade)
             {
                 var up = _locate.LocateUpgrade(game, itemId);
-                if (up.MaxBuy == 1 && up.ActualBuy >= 1)
+                if ((up.MaxBuy == 1 && up.ActualBuy >= 1) || (up.MaxBuy == up.ActualBuy))
                 {
                     _tooltip.Clear();
                 }

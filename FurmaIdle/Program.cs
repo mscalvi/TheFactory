@@ -40,6 +40,7 @@ builder.Services.AddSingleton<ICostService, CostService>();
 builder.Services.AddSingleton<IModifierService, ModifierService>();
 builder.Services.AddSingleton<ILoreService, LoreService>();
 builder.Services.AddSingleton<IOfflineService, OfflineService>();
+builder.Services.AddSingleton<INotificationService, NotificationService>();
 
 builder.Services.AddSingleton<IGameStore, GameStore>();
 

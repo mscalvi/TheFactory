@@ -4,6 +4,7 @@
 @using FurmaIdle.Models
 @using FurmaIdle.Services
 
+@inject IContractsService Contracts
 @inject IExpeditionService Expedition
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
@@ -45,6 +46,9 @@
 
         var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1;
 
+        var contractsInfo = Contracts.GetStageInfo(game, _stage.Id);
+        var minContracts = contractsInfo.ContractsUsed <= 49;
+
         var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
         var avaliableChars = chars.Where(c => c.State == UnlockHelper.State.Unlocked
@@ -59,7 +63,7 @@
 
         <section class="@($"menu-panel {UI.PanelClass("expedition-toggle")}")">
             <button class="objetive-button"
-                    disabled="@( !isActive && !canLaunch )"
+                    disabled="@( !isActive && !canLaunch && minContracts)"
                     @onclick="OnClickToggleExpedition"
                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Expedition, _stage.Id))"
                     @onmouseleave="Tooltips.Clear">

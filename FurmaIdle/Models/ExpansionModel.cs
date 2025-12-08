@@ -15,6 +15,8 @@ namespace FurmaIdle.Models
         public UnlockHelper.State State { get; set; }
         public DateTimeOffset? StartedAt { get; set; }
         public DateTimeOffset? FinishedAt { get; set; }
+
+        public int MaxKnowledge { get; set; }
         
         public List<string> inUseContracts { get; set; } = new List<string>();
         public StatsModel ExpansionStats { get; set; } = new();

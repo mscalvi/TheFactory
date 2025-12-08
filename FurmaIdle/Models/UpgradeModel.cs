@@ -15,6 +15,7 @@ namespace FurmaIdle.Models
         public string Description { get; set; }
         public string UnlockId { get; set; }
         public string StageId { get; set; } = "all";
+        public string TabId { get; set; } = "none";
         public int ActualBuy { get; set; } = 0;
         public int MaxBuy { get; set; }
         public PricingHelper.PricingId PricingId { get; set; }

@@ -8,7 +8,6 @@ namespace FurmaIdle.Services
     public interface IKnowledgeService
     {
         Task EndExpeditionKnowGain(StageModel stage, long coins);
-
         Dictionary<string, double> KnowledgeGain(StageModel stage, long coins);
         double GetKnowledgeBurst(GameModel game, string coinId, ExpansionModel expansion);
         Dictionary<string, double> GetKnowFactor(StageModel stage);
@@ -88,8 +87,17 @@ namespace FurmaIdle.Services
                 var modifier = _modifier.GetModifiers(ItemHelper.ItemType.Knowledge, kId, stage.Id, EffectHelper.EffectSupertype.Gain);
                 double final = (gained + modifier.AddMod) * modifier.MultMod;
 
-                if (final > 0) result[kId] = final;
+                if (final > 0)
+                {
+                    if(final > expansion.MaxKnowledge)
+                    {
+                        final = expansion.MaxKnowledge;
+                    }
+
+                    result[kId] = final;
+                }
             }
+
             return result;
         }
 

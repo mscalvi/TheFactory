@@ -1,5 +1,4 @@
-﻿@* Components/ShopMenuTech.razor *@
-@inherits UiHelper
+﻿@inherits UiHelper
 
 @using System.Linq
 @using FurmaIdle.Models
@@ -12,81 +11,138 @@
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
+@inject INotificationService Notifications
 
 <div class="menu-root">
-    @{
-        var game = Game.CurrentGame;
-        var stage = Locate.LocateStage(game, game.SelectedStageId);
-
-        var availableShips = game is null ? Enumerable.Empty<UpgradeModel>() :
-        game.Upgrades.Values
-        .Where(u => u?.Id != null
-        && u.Id.StartsWith("un", StringComparison.OrdinalIgnoreCase)
-        && u.State == UnlockHelper.State.Available);
-
-        var availableRoutes = game is null ? Enumerable.Empty<UpgradeModel>() :
-        game.Upgrades.Values
-        .Where(u => u?.Id != null
-        && u.Id.StartsWith("uo", StringComparison.OrdinalIgnoreCase)
-        && u.State == UnlockHelper.State.Available);
+    @if (!Game.IsReady || _stage is null)
+    {
+        <div class="contracts-placeholder">Stage não Selecionado</div>
     }
+    else
+    {
+        <section class="@($"menu-panel menu-section {UI.PanelClass("shop-tech-ships")}")">
+            <h3 class="title">Navios Disponíveis</h3>
+            <div class="icon-grid">
+                @foreach (var u in _shipUpgrades)
+                {
+                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                    <button class="icon-button"
+                            disabled="@(!can)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onclick="() => OnClickBuy(u.Id)">
+                        @if (!string.IsNullOrWhiteSpace(u.Icon))
+                        {
+                            <img src="@u.Icon"
+                                 alt="@u.Id"
+                                 class="icon-img" />
+                        }
+                        else
+                        {
+                            @u.Id
+                        }
+                    </button>
+                }
+            </div>
+        </section>
 
-    <section class="@($"menu-panel menu-section {UI.PanelClass("lab-knowledge")}")">
-        <h3 class="title">Estudos Disponíveis</h3>
-        <div class="icon-grid">
-            @foreach (var u in availableShips)
-            {
-                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, stage.Id);
-                <button class="icon-button"
-                        disabled="@(!can)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, stage.Id))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onclick="() => OnClickBuyTech(u.Id)">
-                    @if (!string.IsNullOrWhiteSpace(u.Icon))
-                    {
-                        <img src="@u.Icon"
-                             alt="@u.Id"
-                             class="icon-img" />
-                    }
-                    else
-                    {
-                        @u.Id
-                    }
-                </button>
-            }
-        </div>
-    </section>
-
-    <section class="@($"menu-panel menu-section {UI.PanelClass("lab-techs")}")">
-        <h3 class="title">Pesquisas Disponíveis</h3>
-        <div class="icon-grid">
-            @foreach (var u in availableRoutes)
-            {
-                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, stage.Id);
-                <button class="icon-button"
-                        disabled="@(!can)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, stage.Id))"
-                        @onmouseleave="Tooltips.Clear"
-                        @onclick="() => OnClickBuyTech(u.Id)">
-                    @if (!string.IsNullOrWhiteSpace(u.Icon))
-                    {
-                        <img src="@u.Icon"
-                             alt="@u.Id"
-                             class="icon-img" />
-                    }
-                    else
-                    {
-                        @u.Id
-                    }
-                </button>
-            }
-        </div>
-    </section>
-
+        <section class="@($"menu-panel menu-section {UI.PanelClass("shop-tech-routes")}")">
+            <h3 class="title">Rotas Disponíveis</h3>
+            <div class="icon-grid">
+                @foreach (var u in _routeUpgrades)
+                {
+                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                    <button class="icon-button"
+                            disabled="@(!can)"
+                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                            @onmouseleave="Tooltips.Clear"
+                            @onclick="() => OnClickBuy(u.Id)">
+                        @if (!string.IsNullOrWhiteSpace(u.Icon))
+                        {
+                            <img src="@u.Icon"
+                                 alt="@u.Id"
+                                 class="icon-img" />
+                        }
+                        else
+                        {
+                            @u.Id
+                        }
+                    </button>
+                }
+            </div>
+        </section>
+    }
 </div>
 
 @code {
+    private StageModel? _stage;
+
+    private List<UpgradeModel> _shipUpgrades = new();
+    private List<UpgradeModel> _routeUpgrades = new();
+
     private bool freeProcess = true;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshStage();
+        RebuildLists();
+    }
+
+    protected override void OnGameChanged()
+    {
+        RefreshStage();
+        RebuildLists();
+    }
+
+    private void RefreshStage()
+    {
+        if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
+        {
+            _stage = null;
+            _shipUpgrades.Clear();
+            _routeUpgrades.Clear();
+            return;
+        }
+
+        var g = Game.CurrentGame;
+        g.Stages.TryGetValue(g.SelectedStageId, out var st);
+        _stage = st;
+    }
+
+    private void RebuildLists()
+    {
+        _shipUpgrades.Clear();
+        _routeUpgrades.Clear();
+
+        if (!Game.IsReady || _stage is null)
+            return;
+
+        var game = Game.CurrentGame;
+        var stage = _stage;
+        var all = OrderedUpgrades(game);
+
+        _shipUpgrades = all
+            .Where(u =>
+                u?.Id != null &&
+                u.Id.StartsWith("un", StringComparison.OrdinalIgnoreCase) &&
+                u.State == UnlockHelper.State.Available &&
+                Notifications.IsUpgradeVisible(game, stage, u))
+            .ToList();
+
+        _routeUpgrades = all
+            .Where(u =>
+                u?.Id != null &&
+                u.Id.StartsWith("uo", StringComparison.OrdinalIgnoreCase) &&
+                u.State == UnlockHelper.State.Available &&
+                Notifications.IsUpgradeVisible(game, stage, u))
+            .ToList();
+
+        var totalVisible = _shipUpgrades.Count + _routeUpgrades.Count;
+
+        // Tab pai no UiService para esta área (ajuste se for outro):
+        Notifications.UpdateVisibleUpgrades("world-ships", totalVisible);
+    }
 
     private (long atual, long total) Total(string kId)
     {
@@ -105,23 +161,37 @@
         return (atual, total);
     }
 
-    private async Task OnClickBuyTech(string upgradeId)
+    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
+        => g.Upgrades.Values
+            .OrderBy(u => u.Id);
+
+    private async Task OnClickBuy(string upgradeId)
     {
-        if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId))
+        if (_stage is null)
+            return;
+
+        var stageId = _stage.Id;
+
+        if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgradeId, stageId))
         {
             Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
             return;
         }
 
-        if (freeProcess)
-        {
-            freeProcess = false;
-            await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, Game.CurrentGame.SelectedStageId);
-            freeProcess = true;
-        }
-        else
-        {
+        if (!freeProcess)
             return;
+
+        freeProcess = false;
+        try
+        {
+            await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, stageId);
+
+            var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, stageId);
+            Tooltips.Show(hover);
+        }
+        finally
+        {
+            freeProcess = true;
         }
     }
 }

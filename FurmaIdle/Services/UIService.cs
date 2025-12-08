@@ -48,7 +48,6 @@ namespace FurmaIdle.Services
         }
 
         #region Ui Control
-
         public string? OpenMenuId { get; private set; } = "i1";
         public string? OpenTabId { get; private set; } = "game-tips";
         public string? PreviousMenuId { get; private set; } = "i1";
@@ -259,6 +258,7 @@ namespace FurmaIdle.Services
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
             if (item is null) return false;
             if (item.Notification) return false;
+            if (OpenMenuId == menuId) return false;
 
             item.Notification = true;
             RaiseChanged();
@@ -366,6 +366,7 @@ namespace FurmaIdle.Services
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
             if (tab.Notification) return false;
+            if (OpenTabId == tabId) return false;
 
             tab.Notification = true;
 
@@ -457,8 +458,8 @@ namespace FurmaIdle.Services
             // GUILD (i1)
             new() { Id = "guild-hall",      ParentMenuId = "i1", Label = "Gerência", SortKey = 10 },
             new() { Id = "guild-contracts", ParentMenuId = "i1", Label = "Contratos", SortKey = 20 },
-            new() { Id = "guild-members",   ParentMenuId = "i1", Label = "Membros", SortKey = 30 },
-            new() { Id = "guild-lab",       ParentMenuId = "i1", Label = "Laboratório", SortKey = 40 },
+            new() { Id = "guild-lab",       ParentMenuId = "i1", Label = "Laboratório", SortKey = 30 },
+            new() { Id = "guild-members",   ParentMenuId = "i1", Label = "Membros", SortKey = 40 },
 
             // STAGE (i2)
             new() { Id = "stage-expedition", ParentMenuId = "i2", Label = "Expedição", SortKey = 10 },
@@ -664,6 +665,14 @@ namespace FurmaIdle.Services
 
                     // Animation: piscar os Recursos e as Specialties
                     break;
+                case "GuildTip":
+                    // Tips: Guild
+                    SetNotificationTab("game-tips");
+                    break;
+                case "BaseTip":
+                    // Tips: Base
+                    SetNotificationTab("game-tips");
+                    break;
                 case "FirstExpansionUnlock":
                     _lore.LoreTrigger(controlItem, helper);
 
@@ -688,6 +697,7 @@ namespace FurmaIdle.Services
                     SetNotificationTab("game-tips");
                     break;
                 #endregion
+
                 #region Gerais
                 case "LocalUnlock":
                     _lore.LoreTrigger(controlItem, helper);

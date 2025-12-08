@@ -7,12 +7,12 @@
 @using FurmaIdle.Services
 
 @inject IPurchaseService Purchase
-@inject IExpeditionService Expedition
 @inject ICostService Cost
 @inject IContractsService Contracts
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
+@inject INotificationService Notifications
 
 <div class="menu-root">
 @if (!Game.IsReady || _stage is null)
@@ -23,28 +23,10 @@
     {
         var game = Game.CurrentGame;
 
-        var all = OrderedUpgrades(game);
-
-        // ==== Permanentes (UP - Characters, UR - Resources, UA - Party Cap, UU - Contracts) ====
-        var permanents =
-        all.Where(u =>
-        u.State == UnlockHelper.State.Available &&
-        (Up(u.Id) || Ur(u.Id) || Ua(u.Id) || Uu(u.Id)) &&
-        IsUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-        .ToList();
-
-        // ==== Expansão (UE - Expansions, UD - Resources, UJ - Characters) ====
-        var expansionUps =
-        all.Where(u =>
-        u.State == UnlockHelper.State.Available &&
-        (Ue(u.Id) || Ud(u.Id) || Uj(u.Id)) &&
-        IsUpgradeVisible(game, u.Id) && (u.StageId == _stage.Id || u.StageId == "all"))
-        .ToList();
-
         <section class="@($"menu-panel menu-section {UI.PanelClass("hall-permanents")}")">
             <h3 class="title">Desenvolvimento Permanente</h3>
             <div class="icon-grid">
-                @foreach (var u in permanents)
+                @foreach (var u in _permanentUpgrades)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button" disabled="@(!can)"
@@ -69,7 +51,7 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("hall-expansion")}")">
                 <h3 class="title">Impulsos Temporários</h3>
             <div class="icon-grid">
-                @foreach (var u in expansionUps)
+                @foreach (var u in _expansionUpgrades)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button" disabled="@(!can)"
@@ -96,15 +78,20 @@
 @code {
     private StageModel? _stage;
 
+    private List<UpgradeModel> _permanentUpgrades = new();
+    private List<UpgradeModel> _expansionUpgrades = new();
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
         RefreshStage();
+        RebuildLists();
     }
 
     protected override void OnGameChanged()
     {
         RefreshStage();
+        RebuildLists();
     }
 
     private void RefreshStage()
@@ -112,6 +99,8 @@
         if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
+            _expansionUpgrades.Clear();
+            _permanentUpgrades.Clear();
             return;
         }
 
@@ -120,44 +109,42 @@
         _stage = st;
     }
 
+    private void RebuildLists()
+    {
+        _permanentUpgrades.Clear();
+        _expansionUpgrades.Clear();
+
+        if (!Game.IsReady || _stage is null)
+            return;
+
+        var game = Game.CurrentGame;
+
+        var all = OrderedUpgrades(game);
+
+        _permanentUpgrades = all.Where(u =>
+                u.State == UnlockHelper.State.Available &&
+                (u.TabId == "guild-hall-permanent") &&
+                Notifications.IsUpgradeVisible(game, _stage, u) &&
+                (u.StageId == _stage.Id || u.StageId == "all"))
+            .ToList();
+
+        _expansionUpgrades = all.Where(u =>
+                u.State == UnlockHelper.State.Available &&
+                (u.TabId == "guild-hall-expansion") &&
+                Notifications.IsUpgradeVisible(game, _stage, u) &&
+                (u.StageId == _stage.Id || u.StageId == "all"))
+            .ToList();
+
+        var totalVisible = _permanentUpgrades.Count + _expansionUpgrades.Count;
+        Notifications.UpdateVisibleUpgrades("guild-hall", totalVisible);
+    }
+
     private bool freeProcess = true;
 
     // ===== Helpers de ordenação/filtragem =====
     private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
         => g.Upgrades.Values
             .OrderBy(u => u.Id);
-
-    static bool StartsWith(string? id, string prefix)
-        => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
-
-    static bool Ua(string? id) => StartsWith(id, "ua");
-    static bool Ud(string? id) => StartsWith(id, "ud");
-    static bool Ue(string? id) => StartsWith(id, "ue");
-    static bool Uj(string? id) => StartsWith(id, "uj");
-    static bool Up(string? id) => StartsWith(id, "up");
-    static bool Ur(string? id) => StartsWith(id, "ur");
-    static bool Uu(string? id) => StartsWith(id, "uu");
-
-    private bool IsUpgradeVisible(GameModel game, string upgradeId)
-    {
-        var up = Locate.LocateUpgrade(game, upgradeId);
-
-        if (StartsWith(upgradeId, "uu"))
-        {
-            // “uu”: visível se o nível atual de contrato for >= nível do upgrade
-            var stageInfo = Contracts.GetStageInfo(game, _stage.Id);
-            var upgrade = Locate.LocateUpgrade(game, upgradeId);
-            if (upgrade.Level > stageInfo.ContractsLevel)
-            {
-                return false;
-            } else
-            {
-                return true;
-            }
-        }
-
-        return true;
-    }
 
     // ===== Ações =====
     private async Task OnClickBuy(string upgradeId)
