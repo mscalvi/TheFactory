@@ -1,5 +1,4 @@
-﻿@* Components/ShopMenuStage.razor *@
-@inherits UiHelper
+﻿@inherits UiHelper
 
 @using System.Linq
 @using FurmaIdle.Models
@@ -13,7 +12,6 @@
 @inject ITooltipService Tooltips
 @inject IUiLogService Log
 @inject IExpeditionService Expedition
-@inject IUiService Ui
 
 <div class="menu-root">
 @if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
@@ -172,7 +170,7 @@ else
     // ===== Ações =====
     private async Task SelectStage(string stageId)
     {
-        await Ui.LoadStage(stageId);
+        await UI.LoadStage(stageId);
     }
 
     private async Task OnClickBuyLocalUpgrade(string upgradeId)

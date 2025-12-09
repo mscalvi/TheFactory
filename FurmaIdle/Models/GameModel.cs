@@ -45,14 +45,14 @@ namespace FurmaIdle.Models
         public HashSet<string> HiddenPanels { get; set; } = new(StringComparer.Ordinal);
         public string? OpenMenuId { get; set; }
         public string? OpenTabId { get; set; }
-        public Dictionary<string, int> VisibleUpgradesByTab { get; set; }
-            = new(StringComparer.OrdinalIgnoreCase);
-        public Dictionary<string, long> MinPriceByTab { get; set; }
-            = new(StringComparer.OrdinalIgnoreCase);
-        public Dictionary<string, string> MinPriceUpgradeByTab { get; set; }
-            = new(StringComparer.OrdinalIgnoreCase);
 
         public List<UiLogMessage> LogBuffer { get; set; } = new();
         public const int LogMax = 200;
+
+        // Notification
+        public Dictionary<string, List<UpgradeModel>> VisibleUpgradesByTab { get; set; }
+            = new(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, long> MinPriceByTab { get; set; }
+            = new(StringComparer.OrdinalIgnoreCase);
     }
 }

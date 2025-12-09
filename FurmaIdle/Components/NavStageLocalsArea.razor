@@ -23,7 +23,7 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("locals-locals")}")">
             <h3 class="title">Locais para Explorar na Região</h3>
             <div class="icon-grid">
-                @foreach (var u in _availableLocals)
+                @foreach (var u in _stageLocals)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button"
@@ -49,7 +49,7 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("locals-locals")}")">
             <h3 class="title">Locais Distantes</h3>
             <div class="icon-grid">
-                @foreach (var u in _unavailableLocals)
+                @foreach (var u in _stageLockedLocals)
                 {
                     var can = true;
                     <button class="icon-button"
@@ -77,8 +77,8 @@
 @code {
     private StageModel? _stage;
 
-    private List<UpgradeModel> _availableLocals = new();
-    private List<UpgradeModel> _unavailableLocals = new();
+    private List<UpgradeModel> _stageLocals = new();
+    private List<UpgradeModel> _stageLockedLocals = new();
 
     private bool freeProcess = true;
 
@@ -92,7 +92,12 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
-        RebuildLists();
+
+        if (Purchase.PurchaseChangeLocals)
+        {
+            RebuildLists();
+            Purchase.PurchaseChangeLocals = false;
+        }
     }
 
     private void RefreshStage()
@@ -100,8 +105,6 @@
         if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
-            _availableLocals.Clear();
-            _unavailableLocals.Clear();
             return;
         }
 
@@ -112,60 +115,14 @@
 
     private void RebuildLists()
     {
-        _availableLocals.Clear();
-        _unavailableLocals.Clear();
-
         if (!Game.IsReady || _stage is null)
             return;
 
-        var game = Game.CurrentGame;
-        var stage = _stage;
-        var all = OrderedUpgrades(game);
+        Notifications.UpdateVisibleUpgrades("stage-locals");
 
-        _availableLocals = all
-            .Where(u =>
-                u?.Id != null &&
-                u.TabId == "stage-locals" &&
-                u.State == UnlockHelper.State.Available &&
-                Notifications.IsUpgradeVisible(game, stage, u) &&
-                (u.StageId == stage.Id || u.StageId == "all"))
-            .ToList();
-
-        // Locais bloqueados da região atual (state = Blocked, stage atual)
-        _unavailableLocals = all
-            .Where(u =>
-                u?.Id != null &&
-                u.TabId == "stage-locals" &&
-                u.State == UnlockHelper.State.Blocked &&
-                u.StageId == stage.Id &&
-                Notifications.IsUpgradeVisible(game, stage, u))
-            .ToList();
-
-        var totalVisible = _availableLocals.Count;
-
-        Notifications.UpdateVisibleUpgrades("stage-locals", totalVisible);
+        Notifications.TabsUpgrades.TryGetValue("stageLocals", out _stageLocals);
+        Notifications.TabsUpgrades.TryGetValue("stageLockedLocals", out _stageLockedLocals);
     }
-
-    private (long atual, long total) Total(string kId)
-    {
-        long total = 0;
-        long atual = 0;
-
-        var game = Game.CurrentGame;
-        var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
-
-        expansion.ExpansionStats.Knowledge.TryGetValue(kId, out var value);
-        atual = value;
-
-        expansion.ExpansionStats.KnowledgeGain.TryGetValue(kId, out var tot);
-        total = tot;
-
-        return (atual, total);
-    }
-
-    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
-        => g.Upgrades.Values
-            .OrderBy(u => u.Id);
 
     private async Task OnClickBuy(string upgradeId)
     {

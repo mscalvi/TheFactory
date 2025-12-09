@@ -1,6 +1,7 @@
 ﻿@inherits UiHelper
 
 @using FurmaIdle.Models
+@using FurmaIdle.Services
 
 <div class="game-area shop-shell">
     @if (!Game.IsReady || _stage is null || string.IsNullOrWhiteSpace(_stage.Id))
@@ -16,7 +17,7 @@
                     var isSelected = IsTabSelected(tab.Id);
                     var hasNotif = tab.Notification;
 
-                    <button class="@SubTabClass(isSelected, hasNotif)"
+                    <button class="@SubTabClass(tab, isSelected)"
                             @onclick="@(() => SelectTab(tab.Id))">
                         @tab.Label
                     </button>
@@ -178,8 +179,26 @@
         StateHasChanged();
     }
 
-    private string SubTabClass(bool isSelected, bool hasNotif)
-        => "subnav-button"
-           + (isSelected ? " is-selected" : "")
-           + (hasNotif ? " has-notif" : "");
+    private string SubTabClass(UiService.TabItem tab, bool isSelected)
+    {
+        var cls = "subnav-button";
+
+        if (isSelected)
+            cls += " is-selected";
+
+        if (tab.Notification)
+        {
+            cls += " has-notif";
+            cls += tab.NotificationKind switch
+            {
+                NotificationKind.Info => " notif-info",
+                NotificationKind.NewItem => " notif-newitem",
+                NotificationKind.Affordable => " notif-affordable",
+                _ => " "
+            };
+        }
+
+        return cls;
+    }
+
 }

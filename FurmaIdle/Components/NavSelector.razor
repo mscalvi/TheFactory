@@ -1,7 +1,5 @@
 ﻿@inherits UiHelper
 
-@inject IUiService Ui
-
 @using System.Linq
 @using FurmaIdle.Helpers
 @using FurmaIdle.Models
@@ -9,12 +7,24 @@
 
 <div class="game-area nav-menu">
     <div class="nav-col">
-        @foreach (var it in Ui.VisibleMenu)
+        @foreach (var it in UI.VisibleMenu)
         {
-            var isSelected = string.Equals(Ui.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
+            var isSelected = string.Equals(UI.OpenMenuId, it.Id, StringComparison.OrdinalIgnoreCase);
             var hasNotif = it.Notification;
+            var notifClass = "";
 
-            <button class="@($"nav-button{(isSelected ? " is-selected" : "")}{(hasNotif ? " has-notif" : "")}")"
+            if (hasNotif)
+            {
+                notifClass = it.NotificationKind switch
+                {
+                    NotificationKind.Info => " has-notif notif-info",
+                    NotificationKind.NewItem => " has-notif notif-newitem",   
+                    NotificationKind.Affordable => " has-notif notif-affordable",
+                    _ => " has-notif"
+                };
+            }
+
+            <button class="@($"nav-button{(isSelected ? " is-selected" : "")}{notifClass}")"
                     title="@it.Label"
                     aria-label="@it.Label"
                     aria-pressed="@isSelected"
@@ -33,8 +43,8 @@
     {
         base.OnInitialized();
 
-        Ui.Changed += OnUiChanged;
-        Ui.Pulse += OnUiPulse;
+        UI.Changed += OnUiChanged;
+        UI.Pulse += OnUiPulse;
     }
 
     private void OnUiChanged()

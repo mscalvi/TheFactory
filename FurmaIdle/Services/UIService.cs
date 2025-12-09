@@ -5,6 +5,14 @@ using static FurmaIdle.Services.UiService;
 
 namespace FurmaIdle.Services
 {
+    public enum NotificationKind
+    {
+        None = 0,
+        Info = 1,        // Laranja
+        NewItem = 2,     // Azul
+        Affordable = 3   // Roxo
+    }
+
     public interface IUiService
     {
         string? OpenMenuId { get; }
@@ -18,11 +26,11 @@ namespace FurmaIdle.Services
         Task LoadStage(string stageId);
         void SetOpenMenu(string? id);
         void SetOpenTab(string? id);
-        void NavMenuControl(string controlItem,string? helper = "");
+        void NavMenuControl(string controlItem, string? helper = "");
         void SyncMenusFromGame(GameModel g);
         void RaisePulse();
 
-        bool SetNotificationTab(string tabId);
+        bool SetNotificationTab(string tabId, NotificationKind kind = NotificationKind.Info);
         bool ClearNotificationTab(string tabId);
 
         void SetBusy(string? message);
@@ -57,6 +65,7 @@ namespace FurmaIdle.Services
             public required string Label { get; init; } = "";
             public bool Unlocked { get; set; } = false;
             public bool Notification { get; set; } = false;
+            public NotificationKind NotificationKind { get; set; } = NotificationKind.None;
             public int SortKey =>
                 int.TryParse(Id.AsSpan(1), out var n) ? n : int.MaxValue;
         }
@@ -67,7 +76,7 @@ namespace FurmaIdle.Services
             public required string Label { get; init; } = "";
             public bool Unlocked { get; set; } = false;
             public bool Notification { get; set; } = false;
-
+            public NotificationKind NotificationKind { get; set; } = NotificationKind.None;
             public int SortKey { get; init; } = 0;
         }
 
@@ -182,18 +191,44 @@ namespace FurmaIdle.Services
             // aplica flags de notificação salvas
             foreach (var tab in _tabs)
             {
-                tab.Notification = g.Ui.TabsWithNotification.Contains(tab.Id);
+                if (g.Ui.TabsWithNotification.Contains(tab.Id))
+                {
+                    tab.Notification = true;
+                    // ao carregar do save antigo, assume Info por padrão
+                    tab.NotificationKind = NotificationKind.Info;
+                }
+                else
+                {
+                    tab.Notification = false;
+                    tab.NotificationKind = NotificationKind.None;
+                }
             }
+
+
 
             // garante que menus reflitam notificações das tabs
             foreach (var menu in _nav)
             {
-                var anyTabNotified = _tabs.Any(t => t.ParentMenuId == menu.Id && t.Notification);
-                if (anyTabNotified)
+                var notifiedTabs = _tabs
+                    .Where(t => t.ParentMenuId == menu.Id && t.Notification)
+                    .ToList();
+
+                if (!notifiedTabs.Any())
+                {
+                    menu.Notification = false;
+                    menu.NotificationKind = NotificationKind.None;
+                }
+                else
                 {
                     menu.Notification = true;
+                    // pega o tipo "mais forte" entre as tabs
+                    menu.NotificationKind = notifiedTabs
+                        .Select(t => t.NotificationKind)
+                        .DefaultIfEmpty(NotificationKind.Info)
+                        .Max();
                 }
             }
+
 
             RaiseChanged();
         }
@@ -253,14 +288,14 @@ namespace FurmaIdle.Services
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, id, StringComparison.OrdinalIgnoreCase));
             return item is not null && item.Unlocked;
         }
-        private bool SetNotificationMenu(string menuId)
+        private bool SetNotificationMenu(string menuId, NotificationKind kind)
         {
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
             if (item is null) return false;
-            if (item.Notification) return false;
             if (OpenMenuId == menuId) return false;
 
             item.Notification = true;
+            item.NotificationKind = kind;
             RaiseChanged();
             return true;
         }
@@ -275,9 +310,12 @@ namespace FurmaIdle.Services
             if (!item.Notification) return false;
 
             item.Notification = false;
+            item.NotificationKind = NotificationKind.None;
+
             RaiseChanged();
             return true;
         }
+
 
         public IEnumerable<TabItem> VisibleTabs(string? menuId)
         {
@@ -361,16 +399,19 @@ namespace FurmaIdle.Services
 
             RaiseChanged();
         }
-        public bool SetNotificationTab(string tabId)
+        public bool SetNotificationTab(string tabId, NotificationKind kind = NotificationKind.Info)
         {
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
-            if (tab.Notification) return false;
             if (OpenTabId == tabId) return false;
 
-            tab.Notification = true;
+            if (tab.Notification && tab.NotificationKind == kind)
+                return false;
 
-            SetNotificationMenu(tab.ParentMenuId);
+            tab.Notification = true;
+            tab.NotificationKind = kind;
+
+            SetNotificationMenu(tab.ParentMenuId, kind);
 
             _ = _game.Mutate(g =>
             {
@@ -389,6 +430,7 @@ namespace FurmaIdle.Services
             if (!tab.Notification) return false;
 
             tab.Notification = false;
+            tab.NotificationKind = NotificationKind.None;
 
             _ = _game.Mutate(g =>
             {
@@ -406,9 +448,23 @@ namespace FurmaIdle.Services
             var menu = _nav.FirstOrDefault(n => n.Id == parentMenuId);
             if (menu is null) return;
 
-            // Se qualquer tab desse menu tiver Notification, o menu fica com Notification.
-            var anyTabNotified = _tabs.Any(t => t.ParentMenuId == parentMenuId && t.Notification);
-            menu.Notification = anyTabNotified;
+            var notifiedTabs = _tabs
+                .Where(t => t.ParentMenuId == parentMenuId && t.Notification)
+                .ToList();
+
+            if (!notifiedTabs.Any())
+            {
+                menu.Notification = false;
+                menu.NotificationKind = NotificationKind.None;
+            }
+            else
+            {
+                menu.Notification = true;
+                menu.NotificationKind = notifiedTabs
+                    .Select(t => t.NotificationKind)
+                    .DefaultIfEmpty(NotificationKind.Info)
+                    .Max();
+            }
         }
 
         public void UnlockPanel(string id)
@@ -525,7 +581,9 @@ namespace FurmaIdle.Services
                     UnlockMenu("i1");
                     UnlockTab("guild-contracts");
                     UnlockPanel("guild-contracts-fast");
-                    SetNotificationTab("guild-contracts");
+
+                    SetOpenMenu("i1");
+                    SetOpenTab("guild-contracts");
 
                     _lore.LoreTrigger(controlItem);
 

@@ -23,7 +23,7 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("lab-knowledge")}")">
             <h3 class="title">Estudos Disponíveis</h3>
             <div class="icon-grid">
-                @foreach (var u in _knowledgeUpgrades)
+                @foreach (var u in _labKnowledge)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button"
@@ -49,7 +49,7 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("lab-techs")}")">
             <h3 class="title">Pesquisas Disponíveis</h3>
             <div class="icon-grid">
-                @foreach (var u in _techUpgrades)
+                @foreach (var u in _labTech)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button"
@@ -75,7 +75,7 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("lab-upgrades")}")">
             <h3 class="title">Melhorias Disponíveis</h3>
             <div class="icon-grid">
-                @foreach (var u in _upgradeUpgrades)
+                @foreach (var u in _labUpgrades)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button"
@@ -103,9 +103,9 @@
 @code {
     private StageModel? _stage;
 
-    private List<UpgradeModel> _knowledgeUpgrades = new();
-    private List<UpgradeModel> _techUpgrades = new();
-    private List<UpgradeModel> _upgradeUpgrades = new();
+    private List<UpgradeModel> _labKnowledge = new();
+    private List<UpgradeModel> _labTech = new();
+    private List<UpgradeModel> _labUpgrades = new();
 
     private bool freeProcess = true;
 
@@ -119,7 +119,12 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
-        RebuildLists();
+
+        if (Purchase.PurchaseChangeContracts)
+        {
+            RebuildLists();
+            Purchase.PurchaseChangeLab = false;
+        }
     }
 
     private void RefreshStage()
@@ -127,9 +132,6 @@
         if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
-            _knowledgeUpgrades.Clear();
-            _techUpgrades.Clear();
-            _upgradeUpgrades.Clear();
             return;
         }
 
@@ -140,69 +142,15 @@
 
     private void RebuildLists()
     {
-        _knowledgeUpgrades.Clear();
-        _techUpgrades.Clear();
-        _upgradeUpgrades.Clear();
-
         if (!Game.IsReady || _stage is null)
             return;
 
-        var game = Game.CurrentGame;
-        var stage = _stage;
-        var all = OrderedUpgrades(game);
+        Notifications.UpdateVisibleUpgrades("guild-lab");
 
-        _knowledgeUpgrades = all
-            .Where(u =>
-                u.State == UnlockHelper.State.Available &&
-                u.TabId == "guild-lab-knowledge" &&
-                Notifications.IsUpgradeVisible(game, stage, u) &&
-                (u.StageId == stage.Id || u.StageId == "all"))
-            .ToList();
-
-        _techUpgrades = all
-            .Where(u =>
-                u.State == UnlockHelper.State.Available &&
-                u.TabId == "guild-lab-techs" &&
-                Notifications.IsUpgradeVisible(game, stage, u) &&
-                (u.StageId == stage.Id || u.StageId == "all"))
-            .ToList();
-
-        _upgradeUpgrades = all
-            .Where(u =>
-                u.State == UnlockHelper.State.Available &&
-                u.TabId == "guild-lab-upgrades" &&
-                Notifications.IsUpgradeVisible(game, stage, u) &&
-                (u.StageId == stage.Id || u.StageId == "all"))
-            .ToList();
-
-        var totalVisible =
-            _knowledgeUpgrades.Count +
-            _techUpgrades.Count +
-            _upgradeUpgrades.Count;
-
-        Notifications.UpdateVisibleUpgrades("guild-lab", totalVisible);
+        Notifications.TabsUpgrades.TryGetValue("labKnowledge", out _labKnowledge);
+        Notifications.TabsUpgrades.TryGetValue("labTech", out _labTech);
+        Notifications.TabsUpgrades.TryGetValue("labUpgrades", out _labUpgrades);
     }
-
-    private (long atual, long total) Total(string kId)
-    {
-        long total = 0;
-        long atual = 0;
-
-        var game = Game.CurrentGame;
-        var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
-
-        expansion.ExpansionStats.Knowledge.TryGetValue(kId, out var value);
-        atual = value;
-
-        expansion.ExpansionStats.KnowledgeGain.TryGetValue(kId, out var tot);
-        total = tot;
-
-        return (atual, total);
-    }
-
-    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
-        => g.Upgrades.Values
-            .OrderBy(u => u.Id);
 
     private async Task OnClickBuy(string upgradeId)
     {

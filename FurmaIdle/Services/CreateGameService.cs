@@ -21,15 +21,18 @@ namespace FurmaIdle.Services
         private readonly IUnlockService _unlock;
         private readonly IExpeditionService _expedition;
         private readonly IGameMigrationService _migration;
+        private readonly INotificationService _notification;
 
-        public CreateGameService(IGameStore store, ICurrentGameService current, IUnlockService unlock, IExpeditionService expedition, IGameMigrationService migration)
+        public CreateGameService(IGameStore store, ICurrentGameService current, IUnlockService unlock, IExpeditionService expedition, IGameMigrationService migration, INotificationService notification)
         {
             _store = store;
             _game = current;
             _unlock = unlock;
             _expedition = expedition;
             _migration = migration;
+            _notification = notification;
         }
+
         public GameModel NewGame { get; private set; } = new();
 
         private bool _loadedFromOlderSchema;
@@ -81,16 +84,20 @@ namespace FurmaIdle.Services
                 };
 
                 _game.Attach(model);
-                Console.WriteLine("[CGS] Jogo criado");
+                Console.WriteLine("[CGS] Jogo criado.");
+
 
                 await _unlock.UnlockInitialState();
-                Console.WriteLine("[CGS] Estágio Inicial Desbloqueado");
+                Console.WriteLine("[CGS] Estágio Inicial Desbloqueado.");
 
                 await _expedition.FirstExpeditionStart();
-                Console.WriteLine("[CGS] Primeira Expedição Iniciada");
+                Console.WriteLine("[CGS] Primeira Expedição Iniciada.");
+
+                _notification.InitialTabs(model);
+                Console.WriteLine("[CGS] Menus carregados.");
 
                 await _store.SaveAsync(model, "main");
-                Console.WriteLine("[CGS] Jogo salvo");
+                Console.WriteLine("[CGS] Jogo salvo.");
 
                 _loadedFromOlderSchema = false;
                 _loadedFromOlderVersion = false;

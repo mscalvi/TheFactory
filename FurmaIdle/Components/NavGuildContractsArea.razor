@@ -12,7 +12,6 @@
 @inject IContractsService Contracts
 @inject ILocateService Locate
 @inject ITooltipService Tooltips
-@inject IUiLogService Log
 @inject INotificationService Notifications
 
 <div class="menu-root">
@@ -32,7 +31,7 @@
                 <h3 class="title">Melhorias da Expedição</h3>
             }
             <div class="icon-grid">
-                @foreach (var u in _expeditionUps)
+                @foreach (var u in _contractsExpedition)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button" disabled="@(!can)"
@@ -64,7 +63,7 @@
                 <h3 class="title">Melhorias da Expansão</h3>
             }
             <div class="icon-grid">
-                @foreach (var u in _expansionUps)
+                @foreach (var u in _contractsExpansion)
                 {
                     var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                     <button class="icon-button" disabled="@(!can)"
@@ -90,7 +89,7 @@
             <section class="@($"menu-panel menu-section {UI.PanelClass("guild-contracts-tutorial")}")">
                 <h3 class="title">Encerrar Tutorial</h3>
                 <div class="icon-grid">
-                    @foreach (var u in _tutorialUps)
+                    @foreach (var u in _contractsTutorial)
                     {
                         var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
                         <button class="icon-button" disabled="@(!can)"
@@ -118,9 +117,9 @@
 @code {
     private StageModel? _stage;
 
-    private List<UpgradeModel> _expeditionUps = new();
-    private List<UpgradeModel> _expansionUps = new();
-    private List<UpgradeModel> _tutorialUps = new();
+    private List<UpgradeModel> _contractsExpedition = new();
+    private List<UpgradeModel> _contractsExpansion = new();
+    private List<UpgradeModel> _contractsTutorial = new();
 
     private bool freeProcess = true;
 
@@ -134,7 +133,12 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
-        RebuildLists();
+
+        if (Purchase.PurchaseChangeContracts)
+        {
+            RebuildLists();
+            Purchase.PurchaseChangeContracts = false;
+        }
     }
 
     private void RefreshStage()
@@ -142,9 +146,6 @@
         if (!Game.IsReady || string.IsNullOrWhiteSpace(Game?.CurrentGame.SelectedStageId))
         {
             _stage = null;
-            _expeditionUps.Clear();
-            _expansionUps.Clear();
-            _tutorialUps.Clear();
             return;
         }
 
@@ -155,57 +156,15 @@
 
     private void RebuildLists()
     {
-        _expeditionUps.Clear();
-        _expansionUps.Clear();
-        _tutorialUps.Clear();
-
         if (!Game.IsReady || _stage is null)
             return;
 
-        var game = Game.CurrentGame;
-        var stage = _stage;
-        var all = OrderedUpgrades(game);
+        Notifications.UpdateVisibleUpgrades("guild-contracts");
 
-        _expeditionUps = all
-            .Where(u =>
-                u.State == UnlockHelper.State.Available &&
-                u.TabId == "guild-contracts-fast" &&
-                Notifications.IsUpgradeVisible(game, stage, u) &&
-                (u.StageId == stage.Id || u.StageId == "all"))
-            .ToList();
-
-        _expansionUps = all
-            .Where(u =>
-                u.State == UnlockHelper.State.Available &&
-                u.TabId == "guild-contracts-long" &&
-                Notifications.IsUpgradeVisible(game, stage, u) &&
-                (u.StageId == stage.Id || u.StageId == "all"))
-            .ToList();
-
-        _tutorialUps = all
-            .Where(u =>
-                u.State == UnlockHelper.State.Available &&
-                u.TabId == "tutorial-end" &&
-                Notifications.IsUpgradeVisible(game, stage, u) &&
-                (u.StageId == stage.Id || u.StageId == "all"))
-            .ToList();
-
-        var totalVisible =
-            _expeditionUps.Count +
-            _expansionUps.Count +
-            _tutorialUps.Count;
-
-        // Tab pai no UiService: "guild-contracts"
-        Notifications.UpdateVisibleUpgrades("guild-contracts", totalVisible);
+        Notifications.TabsUpgrades.TryGetValue("contractsExpedition", out _contractsExpedition);
+        Notifications.TabsUpgrades.TryGetValue("contractsExpansion", out _contractsExpansion);
+        Notifications.TabsUpgrades.TryGetValue("contractsTutorial", out _contractsTutorial);
     }
-
-    // ===== Helpers de ordenação/filtragem =====
-    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
-        => g.Upgrades.Values
-            .OrderBy(u => u.Id);
-
-    private static bool StartsWith(string? id, string prefix)
-        => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
 
     private async Task OnClickBuy(string upgradeId)
     {
@@ -219,11 +178,10 @@
 
         if (!Cost.CanAfford(ItemHelper.ItemType.Upgrade, upgrade.Id, stageId))
         {
-            Log.Error($"Sem recursos para comprar upgrade {upgradeId}.");
             return;
         }
 
-        if (StartsWith(upgrade.Id, "uc"))
+        if (upgrade.Id.StartsWith("uc"))
         {
             if (upgrade is null || string.IsNullOrWhiteSpace(upgrade.TargetId))
                 return;
@@ -235,7 +193,7 @@
             if (!(_stage.ActiveContracts?.TryGetValue(upgrade.TargetId, out var qty) ?? false) || qty <= 0)
                 return;
 
-            var needed = Notifications.GetContractNeeded(upgrade.EffectType, nextBuy);
+            var needed = Notifications.ContractUpgradeAvailable(upgrade.EffectType, nextBuy);
             if (needed > 0 && qty < needed)
                 return;
         }
