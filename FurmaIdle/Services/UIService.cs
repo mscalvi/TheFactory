@@ -292,13 +292,19 @@ namespace FurmaIdle.Services
         {
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
             if (item is null) return false;
-            if (OpenMenuId == menuId) return false;
+
+            if (item.Notification)
+            {
+                if ((int)kind <= (int)item.NotificationKind)
+                    return false;
+            }
 
             item.Notification = true;
             item.NotificationKind = kind;
             RaiseChanged();
             return true;
         }
+
         public bool ClearNotificationMenu(string menuId)
         {
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
@@ -401,12 +407,20 @@ namespace FurmaIdle.Services
         }
         public bool SetNotificationTab(string tabId, NotificationKind kind = NotificationKind.Info)
         {
+            Console.WriteLine($"[UI] Chamada Notificação para {tabId} -> {kind}");
+
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
+
             if (OpenTabId == tabId) return false;
 
-            if (tab.Notification && tab.NotificationKind == kind)
-                return false;
+            if (tab.Notification)
+            {
+                if ((int)kind <= (int)tab.NotificationKind)
+                {
+                    return false;
+                }
+            }
 
             tab.Notification = true;
             tab.NotificationKind = kind;
@@ -423,6 +437,7 @@ namespace FurmaIdle.Services
             RaiseChanged();
             return true;
         }
+
         public bool ClearNotificationTab(string tabId)
         {
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
@@ -626,7 +641,6 @@ namespace FurmaIdle.Services
                 case "ContractLevel1Unlock":
                     // Menus: Guild > Hall
                     UnlockTab("guild-hall");
-                    SetNotificationTab("guild-hall");
 
                     _lore.LoreTrigger(controlItem);
 
@@ -647,8 +661,6 @@ namespace FurmaIdle.Services
                 #region Stage 1
                 case "Stage1Start":
                     SetOpenTab("game-tips");
-                    SetNotificationTab("guild-hall");
-                    SetNotificationTab("guild-contracts");
 
                     // Menu: Game > Archievments TODO
 
@@ -661,7 +673,6 @@ namespace FurmaIdle.Services
                 case "FirstCharacterUnlock":
                     // Menu: Guild > Members
                     UnlockTab("guild-members");
-                    SetNotificationTab("guild-members");
 
                     _lore.LoreTrigger(controlItem, helper);
 
@@ -675,7 +686,6 @@ namespace FurmaIdle.Services
                     // Menu: Stage > Expedition
                     UnlockMenu("i2");
                     UnlockTab("stage-expedition");
-                    SetNotificationTab("stage-expedition");
 
                     _lore.LoreTrigger(controlItem, helper);
 
@@ -687,7 +697,6 @@ namespace FurmaIdle.Services
                 case "FirstExpeditionComplete":
                     // Menu: Guild > Lab
                     UnlockTab("guild-lab");
-                    SetNotificationTab("guild-lab");
 
                     _lore.LoreTrigger(controlItem, helper);
 
@@ -697,7 +706,7 @@ namespace FurmaIdle.Services
                 case "FirstKnowledgeUnlock":
                     // Menu: Stage > Locals
                     UnlockTab("stage-locals");
-                    SetNotificationTab("stage-locals");
+
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Techs
@@ -707,7 +716,6 @@ namespace FurmaIdle.Services
                     // Menu: World > Expansion
                     UnlockMenu("i3");
                     UnlockTab("world-expansion");
-                    SetNotificationTab("world-expansion");
 
                     _lore.LoreTrigger(controlItem, helper);
 
@@ -740,14 +748,12 @@ namespace FurmaIdle.Services
                 case "FirstShipUnlock":
                     // Menu: World > Dock
                     UnlockTab("stage-dock");
-                    SetNotificationTab("stage-dock");
 
                     _lore.LoreTrigger(controlItem, helper);
                     break;
                 case "FirstStageUnlock":
                     // Menu: World > Map
                     UnlockTab("world-map");
-                    SetNotificationTab("world-map");
 
                     _lore.LoreTrigger(controlItem, helper);
 

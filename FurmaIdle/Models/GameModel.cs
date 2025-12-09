@@ -51,8 +51,8 @@ namespace FurmaIdle.Models
 
         // Notification
         public Dictionary<string, List<UpgradeModel>> VisibleUpgradesByTab { get; set; }
-            = new(StringComparer.OrdinalIgnoreCase);
-        public Dictionary<string, long> MinPriceByTab { get; set; }
-            = new(StringComparer.OrdinalIgnoreCase);
+            = new(StringComparer.OrdinalIgnoreCase); // TabId, VisibleUpgrades
+        public Dictionary<string, Dictionary<string, long>> MinPriceByTab { get; set; }
+            = new(StringComparer.OrdinalIgnoreCase); // TabId, CoinId, Ammount
     }
 }
