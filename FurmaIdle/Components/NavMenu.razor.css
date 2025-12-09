@@ -53,15 +53,26 @@
         box-shadow: 0 0 0 2px rgba(106,160,255,.25);
     }
 
-    /* opcional: se quiser também “bolinha” de notif em subtab no futuro */
     .subnav-button.has-notif::after {
         content: "";
         position: absolute;
         top: 4px;
         right: 4px;
-        width: 8px;
-        height: 8px;
+        width: 10px;
+        height: 10px;
         border-radius: 999px;
-        background: #C87A3D;
         box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+        animation: notif-pulse .6s ease-out 1;
+    }
+
+    .subnav-button.has-notif.notif-info::after {
+        background: #C87A3D;
+    }
+
+    .subnav-button.has-notif.notif-newitem::after {
+        background: #4DA3FF;
+    }
+
+    .subnav-button.has-notif.notif-affordable::after {
+        background: #B57BFF;
     }

@@ -407,20 +407,13 @@ namespace FurmaIdle.Services
         }
         public bool SetNotificationTab(string tabId, NotificationKind kind = NotificationKind.Info)
         {
-            Console.WriteLine($"[UI] Chamada Notificação para {tabId} -> {kind}");
+            Console.WriteLine($"[UI] Chamada Notificação para {tabId} -> {kind} (OpenTabId={OpenTabId})");
 
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
 
-            if (OpenTabId == tabId) return false;
-
-            if (tab.Notification)
-            {
-                if ((int)kind <= (int)tab.NotificationKind)
-                {
-                    return false;
-                }
-            }
+            if (tab.Notification && (int)kind <= (int)tab.NotificationKind)
+                return false;
 
             tab.Notification = true;
             tab.NotificationKind = kind;

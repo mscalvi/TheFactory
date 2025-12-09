@@ -30,12 +30,14 @@ namespace FurmaIdle.Services
         private readonly ICurrentGameService _game;
         private readonly IUiService _ui;
         private readonly IOfflineService _offline;
+        private readonly INotificationService _notifications;
 
-        public TickService(ICurrentGameService game, IUiService ui, IOfflineService offline)
+        public TickService(ICurrentGameService game, IUiService ui, IOfflineService offline, INotificationService notifications)
         {
             _game = game;
             _ui = ui;
             _offline = offline;
+            _notifications = notifications;
         }
 
         public bool IsRunning { get; private set; }
@@ -60,11 +62,6 @@ namespace FurmaIdle.Services
         private const double SaveEvery = 60.0;          // salva a cada ~1min
         private const double MaxCatchupSeconds = 60.0;  // 1 min
 
-        public TickService(ICurrentGameService game)
-        {
-            _game = game;
-        }
-
         public void Subscribe(ITickSink sink) => _sinks.Add(sink);
         public void Unsubscribe(ITickSink sink) => _sinks.Remove(sink);
 
@@ -87,25 +84,7 @@ namespace FurmaIdle.Services
             await CatchUpOfflineAsync();
 
             try
-            {
-                //while (await _timer!.WaitForNextTickAsync(ct))
-                //{
-                //    var dt = ComputeDtSeconds();
-                //    if (dt <= 0) continue;
-                //    if (dt > MaxDt) dt = MaxDt;
-
-                //    _saveAcc += dt;
-                //    _uiAcc += dt;
-
-                //    var doSave = _saveAcc >= SaveEvery;
-                //    if (doSave) _saveAcc = 0;
-
-                //    var doUi = _uiAcc >= UiEvery;
-                //    if (doUi) _uiAcc = 0;
-
-                //    await ProcessTickAsync(dt, doSave, doUi);
-                //}
-
+            {                
                 while (await _timer!.WaitForNextTickAsync(ct))
                 {
                     var rawDt = ComputeDtSeconds();
@@ -232,6 +211,7 @@ namespace FurmaIdle.Services
 
             if (ui || save)
             {
+                _notifications.RefreshAffordableNotifications();
                 _ui.RaisePulse();
             }
         }

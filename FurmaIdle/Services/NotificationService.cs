@@ -8,6 +8,7 @@ namespace FurmaIdle.Services
         Dictionary<string, List<UpgradeModel>> TabsUpgrades { get; }
         void InitialTabs (GameModel game);
         bool UpdateVisibleUpgrades(string tabId);
+        void RefreshAffordableNotifications();
 
         // Helpers
         int ContractUpgradeAvailable(EffectHelper.EffectType type, int nextBuy);
@@ -147,6 +148,27 @@ namespace FurmaIdle.Services
 
             return hasNew;
         }
+        public void RefreshAffordableNotifications()
+        {
+            var game = _game.CurrentGame;
+            if (game is null) return;
+            if (game.Ui?.MinPriceByTab is null) return;
+
+            string[] tabs =
+            {
+                "guild-contracts",
+                "guild-hall",
+                "guild-lab",
+                "stage-locals",
+                "stage-dock"
+            };
+
+            foreach (var tabId in tabs)
+            {
+                UpdateAffordableNotificationForTab(game, tabId);
+            }
+        }
+
 
 
         // Helpers
