@@ -2244,7 +2244,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/ui002.svg",
                 Lore = "",
                 Description = "Aumenta o ganho por Click na Casa de Ferri.",
-                UnlockId = "ui001",
+                UnlockId = "x000",
                 StageId = "s00",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ClickGainM0,

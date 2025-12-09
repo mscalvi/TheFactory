@@ -119,12 +119,7 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
-
-        if (Purchase.PurchaseChangeContracts)
-        {
-            RebuildLists();
-            Purchase.PurchaseChangeLab = false;
-        }
+        RebuildLists();
     }
 
     private void RefreshStage()

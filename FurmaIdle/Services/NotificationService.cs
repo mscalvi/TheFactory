@@ -1,5 +1,6 @@
 ﻿using FurmaIdle.Helpers;
 using FurmaIdle.Models;
+using static FurmaIdle.Helpers.UnlockHelper;
 
 namespace FurmaIdle.Services
 {
@@ -8,7 +9,7 @@ namespace FurmaIdle.Services
         Dictionary<string, List<UpgradeModel>> TabsUpgrades { get; }
         void InitialTabs (GameModel game);
         bool UpdateVisibleUpgrades(string tabId);
-        void RefreshAffordableNotifications();
+        void AllTabsAffordables();
 
         // Helpers
         int ContractUpgradeAvailable(EffectHelper.EffectType type, int nextBuy);
@@ -31,43 +32,36 @@ namespace FurmaIdle.Services
 
         public Dictionary<string, List<UpgradeModel>> TabsUpgrades { get; set; } = new Dictionary<string, List<UpgradeModel>>(StringComparer.OrdinalIgnoreCase);
 
+        string[] tabs =
+        {
+                "guild-contracts",
+                "guild-hall",
+                "guild-lab",
+                "stage-locals",
+                "stage-dock",
+                "world-expansion",
+                "world-map",
+        };
+
         public void InitialTabs(GameModel game)
         {
-            TabsUpgrades = new Dictionary<string, List<UpgradeModel>>(StringComparer.OrdinalIgnoreCase);
-
-            TabsListsFormer();
+            TabsUpgrades = TabsListsFormer();
 
             game.Ui ??= new UiState();
             game.Ui.VisibleUpgradesByTab ??= new(StringComparer.OrdinalIgnoreCase);
-
-            game.Ui.VisibleUpgradesByTab = TabsUpgrades;
-
             game.Ui.MinPriceByTab ??= new(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var coin in game.Coins)
+            foreach (var kvp in TabsUpgrades)
             {
-                if (coin.Value.State == UnlockHelper.State.Unlocked)
-                {
-                    SetMinPrice(game, "guild-contracts", coin.Value.Id);
-                    SetMinPrice(game, "guild-hall", coin.Value.Id);
-                    SetMinPrice(game, "guild-lab", coin.Value.Id);
-                    SetMinPrice(game, "stage-dock", coin.Value.Id);
-                    SetMinPrice(game, "stage-locals", coin.Value.Id);
-                }
+                game.Ui.VisibleUpgradesByTab[kvp.Key] = new List<UpgradeModel>(kvp.Value);
             }
 
-            foreach (var know in game.Knowledges)
+            foreach (var tabId in tabs)
             {
-                if (know.Value.State == UnlockHelper.State.Unlocked)
-                {
-                    SetMinPrice(game, "guild-contracts", know.Value.Id);
-                    SetMinPrice(game, "guild-hall", know.Value.Id);
-                    SetMinPrice(game, "guild-lab", know.Value.Id);
-                    SetMinPrice(game, "stage-dock", know.Value.Id);
-                    SetMinPrice(game, "stage-locals", know.Value.Id);
-                }
+                MinPriceForTab(game, tabId);
             }
         }
+
         public bool UpdateVisibleUpgrades(string tabId)
         {
             var game = _game.CurrentGame;
@@ -77,98 +71,66 @@ namespace FurmaIdle.Services
             game.Ui.VisibleUpgradesByTab ??= new(StringComparer.OrdinalIgnoreCase);
             game.Ui.MinPriceByTab ??= new(StringComparer.OrdinalIgnoreCase);
 
-            // 1) "all" despacha pras tabs principais
+            // 1) "all" despacha pras principais
             if (tabId == "all")
             {
                 bool any = false;
-
-                string[] tabs =
-                {
-            "guild-contracts",
-            "guild-hall",
-            "guild-lab",
-            "stage-locals",
-            "stage-dock"
-        };
-
                 foreach (var t in tabs)
-                {
                     any |= UpdateVisibleUpgrades(t);
-                }
-
                 return any;
             }
 
-            // 2) Uma tab específica
+            // 2) carrega o "antes" (ou vazio, se ainda não existia)
+            game.Ui.VisibleUpgradesByTab.TryGetValue(tabId, out var previousList);
+            var prevIds = previousList is null
+                ? new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                : new HashSet<string>(
+                    previousList.Where(u => !string.IsNullOrWhiteSpace(u.Id))
+                                .Select(u => u.Id),
+                    StringComparer.OrdinalIgnoreCase);
 
-            // Seed inicial (save antigo / tab nova) – sem notificar, só sincroniza
-            if (!game.Ui.VisibleUpgradesByTab.TryGetValue(tabId, out var seenUps) || seenUps is null)
-            {
-                var seedLists = TabsListsActualize(tabId);
-                if (!seedLists.TryGetValue(tabId, out seenUps) || seenUps is null)
-                    return false;
-
-                game.Ui.VisibleUpgradesByTab[tabId] = new List<UpgradeModel>(seenUps);
-
-                // Mesmo sem item novo, já calcula min prices e affordable
-                RebuildMinPricesForTab(game, tabId);
-                UpdateAffordableNotificationForTab(game, tabId);
-                return false;
-            }
-
+            // 3) recalcula upgrades visíveis da tab
             var actualLists = TabsListsActualize(tabId);
             if (!actualLists.TryGetValue(tabId, out var actualUpgrades) || actualUpgrades is null)
                 return false;
 
-            var hasNew = false;
-
-            foreach (var upgrade in actualUpgrades)
+            // 4) detecta se apareceu algum Id que não tinha antes
+            bool hasNew = false;
+            foreach (var up in actualUpgrades)
             {
-                if (string.IsNullOrWhiteSpace(upgrade.Id))
-                    continue;
-
-                if (!seenUps.Contains(upgrade))
+                if (string.IsNullOrWhiteSpace(up.Id)) continue;
+                if (!prevIds.Contains(up.Id))
                 {
-                    seenUps.Add(upgrade);
                     hasNew = true;
+                    break;
                 }
             }
 
+            // 5) salva a lista nova como "visível"
+            game.Ui.VisibleUpgradesByTab[tabId] = new List<UpgradeModel>(actualUpgrades);
+
+            // 6) notificação de item novo
             if (hasNew)
-            {
-                game.Ui.VisibleUpgradesByTab[tabId] = seenUps;
                 _ui.SetNotificationTab(tabId, NotificationKind.NewItem);
-            }
 
-            // 3) Sempre recalc min prices depois de atualizar visíveis
-            RebuildMinPricesForTab(game, tabId);
-
-            // 4) E em seguida tenta promover para Affordable, se couber
-            UpdateAffordableNotificationForTab(game, tabId);
+            // 7) recalcula preços mínimos + Affordable
+            MinPriceForTab(game, tabId);
+            NotifyAffordables(game, tabId);
 
             return hasNew;
         }
-        public void RefreshAffordableNotifications()
+
+        public void AllTabsAffordables()
         {
             var game = _game.CurrentGame;
             if (game is null) return;
             if (game.Ui?.MinPriceByTab is null) return;
 
-            string[] tabs =
-            {
-                "guild-contracts",
-                "guild-hall",
-                "guild-lab",
-                "stage-locals",
-                "stage-dock"
-            };
-
             foreach (var tabId in tabs)
             {
-                UpdateAffordableNotificationForTab(game, tabId);
+                NotifyAffordables(game, tabId);
             }
         }
-
 
 
         // Helpers
@@ -267,6 +229,9 @@ namespace FurmaIdle.Services
 
             List<UpgradeModel> _stageShips = new();
             List<UpgradeModel> _stageRoutes = new();
+
+            List<UpgradeModel> _worldExpansion = new();
+            List<UpgradeModel> _worldStages = new();
 
             _contractsExpedition = all
                 .Where(u =>
@@ -386,6 +351,18 @@ namespace FurmaIdle.Services
                 .Concat(_stageRoutes)
                 .ToList();
 
+            _worldExpansion = all
+                .Where(u => u.State == UnlockHelper.State.Available 
+                && u.TabId == "expansions").ToList();
+
+            var _expansionTab = _worldExpansion;            
+
+            _worldStages = all
+                .Where(u => u.State == UnlockHelper.State.Available
+                && u.TabId == "world-map-stages").ToList();
+
+            var _mapTab = _worldStages;
+
             TabLists.Add("contractsExpedition", _contractsExpedition);
             TabLists.Add("contractsExpansion", _contractsExpansion);
             TabLists.Add("contractsTutorial", _contractsTutorial);
@@ -407,6 +384,12 @@ namespace FurmaIdle.Services
             TabLists.Add("stageShips", _stageShips);
             TabLists.Add("stageRoutes", _stageRoutes);
             TabLists.Add("stage-dock", _dockTab);
+
+            TabLists.Add("worldExpansion", _worldExpansion);
+            TabLists.Add("world-expansion", _expansionTab);
+
+            TabLists.Add("worldStages", _worldStages);
+            TabLists.Add("world-map", _mapTab);
 
             TabsUpgrades = TabLists;
 
@@ -584,6 +567,29 @@ namespace FurmaIdle.Services
                     TabLists.Add("stageRoutes", _stageRoutes);
                     TabLists.Add("stage-dock", _dockTab);
                     break;
+                case "world-expansion":
+                    List<UpgradeModel> _worldExpansion = new();
+
+                    _worldExpansion = all
+                        .Where(u => u.State == UnlockHelper.State.Available
+                        && u.TabId == "expansions").ToList();
+
+                    var _expansionTab = _worldExpansion;
+                    TabLists.Add("worldExpansion", _worldExpansion);
+                    TabLists.Add("world-expansion", _expansionTab);
+                    break;
+                case "world-map":
+                    List<UpgradeModel> _worldStages = new();
+
+                    _worldStages = all
+                        .Where(u => u.State == UnlockHelper.State.Available
+                        && u.TabId == "world-map-stages").ToList();
+
+                    var _mapTab = _worldStages;
+
+                    TabLists.Add("worldStages", _worldStages);
+                    TabLists.Add("world-map", _mapTab);
+                    break;
             }
 
             TabsUpgrades = TabLists;
@@ -624,37 +630,7 @@ namespace FurmaIdle.Services
 
             return found ? minPrice : 0;
         }
-        private void SetMinPrice(GameModel game, string tabId, string costId)
-        {
-            game.Ui ??= new UiState();
-            game.Ui.MinPriceByTab ??= new(StringComparer.OrdinalIgnoreCase);
-
-            // garante dicionário interno para a tab
-            if (!game.Ui.MinPriceByTab.TryGetValue(tabId, out var tabMap) || tabMap is null)
-            {
-                tabMap = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
-                game.Ui.MinPriceByTab[tabId] = tabMap;
-            }
-
-            // calcula o "mínimo" de fato pra essa tab/moeda
-            var minPrice = TabListsPricing(tabId, costId);
-
-            // se não encontrou nada, nem registra
-            if (minPrice <= 0)
-                return;
-
-            // se já existe um valor, guarda o menor entre eles
-            if (tabMap.TryGetValue(costId, out var existing))
-            {
-                if (minPrice < existing)
-                    tabMap[costId] = minPrice;
-            }
-            else
-            {
-                tabMap[costId] = minPrice;
-            }
-        }
-        private void RebuildMinPricesForTab(GameModel game, string tabId)
+        private void MinPriceForTab(GameModel game, string tabId)
         {
             game.Ui ??= new UiState();
             game.Ui.MinPriceByTab ??= new(StringComparer.OrdinalIgnoreCase);
@@ -706,7 +682,7 @@ namespace FurmaIdle.Services
                 _ => false
             };
         }
-        private void UpdateAffordableNotificationForTab(GameModel game, string tabId)
+        private void NotifyAffordables(GameModel game, string tabId)
         {
             if (game.Ui?.MinPriceByTab is null)
                 return;
@@ -715,6 +691,8 @@ namespace FurmaIdle.Services
                 prices is null || prices.Count == 0)
                 return;
 
+            bool noFounds = true;
+
             foreach (var kv in prices)
             {
                 var costId = kv.Key;
@@ -722,11 +700,16 @@ namespace FurmaIdle.Services
 
                 if (HasFundsFor(game, costId, minPrice))
                 {
+                    noFounds = false;
                     _ui.SetNotificationTab(tabId, NotificationKind.Affordable);
                     return;
                 }
             }
-        }
 
+            if (noFounds)
+            {
+                _ui.ClearNotificationTab(tabId);
+            }
+        }
     }
 }

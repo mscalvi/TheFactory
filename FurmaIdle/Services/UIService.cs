@@ -128,22 +128,18 @@ namespace FurmaIdle.Services
             BusyMessage = null;
             BusyChanged?.Invoke();
         }
+
         public void SyncMenusFromGame(GameModel g)
         {
             g.Ui ??= new UiState();
 
-            // garante que sempre existe HashSet no save
             g.Ui.UnlockedMenus ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var item in _nav)
             {
-                // Regra: se o id está no save, fica desbloqueado.
-                // Se não está, fica bloqueado.
                 item.Unlocked = g.Ui.UnlockedMenus.Contains(item.Id);
             }
 
-            // fallback obrigatório: se nada estava salvo ainda (jogo novo),
-            // garante pelo menos Updates aberto (i5) pra não quebrar a UI:
             if (!g.Ui.UnlockedMenus.Any())
             {
                 foreach (var id in _nav.Select(n => n.Id))
@@ -153,7 +149,6 @@ namespace FurmaIdle.Services
                     item.Unlocked = true;
             }
 
-            // opcional: também seta qual menu está aberto visualmente
             if (!string.IsNullOrWhiteSpace(g.Ui.OpenMenuId) &&
                 _nav.Any(n => n.Id == g.Ui.OpenMenuId && n.Unlocked))
             {
@@ -172,8 +167,6 @@ namespace FurmaIdle.Services
 
             if (g.Ui.UnlockedTabs.Count == 0)
             {
-                // comportamento já implícito em IsTabUnlocked: se nada foi salvo ainda,
-                // considera tudo liberado (ou aqui você pode liberar só as iniciais, se preferir)
                 foreach (var tab in _tabs)
                 {
                     tab.Unlocked = true;
@@ -188,14 +181,19 @@ namespace FurmaIdle.Services
                 }
             }
 
-            // aplica flags de notificação salvas
+            g.Ui.TabsWithNotification ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            g.Ui.TabsNotificationKind ??= new(StringComparer.OrdinalIgnoreCase);
+
             foreach (var tab in _tabs)
             {
                 if (g.Ui.TabsWithNotification.Contains(tab.Id))
                 {
                     tab.Notification = true;
-                    // ao carregar do save antigo, assume Info por padrão
-                    tab.NotificationKind = NotificationKind.Info;
+
+                    if (g.Ui.TabsNotificationKind.TryGetValue(tab.Id, out var kind))
+                        tab.NotificationKind = kind;
+                    else
+                        tab.NotificationKind = NotificationKind.Info;
                 }
                 else
                 {
@@ -204,9 +202,6 @@ namespace FurmaIdle.Services
                 }
             }
 
-
-
-            // garante que menus reflitam notificações das tabs
             foreach (var menu in _nav)
             {
                 var notifiedTabs = _tabs
@@ -229,6 +224,15 @@ namespace FurmaIdle.Services
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(g.Ui.OpenTabId) && _tabs.Any(t => t.Id == g.Ui.OpenTabId && t.Unlocked))
+            {
+                OpenTabId = g.Ui.OpenTabId;
+            }
+            else
+            {
+                OpenTabId = "game-tips";
+                g.Ui.OpenTabId = OpenTabId;
+            }
 
             RaiseChanged();
         }
@@ -304,7 +308,6 @@ namespace FurmaIdle.Services
             RaiseChanged();
             return true;
         }
-
         public bool ClearNotificationMenu(string menuId)
         {
             var item = _nav.FirstOrDefault(n => string.Equals(n.Id, menuId, StringComparison.OrdinalIgnoreCase));
@@ -321,7 +324,6 @@ namespace FurmaIdle.Services
             RaiseChanged();
             return true;
         }
-
 
         public IEnumerable<TabItem> VisibleTabs(string? menuId)
         {
@@ -346,7 +348,10 @@ namespace FurmaIdle.Services
         public void SetOpenTab(string? id)
         {
             if (OpenTabId == id)
+            {
+                ClearNotificationTab(id);
                 return;
+            }
 
             OpenTabId = id;
 
@@ -355,7 +360,6 @@ namespace FurmaIdle.Services
                 // 1) limpa a notificação da TAB
                 ClearNotificationTab(id);
 
-                // 2) encontra o menu pai e atualiza a notificação do menu
                 var parent = _tabs.FirstOrDefault(t => t.Id == id)?.ParentMenuId;
                 if (!string.IsNullOrWhiteSpace(parent))
                 {
@@ -407,8 +411,6 @@ namespace FurmaIdle.Services
         }
         public bool SetNotificationTab(string tabId, NotificationKind kind = NotificationKind.Info)
         {
-            Console.WriteLine($"[UI] Chamada Notificação para {tabId} -> {kind} (OpenTabId={OpenTabId})");
-
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
 
@@ -425,12 +427,14 @@ namespace FurmaIdle.Services
                 g.Ui ??= new UiState();
                 g.Ui.TabsWithNotification ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 g.Ui.TabsWithNotification.Add(tabId);
+
+                g.Ui.TabsNotificationKind ??= new(StringComparer.OrdinalIgnoreCase);
+                g.Ui.TabsNotificationKind[tabId] = kind;
             }, save: true);
 
             RaiseChanged();
             return true;
         }
-
         public bool ClearNotificationTab(string tabId)
         {
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
@@ -442,8 +446,10 @@ namespace FurmaIdle.Services
 
             _ = _game.Mutate(g =>
             {
-                if (g.Ui?.TabsWithNotification is null) return;
-                g.Ui.TabsWithNotification.Remove(tabId);
+                if (g.Ui is null) return;
+
+                g.Ui.TabsWithNotification?.Remove(tabId);
+                g.Ui.TabsNotificationKind?.Remove(tabId);
             }, save: true);
 
             UpdateMenuNotificationFromTabs(tab.ParentMenuId);
@@ -569,8 +575,8 @@ namespace FurmaIdle.Services
                     UnlockMenu("i4");
                     UnlockTab("game-tips");
 
-                    SetOpenMenu("i4");
                     SetOpenTab("game-tips");
+                    SetOpenMenu("i4");
 
                     _lore.LoreTrigger(controlItem);
                     // Tips: Introdução
@@ -782,6 +788,7 @@ namespace FurmaIdle.Services
         #endregion
     }
 
+    #region LogService
     public interface IUiLogService
     {
         event Action<UiLogMessage>? OnMessage;
@@ -840,4 +847,5 @@ namespace FurmaIdle.Services
         public void Jaime(string text) => Emit(text, UiLogKind.Jaime);
         public void Yg(string text) => Emit(text, UiLogKind.Yg);
     }
+    #endregion
 }

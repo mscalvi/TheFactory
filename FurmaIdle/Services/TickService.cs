@@ -211,7 +211,7 @@ namespace FurmaIdle.Services
 
             if (ui || save)
             {
-                _notifications.RefreshAffordableNotifications();
+                _notifications.AllTabsAffordables();
                 _ui.RaisePulse();
             }
         }

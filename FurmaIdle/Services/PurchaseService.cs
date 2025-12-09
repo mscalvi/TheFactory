@@ -8,12 +8,6 @@ namespace FurmaIdle.Services
     {
         Task Purchase(ItemHelper.ItemType type, string itemId, string stageId);
         Task Purchase(ItemHelper.ItemType type, string itemId, string stageId, int quantity);
-
-        bool PurchaseChangeContracts { get; set; }
-        bool PurchaseChangeHall { get; set; }
-        bool PurchaseChangeLab { get; set; }
-        bool PurchaseChangeLocals { get; set; }
-        bool PurchaseChangeDock { get; set; }
     }
 
     public sealed class PurchaseService : IPurchaseService
@@ -47,12 +41,6 @@ namespace FurmaIdle.Services
         private int contractBuy = 0;
         private bool busy = false;
 
-        public bool PurchaseChangeContracts { get; set; } = false;
-        public bool PurchaseChangeHall { get; set; } = false;
-        public bool PurchaseChangeLab { get; set; } = false;
-        public bool PurchaseChangeLocals { get; set; } = false;
-        public bool PurchaseChangeDock { get; set; } = false;
-
         public Task Purchase(ItemHelper.ItemType type, string itemId, string stageId)
             => Purchase(type, itemId, stageId, 1);
 
@@ -60,12 +48,6 @@ namespace FurmaIdle.Services
         {
             if (busy || quantity <= 0)
                 return;
-
-            PurchaseChangeContracts = true;
-            PurchaseChangeHall = true;
-            PurchaseChangeLab = true;
-            PurchaseChangeLocals = true;
-            PurchaseChangeDock = true;
 
             busy = true;
             try

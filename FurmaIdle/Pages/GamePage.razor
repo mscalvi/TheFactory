@@ -56,32 +56,32 @@
 
             if (confirmed)
             {
-                Console.WriteLine("[GP] Confirmação de Reset pelo Usuário");
+                Console.WriteLine("[GP] Confirmação de Reset pelo Usuário.");
 
                 Nav.NavigateTo("/?reset=1", forceLoad: true);
                 return;
             }
             else
             {
-                Console.WriteLine("[GP] Reset Negado pelo Usuário");
+                Console.WriteLine("[GP] Reset Negado pelo Usuário.");
             }
         }
 
         Game.MarkReady();
-        Console.WriteLine("[GP] Jogo marcado como Pronto");
+        Console.WriteLine("[GP] Jogo marcado como Pronto.");
 
         Ticks.Start();
-        Console.WriteLine("[GP] Ticks iniciados");
+        Console.WriteLine("[GP] Ticks iniciados.");
 
         Ui.SyncMenusFromGame(Game.CurrentGame);
         RecomputeReady();
         StateHasChanged();
 
-        Console.WriteLine("[GP] Jogo iniciado");
+        Console.WriteLine("[GP] Jogo iniciado.");
 
         if (reseted)
         {
-            Console.WriteLine("[BOOT] Reset terminado, url limpa");
+            Console.WriteLine("[BOOT] Reset terminado, url limpa.");
 
             Nav.NavigateTo("/", forceLoad: false);
         }

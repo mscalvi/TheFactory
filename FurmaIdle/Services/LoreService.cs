@@ -17,6 +17,13 @@
             _locate = locate;
         }
 
+        string[] circular =
+        {
+                "LocalUnlock",
+                "CharacterUnlock",
+                "SpecialtyUsed",
+        };
+
         #region Lore
         public void LoreTrigger(string loreId, string? helper = "")
         {
@@ -24,10 +31,13 @@
 
             game.LoreTriggers ??= new Dictionary<string, bool>();
 
-            if (game.LoreTriggers.TryGetValue(loreId, out var seen) && seen)
-                return;
+            if (!circular.Contains(loreId))
+            {
+                if (game.LoreTriggers.TryGetValue(loreId, out var seen) && seen)
+                    return;
 
-            game.LoreTriggers[loreId] = true;
+                game.LoreTriggers[loreId] = true;
+            }
 
             switch (loreId)
             {

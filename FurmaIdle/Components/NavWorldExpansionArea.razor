@@ -11,6 +11,7 @@
 @inject IExpeditionService Expedition
 @inject ICostService Cost
 @inject IPurchaseService Purchase
+@inject INotificationService Notifications
 
 <div class="menu-root">
     @if (!Game.IsReady || _stage is null)
@@ -29,30 +30,26 @@
 
         string durationText;
 
-        var all = OrderedUpgrades(game);
-
-        var expansionPurchase =
-        all.FirstOrDefault(u =>
-        u.State == UnlockHelper.State.Available && (((Ux(u.Id) && (u.StageId == _stage.Id || u.StageId == "all")))));
-
         <section class="@($"menu-panel {UI.PanelClass("expansion-objetive")}")">
-            @if (expansionPurchase is not null)
+            @if (_worldExpansion is not null)
             {
-                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, expansionPurchase.Id, _stage.Id);
+                var nextExpansion = _worldExpansion.FirstOrDefault();
+
+                var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, nextExpansion.Id, _stage.Id);
                 <button class="objetive-button"
                         disabled="@(!can)"
-                        @onclick="() => OnClickBuy(expansionPurchase.Id)"
-                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, expansionPurchase.Id, _stage.Id))"
+                        @onclick="() => OnClickBuy(nextExpansion.Id)"
+                        @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, nextExpansion.Id, _stage.Id))"
                         @onmouseleave="Tooltips.Clear">
-                    @if (!string.IsNullOrWhiteSpace(expansionPurchase.Image))
+                    @if (!string.IsNullOrWhiteSpace(nextExpansion.Image))
                     {
-                        <img src="@expansionPurchase.Image"
-                             alt="@expansionPurchase.Id"
+                        <img src="@nextExpansion.Image"
+                             alt="@nextExpansion.Id"
                              class="objetive-img" />
                     }
                     else
                     {
-                        @expansionPurchase.Id
+                        @nextExpansion.Id
                     }
                 </button>
             }
@@ -132,6 +129,10 @@
 @code {
     private StageModel? _stage;
 
+    private List<UpgradeModel> _worldExpansion = new();
+
+    private bool freeProcess = true;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -141,6 +142,7 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
+        RebuildLists();
     }
 
     private void RefreshStage()
@@ -156,33 +158,15 @@
         _stage = st;
     }
 
-    private static IEnumerable<UpgradeModel> OrderedUpgrades(GameModel g)
-        => g.Upgrades.Values
-            .OrderBy(u => u.Id);
+    private void RebuildLists()
+    {
+        if (!Game.IsReady || _stage is null)
+            return;
 
-    static bool StartsWith(string? id, string prefix)
-        => id?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
+        Notifications.UpdateVisibleUpgrades("world-expansion");
 
-    static bool Ua(string? id) => StartsWith(id, "ua");
-    static bool Ub(string? id) => StartsWith(id, "ub");
-    static bool Uc(string? id) => StartsWith(id, "uc");
-    static bool Ud(string? id) => StartsWith(id, "ud");
-    static bool Ue(string? id) => StartsWith(id, "ue");
-    static bool Uh(string? id) => StartsWith(id, "uh");
-    static bool Ui(string? id) => StartsWith(id, "ui");
-    static bool Uk(string? id) => StartsWith(id, "uk");
-    static bool Ul(string? id) => StartsWith(id, "ul");
-    static bool Um(string? id) => StartsWith(id, "um");
-    static bool Un(string? id) => StartsWith(id, "un");
-    static bool Up(string? id) => StartsWith(id, "up");
-    static bool Ur(string? id) => StartsWith(id, "ur");
-    static bool Us(string? id) => StartsWith(id, "us");
-    static bool Ut(string? id) => StartsWith(id, "ut");
-    static bool Uu(string? id) => StartsWith(id, "uu");
-    static bool Ux(string? id) => StartsWith(id, "ux");
-    static bool Uz(string? id) => StartsWith(id, "uz");
-
-    private bool freeProcess = true;
+        Notifications.TabsUpgrades.TryGetValue("worldExpansion", out _worldExpansion);
+    }
 
     private async Task OnClickBuy(string upgradeId)
     {
@@ -201,32 +185,19 @@
 
             try
             {
-                if (StartsWith(upgrade.Id, "ux") || StartsWith(upgrade.Id, "us"))
-                {
-                    UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
-                }
+                UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
 
                 await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
 
-                if (StartsWith(upgrade.Id, "ux") || upgrade.Id == "us01")
-                {
-                    await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
+                await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
 
-                    if (upgrade.Id == "us01")
-                    {
-                        await Expedition.SecondExpeditionStart();
-                        await UI.LoadStage("s01");
-                    }
-
-                    UI.ClearBusy();
-                }
+                UI.ClearBusy();
 
                 if (_stage is not null)
                 {
                     var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, _stage.Id);
                     Tooltips.Show(hover);
                 }
-
             }
             finally
             {

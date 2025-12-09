@@ -94,12 +94,7 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
-
-        if (Purchase.PurchaseChangeHall)
-        {
-            RebuildLists();
-            Purchase.PurchaseChangeHall = false;
-        }
+        RebuildLists();
     }
 
     private void RefreshStage()

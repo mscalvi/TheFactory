@@ -91,7 +91,9 @@
                 <div class="icon-grid">
                     @foreach (var u in _contractsTutorial)
                     {
-                        var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                        var c101 = _stage.ActiveContracts.TryGetValue("c101", out var qnt);
+                        var price = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                        var can = price && c101;
                         <button class="icon-button" disabled="@(!can)"
                                 @onclick="() => OnClickBuy(u.Id)"
                                 @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
@@ -133,12 +135,7 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
-
-        if (Purchase.PurchaseChangeContracts)
-        {
-            RebuildLists();
-            Purchase.PurchaseChangeContracts = false;
-        }
+        RebuildLists();
     }
 
     private void RefreshStage()

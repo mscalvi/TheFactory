@@ -92,12 +92,7 @@
     protected override void OnGameChanged()
     {
         RefreshStage();
-
-        if (Purchase.PurchaseChangeDock)
-        {
-            RebuildLists();
-            Purchase.PurchaseChangeDock = false;
-        }
+        RebuildLists();
     }
 
     private void RefreshStage()
