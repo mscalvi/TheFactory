@@ -164,14 +164,14 @@ namespace FurmaIdle.Services
             var last = g.LastTick == default ? now : g.LastTick;
 
             var elapsedRaw = (now - last).TotalSeconds;
-            Console.WriteLine($"[Tick] Catch-up START: elapsed={elapsedRaw:F1}s, last={last:O}");
+            Console.WriteLine($"[Tick] Catch-up START: elapsed={elapsedRaw:F1}s, last={last:O}.");
             if (elapsedRaw <= 0) return;
 
             var elapsed = Math.Min(elapsedRaw, MaxCatchupSeconds);
             var skipped = elapsedRaw - elapsed;
             if (skipped > 0)
             {
-                Console.WriteLine($"[Tick] Offline catch-up: {skipped}s");
+                Console.WriteLine($"[Tick] Offline catch-up: {skipped}s.");
                 await _offline.OfflineIncome(skipped);
             }
 
@@ -195,7 +195,7 @@ namespace FurmaIdle.Services
             // salva ao final do catch-up
             await _game.Mutate(_ => { /* LastTick já foi atualizado no ProcessTickAsync */ }, save: true);
             _ui.RaisePulse();
-            Console.WriteLine($"[Tick] Offline catch-up: {elapsed:F1}s (total {elapsedRaw:F1}s)");
+            Console.WriteLine($"[Tick] Offline catch-up: {elapsed:F1}s (total {elapsedRaw:F1}s).");
         }
 
         private async Task ProcessTickAsync(double dtSeconds, bool save, bool ui)
@@ -209,7 +209,7 @@ namespace FurmaIdle.Services
                     s.OnTick(g, dtSeconds);
             }, save: save, ui: ui || save);
 
-            if (ui || save)
+            if ((ui || save) && !_ui.IsBusy)
             {
                 _notifications.AllTabsAffordables();
                 _ui.RaisePulse();

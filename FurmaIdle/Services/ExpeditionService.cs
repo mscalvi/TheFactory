@@ -647,6 +647,8 @@ namespace FurmaIdle.Services
                     game.GameStats.Resources.Clear();
                     game.GameStats.Knowledge.Clear();
 
+                    _ui.LoadStage("s01");
+
                     _ui.NavMenuControl("ExpansionEnd");
 
                 }, save: true, ui: true);

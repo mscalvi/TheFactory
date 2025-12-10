@@ -113,122 +113,148 @@ namespace FurmaIdle.Services
                     string targetTypeId = spec.TargetId.Length >= 2
                         ? spec.TargetId.Substring(0, 1)
                         : spec.TargetId;
-                    switch (targetTypeId)
+
+                    if (spec.TargetId.StartsWith("stage"))
                     {
-                        case "a": // All of a Kind
-                            if (spec.TargetId == "allContracts")
-                            {
-                                foreach (var it in g.Contracts.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            if (spec.TargetId == "allKnowledges")
-                            {
-                                foreach (var it in g.Knowledges.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            if (spec.TargetId == "allCoins")
-                            {
-                                foreach (var it in g.Coins.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            if (spec.TargetId == "allResources")
-                            {
-                                foreach (var it in g.Resources.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            if (spec.TargetId == "allClicks")
-                            {
-                                foreach (var it in g.Clicks.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            if (spec.TargetId == "allCharacters")
-                            {
-                                foreach (var it in g.Characters.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            if (spec.TargetId == "allUpgrades")
-                            {
-                                foreach (var it in g.Upgrades.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            if (spec.TargetId == "allSpecialties")
-                            {
-                                foreach (var it in g.Specialties.Values)
-                                    Scrub(it.Modifiers, specId);
-                            }
-                            break;
-                        case "m": // Coins
-                            var coins = _locate.LocateCoin(game, spec.TargetId);
+                        if (spec.TargetId == "stageContracts")
+                        {
+                            foreach (var it in g.Contracts.Values)
+                                Scrub(it.Modifiers, specId);
+                        }
+                        if (spec.TargetId == "stageSpecialties")
+                        {
+                            foreach (var it in g.Specialties.Values)
+                                Scrub(it.Modifiers, specId);
+                        }
+                        if (spec.TargetId == "stageclick")
+                        {
+                            foreach (var it in g.Clicks.Values)
+                                Scrub(it.Modifiers, specId);
+                        }
+                    } 
+                    else if (spec.TargetId.StartsWith("wild"))
+                    {
 
-                            Scrub(coins.Modifiers, specId);
-                            break;
-                        case "p": // Characters
-                            var character = _locate.LocateCharacter(game, spec.TargetId);
+                    } 
+                    else
+                    {
+                        switch (targetTypeId)
+                        {
+                            case "a": // All of a Kind
+                                if (spec.TargetId == "allContracts")
+                                {
+                                    foreach (var it in g.Contracts.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                if (spec.TargetId == "allKnowledges")
+                                {
+                                    foreach (var it in g.Knowledges.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                if (spec.TargetId == "allCoins")
+                                {
+                                    foreach (var it in g.Coins.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                if (spec.TargetId == "allResources")
+                                {
+                                    foreach (var it in g.Resources.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                if (spec.TargetId == "allClicks")
+                                {
+                                    foreach (var it in g.Clicks.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                if (spec.TargetId == "allCharacters")
+                                {
+                                    foreach (var it in g.Characters.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                if (spec.TargetId == "allUpgrades")
+                                {
+                                    foreach (var it in g.Upgrades.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                if (spec.TargetId == "allSpecialties")
+                                {
+                                    foreach (var it in g.Specialties.Values)
+                                        Scrub(it.Modifiers, specId);
+                                }
+                                break;
+                            case "m": // Coins
+                                var coins = _locate.LocateCoin(game, spec.TargetId);
 
-                            Scrub(character.Modifiers, specId);
-                            break;
-                        case "k": // Knowledge
-                            var knowledge = _locate.LocateKnowledge(game, spec.TargetId);
+                                Scrub(coins.Modifiers, specId);
+                                break;
+                            case "p": // Characters
+                                var character = _locate.LocateCharacter(game, spec.TargetId);
 
-                            Scrub(knowledge.Modifiers, specId);
-                            break;
-                        case "t": // Techs
-                            var tech = _locate.LocateTech(game, spec.TargetId);
+                                Scrub(character.Modifiers, specId);
+                                break;
+                            case "k": // Knowledge
+                                var knowledge = _locate.LocateKnowledge(game, spec.TargetId);
 
-                            Scrub(tech.Modifiers, specId);
-                            break;
-                        case "u": // Upgrades
-                            var targetupgrade = _locate.LocateUpgrade(game, spec.TargetId);
+                                Scrub(knowledge.Modifiers, specId);
+                                break;
+                            case "t": // Techs
+                                var tech = _locate.LocateTech(game, spec.TargetId);
 
-                            Scrub(targetupgrade.Modifiers, specId);
-                            break;
-                        case "l": // Locals
-                            var local = _locate.LocateLocal(game, spec.TargetId);
+                                Scrub(tech.Modifiers, specId);
+                                break;
+                            case "u": // Upgrades
+                                var targetupgrade = _locate.LocateUpgrade(game, spec.TargetId);
 
-                            Scrub(local.Modifiers, specId);
-                            break;
-                        case "s": // Stages
-                            var targetstage = _locate.LocateStage(game, spec.TargetId);
+                                Scrub(targetupgrade.Modifiers, specId);
+                                break;
+                            case "l": // Locals
+                                var local = _locate.LocateLocal(game, spec.TargetId);
 
-                            Scrub(targetstage.Modifiers, specId);
-                            break;
-                        case "x": // Expansions
-                            var expansion = _locate.LocateExpansion(game, spec.TargetId);
+                                Scrub(local.Modifiers, specId);
+                                break;
+                            case "s": // Stages
+                                var targetstage = _locate.LocateStage(game, spec.TargetId);
 
-                            Scrub(expansion.Modifiers, specId);
-                            break;
-                        case "d": // Expeditions
-                            var expedition = _locate.LocateExpedition(game, spec.TargetId);
+                                Scrub(targetstage.Modifiers, specId);
+                                break;
+                            case "x": // Expansions
+                                var expansion = _locate.LocateExpansion(game, spec.TargetId);
 
-                            Scrub(expedition.Modifiers, specId);
-                            break;
-                        case "o": // Traits
-                            var trait = _locate.LocateTrait(game, spec.TargetId);
+                                Scrub(expansion.Modifiers, specId);
+                                break;
+                            case "d": // Expeditions
+                                var expedition = _locate.LocateExpedition(game, spec.TargetId);
 
-                            Scrub(trait.Modifiers, specId);
-                            break;
-                        case "e": // Specialty
-                            var speciality = _locate.LocateSpecialty(game, spec.TargetId);
+                                Scrub(expedition.Modifiers, specId);
+                                break;
+                            case "o": // Traits
+                                var trait = _locate.LocateTrait(game, spec.TargetId);
 
-                            Scrub(speciality.Modifiers, specId);
-                            break;
-                        case "c": // Contracts
-                            var contract = _locate.LocateContract(game, spec.TargetId);
+                                Scrub(trait.Modifiers, specId);
+                                break;
+                            case "e": // Specialty
+                                var speciality = _locate.LocateSpecialty(game, spec.TargetId);
 
-                            Scrub(contract.Modifiers, specId);
-                            break;
-                        case "i": // Clicks
-                            var click = _locate.LocateClick(game, spec.TargetId);
+                                Scrub(speciality.Modifiers, specId);
+                                break;
+                            case "c": // Contracts
+                                var contract = _locate.LocateContract(game, spec.TargetId);
 
-                            Scrub(click.Modifiers, specId);
-                            break;
-                        case "r": // Resources
-                            var resource = _locate.LocateResource(game, spec.TargetId);
+                                Scrub(contract.Modifiers, specId);
+                                break;
+                            case "i": // Clicks
+                                var click = _locate.LocateClick(game, spec.TargetId);
 
-                            Scrub(resource.Modifiers, specId);
-                            break;
+                                Scrub(click.Modifiers, specId);
+                                break;
+                            case "r": // Resources
+                                var resource = _locate.LocateResource(game, spec.TargetId);
+
+                                Scrub(resource.Modifiers, specId);
+                                break;
+                        }
+
                     }
-
                     _specTimers.Remove(specId);
                 }
 

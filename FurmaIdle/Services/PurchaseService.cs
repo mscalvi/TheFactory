@@ -236,11 +236,11 @@ namespace FurmaIdle.Services
                     {
                         _ui.NavMenuControl("FirstLocalUnlock");
                     }
-                    if (itemId == "uz0102")
+                    if (itemId == "ut04011")
                     {
                         _ui.NavMenuControl("FirstRouteUnlock");
                     }
-                    if (itemId == "un01")
+                    if (itemId == "ut04021")
                     {
                         _ui.NavMenuControl("FirstShipUnlock");
                     }

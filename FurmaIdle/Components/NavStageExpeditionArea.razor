@@ -40,14 +40,21 @@
 
         var isActive = isExpActive(_stage);
         var partySize = Expedition.GetPartyCap(_stage);
-        var partyIds = expedition.PartyIds;
 
         var selectedCount = CountLine();
 
-        var canLaunch = !isActive && _stage is not null && selectedCount <= partySize && selectedCount >= 1;
-
         var contractsInfo = Contracts.GetStageInfo(game, _stage.Id);
-        var minContracts = contractsInfo.ContractsUsed >= 49;
+        var totalContracts = contractsInfo.ContractsUsed;
+
+        var canLaunch = !isActive
+        && _stage is not null
+        && selectedCount >= 1
+        && selectedCount <= partySize;
+
+        const int MinContractsToEnd = 50;
+        var canEnd = isActive && totalContracts >= MinContractsToEnd;
+
+        var canToggleExp = isActive ? canEnd : canLaunch;
 
         var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
@@ -63,7 +70,7 @@
 
         <section class="@($"menu-panel {UI.PanelClass("expedition-toggle")}")">
             <button class="objetive-button"
-                    disabled="@( !isActive && !canLaunch && !minContracts)"
+                    disabled="@(!canToggleExp)"
                     @onclick="OnClickToggleExpedition"
                     @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Expedition, _stage.Id))"
                     @onmouseleave="Tooltips.Clear">

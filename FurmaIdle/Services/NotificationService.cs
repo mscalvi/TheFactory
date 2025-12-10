@@ -176,19 +176,21 @@ namespace FurmaIdle.Services
 
             if (upgrade.Id.StartsWith("uu"))
             {
-                bool inStage = false;
-
                 foreach (var characterId in stage.Expedition.PartyIds)
                 {
                     var character = _locate.LocateCharacter(game, characterId);
 
                     if (character.ContractsIds.Contains(upgrade.TargetId))
                     {
-                        inStage = true;
+                        var contract = _locate.LocateContract(game, upgrade.TargetId);
+                        if (contract.Level <= stage.ActualContractLevel)
+                        {
+                            return true;
+                        }
                     }
                 }
 
-                return inStage;
+                return false;
             }
 
             if (upgrade.Id.StartsWith("ut"))
@@ -572,7 +574,7 @@ namespace FurmaIdle.Services
 
                     _worldExpansion = all
                         .Where(u => u.State == UnlockHelper.State.Available
-                        && u.TabId == "expansions").ToList();
+                        && u.TabId == "expansion").ToList();
 
                     var _expansionTab = _worldExpansion;
                     TabLists.Add("worldExpansion", _worldExpansion);
@@ -693,11 +695,16 @@ namespace FurmaIdle.Services
 
             game.Ui.TabsNotificationKind.TryGetValue(tabId, out var kind);
 
-            if (prices.Count == 0 && kind == NotificationKind.Affordable)
+            if (prices.Count == 0)
             {
-                _ui.ClearNotificationTab(tabId);
+                if (kind == NotificationKind.Affordable)
+                {
+                    _ui.ClearNotificationTab(tabId);
+                }
                 return;
             }
+
+            bool anyAffordable = false;
 
             foreach (var kv in prices)
             {
@@ -706,19 +713,26 @@ namespace FurmaIdle.Services
 
                 if (HasFundsFor(game, costId, minPrice))
                 {
-                    if (kind != NotificationKind.Affordable)
-                    {
-                        _ui.SetNotificationTab(tabId, NotificationKind.Affordable);
-                        return;
-                    }
-                } else
+                    anyAffordable = true;
+                    break;
+                }
+            }
+
+            if (anyAffordable)
+            {
+                if (kind != NotificationKind.Affordable)
                 {
-                    if (kind == NotificationKind.Affordable)
-                    {
-                        _ui.ClearNotificationTab(tabId);
-                    }
+                    _ui.SetNotificationTab(tabId, NotificationKind.Affordable);
+                }
+            }
+            else
+            {
+                if (kind == NotificationKind.Affordable)
+                {
+                    _ui.ClearNotificationTab(tabId);
                 }
             }
         }
+
     }
 }

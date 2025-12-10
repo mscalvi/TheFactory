@@ -435,7 +435,6 @@ namespace FurmaIdle.Services
         }
         public bool SetNotificationTab(string tabId, NotificationKind kind = NotificationKind.Info)
         {
-            Console.WriteLine($"[UI] Criando Notificação: {tabId} = {kind}");
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
 
@@ -466,8 +465,6 @@ namespace FurmaIdle.Services
         }
         public bool ClearNotificationTab(string tabId)
         {
-            Console.WriteLine($"[UI] Limpando Notificação: {tabId}");
-
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
             if (!tab.Notification) return false;
@@ -938,6 +935,8 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "ExpansionEnd":
+                    SetOpenMenu("i2");
+                    SetOpenTab("stage-expedition");
                     _lore.LoreTrigger(controlItem);
                     break;
                 #endregion
