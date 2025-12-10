@@ -40,7 +40,7 @@
         if (reseted)
         {
             await Store.ClearAsync("main");
-            Console.WriteLine("[BOOT] Reset solicitado: removido 'main'");
+            Console.WriteLine("[GP] Reset solicitado: removido 'main'.");
         }
 
         // 2. Fluxo normal de boot
@@ -81,7 +81,7 @@
 
         if (reseted)
         {
-            Console.WriteLine("[BOOT] Reset terminado, url limpa.");
+            Console.WriteLine("[GP] Reset terminado, url limpa.");
 
             Nav.NavigateTo("/", forceLoad: false);
         }

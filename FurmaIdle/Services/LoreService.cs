@@ -17,28 +17,9 @@
             _locate = locate;
         }
 
-        string[] circular =
-        {
-                "LocalUnlock",
-                "CharacterUnlock",
-                "SpecialtyUsed",
-        };
-
         #region Lore
         public void LoreTrigger(string loreId, string? helper = "")
         {
-            var game = _game.CurrentGame;
-
-            game.LoreTriggers ??= new Dictionary<string, bool>();
-
-            if (!circular.Contains(loreId))
-            {
-                if (game.LoreTriggers.TryGetValue(loreId, out var seen) && seen)
-                    return;
-
-                game.LoreTriggers[loreId] = true;
-            }
-
             switch (loreId)
             {
                 #region Stage 0
@@ -58,20 +39,14 @@
                     _log.Ferri("Acho que consigo ganhar mais Talhos, só preciso melhorar minha técnica.");
                     break;
                 case "20thClick":
-                    _log.Info("Existem diferentes tipos de Melhorias, divididas em categorias de Permanência.");
                     _log.Ferri("Preciso de uma forma mais eficiente de conseguir Talhos. Talvez eu devesse procurar trabalhos maiores," +
                         " ou reabrir a antiga taberna de meu pai...");
                     break;
                 case "ContractLevel0Unlock":
-                    _log.Info("Contratos são formas de gerar Moedas automaticamente. São divididos em níveis, onde cada um garante mais" +
-                        " moedas que o anterior.");
                     _log.Ferri("Vou fazer um acordo, comigo mesmo. Só vou descansar quando tiver resolvido a situação da Murada. Vou estudar" +
                         " tudo o que tiver para conhecer, tudo o que puder me ajudar.");
                     break;
                 case "FirstContract0Purchase":
-                    _log.Info("Após escolhido um Contrato de determinado nível, não será possível trocá-lo tão cedo.");
-                    _log.Info("Só é possível fechar Contratos até atingir o limite, que pode ser aumentado de várias maneiras," +
-                        " como Melhorias.");
                     break;
                 case "5xContract0Purchase":
                     _log.Info("Atingir determinadas quantidades de um Contrato pode liberar Melhorias para ele.");
@@ -79,17 +54,11 @@
                         " melhorar os resultados do Contrato.");
                     break;
                 case "ContractLevel1Unlock":
-                    _log.Info("É possível desbloquear novos tipos de Contratos para todos os níveis. Eles recebem melhorias diferentes," +
-                        " além de influenciarem outros aspectos futuros no jogo.");
                     break;
                 case "FirstContractUnlock":
                     _log.Info("Melhorias de desbloqueio são permanentes, e só são compradas uma vez ao longo do jogo.");
                     break;
                 case "FirstContract1Purchase":
-                    _log.Info("Os Objetivos, disponíveis na parte superior do menu de Melhorias, permitem desbloquear a próxima parte" +
-                        " da história, quer seja na mesma Região, ou em uma próxima.");
-                    _log.Info("Após comprados, os Objetivos causam um Soft Reset de Expansão, reiniciando o progresso e liberando novos" +
-                        " recursos.");
                     _log.Ferri("Agora, é só questão de tempo. Vou reabrir a taberna, e vou recrutar uma equipe. Está na hora de fundar" +
                         " a Guilda da Ilha de Vera.");
                     break;
@@ -115,13 +84,11 @@
                         // Maik
                         _log.Maik("Ferramentas preparadas. Quero saber o que mais essa ilha pode oferecer, além de areia e conchas riscadas.");
                     }
-
                     if(helper == "p0102")
                     {
                         // Claimi
                         _log.Claimi("Já estava cansada de pescar aqui na Murada, vamos viajar!");
                     }
-
                     if (helper == "p0103")
                     {
                         // Alan
@@ -131,12 +98,7 @@
                     }
                     break;
                 case "FirstResourceUnlock":
-                    _log.Info("Recursos são um importante artifício para conseguir vantagens, utilizando as Especialidades dos Personagens," +
-                        " como as Gorjetas, de Ferri.");
-                    _log.Info("São compartilhadas entre todas as Regiões, e não são perdidas com o fim da Expedição, mas podem demorar um pouco" +
-                        " para serem conseguidas.");
                     _log.Ferri("Não dá pra carregar muita comida de uma vez...");
-                    // personagem na base.
                     if (helper == "p0101")
                     {
                         // Maik
@@ -156,12 +118,6 @@
                     }
                     break;
                 case "FirstExpeditionUnlock":
-                    _log.Info("Expedições são o tipo mais rápido de Reset no jogo, e acontecem de forma independente em cada" +
-                        " Região. Podem ser utilizadas para realocar Personagens em diferentes Regiões, aumentando o tamanho da" +
-                        " equipe quando houver espaço, ou ainda para conseguir Conhecimento.");
-                    _log.Info("Por serem um Reset, todas as Moedas daquela Região são consumidas ao encerrar a Expedição, e todas" +
-                        " as Melhorias de Expedição são desligadas e voltam ao início.");
-                    // personagem na base pedindo pra entrar
                     if (helper == "p0101")
                     {
                         // Maik
@@ -180,36 +136,31 @@
                         _log.Alan("Deixe-me mostrar o quão valiosa é minha companhia.");
                     }
                     break;
+                case "FirstExpeditionComplete":
+                    _log.Ferri("Certo, descansar e recomeçar.");
+                    break;
+                case "FirstLocalUnlock":
+                    _log.Alan("Encantador... Inspirador... Assustador...");
+                    break;
                 case "FirstKnowledgeUnlock":
-                    _log.Info("Conhecimento é uma das maneiras mais poderosas de melhorar os ganhos. Cada ponto conquistado, em" +
-                        " qualquer tipo de Conhecimento, aumenta a geração de Moedas, tanto dos Contratos quanto do Click, além" +
-                        " de poderem ser utilizados para fazer Pesquisas, que liberam novas Melhorias.");
-                    _log.Ferri("Sim! Sabia que meus estudos seriam recompensados. Tenho certeza que só um pouquinho de conhecimento" +
+                    _log.Ferri("Sabia que meus estudos seriam recompensados. Tenho certeza que só um pouquinho de conhecimento" +
                         " já vai me ajudar muito.");
                     break;
                 case "FirstExpansionUnlock":
-                    _log.Info("Terminar uma Expansão é a segunda forma de Reset no jogo, dessa vez um pouco mais impactante do que" +
-                        " terminar uma Expedição. Todos os Personagens, de todas as Regiões, voltam para a Base, e todo o Conhecimento" +
-                        " acumulado volta a zero, assim como Moedas e Recursos. Novas Melhorias são desbloqueadas, e a história progride," +
-                        " permitindo chegar ainda mais longe.");
                     break;
                 case "FirstTechUnlock":
-                    // info.tech
-                    _log.Info("Pesquisas são uma importante maneira de conseguir Melhorias poderosas, que podem afetar várias fases do jogo." +
-                        " Custam Conhecimento, mas não diminuem o bônus total garantido por ele.");
                     _log.Ferri("Tanta coisa pra saber, e eu achei que ia ser só juntar um pessoal e limpar a ilha...");
                     break;
+                case "FirstRouteUnlock":
+                    _log.Jaime("Ah, sim, uma saída!");
+                    _log.Claimi("Pra onde?");
+                    _log.Jaime("Não tenho ideia.");
+                    _log.Yg("Humpf.");
+                    break;
                 case "FirstShipUnlock":
-                    _log.Info("Navios permitem conhecer novas Regiões, através de uma longa exploração, que possibilitam expandir" +
-                        " a Guilda para novos horizontes.");
-                    _log.Claimi("Finalmente!");
+                    _log.Claimi("Finalmente! Vamos viajar!");
                     break;
                 case "FirstStageUnlock":
-                    _log.Info("Cada Região possui a própria Expedição, e pode precisar ou garantir coisas únicas, como Moedas, Recursos," +
-                        " Melhorias, Personagens e Pesquisas. É possível trocar a Região selecionada a qualquer momento, mas um mesmo" +
-                        " Personagem ou Contrato não pode ser utilizado em dois lugares diferentes.");
-                    _log.Lore("A Guilda retorna à Murada Cairu, vitoriosos. A Ilha foi retomada, e agora, com a mesma segurança de antes da" +
-                        " Era da Insanidade, seus habitantes podem explorar todo seu território.");
                     _log.Ferri("Cumpri com minha promessa. A Ilha é nossa novamente. Mas... O oceano é tão vasto. Sinto que podemos vencer" +
                         " a Entrilhas, podemos conhecer novas ilhas, novas pessoas... Por que parar agora?");
                     break;
@@ -220,8 +171,6 @@
                 case "LocalUnlock":
                     if (helper == "l011")
                     {
-                        _log.Info("Explorar Locais permite conhecer a Região com maiores detalhes, aprendendo com ela. É possível encontrar" +
-                            " novas Pesquisas, novos Personagens, e até novas Rotas para Navios ao desbloquear um Local.");
                         _log.Lore("A pequena Guilda avança até as Pontas Cantarolantes, contornando a Ilha de Vera pela praia." +
                             " Uma subida perigosa, onde qualquer deslize pode ser fatal.");
                     }
@@ -258,6 +207,24 @@
                         _log.Lore("Yg encara o resto da Guilda. E acena com a cabeça.");
                     }
                     break;
+                case "KnowledgeUnlock":
+
+                    break;
+                case "TechUnlock":
+
+                    break;
+                case "ShipUnlock":
+
+                    break;
+                case "RouteUnlock":
+
+                    break;
+                case "StageUnlock":
+
+                    break;
+                case "ExpansionUnlock":
+
+                    break;
                 case "SpecialtyUsed":
                     if (helper == "e0001")
                     {
@@ -283,6 +250,12 @@
                     {
                         _log.Yg("No momento certo.");
                     }
+                    break;
+                case "ExpeditionStart":
+                    break;
+                case "ExpeditionEnd":
+                    break;
+                case "ExpansionEnd":
                     break;
                 #endregion
                 default: break;

@@ -410,7 +410,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/uk02.svg",
                 Lore = "",
                 Description = "Libera o Conhecimento.",
-                UnlockId = "p0001",
+                UnlockId = "x010",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.KnowledgeUnlock1,
                 State = UnlockHelper.State.Blocked,

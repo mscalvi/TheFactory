@@ -1,0 +1,112 @@
+﻿/* Raiz: a área inteira rola verticalmente */
+.menu-root {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    min-height: 0;
+    padding: 6px;
+    overflow-y: auto;
+}
+
+    /* Título geral "Dicas e Instruções" */
+    .menu-root > .title {
+        margin: 0 0 6px;
+        font-size: 15px;
+        text-align: center;
+    }
+
+/* Painel de seção principal (override do .menu-panel global) */
+.menu-panel {
+    display: block;
+    border-radius: var(--radius);
+    border: 1px solid var(--steel-10);
+    background: linear-gradient(180deg, var(--wood-01), var(--wood-02));
+    padding: 4px 8px 6px;
+    box-shadow: inset 0 1px 0 var(--muted-line);
+    margin-bottom: 6px;
+}
+
+    /* Cabeçalho clicável do menu-panel */
+    .menu-panel > .title {
+        margin: 0;
+        padding: 4px 2px;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        user-select: none;
+    }
+
+        /* Indicador de colapsar/expandir no título do menu-panel */
+        .menu-panel > .title::after {
+            content: "▾";
+            font-size: 11px;
+            opacity: .8;
+            margin-left: 6px;
+        }
+
+    /* Quando colapsado, vira setinha pra cima */
+    .menu-panel.is-collapsed > .title::after {
+        content: "▸";
+    }
+
+    /* Conteúdo interno some quando está colapsado */
+    .menu-panel.is-collapsed > *:not(.title) {
+        display: none;
+    }
+
+/* Painéis de dica internos */
+.tip-panel {
+    border-radius: var(--radius);
+    border: 1px solid var(--muted-line);
+    background: var(--wood-02);
+    padding: 4px 6px 6px;
+    margin: 4px 0;
+}
+
+    /* Cabeçalho clicável da tip */
+    .tip-panel > .title {
+        margin: 0;
+        padding: 2px 1px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        user-select: none;
+    }
+
+        /* Indicador de colapsar/expandir para tip-panel */
+        .tip-panel > .title::after {
+            content: "▾";
+            font-size: 10px;
+            opacity: .7;
+            margin-left: 4px;
+        }
+
+    /* Quando colapsado */
+    .tip-panel.is-collapsed > .title::after {
+        content: "▸";
+    }
+
+    /* Esconde o conteúdo do tip quando colapsado */
+    .tip-panel.is-collapsed > *:not(.title) {
+        display: none;
+    }
+
+    /* Texto das dicas */
+    .tip-panel p {
+        margin: 4px 0;
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    /* Pequeno destaque ao passar o mouse */
+    .menu-panel > .title:hover,
+    .tip-panel > .title:hover {
+        background: var(--muted-pane);
+    }

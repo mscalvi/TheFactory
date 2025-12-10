@@ -353,7 +353,7 @@ namespace FurmaIdle.Services
 
             _worldExpansion = all
                 .Where(u => u.State == UnlockHelper.State.Available 
-                && u.TabId == "expansions").ToList();
+                && u.TabId == "expansion").ToList();
 
             var _expansionTab = _worldExpansion;            
 
@@ -688,10 +688,16 @@ namespace FurmaIdle.Services
                 return;
 
             if (!game.Ui.MinPriceByTab.TryGetValue(tabId, out var prices) ||
-                prices is null || prices.Count == 0)
+                prices is null)
                 return;
 
-            bool noFounds = true;
+            game.Ui.TabsNotificationKind.TryGetValue(tabId, out var kind);
+
+            if (prices.Count == 0 && kind == NotificationKind.Affordable)
+            {
+                _ui.ClearNotificationTab(tabId);
+                return;
+            }
 
             foreach (var kv in prices)
             {
@@ -700,15 +706,18 @@ namespace FurmaIdle.Services
 
                 if (HasFundsFor(game, costId, minPrice))
                 {
-                    noFounds = false;
-                    _ui.SetNotificationTab(tabId, NotificationKind.Affordable);
-                    return;
+                    if (kind != NotificationKind.Affordable)
+                    {
+                        _ui.SetNotificationTab(tabId, NotificationKind.Affordable);
+                        return;
+                    }
+                } else
+                {
+                    if (kind == NotificationKind.Affordable)
+                    {
+                        _ui.ClearNotificationTab(tabId);
+                    }
                 }
-            }
-
-            if (noFounds)
-            {
-                _ui.ClearNotificationTab(tabId);
             }
         }
     }

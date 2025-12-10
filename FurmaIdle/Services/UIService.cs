@@ -80,9 +80,6 @@ namespace FurmaIdle.Services
             public int SortKey { get; init; } = 0;
         }
 
-
-        private readonly HashSet<string> _hidden = new(StringComparer.Ordinal);
-        private readonly List<string> GamePanels = new(AllPanels);
         public bool IsBusy { get; private set; }
         public string? BusyMessage { get; private set; }
 
@@ -167,10 +164,16 @@ namespace FurmaIdle.Services
 
             if (g.Ui.UnlockedTabs.Count == 0)
             {
+                var initialTabs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+
+                };
+
                 foreach (var tab in _tabs)
                 {
-                    tab.Unlocked = true;
-                    g.Ui.UnlockedTabs.Add(tab.Id);
+                    tab.Unlocked = initialTabs.Contains(tab.Id);
+                    if (tab.Unlocked)
+                        g.Ui.UnlockedTabs.Add(tab.Id);
                 }
             }
             else
@@ -180,6 +183,7 @@ namespace FurmaIdle.Services
                     tab.Unlocked = g.Ui.UnlockedTabs.Contains(tab.Id);
                 }
             }
+
 
             g.Ui.TabsWithNotification ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             g.Ui.TabsNotificationKind ??= new(StringComparer.OrdinalIgnoreCase);
@@ -216,7 +220,6 @@ namespace FurmaIdle.Services
                 else
                 {
                     menu.Notification = true;
-                    // pega o tipo "mais forte" entre as tabs
                     menu.NotificationKind = notifiedTabs
                         .Select(t => t.NotificationKind)
                         .DefaultIfEmpty(NotificationKind.Info)
@@ -241,16 +244,37 @@ namespace FurmaIdle.Services
             _nav
                 .Where(item => item.Unlocked)
                 .OrderBy(item => item.SortKey);
+
         public void SetOpenMenu(string? id)
         {
             if (OpenMenuId == id)
+            {
+                if (!string.IsNullOrWhiteSpace(id))
+                {
+                    var openTab = _tabs.FirstOrDefault(t => t.Id == OpenTabId && t.ParentMenuId == id);
+                    if (openTab is not null)
+                    {
+                        ClearNotificationTab(openTab.Id);
+                        UpdateMenuNotificationFromTabs(id);
+                    }
+                }
                 return;
+            }
 
             PreviousMenuId = OpenMenuId;
             OpenMenuId = id;
 
             if (!string.IsNullOrWhiteSpace(id))
+            {
                 ClearNotificationMenu(id);
+
+                var openTab = _tabs.FirstOrDefault(t => t.Id == OpenTabId && t.ParentMenuId == id);
+                if (openTab is not null)
+                {
+                    ClearNotificationTab(openTab.Id);
+                    UpdateMenuNotificationFromTabs(id);
+                }
+            }
 
             _ = _game.Mutate(g => g.Ui.OpenMenuId = id, save: true);
             RaiseChanged();
@@ -411,11 +435,16 @@ namespace FurmaIdle.Services
         }
         public bool SetNotificationTab(string tabId, NotificationKind kind = NotificationKind.Info)
         {
+            Console.WriteLine($"[UI] Criando Notificação: {tabId} = {kind}");
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
 
             if (tab.Notification && (int)kind <= (int)tab.NotificationKind)
                 return false;
+
+            if (!IsTabUnlocked(tabId)) return false;
+
+            if (kind != NotificationKind.Affordable && OpenTabId == tabId) return false;
 
             tab.Notification = true;
             tab.NotificationKind = kind;
@@ -437,6 +466,8 @@ namespace FurmaIdle.Services
         }
         public bool ClearNotificationTab(string tabId)
         {
+            Console.WriteLine($"[UI] Limpando Notificação: {tabId}");
+
             var tab = _tabs.FirstOrDefault(t => string.Equals(t.Id, tabId, StringComparison.OrdinalIgnoreCase));
             if (tab is null) return false;
             if (!tab.Notification) return false;
@@ -551,13 +582,66 @@ namespace FurmaIdle.Services
         private static readonly string[] AllPanels = {
             "guild-contracts-fast",
             "guild-contracts-long",
+            "guild-contracts-tutorial",
+            "game-tips-intro",
+            "game-tips-clicks",
+            "game-tips-permanency",
+            "game-tips-upgrades",
+            "game-tips-expedition",
+            "game-tips-expansion",
+            "game-tips-contractlvl",
+            "game-tips-contracts",
+            "game-tips-contractcap",
+            "game-tips-characters",
+            "game-tips-traits",
+            "game-tips-specialties",
+            "game-tips-guild",
+            "game-tips-base",
+            "game-tips-knowledge",
+            "game-tips-factor",
+            "game-tips-coins",
+            "game-tips-resources",
+            "game-tips-locals",
+            "game-tips-routes",
+            "game-tips-map",
+            "game-tips-stages",
+            "game-tips-ships",
+            "game-tips-influence",
         };
         #endregion
 
         #region Menu Control
+
+        string[] circular =
+        {
+                "LocalUnlock",
+                "CharacterUnlock",
+                "ExpansionUnlock",
+                "TechUnlock",
+                "KnowledgeUnlock",
+                "LocalUnlock",
+                "StageUnlock",
+                "ShipUnlock",
+                "RouteUnlock",
+                "SpecialtyUsed",
+                "ExpeditionStart",
+                "ExpeditionEnd",
+                "ExpansionEnd",
+        };
+
         public void NavMenuControl(string controlItem, string? helper = "")
         {
             var game = _game.CurrentGame;
+
+            game.LoreTriggers ??= new Dictionary<string, bool>();
+
+            if (!circular.Contains(controlItem))
+            {
+                if (game.LoreTriggers.TryGetValue(controlItem, out var seen) && seen)
+                    return;
+
+                game.LoreTriggers[controlItem] = true;
+            }
 
             switch (controlItem)
             {
@@ -575,13 +659,15 @@ namespace FurmaIdle.Services
                     UnlockMenu("i4");
                     UnlockTab("game-tips");
 
-                    SetOpenTab("game-tips");
                     SetOpenMenu("i4");
+                    SetOpenTab("game-tips");
 
                     _lore.LoreTrigger(controlItem);
+
                     // Tips: Introdução
-                    // Tips: Conceito do Jogo
+                    UnlockPanel("game-tips-intro");
                     // Tips: Clicks
+                    UnlockPanel("game-tips-clicks");
 
                     // Animation: piscar imagem central e o marcador de moedas.
                     break;
@@ -602,6 +688,9 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(controlItem);
 
                     // Tips: Melhorias
+                    UnlockPanel("game-tips-upgrades");
+                    // Tips: Moedas
+                    UnlockPanel("game-tips-coins");
                     SetNotificationTab("game-tips");
 
                     // Animation: piscar o navmenu e o contractsmenu
@@ -611,42 +700,42 @@ namespace FurmaIdle.Services
 
                     _lore.LoreTrigger(controlItem);
 
-                    // Tips: Permanência
-                    SetNotificationTab("game-tips");
-
                     // Animation: piscar guild-contracts no navmenu
                     break;
                 case "ContractLevel0Unlock":
                     _lore.LoreTrigger(controlItem);
 
                     // Tips: Contract Level
+                    UnlockPanel("game-tips-contractlvl");
                     SetNotificationTab("game-tips");
 
                     // Animation: piscar o Contract Menu e o Nível 0
+                    break;
+                case "FirstContractUnlock":
+                    UnlockPanel("guild-contracts-tutorial");
+                    _lore.LoreTrigger(controlItem);
                     break;
                 case "FirstContract0Purchase":
                     _lore.LoreTrigger(controlItem);
 
                     // Tips: Contratos
+                    UnlockPanel("game-tips-contracts");
+                    // Tips: Contract Cap
+                    UnlockPanel("game-tips-contractcap");
                     SetNotificationTab("game-tips");
                     break;
                 case "5xContract0Purchase":
                     _lore.LoreTrigger(controlItem);
 
-                    // Tips: Contract Cap
+                    // Tips: Permanência
+                    UnlockPanel("game-tips-permanency");
                     SetNotificationTab("game-tips");
-
                     break;
                 case "ContractLevel1Unlock":
                     // Menus: Guild > Hall
                     UnlockTab("guild-hall");
+                    SetNotificationTab("guild-hall", NotificationKind.NewItem);
 
-                    _lore.LoreTrigger(controlItem);
-
-                    // Tips: Permanência
-                    SetNotificationTab("game-tips");
-                    break;
-                case "FirstContractUnlock":
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "FirstContract1Purchase":
@@ -659,7 +748,7 @@ namespace FurmaIdle.Services
 
                 #region Stage 1
                 case "Stage1Start":
-                    SetOpenTab("game-tips");
+                    SetOpenTab("guild-contracts");
 
                     // Menu: Game > Archievments TODO
 
@@ -676,31 +765,38 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Characters
+                    UnlockPanel("game-tips-characters");
                     // Tips: Traits
+                    UnlockPanel("game-tips-traits");
                     SetNotificationTab("game-tips");
-
-                    // Animation: piscar o Expansion Menu e (se tiver aberto) os Resources
                     break;
                 case "FirstExpeditionUnlock":
                     // Menu: Stage > Expedition
                     UnlockMenu("i2");
                     UnlockTab("stage-expedition");
+                    SetNotificationTab("stage-expedition", NotificationKind.NewItem);
 
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Expedition
+                    UnlockPanel("game-tips-expedition");
                     SetNotificationTab("game-tips");
 
                     // Animation: piscar ExpeditonMenu
                     break;
                 case "FirstExpeditionComplete":
                     // Menu: Guild > Lab
-                    UnlockTab("guild-lab");
+                    if (!IsTabUnlocked("guild-lab"))
+                    {
+                        UnlockTab("guild-lab");
+                        SetNotificationTab("guild-lab", NotificationKind.NewItem);
 
-                    _lore.LoreTrigger(controlItem, helper);
+                        _lore.LoreTrigger(controlItem, helper);
 
-                    // Tips: Knowledge
-                    SetNotificationTab("game-tips");
+                        // Tips: Knowledge
+                        UnlockPanel("game-tips-knowledge");
+                        SetNotificationTab("game-tips");
+                    }
                     break;
                 case "FirstKnowledgeUnlock":
                     // Menu: Stage > Locals
@@ -715,48 +811,85 @@ namespace FurmaIdle.Services
                     // Menu: World > Expansion
                     UnlockMenu("i3");
                     UnlockTab("world-expansion");
+                    SetNotificationTab("world-expansion", NotificationKind.NewItem);
 
                     _lore.LoreTrigger(controlItem, helper);
+                    break;
+                case "FirstExpansionUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
 
-                    // Tips: TechUpgrades
+                    // Tips: Expansion
+                    UnlockPanel("game-tips-expansion");
                     SetNotificationTab("game-tips");
                     break;
                 case "FirstResourceUnlock":
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Resources
+                    UnlockPanel("game-tips-resources");
                     // Tips: Specialties
+                    UnlockPanel("game-tips-specialties");
                     SetNotificationTab("game-tips");
 
                     // Animation: piscar os Recursos e as Specialties
                     break;
                 case "GuildTip":
                     // Tips: Guild
+                    UnlockPanel("game-tips-guild");
                     SetNotificationTab("game-tips");
                     break;
                 case "BaseTip":
                     // Tips: Base
+                    UnlockPanel("game-tips-base");
                     SetNotificationTab("game-tips");
                     break;
-                case "FirstExpansionUnlock":
+                case "FirstLocalUnlock":
+                    // Menu: Stage > Locals
+                    UnlockTab("stage-locals");
+                    SetNotificationTab("stage-locals", NotificationKind.NewItem);
+
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    // Tips: Locals
+                    UnlockPanel("game-tips-locals");
+                    SetNotificationTab("game-tips");
+                    break;
+                case "FirstRouteUnlock":
+                    // Menu: World > Ships
+                    UnlockTab("world-ships");
+                    SetNotificationTab("world-ships", NotificationKind.NewItem);
+
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Expansion
+                    UnlockPanel("game-tips-routes");
                     SetNotificationTab("game-tips");
                     break;
                 case "FirstShipUnlock":
-                    // Menu: World > Dock
+                    // Menu: Stage > Dock
                     UnlockTab("stage-dock");
+                    SetNotificationTab("stage-dock", NotificationKind.NewItem);
 
                     _lore.LoreTrigger(controlItem, helper);
+
+                    // Tips: Expansion
+                    UnlockPanel("game-tips-ships");
+                    SetNotificationTab("game-tips");
                     break;
                 case "FirstStageUnlock":
                     // Menu: World > Map
                     UnlockTab("world-map");
+                    SetNotificationTab("world-map", NotificationKind.NewItem);
+                    // Menu: World > Influence
+                    // UnlockTab("world-influence");
+                    // SetNotificationTab("world-influence", NotificationKind.NewItem);
 
                     _lore.LoreTrigger(controlItem, helper);
 
                     // Tips: Stages
+                    UnlockPanel("game-tips-stages");
+                    // Tips: Influence
+                    // UnlockPanel("game-tips-influence");
                     SetNotificationTab("game-tips");
                     break;
                 #endregion
@@ -765,7 +898,6 @@ namespace FurmaIdle.Services
                 case "LocalUnlock":
                     _lore.LoreTrigger(controlItem, helper);
 
-                    // tips: Locals
                     break;
                 case "CharacterUnlock":
                     _lore.LoreTrigger(controlItem, helper);
@@ -775,11 +907,38 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(controlItem, helper);
 
                     break;
+                case "KnowledgeUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    break;
+                case "TechUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    break;
+                case "ShipUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    break;
+                case "RouteUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    break;
+                case "StageUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    break;
+                case "ExpansionUnlock":
+                    _lore.LoreTrigger(controlItem, helper);
+
+                    break;
                 case "ExpeditionStart":
+                    _lore.LoreTrigger(controlItem);
                     break;
                 case "ExpeditionEnd":
+                    _lore.LoreTrigger(controlItem);
                     break;
                 case "ExpansionEnd":
+                    _lore.LoreTrigger(controlItem);
                     break;
                 #endregion
                 default: break;

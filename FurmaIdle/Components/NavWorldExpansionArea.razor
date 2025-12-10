@@ -31,7 +31,7 @@
         string durationText;
 
         <section class="@($"menu-panel {UI.PanelClass("expansion-objetive")}")">
-            @if (_worldExpansion is not null)
+            @if (_worldExpansion is not null && _worldExpansion.Count > 0)
             {
                 var nextExpansion = _worldExpansion.FirstOrDefault();
 
@@ -137,6 +137,7 @@
     {
         base.OnInitialized();
         RefreshStage();
+        RebuildLists();
     }
 
     protected override void OnGameChanged()

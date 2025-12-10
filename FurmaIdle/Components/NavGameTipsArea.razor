@@ -17,42 +17,354 @@
     }
     else
     {
-        <section class="@($"menu-panel {UI.PanelClass("tips")}")">
-            <h3 class="title">Instruções</h3>
-            <p>
-                O jogo simula a criação e crescimento de uma Guilda em uma ilha isolada, com exploração de regiões, descoberta de pesquisas
-                e novos tipos de conhecimentos, adição de membros e diferentes tipos de trabalho.
-            </p>
-            <p>
-                Os Contratos são os geradores de moedas automáticos. São limitados pelo número de membros da Guilda trabalhando na região. 
-                Para começar um novo contrato, passe o mouse por cima da área do nível e escolha um. Após escolhido, só é possível trocar
-                com um Reset.
-            </p>
-            <p>
-                As Expedições são o primeiro tipo de Reset, que podem, em algum momento, gerar Conhecimento, que por sua vez é utilizado para realizar
-                Pesquisas, liberando novas melhorias poderosas, além de fornecerem bônus de produção. Resetam todas as melhorias de Expedição,
-                Traços e Especialidades, além de zerarem a Moeda referente à Região na qual ela foi realizada. Cada Região pode ter
-                uma Expedição independente.
-            </p>
-            <p>
-                As Expansões são o segundo tipo de Reset, cada uma liberando novas melhorias, porém consumindo todo o Conhecimento acumulado.
-                Resetam todas as melhorias de Expansão, de Expedição, Traços e Especialidades, além de Moedas e Conhecimentos.
-            </p>
-            <p>
-                Os Personagens possuem Traços, que são habilidades passivas e aplicadas automaticamente conforme ele entra em uma Expedição,
-                e Especialidades, habilidades ativas, que consomem Recursos para serem utilizadas.
-            </p>
-            <p>
-                Além disso, ao ler as informações de Personagens e Contratos, podem aparecer Fatores, que servem para distribuir o ganho de Conhecimento
-                ao final da Expedição. Eles são somados, normalizados, e então o ganho total de moedas é distribuído entre os diferentes Fatores
-                para ser convertido em Conhecimento. Ou seja, quanto mais diversos os Fatores, mais diversos os Conhecimentos, porém em menor quantidade.
-            </p>
+        <h3 class="title">Dicas e Instruções</h3>
+        <div class="menu-panel">
+        <!-- Informações Gerais -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-intro")} {CollapseClass("menu-intro")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-intro"))>
+                Informações Gerais
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-intro")} {CollapseClass("tip-intro")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-intro"))>
+                    Introdução
+                </h3>
+                <p>
+                    O jogo simula a criação e crescimento de uma Guilda em uma ilha isolada, com exploração de regiões, descoberta de
+                    tecnologias através de pesquisas, adição e alocação de membros e diferentes tipos de trabalho.
+                </p>
+            </section>
         </section>
+
+        <!-- Conceitos Chaves -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-clicks")} {CollapseClass("menu-concepts")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-concepts"))>
+                Conceitos Chaves
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-clicks")} {CollapseClass("tip-clicks")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-clicks"))>
+                    Clicando
+                </h3>
+                <p>
+                    Clicar na imagem central irá fornecer Moedas, que são utilizadas como o componente base do jogo, servindo para
+                    comprar e desbloquear a maioria dos outros componentes. Cada Região possui o próprio Click, fornecendo a Moeda
+                    principal da Região.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-permanency")} {CollapseClass("tip-permanency")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-permanency"))>
+                    Permanência
+                </h3>
+                <p>
+                    O jogo conta com mais de um tipo de Reset, que reiniciarão o progresso de determinados componentes, como
+                    a quantidade de Moedas adquiridas, Melhorias compradas, ou ainda o Conhecimento acumulado. A Permanência de um componente
+                    indica com qual tipo de Reset ele é reiniciado, ou se nunca é perdido.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-upgrades")} {CollapseClass("tip-upgrades")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-upgrades"))>
+                    Melhorias Simples
+                </h3>
+                <p>
+                    No painel à esquerda da imagem de click, em diferentes abas desbloqueadas ao longo do jogo, será possível
+                    encontrar Melhorias, que servem para muitos propósitos, como aumentar o ganho do Click. Ao passar o mouse
+                    por uma Melhoria, é possível ver, no painel superior esquerdo, mais detalhes sobre ela.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-expedition")} {CollapseClass("tip-expedition")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-expedition"))>
+                    Expedições
+                </h3>
+                <p>
+                    Expedições são um tipo de Reset, no qual todas as Moedas conseguidas em uma Região são gastas,
+                    e possivelmente convertidas em Conhecimento, além de limpar todos os Contratos escolhidos, reiniciar
+                    várias Melhorias, e devolver todos os Personagens para a Base.
+                </p>
+                <p>
+                    Podem ser iniciadas com, no mínimo, um Personagem, e com um máximo que varia por Região. Só podem ser finalizadas
+                    se forem feitos pelo menos cinquenta Contratos na Região.
+                </p>
+                <p>
+                    Cada Região tem uma Expedição completamente independente das outras, sendo que um mesmo Personagem não pode estar
+                    em Expedições diferentes, assim como um mesmo Contrato não pode ser feito em Expedições diferentes.
+                </p>
+                <p>
+                    Enquanto não houver uma Expedição ativa em uma Região não é possível começar Contratos, Clicar ou utilizar
+                    Especialidades.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-expansion")} {CollapseClass("tip-expansion")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-expansion"))>
+                    Expansões
+                </h3>
+                <p>
+                    As Expansões representam a progressão da história de Ferri e da Guilda da Ilha de Vera. São um tipo de Reset
+                    mais abrangente do que as Expedições, e reiniciam melhorias mais profundas. Ao encerrar uma Expansão,
+                    todos os Personagens e Embarcações retornam à base, e todas as Expedições são simultaneamente encerradas.
+                </p>
+                <p>
+                    Além disso, cada Expansão disponibiliza novas Melhorias.
+                </p>
+            </section>
+        </section>
+
+        <!-- Contratos -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-contractlvl")} {CollapseClass("menu-contracts")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-contracts"))>
+                Contratos
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-contracts")} {CollapseClass("tip-contracts")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-contracts"))>
+                    Contratos
+                </h3>
+                <p>
+                    Contratos são uma forma automática de se conseguir Moedas. Existem diferentes Contratos para cada Nível,
+                    mas um tipo só pode ser utilizado por vez, em qualquer Região.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-contractlvl")} {CollapseClass("tip-contractlvl")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-contractlvl"))>
+                    Nível de Contratos
+                </h3>
+                <p>
+                    Os Contratos são divididos em Níveis, sendo que cada Nível tem o potencial de gerar mais Moedas do que
+                    o anterior. A cada Região, é necessário desbloquear os Níveis de Contrato, que reiniciam a cada Expansão.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-contractcap")} {CollapseClass("tip-contractcap")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-contractcap"))>
+                    Limite de Contratos
+                </h3>
+                <p>
+                    Cada Região tem um limite de Contratos ativos, definido pela quantidade de Personagens em Expedição ali presentes.
+                    Esse limite pode ser aumentado através de Melhorias.
+                </p>
+            </section>
+        </section>
+
+        <!-- Personagens -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-characters")} {CollapseClass("menu-characters")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-characters"))>
+                Personagens
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-characters")} {CollapseClass("tip-characters")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-characters"))>
+                    Personagens
+                </h3>
+                <p>
+                    O jogo começa com apenas um Personagem desbloqueado, e já ativo: Ferri Karu. São um tipo importante de componente,
+                    pois impactam na quantidade de Contratos que podem ser feitos em cada Região, quais Contratos podem ser feitos
+                    na Região que estão ativos, quais Traços estão disponíveis, e quais Especialidades podem ser utilizadas.
+                </p>
+                <p>
+                    Mais Personagens podem ser contratados para a Guilda ao longo do jogo, ao explorar novas Regiões e Locais.
+                    Ao ser contratado, um Personagem irá para a Base, e só se tornará ativo ao ser selecionado para uma Expedição.
+                    Ainda assim, vários componentes levam em conta a quantidade de Personagens contratados, ou parados na Base,
+                    como o limite de Recursos.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-traits")} {CollapseClass("tip-traits")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-traits"))>
+                    Traços
+                </h3>
+                <p>
+                    Cada Personagem possui um Traço, que é uma característica natural dele, fornecendo um bônus automático
+                    para toda a Guilda ou apenas para sua Região, contanto que ele esteja ativo em uma Expedição. Podem ser,
+                    por exemplo, a diminuição do tempo para terminar determinado Contrato, ou ainda um ganho automático de determinado
+                    Recurso.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-specialties")} {CollapseClass("tip-specialties")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-specialties"))>
+                    Especialidades
+                </h3>
+                <p>
+                    São habilidades ativas que cada Personagem possui, e podem ser utilizadas em troca de determinado tipo
+                    de Recurso. Cada Especialidade tem um efeito específico, e pode afetar toda a Guilda ou apenas a Expedição.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-guild")} {CollapseClass("tip-guild")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-guild"))>
+                    A Guilda
+                </h3>
+                <p>
+                    A Guilda representa todos os Personagens já contratados, independentemente de estarem ou não em Expedição.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-base")} {CollapseClass("tip-base")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-base"))>
+                    A Base
+                </h3>
+                <p>
+                    A Base representa todos os Personagens que não estão em uma Expedição.
+                </p>
+            </section>
+        </section>
+
+        <!-- Conhecimento e Pesquisa -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-knowledge")} {CollapseClass("menu-knowledge")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-knowledge"))>
+                Conhecimento e Pesquisa
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-knowledge")} {CollapseClass("tip-knowledge")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-knowledge"))>
+                    Conhecimentos
+                </h3>
+                <p>
+                    Conhecimento pode ser adquirido ao terminar uma Expedição, contanto que ele já tenha sido desbloqueado, e um valor mínimo
+                    de Moedas tenha sido ganho, mesmo que seja gastado. Além disso, para ganhar Conhecimento em uma Expedição, é necessário
+                    que o Fator dele seja maior do que zero.
+                </p>
+                <p>
+                    Serve para dois propósitos: em primeiro lugar, para fornecer um bônus de ganho de Moedas, independente da fonte, como
+                    Clicks ou Contratos, sendo que cada Conhecimento influencia em uma única Moeda. Em segundo lugar, serve para realizar
+                    Pesquisas, que, após concluídas, liberam novas e poderosas Melhorias.
+                </p>
+                <p>
+                    Existe um limite de Conhecimento que pode ser acumulado, por tipo, em cada Expansão do jogo.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-factor")} {CollapseClass("tip-factor")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-factor"))>
+                    Fator de Conhecimento
+                </h3>
+                <p>
+                    Cada Personagem em uma Expedição contribui para que determinado tipo de Conhecimento possa ser adquirido, assim como
+                    alguns tipos de Contratos também impactam no resultado final. Toda Expedição tem seu Fator de Conhecimento igual a 1,
+                    e então dividido entre todos os Fatores dentre os Personagens e Contratos, para então ser proporcionalmente contabilizado
+                    no ganho de Moedas.
+                </p>
+                <p>
+                    Quanto menor o Fator de Conhecimento, mais Moedas são necessárias para conseguir um ponto dele. Entretanto, quanto mais Fatores
+                    diferentes, mais tipos de Conhecimento podem ser adquiridos ao final da Expedição.
+                </p>
+            </section>
+        </section>
+
+        <!-- Moedas e Recursos -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-coins")} {CollapseClass("menu-coins")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-coins"))>
+                Moedas e Recursos
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-coins")} {CollapseClass("tip-coins")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-coins"))>
+                    Moedas
+                </h3>
+                <p>
+                    São o componente base para comprar Melhorias e desbloquear outros componentes, podendo ser conseguidas,
+                    principalmente, ao Clicar e através de Contratos. Cada Região possui, no mínimo, uma Moeda,
+                    podendo ser até mesmo exclusiva à ela.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-resources")} {CollapseClass("tip-resources")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-resources"))>
+                    Recursos
+                </h3>
+                <p>
+                    São um componente utilizado para ativar Especialidades, sendo compartilhado por toda a Guilda. Cada Recurso
+                    diferente possui um limite máximo de acúmulo, que pode ser aumentado de acordo com o número de Personagens
+                    na Guilda.
+                </p>
+            </section>
+        </section>
+
+        <!-- Regiões e Locais -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-locals")} {CollapseClass("menu-locals")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-locals"))>
+                As Regiões e seus Locais
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-locals")} {CollapseClass("tip-locals")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-locals"))>
+                    Locais
+                </h3>
+                <p>
+                    São pequenas partes de uma Região, onde é possível liberar novos Personagens, Contratos, Rotas e Pesquisas.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-routes")} {CollapseClass("tip-routes")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-routes"))>
+                    Rotas
+                </h3>
+                <p>
+                    São caminhos entre as diferentes Regiões do jogo, e devem ser completamente percorridas por Embarcações
+                    para que se tornem conhecidas, liberando uma nova Região para ser explorada.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-map")} {CollapseClass("tip-map")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-map"))>
+                    O Mapa
+                </h3>
+                <p>
+                    O Mapa mostra o acesso entre as diferentes Regiões do jogo, de acordo com as Rotas conhecidas e já exploradas.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-stages")} {CollapseClass("tip-stages")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-stages"))>
+                    Regiões
+                </h3>
+                <p>
+                    São áreas independentes do jogo, cada uma com sua Expedição, possibilitando adquirir novas Moedas, Recursos,
+                    Personagens, conhecer novos Locais, Pesquisas, Rotas, e ainda serem exploradas de formas diferentes.
+                </p>
+            </section>
+        </section>
+
+        <!-- Embarcações -->
+        <section class="@($"menu-panel {UI.PanelClass("game-tips-ships")} {CollapseClass("menu-ships")}")">
+            <h3 class="title" @onclick=@(() => ToggleCollapse("menu-ships"))>
+                Embarcações
+            </h3>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-ships")} {CollapseClass("tip-ships")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-ships"))>
+                    Embarcações
+                </h3>
+                <p>
+                    Permitem navegar pelas Rotas e explorar novas Regiões, após um tempo até que todo o trajeto se torne
+                    conhecido. As Embarcações são construídas na Região da Ilha de Vera, e devem ser navegadas até o destino
+                    pretendido.
+                </p>
+            </section>
+
+            <section class="@($"tip-panel {UI.PanelClass("game-tips-influence")} {CollapseClass("tip-influence")}")">
+                <h3 class="title" @onclick=@(() => ToggleCollapse("tip-influence"))>
+                    Influência
+                </h3>
+                <p>
+                    Ainda não feito.
+                </p>
+            </section>
+        </section>
+        </div>
     }
 </div>
 
 @code {
     private StageModel? _stage;
+
+    // ids de painéis colapsados (menu+tip)
+    private readonly HashSet<string> _collapsed = new(StringComparer.Ordinal);
 
     protected override void OnInitialized()
     {
@@ -77,4 +389,16 @@
         g.Stages.TryGetValue(Game?.CurrentGame.SelectedStageId, out var st);
         _stage = st;
     }
+
+    private void ToggleCollapse(string id)
+    {
+        if (!_collapsed.Add(id))
+        {
+            _collapsed.Remove(id);
+        }
+        StateHasChanged();
+    }
+
+    private string CollapseClass(string id)
+        => _collapsed.Contains(id) ? "is-collapsed" : string.Empty;
 }

@@ -46,9 +46,7 @@ namespace FurmaIdle.Services
             _knowledge = knowledge;
             _ui = ui;
         }
-
-        private bool firstExpeditionSet = true;
-
+        
         public int GetPartyCap(StageModel stage)
         {
             int partySize = 0;
@@ -288,14 +286,7 @@ namespace FurmaIdle.Services
 
                     expedition.FinishedAt = null;
 
-                    if (!firstExpeditionSet)
-                    {
-                        _ui.NavMenuControl("ExpeditionStart");
-                    } else
-                    {
-                        firstExpeditionSet = false;
-                        _ui.NavMenuControl("FirstExpeditionComplete");
-                    }
+                    _ui.NavMenuControl("ExpeditionStart");
 
                 }, save: true);
 
@@ -323,6 +314,8 @@ namespace FurmaIdle.Services
 
         public async Task EndExpedition(StageModel stage)
         {
+            _ui.NavMenuControl("FirstExpeditionComplete");
+
             const int minBusyMs = 2000;
             var sw = Stopwatch.StartNew();
 
@@ -352,7 +345,7 @@ namespace FurmaIdle.Services
 
                 stage.ExpeditionStats.Coins.Clear();
                 stage.ExpeditionStats.CoinsGain.Clear();
-                stage.ExpeditionStats.CoinsSpent.Clear();
+                stage.ExpeditionStats.CoinsSpent.Clear();                
 
                 await _knowledge.EndExpeditionKnowGain(stage, cTotal);
 

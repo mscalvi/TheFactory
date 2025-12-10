@@ -25,6 +25,12 @@
             Ganhar Muitas Moedas
         </button>
     </section>
+    <section class="menu-panel">
+        <button class="config-button danger"
+                @onclick="AddDevIncome2">
+            Ganhar Poucas Moedas
+        </button>
+    </section>
 
     <section class="menu-panel">
         <div class="config-version">
@@ -49,5 +55,10 @@
     private async Task AddDevIncome()
     {
         await Contracts.BurstProduction(100000, Game.CurrentGame.SelectedStageId, "e0001");
+    }
+
+    private async Task AddDevIncome2()
+    {
+        await Contracts.BurstProduction(50, Game.CurrentGame.SelectedStageId, "e0001");
     }
 }

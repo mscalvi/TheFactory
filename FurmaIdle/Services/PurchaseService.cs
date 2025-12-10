@@ -52,7 +52,6 @@ namespace FurmaIdle.Services
             busy = true;
             try
             {
-                // Por enquanto, bulk só para Contrato.
                 if (type == ItemHelper.ItemType.Contract && quantity > 1)
                 {
                     await PurchaseContractsBulk(itemId, stageId, quantity);
@@ -136,7 +135,8 @@ namespace FurmaIdle.Services
 
             await _game.Mutate(g =>
             {
-                if(stage.Id == "s00")
+                #region s00
+                if (stage.Id == "s00")
                 {
                     // Contract Level Unlock Stage 0
                     if (itemId == "ub001")
@@ -145,6 +145,7 @@ namespace FurmaIdle.Services
                         if (upgrade.ActualBuy == 1)
                         {
                             _ui.NavMenuControl("ContractLevel0Unlock");
+                            _ui.NavMenuControl("FirstContractUnlock");
                         }
                         if (upgrade.ActualBuy == 2)
                         {
@@ -163,12 +164,10 @@ namespace FurmaIdle.Services
                         {
                             _ui.NavMenuControl("5xContract0Purchase");
                         }
-                    }
-
-                    // Contract Unlock Stage 0
-                    if (itemId == "uu001")
-                    {
-                        _ui.NavMenuControl("FirstContractUnlock");                       
+                        if (contractBuy == 14)
+                        {
+                            _ui.NavMenuControl("14Contract1Purchase");
+                        }
                     }
 
                     // Contract Level 1 Purchase Stage 0
@@ -180,37 +179,14 @@ namespace FurmaIdle.Services
                         }
                     }
                 }
+                #endregion
 
+                #region s01
                 if (stage.Id == "s01")
                 {
                     if (StartsWith(itemId, "up"))
                     {
-                        int chars = 0;
-
-                        foreach (var character in game.Characters)
-                        {
-                            if (character.Value.State == UnlockHelper.State.Unlocked)
-                            {
-                                chars++;
-                            }
-                        }
-
-                        if (chars == 2)
-                        {
-                            _ui.NavMenuControl("FirstCharacterUnlock", helper);
-                        }
-                    }
-                    if (itemId == "ur01")
-                    {
-                        foreach (var character in game.Characters)
-                        {
-                            if (character.Value.State == UnlockHelper.State.Unlocked && character.Value.CharState == UnlockHelper.CharState.InBase)
-                            {
-                                helper = character.Value.Id;
-                            }
-                        }
-
-                        _ui.NavMenuControl("FirstResourceUnlock", helper);
+                        _ui.NavMenuControl("FirstCharacterUnlock", helper);
                     }
                     if (itemId == "ua011")
                     {
@@ -224,72 +200,97 @@ namespace FurmaIdle.Services
 
                         _ui.NavMenuControl("FirstExpeditionUnlock", helper);
                     }
-                    if (StartsWith(itemId, "uk"))
+                    if (itemId == "uk02")
                     {
-                        int knows = 0;
-
-                        foreach (var know in game.Knowledges)
-                        {
-                            if (know.Value.State == UnlockHelper.State.Unlocked)
-                            {
-                                knows++;
-                            }
-                        }
-
-                        if (knows == 1)
-                        {
-                            _ui.NavMenuControl("FirstKnowledgeUnlock");
-                        }
+                        _ui.NavMenuControl("FirstKnowledgeUnlock");
                     }
-                    if (itemId == "ue0001")
+                    if (StartsWith(itemId, "uh"))
+                    {
+                        _ui.NavMenuControl("FirstTechUnlock");
+                    }
+                    if (itemId == "ux011")
                     {
                         _ui.NavMenuControl("FirstExpansionUnlock");
                     }
-                    if(StartsWith(itemId, "uh"))
+                    if (itemId == "ur01")
                     {
-                        int techs = 0;
-
-                        foreach (var tech in game.Techs)
+                        foreach (var character in game.Characters)
                         {
-                            if (tech.Value.State == UnlockHelper.State.Unlocked)
+                            if (character.Value.State == UnlockHelper.State.Unlocked && character.Value.CharState == UnlockHelper.CharState.InBase)
                             {
-                                techs++;
+                                helper = character.Value.Id;
                             }
                         }
 
-                        if (techs == 1)
-                        {
-                            _ui.NavMenuControl("FirstTechUnlock");
-                        }
+                        _ui.NavMenuControl("FirstResourceUnlock", helper);
                     }
-                    if(itemId == "un01")
-                    {
-                        _ui.NavMenuControl("FirstShipUnlock", helper);
-                    }
-                    if(itemId == "ue0102")
+                    if (itemId == "ue0102")
                     {
                         _ui.NavMenuControl("GuildTip");
                     }
-                    if (itemId == "ue01023")
+                    if (itemId == "ue0103")
                     {
-                        _ui.NavMenuControl("BaseTip", helper);
+                        _ui.NavMenuControl("BaseTip");
+                    }
+                    if (itemId == "ul011")
+                    {
+                        _ui.NavMenuControl("FirstLocalUnlock");
+                    }
+                    if (itemId == "uz0102")
+                    {
+                        _ui.NavMenuControl("FirstRouteUnlock");
+                    }
+                    if (itemId == "un01")
+                    {
+                        _ui.NavMenuControl("FirstShipUnlock");
                     }
                     if (itemId == "us02")
                     {
                         _ui.NavMenuControl("FirstStageUnlock");
                     }
                 }
+                #endregion
 
-                if (StartsWith(itemId, "ul"))
-                {
-                    _ui.NavMenuControl("LocalUnlock", helper);
-                }
+                #region Gerais
 
                 if (StartsWith(itemId, "e"))
                 {
                     _ui.NavMenuControl("SpecialtyUsed", helper);
                 }
+                if (StartsWith(itemId, "uk"))
+                {
+                    _ui.NavMenuControl("KnowledgeUnlock", helper);
+                }
+                if (StartsWith(itemId, "up"))
+                {
+                    _ui.NavMenuControl("CharacterUnlock", helper);
+                }
+                if (StartsWith(itemId, "ul"))
+                {
+                    _ui.NavMenuControl("LocalUnlock", helper);
+                }
+                if (StartsWith(itemId, "uh"))
+                {
+                    _ui.NavMenuControl("TechUnlock", helper);
+                }
+                if (StartsWith(itemId, "un"))
+                {
+                    _ui.NavMenuControl("ShipUnlock", helper);
+                }
+                if (StartsWith(itemId, "uz"))
+                {
+                    _ui.NavMenuControl("RouteUnlock", helper);
+                }
+                if (StartsWith(itemId, "us"))
+                {
+                    _ui.NavMenuControl("StageUnlock", helper);
+                }
+                if (StartsWith(itemId, "ux"))
+                {
+                    _ui.NavMenuControl("ExpansionUnlock", helper);
+                }
 
+                #endregion
                 _notifications.UpdateVisibleUpgrades("all");
 
             }, save: true, ui: true);
