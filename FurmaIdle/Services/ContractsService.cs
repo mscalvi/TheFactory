@@ -157,6 +157,11 @@ namespace FurmaIdle.Services
                 contractsCap += stageCap;
             }
 
+            if(contractsUsed >= 50)
+            {
+                _ui.SetNotificationTab("stage-expedition", NotificationKind.Info);
+            }
+
             contractsCap *= stage.Expedition.PartyIds.Count;
 
             stage.ActualContractLevel = contractsLevel;

@@ -15,8 +15,8 @@
 @inject INotificationService Notifications
 
 <div class="menu-root">
-@if (!Game.IsReady || _stage is null)
-{
+    @if (!Game.IsReady || _stage is null)
+    {
         <div class="contracts-placeholder">Stage não Selecionado</div>
     }
     else
@@ -49,7 +49,7 @@
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("hall-expansion")}")">
-                <h3 class="title">Impulsos Temporários</h3>
+            <h3 class="title">Impulsos Temporários</h3>
             <div class="icon-grid">
                 @foreach (var u in _hallExpansion)
                 {
@@ -72,7 +72,7 @@
                 }
             </div>
         </section>
-}
+    }
 </div>
 
 @code {

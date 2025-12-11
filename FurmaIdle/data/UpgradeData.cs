@@ -2099,15 +2099,15 @@ namespace FurmaIdle.Data
             #endregion
 
             #region k04 - Navegação
-            #region t0401 - Construção de Pequenas Embarcações
+            #region t0401 - Fluxo das Correntezas
             ["ut04011"] = new UpgradeModel
             {
                 Id = "ut04011",
-                Name = "Estudar as Embarcações para Correntezas",
+                Name = "Estudar as Correntezas da Ilha de Vera",
                 Level = 1,
                 Icon = "icons/upgrades/ut04011.svg",
                 Lore = "",
-                Description = "Permite construir Barcos para correntezas.",
+                Description = "Permite encontrar Rotas pela Entrilhas saindo da Ilha de Vera.",
                 UnlockId = "t0401",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
@@ -2120,15 +2120,16 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            #region t0402 - Fluxo das Correntezas
+            #endregion
+            #region t0402 - Construção de Pequenas Embarcações
             ["ut04021"] = new UpgradeModel
             {
                 Id = "ut04021",
-                Name = "Estudar as Correntezas da Ilha de Vera",
-                Level = 2,
+                Name = "Estudar as Embarcações para Correntezas",
+                Level = 1,
                 Icon = "icons/upgrades/ut04021.svg",
                 Lore = "",
-                Description = "Permite encontrar Rotas pela Entrilhas saindo da Ilha de Vera.",
+                Description = "Permite construir Barcos para correntezas.",
                 UnlockId = "t0402",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
@@ -2141,7 +2142,6 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            #endregion
             #endregion
             #endregion
 

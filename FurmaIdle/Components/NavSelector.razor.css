@@ -1,4 +1,25 @@
-﻿.nav-button {
+﻿.nav-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+aside.nav-menu {
+    grid-area: nav;
+    height: 100%;
+    min-height: 100%;
+    min-width: 0;
+    padding: 0;
+}
+
+.game-area.nav-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-button {
     width: 60px;
     height: 60px;
     display: grid;

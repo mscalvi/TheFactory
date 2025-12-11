@@ -3,7 +3,7 @@
 @using FurmaIdle.Models
 @using FurmaIdle.Services
 
-<div class="game-area shop-shell">
+<div class="game-area">
     @if (!Game.IsReady || _stage is null || string.IsNullOrWhiteSpace(_stage.Id))
     {
         <div class="contracts-placeholder">Stage não Selecionado</div>
@@ -91,7 +91,7 @@
                         break;
                 }  
             }
-        </div>
+            </div>
     }
 </div>
 

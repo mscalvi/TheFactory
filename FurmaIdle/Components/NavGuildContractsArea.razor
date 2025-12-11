@@ -25,13 +25,11 @@
         var expedition = _stage.Expedition;
         var expeditionStats = _stage.ExpeditionStats;
 
-        // Id da expansão atual
         var expansionId = game.CurrentExpansionId;
 
-        // Mostrar "Comprar Tudo" somente se NÃO for x000, x010 ou x011
         var showBuyAll = expansionId != "x000"
-            && expansionId != "x010"
-            && expansionId != "x011";
+        && expansionId != "x010"
+        && expansionId != "x011";
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("guild-contracts-fast")}")">
             @if (_stage.Id == "s00")
