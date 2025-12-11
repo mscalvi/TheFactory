@@ -36,6 +36,7 @@
         else
         {
             durationText = "--:--:--";
+            UI.SetNotificationTab("stage-expedition", NotificationKind.Info);
         }
 
         var isActive = isExpActive(_stage);
@@ -55,6 +56,12 @@
         var canEnd = isActive && totalContracts >= MinContractsToEnd;
 
         var canToggleExp = isActive ? canEnd : canLaunch;
+
+        var missingContracts = 0;
+        if (isActive && totalContracts < MinContractsToEnd)
+        {
+            missingContracts = MinContractsToEnd - totalContracts;
+        }
 
         var chars = game.Characters?.Values ?? Enumerable.Empty<CharacterModel>();
 
@@ -76,6 +83,13 @@
                     @onmouseleave="Tooltips.Clear">
                 @(isActive ? "Encerrar Expedição" : "Iniciar Expedição")
             </button>
+
+            @if (isActive && missingContracts > 0)
+            {
+                <div class="expedition-warning">
+                    Faltam @missingContracts Contratos
+                </div>
+            }
         </section>
 
         <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-party")}")">

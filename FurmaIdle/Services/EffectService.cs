@@ -536,7 +536,7 @@ namespace FurmaIdle.Services
                                         contract.Modifiers.Add(contractNewMod);
                                     }
                                     break;
-                                case "stageClicks":
+                                case "stageClick":
                                     var click = _locate.LocateStageClick(game, stage.Id);
 
                                     var clickNewMod = new ModifierModel

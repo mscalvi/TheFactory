@@ -63,7 +63,7 @@
 }
 
     .tt-desc .tt-description {
-        font-size: clamp(0.25rem, 0.7rem + 0.2vw, 0.8rem);
+        font-size: clamp(0.25rem, 0.5rem + 0.2vw, 0.6rem);
         line-height: 1.2;
         color: var(--metal-ink);
         overflow: hidden;
@@ -98,7 +98,7 @@
 }
 
     .tt-info .tt-info-title {
-        font-size: calc(.68rem * var(--ui-scale));
+        font-size: calc(.45rem * var(--ui-scale));
         font-weight: 350;
         margin-bottom: 0px;
         white-space: nowrap;
@@ -109,7 +109,7 @@
     }
 
     .tt-info .tt-info-item {
-        font-size: calc(1rem * var(--ui-scale));
+        font-size: calc(0.8rem * var(--ui-scale));
         line-height: 1;
         max-width: 100%;
         text-wrap: auto;

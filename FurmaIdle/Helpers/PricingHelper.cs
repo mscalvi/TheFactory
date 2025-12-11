@@ -128,10 +128,10 @@ namespace FurmaIdle.Helpers
                 [PricingId.ContractLevelUnlock01] = new Entry("m01", 600, 3.8, CostFactor.Level, 4.3),
 
                 // Unlock Knowledge Stage X
-                [PricingId.KnowledgeUnlock1] = new Entry("m01", 60000, 1.0, CostFactor.KnowledgesUnlocked, 5.9),
+                [PricingId.KnowledgeUnlock1] = new Entry("m01", 60000, 1.0, CostFactor.KnowledgesUnlocked, 5.3),
 
                 // Unlock Local Stage X
-                [PricingId.LocalUnlock01] = new Entry("m01", 140000, 1.0, CostFactor.LocalsUnlocked, 7.2),
+                [PricingId.LocalUnlock01] = new Entry("m01", 140000, 1.0, CostFactor.LocalsUnlocked, 6.5),
 
                 // Unlock Resource X
                 [PricingId.ResourceUnlock01] = new Entry("m01", 1500, 1.0, CostFactor.None, 1),

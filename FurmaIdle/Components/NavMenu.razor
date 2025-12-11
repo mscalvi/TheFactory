@@ -98,12 +98,14 @@
 @code {
     private StageModel? _stage;
     private string? SelectedMenuId;
+    private string? SelectedTabId;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         UI.Changed += OnUiChanged;
         SelectedMenuId = UI.OpenMenuId;
+        SelectedTabId = UI.OpenTabId;
         RefreshStage();
     }
 
@@ -115,6 +117,7 @@
     private void OnUiChanged()
     {
         SelectedMenuId = UI.OpenMenuId;
+        SelectedTabId = UI.OpenTabId;
         InvokeAsync(StateHasChanged);
     }
 

@@ -193,12 +193,6 @@
                 await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
 
                 UI.ClearBusy();
-
-                if (_stage is not null)
-                {
-                    var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, _stage.Id);
-                    Tooltips.Show(hover);
-                }
             }
             finally
             {

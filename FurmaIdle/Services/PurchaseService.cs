@@ -135,6 +135,47 @@ namespace FurmaIdle.Services
 
             await _game.Mutate(g =>
             {
+                #region Gerais
+
+                if (StartsWith(itemId, "e"))
+                {
+                    _ui.NavMenuControl("SpecialtyUsed", helper);
+                }
+                if (StartsWith(itemId, "uk"))
+                {
+                    _ui.NavMenuControl("KnowledgeUnlock", helper);
+                }
+                if (StartsWith(itemId, "up"))
+                {
+                    _ui.NavMenuControl("CharacterUnlock", helper);
+                }
+                if (StartsWith(itemId, "ul"))
+                {
+                    _ui.NavMenuControl("LocalUnlock", helper);
+                }
+                if (StartsWith(itemId, "uh"))
+                {
+                    _ui.NavMenuControl("TechUnlock", helper);
+                }
+                if (StartsWith(itemId, "un"))
+                {
+                    _ui.NavMenuControl("ShipUnlock", helper);
+                }
+                if (StartsWith(itemId, "uz"))
+                {
+                    _ui.NavMenuControl("RouteUnlock", helper);
+                }
+                if (StartsWith(itemId, "us"))
+                {
+                    _ui.NavMenuControl("StageUnlock", helper);
+                }
+                if (StartsWith(itemId, "ux"))
+                {
+                    _ui.NavMenuControl("ExpansionUnlock", helper);
+                }
+
+                #endregion
+
                 #region s00
                 if (stage.Id == "s00")
                 {
@@ -236,11 +277,15 @@ namespace FurmaIdle.Services
                     {
                         _ui.NavMenuControl("FirstLocalUnlock");
                     }
-                    if (itemId == "ut04011")
+                    if(itemId == "ut04011")
+                    {
+                        _ui.NavMenuControl("SeaUnlock");
+                    }
+                    if (itemId == "uz0102")
                     {
                         _ui.NavMenuControl("FirstRouteUnlock");
                     }
-                    if (itemId == "ut04021")
+                    if (itemId == "un01")
                     {
                         _ui.NavMenuControl("FirstShipUnlock");
                     }
@@ -251,46 +296,6 @@ namespace FurmaIdle.Services
                 }
                 #endregion
 
-                #region Gerais
-
-                if (StartsWith(itemId, "e"))
-                {
-                    _ui.NavMenuControl("SpecialtyUsed", helper);
-                }
-                if (StartsWith(itemId, "uk"))
-                {
-                    _ui.NavMenuControl("KnowledgeUnlock", helper);
-                }
-                if (StartsWith(itemId, "up"))
-                {
-                    _ui.NavMenuControl("CharacterUnlock", helper);
-                }
-                if (StartsWith(itemId, "ul"))
-                {
-                    _ui.NavMenuControl("LocalUnlock", helper);
-                }
-                if (StartsWith(itemId, "uh"))
-                {
-                    _ui.NavMenuControl("TechUnlock", helper);
-                }
-                if (StartsWith(itemId, "un"))
-                {
-                    _ui.NavMenuControl("ShipUnlock", helper);
-                }
-                if (StartsWith(itemId, "uz"))
-                {
-                    _ui.NavMenuControl("RouteUnlock", helper);
-                }
-                if (StartsWith(itemId, "us"))
-                {
-                    _ui.NavMenuControl("StageUnlock", helper);
-                }
-                if (StartsWith(itemId, "ux"))
-                {
-                    _ui.NavMenuControl("ExpansionUnlock", helper);
-                }
-
-                #endregion
                 _notifications.UpdateVisibleUpgrades("all");
 
             }, save: true, ui: true);

@@ -71,7 +71,7 @@ namespace FurmaIdle.Data
             },
             ["x013"] = new ExpansionModel
             {
-                Id = "x13",
+                Id = "x013",
                 Name = "Mestres da Ilha de Vera",
                 Icon = "icons/expansions/x013.svg",
                 UnlockId = "ux013",

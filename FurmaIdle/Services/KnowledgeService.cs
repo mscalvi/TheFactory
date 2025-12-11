@@ -89,10 +89,10 @@ namespace FurmaIdle.Services
 
                 if (final > 0)
                 {
-                    if(final > expansion.MaxKnowledge)
-                    {
-                        final = expansion.MaxKnowledge;
-                    }
+                    //if(final > expansion.MaxKnowledge)
+                    //{
+                    //    final = expansion.MaxKnowledge;
+                    //}
 
                     result[kId] = final;
                 }

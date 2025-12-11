@@ -190,20 +190,7 @@ namespace FurmaIdle.Services
 
             foreach (var tab in _tabs)
             {
-                if (g.Ui.TabsWithNotification.Contains(tab.Id))
-                {
-                    tab.Notification = true;
-
-                    if (g.Ui.TabsNotificationKind.TryGetValue(tab.Id, out var kind))
-                        tab.NotificationKind = kind;
-                    else
-                        tab.NotificationKind = NotificationKind.Info;
-                }
-                else
-                {
-                    tab.Notification = false;
-                    tab.NotificationKind = NotificationKind.None;
-                }
+                SetNotificationTab(tab.Id, NotificationKind.Info);
             }
 
             foreach (var menu in _nav)
@@ -450,7 +437,8 @@ namespace FurmaIdle.Services
 
             SetNotificationMenu(tab.ParentMenuId, kind);
 
-            _ = _game.Mutate(g =>
+            var g = _game.CurrentGame;
+            if (g is not null)
             {
                 g.Ui ??= new UiState();
                 g.Ui.TabsWithNotification ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -458,7 +446,7 @@ namespace FurmaIdle.Services
 
                 g.Ui.TabsNotificationKind ??= new(StringComparer.OrdinalIgnoreCase);
                 g.Ui.TabsNotificationKind[tabId] = kind;
-            }, save: true);
+            }
 
             RaiseChanged();
             return true;
@@ -472,13 +460,12 @@ namespace FurmaIdle.Services
             tab.Notification = false;
             tab.NotificationKind = NotificationKind.None;
 
-            _ = _game.Mutate(g =>
+            var g = _game.CurrentGame;
+            if (g?.Ui is not null)
             {
-                if (g.Ui is null) return;
-
                 g.Ui.TabsWithNotification?.Remove(tabId);
                 g.Ui.TabsNotificationKind?.Remove(tabId);
-            }, save: true);
+            }
 
             UpdateMenuNotificationFromTabs(tab.ParentMenuId);
 
@@ -851,6 +838,13 @@ namespace FurmaIdle.Services
                     UnlockPanel("game-tips-locals");
                     SetNotificationTab("game-tips");
                     break;
+                case "SeaUnlock":
+                    // Menu: Stage > Dock
+                    UnlockTab("stage-dock");
+                    SetNotificationTab("stage-dock", NotificationKind.NewItem);
+
+                    _lore.LoreTrigger(controlItem, helper);
+                    break;
                 case "FirstRouteUnlock":
                     // Menu: World > Ships
                     UnlockTab("world-ships");
@@ -863,13 +857,9 @@ namespace FurmaIdle.Services
                     SetNotificationTab("game-tips");
                     break;
                 case "FirstShipUnlock":
-                    // Menu: Stage > Dock
-                    UnlockTab("stage-dock");
-                    SetNotificationTab("stage-dock", NotificationKind.NewItem);
-
                     _lore.LoreTrigger(controlItem, helper);
 
-                    // Tips: Expansion
+                    // Tips: Ships
                     UnlockPanel("game-tips-ships");
                     SetNotificationTab("game-tips");
                     break;
@@ -929,6 +919,9 @@ namespace FurmaIdle.Services
 
                     break;
                 case "ExpeditionStart":
+                    SetOpenMenu("i1");
+                    SetOpenTab("guild-contracts");
+
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "ExpeditionEnd":
@@ -936,7 +929,15 @@ namespace FurmaIdle.Services
                     break;
                 case "ExpansionEnd":
                     SetOpenMenu("i2");
-                    SetOpenTab("stage-expedition");
+
+                    if(game.CurrentExpansionId != "x000")
+                    {
+                        if(game.CurrentExpansionId != "x010")
+                        {
+                            SetOpenTab("stage-expedition");
+                        }
+                    }
+
                     _lore.LoreTrigger(controlItem);
                     break;
                 #endregion

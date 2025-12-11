@@ -48,14 +48,14 @@ namespace FurmaIdle.Data
                 PricingId = "r01",
                 Modifiers = new List<ModifierModel>(),
             },
-            ["e01002"] = new SpecialtyModel
+            ["e0102"] = new SpecialtyModel
             {
-                Id = "e01002",
+                Id = "e0102",
                 Name = "Força de Pescador",
                 Description = "Aumenta o ganho por Click da Expedição.",
                 Lore = "",
-                Image = "images/specialties/e01002.svg",
-                Icon = "icons/specialties/e01002.svg",
+                Image = "images/specialties/e0102.svg",
+                Icon = "icons/specialties/e0102.svg",
                 TargetId = "stageClick",
                 EffectValue = 3.0,
                 EffectType = EffectHelper.EffectType.ClickGain,

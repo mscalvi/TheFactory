@@ -36,4 +36,9 @@
     grid-area: expedition-gain;
 }
 
-
+.expedition-warning {
+    margin-top: .25rem;
+    font-size: .8rem;
+    color: #f6d28a;
+    opacity: 0.9;
+}

@@ -73,6 +73,8 @@
                         var spec = Locate.LocateSpecialty(Game.CurrentGame, c.SpecialtyId);
 
                         var canUse = CanUseSpec(spec);
+                        var requisites = Requisites(spec.Id);
+
                         var isActive = IsSpecActive(spec);
 
                         var timer = Specialty.GetSpecialtyTimer(spec);
@@ -84,7 +86,7 @@
                             <div class="party-card">
                                 <div class="pc-action">
                                     <button class="spec-button"
-                                            disabled="@(!canUse)"
+                                            disabled="@(!canUse || !requisites)"
                                             @onclick="() => UseSpec(spec)"
                                             @onmouseover="() => Tooltips.Show(Tooltips.GetHover(HoverType.Specialty, spec.Id, _stage!.Id))"
                                             @onmouseout="Tooltips.Clear">
@@ -229,8 +231,31 @@
         foreach(var stage in Game.CurrentGame.Stages)
         {
             resTotal += stage.Value.ExpeditionStats.Resources.TryGetValue(resId, out var v) == true ? v : 0L;
-            
+
         }
         return resTotal;
+    }
+
+    private bool Requisites (string specId)
+    {
+        if(_stage is null)
+        {
+            return false;
+        }
+
+        if (_stage.ActiveContracts is null)
+        {
+            return false;
+        }
+
+        if (specId == "e0121")
+        {
+            if (!_stage.ActiveContracts.ContainsKey("c405"))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

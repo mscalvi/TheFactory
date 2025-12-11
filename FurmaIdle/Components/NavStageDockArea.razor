@@ -20,7 +20,7 @@
     }
     else
     {
-        <section class="@($"menu-panel menu-section {UI.PanelClass("shop-tech-ships")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("stage-dock-ships")}")">
             <h3 class="title">Navios Disponíveis</h3>
             <div class="icon-grid">
                 @foreach (var u in _stageShips)
@@ -46,7 +46,7 @@
             </div>
         </section>
 
-        <section class="@($"menu-panel menu-section {UI.PanelClass("shop-tech-routes")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("stage-dock-routes")}")">
             <h3 class="title">Rotas Disponíveis</h3>
             <div class="icon-grid">
                 @foreach (var u in _stageRoutes)

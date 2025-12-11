@@ -209,12 +209,17 @@ namespace FurmaIdle.Services
                     s.OnTick(g, dtSeconds);
             }, save: save, ui: ui || save);
 
-            if ((ui || save) && !_ui.IsBusy)
+            if (ui && !_ui.IsBusy)
             {
                 _notifications.AllTabsAffordables();
+            }
+
+            if (ui || save)
+            {
                 _ui.RaisePulse();
             }
         }
+
 
         public ValueTask DisposeAsync()
         {

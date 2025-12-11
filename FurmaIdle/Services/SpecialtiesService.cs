@@ -126,7 +126,7 @@ namespace FurmaIdle.Services
                             foreach (var it in g.Specialties.Values)
                                 Scrub(it.Modifiers, specId);
                         }
-                        if (spec.TargetId == "stageclick")
+                        if (spec.TargetId == "stageClick")
                         {
                             foreach (var it in g.Clicks.Values)
                                 Scrub(it.Modifiers, specId);

@@ -167,7 +167,6 @@
                 #endregion
 
                 #region Geral
-
                 case "LocalUnlock":
                     if (helper == "l011")
                     {
@@ -226,10 +225,6 @@
 
                     break;
                 case "SpecialtyUsed":
-                    if (helper == "e0001")
-                    {
-                        _log.Ferri("Colaborem com a recuperação da ilha! Pela Guilda da Illha de Vera!");
-                    }
                     if (helper == "e0101")
                     {
                         _log.Maik("Deixe-me mostrar meu talento.");

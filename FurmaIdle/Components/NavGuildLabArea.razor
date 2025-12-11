@@ -20,6 +20,30 @@
     }
     else
     {
+        var game = Game.CurrentGame;
+
+        var expansion = Locate.LocateExpansion(game, game.CurrentExpansionId);
+
+        var expansionStats = expansion.ExpansionStats;
+
+        <section class="@($"menu-panel {UI.PanelClass("lab-accumuled")}")">
+            <table class="info-table">
+                <thead>
+                    <tr><th colspan="2">Conhecimentos</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var knowEntry in expansionStats.Knowledge)
+                    {
+                        var know = Locate.LocateKnowledge(game, knowEntry.Key);
+                        <tr class="info-row">
+                            <td class="info-name">@know.Name</td>
+                            <td class="info-value">@NumbersHelper.Padronize(knowEntry.Value)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+
         <section class="@($"menu-panel menu-section {UI.PanelClass("lab-knowledge")}")">
             <h3 class="title">Estudos Disponíveis</h3>
             <div class="icon-grid">

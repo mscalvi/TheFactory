@@ -878,7 +878,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/un01.svg",
                 Lore = "",
                 Description = "Constrói um novo Barco na Ilha de Vera.",
-                UnlockId = "ut04021",
+                UnlockId = "ut04011",
                 StageId = "s01",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.ShipUnlock1,
@@ -902,7 +902,7 @@ namespace FurmaIdle.Data
                 Icon = "icons/upgrades/uz0102.svg",
                 Lore = "",
                 Description = "Reconhece a Rota entre a Ilha de Vera e a Ilha Maravasta.",
-                UnlockId = "ut04011",
+                UnlockId = "ut04021",
                 StageId = "s01",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.RouteUnlock1,
@@ -1968,7 +1968,7 @@ namespace FurmaIdle.Data
                 Level = 1,
                 Icon = "icons/upgrades/ut01011.svg",
                 Lore = "",
-                Description = "Diminui o tempo para concluir Contratos de Regiões Selvagens.",
+                Description = "Diminui o tempo para concluir Contratos próprios para Regiões Selvagens.",
                 UnlockId = "t0101",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
@@ -2099,15 +2099,15 @@ namespace FurmaIdle.Data
             #endregion
 
             #region k04 - Navegação
-            #region t0401 - Fluxo das Correntezas
+            #region t0401 - Construção de Pequenas Embarcações
             ["ut04011"] = new UpgradeModel
             {
                 Id = "ut04011",
-                Name = "Estudar as Correntezas da Ilha de Vera",
+                Name = "Estudar as Embarcações para Correntezas",
                 Level = 1,
                 Icon = "icons/upgrades/ut04011.svg",
                 Lore = "",
-                Description = "Permite encontrar Rotas pela Entrilhas saindo da Ilha de Vera.",
+                Description = "Permite construir Barcos para correntezas.",
                 UnlockId = "t0401",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
@@ -2120,16 +2120,15 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
-            #endregion
-            #region t0402 - Construção de Pequenas Embarcações
+            #region t0402 - Fluxo das Correntezas
             ["ut04021"] = new UpgradeModel
             {
                 Id = "ut04021",
-                Name = "Estudar as Embarcações para Correntezas",
+                Name = "Estudar as Correntezas da Ilha de Vera",
                 Level = 2,
                 Icon = "icons/upgrades/ut04021.svg",
                 Lore = "",
-                Description = "Permite construir Barcos para correntezas.",
+                Description = "Permite encontrar Rotas pela Entrilhas saindo da Ilha de Vera.",
                 UnlockId = "t0402",
                 MaxBuy = 1,
                 PricingId = PricingHelper.PricingId.TechUpgrade1,
@@ -2142,6 +2141,7 @@ namespace FurmaIdle.Data
                 EffectSupertype = EffectHelper.EffectSupertype.Unlock,
                 EffectValue = 0,
             },
+            #endregion
             #endregion
             #endregion
 

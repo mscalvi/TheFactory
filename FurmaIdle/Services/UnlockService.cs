@@ -65,13 +65,11 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
                 character.State = UnlockHelper.State.Unlocked;
                 character.CharState = UnlockHelper.CharState.InBase;
-                Console.WriteLine($"[Unlock] Character {character.Id}: {character.State}");
                 game.GameStats.CharactersUnlocked++;
             }, save: true);
         }
@@ -85,7 +83,6 @@ namespace FurmaIdle.Services
                 var coin = _locate.LocateCoin(game, coinId);
 
                 coin.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Coin {coin.Id}: {coin.State}");
                 game.GameStats.CoinsUnlocked++;
             }, save: true);
         }
@@ -104,12 +101,10 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
                 contract.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Contract {contract.Id}: {contract.State}");
                 game.GameStats.ContractsUnlocked++;
             }, save: true);
         }
@@ -129,7 +124,6 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
@@ -140,8 +134,6 @@ namespace FurmaIdle.Services
                         if (nextExpansion.Value.State != UnlockHelper.State.Blocked) continue;
 
                         nextExpansion.Value.State = UnlockHelper.State.Available;
-
-                        Console.WriteLine($"[Unlock] Expansion {nextExpansion.Value.Id}: {nextExpansion.Value.State}");
                     }
                 }
 
@@ -151,11 +143,8 @@ namespace FurmaIdle.Services
                 }
 
                 expansion.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Expansion {expansion.Id}: {expansion.State} -> {expansion.StartedAt}");
                 game.GameStats.ExpansionsUnlocked++;
                 game.CurrentExpansionId = expansion.Id;
-
-                Console.WriteLine($"[Unlock] Current Expansion: {game.CurrentExpansionId} - {expansion.Name}");
 
             }, save: true);
         }
@@ -169,7 +158,6 @@ namespace FurmaIdle.Services
                 var know = _locate.LocateKnowledge(game, knowledgeId);
 
                 know.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Knowledge {know.Id}: {know.State}");
                 game.GameStats.KnowledgesUnlocked++;
             }, save: true);
         }
@@ -188,12 +176,10 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
                 local.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Local {local.Id}: {local.State}");
                 game.GameStats.LocalsUnlocked++;
             }, save: true);
         }
@@ -220,7 +206,6 @@ namespace FurmaIdle.Services
                         coin.Value.State = UnlockHelper.State.Available;
                         newCoin = true;
                         newCoinId = coin.Value.Id;
-                        Console.WriteLine($"[Unlock] Coin {coin.Value.Id}: {coin.Value.State}");
                     }
                 }
 
@@ -232,7 +217,6 @@ namespace FurmaIdle.Services
                         local.Value.State = UnlockHelper.State.Available;
                         newLocal = true;
                         newLocalId = local.Value.Id;
-                        Console.WriteLine($"[Unlock] Local {local.Value.Id}: {local.Value.State}");
                     }
                 }
 
@@ -242,13 +226,11 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
                 stage.State = UnlockHelper.State.Unlocked;
 
-                Console.WriteLine($"[Unlock] Stage {stage.Id}: {stage.State}");
                 game.GameStats.StagesUnlocked++;
             }, save: true);
 
@@ -282,12 +264,10 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
                 tech.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Tech {tech.Id}: {tech.State}");
                 game.GameStats.TechUnlocked++;
             }, save: true);
         }
@@ -301,7 +281,6 @@ namespace FurmaIdle.Services
                 var resource = _locate.LocateResource(game, resourceId);
 
                 resource.State = UnlockHelper.State.Unlocked;
-                Console.WriteLine($"[Unlock] Resource {resource.Id}: {resource.State}");
                 game.GameStats.ResourcesUnlocked++;
             }, save: true);
         }
@@ -363,14 +342,11 @@ namespace FurmaIdle.Services
                     {
                         if (upgrade.Value.State != UnlockHelper.State.Blocked) continue;
                         upgrade.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {upgrade.Value.Id}: {upgrade.Value.State}");
                     }
                 }
 
                 up.State = UnlockHelper.State.Unlocked;
-
-                Console.WriteLine($"[Unlock] Upgrade {up.Id}: {up.State}");
-                
+                                
                 game.GameStats.UpgradesUnlocked++;
 
             }, save: true);
@@ -390,14 +366,12 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
                 ship.State = UnlockHelper.State.Unlocked;
                 ship.ShipState = UnlockHelper.ShipState.InStage;
                 ship.InStageId = "s01";
-                Console.WriteLine($"[Unlock] Ship {ship.Id}: {ship.State} -> Stage {ship.InStageId}");
                 game.GameStats.ShipsUnlocked++;
             }, save: true);
         }
@@ -416,13 +390,11 @@ namespace FurmaIdle.Services
                     {
                         if (up.Value.State != UnlockHelper.State.Blocked) continue;
                         up.Value.State = UnlockHelper.State.Available;
-                        Console.WriteLine($"[Unlock] Upgrade {up.Value.Id}: {up.Value.State}");
                     }
                 }
 
                 route.State = UnlockHelper.State.Unlocked;
                 route.RouteState = UnlockHelper.RouteState.Available;
-                Console.WriteLine($"[Unlock] Route {route.Id}: {route.State}");
                 game.GameStats.RoutesUnlocked++;
             }, save: true);
         }
