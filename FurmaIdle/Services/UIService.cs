@@ -928,13 +928,18 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "ExpansionEnd":
-                    SetOpenMenu("i2");
+
 
                     if(game.CurrentExpansionId != "x000")
                     {
                         if(game.CurrentExpansionId != "x010")
                         {
+                            SetOpenMenu("i2");
                             SetOpenTab("stage-expedition");
+                        } else
+                        {
+                            SetOpenMenu("i1");
+                            SetOpenTab("guild-contracts");
                         }
                     }
 

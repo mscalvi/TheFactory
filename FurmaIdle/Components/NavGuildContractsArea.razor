@@ -232,7 +232,6 @@
         {
             await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
             await Expedition.SecondExpeditionStart();
-            await UI.LoadStage("s01");
             UI.ClearBusy();
         }
 
