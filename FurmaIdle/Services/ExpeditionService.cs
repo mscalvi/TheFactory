@@ -629,9 +629,13 @@ namespace FurmaIdle.Services
                 {
                     var expansion = _locate.LocateExpansion(game, expansionId);
 
+                    expansion.ExpansionStats.Knowledge.Clear();
+                    expansion.ExpansionStats.Coins.Clear();
+                    expansion.ExpansionStats.Resources.Clear();
+
                     expansion.FinishedAt = DateTimeOffset.UtcNow;
 
-                    var expansionStarting = _locate.LocateExpansion(game, game.CurrentExpansionId);
+                    var expansionStarting = _locate.LocateExpansion(game, expansion.NextExpansion);
 
                     expansionStarting.ExpansionStats.Knowledge.Clear();
                     expansionStarting.ExpansionStats.KnowledgeGain.Clear();
@@ -647,9 +651,16 @@ namespace FurmaIdle.Services
                     game.GameStats.Resources.Clear();
                     game.GameStats.Knowledge.Clear();
 
+                    expansionStarting.StartedAt = DateTime.Now;
+
+                    game.CurrentExpansionId = expansionStarting.Id;
+
                     _ui.LoadStage("s01");
 
-                    _ui.NavMenuControl("ExpansionEnd");
+                    if(expansionStarting.Id != "x010")
+                    {
+                        _ui.NavMenuControl("ExpansionEnd");
+                    }
 
                 }, save: true, ui: true);
             }            

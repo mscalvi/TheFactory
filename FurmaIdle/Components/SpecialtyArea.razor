@@ -55,7 +55,9 @@
 
         if (!resourcesUnlocked)
         {
-            <div class="contracts-placeholder">Stage não Selecionado</div>
+            <div class="blocked">
+                <img src="@($"images/specialties-locked.svg")" alt="Recursos Bloqueados" class="no-resources" />
+            </div>
         }
         else
         {

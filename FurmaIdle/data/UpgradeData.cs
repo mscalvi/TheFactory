@@ -2604,46 +2604,6 @@ namespace FurmaIdle.Data
             #endregion
 
             #region x013
-            ["ue0131"] = new UpgradeModel
-            {
-                Id = "ue0131",
-                Name = "Prática Acumulada",
-                Level = 4,
-                Icon = "icons/upgrades/ue0131.svg",
-                Lore = "",
-                Description = "Aumenta o ganho de todos os Contratos por tempo de Expedição.",
-                UnlockId = "x013",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "allContracts",
-                TabId = "guild-hall-expansion",
-                EffectType = EffectHelper.EffectType.ContractGainPerExpeditionTime,
-                EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Gain,
-                EffectValue = 1.00001,
-            },
-            ["ue0132"] = new UpgradeModel
-            {
-                Id = "ue0132",
-                Name = "Habilidade Aperfeiçoada",
-                Level = 4,
-                Icon = "icons/upgrades/ue0132.svg",
-                Lore = "",
-                Description = "Diminui o tempo para concluir os Contratos por tempo de Expansão.",
-                UnlockId = "x013",
-                MaxBuy = 1,
-                PricingId = PricingHelper.PricingId.ExpansionUpgrade1,
-                State = UnlockHelper.State.Blocked,
-                Persistence = UnlockHelper.Persistence.untilExpansion,
-                TargetId = "allContracts",
-                TabId = "guild-hall-expansion",
-                EffectType = EffectHelper.EffectType.ContractTimePerExpansionTime,
-                EffectOp = EffectHelper.EffectOperation.Multiplicative,
-                EffectSupertype = EffectHelper.EffectSupertype.Time,
-                EffectValue = 0.999995,
-            },
             #endregion
             #endregion
         };

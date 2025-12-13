@@ -33,12 +33,15 @@
 
         <div class="contracts-layout">
             <div class="contracts-capbar">
-                <div class="selectbuy">
-                    <button class="buy-button select-toggle" disabled = "@stageTutorial"
-                            @onclick="ToggleBuyMode">
-                        @BuyModeLabel
-                    </button>
-                </div>
+                @if (!stageTutorial)
+                {
+                    <div class="selectbuy">
+                        <button class="utility-button select-toggle" disabled="@stageTutorial"
+                                @onclick="ToggleBuyMode">
+                            @BuyModeLabel
+                        </button>
+                    </div>
+                }
                 <div class="cap">
                     <strong>Contratos:</strong>
                     <span>@contractsInfo.ContractsUsed / @contractsInfo.ContractsCap</span>

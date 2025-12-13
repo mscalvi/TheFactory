@@ -17,51 +17,58 @@
 <div class="menu-root">
 @if (!Game.IsReady || string.IsNullOrWhiteSpace(_stage.Id) || _stage is null)
 {
-    <div class="contracts-placeholder">Stage não Selecionado</div>
-}
-else
-{
-    var game = Game.CurrentGame;
+        <div class="contracts-placeholder">Stage não Selecionado</div>
+    }
+    else
+    {
+        var game = Game.CurrentGame;
 
+        bool notReady = true;
+        if (notReady)
+        {
+            <div class="contracts-placeholder">A área ainda não está pronta. Volte em Fevereiro de 2026.</div>
+        }
+        else
+        {
+            <section class="@($"menu-panel {UI.PanelClass("stage-select")}")">
+                <h3 class="title">Unlocked Stages</h3>
+                @if (!_worldStages.Any())
+                {
+                    <div>Nenhuma Stage desbloqueada.</div>
+                }
+                else
+                {
+                    <div>
+                        @foreach (var stage in _worldStages)
+                        {
+                            var isSelected = string.Equals(_stage.Id, stage.Id, StringComparison.OrdinalIgnoreCase);
 
-        <section class="@($"menu-panel {UI.PanelClass("stage-select")}")">
-            <h3 class="title">Unlocked Stages</h3>
-            @if (!_worldStages.Any())
-            {
-                <div>Nenhuma Stage desbloqueada.</div>
-            }
-            else
-            {
-                <div>
-                    @foreach (var stage in _worldStages)
-                    {
-                        var isSelected = string.Equals(_stage.Id, stage.Id, StringComparison.OrdinalIgnoreCase);
-
-                        <button type="button"
-                                class="character-button"
-                                disabled="@(isSelected)"
-                                aria-pressed="@(isSelected)"
-                                @onclick="() => SelectStage(stage.Id)"
-                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
-                                @onmouseleave="Tooltips.Clear"
-                                @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
-                                @onblur="Tooltips.Clear"
-                                tabindex="0">
-                            @if (!string.IsNullOrWhiteSpace(stage.Icon))
-                            {
-                                <img src="@stage.Icon"
-                                     alt="@stage.Id"
-                                     class="icon-img" />
-                            }
-                            else
-                            {
-                                @stage.Id
-                            }
-                        </button>
-                    }
-                </div>
-            }
-        </section>
+                            <button type="button"
+                                    class="character-button"
+                                    disabled="@(isSelected)"
+                                    aria-pressed="@(isSelected)"
+                                    @onclick="() => SelectStage(stage.Id)"
+                                    @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
+                                    @onmouseleave="Tooltips.Clear"
+                                    @onfocus="() => Tooltips.Show(Tooltips.GetHover(HoverType.Stage, stage.Id, _stage.Id))"
+                                    @onblur="Tooltips.Clear"
+                                    tabindex="0">
+                                @if (!string.IsNullOrWhiteSpace(stage.Icon))
+                                {
+                                    <img src="@stage.Icon"
+                                         alt="@stage.Id"
+                                         class="icon-img" />
+                                }
+                                else
+                                {
+                                    @stage.Id
+                                }
+                            </button>
+                        }
+                    </div>
+                }
+            </section>
+        }
 }
 
 </div>
@@ -139,12 +146,6 @@ else
         {
             await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, stageId);
 
-
-            if (_stage is not null)
-            {
-                var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, stageId);
-                Tooltips.Show(hover);
-            }
         }
         finally
         {

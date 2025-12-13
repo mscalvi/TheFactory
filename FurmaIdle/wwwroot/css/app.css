@@ -2,7 +2,28 @@
 
 * {
     box-sizing: border-box;
+    scrollbar-width: thin; /* auto | thin | none */
+    scrollbar-color: rgba(183,154,99,.45) rgba(255,255,255,.06); /* thumb | track */
 }
+    *::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: rgba(255,255,255,.06);
+        border-radius: 10px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: rgba(183,154,99,.45);
+        border-radius: 10px;
+        border: 2px solid rgba(255,255,255,.06); 
+    }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: rgba(183,154,99,.65);
+        }
 
 :root {
     /* escala e medidas */
@@ -82,16 +103,25 @@ body {
     box-shadow: inset 0 0 0 1px var(--muted-line);
 }
 
-/* #endregion */
-
-/* #region Layout: Menus & Panels */
-
 .menu-root {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     min-height: 0;
     overflow: hidden;
+    gap: 4px;
 }
+
+    .menu-root > .menu-section {
+        flex: 1 1 0;
+        min-height: 0;
+    }
+
+        .menu-root > .menu-section > .menu-panel {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+        }
 
 .menu-section {
     display: grid;
@@ -101,7 +131,7 @@ body {
     border: 1px solid var(--steel-10);
     background: linear-gradient(180deg, var(--wood-01), var(--wood-02));
     overflow: auto;
-    height: 100%;
+    height: auto;
     min-height: 0;
     box-shadow: inset 0 1px 0 var(--muted-line);
     align-content: space-around;
@@ -150,9 +180,34 @@ body {
     padding: 0 4px;
 }
 
+
 /* #endregion */
 
 /* #region Grids & Tables */
+
+.upgrades-empty {
+    height: 100%;
+    width: 100%;
+    min-width: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    padding: 0;
+    place-items: center;
+    object-fit: contain;
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+}
+
+    .upgrades-empty .no-upgrades {
+        height: 65%;
+        max-width: 65%;
+        max-height: 65%;
+        object-fit: contain;
+        display: block;
+        pointer-events: none;
+        user-select: none;
+    }
 
 .icon-grid {
     display: grid;
@@ -165,6 +220,7 @@ body {
     align-content: space-evenly;
     height: 100%;
     overflow-x: hidden;
+    user-select: none;
 }
 
 .info-table {
@@ -220,6 +276,39 @@ body {
 /* #endregion */
 
 /* #region Buttons: Icon & Character */
+
+.utility-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: calc(var(--contract-btn-w) * var(--ui-scale));
+    height: calc(var(--contract-btn-h) * var(--ui-scale));
+    min-width: calc(var(--contract-btn-w) * var(--ui-scale));
+    min-height: calc(var(--contract-btn-h) * var(--ui-scale));
+    max-width: calc(var(--contract-btn-w) * var(--ui-scale));
+    max-height: calc(var(--contract-btn-h) * var(--ui-scale));
+    padding: calc(2px * var(--ui-scale));
+    background: var(--brass-20);
+}
+
+.utility-button.select-toggle {
+
+}
+
+    .utility-button.select-toggle:active {
+        background: var(--brass-30);
+        transform: translateY(1px) scale(.98);
+        box-shadow: 0 0 0 1px var(--brass-00), inset 0 0 0 1px var(--muted-line);
+    }
+
+    .utility-button.select-toggle:disabled {
+        background: var(--disabled-bg);
+        color: var(--disabled-fg);
+        opacity: .3;
+        transform: none;
+        box-shadow: none;
+    }
 
 .icon-button {
     border: 1px solid var(--steel-10);

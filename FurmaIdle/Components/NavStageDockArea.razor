@@ -20,57 +20,76 @@
     }
     else
     {
-        <section class="@($"menu-panel menu-section {UI.PanelClass("stage-dock-ships")}")">
-            <h3 class="title">Navios Disponíveis</h3>
+        <section class="@($"menu-panel menu-section {UI.PanelClass("stage-dock-routes")}")">
+            <h3 class="title">Rotas Disponíveis</h3>
             <div class="icon-grid">
-                @foreach (var u in _stageShips)
+                @if (_stageRoutes.Count <= 0)
                 {
-                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
-                    <button class="icon-button"
-                            disabled="@(!can)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onclick="() => OnClickBuy(u.Id)">
-                        @if (!string.IsNullOrWhiteSpace(u.Icon))
-                        {
-                            <img src="@u.Icon"
-                                 alt="@u.Id"
-                                 class="icon-img" />
-                        }
-                        else
-                        {
-                            @u.Id
-                        }
-                    </button>
+                    <div class="upgrades-empty">
+                        <img src="@($"images/upgrades-noUpgrades.svg")" alt="Nenhuma Melhoria disponível" class="no-upgrades" />
+                    </div>
+                }
+                else
+                {
+                    foreach (var u in _stageRoutes)
+                    {
+                        var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                        <button class="icon-button"
+                                disabled="@(!can)"
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onclick="() => OnClickBuy(u.Id)">
+                            @if (!string.IsNullOrWhiteSpace(u.Icon))
+                            {
+                                <img src="@u.Icon"
+                                     alt="@u.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @u.Id
+                            }
+                        </button>
+                    }
                 }
             </div>
         </section>
 
-        <section class="@($"menu-panel menu-section {UI.PanelClass("stage-dock-routes")}")">
-            <h3 class="title">Rotas Disponíveis</h3>
+        <section class="@($"menu-panel menu-section {UI.PanelClass("stage-dock-ships")}")">
+            <h3 class="title">Navios Disponíveis</h3>
             <div class="icon-grid">
-                @foreach (var u in _stageRoutes)
+                @if (_stageShips.Count <= 0)
                 {
-                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
-                    <button class="icon-button"
-                            disabled="@(!can)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onclick="() => OnClickBuy(u.Id)">
-                        @if (!string.IsNullOrWhiteSpace(u.Icon))
-                        {
-                            <img src="@u.Icon"
-                                 alt="@u.Id"
-                                 class="icon-img" />
-                        }
-                        else
-                        {
-                            @u.Id
-                        }
-                    </button>
+                    <div class="upgrades-empty">
+                        <img src="@($"images/upgrades-noUpgrades.svg")" alt="Nenhuma Melhoria disponível" class="no-upgrades" />
+                    </div>
+                } else
+                {
+                    foreach (var u in _stageShips)
+                    {
+                        var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                        <button class="icon-button"
+                                disabled="@(!can)"
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onclick="() => OnClickBuy(u.Id)">
+                            @if (!string.IsNullOrWhiteSpace(u.Icon))
+                            {
+                                <img src="@u.Icon"
+                                     alt="@u.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @u.Id
+                            }
+                        </button>
+                    }
                 }
+               
             </div>
         </section>
+
     }
 </div>
 
@@ -139,9 +158,6 @@
         try
         {
             await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, stageId);
-
-            var hover = Tooltips.GetHover(HoverType.Upgrade, upgradeId, stageId);
-            Tooltips.Show(hover);
         }
         finally
         {

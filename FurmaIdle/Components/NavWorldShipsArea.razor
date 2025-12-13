@@ -17,68 +17,75 @@
     }
     else
     {
-        <div class="menu-panel ships-layout">
-            @if (_ships.Count == 0)
-            {
-                <div class="ships-empty">
-                    <p>Nenhum navio atracado neste porto.</p>
-                    <p class="ships-empty-hint">
-                        Construa um navio e traga-o para esta região para começar a explorá-la.
-                    </p>
-                </div>
-            }
-            else
-            {
-                var ship = _ships[_currentShipIndex];
-                var selectedRouteId = GetSelectedRouteId(ship.Id);
-                var routeSelected = !string.IsNullOrWhiteSpace(selectedRouteId)
-                ? FindRoute(selectedRouteId)
-                : null;
 
-                <!-- TOPO: navegação entre navios -->
-                <div class="ship-top-nav">
-                    <button class="ship-nav-btn"
-                            disabled="@(_currentShipIndex <= 0)"
-                            @onclick="PrevShip">
-                        ‹
-                    </button>
+        bool notReady = true;
+        if (notReady)
+        {
+            <div class="contracts-placeholder">A área ainda não está pronta. Volte em Fevereiro de 2026.</div>
+        }
+        else
+        {
+            <div class="menu-panel ships-layout">
+                @if (_ships.Count == 0)
+                {
+                    <div class="ships-empty">
+                        <p>Nenhum navio atracado neste porto.</p>
+                        <p class="ships-empty-hint">
+                            Construa um navio e traga-o para esta região para começar a explorá-la.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    var ship = _ships[_currentShipIndex];
+                    var selectedRouteId = GetSelectedRouteId(ship.Id);
+                    var routeSelected = !string.IsNullOrWhiteSpace(selectedRouteId)
+                    ? FindRoute(selectedRouteId)
+                    : null;
 
-                    <div class="ship-top-current">
-                        <div class="ship-icon">
-                            @if (!string.IsNullOrWhiteSpace(ship.Icon))
-                            {
-                                <img src="@ship.Icon" alt="@ship.Name" />
-                            }
-                            else
-                            {
-                                <div class="ship-icon-fallback">@ship.Id</div>
-                            }
-                        </div>
-                        <div class="ship-header-text">
-                            <div class="ship-name">@ship.Name</div>
-                            <div class="ship-sub">
-                                @ShipStateLabel(ship)
+                    <div class="ship-top-nav">
+                        <button class="ship-nav-btn"
+                                disabled="@(_currentShipIndex <= 0)"
+                                @onclick="PrevShip">
+                            ‹
+                        </button>
+
+                        <div class="ship-top-current">
+                            <div class="ship-icon">
+                                @if (!string.IsNullOrWhiteSpace(ship.Icon))
+                                {
+                                    <img src="@ship.Icon" alt="@ship.Name" />
+                                }
+                                else
+                                {
+                                    <div class="ship-icon-fallback">@ship.Id</div>
+                                }
+                            </div>
+                            <div class="ship-header-text">
+                                <div class="ship-name">@ship.Name</div>
+                                <div class="ship-sub">
+                                    @ShipStateLabel(ship)
+                                </div>
                             </div>
                         </div>
+
+                        <button class="ship-nav-btn"
+                                disabled="@(_currentShipIndex >= _ships.Count - 1)"
+                                @onclick="NextShip">
+                            ›
+                        </button>
                     </div>
 
-                    <button class="ship-nav-btn"
-                            disabled="@(_currentShipIndex >= _ships.Count - 1)"
-                            @onclick="NextShip">
-                        ›
-                    </button>
-                </div>
+                    <!-- MEIO: informações do navio + rota selecionada -->
+                    <section class="ship-middle">
+                        <div class="ship-info-block">
+                            <div class="ship-info-row">
+                                <span class="ship-info-label">Situação:</span>
+                                <span class="ship-info-value">@ShipStateLabel(ship)</span>
+                            </div>
 
-                <!-- MEIO: informações do navio + rota selecionada -->
-                <section class="ship-middle">
-                    <div class="ship-info-block">
-                        <div class="ship-info-row">
-                            <span class="ship-info-label">Situação:</span>
-                            <span class="ship-info-value">@ShipStateLabel(ship)</span>
-                        </div>
-
-                        @* Aqui você pode encaixar velocidade / tripulação quando tiver as props certinhas *@
-                        @* 
+                            @* Aqui você pode encaixar velocidade / tripulação quando tiver as props certinhas *@
+                            @* 
                         <div class="ship-info-row">
                             <span class="ship-info-label">Velocidade:</span>
                             <span class="ship-info-value">@ship.Speed</span>
@@ -89,112 +96,114 @@
                         </div>
                         *@
 
-                        @if (routeSelected is not null)
-                        {
-                            <div class="ship-info-row">
-                                <span class="ship-info-label">Rota:</span>
-                                <span class="ship-info-value">@routeSelected.Name</span>
-                            </div>
-                            <div class="ship-info-row">
-                                <span class="ship-info-label">Distância:</span>
-                                <span class="ship-info-value">@routeSelected.Distance</span>
-                            </div>
-
-                            @* Exemplo de progresso: ajusta conforme seu modelo (TravelProgress vs Distance) *@
-                            <div class="ship-info-row">
-                                <span class="ship-info-label">Progresso:</span>
-                                <span class="ship-info-value">
-                                    @ship.TravelProgress / @routeSelected.Distance
-                                </span>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="ship-info-row">
-                                <span class="ship-info-label">Rota:</span>
-                                <span class="ship-info-value ship-info-hint">
-                                    Selecione uma rota abaixo.
-                                </span>
-                            </div>
-                        }
-                    </div>
-
-                    <div class="ship-middle-actions">
-                        @{
-                            bool hasRoute = routeSelected is not null;
-                            bool canStart = hasRoute && CanStartVoyage(ship, routeSelected!);
-                        }
-
-                        <button class="btn ship-start-button @(canStart ? null : "is-locked")"
-                                disabled="@( !canStart )"
-                                @onclick="() => StartVoyage(ship, routeSelected)">
-                            @if (routeSelected is null)
+                            @if (routeSelected is not null)
                             {
-                                <span>Escolha uma rota</span>
+                                <div class="ship-info-row">
+                                    <span class="ship-info-label">Rota:</span>
+                                    <span class="ship-info-value">@routeSelected.Name</span>
+                                </div>
+                                <div class="ship-info-row">
+                                    <span class="ship-info-label">Distância:</span>
+                                    <span class="ship-info-value">@routeSelected.Distance</span>
+                                </div>
+
+                                @* Exemplo de progresso: ajusta conforme seu modelo (TravelProgress vs Distance) *@
+                                <div class="ship-info-row">
+                                    <span class="ship-info-label">Progresso:</span>
+                                    <span class="ship-info-value">
+                                        @ship.TravelProgress / @routeSelected.Distance
+                                    </span>
+                                </div>
                             }
                             else
                             {
-                                <span>@RouteButtonLabel(ship, routeSelected)</span>
+                                <div class="ship-info-row">
+                                    <span class="ship-info-label">Rota:</span>
+                                    <span class="ship-info-value ship-info-hint">
+                                        Selecione uma rota abaixo.
+                                    </span>
+                                </div>
                             }
-                        </button>
-                    </div>
-                </section>
+                        </div>
 
-                <!-- BAIXO: grid de rotas -->
-                <section class="ship-routes-section">
-                    <h4 class="ship-routes-title">Rotas a partir desta região</h4>
+                        <div class="ship-middle-actions">
+                            @{
+                                bool hasRoute = routeSelected is not null;
+                                bool canStart = hasRoute && CanStartVoyage(ship, routeSelected!);
+                            }
 
-                    <div class="ship-routes-grid">
-                        @foreach (var route in _routesFromStage)
-                        {
-                            bool isSelected = route.Id == selectedRouteId;
-                            bool isBusy = _busyRouteIds.Contains(route.Id);
-                            bool canStartThisRoute = CanStartVoyage(ship, route);
-                            bool isDisabled = isBusy || !canStartThisRoute;
-
-                            <button class="ship-route-card
-                                                       @(isSelected ? "is-selected" : null)
-                                                       @(isDisabled ? "is-locked" : null)"
-                                    disabled="@isDisabled"
-                                    @onclick="() => OnRouteSelected(ship.Id, route.Id)">
-                                <div class="ship-route-image">
-                                    @if (!string.IsNullOrWhiteSpace(route.Icon))
-                                    {
-                                        <img src="@route.Icon" alt="@route.Name" />
-                                    }
-                                    else
-                                    {
-                                        <span class="ship-route-icon-fallback">
-                                            @route.Name
-                                        </span>
-                                    }
-                                </div>
-
-                                <div class="ship-route-name">
-                                    @route.Name
-                                </div>
-
-                                <div class="ship-route-meta">
-                                    @if (IsRouteKnown(route))
-                                    {
-                                        <span>Rota conhecida</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Rota desconhecida</span>
-                                    }
-
-                                    @if (isBusy)
-                                    {
-                                        <span> · Em uso</span>
-                                    }
-                                </div>
+                            <button class="btn ship-start-button @(canStart ? null : "is-locked")"
+                                    disabled="@( !canStart )"
+                                    @onclick="() => StartVoyage(ship, routeSelected)">
+                                @if (routeSelected is null)
+                                {
+                                    <span>Escolha uma rota</span>
+                                }
+                                else
+                                {
+                                    <span>@RouteButtonLabel(ship, routeSelected)</span>
+                                }
                             </button>
-                        }
-                    </div>
-                </section>
-            }
-        </div>
+                        </div>
+                    </section>
+
+                    <!-- BAIXO: grid de rotas -->
+                    <section class="ship-routes-section">
+                        <h4 class="ship-routes-title">Rotas a partir desta região</h4>
+
+                        <div class="ship-routes-grid">
+                            @foreach (var route in _routesFromStage)
+                            {
+                                bool isSelected = route.Id == selectedRouteId;
+                                bool isBusy = _busyRouteIds.Contains(route.Id);
+                                bool canStartThisRoute = CanStartVoyage(ship, route);
+                                bool isDisabled = isBusy || !canStartThisRoute;
+
+                                <button class="ship-route-card
+                                                                       @(isSelected ? "is-selected" : null)
+                                                                       @(isDisabled ? "is-locked" : null)"
+                                        disabled="@isDisabled"
+                                        @onclick="() => OnRouteSelected(ship.Id, route.Id)">
+                                    <div class="ship-route-image">
+                                        @if (!string.IsNullOrWhiteSpace(route.Icon))
+                                        {
+                                            <img src="@route.Icon" alt="@route.Name" />
+                                        }
+                                        else
+                                        {
+                                            <span class="ship-route-icon-fallback">
+                                                @route.Name
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <div class="ship-route-name">
+                                        @route.Name
+                                    </div>
+
+                                    <div class="ship-route-meta">
+                                        @if (IsRouteKnown(route))
+                                        {
+                                            <span>Rota conhecida</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Rota desconhecida</span>
+                                        }
+
+                                        @if (isBusy)
+                                        {
+                                            <span> · Em uso</span>
+                                        }
+                                    </div>
+                                </button>
+                            }
+                        </div>
+                    </section>
+                }
+            </div>
+            
+        }
     }
 </div>
 

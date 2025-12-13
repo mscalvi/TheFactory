@@ -23,51 +23,34 @@
         <section class="@($"menu-panel menu-section {UI.PanelClass("locals-locals")}")">
             <h3 class="title">Locais para Explorar na Região</h3>
             <div class="icon-grid">
-                @foreach (var u in _stageLocals)
+                @if (_stageLocals.Count <= 0)
                 {
-                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
-                    <button class="icon-button"
-                            disabled="@(!can)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onclick="() => OnClickBuy(u.Id)">
-                        @if (!string.IsNullOrWhiteSpace(u.Icon))
-                        {
-                            <img src="@u.Icon"
-                                 alt="@u.Id"
-                                 class="icon-img" />
-                        }
-                        else
-                        {
-                            @u.Id
-                        }
-                    </button>
+                    <div class="upgrades-empty">
+                        <img src="@($"images/upgrades-noUpgrades.svg")" alt="Nenhuma Melhoria disponível" class="no-upgrades" />
+                    </div>                    
                 }
-            </div>
-        </section>
-
-        <section class="@($"menu-panel menu-section {UI.PanelClass("locals-locals")}")">
-            <h3 class="title">Locais Distantes</h3>
-            <div class="icon-grid">
-                @foreach (var u in _stageLockedLocals)
+                else
                 {
-                    var can = true;
-                    <button class="icon-button"
-                            disabled="@(can)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear"
-                            @onclick="() => OnClickBuy(u.Id)">
-                        @if (!string.IsNullOrWhiteSpace(u.Icon))
-                        {
-                            <img src="@u.Icon"
-                                 alt="@u.Id"
-                                 class="icon-img" />
-                        }
-                        else
-                        {
-                            @u.Id
-                        }
-                    </button>
+                    foreach (var u in _stageLocals)
+                    {
+                        var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                        <button class="icon-button"
+                                disabled="@(!can)"
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear"
+                                @onclick="() => OnClickBuy(u.Id)">
+                            @if (!string.IsNullOrWhiteSpace(u.Icon))
+                            {
+                                <img src="@u.Icon"
+                                     alt="@u.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @u.Id
+                            }
+                        </button>
+                    }
                 }
             </div>
         </section>
@@ -78,7 +61,6 @@
     private StageModel? _stage;
 
     private List<UpgradeModel> _stageLocals = new();
-    private List<UpgradeModel> _stageLockedLocals = new();
 
     private bool freeProcess = true;
 
@@ -116,7 +98,6 @@
         Notifications.UpdateVisibleUpgrades("stage-locals");
 
         Notifications.TabsUpgrades.TryGetValue("stageLocals", out _stageLocals);
-        Notifications.TabsUpgrades.TryGetValue("stageLockedLocals", out _stageLockedLocals);
     }
 
     private async Task OnClickBuy(string upgradeId)

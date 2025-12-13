@@ -142,7 +142,7 @@ namespace FurmaIdle.Helpers
 
                 // Unlock Expansion Stage X
                 [PricingId.ExpansionUnlock1] = new Entry("m01", 500000, 1.0, CostFactor.Level, 10.0),
-                [PricingId.ExpansionUnlock2] = new Entry("m01", 500000000000000, 1.0, CostFactor.Level, 10.0),
+                [PricingId.ExpansionUnlock2] = new Entry("m01", 50000000000000000, 1.0, CostFactor.Level, 10.0),
 
                 // Unlock Tech Know X
                 [PricingId.TechUnlockk01] = new Entry("k01", 1, 1.0, CostFactor.Level, 4.9),

@@ -302,11 +302,7 @@ namespace FurmaIdle.Services
 
             if (type == ItemHelper.ItemType.Upgrade)
             {
-                var up = _locate.LocateUpgrade(game, itemId);
-                if ((up.MaxBuy == 1 && up.ActualBuy >= 1) || (up.MaxBuy == up.ActualBuy))
-                {
-                    _tooltip.Clear();
-                }
+                _tooltip.Clear();
             }
 
             return true;

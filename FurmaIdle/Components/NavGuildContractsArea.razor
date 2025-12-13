@@ -31,6 +31,15 @@
         && expansionId != "x010"
         && expansionId != "x011";
 
+
+        @if (showBuyAll)
+        {
+            <button class="utility-button @(_autoBuyEnabled ? "is-on" : null)"
+                    @onclick="OnClickBuyAll">
+                @(_autoBuyEnabled ? "COMPRA AUTOMÁTICA LIGADA! DESLIGUE PARA CLICAR NO JOGO!" : "Ligar COMPRA AUTOMÁTICA")
+            </button>
+        }
+
         <section class="@($"menu-panel menu-section {UI.PanelClass("guild-contracts-fast")}")">
             @if (_stage.Id == "s00")
             {
@@ -41,34 +50,35 @@
                 <h3 class="title">Melhorias da Expedição</h3>
             }
 
-            @if (showBuyAll && (_contractsExpedition.Any() || _contractsExpansion.Any()))
-            {
-                <button class="buy-all-button @(_autoBuyEnabled ? "is-on" : null)"
-                        @onclick="OnClickBuyAll">
-                    @(_autoBuyEnabled ? "Auto: ON" : "Auto: OFF")
-                </button>
-            }
-
             <div class="icon-grid">
-                @foreach (var u in _contractsExpedition)
+                @if(_contractsExpedition.Count <= 0)
                 {
-                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
-                    <button class="icon-button" disabled="@(!can || _autoBuyEnabled)"
-                            @onclick="() => OnClickBuy(u.Id)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear">
-                        @if (!string.IsNullOrWhiteSpace(u.Icon))
-                        {
-                            <img src="@u.Icon"
-                                 alt="@u.Id"
-                                 class="icon-img" />
-                        }
-                        else
-                        {
-                            @u.Id
-                        }
-                    </button>
+                    <div class="upgrades-empty">
+                        <img src="@($"images/upgrades-noUpgrades.svg")" alt="Nenhuma Melhoria disponível" class="no-upgrades" />
+                    </div>
                 }
+                else
+                {
+                    @foreach (var u in _contractsExpedition)
+                    {
+                        var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                        <button class="icon-button" disabled="@(!can || _autoBuyEnabled)"
+                                @onclick="() => OnClickBuy(u.Id)"
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear">
+                            @if (!string.IsNullOrWhiteSpace(u.Icon))
+                            {
+                                <img src="@u.Icon"
+                                     alt="@u.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @u.Id
+                            }
+                        </button>
+                    }
+                }  
             </div>
         </section>
 
@@ -82,24 +92,33 @@
                 <h3 class="title">Melhorias da Expansão</h3>
             }
             <div class="icon-grid">
-                @foreach (var u in _contractsExpansion)
+                @if (_contractsExpansion.Count <= 0)
                 {
-                    var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
-                    <button class="icon-button" disabled="@(!can || _autoBuyEnabled)"
-                            @onclick="() => OnClickBuy(u.Id)"
-                            @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
-                            @onmouseleave="Tooltips.Clear">
-                        @if (!string.IsNullOrWhiteSpace(u.Icon))
-                        {
-                            <img src="@u.Icon"
-                                 alt="@u.Id"
-                                 class="icon-img" />
-                        }
-                        else
-                        {
-                            @u.Id
-                        }
-                    </button>
+                    <div class="upgrades-empty">
+                        <img src="@($"images/upgrades-noUpgrades.svg")" alt="Nenhuma Melhoria disponível" class="no-upgrades" />
+                    </div>
+                }
+                else
+                {
+                    foreach (var u in _contractsExpansion)
+                    {
+                        var can = Cost.CanAfford(ItemHelper.ItemType.Upgrade, u.Id, _stage.Id);
+                        <button class="icon-button" disabled="@(!can || _autoBuyEnabled)"
+                                @onclick="() => OnClickBuy(u.Id)"
+                                @onmouseenter="() => Tooltips.Show(Tooltips.GetHover(HoverType.Upgrade, u.Id, _stage.Id))"
+                                @onmouseleave="Tooltips.Clear">
+                            @if (!string.IsNullOrWhiteSpace(u.Icon))
+                            {
+                                <img src="@u.Icon"
+                                     alt="@u.Id"
+                                     class="icon-img" />
+                            }
+                            else
+                            {
+                                @u.Id
+                            }
+                        </button>
+                    }
                 }
             </div>
         </section>
@@ -233,12 +252,6 @@
             await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
             await Expedition.SecondExpeditionStart();
             UI.ClearBusy();
-        }
-
-        if (_stage is not null)
-        {
-            var hover = Tooltips.GetHover(HoverType.Upgrade, upgrade.Id, stageId);
-            Tooltips.Show(hover);
         }
 
         return true;

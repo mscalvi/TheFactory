@@ -18,6 +18,9 @@
     {
         var item = _items[_currentItemIndex];
 
+        var trait = Locate.LocateTrait(Game.CurrentGame, item.TraitId);
+        var spec = Locate.LocateSpecialty(Game.CurrentGame, item.SpecialtyId);
+
         <!-- Seletor -->
         <section class="@($"menu-panel nav-panel {UI.PanelClass("guildinfo-nav")}")">
             <button class="nav-selector-button"
@@ -43,29 +46,28 @@
                 <h3 class="guildinfo-name">@item.Name</h3>
 
                 <div class="guildinfo-row">
-                    <span class="guildinfo-label">Classe</span>
-                    <span class="guildinfo-value">@item.Id</span>
+                    <span class="guildinfo-label">Classe: </span>
+                    <span class="guildinfo-value">@item.Class</span>
                 </div>
 
                 <div class="guildinfo-row">
-                    <span class="guildinfo-label">Traço</span>
-                    <span class="guildinfo-value">@item.TraitId</span>
+                    <span class="guildinfo-label">Traço: </span>
+                    <span class="guildinfo-value">@trait.Description</span>
                 </div>
 
                 <div class="guildinfo-row">
-                    <span class="guildinfo-label">Especialidade</span>
-                    <span class="guildinfo-value">@item.SpecialtyId</span>
+                    <span class="guildinfo-label">@spec.Name: </span>
+                    <span class="guildinfo-value">@spec.Description</span>
                 </div>
 
                 <div class="guildinfo-row guildinfo-row--multiline">
-                    <span class="guildinfo-label">Descrição</span>
+                    <span class="guildinfo-label">Descrição: </span>
                     <p class="guildinfo-text">
                         @item.Description
                     </p>
                 </div>
 
                 <div class="guildinfo-row guildinfo-row--multiline">
-                    <span class="guildinfo-label">Lore</span>
                     <p class="guildinfo-text guildinfo-text--lore">
                         @item.Lore
                     </p>

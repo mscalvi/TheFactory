@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1028"
+   height="700"
+   viewBox="0 0 1028 700"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="l013.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern6-7"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2"
+       patternTransform="translate(190,350)" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="29"
+       height="20"
+       patternTransform="translate(190,350)"
+       preserveAspectRatio="xMidYMid"
+       style="fill:#000000"
+       id="pattern6-7"
+       inkscape:label=""
+       inkscape:collect="always"
+       inkscape:isstock="true">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:10;stroke-linecap:butt;stroke-dasharray:none;paint-order:stroke markers fill;stop-color:#000000"
+         d="M 0,5 C 19,5 10,15 29,15"
+         id="path4-2"
+         sodipodi:nodetypes="cc" />
+    </pattern>
+    <rect
+       x="53.740116"
+       y="41.012192"
+       width="388.90872"
+       height="407.29352"
+       id="rect6" />
+    <rect
+       x="41.721928"
+       y="116.19333"
+       width="318.07361"
+       height="50.694386"
+       id="rect5" />
+    <rect
+       x="124.26854"
+       y="121.12818"
+       width="162.40147"
+       height="29.60911"
+       id="rect4" />
+    <rect
+       x="87.481461"
+       y="30.506355"
+       width="236.87288"
+       height="71.779663"
+       id="rect2" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="446"
+     inkscape:cy="361"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4"
+     showguides="true" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Fundo">
+    <rect
+       style="fill:#506083;fill-opacity:0.375826;stroke:none;stroke-width:3.53456"
+       id="rect3"
+       width="1028"
+       height="700"
+       x="0"
+       y="0"
+       inkscape:label="Fundo" />
+  </g>
+  <!-- Borda externa -->
+  <!-- Borda interna (chanfro / brilho suave) -->
+  <!-- Aqui dentro você desenha o ícone depois -->
+  <!-- <g id="icon"> … </g> -->
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Arte Fundo">
+    <path
+       fill="#000000"
+       d="m 835.98594,-197 -74.62188,74.62188 -158.025,-10.975 -64.01562,126.15156 107.325,39.60937 58.05156,-31.15 13.29844,24.78281 -69.20781,37.1375 -124.53125,-45.9625 -109.67188,86.47032 54.87031,92.17968 -0.58593,0.3125 20.33437,33.72657 45.52188,3.68906 86.03125,-54.87969 15.12343,23.7125 -94,59.96406 -69.31875,-5.61875 -28.48437,-47.24062 -88.75,47.79062 52.675,96.56875 -52.67657,63.64844 L 322,458.61719 v 77.84844 h 266.59375 l -8.75,-71.2375 a 407.27813,407.27813 0 0 1 -8.04219,-7.05 c -6.54062,-5.87657 -9.20312,-8.50626 -12.54218,-11.69375 l -114.26563,34.05781 -33.34219,-32.00625 19.47969,-20.28906 21.52656,20.66406 114.16875,-34.03125 5.9125,5.72969 c 0,0 6.625,6.39062 14.4,13.49375 l 59.05782,-58.2 12.70781,124.28125 9.84375,-146.00625 16.19375,44.35468 9.81406,-70.4875 4.90625,-4.82968 -0.45313,-0.36407 35.13438,-43.70937 0.72656,-1.41719 0.29375,0.15 17.89531,-22.2625 21.92188,17.62031 -14.25313,17.73125 105.94219,54.24219 42.2,-14.82656 35.12188,27.67187 35.81875,-18.80625 13.07343,24.90313 -51.97187,27.28125 -37.30469,-29.39063 -39.00625,13.70625 -14.975,-7.66718 61,137.25312 -17.07187,31.13438 H 1065.75 v -44.55 l -48.8859,19.8625 -10.5875,-26.05938 59.4734,-24.15937 V 94.55312 L 1029.1281,53.20469 995.29375,-52.0625 942.87656,-1.02188 774.48594,-22.69844 l -43.77969,-45.462498 20.26094,-19.509375 36.92031,38.342188 145.10469,18.676565 49.12812,-47.83594 -82.48437,-96.56406 z m 43.01562,277.71875 53.40157,64.73125 45.09843,-10.25 -6.4625,-21.23438 26.90625,-8.19218 15.26559,50.15312 -91.4734,20.79219 -49.02656,-59.42656 -51.69688,31.02031 -14.47187,-24.11875 z"
+       id="path1"
+       style="stroke-width:1.5625" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Arte Meio">
+    <path
+       d="m 682.13163,456.40096 0.24182,0.54614 c 1.7932,4.09464 6.18995,6.84845 10.66405,6.84845 h 12.44832 v 2.92867 c 0,14.64483 6.28147,32.41328 23.42265,37.74381 l 2.90858,30.88867 c -2.12952,0.8334 -3.64,2.9004 -3.64,5.3246 h 8.8991 l 3.55743,-38.15232 29.01881,-5.0344 c 8.00248,9.76298 20.22015,17.46636 33.17446,19.75438 l 2.74935,18.13304 c -2.09159,0.8512 -3.56783,2.9011 -3.56783,5.2985 h 8.89763 v -33.23841 c -7.74878,-4.78662 -14.02356,-12.78242 -15.5489,-22.12648 0,0 32.64321,31.27633 42.19488,37.15379 3.72929,2.2947 7.89386,3.4793 11.99519,3.4793 4.92723,0 9.76446,-1.7084 13.65224,-5.2532 7.18326,-6.54932 8.38718,-17.41278 2.81259,-25.37658 l -0.53723,-0.77012 c -3.72555,3.88629 -8.75401,5.89157 -13.85684,5.89157 -3.30445,0 -6.64087,-0.84155 -9.67518,-2.55812 -9.58218,-5.42057 -25.1236,-16.0608 -31.24137,-19.74099 -4.13779,-2.48892 -9.97726,-4.53512 -14.67909,-5.64081 -11.72805,-2.75753 -50.50612,-6.3767 -50.50612,-6.3767 l -40.02885,-38.94177 v 12.28686 c 0.004,0 0.007,-7.1e-4 0.01,-7.1e-4 0.02,0 -0.01,0.009 -0.01,0.009 v -0.008 c -0.0588,0.004 -0.30582,0.0439 -1.20243,0.22173 -3.63852,0.72399 -6.88342,2.77018 -9.09777,5.74647 l -4.23079,5.68621 -7.99283,3.23001 c -0.80732,0.32665 -1.18307,1.25302 -0.83187,2.04769 z m 75.99878,47.55143 9.81507,-1.70244 c 3.1452,3.50309 6.74651,6.65647 10.64097,9.37382 l -10.36491,29.05753 h -8.89911 c 0,-3.0849 2.44353,-5.5932 5.50018,-5.7093 l 4.17647,-20.41733 c -4.1147,-2.96363 -7.69444,-6.59173 -10.86867,-10.60228 z m -47.75974,31.07471 5.13855,-32.98549 c 2.69057,2.4547 6.12223,4.49717 9.28081,5.67727 l -10.41404,32.96242 h -8.8991 c 0,-2.8781 2.12731,-5.2524 4.89378,-5.6542 z"
+       id="path1-0"
+       style="stroke-width:0.744072;fill:#2e1f00;fill-opacity:1" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Arte Frente">
+    <g
+       stroke="#2b2018"
+       stroke-width="3"
+       fill="none"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       id="g5-7-8"
+       transform="matrix(2.8315585,0,0,1.966697,-72.692357,398.42062)"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <!-- Cabeça -->
+      <circle
+         cx="50"
+         cy="18"
+         r="7"
+         id="circle1-7"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Corpo levemente inclinado para frente -->
+      <line
+         x1="48"
+         y1="25"
+         x2="52"
+         y2="50"
+         id="line1-4"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Braços para frente, como segurando uma vassoura -->
+      <!-- Braço "de trás" -->
+      <line
+         x1="50"
+         y1="30"
+         x2="64"
+         y2="40"
+         id="line2-2"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Braço "da frente", mais baixo -->
+      <line
+         x1="31.364048"
+         y1="13.553568"
+         x2="47.364048"
+         y2="31.553568"
+         id="line3-7"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Pernas: uma à frente, outra atrás, dando ideia de movimento -->
+      <!-- Perna de trás -->
+      <line
+         x1="52"
+         y1="50"
+         x2="42"
+         y2="72"
+         id="line4-7"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Perna da frente -->
+      <line
+         x1="52"
+         y1="50"
+         x2="62"
+         y2="72"
+         id="line5-9"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="Arte Animada" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Borda" />
+</svg>

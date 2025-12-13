@@ -764,6 +764,7 @@ namespace FurmaIdle.Services
 
                     // Tips: Expedition
                     UnlockPanel("game-tips-expedition");
+                    UnlockPanel("game-tips-permanency");
                     SetNotificationTab("game-tips");
 
                     // Animation: piscar ExpeditonMenu
@@ -779,6 +780,7 @@ namespace FurmaIdle.Services
 
                         // Tips: Knowledge
                         UnlockPanel("game-tips-knowledge");
+                        UnlockPanel("game-tips-factor");
                         SetNotificationTab("game-tips");
                     }
                     break;
@@ -875,6 +877,7 @@ namespace FurmaIdle.Services
 
                     // Tips: Stages
                     UnlockPanel("game-tips-stages");
+                    UnlockPanel("game-tips-map");
                     // Tips: Influence
                     // UnlockPanel("game-tips-influence");
                     SetNotificationTab("game-tips");
@@ -928,8 +931,6 @@ namespace FurmaIdle.Services
                     _lore.LoreTrigger(controlItem);
                     break;
                 case "ExpansionEnd":
-
-
                     if(game.CurrentExpansionId != "x000")
                     {
                         if(game.CurrentExpansionId != "x010")

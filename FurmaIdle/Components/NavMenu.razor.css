@@ -27,9 +27,9 @@
 
 .subnav-button {
     min-height: 45px;
-    min-width: 65px;
+    min-width: 85px;
     height: 45px;
-    width: 65px;
+    width: 85px;
     padding: 0 8px;
     display: grid;
     border: 1px solid #3a4057;
@@ -38,10 +38,15 @@
     border-radius: 10px;
     cursor: pointer;
     position: relative;
-    font: 600 12px/1 system-ui, Segoe UI, Roboto, Arial, sans-serif;
+    font: 450 12px/1 system-ui, Segoe UI, Roboto, Arial, sans-serif;
     letter-spacing: .3px;
     text-transform: uppercase;
     user-select: none;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    place-content: center;
 }
 
     .subnav-button:hover {

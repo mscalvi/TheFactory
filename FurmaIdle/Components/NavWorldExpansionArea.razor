@@ -71,7 +71,7 @@
             durationText = "--:--:--";
         }
 
-        <section class="@($"menu-panel {UI.PanelClass("expansion-info")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-info")}")">
             <h3 class="title">Expansão Atual</h3>
             <table class="info-table">
                 <thead>
@@ -119,7 +119,7 @@
                 </tbody>
             </table>
         </section>
-        <section class="@($"menu-panel {UI.PanelClass("expansion-history")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expansion-history")}")">
             <h3 class="title">História</h3>
         </section>
     }
@@ -188,9 +188,11 @@
             {
                 UI.SetBusy("Objetivo alcançado! Vamos nos preparar para o próximo.");
 
+                var endingExpansionId = Game.CurrentGame.CurrentExpansionId;
+
                 await Purchase.Purchase(ItemHelper.ItemType.Upgrade, upgradeId, _stage.Id);
 
-                await Expedition.EndExpansion(Game.CurrentGame.CurrentExpansionId);
+                await Expedition.EndExpansion(endingExpansionId);
 
                 UI.ClearBusy();
             }

@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1028"
+   height="700"
+   viewBox="0 0 1028 700"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="l011.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern6-7"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2"
+       patternTransform="translate(190,350)" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="29"
+       height="20"
+       patternTransform="translate(190,350)"
+       preserveAspectRatio="xMidYMid"
+       style="fill:#000000"
+       id="pattern6-7"
+       inkscape:label=""
+       inkscape:collect="always"
+       inkscape:isstock="true">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:10;stroke-linecap:butt;stroke-dasharray:none;paint-order:stroke markers fill;stop-color:#000000"
+         d="M 0,5 C 19,5 10,15 29,15"
+         id="path4-2"
+         sodipodi:nodetypes="cc" />
+    </pattern>
+    <rect
+       x="53.740116"
+       y="41.012192"
+       width="388.90872"
+       height="407.29352"
+       id="rect6" />
+    <rect
+       x="41.721928"
+       y="116.19333"
+       width="318.07361"
+       height="50.694386"
+       id="rect5" />
+    <rect
+       x="124.26854"
+       y="121.12818"
+       width="162.40147"
+       height="29.60911"
+       id="rect4" />
+    <rect
+       x="87.481461"
+       y="30.506355"
+       width="236.87288"
+       height="71.779663"
+       id="rect2" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="466"
+     inkscape:cy="293"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4"
+     showguides="true" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Fundo"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#506083;fill-opacity:0.375826;stroke:none;stroke-width:3.53456"
+       id="rect3"
+       width="1028"
+       height="700"
+       x="0"
+       y="0"
+       inkscape:label="Fundo" />
+  </g>
+  <!-- Borda externa -->
+  <!-- Borda interna (chanfro / brilho suave) -->
+  <!-- Aqui dentro você desenha o ícone depois -->
+  <!-- <g id="icon"> … </g> -->
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Arte Fundo">
+    <g
+       id="sea-2"
+       transform="matrix(-8.9842818,0,0,8.9842818,477.69168,358.39526)">
+      <path
+         id="primary"
+         d="m 3,17.5 c 1.5,0 1.5,0.5 3,0.5 1.5,0 1.51,-0.5 3,-0.5 1.49,0 1.5,0.5 3,0.5 1.5,0 1.5,-0.5 3,-0.5 1.5,0 1.5,0.5 3,0.5 1.5,0 1.49,-0.5 3,-0.5"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2" />
+      <path
+         id="primary-2"
+         data-name="primary"
+         d="m 0.00921473,18.250063 a 4.93,4.93 0 0 0 2.40999997,-1.21 c 2.8,-2 4.59,0.57 6.59,-0.18 2.0000003,-0.75 1.3800003,-4.31 -1.94,-5.11 4.7600003,-3.5799997 8.3100003,0 8.6800003,2.68 0.26,1.82 0.44,3.31 2.26,3.82"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2"
+         inkscape:label="primary-2" />
+    </g>
+    <g
+       id="line"
+       transform="matrix(6.6033053,0,0,6.6033053,438.09227,-349.09347)">
+      <polyline
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2"
+         points="37.889 22.838 39.389 28.796 37.889 34.015 39.389 36.921 40.389 43.171"
+         id="polyline2"
+         transform="matrix(1.4216423,0,0,1.4216423,-3.399909,50.196196)" />
+      <polyline
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2"
+         points="67 34.432 56.889 33.005 51.639 34.671 51.639 39.546 53.139 44.296 52.889 48.421 51.639 53.796 52.889 56.671"
+         id="polyline3"
+         transform="matrix(1.4216423,0,0,1.4216423,-3.399909,50.196196)" />
+      <polyline
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2"
+         points="60.264 39.296 61.389 44.046 60.444 49.057"
+         id="polyline4"
+         transform="matrix(1.4216423,0,0,1.4216423,-3.399909,50.196196)" />
+      <polyline
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2"
+         points="35.681 56.671 35.264 51.13 31.723 48.213 31.723 43.671 30.598 41.005 28.598 39.13 27.598 33.755 24.931 36.005 24.931 19.505 37.514 16.046 53.139 18.421 59.038 18.067 62.639 18.921 67 19.671"
+         id="polyline5"
+         transform="matrix(1.4216423,0,0,1.4216423,-3.399909,50.196196)" />
+    </g>
+    <g
+       id="g1">
+      <path
+         id="primary-27"
+         d="m 875.84349,523.60636 c -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.56627,4.49214 -26.95285,4.49214 -13.38658,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.47642,4.49214 -26.95285,4.49214 -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47643,0 -13.38658,4.49214 -26.95285,4.49214"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="17.9686" />
+      <path
+         id="primary-5"
+         d="m 738.31448,518.499 c -13.47642,0 -13.47642,4.49214 -26.95284,4.49214 -13.47642,0 -13.56627,-4.49214 -26.95285,-4.49214 -13.38658,0 -13.47642,4.49214 -26.95284,4.49214 -13.47642,0 -13.47642,-4.49214 -26.95285,-4.49214 -13.47642,0 -13.47642,4.49214 -26.95284,4.49214 -13.47643,0 -13.38658,-4.49214 -26.95285,-4.49214"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="17.9686" />
+      <path
+         id="primary-8"
+         d="m -58.829825,19.495204 c 1.5,0 1.5,0.5 3,0.5 1.5,0 1.51,-0.5 3,-0.5 1.49,0 1.5,0.5 3,0.5 1.5,0 1.5,-0.5 3,-0.5 1.5,0 1.5,0.5 3,0.5 1.5,0 1.49,-0.5 3,-0.5"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2"
+         transform="matrix(-8.9842815,0,0,8.9842815,504.56174,348.49575)" />
+      <path
+         id="primary-3"
+         d="m 591.64248,521.59922 c -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.56627,4.49214 -26.95285,4.49214 -13.38658,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.47642,4.49214 -26.95285,4.49214 -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47643,0 -13.38658,4.49214 -26.95285,4.49214"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="17.9686" />
+    </g>
+    <g
+       id="g1-2"
+       transform="translate(-515.94111,-6.12278)">
+      <path
+         id="primary-27-3"
+         d="m 875.84349,523.60636 c -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.56627,4.49214 -26.95285,4.49214 -13.38658,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.47642,4.49214 -26.95285,4.49214 -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47643,0 -13.38658,4.49214 -26.95285,4.49214"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="17.9686" />
+      <path
+         id="primary-5-3"
+         d="m 738.31448,518.499 c -13.47642,0 -13.47642,4.49214 -26.95284,4.49214 -13.47642,0 -13.56627,-4.49214 -26.95285,-4.49214 -13.38658,0 -13.47642,4.49214 -26.95284,4.49214 -13.47642,0 -13.47642,-4.49214 -26.95285,-4.49214 -13.47642,0 -13.47642,4.49214 -26.95284,4.49214 -13.47643,0 -13.38658,-4.49214 -26.95285,-4.49214"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="17.9686" />
+      <path
+         id="primary-8-4"
+         d="m -58.829825,19.495204 c 1.5,0 1.5,0.5 3,0.5 1.5,0 1.51,-0.5 3,-0.5 1.49,0 1.5,0.5 3,0.5 1.5,0 1.5,-0.5 3,-0.5 1.5,0 1.5,0.5 3,0.5 1.5,0 1.49,-0.5 3,-0.5"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="2"
+         transform="matrix(-8.9842815,0,0,8.9842815,504.56174,348.49575)" />
+      <path
+         id="primary-3-1"
+         d="m 591.64248,521.59922 c -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.56627,4.49214 -26.95285,4.49214 -13.38658,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47642,0 -13.47642,4.49214 -26.95285,4.49214 -13.47642,0 -13.47642,-4.49214 -26.95284,-4.49214 -13.47643,0 -13.38658,4.49214 -26.95285,4.49214"
+         fill="none"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="17.9686" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Arte Meio" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Arte Frente" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="Arte Animada">
+    <g
+       stroke="#2b2018"
+       stroke-width="3"
+       fill="none"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       id="g5-7"
+       transform="matrix(-1.2141809,0,0,0.84332562,726.9572,94.550566)"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <!-- Cabeça -->
+      <circle
+         cx="50"
+         cy="18"
+         r="7"
+         id="circle1"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Corpo levemente inclinado para frente -->
+      <line
+         x1="48"
+         y1="25"
+         x2="52"
+         y2="50"
+         id="line1"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Braços para frente, como segurando uma vassoura -->
+      <!-- Braço "de trás" -->
+      <line
+         x1="50"
+         y1="30"
+         x2="64"
+         y2="40"
+         id="line2"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Braço "da frente", mais baixo -->
+      <line
+         x1="50"
+         y1="32"
+         x2="66"
+         y2="50"
+         id="line3"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Pernas: uma à frente, outra atrás, dando ideia de movimento -->
+      <!-- Perna de trás -->
+      <line
+         x1="52"
+         y1="50"
+         x2="42"
+         y2="72"
+         id="line4"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Perna da frente -->
+      <line
+         x1="52"
+         y1="50"
+         x2="62"
+         y2="72"
+         id="line5"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+    </g>
+    <g
+       stroke="#2b2018"
+       stroke-width="3"
+       fill="none"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       id="g5-7-8"
+       transform="matrix(-1.2141809,0,0,0.84332562,772.57601,83.172172)"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <!-- Cabeça -->
+      <circle
+         cx="50"
+         cy="18"
+         r="7"
+         id="circle1-7"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Corpo levemente inclinado para frente -->
+      <line
+         x1="48"
+         y1="25"
+         x2="52"
+         y2="50"
+         id="line1-4"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Braços para frente, como segurando uma vassoura -->
+      <!-- Braço "de trás" -->
+      <line
+         x1="50"
+         y1="30"
+         x2="64"
+         y2="40"
+         id="line2-2"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Braço "da frente", mais baixo -->
+      <line
+         x1="31.364048"
+         y1="13.553568"
+         x2="47.364048"
+         y2="31.553568"
+         id="line3-7"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Pernas: uma à frente, outra atrás, dando ideia de movimento -->
+      <!-- Perna de trás -->
+      <line
+         x1="52"
+         y1="50"
+         x2="42"
+         y2="72"
+         id="line4-7"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+      <!-- Perna da frente -->
+      <line
+         x1="52"
+         y1="50"
+         x2="62"
+         y2="72"
+         id="line5-9"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Borda" />
+</svg>

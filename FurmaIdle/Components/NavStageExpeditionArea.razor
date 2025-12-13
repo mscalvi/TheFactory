@@ -157,7 +157,7 @@
             }
         </section>
 
-        <section class="@($"menu-panel {UI.PanelClass("expedition-status")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("expedition-status")}")">
             @if (expedition.ExpeditionState != UnlockHelper.ExpeditionState.Active)
             {
                 <h3 class="title">Expedição Inativa</h3>

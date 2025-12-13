@@ -35,35 +35,6 @@
         grid-area: selectbuy;
     }
 
-.buy-button.select-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: calc(var(--contract-btn-w) * var(--ui-scale));
-    height: calc(var(--contract-btn-h) * var(--ui-scale));
-    min-width: calc(var(--contract-btn-w) * var(--ui-scale));
-    min-height: calc(var(--contract-btn-h) * var(--ui-scale));
-    max-width: calc(var(--contract-btn-w) * var(--ui-scale));
-    max-height: calc(var(--contract-btn-h) * var(--ui-scale));
-    padding: calc(2px * var(--ui-scale));
-    background: var(--brass-20);
-}
-
-    .buy-button.select-toggle:active {
-        background: var(--brass-30);
-        transform: translateY(1px) scale(.98);
-        box-shadow: 0 0 0 1px var(--brass-00), inset 0 0 0 1px var(--muted-line);
-    }
-
-    .buy-button.select-toggle:disabled {
-        background: var(--disabled-bg);
-        color: var(--disabled-fg);
-        opacity: .3;
-        transform: none;
-        box-shadow: none;
-    }
-
 .contracts-grid {
     grid-area: contract-levels;
     display: grid;

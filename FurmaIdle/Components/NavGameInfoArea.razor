@@ -37,7 +37,7 @@ else
         var totalHours = (int)gameDuration.TotalHours;
         var durationText = $"{totalHours:00}:{gameDuration.Minutes:00}:{gameDuration.Seconds:00}";
 
-        <section class="@($"menu-panel {UI.PanelClass("game-status")}")">
+        <section class="@($"menu-panel menu-section {UI.PanelClass("game-status")}")">
         <h3 class="title">Jogo</h3>
 
             <table class="info-table">

@@ -137,14 +137,8 @@ namespace FurmaIdle.Services
                     }
                 }
 
-                if (expansion.State != UnlockHelper.State.Unlocked)
-                {
-                    expansion.StartedAt = DateTime.Now;
-                }
-
                 expansion.State = UnlockHelper.State.Unlocked;
                 game.GameStats.ExpansionsUnlocked++;
-                game.CurrentExpansionId = expansion.Id;
 
             }, save: true);
         }
