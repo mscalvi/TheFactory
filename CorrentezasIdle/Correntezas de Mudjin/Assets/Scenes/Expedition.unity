@@ -863,6 +863,7 @@ GameObject:
   - component: {fileID: 1083699778}
   - component: {fileID: 1083699780}
   - component: {fileID: 1083699781}
+  - component: {fileID: 1083699782}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -910,6 +911,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52b75eaefe37d184c932def55949eed8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  expedition: {fileID: 1083699782}
+  tick: {fileID: 1083699778}
   DayCounterText: {fileID: 2059583592}
   DestinationArrivalText: {fileID: 1772277634}
   DayTimeText: {fileID: 2100810575}
@@ -925,12 +928,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d07aa61ed4817a34d8692d0c43b03f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tick: {fileID: 1083699778}
   database: {fileID: 11400000, guid: 31e643da0fc87904984a6f2a8f56d41a, type: 2}
+  expedition: {fileID: 1083699782}
   dayCycle: {fileID: 1083699780}
-  EnemyFishText: {fileID: 722215893}
-  EnemyPirateText: {fileID: 2081338469}
-  EnemySnakeText: {fileID: 1891446928}
-  EnemySharkText: {fileID: 1990508719}
+--- !u!114 &1083699782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05ef21a98637dcc4bbc3986edb957f32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BaseSpawnDistance: 20
+  BaseSpawnTimer: 10
+  BasePhaseCycleTime: 75
+  DayCounter: 1
+  DestinationArrival: 0
 --- !u!1 &1099042370
 GameObject:
   m_ObjectHideFlags: 0

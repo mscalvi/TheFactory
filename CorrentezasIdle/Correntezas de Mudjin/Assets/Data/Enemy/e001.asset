@@ -10,16 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5c2e65d716c50746bb11a58f3cb4066, type: 3}
-  m_Name: Pirate
+  m_Name: e001
   m_EditorClassIdentifier: 
-  Id: e002
-  Name: Pirate
-  Description: Pirata
+  Id: e001
+  Name: Fish
+  Description: Peixe
   DayEnemy: 1
-  BossEnemy: 1
-  LifeTotal: 20
+  BossEnemy: 0
+  Life: 3
+  LifeGrowth: 0.1
   LifeRegen: 0
-  Damage: 50
-  AtackSpeed: 1
+  LifeRegenGrowth: 0
+  Speed: 3
+  SpeedGrowth: 0
+  Armor: 0
+  ArmorGrowth: 0
   Range: 0
-  MovimentSpeed: 2
+  RangeGrowth: 0
+  Damage: 2
+  DamageGrowth: 0.1
+  AtackSpeed: 1
+  AtackSpeedGrowth: 0
+  SpawnDistance: 20
+  SpawnDistanceGrowth: 0
+  Rarity: 10
+  EnemyType: 1
+  RegionType: -1

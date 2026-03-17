@@ -12,10 +12,25 @@ public class EnemyModel : ScriptableObject
     public bool DayEnemy;
     public bool BossEnemy;
 
-    public double LifeTotal;
+    public double Life;
+    public double LifeGrowth;
     public double LifeRegen;
-    public double Damage;
-    public double AtackSpeed;
+    public double LifeRegenGrowth;
+    public double Speed;
+    public double SpeedGrowth;
+    public double Armor;
+    public double ArmorGrowth;
     public double Range;
-    public double MovimentSpeed;
+    public double RangeGrowth;
+    public double Damage;
+    public double DamageGrowth;
+    public double AtackSpeed;
+    public double AtackSpeedGrowth;
+    public double SpawnDistance;
+    public double SpawnDistanceGrowth;
+
+    public double Rarity;
+
+    public EnemyHelper.EnemyType EnemyType;
+    public EnemyHelper.RegionType RegionType;
 }

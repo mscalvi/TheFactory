@@ -16,6 +16,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b3fefa50996da144d8f747f928f92e96, type: 2}
   enemies:
   - {fileID: 11400000, guid: 7a12713d66d5e2a448af0b0c2794dd8b, type: 2}
-  - {fileID: 11400000, guid: 574efa354e37d74439847fd2a764f592, type: 2}
+  - {fileID: 11400000, guid: d72e722754fc2fe42a6d98eb2dee816c, type: 2}
+  - {fileID: 11400000, guid: f95a6d7336de996449cea83acd82a303, type: 2}
+  - {fileID: 11400000, guid: 64da3d5528393264688572a9b59495e1, type: 2}
+  - {fileID: 11400000, guid: 64da3d5528393264688572a9b59495e1, type: 2}
   - {fileID: 11400000, guid: 1047f6e41a38ad341a19015c6e3b427f, type: 2}
   - {fileID: 11400000, guid: c5e9c9b9528bc084388cb80e73a5252c, type: 2}
+  - {fileID: 11400000, guid: 6df9a98c6bb9cac4babad3d4cdc6424a, type: 2}
+  - {fileID: 11400000, guid: 14a87b453d7d7ab469a6a19c7ec361bf, type: 2}
+  - {fileID: 11400000, guid: 574efa354e37d74439847fd2a764f592, type: 2}
+  - {fileID: 11400000, guid: 3a38a0abc9398fd4cbeb73c869d69f91, type: 2}

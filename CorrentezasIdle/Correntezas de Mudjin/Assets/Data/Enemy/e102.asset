@@ -10,16 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5c2e65d716c50746bb11a58f3cb4066, type: 3}
-  m_Name: Shark
+  m_Name: e102
   m_EditorClassIdentifier: 
-  Id: e004
+  Id: e102
   Name: Shark
   Description: "Tubar\xE3o"
   DayEnemy: 0
-  BossEnemy: 1
-  LifeTotal: 15
+  BossEnemy: 0
+  Life: 30
+  LifeGrowth: 0.11
   LifeRegen: 0
-  Damage: 50
-  AtackSpeed: 1
+  LifeRegenGrowth: 0
+  Speed: 5
+  SpeedGrowth: 0
+  Armor: 0
+  ArmorGrowth: 0
   Range: 0
-  MovimentSpeed: 3
+  RangeGrowth: 0
+  Damage: 20
+  DamageGrowth: 0.5
+  AtackSpeed: 1.5
+  AtackSpeedGrowth: 0
+  SpawnDistance: 20
+  SpawnDistanceGrowth: 0
+  Rarity: 2
+  EnemyType: 2
+  RegionType: 26

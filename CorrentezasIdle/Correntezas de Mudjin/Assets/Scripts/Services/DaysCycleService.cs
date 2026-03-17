@@ -3,30 +3,23 @@ using UnityEngine;
 
 public class DaysCycleService : MonoBehaviour, ITickable
 {
-    TickService tick;
-
-    const int TicksPerPhase = 75;   // Recebe de um GameService?
+    public ExpeditionService expedition;
 
     int tickCounter = 0;
 
-    public bool IsDay { get; private set; } = true; // Recebe de um GameService?
-
-    int DayCounter = 1; // Recebe de um GameService?
-    int DestinationArrival; // Recebe de um GameService?
-
+    [SerializeField] TickService tick;
     [SerializeField] TextMeshProUGUI DayCounterText;
     [SerializeField] TextMeshProUGUI DestinationArrivalText;
     [SerializeField] TextMeshProUGUI DayTimeText;
 
     void Start()
     {
-        Debug.Log("DaysCicleService On");
-
-        tick = FindObjectOfType<TickService>();
         tick.Subscribe(this);
 
+        // Mudar para UiService
+        Debug.Log("DaysCicleService On");
         DayTimeText.text = "Dia";
-        DayCounterText.text = DayCounter.ToString();
+        DayCounterText.text = expedition.DayCounter.ToString();
     }
 
     void OnDestroy()
@@ -38,18 +31,22 @@ public class DaysCycleService : MonoBehaviour, ITickable
     {
         tickCounter++;
 
-        if (tickCounter >= TicksPerPhase)
+        if (tickCounter >= expedition.BasePhaseCycleTime)
         {
-            tickCounter = 0;
-            IsDay = !IsDay;
+            Debug.Log("Período terminado.");
 
-            if (IsDay) 
+            tickCounter = 0;
+            expedition.IsDay = !expedition.IsDay;
+
+            if (expedition.IsDay) 
             {
-                DayCounter++;
-                DayCounterText.text = DayCounter.ToString();
+                expedition.DayCounter++;
+                // Mudar para UiService
+                DayCounterText.text = expedition.DayCounter.ToString();
                 DayTimeText.text = "Dia";
             } else
             {
+                // Mudar para UiService
                 DayTimeText.text = "Noite";
             }
         }

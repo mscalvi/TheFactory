@@ -10,16 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5c2e65d716c50746bb11a58f3cb4066, type: 3}
-  m_Name: Fish
+  m_Name: e101
   m_EditorClassIdentifier: 
-  Id: e001
-  Name: Fish
-  Description: Peixe
-  DayEnemy: 1
+  Id: e003
+  Name: Snake
+  Description: Cobra
+  DayEnemy: 0
   BossEnemy: 0
-  LifeTotal: 2
+  Life: 5
+  LifeGrowth: 0.09
   LifeRegen: 0
-  Damage: 1
-  AtackSpeed: 1
+  LifeRegenGrowth: 0
+  Speed: 3
+  SpeedGrowth: 0
+  Armor: 0
+  ArmorGrowth: 0
   Range: 0
-  MovimentSpeed: 4
+  RangeGrowth: 0
+  Damage: 1
+  DamageGrowth: 0.07
+  AtackSpeed: 0.5
+  AtackSpeedGrowth: 0
+  SpawnDistance: 20
+  SpawnDistanceGrowth: 0
+  Rarity: 5
+  EnemyType: 1
+  RegionType: 44
