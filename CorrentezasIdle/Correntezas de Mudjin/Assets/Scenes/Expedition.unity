@@ -776,6 +776,69 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 850093040}
   m_CullTransparentMesh: 1
+--- !u!1 &991191063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991191066}
+  - component: {fileID: 991191065}
+  - component: {fileID: 991191064}
+  m_Layer: 0
+  m_Name: EnemySystems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &991191064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991191063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d07aa61ed4817a34d8692d0c43b03f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tick: {fileID: 1083699778}
+  database: {fileID: 11400000, guid: 31e643da0fc87904984a6f2a8f56d41a, type: 2}
+  expedition: {fileID: 1083699782}
+  dayCycle: {fileID: 1083699780}
+--- !u!114 &991191065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991191063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60d7a8ae97dcd4c41b53f5d1b6daadd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tick: {fileID: 1083699778}
+  expedition: {fileID: 1083699782}
+--- !u!4 &991191066
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991191063}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 540, y: 960, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1064021753
 GameObject:
   m_ObjectHideFlags: 0
@@ -862,8 +925,8 @@ GameObject:
   - component: {fileID: 1083699779}
   - component: {fileID: 1083699778}
   - component: {fileID: 1083699780}
-  - component: {fileID: 1083699781}
   - component: {fileID: 1083699782}
+  - component: {fileID: 1083699783}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -916,22 +979,6 @@ MonoBehaviour:
   DayCounterText: {fileID: 2059583592}
   DestinationArrivalText: {fileID: 1772277634}
   DayTimeText: {fileID: 2100810575}
---- !u!114 &1083699781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083699777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d07aa61ed4817a34d8692d0c43b03f14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tick: {fileID: 1083699778}
-  database: {fileID: 11400000, guid: 31e643da0fc87904984a6f2a8f56d41a, type: 2}
-  expedition: {fileID: 1083699782}
-  dayCycle: {fileID: 1083699780}
 --- !u!114 &1083699782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -944,11 +991,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05ef21a98637dcc4bbc3986edb957f32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseSpawnDistance: 20
-  BaseSpawnTimer: 10
+  BaseSpawnDistance: 1.5
+  BaseSpawnChance: 1
+  BaseSpawnTimer: 5
   BasePhaseCycleTime: 75
   DayCounter: 1
   DestinationArrival: 0
+  currentShip: {fileID: 11400000, guid: b3fefa50996da144d8f747f928f92e96, type: 2}
+--- !u!114 &1083699783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89fe943966d3ceb4aa135da31f671c3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tick: {fileID: 1083699778}
+  expedition: {fileID: 1083699782}
 --- !u!1 &1099042370
 GameObject:
   m_ObjectHideFlags: 0
@@ -3401,3 +3464,4 @@ SceneRoots:
   - {fileID: 368440783}
   - {fileID: 805394645}
   - {fileID: 1083699779}
+  - {fileID: 991191066}

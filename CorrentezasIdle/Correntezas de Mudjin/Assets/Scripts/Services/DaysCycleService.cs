@@ -1,16 +1,17 @@
 using TMPro;
 using UnityEngine;
+using static GameHelper;
 
 public class DaysCycleService : MonoBehaviour, ITickable
 {
-    public ExpeditionService expedition;
-
-    int tickCounter = 0;
-
+    [SerializeField] ExpeditionService expedition;
     [SerializeField] TickService tick;
+
     [SerializeField] TextMeshProUGUI DayCounterText;
     [SerializeField] TextMeshProUGUI DestinationArrivalText;
     [SerializeField] TextMeshProUGUI DayTimeText;
+
+    int tickCounter = 0;
 
     void Start()
     {
@@ -29,12 +30,13 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
+        if (expedition.State != GameState.Running)
+            return;
+
         tickCounter++;
 
         if (tickCounter >= expedition.BasePhaseCycleTime)
         {
-            Debug.Log("Período terminado.");
-
             tickCounter = 0;
             expedition.IsDay = !expedition.IsDay;
 

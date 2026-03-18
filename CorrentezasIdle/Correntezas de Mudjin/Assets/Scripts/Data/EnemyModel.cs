@@ -24,12 +24,14 @@ public class EnemyModel : ScriptableObject
     public double RangeGrowth;
     public double Damage;
     public double DamageGrowth;
-    public double AtackSpeed;
-    public double AtackSpeedGrowth;
+    public double AttackSpeed;
+    public double AttackSpeedGrowth;
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
 
     public double Rarity;
+
+    public EnemyHelper.EnemyState State;
 
     public EnemyHelper.EnemyType EnemyType;
     public EnemyHelper.RegionType RegionType;

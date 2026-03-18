@@ -26,4 +26,14 @@ public class EnemyHelper
         Cold = 1 << 4,
         River = 1 << 5,
     }
+
+    [Flags]
+    public enum EnemyState
+    {
+        Moving,
+        Arrival,
+        Damaging,
+        Cooldown,
+        Dead,
+    }
 }

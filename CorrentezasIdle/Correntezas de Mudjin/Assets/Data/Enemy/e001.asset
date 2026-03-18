@@ -29,10 +29,11 @@ MonoBehaviour:
   RangeGrowth: 0
   Damage: 2
   DamageGrowth: 0.1
-  AtackSpeed: 1
-  AtackSpeedGrowth: 0
+  AttackSpeed: 1
+  AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
   Rarity: 10
+  State: 0
   EnemyType: 1
   RegionType: -1

@@ -9,9 +9,12 @@ public class ShipModel : ScriptableObject
     public string Name;
     public string Description;
 
-    public double LifeTotal;
-    public double LifeRegen;
-    public double Damage;
-    public double AtackSpeed;
-    public double Range;
+    public double Life;
+    public double Speed;
+    public double Armor;
+    public int Size;
+    public int UnnamedTripulation;
+    public int NamedTripulation;
+    public int WeaponRooms;
+    public int OtherRooms;
 }
