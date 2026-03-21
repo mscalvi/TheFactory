@@ -61,35 +61,38 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Controller\ExpeditionController.cs" />
-    <Compile Include="Assets\Scripts\Data\WeaponRoomModel.cs" />
     <Compile Include="Assets\Scripts\Controller\GameController.cs" />
-    <Compile Include="Assets\Scripts\Instances\OtherRoomUI.cs" />
-    <Compile Include="Assets\Scripts\Instances\WeaponRoomUI.cs" />
-    <Compile Include="Assets\Scripts\UI Controllers\ShipConfigController.cs" />
-    <Compile Include="Assets\Scripts\Data\WeaponModel.cs" />
-    <Compile Include="Assets\Scripts\Data\AmmoModel.cs" />
-    <Compile Include="Assets\Scripts\Controller\RunController.cs" />
+    <Compile Include="Assets\Scripts\Services\LandingService.cs" />
+    <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />
+    <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
+    <Compile Include="Assets\Scripts\Design\ExpeditionPageController.cs" />
+    <Compile Include="Assets\Scripts\Models\OtherRoomModel.cs" />
+    <Compile Include="Assets\Scripts\States\GameState.cs" />
+    <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\RoomHelper.cs" />
-    <Compile Include="Assets\Scripts\Data\ShipModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
-    <Compile Include="Assets\Scripts\Data\GameDatabase.cs" />
+    <Compile Include="Assets\Scripts\Design\LandingPageController.cs" />
+    <Compile Include="Assets\Scripts\Definitions\OtherRoomDesign.cs" />
+    <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
-    <Compile Include="Assets\Scripts\UI Controllers\ExpeditionPageController.cs" />
+    <Compile Include="Assets\Scripts\Models\AmmoModel.cs" />
     <Compile Include="Assets\Scripts\Services\DaysCycleService.cs" />
+    <Compile Include="Assets\Scripts\Definitions\WeaponRoomDesign.cs" />
     <Compile Include="Assets\Scripts\Services\TickService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionService.cs" />
     <Compile Include="Assets\Scripts\Services\EnemyControlService.cs" />
     <Compile Include="Assets\Scripts\Services\EnemySpawnerService.cs" />
-    <Compile Include="Assets\Scripts\Data\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\TripulationHelper.cs" />
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
-    <Compile Include="Assets\Scripts\UI Controllers\LandingPageController.cs" />
     <Compile Include="Assets\Scripts\Instances\ShipInstance.cs" />
-    <Compile Include="Assets\Scripts\Data\OtherRoomModel.cs" />
+    <Compile Include="Assets\Scripts\Configurations\ExpeditionConfiguration.cs" />
+    <Compile Include="Assets\Scripts\Models\WeaponRoomModel.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
+    <Compile Include="Assets\Scripts\Design\ShipConfigController.cs" />
     <Compile Include="Assets\Scripts\Services\ShipControlService.cs" />
-    <Compile Include="Assets\Scripts\Data\TripulationModel.cs" />
+    <Compile Include="Assets\Scripts\Models\TripulationModel.cs" />
+    <Compile Include="Assets\Scripts\Models\ShipModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

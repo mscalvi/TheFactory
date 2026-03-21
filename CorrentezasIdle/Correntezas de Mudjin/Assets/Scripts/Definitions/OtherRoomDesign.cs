@@ -2,7 +2,7 @@
 using UnityEngine;
 using TMPro;
 
-public class OtherRoomUI : MonoBehaviour
+public class OtherRoomDesign : MonoBehaviour
 {
     public TMP_Text RoomName;
     public TMP_Dropdown TripulationDropdown;

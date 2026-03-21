@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 [System.Serializable]
-public class RunController
+public class ExpeditionConfiguration
 {
     public ShipModel Ship;
     public List<RoomConfiguration> Rooms;

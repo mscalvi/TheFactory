@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameHelper
 {
-    public enum GameState
+    public enum ExpeditionStatus
     {
         Stopped,
         Paused,

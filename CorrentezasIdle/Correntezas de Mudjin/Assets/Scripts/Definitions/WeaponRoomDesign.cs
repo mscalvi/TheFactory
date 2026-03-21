@@ -2,7 +2,7 @@
 using UnityEngine;
 using TMPro;
 
-public class WeaponRoomUI : MonoBehaviour
+public class WeaponRoomDesign : MonoBehaviour
 {
     public TMP_Text RoomName;
     public TMP_Dropdown TripulationDropdown;

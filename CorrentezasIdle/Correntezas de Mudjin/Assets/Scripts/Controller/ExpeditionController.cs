@@ -5,31 +5,45 @@ using static GameHelper;
 
 public class ExpeditionController : MonoBehaviour
 {
-    public void Awake()
-    {
-        RunController runControler = BuildConfig();
+    [SerializeField] TickService TickService;
+    [SerializeField] DaysCycleService DaysCycleService;
+    [SerializeField] EnemySpawnerService EnemySpawnerService;
+    [SerializeField] EnemyControllerService EnemyControllerService;
 
-        GameController.Instance.CurrentRun = runControler;
+    private void Awake()
+    {
+        var Expedition = GameController.Instance.GameState.Expedition;
+
+        if (Expedition == null)
+        {
+            Debug.LogError("ExpeditionState NULL!");
+            return;
+        }
+
+        var ExpeditionConfiguration = Expedition.CurrentExpedition;
+
+        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Ship}");
+        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Rooms[0].Tripulation}");
+        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Rooms[0].Weapon}");
+        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Rooms[0].Ammo}");
+
     }
 
-    RunController BuildConfig()
+    private void Start()
     {
-        var config = new RunController();
+        var expedition = GameController.Instance.GameState.Expedition;
+        var db = GameController.Instance.Database;
 
-        //// Aqui você preenche com base na UI
-        //config.Ship = selectedShip;
+        if (expedition == null)
+        {
+            Debug.LogError("ExpeditionState NULL!");
+            return;
+        }
 
-        //config.Rooms = new List<RoomConfig>();
+        DaysCycleService.Initialize(expedition, TickService);
 
-        //foreach (var roomUI in roomUIs)
-        //{
-        //    config.Rooms.Add(new RoomConfig
-        //    {
-        //        Weapon = roomUI.SelectedWeapon,
-        //        TargetType = roomUI.SelectedTargetType
-        //    });
-        //}
+        EnemySpawnerService.Initialize(expedition, TickService, db);
 
-        return config;
+        EnemyControllerService.Initialize(expedition, TickService);
     }
 }

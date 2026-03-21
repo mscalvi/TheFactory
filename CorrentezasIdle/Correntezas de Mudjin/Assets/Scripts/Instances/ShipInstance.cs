@@ -7,20 +7,9 @@ public class ShipInstance
 
     public double CurrentLife;
 
-
-    public double Damage;
-    public double AttackSpeed;
-    public double Range;
-    public double Cooldown;
-
     public ShipInstance(ShipModel model)
     {
         Model = model;
         CurrentLife = model.Life;
-
-        Damage = 5;
-        AttackSpeed = 1;
-        Range = 20;
-        Cooldown = 1;
     }
 }

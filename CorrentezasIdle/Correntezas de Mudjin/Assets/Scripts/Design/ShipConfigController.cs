@@ -8,15 +8,17 @@ public class ShipConfigController : MonoBehaviour
 {
     public GameDatabase Database;
 
+    public ExpeditionState ExpeditionState;
+
     public TMPro.TMP_Dropdown ShipDropdown;
 
     public Transform RoomsParent;
-    public WeaponRoomUI WeaponRoomPrefab;
-    public OtherRoomUI OtherRoomPrefab;
+    public WeaponRoomDesign WeaponRoomPrefab;
+    public OtherRoomDesign OtherRoomPrefab;
 
     private List<ShipModel> unlockedShips;
-    private List<WeaponRoomUI> activeWeaponRooms = new List<WeaponRoomUI>();
-    private List<OtherRoomUI> activeOtherRooms = new List<OtherRoomUI>();
+    private List<WeaponRoomDesign> activeWeaponRooms = new List<WeaponRoomDesign>();
+    private List<OtherRoomDesign> activeOtherRooms = new List<OtherRoomDesign>();
 
     // Start is called before the first frame update
     void Start()
@@ -91,7 +93,7 @@ public class ShipConfigController : MonoBehaviour
 
     public void ConfirmBtn()
     {
-        var run = new RunController();
+        var run = new ExpeditionConfiguration();
 
         // Ship selecionado
         run.Ship = unlockedShips[ShipDropdown.value];
@@ -120,7 +122,7 @@ public class ShipConfigController : MonoBehaviour
             run.Rooms.Add(config);
         }
 
-        GameController.Instance.CurrentRun = run;
+        ExpeditionState.CurrentExpedition = run;
 
         SceneManager.LoadScene("LandingPage");
     }

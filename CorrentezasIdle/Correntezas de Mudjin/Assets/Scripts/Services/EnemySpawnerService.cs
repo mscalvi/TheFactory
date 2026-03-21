@@ -6,40 +6,44 @@ using static GameHelper;
 
 public class EnemySpawnerService : MonoBehaviour, ITickable
 {
-    [SerializeField] TickService tick;
-    [SerializeField] GameDatabase database;
-    [SerializeField] ExpeditionService expedition;
-    [SerializeField] DaysCycleService dayCycle;
+    private GameDatabase DataBase;
+    private TickService TickService;
+    private ExpeditionState Expedition;
+
+    [SerializeField] TextMeshProUGUI SpawnText;
 
     EnemyModel[] AllEnemies;
     public Dictionary<string, float> EnemyWeights = new();
 
-    int SpawnTimer = 0;
+    int tickCounter = 0;
 
-    void Start()
+    public void Initialize(ExpeditionState expeditionState, TickService Tick, GameDatabase db)
     {
-        tick.Subscribe(this);
+        Expedition = expeditionState;
 
-        AllEnemies = database.enemies;
+        TickService = Tick;
+
+        DataBase = db;
+
+        TickService.Subscribe(this);
+
+        Debug.Log("EnemySpawnService On");
+
+        AllEnemies = DataBase.enemies;
 
         foreach (var enemy in AllEnemies)
         {
             EnemyWeights[enemy.Id] = (float)enemy.Rarity;
         }
-
-        Debug.Log("Spawn On.");
     }
 
     public void OnTick(float dt)
     {
-        if (expedition.State != GameState.Running)
-            return;
+        tickCounter++;
 
-        SpawnTimer++;
-
-        if (SpawnTimer >= expedition.BaseSpawnTimer)
+        if (tickCounter >= Expedition.BaseTicksPerSpawn)
         {
-            SpawnTimer = 0;
+            tickCounter = 0;
             SpawnEnemy();
         }
     }
@@ -50,9 +54,11 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         Debug.Log($"{spawn}");
 
-        if (spawn < expedition.BaseSpawnChance)
+        if (spawn < Expedition.BaseSpawnChance)
         {
             IncreaseChance();
+            Debug.Log($"Sem Spawn. Nível aumentado.");
+
             return;
         }
 
@@ -85,14 +91,16 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             }
         }
 
-        foreach (var enemy in validEnemies)
+        if (chosen == null)
         {
-            totalWeight += EnemyWeights[enemy.Id];
+            Debug.LogError("Nenhum inimigo selecionado!");
+            return;
         }
 
-        expedition.ActiveEnemies.Add(new EnemyInstance(chosen, expedition.BaseSpawnDistance));
+        Expedition.ActiveEnemies.Add(new EnemyInstance(chosen, Expedition.BaseSpawnDistance));
+        SpawnText.text = "New Arrival: " + chosen.Name;
 
-        Debug.Log($"Um {chosen.Name} selvagem apareceu.");
+        Debug.Log($"Spawn.");
     }
 
     List<EnemyModel> SpawnChance()
@@ -103,12 +111,12 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         {
             if (enemy.Rarity > 0)
             {
-                if (expedition.IsDay && enemy.DayEnemy)
+                if (Expedition.IsDay && enemy.DayEnemy)
                 {
                     // Checar também região/tipo...
                     validEnemies.Add(enemy);
                 }
-                else if (!expedition.IsDay && !enemy.DayEnemy)
+                else if (!Expedition.IsDay && !enemy.DayEnemy)
                 {
                     validEnemies.Add(enemy);
                 }
@@ -120,8 +128,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     void IncreaseChance()
     {
-        Debug.Log("Dificuldade aumentada.");
-
         foreach (var key in new List<string>(EnemyWeights.Keys))
         {
             float value = EnemyWeights[key];

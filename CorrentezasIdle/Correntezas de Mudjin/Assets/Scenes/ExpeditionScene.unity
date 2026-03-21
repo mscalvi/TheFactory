@@ -662,7 +662,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 805394645}
-  - component: {fileID: 805394644}
   - component: {fileID: 805394646}
   m_Layer: 0
   m_Name: ExpeditionController
@@ -671,22 +670,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &805394644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 805394643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c409a6c33b1b6c42baee3e6e5f39952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shipPanel: {fileID: 1064021753}
-  crewPanel: {fileID: 1590224811}
-  roomsPanel: {fileID: 1895386239}
-  settingsPanel: {fileID: 803104475}
 --- !u!4 &805394645
 Transform:
   m_ObjectHideFlags: 0
@@ -714,6 +697,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2669c4430134174a934a693898e8fe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TickService: {fileID: 1083699780}
+  DaysCycleService: {fileID: 1083699781}
+  EnemySpawnerService: {fileID: 991191067}
+  EnemyControllerService: {fileID: 991191068}
 --- !u!1 &850093040
 GameObject:
   m_ObjectHideFlags: 0
@@ -798,8 +785,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 991191066}
-  - component: {fileID: 991191065}
-  - component: {fileID: 991191064}
+  - component: {fileID: 991191067}
+  - component: {fileID: 991191068}
   m_Layer: 0
   m_Name: EnemySystems
   m_TagString: Untagged
@@ -807,36 +794,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &991191064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 991191063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d07aa61ed4817a34d8692d0c43b03f14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tick: {fileID: 1083699778}
-  database: {fileID: 11400000, guid: 31e643da0fc87904984a6f2a8f56d41a, type: 2}
-  expedition: {fileID: 1083699782}
-  dayCycle: {fileID: 1083699780}
---- !u!114 &991191065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 991191063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60d7a8ae97dcd4c41b53f5d1b6daadd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tick: {fileID: 1083699778}
-  expedition: {fileID: 1083699782}
 --- !u!4 &991191066
 Transform:
   m_ObjectHideFlags: 0
@@ -852,6 +809,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &991191067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991191063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d07aa61ed4817a34d8692d0c43b03f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpawnText: {fileID: 722215893}
+--- !u!114 &991191068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991191063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60d7a8ae97dcd4c41b53f5d1b6daadd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AliveEnemies: {fileID: 1891446928}
+  KilledEnemies: {fileID: 1990508719}
 --- !u!1 &1064021753
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,10 +920,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1083699779}
-  - component: {fileID: 1083699778}
   - component: {fileID: 1083699780}
-  - component: {fileID: 1083699782}
-  - component: {fileID: 1083699783}
+  - component: {fileID: 1083699781}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -947,19 +929,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1083699778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083699777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d9320c214d65124ab96f2fc2e4f88e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tickInterval: 0.2
 --- !u!4 &1083699779
 Transform:
   m_ObjectHideFlags: 0
@@ -984,47 +953,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1083699777}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d9320c214d65124ab96f2fc2e4f88e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tickInterval: 0.2
+--- !u!114 &1083699781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52b75eaefe37d184c932def55949eed8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expedition: {fileID: 1083699782}
-  tick: {fileID: 1083699778}
   DayCounterText: {fileID: 2059583592}
   DestinationArrivalText: {fileID: 1772277634}
   DayTimeText: {fileID: 2100810575}
---- !u!114 &1083699782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083699777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05ef21a98637dcc4bbc3986edb957f32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BaseSpawnDistance: 1.5
-  BaseSpawnChance: 1
-  BaseSpawnTimer: 5
-  BasePhaseCycleTime: 75
-  DayCounter: 1
-  DestinationArrival: 0
-  currentShip: {fileID: 11400000, guid: b3fefa50996da144d8f747f928f92e96, type: 2}
---- !u!114 &1083699783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083699777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89fe943966d3ceb4aa135da31f671c3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tick: {fileID: 1083699778}
-  expedition: {fileID: 1083699782}
 --- !u!1 &1099042370
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,7 +1424,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 805394644}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ExpeditionPageController, Assembly-CSharp
         m_MethodName: OpenSettingMenu
         m_Mode: 1
@@ -1610,7 +1557,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 805394644}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ExpeditionPageController, Assembly-CSharp
         m_MethodName: OpenShipMenu
         m_Mode: 1
@@ -2326,7 +2273,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 805394644}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ExpeditionPageController, Assembly-CSharp
         m_MethodName: OpenRoomMenu
         m_Mode: 1
@@ -3070,7 +3017,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 805394644}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ExpeditionPageController, Assembly-CSharp
         m_MethodName: OpenCrewMenu
         m_Mode: 1

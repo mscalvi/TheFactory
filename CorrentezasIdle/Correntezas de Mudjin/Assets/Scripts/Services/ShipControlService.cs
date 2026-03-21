@@ -7,7 +7,7 @@ using static GameHelper;
 public class ShipControlService : MonoBehaviour, ITickable
 {
     [SerializeField] TickService tick;
-    [SerializeField] ExpeditionService expedition;
+    [SerializeField] ExpeditionState expedition;
 
     EnemyInstance SelectedTarget = null;
 
@@ -18,7 +18,7 @@ public class ShipControlService : MonoBehaviour, ITickable
     {
         tick.Subscribe(this);
         currentLife = expedition.Ship.CurrentLife;
-        expedition.Ship.Cooldown = 0;
+        // expedition.Ship.Cooldown = 0;
         Debug.Log($"Navio On. Vida atual: {expedition.Ship.CurrentLife}");
     }
 
@@ -29,9 +29,6 @@ public class ShipControlService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        if (expedition.State != GameState.Running)
-            return;
-
         ReceiveDamage(dt);
         RepairLife(dt);
 
@@ -49,7 +46,7 @@ public class ShipControlService : MonoBehaviour, ITickable
         if (expedition.Ship.CurrentLife <= 0) 
         {
             expedition.Ship.CurrentLife = 0;
-            expedition.EndExpedition();
+            // expedition.EndExpedition();
         }
     }
 
@@ -68,19 +65,19 @@ public class ShipControlService : MonoBehaviour, ITickable
                 continue;
             }
 
-            if (enemy.Distance <= expedition.Ship.Range)
-            {
-                if (SelectedTarget == null)
-                {
-                    SelectedTarget = enemy;
-                    Debug.Log("Novo inimigo selecionado");
-                }
-                else if (enemy.Distance < SelectedTarget.Distance)
-                {
-                    Debug.Log("Outro inimigo selecionado");
-                    SelectedTarget = enemy;
-                }
-            }
+            //if (enemy.Distance <= expedition.Ship.Range)
+            //{
+            //    if (SelectedTarget == null)
+            //    {
+            //        SelectedTarget = enemy;
+            //        Debug.Log("Novo inimigo selecionado");
+            //    }
+            //    else if (enemy.Distance < SelectedTarget.Distance)
+            //    {
+            //        Debug.Log("Outro inimigo selecionado");
+            //        SelectedTarget = enemy;
+            //    }
+            //}
         }
     }
 
@@ -91,28 +88,28 @@ public class ShipControlService : MonoBehaviour, ITickable
 
     public void ShootTarget(float dt)
     {
-        expedition.Ship.Cooldown -= dt;
+        //expedition.Ship.Cooldown -= dt;
 
-        if (expedition.Ship.Cooldown > 0)
-            return;
+        //if (expedition.Ship.Cooldown > 0)
+        //    return;
 
-        SelectClosestTarget(dt);
+        //SelectClosestTarget(dt);
 
-        if (SelectedTarget != null)
-        {
-            Debug.Log($"Alvo selecionado: {SelectedTarget.Model.Name}");
-        }
+        //if (SelectedTarget != null)
+        //{
+        //    Debug.Log($"Alvo selecionado: {SelectedTarget.Model.Name}");
+        //}
 
-        if (SelectedTarget == null ||
-            SelectedTarget.State == EnemyHelper.EnemyState.Dead ||
-            SelectedTarget.CurrentLife <= 0)
-        {
-            SelectedTarget = null;
-            return;
-        }
+        //if (SelectedTarget == null ||
+        //    SelectedTarget.State == EnemyHelper.EnemyState.Dead ||
+        //    SelectedTarget.CurrentLife <= 0)
+        //{
+        //    SelectedTarget = null;
+        //    return;
+        //}
 
-        SelectedTarget.CurrentLife -= expedition.Ship.Damage;
-        Debug.Log($"Navio atirou em um {SelectedTarget.Model.Name}, deixando-o com {SelectedTarget.CurrentLife} de vida.");
-        expedition.Ship.Cooldown = 1.0 / expedition.Ship.AttackSpeed;
+        //SelectedTarget.CurrentLife -= expedition.Ship.Damage;
+        //Debug.Log($"Navio atirou em um {SelectedTarget.Model.Name}, deixando-o com {SelectedTarget.CurrentLife} de vida.");
+        //expedition.Ship.Cooldown = 1.0 / expedition.Ship.AttackSpeed;
     }
 }

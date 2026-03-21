@@ -14,11 +14,11 @@ public class LandingPageUi : MonoBehaviour
 
     public void ExpeditionButton()
     {
-        SceneManager.LoadScene("Expedition");
+        SceneManager.LoadScene("ExpeditionScene");
     }
 
     public void ShipConfigButton()
     {
-        SceneManager.LoadScene("Ship");
+        SceneManager.LoadScene("ShipConfigScene");
     }
 }
