@@ -21,5 +21,8 @@ MonoBehaviour:
   Size: 2
   UnnamedTripulation: 3
   NamedTripulation: 2
-  WeaponRooms: 1
-  OtherRooms: 1
+  WeaponRooms:
+  - RoomModel: {fileID: 11400000, guid: e36c58bec8882e14ca7b82e3b987fa09, type: 2}
+  OtherRooms:
+  - RoomModel: {fileID: 11400000, guid: fdc3c7cba06298042a802db146aa6788, type: 2}
+  UnlockStatus: 1

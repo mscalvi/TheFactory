@@ -14,6 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ships:
   - {fileID: 11400000, guid: b3fefa50996da144d8f747f928f92e96, type: 2}
+  - {fileID: 11400000, guid: f06410d5420c1c44dadb7fbced67b898, type: 2}
+  - {fileID: 11400000, guid: d8bb4c3f6b925d848a548d65eff7c327, type: 2}
+  - {fileID: 11400000, guid: 5d34dfb4150b6da45a78bb319d50b1d8, type: 2}
+  - {fileID: 11400000, guid: c177b6de8a8869c46a3c009177740d5b, type: 2}
+  weapons:
+  - {fileID: 11400000, guid: feab01c77eb5a8b40b8663abec2e0cb8, type: 2}
+  - {fileID: 11400000, guid: afb9c92cd6da3fb4a987a49842a1392d, type: 2}
+  - {fileID: 11400000, guid: 7219ebbb02a3c2144950d8af2f5de80a, type: 2}
+  - {fileID: 11400000, guid: 65ad5c93e7d1bb047a6cd79e4a8d7984, type: 2}
+  - {fileID: 11400000, guid: 4c1fbf4668da8eb48a0f14a30d08e28f, type: 2}
+  ammos:
+  - {fileID: 11400000, guid: c64ef2df1c3fcf84097c386307dd65f4, type: 2}
+  - {fileID: 11400000, guid: 7754315f65484ae41ada43c3c87c335f, type: 2}
+  - {fileID: 11400000, guid: ff37b20c7d2619746b68e98e159c683b, type: 2}
+  - {fileID: 11400000, guid: 17ea71dedfe73574cb41cccb98f7a89d, type: 2}
+  - {fileID: 11400000, guid: 6f4240fbe3ebb0847b0a10cfc6c811d6, type: 2}
+  - {fileID: 11400000, guid: 93cd2acf8ec3625499960cd8bc17bda4, type: 2}
+  - {fileID: 11400000, guid: bdb25ffa1a7e64c488f8d0714b157f50, type: 2}
+  - {fileID: 11400000, guid: 981d35181602b5d4d86687c323b4e57a, type: 2}
+  tripulation:
+  - {fileID: 11400000, guid: ae9a960b70176f442af15f92333041d5, type: 2}
+  - {fileID: 11400000, guid: 95a29357cdf28a842b6177e98f6bab25, type: 2}
+  - {fileID: 11400000, guid: d98aec02088e07f429955df0b6e521bc, type: 2}
+  - {fileID: 11400000, guid: 0a44d21394a66aa479acc75ffd70a392, type: 2}
+  - {fileID: 11400000, guid: 73efef6c2c85873469a3db469dba144c, type: 2}
+  weaponsRooms:
+  - {fileID: 11400000, guid: b36f8917ccb9df041880bf4a54bf6990, type: 2}
+  - {fileID: 11400000, guid: e36c58bec8882e14ca7b82e3b987fa09, type: 2}
+  - {fileID: 11400000, guid: 982b12f2805622648b26513b13212324, type: 2}
+  - {fileID: 11400000, guid: 6f5e34812f4c3d445864ab89f08daf94, type: 2}
+  - {fileID: 11400000, guid: fad8e4292a19fd945b95c080a3562281, type: 2}
+  - {fileID: 11400000, guid: 9bfde6e3aed89d1419b44ea5dae0d3f0, type: 2}
+  - {fileID: 11400000, guid: ba00cf23bd49214438c90fc2552ee9ad, type: 2}
+  - {fileID: 11400000, guid: 406c2a9e41130c14d9f3a6b1ad4b2b12, type: 2}
+  otherRooms:
+  - {fileID: 11400000, guid: fdc3c7cba06298042a802db146aa6788, type: 2}
   enemies:
   - {fileID: 11400000, guid: 7a12713d66d5e2a448af0b0c2794dd8b, type: 2}
   - {fileID: 11400000, guid: d72e722754fc2fe42a6d98eb2dee816c, type: 2}

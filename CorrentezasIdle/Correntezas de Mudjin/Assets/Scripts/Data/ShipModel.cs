@@ -15,6 +15,23 @@ public class ShipModel : ScriptableObject
     public int Size;
     public int UnnamedTripulation;
     public int NamedTripulation;
-    public int WeaponRooms;
-    public int OtherRooms;
+
+    public List<WeaponRoomSlot> WeaponRooms;
+
+    [System.Serializable]
+    public class WeaponRoomSlot
+    {
+        public WeaponRoomModel RoomModel;
+    }
+
+    public List<OtherRoomSlot> OtherRooms;
+
+    [System.Serializable]
+    public class OtherRoomSlot
+    {
+        public OtherRoomModel RoomModel;
+    }
+
+    // Na Instance
+    public UnlockHelper.UnlockStatus UnlockStatus;
 }

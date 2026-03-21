@@ -27,7 +27,6 @@ public class EnemyHelper
         River = 1 << 5,
     }
 
-    [Flags]
     public enum EnemyState
     {
         Moving,

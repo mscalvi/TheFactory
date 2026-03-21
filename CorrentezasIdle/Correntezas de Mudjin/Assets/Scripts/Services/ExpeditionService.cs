@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using static GameHelper;
 
@@ -6,19 +6,12 @@ public class ExpeditionService : MonoBehaviour
 {
     private void Start()
     {
-        Ship = new ShipInstance(currentShip);
-
-        StartExpedition();
+        State = GameState.Running;
     }
 
 
     // Controlador do Estado de Jogo
     public GameState State { get; private set; } = GameState.Stopped;
-
-    public void StartExpedition()
-    {
-        State = GameState.Running;
-    }
 
     public void EndExpedition()
     {

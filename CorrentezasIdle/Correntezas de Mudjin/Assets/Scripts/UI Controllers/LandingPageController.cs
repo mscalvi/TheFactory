@@ -1,0 +1,24 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class LandingPageUi : MonoBehaviour
+{
+    // Start is called before the first frame update
+    void Start()
+    {
+        // Ui do Barco Ativo?
+        // Ui das Buildings Ativas?
+    }
+
+    public void ExpeditionButton()
+    {
+        SceneManager.LoadScene("Expedition");
+    }
+
+    public void ShipConfigButton()
+    {
+        SceneManager.LoadScene("Ship");
+    }
+}

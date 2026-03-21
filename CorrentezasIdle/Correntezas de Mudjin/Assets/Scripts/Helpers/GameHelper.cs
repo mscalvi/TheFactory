@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GameHelper
 {
-    [Flags]
     public enum GameState
     {
         Stopped,

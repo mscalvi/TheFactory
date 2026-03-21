@@ -4,5 +4,14 @@ using UnityEngine;
 public class GameDatabase : ScriptableObject
 {
     public ShipModel[] ships;
+
+    public WeaponModel[] weapons;
+    public AmmoModel[] ammos;
+
+    public TripulationModel[] tripulation;
+
+    public WeaponRoomModel[] weaponsRooms;
+    public OtherRoomModel[] otherRooms;
+
     public EnemyModel[] enemies;
 }

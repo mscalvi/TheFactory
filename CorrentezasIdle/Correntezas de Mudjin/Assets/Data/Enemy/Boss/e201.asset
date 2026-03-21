@@ -37,3 +37,4 @@ MonoBehaviour:
   State: 0
   EnemyType: 6
   RegionType: 11
+  UnlockStatus: 0
