@@ -32,10 +32,11 @@
 
 /* Tabuleiro */
 .board {
+    width: min(90vmin, 600px);
+    height: min(90vmin, 600px);
     display: grid;
-    grid-template-columns: repeat(12, min(6vw, 50px));
-    grid-template-rows: repeat(12, min(6vw, 50px));
-    gap: 4px;
+    grid-template-columns: repeat(var(--size), 1fr);
+    grid-template-rows: repeat(var(--size), 1fr);
 }
 
 /* Células */
@@ -49,18 +50,16 @@
     font-weight: bold;
 }
 
+    .cell.inicio {
+        background-color: #ffe5b4;
+    }
+
+    .cell.objetivo {
+        background-color: #e6ccff;
+    }
+
     .cell.fechada {
         background-color: #777;
-    }
-
-    .cell.centro {
-        background-color: #ffe5b4; /* laranja claro */
-        border: 2px solid #ff9800;
-    }
-
-    .cell.canto {
-        background-color: #e6ccff; /* roxo claro */
-        border: 2px solid #8a2be2;
     }
 
 /* Botões */

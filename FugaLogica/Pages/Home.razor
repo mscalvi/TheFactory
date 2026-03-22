@@ -8,22 +8,23 @@
     {
         <h2 class="subtitle">Escolher Tabuleiro</h2>
     }
-    @if (emJogo)
+    else
     {
         <button class="back-button" @onclick="() => emJogo = false">
             Voltar
         </button>
     }
 
-    <div class="board">
+    <div class="board" style="--size:@Tamanho">
         @for (int i = 0; i < Tamanho; i++)
         {
-            @for (int j = 0; j < Tamanho; j++)
+            for (int j = 0; j < Tamanho; j++)
             {
                 <div class="cell
-                    @(Tabuleiro[i, j].Fechada ? "fechada" : "")
-                    @(Centro(i, j) ? "centro" : "")
-                    @(Canto(i, j) ? "canto" : "")">
+                            @(Tabuleiro[i, j].Fechada ? "fechada" : "")
+                            @(Inicio(i, j) ? "inicio" : "")
+                            @(Objetivo(i, j) ? "objetivo" : "")">
+
                     @if (!Tabuleiro[i, j].Fechada)
                     {
                         <div>@((MarkupString)RenderItem(Tabuleiro[i, j].Item1))</div>
@@ -52,21 +53,8 @@
 </div>
 
 @code {
-    enum Forma
-    {
-        Circulo,
-        Quadrado,
-        Triangulo,
-        Losango
-    }
-
-    enum Cor
-    {
-        Amarelo,
-        Vermelho,
-        Verde,
-        Azul
-    }
+    enum Forma { Circulo, Quadrado, Triangulo, Losango }
+    enum Cor { Amarelo, Vermelho, Verde, Azul }
 
     class ItemCelula
     {
@@ -81,69 +69,7 @@
         public bool Fechada { get; set; } = false;
     }
 
-    List<(int, int)> GetPosicoesQuadrante(int q)
-    {
-        var lista = new List<(int, int)>();
-
-        int meio = Tamanho / 2;
-
-        for (int i = 0; i < Tamanho; i++)
-        {
-            for (int j = 0; j < Tamanho; j++)
-            {
-                bool pertence =
-                    (q == 0 && i < meio && j < meio) ||         // superior esquerdo
-                    (q == 1 && i < meio && j >= meio) ||        // superior direito
-                    (q == 2 && i >= meio && j < meio) ||        // inferior esquerdo
-                    (q == 3 && i >= meio && j >= meio);         // inferior direito
-
-                if (pertence)
-                    lista.Add((i, j));
-            }
-        }
-
-        return lista;
-    }
-
-    bool Proibida(int i, int j)
-    {
-        int meio1 = Tamanho / 2 - 1;
-        int meio2 = Tamanho / 2;
-
-        // 4 cantos
-        bool canto =
-            (i == 0 && j == 0) ||
-            (i == 0 && j == Tamanho - 1) ||
-            (i == Tamanho - 1 && j == 0) ||
-            (i == Tamanho - 1 && j == Tamanho - 1);
-
-        // 4 centrais
-        bool centro =
-            (i == meio1 || i == meio2) &&
-            (j == meio1 || j == meio2);
-
-        return canto || centro;
-    }
- 
-    bool Centro(int i, int j)
-    {
-        int meio1 = Tamanho / 2 - 1;
-        int meio2 = Tamanho / 2;
-
-        return (i == meio1 || i == meio2) &&
-               (j == meio1 || j == meio2);
-    }
-
-    bool Canto(int i, int j)
-    {
-        return
-            (i == 0 && j == 0) ||
-            (i == 0 && j == Tamanho - 1) ||
-            (i == Tamanho - 1 && j == 0) ||
-            (i == Tamanho - 1 && j == Tamanho - 1);
-    }
-
-    int Tamanho = 12;
+    int Tamanho = 8;
     Celula[,] Tabuleiro = new Celula[0, 0];
     int dificuldade = 1;
     bool emJogo = false;
@@ -219,10 +145,49 @@
         return $"<span style='color:{cor}'>{forma}</span>";
     }
 
-    void JogarTabuleiro()
+    bool Inicio(int i, int j) => i == 0 && j == 0;
+
+    bool Objetivo(int i, int j) => i == Tamanho - 1 && j == Tamanho - 1;
+
+    bool AreaProtegida(int i, int j)
     {
-        emJogo = true;
+        bool inicio =
+            (i <= 1 && j <= 1);
+
+        bool fim =
+            (i >= Tamanho - 2 && j >= Tamanho - 2);
+
+        return inicio || fim;
     }
+
+    void AplicarDificuldade(Random rand)
+    {
+        int total = Tamanho * Tamanho;
+
+        int maxFechadas = (int)(total * 0.35);
+        int quantidade = (dificuldade - 1) * maxFechadas / 9;
+
+        var posicoes = new List<(int, int)>();
+
+        for (int i = 0; i < Tamanho; i++)
+        {
+            for (int j = 0; j < Tamanho; j++)
+            {
+                if (!AreaProtegida(i, j))
+                    posicoes.Add((i, j));
+            }
+        }
+
+        posicoes = posicoes.OrderBy(x => rand.Next()).ToList();
+
+        for (int i = 0; i < quantidade && i < posicoes.Count; i++)
+        {
+            var (x, y) = posicoes[i];
+            Tabuleiro[x, y].Fechada = true;
+        }
+    }
+
+    void JogarTabuleiro() => emJogo = true;
 
     void Facilitar()
     {
@@ -235,39 +200,10 @@
 
     void Dificultar()
     {
-        if (dificuldade < 9)
+        if (dificuldade < 7)
         {
             dificuldade++;
             GerarTabuleiro();
-        }
-    }
-
-    void AplicarDificuldade(Random rand)
-    {
-        int totalCelulas = Tamanho * Tamanho;
-
-        int maxFechadas = (int)(totalCelulas * 0.3);
-        int quantidade = (dificuldade - 1) * maxFechadas / 9;
-
-        int porQuadrante = quantidade / 4;
-
-        for (int q = 0; q < 4; q++)
-        {
-            var posicoes = GetPosicoesQuadrante(q);
-
-            // remove proibidas
-            posicoes = posicoes
-                .Where(p => !Proibida(p.Item1, p.Item2))
-                .ToList();
-
-            // embaralhar
-            posicoes = posicoes.OrderBy(x => rand.Next()).ToList();
-
-            for (int i = 0; i < porQuadrante && i < posicoes.Count; i++)
-            {
-                var (x, y) = posicoes[i];
-                Tabuleiro[x, y].Fechada = true;
-            }
         }
     }
 }
