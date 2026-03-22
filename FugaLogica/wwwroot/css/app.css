@@ -1,0 +1,108 @@
+/* Container principal */
+.page-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Título */
+.title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.subtitle {
+    font-size: 2.1rem;
+    font-weight: 500;
+    text-align: center;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.text {
+    font-size: 1.8rem;
+    font-weight: 400;
+    text-align: center;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Tabuleiro */
+.board {
+    display: grid;
+    grid-template-columns: repeat(12, min(6vw, 50px));
+    grid-template-rows: repeat(12, min(6vw, 50px));
+    gap: 4px;
+}
+
+/* Células */
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+    .cell.fechada {
+        background-color: #777;
+    }
+
+    .cell.centro {
+        background-color: #ffe5b4; /* laranja claro */
+        border: 2px solid #ff9800;
+    }
+
+    .cell.canto {
+        background-color: #e6ccff; /* roxo claro */
+        border: 2px solid #8a2be2;
+    }
+
+/* Botões */
+.buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.bigbutton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background-color: #0078D4;
+    color: white;
+    width: 300px;
+}
+
+    button:hover {
+        background-color: #005ea2;
+    }
+
+.smallbutton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background-color: #0078D4;
+    color: white;
+    align-items: center;
+    height: 50px;
+    width: 50px;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background-color: #0078D4;
+}

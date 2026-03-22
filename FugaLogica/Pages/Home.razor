@@ -1,0 +1,273 @@
+﻿@page "/"
+
+<div class="page-container">
+
+    <h1 class="title">Fuga Lógica</h1>
+
+    @if (!emJogo)
+    {
+        <h2 class="subtitle">Escolher Tabuleiro</h2>
+    }
+    @if (emJogo)
+    {
+        <button class="back-button" @onclick="() => emJogo = false">
+            Voltar
+        </button>
+    }
+
+    <div class="board">
+        @for (int i = 0; i < Tamanho; i++)
+        {
+            @for (int j = 0; j < Tamanho; j++)
+            {
+                <div class="cell
+                    @(Tabuleiro[i, j].Fechada ? "fechada" : "")
+                    @(Centro(i, j) ? "centro" : "")
+                    @(Canto(i, j) ? "canto" : "")">
+                    @if (!Tabuleiro[i, j].Fechada)
+                    {
+                        <div>@((MarkupString)RenderItem(Tabuleiro[i, j].Item1))</div>
+                        <div>@((MarkupString)RenderItem(Tabuleiro[i, j].Item2))</div>
+                    }
+                </div>
+            }
+        }
+    </div>
+
+    @if (!emJogo)
+    {
+        <h3 class="subtitle">Nível de Dificuldade</h3>
+        <div class="buttons">
+            <button class="smallbutton" @onclick="Facilitar">-</button>
+            <p class="text">@dificuldade</p>
+            <button class="smallbutton" @onclick="Dificultar">+</button>
+        </div>
+
+        <div class="buttons">
+            <button class="bigbutton" @onclick="GerarTabuleiro">Trocar Tabuleiro</button>
+            <button class="bigbutton" @onclick="JogarTabuleiro">Escolher esse Tabuleiro</button>
+        </div>
+    }
+
+</div>
+
+@code {
+    enum Forma
+    {
+        Circulo,
+        Quadrado,
+        Triangulo,
+        Losango
+    }
+
+    enum Cor
+    {
+        Amarelo,
+        Vermelho,
+        Verde,
+        Azul
+    }
+
+    class ItemCelula
+    {
+        public Forma Forma { get; set; }
+        public Cor Cor { get; set; }
+    }
+
+    class Celula
+    {
+        public ItemCelula Item1 { get; set; }
+        public ItemCelula Item2 { get; set; }
+        public bool Fechada { get; set; } = false;
+    }
+
+    List<(int, int)> GetPosicoesQuadrante(int q)
+    {
+        var lista = new List<(int, int)>();
+
+        int meio = Tamanho / 2;
+
+        for (int i = 0; i < Tamanho; i++)
+        {
+            for (int j = 0; j < Tamanho; j++)
+            {
+                bool pertence =
+                    (q == 0 && i < meio && j < meio) ||         // superior esquerdo
+                    (q == 1 && i < meio && j >= meio) ||        // superior direito
+                    (q == 2 && i >= meio && j < meio) ||        // inferior esquerdo
+                    (q == 3 && i >= meio && j >= meio);         // inferior direito
+
+                if (pertence)
+                    lista.Add((i, j));
+            }
+        }
+
+        return lista;
+    }
+
+    bool Proibida(int i, int j)
+    {
+        int meio1 = Tamanho / 2 - 1;
+        int meio2 = Tamanho / 2;
+
+        // 4 cantos
+        bool canto =
+            (i == 0 && j == 0) ||
+            (i == 0 && j == Tamanho - 1) ||
+            (i == Tamanho - 1 && j == 0) ||
+            (i == Tamanho - 1 && j == Tamanho - 1);
+
+        // 4 centrais
+        bool centro =
+            (i == meio1 || i == meio2) &&
+            (j == meio1 || j == meio2);
+
+        return canto || centro;
+    }
+ 
+    bool Centro(int i, int j)
+    {
+        int meio1 = Tamanho / 2 - 1;
+        int meio2 = Tamanho / 2;
+
+        return (i == meio1 || i == meio2) &&
+               (j == meio1 || j == meio2);
+    }
+
+    bool Canto(int i, int j)
+    {
+        return
+            (i == 0 && j == 0) ||
+            (i == 0 && j == Tamanho - 1) ||
+            (i == Tamanho - 1 && j == 0) ||
+            (i == Tamanho - 1 && j == Tamanho - 1);
+    }
+
+    int Tamanho = 12;
+    Celula[,] Tabuleiro = new Celula[0, 0];
+    int dificuldade = 1;
+    bool emJogo = false;
+
+    protected override void OnInitialized()
+    {
+        GerarTabuleiro();
+    }
+
+    void GerarTabuleiro()
+    {
+        Tabuleiro = new Celula[Tamanho, Tamanho];
+        var rand = new Random();
+
+        for (int i = 0; i < Tamanho; i++)
+        {
+            for (int j = 0; j < Tamanho; j++)
+            {
+                Tabuleiro[i, j] = GerarCelula(rand);
+            }
+        }
+
+        AplicarDificuldade(rand);
+    }
+
+    Celula GerarCelula(Random rand)
+    {
+        var item1 = new ItemCelula
+        {
+            Forma = (Forma)rand.Next(0, 4),
+            Cor = (Cor)rand.Next(0, 4)
+        };
+
+        ItemCelula item2;
+
+        do
+        {
+            item2 = new ItemCelula
+            {
+                Forma = (Forma)rand.Next(0, 4),
+                Cor = (Cor)rand.Next(0, 4)
+            };
+        }
+        while (item2.Forma == item1.Forma && item2.Cor == item1.Cor);
+
+        return new Celula
+        {
+            Item1 = item1,
+            Item2 = item2
+        };
+    }
+
+    string RenderItem(ItemCelula item)
+    {
+        string forma = item.Forma switch
+        {
+            Forma.Circulo => "●",
+            Forma.Quadrado => "■",
+            Forma.Triangulo => "▲",
+            Forma.Losango => "◆",
+            _ => "?"
+        };
+
+        string cor = item.Cor switch
+        {
+            Cor.Amarelo => "gold",
+            Cor.Vermelho => "red",
+            Cor.Verde => "green",
+            Cor.Azul => "blue",
+            _ => "black"
+        };
+
+        return $"<span style='color:{cor}'>{forma}</span>";
+    }
+
+    void JogarTabuleiro()
+    {
+        emJogo = true;
+    }
+
+    void Facilitar()
+    {
+        if (dificuldade > 1)
+        {
+            dificuldade--;
+            GerarTabuleiro();
+        }
+    }
+
+    void Dificultar()
+    {
+        if (dificuldade < 9)
+        {
+            dificuldade++;
+            GerarTabuleiro();
+        }
+    }
+
+    void AplicarDificuldade(Random rand)
+    {
+        int totalCelulas = Tamanho * Tamanho;
+
+        int maxFechadas = (int)(totalCelulas * 0.3);
+        int quantidade = (dificuldade - 1) * maxFechadas / 9;
+
+        int porQuadrante = quantidade / 4;
+
+        for (int q = 0; q < 4; q++)
+        {
+            var posicoes = GetPosicoesQuadrante(q);
+
+            // remove proibidas
+            posicoes = posicoes
+                .Where(p => !Proibida(p.Item1, p.Item2))
+                .ToList();
+
+            // embaralhar
+            posicoes = posicoes.OrderBy(x => rand.Next()).ToList();
+
+            for (int i = 0; i < porQuadrante && i < posicoes.Count; i++)
+            {
+                var (x, y) = posicoes[i];
+                Tabuleiro[x, y].Fechada = true;
+            }
+        }
+    }
+}

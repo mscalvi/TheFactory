@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FugaLogica", "FugaLogica.csproj", "{21679A8B-7BAF-428B-A380-73A08A3AB39F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21679A8B-7BAF-428B-A380-73A08A3AB39F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21679A8B-7BAF-428B-A380-73A08A3AB39F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21679A8B-7BAF-428B-A380-73A08A3AB39F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21679A8B-7BAF-428B-A380-73A08A3AB39F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {656609CC-3B82-4ED7-9AE7-999B8788047D}
+	EndGlobalSection
+EndGlobal
