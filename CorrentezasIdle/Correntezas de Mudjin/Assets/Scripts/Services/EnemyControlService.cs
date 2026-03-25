@@ -9,12 +9,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
     private TickService TickService;
     private ExpeditionState Expedition;
 
-    [SerializeField] TextMeshProUGUI AliveEnemies;
-    [SerializeField] TextMeshProUGUI KilledEnemies;
-
-    int Alive = 0;
-    int Killed = 0;
-
     public void Initialize(ExpeditionState expeditionState, TickService Tick)
     {
         Expedition = expeditionState;
@@ -24,9 +18,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
         TickService.Subscribe(this);
 
         Debug.Log("EnemyControlSystem On");
-
-        AliveEnemies.text = "Nenhum Inimigo Vivo.";
-        KilledEnemies.text = "Nenhum Inimigo Eliminado.";
     }
 
     void OnDestroy()
@@ -37,15 +28,12 @@ public class EnemyControllerService : MonoBehaviour, ITickable
     public void OnTick(float dt)
     {
         EnemyDie(dt);
-        EnemyDamage(dt);
         EnemyContact(dt);
         EnemyMove(dt);
     }
 
     void EnemyMove(float dt)
     {
-        Alive = 0;
-
         var enemies = Expedition.ActiveEnemies;
 
         for (int i = enemies.Count - 1; i >= 0; i--)
@@ -68,12 +56,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
                     enemy.State = EnemyHelper.EnemyState.Arrival;
                 }
             }
-
-            if (enemy.State != EnemyHelper.EnemyState.Dead)
-            {
-                Alive++;
-                AliveEnemies.text = "Vivos: " + Alive;
-            }
         }
     }
 
@@ -90,34 +72,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
             {
                 enemy.Cooldown = 0.1;
                 enemy.State = EnemyHelper.EnemyState.Damaging;
-                Debug.Log($"{enemy.Model.Name} preparado para atacar.");
-            }
-        }
-    }
-
-    void EnemyDamage(float dt)
-    {
-        var enemies = Expedition.ActiveEnemies;
-
-        for (int i = enemies.Count - 1; i >= 0; i--)
-        {
-            var enemy = enemies[i];
-
-            enemy.Cooldown -= dt;
-
-            if (enemy.State == EnemyHelper.EnemyState.Cooldown && enemy.Cooldown <= 0)
-            {
-                enemy.State = EnemyHelper.EnemyState.Damaging;
-            }
-
-            if (enemy.State == EnemyHelper.EnemyState.Damaging)
-            {
-                Expedition.Ship.CurrentLife -= enemy.Model.Damage;
-
-                enemy.Cooldown = 1.0 / enemy.Model.AttackSpeed;
-                enemy.State = EnemyHelper.EnemyState.Cooldown;
-
-                Debug.Log($"{enemy.Model.Name} atacou: {enemy.Model.Damage}");
             }
         }
     }
@@ -135,12 +89,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
                 enemy.State = EnemyHelper.EnemyState.Dead;
                 Debug.Log($"Inimigo eliminado {enemy.Model.Name}.");
                 Expedition.ActiveEnemies.Remove(enemy);
-
-                // Mover pra UI
-                Killed++;
-                KilledEnemies.text = "Eliminados: " + Killed;
-                Alive--;
-                AliveEnemies.text = "Vivos: " + Alive;
             }
         }
     }

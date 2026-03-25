@@ -21,7 +21,7 @@ public class ShipModel : ScriptableObject
     [System.Serializable]
     public class WeaponRoomSlot
     {
-        public WeaponRoomModel RoomModel;
+        public WeaponRoomModel WeaponRoomModel;
     }
 
     public List<OtherRoomSlot> OtherRooms;
@@ -29,7 +29,7 @@ public class ShipModel : ScriptableObject
     [System.Serializable]
     public class OtherRoomSlot
     {
-        public OtherRoomModel RoomModel;
+        public OtherRoomModel OtherRoomModel;
     }
 
     // Na Instance

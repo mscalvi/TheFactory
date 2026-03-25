@@ -5,8 +5,6 @@ public class EnemyInstance
 {
     public EnemyModel Model;
 
-    // Calcular o crescimento das propriedades dos inimigos aqui
-
     public double Distance;
     public double Cooldown;
     public double CurrentLife;

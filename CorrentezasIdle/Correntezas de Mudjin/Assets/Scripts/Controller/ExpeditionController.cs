@@ -6,13 +6,35 @@ using static GameHelper;
 public class ExpeditionController : MonoBehaviour
 {
     [SerializeField] TickService TickService;
+    [SerializeField] StartExpeditionService StartExpeditionService;
+
+    // Expedition
     [SerializeField] DaysCycleService DaysCycleService;
     [SerializeField] EnemySpawnerService EnemySpawnerService;
     [SerializeField] EnemyControllerService EnemyControllerService;
 
+    // Ship
+    [SerializeField] ShipControlService ShipControlService;
+    [SerializeField] UnnamedTripulationService UnnamedTripulationService;
+    [SerializeField] WeaponRoomsService WeaponRoomsService;
+
+    // Ambos
+    [SerializeField] ExpeditionService ExpeditionService;
+    [SerializeField] CombatService CombatService;
+
     private void Awake()
     {
-        var Expedition = GameController.Instance.GameState.Expedition;
+        var Game = GameController.Instance.GameState;
+
+        if (Game == null)
+        {
+            Debug.LogError("Game NULL!");
+            return;
+        }
+
+        StartExpeditionService.Initialize(Game);
+
+        var Expedition = GameController.Instance.GameState.ExpeditionState;
 
         if (Expedition == null)
         {
@@ -20,30 +42,34 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        var ExpeditionConfiguration = Expedition.CurrentExpedition;
+        var Ship = GameController.Instance.GameState.ShipState;
 
-        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Ship}");
-        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Rooms[0].Tripulation}");
-        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Rooms[0].Weapon}");
-        Debug.Log($"Navio Ativo: {ExpeditionConfiguration.Rooms[0].Ammo}");
-
-    }
-
-    private void Start()
-    {
-        var expedition = GameController.Instance.GameState.Expedition;
-        var db = GameController.Instance.Database;
-
-        if (expedition == null)
+        if (Ship == null)
         {
-            Debug.LogError("ExpeditionState NULL!");
+            Debug.LogError("ShipState NULL -> Criando Nova");
             return;
         }
 
-        DaysCycleService.Initialize(expedition, TickService);
+        var db = GameController.Instance.Database;
 
-        EnemySpawnerService.Initialize(expedition, TickService, db);
+        // Expedition
+        DaysCycleService.Initialize(Expedition, TickService);
 
-        EnemyControllerService.Initialize(expedition, TickService);
+        EnemySpawnerService.Initialize(Expedition, TickService, db);
+
+        EnemyControllerService.Initialize(Expedition, TickService);
+
+        // Ship
+        ShipControlService.Initialize(Ship, Game, TickService);
+
+        UnnamedTripulationService.Initialize(Ship, TickService);
+
+
+        // Ambos
+        CombatService.Initialize(Expedition, Ship, TickService);
+
+        ExpeditionService.Initialize(Expedition, Ship, TickService);
+
+        WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
     }
 }

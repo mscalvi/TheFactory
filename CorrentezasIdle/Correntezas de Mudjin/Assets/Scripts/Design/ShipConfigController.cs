@@ -8,7 +8,8 @@ public class ShipConfigController : MonoBehaviour
 {
     public GameDatabase Database;
 
-    public ExpeditionState ExpeditionState;
+    public ShipState ShipState;
+    public GameState GameState;
 
     public TMPro.TMP_Dropdown ShipDropdown;
 
@@ -23,6 +24,14 @@ public class ShipConfigController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        var Game = GameController.Instance.GameState;
+
+        if (Game == null)
+        {
+            Debug.LogError("Game NULL!");
+            return;
+        }
+
         unlockedShips = new List<ShipModel>();
 
         foreach (var ship in Database.ships)
@@ -71,7 +80,7 @@ public class ShipConfigController : MonoBehaviour
         foreach (var room in ship.WeaponRooms)
         {
             var roomUI = Instantiate(WeaponRoomPrefab, RoomsParent);
-            roomUI.Setup(room.RoomModel, Database);
+            roomUI.Setup(room.WeaponRoomModel, Database);
 
             activeWeaponRooms.Add(roomUI);
         }
@@ -80,7 +89,7 @@ public class ShipConfigController : MonoBehaviour
         foreach (var room in ship.OtherRooms)
         {
             var roomUI = Instantiate(OtherRoomPrefab, RoomsParent);
-            roomUI.Setup(room.RoomModel, Database);
+            roomUI.Setup(room.OtherRoomModel, Database);
 
             activeOtherRooms.Add(roomUI);
         }
@@ -93,36 +102,36 @@ public class ShipConfigController : MonoBehaviour
 
     public void ConfirmBtn()
     {
-        var run = new ExpeditionConfiguration();
+        var ShipConfiguration = new ShipInitialConfiguration();
 
         // Ship selecionado
-        run.Ship = unlockedShips[ShipDropdown.value];
+        ShipConfiguration.Ship = unlockedShips[ShipDropdown.value];
 
         // Weapon Rooms
         foreach (var roomUI in activeWeaponRooms)
         {
-            var config = new RoomConfiguration();
+            var config = new WeaponRoomInitialConfiguration();
 
             config.RoomId = roomUI.name;
             config.Tripulation = roomUI.GetSelectedTripulation();
             config.Weapon = roomUI.GetSelectedWeapon();
             config.Ammo = roomUI.GetSelectedAmmo();
 
-            run.Rooms.Add(config);
+            ShipConfiguration.WeaponRooms.Add(config);
         }
 
         // Other Rooms
-        foreach (var roomUI in activeOtherRooms)
-        {
-            var config = new RoomConfiguration();
+        //foreach (var roomUI in activeOtherRooms)
+        //{
+        //    var config = new OtherRoomInitialConfiguration();
 
-            config.RoomId = roomUI.name;
-            config.Tripulation = roomUI.GetSelectedTripulation();
+        //    config.RoomId = roomUI.name;
+        //    config.Tripulation = roomUI.GetSelectedTripulation();
 
-            run.Rooms.Add(config);
-        }
+        //    ShipConfiguration.OtherRooms.Add(config);
+        //}
 
-        ExpeditionState.CurrentExpedition = run;
+        GameState.ShipInitialConfiguration = ShipConfiguration;
 
         SceneManager.LoadScene("LandingPage");
     }

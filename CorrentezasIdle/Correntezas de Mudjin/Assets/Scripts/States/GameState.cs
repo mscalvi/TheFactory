@@ -8,7 +8,10 @@ public class GameState
 
     public bool FirstExpedition = true;
 
-    public ExpeditionState Expedition;
+    public ExpeditionState ExpeditionState;
+    public ShipState ShipState;
+
+    public ShipInitialConfiguration ShipInitialConfiguration;
 
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ExpeditionState
 {
-    public ExpeditionConfiguration CurrentExpedition;
+    // public ExpeditionConfiguration CurrentExpedition;
 
     // Day/Night Service
     public int BaseTicksPerPhase = 75;
@@ -19,8 +19,4 @@ public class ExpeditionState
     public int BaseTicksPerSpawn = 15;
 
     public List<EnemyInstance> ActiveEnemies = new();
-
-    // Controlador do Navio
-    public ShipModel currentShip;
-    public ShipInstance Ship;
 }

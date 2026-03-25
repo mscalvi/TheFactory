@@ -1,14 +1,7 @@
 using System.Collections.Generic;
 
 [System.Serializable]
-public class ExpeditionConfiguration
-{
-    public ShipModel Ship;
-    public List<RoomConfiguration> Rooms;
-}
-
-[System.Serializable]
-public class RoomConfiguration
+public class WeaponRoomInitialConfiguration
 {
     public string RoomId;
     public TripulationModel Tripulation;

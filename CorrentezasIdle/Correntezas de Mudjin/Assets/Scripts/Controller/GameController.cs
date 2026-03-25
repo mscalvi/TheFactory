@@ -28,19 +28,10 @@ public class GameController : MonoBehaviour
         }
 
         if (GameState == null)
-            GameState = new GameState();
-
-        LandingService.GameState = GameState;
-        LandingService.Database = Database;
-
-        if (GameState.FirstExpedition)
         {
-            LandingService.CreateFirstExpedition();
+            GameState = new GameState();
+        }
 
-            PlayerPrefs.SetInt("HasInitialized", 1);
-            PlayerPrefs.Save();
-        } 
-
-        // Adicinar Else para carregar a Ui de acordo com os dados salvos
+        LandingService.Initialize(GameState, Database);
     }
 }

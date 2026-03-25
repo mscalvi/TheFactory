@@ -10,8 +10,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     private TickService TickService;
     private ExpeditionState Expedition;
 
-    [SerializeField] TextMeshProUGUI SpawnText;
-
     EnemyModel[] AllEnemies;
     public Dictionary<string, float> EnemyWeights = new();
 
@@ -51,8 +49,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     void SpawnEnemy()
     {
         float spawn = Random.Range(0, 100);
-
-        Debug.Log($"{spawn}");
 
         if (spawn < Expedition.BaseSpawnChance)
         {
@@ -98,9 +94,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         }
 
         Expedition.ActiveEnemies.Add(new EnemyInstance(chosen, Expedition.BaseSpawnDistance));
-        SpawnText.text = "New Arrival: " + chosen.Name;
 
-        Debug.Log($"Spawn.");
+        Debug.Log($"{chosen.Name} Spawnado.");
     }
 
     List<EnemyModel> SpawnChance()

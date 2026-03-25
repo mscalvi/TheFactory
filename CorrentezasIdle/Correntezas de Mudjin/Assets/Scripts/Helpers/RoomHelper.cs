@@ -26,13 +26,14 @@ public class RoomHelper
 
     public enum RoomTarget
     {
+        None,
         Closest,
         Farest,
         LowestHp,
         HighestHp,
         BossFirst,
         SpecialFirst,
-        HigherLevel,
+        HighestLevel,
         LowerLevel,
     }
 }
