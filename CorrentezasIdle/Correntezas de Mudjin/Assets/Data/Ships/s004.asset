@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Small Barque
   Description: Barca
   Life: 300
-  Speed: 6
+  Speed: 3
   Armor: 1
   Size: 4
   UnnamedTripulation: 7

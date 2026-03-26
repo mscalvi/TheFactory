@@ -15,18 +15,6 @@ public class EnemyHelper
         Monster = 1 << 3,
     }
 
-    [Flags]
-    public enum RegionType
-    {
-        None = 0,
-        Sea = 1 << 0,
-        HighSea = 1 << 1,
-        Entrilhas = 1 << 2,
-        Urban = 1 << 3,
-        Cold = 1 << 4,
-        River = 1 << 5,
-    }
-
     public enum EnemyState
     {
         Moving,

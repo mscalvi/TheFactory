@@ -34,7 +34,7 @@ public class EnemyModel : ScriptableObject
     public EnemyHelper.EnemyState State;
 
     public EnemyHelper.EnemyType EnemyType;
-    public EnemyHelper.RegionType RegionType;
+    public PathHelper.EnemiesType PathType;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

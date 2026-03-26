@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Small Caravel
   Description: "Caravel\xE3o"
   Life: 1500
-  Speed: 6
+  Speed: 3
   Armor: 1
   Size: 5
   UnnamedTripulation: 11

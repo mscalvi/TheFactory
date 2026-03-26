@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Longboat
   Description: Bote
   Life: 50
-  Speed: 6
+  Speed: 3
   Armor: 0
   Size: 2
   UnnamedTripulation: 3

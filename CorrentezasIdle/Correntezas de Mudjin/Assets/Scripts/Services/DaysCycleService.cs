@@ -6,15 +6,19 @@ public class DaysCycleService : MonoBehaviour, ITickable
 {
     private TickService TickService;
 
-    private ExpeditionState Expedition;
+    private ExpeditionState ExpeditionState;
+
+    private ExpeditionUiService UiService;
 
     int tickCounter = 0;
 
-    public void Initialize(ExpeditionState expeditionState, TickService Tick)
+    public void Initialize(ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui)
     {
-        Expedition = expeditionState;
+        ExpeditionState = expeditionState;
 
         TickService = Tick;
+
+        UiService = ui;
 
         TickService.Subscribe(this);
 
@@ -30,19 +34,22 @@ public class DaysCycleService : MonoBehaviour, ITickable
     {
         tickCounter++;
 
-        if (tickCounter >= Expedition.BaseTicksPerPhase)
+        if (tickCounter >= ExpeditionState.BaseTicksPerPhase)
         {
             tickCounter = 0;
-            Expedition.IsDay = !Expedition.IsDay;
+            ExpeditionState.IsDay = !ExpeditionState.IsDay;
 
-            if (Expedition.IsDay) 
+            if (ExpeditionState.IsDay) 
             {
-                Expedition.DayCounter++;
-                Debug.Log($"Início do Dia {Expedition.DayCounter}");
+                ExpeditionState.DayCounter++;
+            }
+
+            if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)
+            {
+                ExpeditionState.ExpeditionStatus = ExpeditionStatus.Complete;
             } else
             {
-                // Mudar para UiService
-                Debug.Log($"Início da Noite {Expedition.DayCounter}");
+                UiService.DayCycleTextSet();
             }
         }
     }

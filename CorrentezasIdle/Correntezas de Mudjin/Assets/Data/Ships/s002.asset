@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Skiff
   Description: Batel
   Life: 15
-  Speed: 6
+  Speed: 3
   Armor: 0
   Size: 1
   UnnamedTripulation: 0

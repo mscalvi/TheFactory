@@ -49,11 +49,6 @@ public class LandingService : MonoBehaviour
         Game.ShipState = new ShipState();
         Game.ShipInitialConfiguration = ShipConfiguration;
 
-        Game.FirstExpedition = false;
-
-        PlayerPrefs.SetInt("HasInitialized", 1);
-        PlayerPrefs.Save();
-
         Debug.Log($"Navio: {Game.ShipInitialConfiguration.Ship.Name} Carregado.");
     }
 }

@@ -5,21 +5,23 @@ using static GameHelper;
 public class ExpeditionService : MonoBehaviour, ITickable
 {
     private TickService TickService;
+    private ExpeditionUiService UiService;
     private ShipState ShipState;
-    private ExpeditionState Expedition;
+    private ExpeditionState ExpeditionState;
 
-    public void Initialize(ExpeditionState expeditionState, ShipState shipState, TickService Tick)
+    public void Initialize(ExpeditionState expeditionState, ShipState shipState, TickService Tick, ExpeditionUiService ui)
     {
         ShipState = shipState;
-        Debug.Log($"Vida Inicial: {ShipState.Ship.CurrentLife}");
 
-        Expedition = expeditionState;
+        ExpeditionState = expeditionState;
 
         TickService = Tick;
 
+        UiService = ui;
+
         TickService.Subscribe(this);
 
-        Debug.Log("ShipControlService On");
+        Debug.Log("ExpeditionService On");
     }
 
     void OnDestroy()
@@ -33,12 +35,24 @@ public class ExpeditionService : MonoBehaviour, ITickable
         {
             EndExpedition();
         }
+
+        if (ExpeditionState.ExpeditionStatus == ExpeditionStatus.Complete)
+        {
+            Debug.Log("Vitória!");
+            TickService.Pause();
+        }
     }
 
     public void EndExpedition()
     {
         Debug.Log("Game Over!");
+        TickService.Pause();
     }
 
+    public void NewDestinationChose()
+    {
+        ExpeditionState.DayCounter = 1;
 
+        UiService.DestinationTextSet();
+    }
 }

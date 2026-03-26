@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using static GameHelper;
 
 public class ExpeditionController : MonoBehaviour
@@ -21,6 +22,11 @@ public class ExpeditionController : MonoBehaviour
     // Ambos
     [SerializeField] ExpeditionService ExpeditionService;
     [SerializeField] CombatService CombatService;
+    [SerializeField] DecisionsService DecisionsService;
+
+    // Outros Mecanismos Úteis
+    [SerializeField] DecisionsPopUpDesigner DecisionsPanel;
+    [SerializeField] ExpeditionUiService ExpeditionUiService;
 
     private void Awake()
     {
@@ -42,6 +48,8 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
+        Expedition.ExpeditionStatus = ExpeditionStatus.Paused;
+
         var Ship = GameController.Instance.GameState.ShipState;
 
         if (Ship == null)
@@ -52,24 +60,32 @@ public class ExpeditionController : MonoBehaviour
 
         var db = GameController.Instance.Database;
 
+        // Base
+
+        TickService.Initialize();
+
+        ExpeditionUiService.Initialize(Expedition, Ship, Game);
+
         // Expedition
-        DaysCycleService.Initialize(Expedition, TickService);
+        DaysCycleService.Initialize(Expedition, TickService, ExpeditionUiService);
 
         EnemySpawnerService.Initialize(Expedition, TickService, db);
 
-        EnemyControllerService.Initialize(Expedition, TickService);
+        EnemyControllerService.Initialize(Expedition, TickService, ExpeditionUiService);
 
         // Ship
         ShipControlService.Initialize(Ship, Game, TickService);
 
         UnnamedTripulationService.Initialize(Ship, TickService);
 
-
         // Ambos
-        CombatService.Initialize(Expedition, Ship, TickService);
 
-        ExpeditionService.Initialize(Expedition, Ship, TickService);
+        CombatService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
+
+        ExpeditionService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
 
         WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
+
+        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, ExpeditionService);
     }
 }

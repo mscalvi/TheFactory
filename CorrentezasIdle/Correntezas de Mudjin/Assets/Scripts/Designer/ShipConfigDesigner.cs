@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static GameHelper;
 
-public class ShipConfigController : MonoBehaviour
+public class ShipConfigDesigner : MonoBehaviour
 {
     public GameDatabase Database;
 
@@ -97,7 +97,7 @@ public class ShipConfigController : MonoBehaviour
 
     public void ReturnBtn()
     {
-        SceneManager.LoadScene("LandingPage");
+        SceneManager.LoadScene("LandingScene");
     }
 
     public void ConfirmBtn()
@@ -133,6 +133,6 @@ public class ShipConfigController : MonoBehaviour
 
         GameState.ShipInitialConfiguration = ShipConfiguration;
 
-        SceneManager.LoadScene("LandingPage");
+        SceneManager.LoadScene("LandingScene");
     }
 }

@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: Peixe Noturno
   DayEnemy: 0
   BossEnemy: 0
-  Life: 2
+  Life: 1
   LifeGrowth: 0.08
   LifeRegen: 0
   LifeRegenGrowth: 0
@@ -33,7 +33,8 @@ MonoBehaviour:
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
-  Rarity: 10
+  Rarity: 100
   State: 0
   EnemyType: 1
-  RegionType: 47
+  PathType: 0
+  UnlockStatus: 0

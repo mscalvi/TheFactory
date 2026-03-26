@@ -7,13 +7,16 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 {
     private GameDatabase DataBase;
     private TickService TickService;
+    private ExpeditionUiService UiService;
     private ExpeditionState Expedition;
 
-    public void Initialize(ExpeditionState expeditionState, TickService Tick)
+    public void Initialize(ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui)
     {
         Expedition = expeditionState;
 
         TickService = Tick;
+
+        UiService = ui;
 
         TickService.Subscribe(this);
 
@@ -56,6 +59,8 @@ public class EnemyControllerService : MonoBehaviour, ITickable
                     enemy.State = EnemyHelper.EnemyState.Arrival;
                 }
             }
+
+            UiService.EnemiesTotalSet();
         }
     }
 
@@ -89,6 +94,7 @@ public class EnemyControllerService : MonoBehaviour, ITickable
                 enemy.State = EnemyHelper.EnemyState.Dead;
                 Debug.Log($"Inimigo eliminado {enemy.Model.Name}.");
                 Expedition.ActiveEnemies.Remove(enemy);
+                UiService.EnemiesTotalSet();
             }
         }
     }

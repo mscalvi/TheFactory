@@ -6,16 +6,19 @@ public class CombatService : MonoBehaviour, ITickable
 {
     private GameDatabase DataBase;
     private TickService TickService;
+    private ExpeditionUiService UiService;
     private ShipState ShipState;
     private ExpeditionState Expedition;
 
-    public void Initialize(ExpeditionState expeditionState, ShipState shipState, TickService Tick)
+    public void Initialize(ExpeditionState expeditionState, ShipState shipState, TickService Tick, ExpeditionUiService ui)
     {
         Expedition = expeditionState;
 
         ShipState = shipState;
 
         TickService = Tick;
+
+        UiService = ui;
 
         TickService.Subscribe(this);
 
@@ -55,6 +58,7 @@ public class CombatService : MonoBehaviour, ITickable
                 enemy.State = EnemyHelper.EnemyState.Cooldown;
 
                 Debug.Log($"{enemy.Model.Name} atacou: {enemy.Model.Damage}");
+                UiService.LifeTextSet();
             }
         }
     }
@@ -64,5 +68,6 @@ public class CombatService : MonoBehaviour, ITickable
         target.CurrentLife -= damage;
 
         Debug.Log($"{room.Weapon.Name} causou {damage} em {target.Model.Name}");
+        UiService.LifeTextSet();
     }
 }

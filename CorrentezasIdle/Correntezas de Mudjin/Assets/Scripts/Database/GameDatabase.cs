@@ -14,4 +14,7 @@ public class GameDatabase : ScriptableObject
     public OtherRoomModel[] otherRooms;
 
     public EnemyModel[] enemies;
+
+    public DestinationModel[] destinations;
+    public PathModel[] paths;
 }

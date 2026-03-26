@@ -13,7 +13,14 @@ public class TickService : MonoBehaviour
 
     float timer = 0f;
 
+    bool isPaused = false;
+
     readonly List<ITickable> tickables = new();
+    
+    public void Initialize()
+    {
+        Debug.Log("TickService On");
+    }
 
     public void Subscribe(ITickable t)
     {
@@ -26,13 +33,11 @@ public class TickService : MonoBehaviour
         tickables.Remove(t);
     }
 
-    private void Start()
-    {
-        Debug.Log("TickService On");
-    }
-
     void Update()
     {
+        if (isPaused)
+            return;
+
         timer += Time.deltaTime;
 
         if (timer >= tickInterval)
@@ -45,5 +50,18 @@ public class TickService : MonoBehaviour
                 t.OnTick(dt);
             }
         }
+    }
+
+    // Pause System
+    public void Pause()
+    {
+        isPaused = true;
+        Debug.Log("TickService Paused");
+    }
+
+    public void Resume()
+    {
+        Debug.Log("TickService Retomado");
+        isPaused = false;
     }
 }

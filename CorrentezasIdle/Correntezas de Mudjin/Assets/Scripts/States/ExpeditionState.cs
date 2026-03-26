@@ -9,9 +9,14 @@ public class ExpeditionState
     // Day/Night Service
     public int BaseTicksPerPhase = 75;
     public bool IsDay { get; set; } = true;
-
     public int DayCounter = 1;
+
+    // Destination
+    public DestinationModel OldDestination;
+    public DestinationModel NewDestination;
+    public PathModel CurrentPath;
     public int DestinationArrival = 0;
+    public GameHelper.ExpeditionStatus ExpeditionStatus;
 
     // Controlador de Inimigos
     public double BaseSpawnDistance = 1.5;

@@ -46,7 +46,6 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
 
         if (CanShoot(room))
         {
-            Debug.Log("Tiro Preparado");
             ShootTarget(room);
         }
     }
@@ -150,7 +149,7 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
         if (target == null)
             return;
 
-        double damage = room.Weapon.Damage;
+        double damage = room.Weapon.Damage + room.Ammo.Damage;
 
         CombatService.ShipDamage(room, target, damage);
 
