@@ -52,12 +52,12 @@ public class CombatService : MonoBehaviour, ITickable
 
             if (enemy.State == EnemyHelper.EnemyState.Damaging)
             {
-                ShipState.Ship.CurrentLife -= enemy.Model.Damage;
+                ShipState.Ship.CurrentLife -= enemy.Damage;
 
-                enemy.Cooldown = 1.0 / enemy.Model.AttackSpeed;
+                enemy.Cooldown = 1.0 / enemy.AttackSpeed;
                 enemy.State = EnemyHelper.EnemyState.Cooldown;
 
-                Debug.Log($"{enemy.Model.Name} atacou: {enemy.Model.Damage}");
+                Debug.Log($"{enemy.Name} atacou: {enemy.Damage}");
                 UiService.LifeTextSet();
             }
         }
@@ -67,7 +67,7 @@ public class CombatService : MonoBehaviour, ITickable
     {
         target.CurrentLife -= damage;
 
-        Debug.Log($"{room.Weapon.Name} causou {damage} em {target.Model.Name}");
+        Debug.Log($"{room.Model.Name} causou {damage} em {target.Name}");
         UiService.LifeTextSet();
     }
 }

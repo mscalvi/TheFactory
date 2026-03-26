@@ -11,6 +11,7 @@ public class ExpeditionController : MonoBehaviour
 
     // Expedition
     [SerializeField] DaysCycleService DaysCycleService;
+    [SerializeField] EnemyProgressService EnemyProgressService;
     [SerializeField] EnemySpawnerService EnemySpawnerService;
     [SerializeField] EnemyControllerService EnemyControllerService;
 
@@ -69,7 +70,9 @@ public class ExpeditionController : MonoBehaviour
         // Expedition
         DaysCycleService.Initialize(Expedition, TickService, ExpeditionUiService);
 
-        EnemySpawnerService.Initialize(Expedition, TickService, db);
+        EnemyProgressService.Initialize(Expedition);
+
+        EnemySpawnerService.Initialize(Expedition, TickService, db, EnemyProgressService);
 
         EnemyControllerService.Initialize(Expedition, TickService, ExpeditionUiService);
 

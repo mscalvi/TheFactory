@@ -42,6 +42,7 @@ public class DaysCycleService : MonoBehaviour, ITickable
             if (ExpeditionState.IsDay) 
             {
                 ExpeditionState.DayCounter++;
+                ExpeditionState.DestinationDayCounter++;
             }
 
             if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)

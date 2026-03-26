@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
     <Compile Include="Assets\Scripts\Configurations\WeaponRoomInitialConfiguration.cs" />
+    <Compile Include="Assets\Scripts\Services\EnemyProgressService.cs" />
     <Compile Include="Assets\Scripts\Models\OtherRoomModel.cs" />
     <Compile Include="Assets\Scripts\Services\UnnamedTripulationService.cs" />
     <Compile Include="Assets\Scripts\Designer\ExpeditionPageDesigner.cs" />

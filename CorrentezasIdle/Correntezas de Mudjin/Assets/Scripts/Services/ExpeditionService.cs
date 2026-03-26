@@ -51,7 +51,7 @@ public class ExpeditionService : MonoBehaviour, ITickable
 
     public void NewDestinationChose()
     {
-        ExpeditionState.DayCounter = 1;
+        ExpeditionState.DestinationDayCounter = 1;
 
         UiService.DestinationTextSet();
     }

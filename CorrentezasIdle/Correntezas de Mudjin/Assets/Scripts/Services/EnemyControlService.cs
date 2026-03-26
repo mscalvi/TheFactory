@@ -46,15 +46,15 @@ public class EnemyControllerService : MonoBehaviour, ITickable
             // Chegou na Área de Ataque ao Navio
             if (enemy.State == EnemyHelper.EnemyState.Moving)
             {
-                if (enemy.Distance - enemy.Model.Range > enemy.Model.Speed * dt)
+                if (enemy.Distance - enemy.Range > enemy.Speed * dt)
                 {
-                    enemy.Distance -= enemy.Model.Speed * dt;
+                    enemy.Distance -= enemy.Speed * dt;
                 } else
                 {
-                    enemy.Distance = enemy.Model.Range;
+                    enemy.Distance = enemy.Range;
                 }
 
-                if (enemy.Distance <= enemy.Model.Range)
+                if (enemy.Distance <= enemy.Range)
                 {
                     enemy.State = EnemyHelper.EnemyState.Arrival;
                 }
@@ -92,7 +92,7 @@ public class EnemyControllerService : MonoBehaviour, ITickable
             if (enemy.CurrentLife <= 0)
             {
                 enemy.State = EnemyHelper.EnemyState.Dead;
-                Debug.Log($"Inimigo eliminado {enemy.Model.Name}.");
+                Debug.Log($"Inimigo eliminado {enemy.Name}.");
                 Expedition.ActiveEnemies.Remove(enemy);
                 UiService.EnemiesTotalSet();
             }

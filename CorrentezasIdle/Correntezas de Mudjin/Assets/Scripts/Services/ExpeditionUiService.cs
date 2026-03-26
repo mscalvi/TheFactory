@@ -46,7 +46,7 @@ public class ExpeditionUiService : MonoBehaviour
         if (ExpeditionState.IsDay)
         {
             CycleText.text = "Dia";
-            DaysPastText.text = ExpeditionState.DayCounter.ToString();
+            DaysPastText.text = ExpeditionState.DestinationDayCounter.ToString();
         } else
         {
             CycleText.text = "Noite";

@@ -9,6 +9,7 @@ public class ExpeditionState
     // Day/Night Service
     public int BaseTicksPerPhase = 75;
     public bool IsDay { get; set; } = true;
+    public int DestinationDayCounter = 1;
     public int DayCounter = 1;
 
     // Destination

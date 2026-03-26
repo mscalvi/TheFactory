@@ -9,17 +9,20 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     private GameDatabase DataBase;
     private TickService TickService;
     private ExpeditionState Expedition;
+    private EnemyProgressService ProgressService;
 
     EnemyModel[] AllEnemies;
     public Dictionary<string, float> EnemyWeights = new();
 
     int tickCounter = 0;
 
-    public void Initialize(ExpeditionState expeditionState, TickService Tick, GameDatabase db)
+    public void Initialize(ExpeditionState expeditionState, TickService Tick, GameDatabase db, EnemyProgressService progress)
     {
         Expedition = expeditionState;
 
         TickService = Tick;
+
+        ProgressService = progress;
 
         DataBase = db;
 
@@ -93,7 +96,11 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             return;
         }
 
-        Expedition.ActiveEnemies.Add(new EnemyInstance(chosen, Expedition.BaseSpawnDistance));
+        EnemyInstance instance = new EnemyInstance(chosen, Expedition.BaseSpawnDistance);
+
+        ProgressService.ApplyProgression(instance);
+
+        Expedition.ActiveEnemies.Add(instance);
 
         Debug.Log($"{chosen.Name} Spawnado.");
     }
