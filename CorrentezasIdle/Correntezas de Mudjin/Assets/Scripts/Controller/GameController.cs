@@ -5,7 +5,6 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
 
     public GameState GameState;
-    public DataState DataState;
     public GameDatabase Database;
 
     [SerializeField] GameCreationService GameCreationService;
@@ -32,7 +31,7 @@ public class GameController : MonoBehaviour
         if (GameState == null)
         {
             GameState = new GameState();
-            DataState = new DataState();
+            GameState.DataState = new DataState();
         } else
         {
             FirstInitialization = false;

@@ -106,7 +106,7 @@ public class DecisionsService : MonoBehaviour
 
     private int CalculateDays(PathInstance Path, ShipInstance Ship)
     {
-        int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.Model.Speed);
+        int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.Speed);
 
         return RealDistance;
     }

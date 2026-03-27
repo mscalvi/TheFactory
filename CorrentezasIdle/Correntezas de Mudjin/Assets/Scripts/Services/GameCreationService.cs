@@ -102,14 +102,10 @@ public class GameCreationService : MonoBehaviour
     {
         foreach (var ship in GameState.DataState.ships)
         {
-            Debug.Log($"Construindo Navio {ship.Key}");
-
             ship.Value.WeaponsRooms = new List<WeaponRoomInstance>();
 
             for (int i = 0; i < ship.Value.WeaponRoomSlots.Count; i++)
             {
-                Debug.Log($"Construindo Room {ship.Value.WeaponRoomSlots[i].WeaponRoomModel.Name} no {ship.Key}");
-
                 string subId = ship.Value.Id + i.ToString();
                 var instance = new WeaponRoomInstance(ship.Value.WeaponRoomSlots[i].WeaponRoomModel, subId);
 

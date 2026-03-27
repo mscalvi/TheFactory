@@ -71,8 +71,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var enemy in validEnemies)
         {
-            var enemyWight = enemy.Value.Rarity;
-            totalWeight += (float)enemyWight;
+            totalWeight += (float)EnemyWeights[enemy.Key];
         }
 
         float roll = Random.Range(0, totalWeight);
@@ -80,8 +79,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var enemy in validEnemies)
         {
-            var enemyWight = enemy.Value.Rarity;
-            roll -= (float)enemyWight;
+            roll -= (float)EnemyWeights[enemy.Key];
 
             if (roll <= 0)
             {
@@ -132,13 +130,16 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     void IncreaseChance()
     {
-        foreach (var enemy in EnemyWeights)
+        var keys = new List<string>(EnemyWeights.Keys);
+
+        foreach (var key in keys)
         {
-            if (enemy.Value > 0)
+            if (EnemyWeights[key] > 0)
             {
-                var oldValue = EnemyWeights[enemy.Key];
-                EnemyWeights[enemy.Key] = EnemyWeights[enemy.Key] + ((1f / EnemyWeights[enemy.Key]) * 0.1f);
-                Debug.Log($"Inimigo {enemy.Key}: Raridade de {oldValue} para {EnemyWeights[enemy.Key]}.");
+                var oldValue = EnemyWeights[key];
+                EnemyWeights[key] = EnemyWeights[key] + ((1f / EnemyWeights[key]) * 0.1f);
+
+                Debug.Log($"Inimigo {key}: Raridade de {oldValue} para {EnemyWeights[key]}.");
             }
         }
     }

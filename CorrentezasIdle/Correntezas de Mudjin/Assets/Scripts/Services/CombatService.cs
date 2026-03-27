@@ -67,7 +67,7 @@ public class CombatService : MonoBehaviour, ITickable
     {
         target.CurrentLife -= damage;
 
-        Debug.Log($"{room.Model.Name} causou {damage} em {target.Name}");
+        Debug.Log($"{room.Name} causou {damage} em {target.Name}");
         UiService.LifeTextSet();
     }
 }

@@ -60,7 +60,7 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        var db = GameController.Instance.DataState;
+        var db = GameController.Instance.GameState.DataState;
 
         // Base
 
