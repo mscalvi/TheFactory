@@ -26,7 +26,7 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        foreach (var room in ShipState.WeaponRooms)
+        foreach (var room in ShipState.Ship.WeaponsRooms)
         {
             if (room == null || room.Weapon == null)
                 continue;

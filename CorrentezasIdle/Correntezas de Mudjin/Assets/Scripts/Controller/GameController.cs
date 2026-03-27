@@ -5,10 +5,12 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
 
     public GameState GameState;
-
+    public DataState DataState;
     public GameDatabase Database;
 
-    public LandingService LandingService;
+    [SerializeField] GameCreationService GameCreationService;
+
+    bool FirstInitialization = true;
 
     private void Awake()
     {
@@ -30,8 +32,18 @@ public class GameController : MonoBehaviour
         if (GameState == null)
         {
             GameState = new GameState();
+            DataState = new DataState();
+        } else
+        {
+            FirstInitialization = false;
         }
 
-        LandingService.Initialize(GameState, Database);
+        if (FirstInitialization)
+        {
+            GameCreationService.Initialize(GameState, Database);
+        } else
+        {
+            // service de Load
+        }
     }
 }

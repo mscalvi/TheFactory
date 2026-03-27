@@ -19,4 +19,6 @@ public class PathModel : ScriptableObject
 
     public PathHelper.RegionType RegionType;
     public PathHelper.PathType PathType;
+
+    public UnlockHelper.UnlockStatus UnlockStatus;
 }

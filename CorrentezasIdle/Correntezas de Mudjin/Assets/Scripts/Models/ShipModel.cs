@@ -16,7 +16,7 @@ public class ShipModel : ScriptableObject
     public int UnnamedTripulation;
     public int NamedTripulation;
 
-    public List<WeaponRoomSlot> WeaponRooms;
+    public List<WeaponRoomSlot> WeaponRoomSlots;
 
     [System.Serializable]
     public class WeaponRoomSlot
@@ -24,7 +24,7 @@ public class ShipModel : ScriptableObject
         public WeaponRoomModel WeaponRoomModel;
     }
 
-    public List<OtherRoomSlot> OtherRooms;
+    public List<OtherRoomSlot> OtherRoomSlots;
 
     [System.Serializable]
     public class OtherRoomSlot

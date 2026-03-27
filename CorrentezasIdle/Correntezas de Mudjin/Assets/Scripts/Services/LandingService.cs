@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class LandingService : MonoBehaviour
 {
-    private GameDatabase Database;
-    private GameState Game;
-    private ShipInitialConfiguration ShipConfiguration;
+    private GameState GameState;
+    private DataState DataState;
 
-    public void Initialize(GameState gameState, GameDatabase db)
+    public void Initialize(GameState gameState, DataState db)
     {
-        Game = gameState;
-        Database = db;
+        GameState = gameState;
+        DataState = db;
 
-        if (Game.ShipInitialConfiguration == null)
+        if (GameState.ShipState == null)
         {
             Debug.Log("Nenhum Navio Carregado.");
+            CreateInitialState();
             CreateFirstExpedition();
         } else
         {
@@ -27,28 +27,41 @@ public class LandingService : MonoBehaviour
 
     public void CreateFirstExpedition()
     {
-        ShipConfiguration = new ShipInitialConfiguration();
-        ShipConfiguration.WeaponRooms = new List<WeaponRoomInitialConfiguration>();
+        GameState.ShipState = new ShipState();
 
-        var ship = Database.ships[0];
-        ShipConfiguration.Ship = ship;
+        var ship = DataState.ships.GetValueOrDefault("s001");
 
         // Weapon Rooms
-        foreach (var room in ship.WeaponRooms)
+        foreach (var room in ship.WeaponsRooms)
         {
-            var config = new WeaponRoomInitialConfiguration();
-
-            config.RoomId = room.WeaponRoomModel.Id;
-            config.Tripulation = Database.tripulation[0];
-            config.Weapon = Database.weapons[0];
-            config.Ammo = Database.ammos[0];
-
-            ShipConfiguration.WeaponRooms.Add(config);
+            room.Tripulation = DataState.tripulations.GetValueOrDefault("t001");
+            room.Weapon = DataState.weapons.GetValueOrDefault("w001");
+            room.Ammo = DataState.ammos.GetValueOrDefault("a001");
+            room.TargetType = RoomHelper.RoomTarget.Closest;
         }
 
-        Game.ShipState = new ShipState();
-        Game.ShipInitialConfiguration = ShipConfiguration;
+        GameState.ShipState.Ship = ship;
 
-        Debug.Log($"Navio: {Game.ShipInitialConfiguration.Ship.Name} Carregado.");
+        Debug.Log($"Navio: {GameState.ShipState.Ship.Name} Tripulado e Equipado.");
+    }
+
+    public void CreateInitialState()
+    {
+        CreateCurrencies();
+    }
+
+    public void CreateCurrencies()
+    {
+        GameState.CompanyCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
+
+        foreach (var currency in DataState.currencies) 
+        {
+            if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                GameState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
+
+                Debug.Log($"Currency pronta: {currency.Value.Type}");
+            }
+        }
     }
 }

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 public class WeaponRoomInitialConfiguration
 {
     public string RoomId;
-    public TripulationModel Tripulation;
-    public WeaponModel Weapon;
-    public AmmoModel Ammo;
+    public TripulationInstance Tripulation;
+    public WeaponInstance Weapon;
+    public AmmoInstance Ammo;
     public RoomHelper.RoomTarget TargetType;
 }

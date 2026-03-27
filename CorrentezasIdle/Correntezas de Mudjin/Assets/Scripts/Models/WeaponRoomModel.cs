@@ -14,12 +14,7 @@ public class WeaponRoomModel : ScriptableObject
     public double AngleMin;
     public double AngleMax;
 
-    // Na Instance
     public RoomHelper.WeaponRoomType Type;
-    public RoomHelper.RoomStatus Status;
-    public RoomHelper.RoomTarget Target;
-
-    public TripulationModel User;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

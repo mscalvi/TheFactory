@@ -6,17 +6,16 @@ using static GameHelper;
 
 public class EnemySpawnerService : MonoBehaviour, ITickable
 {
-    private GameDatabase DataBase;
     private TickService TickService;
     private ExpeditionState Expedition;
+    private DataState DataState;
     private EnemyProgressService ProgressService;
 
-    EnemyModel[] AllEnemies;
-    public Dictionary<string, float> EnemyWeights = new();
+    public Dictionary<string, double> EnemyWeights = new();
 
     int tickCounter = 0;
 
-    public void Initialize(ExpeditionState expeditionState, TickService Tick, GameDatabase db, EnemyProgressService progress)
+    public void Initialize(ExpeditionState expeditionState, TickService Tick, DataState db, EnemyProgressService progress)
     {
         Expedition = expeditionState;
 
@@ -24,17 +23,16 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         ProgressService = progress;
 
-        DataBase = db;
+        DataState = db;
 
         TickService.Subscribe(this);
 
         Debug.Log("EnemySpawnService On");
 
-        AllEnemies = DataBase.enemies;
-
-        foreach (var enemy in AllEnemies)
+        foreach (var enemy in DataState.enemies)
         {
-            EnemyWeights[enemy.Id] = (float)enemy.Rarity;
+            Debug.Log($"{enemy.Value.Name}");
+            EnemyWeights.Add(enemy.Key, enemy.Value.Rarity);
         }
     }
 
@@ -73,19 +71,21 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var enemy in validEnemies)
         {
-            totalWeight += EnemyWeights[enemy.Id];
+            var enemyWight = enemy.Value.Rarity;
+            totalWeight += (float)enemyWight;
         }
 
         float roll = Random.Range(0, totalWeight);
-        EnemyModel chosen = null;
+        EnemyInstance chosen = null;
 
         foreach (var enemy in validEnemies)
         {
-            roll -= EnemyWeights[enemy.Id];
+            var enemyWight = enemy.Value.Rarity;
+            roll -= (float)enemyWight;
 
             if (roll <= 0)
             {
-                chosen = enemy;
+                chosen = enemy.Value;
                 break;
             }
         }
@@ -96,7 +96,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             return;
         }
 
-        EnemyInstance instance = new EnemyInstance(chosen, Expedition.BaseSpawnDistance);
+        EnemyInstance instance = new EnemyInstance(chosen);
+
+        instance.Distance *= Expedition.BaseSpawnDistance;
 
         ProgressService.ApplyProgression(instance);
 
@@ -105,22 +107,22 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         Debug.Log($"{chosen.Name} Spawnado.");
     }
 
-    List<EnemyModel> SpawnChance()
+    Dictionary<string, EnemyInstance> SpawnChance()
     {
-        List<EnemyModel> validEnemies = new();
+        Dictionary<string, EnemyInstance> validEnemies = new();
 
-        foreach (var enemy in AllEnemies)
+        foreach (var enemy in DataState.enemies)
         {
-            if (enemy.Rarity > 0)
+            if (enemy.Value.Rarity > 0)
             {
-                if (Expedition.IsDay && enemy.DayEnemy)
+                if (Expedition.IsDay && enemy.Value.DayEnemy)
                 {
                     // Checar também região/tipo...
-                    validEnemies.Add(enemy);
+                    validEnemies.Add(enemy.Key, enemy.Value);
                 }
-                else if (!Expedition.IsDay && !enemy.DayEnemy)
+                else if (!Expedition.IsDay && !enemy.Value.DayEnemy)
                 {
-                    validEnemies.Add(enemy);
+                    validEnemies.Add(enemy.Key, enemy.Value);
                 }
             }
         }
@@ -130,15 +132,13 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     void IncreaseChance()
     {
-        foreach (var key in new List<string>(EnemyWeights.Keys))
+        foreach (var enemy in EnemyWeights)
         {
-            float value = EnemyWeights[key];
-
-            if (value > 0)
+            if (enemy.Value > 0)
             {
-                Debug.Log($"Inimigo {key} chance anterior {EnemyWeights[key]}.");
-                EnemyWeights[key] = value + ((1f / value) * 0.1f);
-                Debug.Log($"Inimigo {key} nova chance {EnemyWeights[key]}.");
+                var oldValue = EnemyWeights[enemy.Key];
+                EnemyWeights[enemy.Key] = EnemyWeights[enemy.Key] + ((1f / EnemyWeights[enemy.Key]) * 0.1f);
+                Debug.Log($"Inimigo {enemy.Key}: Raridade de {oldValue} para {EnemyWeights[enemy.Key]}.");
             }
         }
     }

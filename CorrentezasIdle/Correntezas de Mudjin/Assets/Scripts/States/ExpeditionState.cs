@@ -13,9 +13,9 @@ public class ExpeditionState
     public int DayCounter = 1;
 
     // Destination
-    public DestinationModel OldDestination;
-    public DestinationModel NewDestination;
-    public PathModel CurrentPath;
+    public DestinationInstance OldDestination;
+    public DestinationInstance NewDestination;
+    public PathInstance CurrentPath;
     public int DestinationArrival = 0;
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 
@@ -25,4 +25,7 @@ public class ExpeditionState
     public int BaseTicksPerSpawn = 15;
 
     public List<EnemyInstance> ActiveEnemies = new();
+
+    // Currency
+    public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> ExpeditionCurrency;
 }

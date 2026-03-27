@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 211441657}
   - component: {fileID: 211441658}
   m_Layer: 0
-  m_Name: LandingPageController
+  m_Name: LandingDesigner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -469,29 +469,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1241133687}
-  - component: {fileID: 1241133686}
   - component: {fileID: 1241133688}
+  - component: {fileID: 1241133689}
   m_Layer: 0
-  m_Name: GameController
+  m_Name: LandingController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1241133686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1241133685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdb8a429d4679a648a6a455155d043e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Database: {fileID: 11400000, guid: 31e643da0fc87904984a6f2a8f56d41a, type: 2}
-  LandingService: {fileID: 1241133688}
 --- !u!4 &1241133687
 Transform:
   m_ObjectHideFlags: 0
@@ -519,10 +505,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83659a78d56ee8542bb2f9dbe5ead561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExpeditionConfiguration:
-    Ship: {fileID: 0}
-    Rooms: []
-  Database: {fileID: 11400000, guid: 31e643da0fc87904984a6f2a8f56d41a, type: 2}
+--- !u!114 &1241133689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1241133685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11e39f0dbb9815d4bb7356a29d587cd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LandingService: {fileID: 1241133688}
 --- !u!1 &1267980979
 GameObject:
   m_ObjectHideFlags: 0

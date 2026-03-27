@@ -13,28 +13,29 @@ MonoBehaviour:
   m_Name: e104
   m_EditorClassIdentifier: 
   Id: e104
-  Name: Night Fish
-  Description: Peixe Noturno
+  Name: Giant Squid
+  Description: Lula Gigante
   DayEnemy: 0
   BossEnemy: 0
-  Life: 1
-  LifeGrowth: 0.08
+  Life: 50
+  LifeGrowth: 0.15
   LifeRegen: 0
   LifeRegenGrowth: 0
-  Speed: 5
+  Speed: 3
   SpeedGrowth: 0
   Armor: 0
   ArmorGrowth: 0
   Range: 0
   RangeGrowth: 0
-  Damage: 2
-  DamageGrowth: 0.15
-  AttackSpeed: 1
+  Damage: 100
+  DamageGrowth: 0.8
+  AttackSpeed: 0.8
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
-  Rarity: 100
+  Experience: 6
+  Rarity: 0.01
   State: 0
-  EnemyType: 1
+  EnemyType: 10
   PathType: 0
   UnlockStatus: 0

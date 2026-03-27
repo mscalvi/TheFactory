@@ -1510,7 +1510,7 @@ GameObject:
   - component: {fileID: 1133899249}
   - component: {fileID: 1133899248}
   m_Layer: 0
-  m_Name: Controller
+  m_Name: ShipConfigDesigner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

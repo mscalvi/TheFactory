@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5c2e65d716c50746bb11a58f3cb4066, type: 3}
   m_Name: e201
   m_EditorClassIdentifier: 
-  Id: e002
+  Id: e201
   Name: Pirate
   Description: Pirata
   DayEnemy: 1
@@ -33,8 +33,9 @@ MonoBehaviour:
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
+  Experience: 50
   Rarity: 0
   State: 0
   EnemyType: 6
-  RegionType: 11
+  PathType: 0
   UnlockStatus: 0

@@ -19,7 +19,5 @@ public class TripulationModel : ScriptableObject
     public TripulationHelper.Type Type;
     public TripulationHelper.Jobs Jobs;
 
-    public WeaponModel Weapon;
-
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

@@ -8,9 +8,10 @@ public class EnemyControllerService : MonoBehaviour, ITickable
     private GameDatabase DataBase;
     private TickService TickService;
     private ExpeditionUiService UiService;
+    private CurrencyService CurrencyService;
     private ExpeditionState Expedition;
 
-    public void Initialize(ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui)
+    public void Initialize(ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui, CurrencyService currency)
     {
         Expedition = expeditionState;
 
@@ -18,9 +19,11 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
         UiService = ui;
 
+        CurrencyService = currency;
+
         TickService.Subscribe(this);
 
-        Debug.Log("EnemyControlSystem On");
+        Debug.Log("EnemyControlService On");
     }
 
     void OnDestroy()
@@ -94,6 +97,8 @@ public class EnemyControllerService : MonoBehaviour, ITickable
                 enemy.State = EnemyHelper.EnemyState.Dead;
                 Debug.Log($"Inimigo eliminado {enemy.Name}.");
                 Expedition.ActiveEnemies.Remove(enemy);
+                double totalExperience = enemy.Experience; // Adicionar modificadores
+                CurrencyService.Add(CurrencyHelper.CurrencyType.Experience, totalExperience);
                 UiService.EnemiesTotalSet();
             }
         }

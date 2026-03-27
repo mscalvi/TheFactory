@@ -8,6 +8,7 @@ public class ExpeditionController : MonoBehaviour
 {
     [SerializeField] TickService TickService;
     [SerializeField] StartExpeditionService StartExpeditionService;
+    [SerializeField] CurrencyService CurrencyService;
 
     // Expedition
     [SerializeField] DaysCycleService DaysCycleService;
@@ -59,13 +60,15 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        var db = GameController.Instance.Database;
+        var db = GameController.Instance.DataState;
 
         // Base
 
         TickService.Initialize();
 
-        ExpeditionUiService.Initialize(Expedition, Ship, Game);
+        ExpeditionUiService.Initialize(Expedition, Ship, Game, db);
+
+        CurrencyService.Initialize(Expedition, ExpeditionUiService);
 
         // Expedition
         DaysCycleService.Initialize(Expedition, TickService, ExpeditionUiService);
@@ -74,7 +77,7 @@ public class ExpeditionController : MonoBehaviour
 
         EnemySpawnerService.Initialize(Expedition, TickService, db, EnemyProgressService);
 
-        EnemyControllerService.Initialize(Expedition, TickService, ExpeditionUiService);
+        EnemyControllerService.Initialize(Expedition, TickService, ExpeditionUiService, CurrencyService);
 
         // Ship
         ShipControlService.Initialize(Ship, Game, TickService);

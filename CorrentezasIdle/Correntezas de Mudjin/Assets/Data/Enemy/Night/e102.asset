@@ -13,27 +13,29 @@ MonoBehaviour:
   m_Name: e102
   m_EditorClassIdentifier: 
   Id: e102
-  Name: Shark
-  Description: "Tubar\xE3o"
+  Name: Snake
+  Description: Cobra
   DayEnemy: 0
   BossEnemy: 0
-  Life: 30
-  LifeGrowth: 0.11
+  Life: 5
+  LifeGrowth: 0.09
   LifeRegen: 0
   LifeRegenGrowth: 0
-  Speed: 5
+  Speed: 3
   SpeedGrowth: 0
   Armor: 0
   ArmorGrowth: 0
   Range: 0
   RangeGrowth: 0
-  Damage: 20
-  DamageGrowth: 0.5
-  AttackSpeed: 1.5
+  Damage: 1
+  DamageGrowth: 0.07
+  AttackSpeed: 0.5
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
-  Rarity: 0.1
+  Experience: 2
+  Rarity: 5
   State: 0
-  EnemyType: 2
-  RegionType: 26
+  EnemyType: 1
+  PathType: 0
+  UnlockStatus: 0

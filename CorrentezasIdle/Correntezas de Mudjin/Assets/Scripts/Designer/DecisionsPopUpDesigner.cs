@@ -23,7 +23,7 @@ public class DecisionsPopUpDesigner : MonoBehaviour
     [SerializeField] TextMeshProUGUI Title;
     [SerializeField] TextMeshProUGUI Info;
 
-    public void ShowDestinations(List<DestinationModel> options, Action<DestinationModel> onSelected)
+    public void ShowDestinations(List<DestinationInstance> options, Action<DestinationInstance> onSelected)
     {
         Hide();
 

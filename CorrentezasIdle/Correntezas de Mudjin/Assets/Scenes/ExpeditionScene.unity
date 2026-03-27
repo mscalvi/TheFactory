@@ -602,6 +602,9 @@ MonoBehaviour:
   DestinationArrivalText: {fileID: 1772277634}
   CurrentLifeText: {fileID: 1597087358}
   TotalEnemiesText: {fileID: 150399159}
+  CompanyCurrencyPanel: {fileID: 1264746648}
+  ExpeditionCurrencyPanel: {fileID: 850093041}
+  CurrencyPrefab: {fileID: 4908442824307002726, guid: 208b1d03c33570444aa1cd07a52e6807, type: 3}
 --- !u!114 &183470227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2470,6 +2473,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TickService: {fileID: 1083699780}
   StartExpeditionService: {fileID: 1083699784}
+  CurrencyService: {fileID: 1083699786}
   DaysCycleService: {fileID: 1083699781}
   EnemyProgressService: {fileID: 991191069}
   EnemySpawnerService: {fileID: 991191067}
@@ -2494,7 +2498,7 @@ GameObject:
   - component: {fileID: 850093043}
   - component: {fileID: 850093042}
   m_Layer: 5
-  m_Name: ExpeditionResourcesPanel
+  m_Name: ExpeditionCurrencyPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2532,7 +2536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2717,6 +2721,7 @@ GameObject:
   - component: {fileID: 1083699782}
   - component: {fileID: 1083699784}
   - component: {fileID: 1083699785}
+  - component: {fileID: 1083699786}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -2810,6 +2815,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d20114e4badb7cf419bfdad51e07ff14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1083699786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee63b6358203cb544a2c985b5ddb60f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1099042370
@@ -3252,7 +3269,7 @@ GameObject:
   - component: {fileID: 1264746650}
   - component: {fileID: 1264746649}
   m_Layer: 5
-  m_Name: PermanentResourcesPanel
+  m_Name: CompanyCurrencyPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3290,7 +3307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

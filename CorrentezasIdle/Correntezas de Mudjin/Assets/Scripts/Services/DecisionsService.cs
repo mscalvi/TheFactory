@@ -11,23 +11,23 @@ public class DecisionsService : MonoBehaviour
     private ExpeditionService ExpeditionService;
     private GameState GameState;
     private ShipState ShipState;
+    private DataState DataState;
     private ExpeditionState ExpeditionState;
     private DecisionsPopUpDesigner Panel;
-    private GameDatabase GameDatabase;
 
-    private List<DestinationModel> DestinationOptions;
+    private List<DestinationInstance> DestinationOptions;
 
-    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, GameDatabase db, ExpeditionService expeditionService)
+    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, DataState db, ExpeditionService expeditionService)
     {
         TickService = tick;
         ExpeditionState = expedition;
         ShipState = ship;
         GameState = game;
         Panel = panel;
-        GameDatabase = db;
+        DataState = db;
         ExpeditionService = expeditionService;
 
-        DestinationOptions = new List<DestinationModel>();
+        DestinationOptions = new List<DestinationInstance>();
 
         Debug.Log("DecisionsService On");
         Debug.Log($"Primeira Expedição: {GameState.FirstExpedition}");
@@ -35,7 +35,7 @@ public class DecisionsService : MonoBehaviour
         if (GameState.FirstExpedition)
         {
             DestinationOptions.Clear();
-            DestinationOptions.Add(GameDatabase.destinations[1]);
+            DestinationOptions.Add(DataState.destinations.GetValueOrDefault("d101"));
             FirstDecision(DestinationOptions);
 
             // Mudar para um SaveService
@@ -48,7 +48,7 @@ public class DecisionsService : MonoBehaviour
         }
     }
 
-    public void FirstDecision(List<DestinationModel> options)
+    public void FirstDecision(List<DestinationInstance> options)
     {
         Debug.Log("Primeira Escolha de Destination Iniciada");
 
@@ -57,18 +57,18 @@ public class DecisionsService : MonoBehaviour
         Panel.ShowDestinations(options, FirstSelection);
     }
 
-    private void FirstSelection(DestinationModel selected)
+    private void FirstSelection(DestinationInstance selected)
     {
         Debug.Log($"Primeiro Destino: {selected.Name}");
 
-        if (GameDatabase == null)
+        if (DataState == null)
         {
-            Debug.LogError("DataBase não encontrada na Decision!");
+            Debug.LogError("DataState não encontrada na Decision!");
             return;
         }
 
-        ExpeditionState.OldDestination = GameDatabase.destinations[0];
-        ExpeditionState.CurrentPath = GameDatabase.paths[0];
+        ExpeditionState.OldDestination = DataState.destinations.GetValueOrDefault("d000");
+        ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
         ExpeditionState.NewDestination = selected;
 
         ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
@@ -82,19 +82,19 @@ public class DecisionsService : MonoBehaviour
         ExpeditionService.NewDestinationChose();
     }
 
-    private void DestinationSelection(DestinationModel selected)
+    private void DestinationSelection(DestinationInstance selected)
     {
         Debug.Log($"Destino escolhido: {selected.Name}");
 
-        if (GameDatabase == null)
+        if (DataState == null)
         {
-            Debug.LogError("DataBase não encontrada na Decision!");
+            Debug.LogError("DataState não encontrada na Decision!");
             return;
         }
 
         ExpeditionState.OldDestination = ExpeditionState.NewDestination;
         // trocar para PathService e definir rota entre os dois destinos
-        ExpeditionState.CurrentPath = GameDatabase.paths[0];
+        ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
         ExpeditionState.NewDestination = selected;
 
         ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
@@ -104,7 +104,7 @@ public class DecisionsService : MonoBehaviour
         TickService.Resume();
     }
 
-    private int CalculateDays(PathModel Path, ShipInstance Ship)
+    private int CalculateDays(PathInstance Path, ShipInstance Ship)
     {
         int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.Model.Speed);
 

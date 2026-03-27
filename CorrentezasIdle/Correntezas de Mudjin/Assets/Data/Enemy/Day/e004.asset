@@ -33,7 +33,9 @@ MonoBehaviour:
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
+  Experience: 5
   Rarity: 0.01
   State: 0
   EnemyType: 2
-  RegionType: 18
+  PathType: 0
+  UnlockStatus: 0

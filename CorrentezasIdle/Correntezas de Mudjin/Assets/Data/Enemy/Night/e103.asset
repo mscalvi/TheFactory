@@ -13,27 +13,29 @@ MonoBehaviour:
   m_Name: e103
   m_EditorClassIdentifier: 
   Id: e103
-  Name: Giant Squid
-  Description: Lula Gigante
+  Name: Shark
+  Description: "Tubar\xE3o"
   DayEnemy: 0
   BossEnemy: 0
-  Life: 50
-  LifeGrowth: 0.15
+  Life: 30
+  LifeGrowth: 0.11
   LifeRegen: 0
   LifeRegenGrowth: 0
-  Speed: 3
+  Speed: 5
   SpeedGrowth: 0
   Armor: 0
   ArmorGrowth: 0
   Range: 0
   RangeGrowth: 0
-  Damage: 100
-  DamageGrowth: 0.8
-  AttackSpeed: 0.8
+  Damage: 20
+  DamageGrowth: 0.5
+  AttackSpeed: 1.5
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
-  Rarity: 0.01
+  Experience: 6
+  Rarity: 0.1
   State: 0
-  EnemyType: 10
-  RegionType: 18
+  EnemyType: 2
+  PathType: 0
+  UnlockStatus: 0

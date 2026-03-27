@@ -11,4 +11,6 @@ public class DestinationModel : ScriptableObject
 
     public DestinationHelper.DestinationType DestinationType;
     public DestinationHelper.DestinationRegion DestinationRegion;
+
+    public UnlockHelper.UnlockStatus UnlockStatus;
 }

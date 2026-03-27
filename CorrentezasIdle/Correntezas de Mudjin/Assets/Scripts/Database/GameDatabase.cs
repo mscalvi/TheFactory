@@ -17,4 +17,7 @@ public class GameDatabase : ScriptableObject
 
     public DestinationModel[] destinations;
     public PathModel[] paths;
+
+    public CurrencyModel[] currency;
+
 }

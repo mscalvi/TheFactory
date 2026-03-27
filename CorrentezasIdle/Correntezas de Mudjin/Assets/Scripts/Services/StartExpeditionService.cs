@@ -12,44 +12,9 @@ public class StartExpeditionService : MonoBehaviour
         GameState = gameState;
 
         LoadExpedition(GameState);
-        LoadShip(GameState);
+        LoadCurrency(GameState);
 
         Debug.Log("ShipControlService On");
-    }
-
-    void LoadShip(GameState Game)
-    {
-        var ShipConfiguration = Game.ShipInitialConfiguration;
-
-        ShipInstance activeShip = new ShipInstance(ShipConfiguration.Ship);
-
-        Game.ShipState.Ship = activeShip;
-
-        Game.ShipState.WeaponRooms = new List<WeaponRoomInstance>();
-
-        for (int i = 0; i < activeShip.Model.WeaponRooms.Count; i++)
-        {
-            var modelRoom = activeShip.Model.WeaponRooms[i];
-            var instanceRoom = new WeaponRoomInstance(modelRoom.WeaponRoomModel);
-
-            if (ShipConfiguration.WeaponRooms != null && i < ShipConfiguration.WeaponRooms.Count)
-            {
-                var roomConfig = ShipConfiguration.WeaponRooms[i];
-
-                instanceRoom.Weapon = roomConfig.Weapon;
-                instanceRoom.Tripulation = roomConfig.Tripulation;
-                instanceRoom.Ammo = roomConfig.Ammo;
-                instanceRoom.TargetType = roomConfig.TargetType;
-
-                instanceRoom.Setup();
-            }
-
-            Game.ShipState.WeaponRooms.Add(instanceRoom);
-        }
-
-        // Repetir para Others
-        Debug.Log($"Navio Ativo: {Game.ShipState.Ship.Model.Name}");
-        Debug.Log($"Rooms carregadas: {Game.ShipState.WeaponRooms.Count}");
     }
 
     void LoadExpedition(GameState Game)
@@ -57,5 +22,33 @@ public class StartExpeditionService : MonoBehaviour
         Game.ExpeditionState = new ExpeditionState();
 
         Debug.Log($"Expedition Ativa");
+    }
+
+    void LoadCurrency(GameState Game)
+    {
+        Game.ExpeditionState.ExpeditionCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
+
+        Debug.Log($"Carregando Currencies");
+
+        if (Game.ExpeditionState.ExpeditionCurrency != null)
+        {
+            Game.ExpeditionState.ExpeditionCurrency.Clear();
+        }
+
+        foreach (var currency in Game.CompanyCurrency)
+        {
+            var original = currency.Value;
+
+            var clone = new CurrencyInstance(original)
+            {
+                Amount = original.Amount
+            };
+
+            Game.ExpeditionState.ExpeditionCurrency.Add(currency.Key, clone);
+
+            Debug.Log($"Currency carregada: {currency.Value.Id}");
+        }
+
+        Debug.Log("Dinheiro Carregado");
     }
 }
