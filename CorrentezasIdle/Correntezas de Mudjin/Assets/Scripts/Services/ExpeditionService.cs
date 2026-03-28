@@ -39,6 +39,7 @@ public class ExpeditionService : MonoBehaviour, ITickable
         if (ExpeditionState.ExpeditionStatus == ExpeditionStatus.Complete)
         {
             Debug.Log("Vitória!");
+            RunEvents.OnDestinationArrival?.Invoke();
             TickService.Pause();
         }
     }

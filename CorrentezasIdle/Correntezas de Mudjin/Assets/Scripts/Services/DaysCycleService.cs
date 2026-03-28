@@ -1,4 +1,4 @@
-using TMPro;
+ using TMPro;
 using UnityEngine;
 using static GameHelper;
 
@@ -37,18 +37,24 @@ public class DaysCycleService : MonoBehaviour, ITickable
         if (tickCounter >= ExpeditionState.BaseTicksPerPhase)
         {
             tickCounter = 0;
+
             ExpeditionState.IsDay = !ExpeditionState.IsDay;
 
             if (ExpeditionState.IsDay) 
             {
                 ExpeditionState.DayCounter++;
                 ExpeditionState.DestinationDayCounter++;
+                RunEvents.OnNightFinish?.Invoke();
+            } else
+            {
+                RunEvents.OnDayFinish?.Invoke();
             }
 
             if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)
             {
                 ExpeditionState.ExpeditionStatus = ExpeditionStatus.Complete;
-            } else
+            }
+            else
             {
                 UiService.DayCycleTextSet();
             }

@@ -6,15 +6,10 @@ using static CurrencyHelper;
 public class CurrencyService : MonoBehaviour
 {
     private ExpeditionState ExpeditionState;
-    private ExpeditionUiService UiService;
 
-    public void Initialize(ExpeditionState expedition, ExpeditionUiService ui)
+    public void Initialize(ExpeditionState expedition)
     {
         ExpeditionState = expedition;
-
-        UiService = ui;
-
-        UiService.CurrenciesSet();
 
         Debug.Log("CurrencyService On");
     }
@@ -36,7 +31,7 @@ public class CurrencyService : MonoBehaviour
 
         currencies[type].Amount = Get(type) + amount;
 
-        UiService.CurrencySet(type);
+        RunEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
 
         Debug.Log($"{currencies[type].Id} : {currencies[type].Amount}");
     }
@@ -51,10 +46,43 @@ public class CurrencyService : MonoBehaviour
 
         currencies[type].Amount = current - amount;
 
-        UiService.CurrencySet(type);
+        RunEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
 
         Debug.Log($"{currencies[type].Id} : {currencies[type].Amount}");
 
         return true;
+    }
+
+    // Event
+
+    void OnEnable()
+    {
+        CombatEvents.OnEnemyDeath += EnemyDeathReward;
+        RunEvents.OnDayFinish += DayFinishReward;
+        RunEvents.OnNightFinish += NightFinishReward;
+    }
+
+    void OnDisable()
+    {
+        CombatEvents.OnEnemyDeath -= EnemyDeathReward;
+        RunEvents.OnDayFinish -= DayFinishReward;
+        RunEvents.OnNightFinish -= NightFinishReward;
+    }
+
+    void EnemyDeathReward(EnemyInstance enemy)
+    {
+        Add(CurrencyHelper.CurrencyType.Experience, enemy.Experience);
+    }
+
+    void DayFinishReward()
+    {
+        double reward = ExpeditionState.BaseDayReward;
+        Add(CurrencyHelper.CurrencyType.Marcos, reward);
+    }
+
+    void NightFinishReward()
+    {
+        double reward = ExpeditionState.BaseNightReward;
+        Add(CurrencyHelper.CurrencyType.Experience, reward);
     }
 }

@@ -63,12 +63,11 @@ public class ExpeditionController : MonoBehaviour
         var db = GameController.Instance.GameState.DataState;
 
         // Base
-
         TickService.Initialize();
 
         ExpeditionUiService.Initialize(Expedition, Ship, Game, db);
 
-        CurrencyService.Initialize(Expedition, ExpeditionUiService);
+        CurrencyService.Initialize(Expedition);
 
         // Expedition
         DaysCycleService.Initialize(Expedition, TickService, ExpeditionUiService);
@@ -77,7 +76,7 @@ public class ExpeditionController : MonoBehaviour
 
         EnemySpawnerService.Initialize(Expedition, TickService, db, EnemyProgressService);
 
-        EnemyControllerService.Initialize(Expedition, TickService, ExpeditionUiService, CurrencyService);
+        EnemyControllerService.Initialize(Expedition, TickService);
 
         // Ship
         ShipControlService.Initialize(Ship, Game, TickService);
@@ -85,7 +84,6 @@ public class ExpeditionController : MonoBehaviour
         UnnamedTripulationService.Initialize(Ship, TickService);
 
         // Ambos
-
         CombatService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
 
         ExpeditionService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
@@ -93,5 +91,8 @@ public class ExpeditionController : MonoBehaviour
         WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
 
         DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, ExpeditionService);
+
+        // Events
+        RunEvents.OnRunStart?.Invoke();
     }
 }

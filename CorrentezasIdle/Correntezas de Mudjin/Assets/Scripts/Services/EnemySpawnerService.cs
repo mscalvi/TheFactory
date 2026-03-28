@@ -31,7 +31,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var enemy in DataState.enemies)
         {
-            Debug.Log($"{enemy.Value.Name}");
             EnemyWeights.Add(enemy.Key, enemy.Value.Rarity);
         }
     }
@@ -101,6 +100,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         ProgressService.ApplyProgression(instance);
 
         Expedition.ActiveEnemies.Add(instance);
+
+        CombatEvents.OnEnemySpawn?.Invoke(instance);
 
         Debug.Log($"{chosen.Name} Spawnado.");
     }

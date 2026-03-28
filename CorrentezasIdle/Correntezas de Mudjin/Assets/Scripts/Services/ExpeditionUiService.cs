@@ -84,15 +84,21 @@ public class ExpeditionUiService : MonoBehaviour
     {
         var currencies = ExpeditionState.ExpeditionCurrency;
 
+        Debug.Log($"Tentando atualizar: {type}");
+
         if (!currencies.TryGetValue(type, out var currency))
             return;
 
         if (currency.Scope == CurrencyScope.Company)
         {
+            Debug.Log($"CompanyUI contém {companyUI.Count} itens");
+
             if (!companyUI.TryGetValue(type, out var ui))
                 return;
 
             ui.Setup(currency, DataState);
+
+            Debug.Log($"Marcos atualizados");
         } else
         {
             if (!expeditionUI.TryGetValue(type, out var ui))
@@ -109,8 +115,10 @@ public class ExpeditionUiService : MonoBehaviour
         foreach (Transform child in parent)
             Destroy(child.gameObject);
 
-        companyUI.Clear();
-        expeditionUI.Clear();
+        if (scope == CurrencyScope.Company)
+            companyUI.Clear();
+        else
+            expeditionUI.Clear();
 
         var ordered = new List<CurrencyInstance>();
 
@@ -142,5 +150,39 @@ public class ExpeditionUiService : MonoBehaviour
                 expeditionUI[currency.Type] = ui;
             }
         }
+    }
+
+    // Eventos
+    void OnEnable()
+    {
+        CombatEvents.OnEnemySpawn += RefreshEnemiesUi;
+        CombatEvents.OnEnemyDeath += RefreshEnemiesUi;
+        RunEvents.OnCurrencyChange += RefreshCurrencyUi;
+
+        RunEvents.OnRunStart += RefreshCurrenciesUi;
+    }
+
+    void OnDisable()
+    {
+        CombatEvents.OnEnemySpawn -= RefreshEnemiesUi;
+        CombatEvents.OnEnemyDeath -= RefreshEnemiesUi;
+        RunEvents.OnCurrencyChange -= RefreshCurrencyUi;
+
+        RunEvents.OnRunStart -= RefreshCurrenciesUi;
+    }
+
+    void RefreshEnemiesUi(EnemyInstance enemy)
+    {
+        EnemiesTotalSet();
+    }
+
+    void RefreshCurrenciesUi()
+    {
+        CurrenciesSet();
+    }
+
+    void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)
+    {
+        CurrencySet(type);
     }
 }

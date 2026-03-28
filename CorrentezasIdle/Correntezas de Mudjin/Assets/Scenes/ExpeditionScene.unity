@@ -2474,6 +2474,7 @@ MonoBehaviour:
   TickService: {fileID: 1083699780}
   StartExpeditionService: {fileID: 1083699784}
   CurrencyService: {fileID: 1083699786}
+  RewardService: {fileID: 1083699787}
   DaysCycleService: {fileID: 1083699781}
   EnemyProgressService: {fileID: 991191069}
   EnemySpawnerService: {fileID: 991191067}
@@ -2722,6 +2723,7 @@ GameObject:
   - component: {fileID: 1083699784}
   - component: {fileID: 1083699785}
   - component: {fileID: 1083699786}
+  - component: {fileID: 1083699787}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -2827,6 +2829,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee63b6358203cb544a2c985b5ddb60f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1083699787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f436c446d025f584f9182d9f216fae71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1099042370

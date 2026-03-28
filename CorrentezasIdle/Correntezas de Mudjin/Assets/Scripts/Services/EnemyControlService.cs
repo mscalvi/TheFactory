@@ -5,21 +5,14 @@ using static GameHelper;
 
 public class EnemyControllerService : MonoBehaviour, ITickable
 {
-    private GameDatabase DataBase;
     private TickService TickService;
-    private ExpeditionUiService UiService;
-    private CurrencyService CurrencyService;
     private ExpeditionState Expedition;
 
-    public void Initialize(ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui, CurrencyService currency)
+    public void Initialize(ExpeditionState expeditionState, TickService Tick)
     {
         Expedition = expeditionState;
 
         TickService = Tick;
-
-        UiService = ui;
-
-        CurrencyService = currency;
 
         TickService.Subscribe(this);
 
@@ -62,8 +55,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
                     enemy.State = EnemyHelper.EnemyState.Arrival;
                 }
             }
-
-            UiService.EnemiesTotalSet();
         }
     }
 
@@ -94,13 +85,19 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
             if (enemy.CurrentLife <= 0)
             {
-                enemy.State = EnemyHelper.EnemyState.Dead;
-                Debug.Log($"Inimigo eliminado {enemy.Name}.");
-                Expedition.ActiveEnemies.Remove(enemy);
-                double totalExperience = enemy.Experience; // Adicionar modificadores
-                CurrencyService.Add(CurrencyHelper.CurrencyType.Experience, totalExperience);
-                UiService.EnemiesTotalSet();
+                KillEnemy(enemy);
+                enemies.RemoveAt(i);
             }
         }
+    }
+
+    void KillEnemy(EnemyInstance enemy)
+    {
+        if (enemy.State == EnemyHelper.EnemyState.Dead)
+            return;
+
+        enemy.State = EnemyHelper.EnemyState.Dead;
+
+        CombatEvents.OnEnemyDeath?.Invoke(enemy);
     }
 }

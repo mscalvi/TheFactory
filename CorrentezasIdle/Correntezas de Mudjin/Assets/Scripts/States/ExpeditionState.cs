@@ -28,4 +28,6 @@ public class ExpeditionState
 
     // Currency
     public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> ExpeditionCurrency;
+    public double BaseDayReward = 1;
+    public double BaseNightReward = 1;
 }

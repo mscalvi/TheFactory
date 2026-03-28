@@ -117,6 +117,7 @@
     <Compile Include="Assets\Scripts\Controller\LandingController.cs" />
     <Compile Include="Assets\Scripts\Models\TripulationModel.cs" />
     <Compile Include="Assets\Scripts\Models\ShipModel.cs" />
+    <Compile Include="Assets\Scripts\Events\EventBus.cs" />
     <Compile Include="Assets\Scripts\Models\CurrencyModel.cs" />
     <Compile Include="Assets\Scripts\Designer\DecisionsPopUpDesigner.cs" />
   </ItemGroup>
