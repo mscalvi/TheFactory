@@ -74,7 +74,9 @@
     <Compile Include="Assets\Scripts\Configurations\WeaponRoomInitialConfiguration.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
     <Compile Include="Assets\Scripts\Services\EnemyProgressService.cs" />
+    <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
     <Compile Include="Assets\Scripts\Services\CurrencyService.cs" />
+    <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
     <Compile Include="Assets\Scripts\Models\OtherRoomModel.cs" />
     <Compile Include="Assets\Scripts\States\DataState.cs" />
     <Compile Include="Assets\Scripts\Helpers\CurrencyHelper.cs" />
