@@ -2,20 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UpgradeModel 
+[CreateAssetMenu(menuName = "Game/Upgrade")]
+public class UpgradeModel : ScriptableObject
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-
-    public UpgradeHelper.UpgradeScope UpgradeScope { get; set; }
-    public UpgradeHelper.UpgradeType UpgradeType { get; set; }
-    public UpgradeHelper.EffectType EffectType { get; set; }
-    public double UpgradeValue { get; set; }
-    public string TargetId { get; set; }
-    public string UnlockId { get; set; }
-    public int MaxBuy { get; set; }
+    public string Id;
+    public string Name;
+    public string Description;
 
 
-    public UnlockHelper.UnlockStatus UnlockStatus { get; set; }
+    public UpgradeHelper.UpgradeScope UpgradeScope;
+    public UpgradeHelper.UpgradeType UpgradeType;
+    public UpgradeHelper.EffectType EffectType;
+
+    public double UpgradeValue;
+    public double StartValue;
+
+    public UpgradeHelper.TargetType TargetType;
+    public string TargetId;
+    public string UnlockId;
+    public int MaxBuy;
+
+    public double Cost;
+    public double CostGrowth;
+    public CurrencyHelper.CurrencyType Currency;
+
+    public UnlockHelper.UnlockStatus UnlockStatus;
 }

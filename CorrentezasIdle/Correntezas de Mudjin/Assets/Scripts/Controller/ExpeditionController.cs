@@ -6,9 +6,13 @@ using static GameHelper;
 
 public class ExpeditionController : MonoBehaviour
 {
-    [SerializeField] TickService TickService;
     [SerializeField] StartExpeditionService StartExpeditionService;
+
+    // Base
+    [SerializeField] TickService TickService;
     [SerializeField] CurrencyService CurrencyService;
+    [SerializeField] ExpeditionPurchaseService ExpeditionPurchaseService;
+    [SerializeField] ExpeditionUiService ExpeditionUiService;
 
     // Expedition
     [SerializeField] DaysCycleService DaysCycleService;
@@ -25,10 +29,10 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] ExpeditionService ExpeditionService;
     [SerializeField] CombatService CombatService;
     [SerializeField] DecisionsService DecisionsService;
+    [SerializeField] ExpeditionUpgradeService ExpeditionUpgradeService;
 
     // Outros Mecanismos Úteis
     [SerializeField] DecisionsPopUpDesigner DecisionsPanel;
-    [SerializeField] ExpeditionUiService ExpeditionUiService;
 
     private void Awake()
     {
@@ -65,9 +69,11 @@ public class ExpeditionController : MonoBehaviour
         // Base
         TickService.Initialize();
 
-        ExpeditionUiService.Initialize(Expedition, Ship, Game, db);
-
         CurrencyService.Initialize(Expedition);
+
+        ExpeditionPurchaseService.Initialize(Expedition, db, CurrencyService);
+
+        ExpeditionUiService.Initialize(Expedition, Ship, Game, db, ExpeditionPurchaseService);
 
         // Expedition
         DaysCycleService.Initialize(Expedition, TickService, ExpeditionUiService);
@@ -90,6 +96,9 @@ public class ExpeditionController : MonoBehaviour
 
         WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
 
+        ExpeditionUpgradeService.Initialize(Expedition, db, Ship);
+
+        // Outros
         DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, ExpeditionService);
 
         // Events

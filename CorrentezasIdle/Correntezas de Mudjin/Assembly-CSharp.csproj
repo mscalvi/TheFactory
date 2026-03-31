@@ -64,9 +64,11 @@
     <Compile Include="Assets\Scripts\Controller\ExpeditionController.cs" />
     <Compile Include="Assets\Scripts\Services\DecisionsService.cs" />
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
+    <Compile Include="Assets\Scripts\Services\ExpeditionPurchaseService.cs" />
     <Compile Include="Assets\Scripts\Controller\GameController.cs" />
     <Compile Include="Assets\Scripts\Definitions\CurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\LandingService.cs" />
+    <Compile Include="Assets\Scripts\Instances\UpgradeInstance.cs" />
     <Compile Include="Assets\Scripts\States\ShipState.cs" />
     <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Assets\Scripts\Services\UnnamedTripulationService.cs" />
     <Compile Include="Assets\Scripts\Designer\ExpeditionPageDesigner.cs" />
     <Compile Include="Assets\Scripts\States\GameState.cs" />
+    <Compile Include="Assets\Scripts\Services\ExpeditionUpgradeService.cs" />
     <Compile Include="Assets\Scripts\Designer\BootstrapDesigner.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
     <Compile Include="Assets\Scripts\Instances\DestinationInstance.cs" />
@@ -102,6 +105,7 @@
     <Compile Include="Assets\Scripts\Services\TickService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionService.cs" />
     <Compile Include="Assets\Scripts\Services\EnemyControlService.cs" />
+    <Compile Include="Assets\Scripts\Definitions\UpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\EnemySpawnerService.cs" />
     <Compile Include="Assets\Scripts\Services\WeaponRoomsService.cs" />
     <Compile Include="Assets\Scripts\Helpers\TripulationHelper.cs" />

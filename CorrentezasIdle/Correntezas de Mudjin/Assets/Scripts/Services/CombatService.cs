@@ -21,8 +21,6 @@ public class CombatService : MonoBehaviour, ITickable
         UiService = ui;
 
         TickService.Subscribe(this);
-
-        Debug.Log("EnemyControlSystem On");
     }
 
     void OnDestroy()
@@ -66,7 +64,5 @@ public class CombatService : MonoBehaviour, ITickable
     public void ShipDamage(WeaponRoomInstance room, EnemyInstance target, double damage)
     {
         target.CurrentLife -= damage;
-
-        Debug.Log($"{room.Name} causou {damage} em {target.Name}");
     }
 }

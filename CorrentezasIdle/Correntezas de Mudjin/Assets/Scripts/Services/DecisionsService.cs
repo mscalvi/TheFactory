@@ -29,9 +29,6 @@ public class DecisionsService : MonoBehaviour
 
         DestinationOptions = new List<DestinationInstance>();
 
-        Debug.Log("DecisionsService On");
-        Debug.Log($"Primeira Expedição: {GameState.FirstExpedition}");
-
         if (GameState.FirstExpedition)
         {
             DestinationOptions.Clear();
@@ -43,15 +40,11 @@ public class DecisionsService : MonoBehaviour
 
             PlayerPrefs.SetInt("HasInitialized", 1);
             PlayerPrefs.Save();
-
-            Debug.Log($"Primeira Expedição: {GameState.FirstExpedition}");
         }
     }
 
     public void FirstDecision(List<DestinationInstance> options)
     {
-        Debug.Log("Primeira Escolha de Destination Iniciada");
-
         TickService.Pause();
 
         Panel.ShowDestinations(options, FirstSelection);
@@ -59,11 +52,8 @@ public class DecisionsService : MonoBehaviour
 
     private void FirstSelection(DestinationInstance selected)
     {
-        Debug.Log($"Primeiro Destino: {selected.Name}");
-
         if (DataState == null)
         {
-            Debug.LogError("DataState não encontrada na Decision!");
             return;
         }
 
@@ -84,11 +74,8 @@ public class DecisionsService : MonoBehaviour
 
     private void DestinationSelection(DestinationInstance selected)
     {
-        Debug.Log($"Destino escolhido: {selected.Name}");
-
         if (DataState == null)
         {
-            Debug.LogError("DataState não encontrada na Decision!");
             return;
         }
 
@@ -106,7 +93,7 @@ public class DecisionsService : MonoBehaviour
 
     private int CalculateDays(PathInstance Path, ShipInstance Ship)
     {
-        int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.Speed);
+        int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.BaseSpeed);
 
         return RealDistance;
     }

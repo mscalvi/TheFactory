@@ -27,8 +27,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         TickService.Subscribe(this);
 
-        Debug.Log("EnemySpawnService On");
-
         foreach (var enemy in DataState.enemies)
         {
             EnemyWeights.Add(enemy.Key, enemy.Value.Rarity);
@@ -53,7 +51,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         if (spawn < Expedition.BaseSpawnChance)
         {
             IncreaseChance();
-            Debug.Log($"Sem Spawn. Nível aumentado.");
 
             return;
         }
@@ -62,7 +59,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         if (validEnemies.Count == 0)
         {
-            Debug.Log("Nenhum inimigo válido para spawn!");
             return;
         }
 
@@ -89,7 +85,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         if (chosen == null)
         {
-            Debug.LogError("Nenhum inimigo selecionado!");
             return;
         }
 
@@ -139,8 +134,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             {
                 var oldValue = EnemyWeights[key];
                 EnemyWeights[key] = EnemyWeights[key] + ((1f / EnemyWeights[key]) * 0.1f);
-
-                Debug.Log($"Inimigo {key}: Raridade de {oldValue} para {EnemyWeights[key]}.");
             }
         }
     }

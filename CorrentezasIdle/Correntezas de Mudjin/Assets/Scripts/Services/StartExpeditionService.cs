@@ -13,22 +13,16 @@ public class StartExpeditionService : MonoBehaviour
 
         LoadExpedition(GameState);
         LoadCurrency(GameState);
-
-        Debug.Log("ShipControlService On");
     }
 
     void LoadExpedition(GameState Game)
     {
         Game.ExpeditionState = new ExpeditionState();
-
-        Debug.Log($"Expedition Ativa");
     }
 
     void LoadCurrency(GameState Game)
     {
         Game.ExpeditionState.ExpeditionCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
-
-        Debug.Log($"Carregando Currencies");
 
         if (Game.ExpeditionState.ExpeditionCurrency != null)
         {
@@ -45,10 +39,6 @@ public class StartExpeditionService : MonoBehaviour
             };
 
             Game.ExpeditionState.ExpeditionCurrency.Add(currency.Key, clone);
-
-            Debug.Log($"Currency carregada: {currency.Value.Id}");
         }
-
-        Debug.Log("Dinheiro Carregado");
     }
 }

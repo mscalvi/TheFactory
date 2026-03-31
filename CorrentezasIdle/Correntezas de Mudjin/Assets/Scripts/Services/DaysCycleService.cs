@@ -21,8 +21,6 @@ public class DaysCycleService : MonoBehaviour, ITickable
         UiService = ui;
 
         TickService.Subscribe(this);
-
-        Debug.Log("DaysCicleService On");
     }
 
     void OnDestroy()

@@ -20,8 +20,6 @@ public class ExpeditionService : MonoBehaviour, ITickable
         UiService = ui;
 
         TickService.Subscribe(this);
-
-        Debug.Log("ExpeditionService On");
     }
 
     void OnDestroy()

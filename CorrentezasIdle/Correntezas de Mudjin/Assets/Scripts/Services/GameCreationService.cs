@@ -12,8 +12,6 @@ public class GameCreationService : MonoBehaviour
         GameState = gs;
         DataBase = db;
 
-        Debug.Log("GameCreationService Iniciado");
-
         CreateDataState(db);
         BuildShips();
     }
@@ -32,6 +30,7 @@ public class GameCreationService : MonoBehaviour
         var destinations = new Dictionary<string, DestinationInstance>();
         var paths = new Dictionary<string, PathInstance>();
         var currencies = new Dictionary<string, CurrencyInstance>();
+        var upgrades = new Dictionary<string, UpgradeInstance>();
 
         foreach (var ship in DataBase.ships)
         {
@@ -87,6 +86,12 @@ public class GameCreationService : MonoBehaviour
             currencies.Add(currency.Id, instance);
         }
 
+        foreach (var upgrade in DataBase.upgrade)
+        {
+            var instance = new UpgradeInstance(upgrade);
+            upgrades.Add(upgrade.Id, instance);
+        }
+
         GameState.DataState.ships = ships;
         GameState.DataState.tripulations = tripulation;
         GameState.DataState.weapons = weapons;
@@ -96,6 +101,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.destinations = destinations;
         GameState.DataState.paths = paths;
         GameState.DataState.currencies = currencies;
+        GameState.DataState.upgrades = upgrades;
     }
 
     private void BuildShips()

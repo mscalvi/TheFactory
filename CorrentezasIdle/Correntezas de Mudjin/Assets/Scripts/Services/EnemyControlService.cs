@@ -15,8 +15,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
         TickService = Tick;
 
         TickService.Subscribe(this);
-
-        Debug.Log("EnemyControlService On");
     }
 
     void OnDestroy()

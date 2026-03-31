@@ -20,4 +20,6 @@ public class DataState
     public Dictionary<string, PathInstance> paths;
 
     public Dictionary<string, CurrencyInstance> currencies;
+
+    public Dictionary<string, UpgradeInstance> upgrades;
 }

@@ -18,6 +18,16 @@ public class UpgradeHelper
 
     public enum EffectType
     {
-        BuildingUnlock,
+        Unlock,
+        ShipLife,
+        ShipArmor,
     }
+
+    public enum TargetType 
+    {
+        None,
+        Ship,
+        Weapon,
+    }
+
 }

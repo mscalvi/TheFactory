@@ -21,3 +21,12 @@ public static class RunEvents
 
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 }
+
+public static class ShipEvents
+{
+    public static Action OnAtributeChange;
+    public static Action<UpgradeInstance> OnUpgradeBuy;
+    public static Action<UpgradeInstance> AfterUpgradeBuy;
+    public static Action<UpgradeInstance> OnCanBuyChange;
+
+}

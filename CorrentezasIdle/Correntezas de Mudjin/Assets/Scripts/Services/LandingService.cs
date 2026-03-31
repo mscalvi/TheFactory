@@ -14,15 +14,12 @@ public class LandingService : MonoBehaviour
 
         if (GameState.ShipState == null)
         {
-            Debug.Log("Nenhum Navio Carregado.");
             CreateInitialState();
             CreateFirstExpedition();
         } else
         {
             // Carregar a configuração anterior
         }
-
-        Debug.Log("LandingService Finalizado");
     }
 
     public void CreateFirstExpedition()
@@ -41,8 +38,6 @@ public class LandingService : MonoBehaviour
         }
 
         GameState.ShipState.Ship = ship;
-
-        Debug.Log($"Navio: {GameState.ShipState.Ship.Name} Tripulado e Equipado.");
     }
 
     public void CreateInitialState()
@@ -59,8 +54,6 @@ public class LandingService : MonoBehaviour
             if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 GameState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
-
-                Debug.Log($"Currency pronta: {currency.Value.Type}");
             }
         }
     }

@@ -10,8 +10,6 @@ public class CurrencyService : MonoBehaviour
     public void Initialize(ExpeditionState expedition)
     {
         ExpeditionState = expedition;
-
-        Debug.Log("CurrencyService On");
     }
 
     public double Get(CurrencyType type)
@@ -32,8 +30,6 @@ public class CurrencyService : MonoBehaviour
         currencies[type].Amount = Get(type) + amount;
 
         RunEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
-
-        Debug.Log($"{currencies[type].Id} : {currencies[type].Amount}");
     }
 
     public bool Spend(CurrencyType type, double amount)
@@ -47,8 +43,6 @@ public class CurrencyService : MonoBehaviour
         currencies[type].Amount = current - amount;
 
         RunEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
-
-        Debug.Log($"{currencies[type].Id} : {currencies[type].Amount}");
 
         return true;
     }
