@@ -6,10 +6,13 @@ using static GameHelper;
 public class LandingController : MonoBehaviour
 {
     [SerializeField] LandingService LandingService;
+    [SerializeField] PermanentUpgradeService PermanentUpgradeService;
 
     private void Awake()
     {
         var Game = GameController.Instance.GameState;
+
+        var Ship = GameController.Instance.GameState.ShipState;
 
         if (Game == null)
         {
@@ -17,9 +20,12 @@ public class LandingController : MonoBehaviour
             return;
         }
 
-        var db = GameController.Instance.GameState.DataState;
+        var Data = GameController.Instance.GameState.DataState;
 
         // Landing
-        LandingService.Initialize(Game, db);
+        LandingService.Initialize(Game, Data);
+
+        // Buildings
+        PermanentUpgradeService.Initialize(Ship);
     }
 }

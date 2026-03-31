@@ -98,7 +98,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         CombatEvents.OnEnemySpawn?.Invoke(instance);
 
-        Debug.Log($"{chosen.Name} Spawnado.");
+        Debug.Log($"{instance.Name} Spawnado. Vida: {instance.Life}. Dano: {instance.Damage}");
     }
 
     Dictionary<string, EnemyInstance> SpawnChance()

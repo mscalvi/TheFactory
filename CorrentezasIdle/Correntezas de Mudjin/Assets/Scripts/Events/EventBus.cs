@@ -11,8 +11,9 @@ public static class CombatEvents
 
 public static class RunEvents
 {
-    public static Action OnRunStart;
-    public static Action OnRunEnd;
+    public static Action OnExpeditionStart;
+    public static Action OnExpeditionEnd;
+    public static Action OnFinalPopUpClose;
 
     public static Action OnDayFinish;
     public static Action OnNightFinish;
@@ -29,4 +30,9 @@ public static class ShipEvents
     public static Action<UpgradeInstance> AfterUpgradeBuy;
     public static Action<UpgradeInstance> OnCanBuyChange;
 
+}
+
+public static class BuildingEvents
+{
+    public static Action<UpgradeInstance> OnUpgradeBuy;
 }

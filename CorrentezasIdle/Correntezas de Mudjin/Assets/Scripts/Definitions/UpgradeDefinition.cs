@@ -55,8 +55,6 @@ public class UpgradeDefinition : MonoBehaviour
 
     void OnBuyClicked()
     {
-        Debug.Log($"Comprando {upgrade.Name}");
-
         ExpeditionPurchaseService.BuyUpgrade(upgrade);
     }
 }

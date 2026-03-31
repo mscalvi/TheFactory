@@ -34,7 +34,7 @@ MonoBehaviour:
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
   Experience: 2
-  Rarity: 5
+  Rarity: 0
   State: 0
   EnemyType: 1
   PathType: 0

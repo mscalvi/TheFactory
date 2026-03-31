@@ -19,8 +19,6 @@ public class ShipControlService : MonoBehaviour, ITickable
         TickService = Tick;
 
         TickService.Subscribe(this);
-
-        Debug.Log("ShipControlService On");
     }
 
     public void OnTick(float dt)

@@ -7,13 +7,16 @@ public class ExpeditionService : MonoBehaviour, ITickable
     private TickService TickService;
     private ExpeditionUiService UiService;
     private ShipState ShipState;
+    private GameState GameState;
     private ExpeditionState ExpeditionState;
 
-    public void Initialize(ExpeditionState expeditionState, ShipState shipState, TickService Tick, ExpeditionUiService ui)
+    public void Initialize(ExpeditionState expeditionState, ShipState shipState, GameState game, TickService Tick, ExpeditionUiService ui)
     {
         ShipState = shipState;
 
         ExpeditionState = expeditionState;
+
+        GameState = game;
 
         TickService = Tick;
 
@@ -31,20 +34,15 @@ public class ExpeditionService : MonoBehaviour, ITickable
     {
         if (ShipState.Ship.CurrentLife <= 0)
         {
-            EndExpedition();
-        }
-
-        if (ExpeditionState.ExpeditionStatus == ExpeditionStatus.Complete)
-        {
-            Debug.Log("Vitória!");
-            RunEvents.OnDestinationArrival?.Invoke();
-            TickService.Pause();
+            Death();
         }
     }
 
-    public void EndExpedition()
+    public void Death()
     {
         Debug.Log("Game Over!");
+        ExpeditionState.ExpeditionStatus = ExpeditionStatus.GameOver;
+        RunEvents.OnExpeditionEnd?.Invoke();
         TickService.Pause();
     }
 

@@ -17,8 +17,6 @@ public class UnnamedTripulationService : MonoBehaviour, ITickable
         TickService = Tick;
 
         TickService.Subscribe(this);
-
-        Debug.Log("UnnamedTripulationService On");
     }
 
     public void OnTick(float dt)

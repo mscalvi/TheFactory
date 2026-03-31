@@ -1,0 +1,66 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class EndExpeditionService : MonoBehaviour
+{
+    private ExpeditionState ExpeditionState;
+    private GameState GameState;
+
+    private DecisionsService DecisionsService;
+    public void Initialize(ExpeditionState expedition, GameState gameState, DecisionsService decisions)
+    {
+        ExpeditionState = expedition;
+        GameState = gameState;
+
+        DecisionsService = decisions;
+    }
+
+    public void TransferCurrencies()
+    {
+        foreach (var currency in ExpeditionState.ExpeditionCurrency)
+        {
+            GameState.CompanyCurrency[currency.Key] = currency.Value;
+        }
+    }
+
+    public void CallFinalPopUp()
+    {
+        if (ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.GameOver)
+        {
+            DecisionsService.LastDecision(false);
+        } else if (ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Finished)
+        {
+            ExpeditionState.FirstExpedition = false;
+            GameState.FirstExpedition = false;
+            DecisionsService.LastDecision(true);
+        }
+    }
+
+    public void LoadLandingPage()
+    {
+        SceneManager.LoadScene("LandingScene");
+    }
+
+    void OnEnable()
+    {
+        RunEvents.OnExpeditionEnd += EndExpedition;
+        RunEvents.OnFinalPopUpClose += EndScene;
+    }
+
+    void OnDisable()
+    {
+        RunEvents.OnExpeditionEnd -= EndExpedition;
+        RunEvents.OnFinalPopUpClose -= EndScene;
+    }
+
+    void EndExpedition()
+    {
+        TransferCurrencies();
+        CallFinalPopUp();
+    }
+
+    void EndScene()
+    {
+        LoadLandingPage();
+    }
+}

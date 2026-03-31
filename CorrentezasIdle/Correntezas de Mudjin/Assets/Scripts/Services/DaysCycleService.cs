@@ -50,7 +50,16 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
             if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)
             {
-                ExpeditionState.ExpeditionStatus = ExpeditionStatus.Complete;
+                if (!ExpeditionState.FirstExpedition)
+                {
+                    ExpeditionState.ExpeditionStatus = ExpeditionStatus.Arrival;
+                    RunEvents.OnDestinationArrival?.Invoke();
+                } else
+                {
+                    ExpeditionState.ExpeditionStatus = ExpeditionStatus.Finished;
+                    Debug.Log($"Rota Finalizada");
+                    RunEvents.OnExpeditionEnd?.Invoke();
+                }
             }
             else
             {

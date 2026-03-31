@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.SearchService;
 using UnityEngine;
 using static GameHelper;
 
@@ -9,34 +10,39 @@ public class DecisionsService : MonoBehaviour
 {
     private TickService TickService;
     private ExpeditionService ExpeditionService;
+
     private GameState GameState;
     private ShipState ShipState;
     private DataState DataState;
     private ExpeditionState ExpeditionState;
-    private DecisionsPopUpDesigner Panel;
+
+    private DecisionsPopUpDesigner DecisionPanel;
+    private FinalPopUpDesigner FinalPanel;
 
     private List<DestinationInstance> DestinationOptions;
 
-    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, DataState db, ExpeditionService expeditionService)
+    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, DataState db, ExpeditionService expeditionService, FinalPopUpDesigner finalpanel)
     {
         TickService = tick;
+        ExpeditionService = expeditionService;
+
         ExpeditionState = expedition;
         ShipState = ship;
         GameState = game;
-        Panel = panel;
         DataState = db;
-        ExpeditionService = expeditionService;
+
+        DecisionPanel = panel;
+        FinalPanel = finalpanel;
 
         DestinationOptions = new List<DestinationInstance>();
 
         if (GameState.FirstExpedition)
         {
+            ExpeditionState.FirstExpedition = true;
+
             DestinationOptions.Clear();
             DestinationOptions.Add(DataState.destinations.GetValueOrDefault("d101"));
             FirstDecision(DestinationOptions);
-
-            // Mudar para um SaveService
-            GameState.FirstExpedition = false;
 
             PlayerPrefs.SetInt("HasInitialized", 1);
             PlayerPrefs.Save();
@@ -47,23 +53,21 @@ public class DecisionsService : MonoBehaviour
     {
         TickService.Pause();
 
-        Panel.ShowDestinations(options, FirstSelection);
+        // Removido, deixar entrada automática
+        //DecisionPanel.ShowDestinations(options, FirstSelection);
+
+        FirstSelection(DataState.destinations.GetValueOrDefault("d101"));
     }
 
     private void FirstSelection(DestinationInstance selected)
     {
-        if (DataState == null)
-        {
-            return;
-        }
-
         ExpeditionState.OldDestination = DataState.destinations.GetValueOrDefault("d000");
         ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
         ExpeditionState.NewDestination = selected;
 
         ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
 
-        Panel.Hide();
+        DecisionPanel.Hide();
 
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.Running;
 
@@ -72,13 +76,15 @@ public class DecisionsService : MonoBehaviour
         ExpeditionService.NewDestinationChose();
     }
 
+    public void DestinationDecision(List<DestinationInstance> options)
+    {
+        TickService.Pause();
+
+        DecisionPanel.ShowDestinations(options, DestinationSelection);
+    }
+
     private void DestinationSelection(DestinationInstance selected)
     {
-        if (DataState == null)
-        {
-            return;
-        }
-
         ExpeditionState.OldDestination = ExpeditionState.NewDestination;
         // trocar para PathService e definir rota entre os dois destinos
         ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
@@ -86,9 +92,21 @@ public class DecisionsService : MonoBehaviour
 
         ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
 
-        Panel.Hide();
+        DecisionPanel.Hide();
 
         TickService.Resume();
+    }
+
+    public void LastDecision(bool victory)
+    {
+        TickService.Pause();
+
+        FinalPanel.ShowResults(victory, ExpeditionState, LastSelecion);
+    }
+
+    private void LastSelecion(bool victory)
+    {
+        RunEvents.OnFinalPopUpClose?.Invoke();
     }
 
     private int CalculateDays(PathInstance Path, ShipInstance Ship)
@@ -96,5 +114,22 @@ public class DecisionsService : MonoBehaviour
         int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.BaseSpeed);
 
         return RealDistance;
+    }
+
+    void OnEnable()
+    {
+        RunEvents.OnDestinationArrival += ChooseDestination;
+    }
+
+    void OnDisable()
+    {
+        RunEvents.OnDestinationArrival += ChooseDestination;
+    }
+
+    void ChooseDestination()
+    {
+        // OptionsService.Destinations();
+        // DestinationDecision();
+        TickService.Pause();
     }
 }

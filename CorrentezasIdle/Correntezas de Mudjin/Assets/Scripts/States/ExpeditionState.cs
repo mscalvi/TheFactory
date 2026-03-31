@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ExpeditionState
 {
-    // public ExpeditionConfiguration CurrentExpedition;
+    // Basic
+    public bool FirstExpedition;
 
     // Day/Night Service
-    public int BaseTicksPerPhase = 75;
+    public int BaseTicksPerPhase = 75; // mudar pra 300
     public bool IsDay { get; set; } = true;
     public int DestinationDayCounter = 1;
     public int DayCounter = 1;

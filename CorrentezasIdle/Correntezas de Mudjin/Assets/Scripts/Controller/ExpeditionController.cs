@@ -19,6 +19,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] EnemyProgressService EnemyProgressService;
     [SerializeField] EnemySpawnerService EnemySpawnerService;
     [SerializeField] EnemyControllerService EnemyControllerService;
+    [SerializeField] ExpeditionPricingService ExpeditionPricingService;
 
     // Ship
     [SerializeField] ShipControlService ShipControlService;
@@ -33,6 +34,8 @@ public class ExpeditionController : MonoBehaviour
 
     // Outros Mecanismos Úteis
     [SerializeField] DecisionsPopUpDesigner DecisionsPanel;
+    [SerializeField] FinalPopUpDesigner FinalPanel;
+    [SerializeField] EndExpeditionService EndExpeditionService;
 
     private void Awake()
     {
@@ -84,6 +87,8 @@ public class ExpeditionController : MonoBehaviour
 
         EnemyControllerService.Initialize(Expedition, TickService);
 
+        ExpeditionPricingService.Initialize(Expedition, db);
+
         // Ship
         ShipControlService.Initialize(Ship, Game, TickService);
 
@@ -92,16 +97,18 @@ public class ExpeditionController : MonoBehaviour
         // Ambos
         CombatService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
 
-        ExpeditionService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
+        ExpeditionService.Initialize(Expedition, Ship, Game, TickService, ExpeditionUiService);
 
         WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
 
         ExpeditionUpgradeService.Initialize(Expedition, db, Ship);
 
         // Outros
-        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, ExpeditionService);
+        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, ExpeditionService, FinalPanel);
+
+        EndExpeditionService.Initialize(Expedition, Game, DecisionsService);
 
         // Events
-        RunEvents.OnRunStart?.Invoke();
+        RunEvents.OnExpeditionStart?.Invoke();
     }
 }

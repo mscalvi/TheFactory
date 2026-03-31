@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\Configurations\WeaponRoomInitialConfiguration.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
     <Compile Include="Assets\Scripts\Services\EnemyProgressService.cs" />
+    <Compile Include="Assets\Scripts\Designer\FinalPopUpDesigner.cs" />
     <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
     <Compile Include="Assets\Scripts\Services\CurrencyService.cs" />
     <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
@@ -97,8 +98,11 @@
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
     <Compile Include="Assets\Scripts\Designer\LandingPageDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\StartExpeditionService.cs" />
+    <Compile Include="Assets\Scripts\Services\ExpeditionPricingService.cs" />
+    <Compile Include="Assets\Scripts\Services\EndExpeditionService.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
+    <Compile Include="Assets\Scripts\Services\PermanentUpgradeService.cs" />
     <Compile Include="Assets\Scripts\Models\AmmoModel.cs" />
     <Compile Include="Assets\Scripts\Services\DaysCycleService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionUiService.cs" />

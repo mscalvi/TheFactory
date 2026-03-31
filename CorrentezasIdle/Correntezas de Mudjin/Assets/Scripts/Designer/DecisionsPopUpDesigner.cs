@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class DecisionsPopUpDesigner : MonoBehaviour
 {
     [SerializeField] GameObject DecisionPanel;
-    [SerializeField] GameObject MinimizeBtn;
+    [SerializeField] Button MinimizeBtn;
     [SerializeField] Button Opt1Btn;
     [SerializeField] Button Opt2Btn;
     [SerializeField] Button Opt3Btn;

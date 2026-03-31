@@ -12,7 +12,7 @@ public class EnemyProgressService : MonoBehaviour
 
     public void ApplyProgression(EnemyInstance enemy)
     {
-        int days = Expedition.DayCounter;
+        int days = Expedition.DayCounter - 1;
 
         enemy.Life = Calculate(enemy.Life, enemy.LifeGrowth, days);
         enemy.CurrentLife = enemy.Life;

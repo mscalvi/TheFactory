@@ -71,7 +71,7 @@ public class ExpeditionUiService : MonoBehaviour
 
     public void LifeTextSet()
     {
-        CurrentLifeText.text = ShipState.Ship.CurrentLife.ToString() + " / " + ShipState.Ship.MaxLife.ToString();
+        CurrentLifeText.text = ShipState.Ship.CurrentLife.ToString("N0") + " / " + ShipState.Ship.MaxLife.ToString("N0");
     }
 
     public void EnemiesTotalSet()
@@ -209,7 +209,7 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.AfterUpgradeBuy += RefreshUpgradeUi;
         ShipEvents.OnCanBuyChange += RefreshUpgradeUi;
 
-        RunEvents.OnRunStart += RefreshUi;
+        RunEvents.OnExpeditionStart += RefreshUi;
     }
 
     void OnDisable()
@@ -223,7 +223,7 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.AfterUpgradeBuy -= RefreshUpgradeUi;
         ShipEvents.OnCanBuyChange -= RefreshUpgradeUi;
 
-        RunEvents.OnRunStart -= RefreshUi;
+        RunEvents.OnExpeditionStart -= RefreshUi;
     }
 
     void RefreshUi()

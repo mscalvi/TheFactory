@@ -20,8 +20,6 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
         TickService.Subscribe(this);
 
         CombatService = combatService;
-
-        Debug.Log("WeaponRoomService On");
     }
 
     public void OnTick(float dt)
