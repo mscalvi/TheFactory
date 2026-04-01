@@ -10,6 +10,21 @@ public class UpgradeHelper
         Permanent,
     }
 
+    public enum UpgradeMenu
+    {
+        None,
+        Ship,
+        Crew,
+        Room,
+    }
+
+    public enum UpgradeBuilding
+    {
+        None,
+        CompanyRoom,
+        PlanningRoom,
+    }
+
     public enum UpgradeType
     {
         Additive,

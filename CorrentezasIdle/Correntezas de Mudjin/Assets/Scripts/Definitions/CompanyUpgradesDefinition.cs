@@ -4,31 +4,33 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UpgradeDefinition : MonoBehaviour
+public class CompanyUpgradeDefinition : MonoBehaviour
 {
     public TMP_Text UpgradeName;
     public TMP_Text UpgradeDescription;
     public TMP_Text UpgradeActualValue;
+    public TMP_Text UpgradeActualLevel;
+    public TMP_Text UpgradeTime;
     public TMP_Text UpgradePrice;
     public Button UpgradeButton;
 
     private bool CanBuyUpgrade;
 
     private UpgradeInstance upgrade;
-    private ExpeditionPurchaseService ExpeditionPurchaseService;
+    private CompanyPurchaseService CompanyPurchaseService;
 
-    public void Setup(UpgradeInstance upgradeInstance, ExpeditionPurchaseService purchaseService)
+    public void Setup(UpgradeInstance upgradeInstance, CompanyPurchaseService purchaseService)
     {
         upgrade = upgradeInstance;
 
-        ExpeditionPurchaseService = purchaseService;
+        CompanyPurchaseService = purchaseService;
 
         UpgradeName.text = upgrade.Name;
         UpgradeDescription.text = upgrade.Description;
 
-        if(upgrade.UpgradeScope == UpgradeHelper.UpgradeScope.Expedition)
+        if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
         {
-            if(upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+            if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
                 UpgradeActualValue.text = "+" + (upgrade.ActualValue).ToString("N2");
             }
@@ -55,6 +57,6 @@ public class UpgradeDefinition : MonoBehaviour
 
     void OnBuyClicked()
     {
-        ExpeditionPurchaseService.BuyUpgrade(upgrade);
+        CompanyPurchaseService.BuyUpgrade(upgrade);
     }
 }

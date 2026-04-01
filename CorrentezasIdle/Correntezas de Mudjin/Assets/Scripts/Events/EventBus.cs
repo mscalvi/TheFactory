@@ -35,4 +35,10 @@ public static class ShipEvents
 public static class BuildingEvents
 {
     public static Action<UpgradeInstance> OnUpgradeBuy;
+    public static Action<UpgradeInstance> OnCanBuyChange;
+}
+
+public static class CompanyEvents
+{
+    public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 }

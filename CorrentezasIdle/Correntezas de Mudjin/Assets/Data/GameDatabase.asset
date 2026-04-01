@@ -81,4 +81,9 @@ MonoBehaviour:
   upgrade:
   - {fileID: 11400000, guid: 34cfd73021a80574ca259d7ba4f1c078, type: 2}
   - {fileID: 11400000, guid: 3e6b7c4db95db604695bf3e66cc7e9c2, type: 2}
-  - {fileID: 11400000, guid: ce2dc0233676be448b637577ea157b84, type: 2}
+  - {fileID: 11400000, guid: 765be19125fe5b54cb80e770cfbbf83c, type: 2}
+  - {fileID: 11400000, guid: 34ba763f25b72c74ca9b070693ea83f7, type: 2}
+  - {fileID: 11400000, guid: cbe04692ffd2e0d4faa0416814226a51, type: 2}
+  buildings:
+  - {fileID: 11400000, guid: e07cdbe7b04c89e4787a1be2f1e93619, type: 2}
+  - {fileID: 11400000, guid: 0c143775c11eae349a3870df8ec2761d, type: 2}

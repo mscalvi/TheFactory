@@ -10,9 +10,12 @@ public class UpgradeInstance
     public string Name;
     public string Description;
 
-    public UpgradeHelper.UpgradeScope UpgradeScope;
     public UpgradeHelper.UpgradeType UpgradeType;
     public UpgradeHelper.EffectType EffectType;
+
+    public UpgradeHelper.UpgradeScope Scope;
+    public UpgradeHelper.UpgradeMenu ExpeditionMenu;
+    public UpgradeHelper.UpgradeBuilding Building;
 
     public double UpgradeValue;
     public double StartValue;
@@ -39,9 +42,12 @@ public class UpgradeInstance
         Name = model.Name;
         Description = model.Description;
 
-        UpgradeScope = model.UpgradeScope;
         UpgradeType = model.UpgradeType;
         EffectType = model.EffectType;
+
+        Scope = model.Scope;
+        Building = model.Building;
+        ExpeditionMenu = model.ExpeditionMenu;
 
         UpgradeValue = model.UpgradeValue;
         StartValue = model.StartValue;

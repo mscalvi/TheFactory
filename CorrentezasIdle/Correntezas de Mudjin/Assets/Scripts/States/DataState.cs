@@ -22,4 +22,6 @@ public class DataState
     public Dictionary<string, CurrencyInstance> currencies;
 
     public Dictionary<string, UpgradeInstance> upgrades;
+
+    public Dictionary<string, BuildingInstance> buildings;
 }

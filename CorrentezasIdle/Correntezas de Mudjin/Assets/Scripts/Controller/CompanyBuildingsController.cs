@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static GameHelper;
 
-public class LandingController : MonoBehaviour
+public class CompanyBuildingsController : MonoBehaviour
 {
-    [SerializeField] LandingService LandingService;
-    [SerializeField] PermanentUpgradeService PermanentUpgradeService;
+    [SerializeField] CompanyPurchaseService CompanyPurchaseService;
+
+    [SerializeField] CompanyBuildingsService CompanyBuildingsService;
 
     private void Awake()
     {
@@ -26,9 +26,6 @@ public class LandingController : MonoBehaviour
             return;
         }
 
-        // Landing
-        LandingService.Initialize(Game, Data);
-
         var Ship = GameController.Instance.GameState.ShipState;
 
         if (Ship == null)
@@ -38,6 +35,8 @@ public class LandingController : MonoBehaviour
         }
 
         // Buildings
-        PermanentUpgradeService.Initialize(Ship);
+        CompanyPurchaseService.Initialize(Data);
+
+        CompanyBuildingsService.Initialize(Data, CompanyPurchaseService);
     }
 }

@@ -10,9 +10,12 @@ public class UpgradeModel : ScriptableObject
     public string Description;
 
 
-    public UpgradeHelper.UpgradeScope UpgradeScope;
     public UpgradeHelper.UpgradeType UpgradeType;
     public UpgradeHelper.EffectType EffectType;
+
+    public UpgradeHelper.UpgradeScope Scope;
+    public UpgradeHelper.UpgradeMenu ExpeditionMenu;
+    public UpgradeHelper.UpgradeBuilding Building;
 
     public double UpgradeValue;
     public double StartValue;

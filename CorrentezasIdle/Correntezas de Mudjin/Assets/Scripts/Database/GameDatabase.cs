@@ -21,4 +21,6 @@ public class GameDatabase : ScriptableObject
     public CurrencyModel[] currency;
 
     public UpgradeModel[] upgrade;
+
+    public BuildingModel[] buildings;
 }

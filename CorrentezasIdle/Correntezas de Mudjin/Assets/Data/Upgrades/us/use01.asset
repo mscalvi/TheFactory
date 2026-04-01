@@ -15,9 +15,11 @@ MonoBehaviour:
   Id: use01
   Name: Ship Total Life
   Description: 
-  UpgradeScope: 0
   UpgradeType: 1
   EffectType: 1
+  Scope: 0
+  ExpeditionMenu: 1
+  Building: 0
   UpgradeValue: 0.1
   StartValue: 1
   TargetType: 1

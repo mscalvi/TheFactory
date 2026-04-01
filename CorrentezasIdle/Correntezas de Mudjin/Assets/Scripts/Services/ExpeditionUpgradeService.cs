@@ -137,7 +137,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
         }
     }
 
-
+    // Events
     void OnEnable()
     {
         ShipEvents.OnUpgradeBuy += UpgradeBought;

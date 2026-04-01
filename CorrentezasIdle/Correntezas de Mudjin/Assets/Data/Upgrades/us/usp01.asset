@@ -10,19 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: use03
+  m_Name: usp01
   m_EditorClassIdentifier: 
-  Id: use03
-  Name: Laranja
+  Id: usp01
+  Name: Ship Inicial Life
   Description: 
-  UpgradeScope: 0
-  UpgradeType: 0
-  EffectType: 2
-  UpgradeValue: 0.4
+  UpgradeType: 1
+  EffectType: 1
+  Scope: 1
+  ExpeditionMenu: 0
+  Building: 1
+  UpgradeValue: 0.1
+  StartValue: 1
   TargetType: 1
   TargetId: 
   UnlockId: 0
   MaxBuy: 0
   Cost: 5
-  CostGrowth: 1.13
-  UnlockStatus: 2
+  CostGrowth: 1.11
+  Currency: 2
+  UnlockStatus: 4

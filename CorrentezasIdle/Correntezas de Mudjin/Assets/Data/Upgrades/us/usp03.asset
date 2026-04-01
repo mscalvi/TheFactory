@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: use02
+  m_Name: usp03
   m_EditorClassIdentifier: 
-  Id: use02
-  Name: Ship Absolute Armor
+  Id: usp03
+  Name: Ship Inicial Armor
   Description: 
   UpgradeType: 0
   EffectType: 2
-  Scope: 0
-  ExpeditionMenu: 1
-  Building: 0
+  Scope: 1
+  ExpeditionMenu: 0
+  Building: 2
   UpgradeValue: 0.4
   StartValue: 0
   TargetType: 1
@@ -28,5 +28,5 @@ MonoBehaviour:
   MaxBuy: 0
   Cost: 5
   CostGrowth: 1.13
-  Currency: 0
+  Currency: 2
   UnlockStatus: 4

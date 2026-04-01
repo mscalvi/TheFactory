@@ -28,11 +28,11 @@ public class ExpeditionUiService : MonoBehaviour
     [SerializeField] CurrencyDefinition CurrencyPrefab;
 
     [SerializeField] Transform ExpeditionShipUpgradesPanel;
-    [SerializeField] UpgradeDefinition UpgradePrefab;
+    [SerializeField] ExpeditionUpgradeDefinition UpgradePrefab;
 
     Dictionary<CurrencyType, CurrencyDefinition> companyUI = new();
     Dictionary<CurrencyType, CurrencyDefinition> expeditionUI = new();
-    Dictionary<string, UpgradeDefinition> shipUpgradeUI = new();
+    Dictionary<string, ExpeditionUpgradeDefinition> shipUpgradeUI = new();
 
     public void Initialize(ExpeditionState expeditionState, ShipState shipState, GameState gameState, DataState dataState, ExpeditionPurchaseService purchaseService)
     {
@@ -188,8 +188,14 @@ public class ExpeditionUiService : MonoBehaviour
             if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
                 continue;
 
+            if (upgrade.Value.Scope != UpgradeHelper.UpgradeScope.Expedition)
+                continue;
+
+            if (upgrade.Value.ExpeditionMenu != UpgradeHelper.UpgradeMenu.Ship)
+                continue;
+
             var obj = Instantiate(UpgradePrefab, parent);
-            var ui = obj.GetComponent<UpgradeDefinition>();
+            var ui = obj.GetComponent<ExpeditionUpgradeDefinition>();
 
             ui.Setup(upgrade.Value, ExpeditionPurchaseService);
 

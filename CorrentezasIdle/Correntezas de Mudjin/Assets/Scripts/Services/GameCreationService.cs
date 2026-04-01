@@ -14,6 +14,7 @@ public class GameCreationService : MonoBehaviour
 
         CreateDataState(db);
         BuildShips();
+        BuildBuildings();
     }
 
     private void CreateDataState(GameDatabase DataBase)
@@ -31,6 +32,7 @@ public class GameCreationService : MonoBehaviour
         var paths = new Dictionary<string, PathInstance>();
         var currencies = new Dictionary<string, CurrencyInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
+        var buildings = new Dictionary<string, BuildingInstance>();
 
         foreach (var ship in DataBase.ships)
         {
@@ -92,6 +94,12 @@ public class GameCreationService : MonoBehaviour
             upgrades.Add(upgrade.Id, instance);
         }
 
+        foreach (var building in DataBase.buildings)
+        {
+            var instance = new BuildingInstance(building);
+            buildings.Add(building.Id, instance);
+        }
+
         GameState.DataState.ships = ships;
         GameState.DataState.tripulations = tripulation;
         GameState.DataState.weapons = weapons;
@@ -102,6 +110,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.paths = paths;
         GameState.DataState.currencies = currencies;
         GameState.DataState.upgrades = upgrades;
+        GameState.DataState.buildings = buildings;
     }
 
     private void BuildShips()
@@ -125,6 +134,25 @@ public class GameCreationService : MonoBehaviour
             //    string subId = ship.Value.Id + i.ToString();
             //    var instance = new OtherRoomInstance(ship.Value.OtherRoomSlots[i].OtherRoomModel, subId);
             //}
+        }
+    }
+
+    private void BuildBuildings()
+    {
+        foreach (var building in GameState.DataState.buildings)
+        {
+            building.Value.Upgrades = new List<UpgradeInstance>();
+
+            foreach (var upgrade in GameState.DataState.upgrades)
+            {
+                if (upgrade.Value.Scope != UpgradeHelper.UpgradeScope.Permanent)
+                    continue;
+
+                if (upgrade.Value.Building != building.Value.Type)
+                    continue;
+
+                building.Value.Upgrades.Add(upgrade.Value);
+            }
         }
     }
 }

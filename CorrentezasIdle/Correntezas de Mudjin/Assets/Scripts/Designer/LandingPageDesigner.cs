@@ -17,8 +17,23 @@ public class LandingPageDesigner : MonoBehaviour
         SceneManager.LoadScene("ExpeditionScene");
     }
 
-    public void ShipConfigButton()
+    public void ShipButton()
     {
         SceneManager.LoadScene("ShipConfigScene");
+    }
+
+    public void CrewButton()
+    {
+        SceneManager.LoadScene("CrewConfigScene");
+    }
+
+    public void CompanyButton()
+    {
+        SceneManager.LoadScene("CompanyBuildingsScene");
+    }
+
+    public void MapButton()
+    {
+        SceneManager.LoadScene("MapScene");
     }
 }
