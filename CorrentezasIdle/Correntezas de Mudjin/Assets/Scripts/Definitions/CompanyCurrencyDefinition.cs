@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CurrencyDefinition : MonoBehaviour
+public class CompanyCurrencyDefinition : MonoBehaviour
 {
     public TMP_Text CurrencyName;
     public TMP_Text CurrencyAmount;

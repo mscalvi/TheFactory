@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class CompanyBuildingsController : MonoBehaviour
 {
+    [SerializeField] CompanyUiService CompanyUiService;
     [SerializeField] CompanyPurchaseService CompanyPurchaseService;
-
-    [SerializeField] CompanyBuildingsService CompanyBuildingsService;
+    [SerializeField] CompanyUpgradeService CompanyUpgradeService;
+    [SerializeField] CompanyCurrencyService CompanyCurrencyService;
+    [SerializeField] CompanyPricingService CompanyPricingService;
 
     private void Awake()
     {
@@ -34,9 +36,14 @@ public class CompanyBuildingsController : MonoBehaviour
             return;
         }
 
-        // Buildings
-        CompanyPurchaseService.Initialize(Data);
+        CompanyCurrencyService.Initialize(Game, Data);
 
-        CompanyBuildingsService.Initialize(Data, CompanyPurchaseService);
+        CompanyPurchaseService.Initialize(Game, Data, CompanyCurrencyService);
+
+        CompanyUiService.Initialize(Game, Data, CompanyPurchaseService);
+
+        CompanyUpgradeService.Initialize(Game, Data, Ship);
+
+        CompanyPricingService.Initialize(Game, Data);
     }
 }

@@ -30,7 +30,6 @@ public class EndExpeditionService : MonoBehaviour
             DecisionsService.LastDecision(false);
         } else if (ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Finished)
         {
-            ExpeditionState.FirstExpedition = false;
             GameState.FirstExpedition = false;
             DecisionsService.LastDecision(true);
         }

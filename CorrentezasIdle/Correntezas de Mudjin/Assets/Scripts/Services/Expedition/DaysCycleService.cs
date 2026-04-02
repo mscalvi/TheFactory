@@ -5,15 +5,18 @@ using static GameHelper;
 public class DaysCycleService : MonoBehaviour, ITickable
 {
     private TickService TickService;
-
+    
+    private GameState GameState;
     private ExpeditionState ExpeditionState;
 
     private ExpeditionUiService UiService;
 
     int tickCounter = 0;
 
-    public void Initialize(ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui)
+    public void Initialize(GameState gameState, ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui)
     {
+        GameState = gameState;
+
         ExpeditionState = expeditionState;
 
         TickService = Tick;
@@ -50,7 +53,7 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
             if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)
             {
-                if (!ExpeditionState.FirstExpedition)
+                if (!GameState.FirstExpedition)
                 {
                     ExpeditionState.ExpeditionStatus = ExpeditionStatus.Arrival;
                     RunEvents.OnDestinationArrival?.Invoke();

@@ -10,6 +10,8 @@ public class BuildingInstance
 
     public string Name;
 
+    public bool Note;
+
     public List<UpgradeInstance> Upgrades;
 
     public UpgradeHelper.UpgradeBuilding Type;
@@ -21,6 +23,8 @@ public class BuildingInstance
         Id = model.Id;
 
         Name = model.Name;
+
+        Note = false;
 
         Upgrades = model.Upgrades;
 

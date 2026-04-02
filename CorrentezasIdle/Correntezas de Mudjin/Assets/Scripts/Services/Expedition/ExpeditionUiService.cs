@@ -25,13 +25,13 @@ public class ExpeditionUiService : MonoBehaviour
 
     [SerializeField] Transform CompanyCurrencyPanel;
     [SerializeField] Transform ExpeditionCurrencyPanel;
-    [SerializeField] CurrencyDefinition CurrencyPrefab;
+    [SerializeField] ExpeditionCurrencyDefinition CurrencyPrefab;
 
     [SerializeField] Transform ExpeditionShipUpgradesPanel;
     [SerializeField] ExpeditionUpgradeDefinition UpgradePrefab;
 
-    Dictionary<CurrencyType, CurrencyDefinition> companyUI = new();
-    Dictionary<CurrencyType, CurrencyDefinition> expeditionUI = new();
+    Dictionary<CurrencyType, ExpeditionCurrencyDefinition> companyUI = new();
+    Dictionary<CurrencyType, ExpeditionCurrencyDefinition> expeditionUI = new();
     Dictionary<string, ExpeditionUpgradeDefinition> shipUpgradeUI = new();
 
     public void Initialize(ExpeditionState expeditionState, ShipState shipState, GameState gameState, DataState dataState, ExpeditionPurchaseService purchaseService)
@@ -163,7 +163,7 @@ public class ExpeditionUiService : MonoBehaviour
         {
             var obj = Instantiate(CurrencyPrefab, parent);
 
-            var ui = obj.GetComponent<CurrencyDefinition>();
+            var ui = obj.GetComponent<ExpeditionCurrencyDefinition>();
             ui.Setup(currency, DataState);
 
             if (parent == CompanyCurrencyPanel)

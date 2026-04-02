@@ -14,7 +14,6 @@ public class LandingService : MonoBehaviour
 
         if (GameState.ShipState == null)
         {
-            CreateInitialState();
             CreateFirstExpedition();
         } else
         {
@@ -38,23 +37,5 @@ public class LandingService : MonoBehaviour
         }
 
         GameState.ShipState.Ship = ship;
-    }
-
-    public void CreateInitialState()
-    {
-        CreateCurrencies();
-    }
-
-    public void CreateCurrencies()
-    {
-        GameState.CompanyCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
-
-        foreach (var currency in DataState.currencies) 
-        {
-            if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-            {
-                GameState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
-            }
-        }
     }
 }

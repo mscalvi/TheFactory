@@ -28,7 +28,7 @@ public class CompanyUpgradeDefinition : MonoBehaviour
         UpgradeName.text = upgrade.Name;
         UpgradeDescription.text = upgrade.Description;
 
-        if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+        if (upgrade.Scope == UpgradeHelper.UpgradeScope.Permanent)
         {
             if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
@@ -46,6 +46,7 @@ public class CompanyUpgradeDefinition : MonoBehaviour
         }
 
         UpgradePrice.text = upgrade.ActualCost.ToString("N0");
+        UpgradeActualLevel.text = upgrade.ActualBuy.ToString("N0");
 
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);

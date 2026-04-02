@@ -351,10 +351,10 @@ GameObject:
   - component: {fileID: 8232319545051426762}
   - component: {fileID: 5378020811613334755}
   - component: {fileID: 3239016366886065042}
-  - component: {fileID: 4908442824307002726}
   - component: {fileID: 4688960421622688376}
+  - component: {fileID: 3482011983423526568}
   m_Layer: 5
-  m_Name: CurrencyPanel
+  m_Name: CompanyCurrencyPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -420,20 +420,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4908442824307002726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8505500138095346876}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91879fe4e5c4fdc419a386255b889774, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CurrencyName: {fileID: 6548282392892077101}
-  CurrencyAmount: {fileID: 7894107678013214468}
 --- !u!114 &4688960421622688376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,8 +435,22 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 200
+  m_PreferredWidth: -1
   m_PreferredHeight: 250
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3482011983423526568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8505500138095346876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0f7422822e4b0a4c8995fd4169c9543, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrencyName: {fileID: 6548282392892077101}
+  CurrencyAmount: {fileID: 7894107678013214468}

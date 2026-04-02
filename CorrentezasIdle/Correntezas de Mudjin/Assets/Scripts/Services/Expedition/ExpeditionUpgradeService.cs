@@ -2,24 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PermanentUpgradeService : MonoBehaviour
+public class ExpeditionUpgradeService : MonoBehaviour
 {
+    private ExpeditionState ExpeditionState;
+    private DataState DataState;
     private ShipState ShipState;
 
-    private Dictionary<string, UpgradeInstance> ActiveUpgrades;
-
-    public void Initialize (ShipState shipState)
+    public void Initialize(ExpeditionState expeditionState, DataState dataState, ShipState shipState)
     {
-        ShipState = shipState;
+        ExpeditionState = expeditionState;
 
-        ActiveUpgrades = new Dictionary<string, UpgradeInstance>();
+        DataState = dataState;
+
+        ShipState = shipState;
     }
 
     public void AddUpgrade(UpgradeInstance upgrade)
     {
-        if (!ActiveUpgrades.TryGetValue(upgrade.Id, out var upgradeInstance))
+        var upgrades = ExpeditionState.ExpeditionUpgrades;
+
+        if (!upgrades.TryGetValue(upgrade.Id, out var upgradeInstance))
         {
-            ActiveUpgrades[upgrade.Id] = upgrade;
+            upgrades[upgrade.Id] = upgrade;
         }
 
         Recalculate();
@@ -29,7 +33,7 @@ public class PermanentUpgradeService : MonoBehaviour
     {
         ApplyBaseStats();
 
-        foreach (var upgrade in ActiveUpgrades)
+        foreach (var upgrade in ExpeditionState.ExpeditionUpgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
@@ -37,27 +41,29 @@ public class PermanentUpgradeService : MonoBehaviour
             }
         }
 
-        foreach (var upgrade in ActiveUpgrades)
+        foreach (var upgrade in ExpeditionState.ExpeditionUpgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
             {
                 ApplyUpgrade(upgrade.Value);
             }
         }
+
+        ShipEvents.OnAtributeChange?.Invoke();
     }
 
     private void ApplyBaseStats()
     {
-        ShipState.Ship.BaseLife = ShipState.Ship.StartLife;
-        ShipState.Ship.BaseArmor = ShipState.Ship.StartArmor;
+        ShipState.Ship.MaxLife = ShipState.Ship.BaseLife;
+        ShipState.Ship.MaxArmor = ShipState.Ship.BaseArmor;
     }
 
     private void ApplyUpgrade(UpgradeInstance upgrade)
     {
         upgrade.ActualValue = upgrade.StartValue;
 
-        switch (upgrade.TargetType)
-        {
+        switch (upgrade.TargetType) 
+        { 
             case UpgradeHelper.TargetType.Ship:
                 switch (upgrade.EffectType)
                 {
@@ -84,7 +90,9 @@ public class PermanentUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.BaseArmor *= upgrade.ActualValue;
+            ShipState.Ship.MaxArmor *= upgrade.ActualValue;
+
+            ShipState.Ship.CurrentArmor = ShipState.Ship.MaxArmor;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
@@ -94,7 +102,9 @@ public class PermanentUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.BaseArmor += upgrade.ActualValue;
+            ShipState.Ship.MaxArmor += upgrade.ActualValue;
+
+            ShipState.Ship.CurrentArmor = ShipState.Ship.MaxArmor;
         }
     }
 
@@ -107,7 +117,9 @@ public class PermanentUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.BaseLife *= upgrade.ActualValue;
+            ShipState.Ship.MaxLife *= upgrade.ActualValue;
+
+            ShipState.Ship.CurrentLife = ShipState.Ship.MaxLife;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
@@ -117,20 +129,37 @@ public class PermanentUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.BaseLife += upgrade.ActualValue;
+            ShipState.Ship.MaxLife += upgrade.ActualValue;
+
+            ShipState.Ship.CurrentLife = ShipState.Ship.MaxLife;
         }
     }
 
     // Events
-
     void OnEnable()
     {
-        BuildingEvents.OnUpgradeBuy += UpgradeBought;
+        ShipEvents.OnUpgradeBuy += UpgradeBought;
+        RunEvents.OnExpeditionEnd += ResetExpeditionUpgrades;
     }
 
     void OnDisable()
     {
-        BuildingEvents.OnUpgradeBuy -= UpgradeBought;
+        ShipEvents.OnUpgradeBuy -= UpgradeBought;
+        RunEvents.OnExpeditionEnd -= ResetExpeditionUpgrades;
+    }
+
+    void ResetExpeditionUpgrades()
+    {
+        var upgrades = ExpeditionState.ExpeditionUpgrades;
+
+        foreach (var upgrade in upgrades)
+        {
+            upgrade.Value.ActualBuy = 0;
+        }
+
+        Recalculate();
+
+        ExpeditionState.ExpeditionUpgrades.Clear();
     }
 
     void UpgradeBought(UpgradeInstance upgrade)
@@ -138,3 +167,5 @@ public class PermanentUpgradeService : MonoBehaviour
         AddUpgrade(upgrade);
     }
 }
+
+

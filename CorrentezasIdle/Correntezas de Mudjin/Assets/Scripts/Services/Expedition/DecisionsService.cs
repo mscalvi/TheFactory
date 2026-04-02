@@ -38,7 +38,7 @@ public class DecisionsService : MonoBehaviour
 
         if (GameState.FirstExpedition)
         {
-            ExpeditionState.FirstExpedition = true;
+            GameState.FirstExpedition = true;
 
             DestinationOptions.Clear();
             DestinationOptions.Add(DataState.destinations.GetValueOrDefault("d101"));

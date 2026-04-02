@@ -7,26 +7,30 @@ public class CompanyPurchaseService : MonoBehaviour
     private GameState GameState;
     private DataState DataState;
 
-    private Dictionary<string, UpgradeInstance> ActiveUpgrades;
+    private CompanyCurrencyService CompanyCurrencyService;
 
-    public void Initialize(DataState dataState)
+    public void Initialize(GameState gameState, DataState dataState, CompanyCurrencyService currencyService)
     {
+        GameState = gameState;
+
         DataState = dataState;
 
-        ActiveUpgrades = new Dictionary<string, UpgradeInstance>();
-
-        foreach (var upgrade in DataState.upgrades)
-        {
-            if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-            {
-                ActiveUpgrades.Add(upgrade.Key, upgrade.Value);
-            }
-        }
+        CompanyCurrencyService = currencyService;
     }
 
     public void BuyUpgrade(UpgradeInstance upgrade)
     {
+        if (!GameState.CompanyCurrency.TryGetValue(upgrade.Currency, out var Currency))
+            return;
 
+        if (Currency.Amount >= upgrade.ActualCost)
+        {
+            CompanyCurrencyService.Spend(upgrade.Currency, upgrade.ActualCost);
+
+            CanBuyCheck(upgrade.Currency);
+
+            CompanyEvents.OnUpgradeBuy?.Invoke(upgrade);
+        }
     }
 
     public void CanBuyCheck(CurrencyHelper.CurrencyType type)
@@ -34,7 +38,7 @@ public class CompanyPurchaseService : MonoBehaviour
         if (!GameState.CompanyCurrency.TryGetValue(type, out var Currency))
             return;
 
-        foreach (var upgrade in ActiveUpgrades)
+        foreach (var upgrade in GameState.CompanyUpgrades)
         {
             if (upgrade.Value.Currency == type)
             {
@@ -47,7 +51,7 @@ public class CompanyPurchaseService : MonoBehaviour
                     upgrade.Value.CanBuy = false;
                 }
 
-                BuildingEvents.OnCanBuyChange?.Invoke(upgrade.Value);
+                CompanyEvents.OnCanBuyChange?.Invoke(upgrade.Value);
             }
         }
     }

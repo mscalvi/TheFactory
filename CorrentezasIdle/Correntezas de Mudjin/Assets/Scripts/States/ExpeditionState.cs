@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class ExpeditionState
 {
-    // Basic
-    public bool FirstExpedition;
-
     // Day/Night Service
-    public int BaseTicksPerPhase = 75; // mudar pra 300
+    public int BaseTicksPerPhase = 20; // mudar pra 150
     public bool IsDay { get; set; } = true;
     public int DestinationDayCounter = 1;
     public int DayCounter = 1;
@@ -31,4 +28,7 @@ public class ExpeditionState
     public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> ExpeditionCurrency;
     public double BaseDayReward = 1;
     public double BaseNightReward = 1;
+
+    // Upgrades
+    public Dictionary<string, UpgradeInstance> ExpeditionUpgrades;
 }

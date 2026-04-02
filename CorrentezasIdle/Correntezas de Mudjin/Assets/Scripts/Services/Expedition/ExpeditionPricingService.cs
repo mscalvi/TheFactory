@@ -16,9 +16,7 @@ public class ExpeditionPricingService : MonoBehaviour
 
     private void AtualizePrice(UpgradeInstance upgrade)
     {
-        Debug.Log($"Velho preço do {upgrade.Id}: {upgrade.ActualCost}");
         upgrade.ActualCost = upgrade.Cost * System.Math.Pow(upgrade.ActualBuy + 1, upgrade.CostGrowth);
-        Debug.Log($"Novo preço do {upgrade.Id}: {upgrade.ActualCost}");
 
         ShipEvents.AfterUpgradeBuy?.Invoke(upgrade);
     }

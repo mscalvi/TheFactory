@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static CurrencyHelper;
 
-public class CurrencyService : MonoBehaviour
+public class ExpeditionCurrencyService : MonoBehaviour
 {
     private ExpeditionState ExpeditionState;
 

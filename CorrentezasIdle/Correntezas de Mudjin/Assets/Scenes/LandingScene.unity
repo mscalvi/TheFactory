@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 211441657}
   - component: {fileID: 211441658}
+  - component: {fileID: 211441659}
   m_Layer: 0
   m_Name: LandingDesigner
   m_TagString: Untagged
@@ -167,6 +168,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a6e171977199b4791e49280e3df3d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &211441659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 211441655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffc7c9984f9c2fc42980f647f01dbb9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CrewButton: {fileID: 297858649}
+  CompanyButton: {fileID: 779107902}
+  ShipButton: {fileID: 1402389086}
+  MapButton: {fileID: 2081216210}
+  ExpeditionButton: {fileID: 1267980981}
 --- !u!1 &289718575
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,7 +195,6 @@ GameObject:
   m_Component:
   - component: {fileID: 289718578}
   - component: {fileID: 289718577}
-  - component: {fileID: 289718576}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -185,18 +202,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &289718576
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 289718575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a05bd97f1c891547a0e44442791b0d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &289718577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1172,7 +1177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LandingService: {fileID: 289718577}
-  PermanentUpgradeService: {fileID: 289718576}
+  UiService: {fileID: 211441659}
 --- !u!1 &1267980979
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class ExpeditionController : MonoBehaviour
 
     // Base
     [SerializeField] TickService TickService;
-    [SerializeField] CurrencyService CurrencyService;
+    [SerializeField] ExpeditionCurrencyService CurrencyService;
     [SerializeField] ExpeditionPurchaseService ExpeditionPurchaseService;
     [SerializeField] ExpeditionUiService ExpeditionUiService;
 
@@ -58,6 +58,7 @@ public class ExpeditionController : MonoBehaviour
         }
 
         Expedition.ExpeditionStatus = ExpeditionStatus.Paused;
+        Expedition.ExpeditionUpgrades = new Dictionary<string, UpgradeInstance>();
 
         var Ship = GameController.Instance.GameState.ShipState;
 
@@ -79,7 +80,7 @@ public class ExpeditionController : MonoBehaviour
         ExpeditionUiService.Initialize(Expedition, Ship, Game, db, ExpeditionPurchaseService);
 
         // Expedition
-        DaysCycleService.Initialize(Expedition, TickService, ExpeditionUiService);
+        DaysCycleService.Initialize(Game, Expedition, TickService, ExpeditionUiService);
 
         EnemyProgressService.Initialize(Expedition);
 

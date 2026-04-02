@@ -537,7 +537,7 @@ GameObject:
   - component: {fileID: 7423255608816063458}
   - component: {fileID: 1252177246217429620}
   m_Layer: 5
-  m_Name: CompanyUpgradePanel
+  m_Name: CompanyUpgradePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -2,31 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExpeditionUpgradeService : MonoBehaviour
+public class CompanyUpgradeService : MonoBehaviour
 {
-    private ExpeditionState Expedition;
+    private GameState GameState;
     private DataState DataState;
     private ShipState ShipState;
 
-    private Dictionary<string, UpgradeInstance> ActiveUpgrades;
-
-    public void Initialize(ExpeditionState expeditionState, DataState dataState, ShipState shipState)
+    public void Initialize (GameState gameState, DataState dataState, ShipState shipState)
     {
-        Expedition = expeditionState;
+        GameState = gameState;
 
         DataState = dataState;
 
         ShipState = shipState;
-
-        ActiveUpgrades = new Dictionary<string, UpgradeInstance>();
     }
 
     public void AddUpgrade(UpgradeInstance upgrade)
     {
-        if (!ActiveUpgrades.TryGetValue(upgrade.Id, out var upgradeInstance))
+        var upgrades = GameState.CompanyUpgrades;
+
+        if (!upgrades.TryGetValue(upgrade.Id, out var instance))
         {
-            ActiveUpgrades[upgrade.Id] = upgrade;
+            upgrades[upgrade.Id] = upgrade;
+            instance = upgrade;
         }
+
+        instance.ActualBuy++;
 
         Recalculate();
     }
@@ -35,7 +36,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
     {
         ApplyBaseStats();
 
-        foreach (var upgrade in ActiveUpgrades)
+        foreach (var upgrade in GameState.CompanyUpgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
@@ -43,29 +44,27 @@ public class ExpeditionUpgradeService : MonoBehaviour
             }
         }
 
-        foreach (var upgrade in ActiveUpgrades)
+        foreach (var upgrade in GameState.CompanyUpgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
             {
                 ApplyUpgrade(upgrade.Value);
             }
         }
-
-        ShipEvents.OnAtributeChange?.Invoke();
     }
 
     private void ApplyBaseStats()
     {
-        ShipState.Ship.MaxLife = ShipState.Ship.BaseLife;
-        ShipState.Ship.MaxArmor = ShipState.Ship.BaseArmor;
+        ShipState.Ship.BaseLife = ShipState.Ship.StartLife;
+        ShipState.Ship.BaseArmor = ShipState.Ship.StartArmor;
     }
 
     private void ApplyUpgrade(UpgradeInstance upgrade)
     {
         upgrade.ActualValue = upgrade.StartValue;
 
-        switch (upgrade.TargetType) 
-        { 
+        switch (upgrade.TargetType)
+        {
             case UpgradeHelper.TargetType.Ship:
                 switch (upgrade.EffectType)
                 {
@@ -79,7 +78,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
                 break;
         }
 
-        ShipEvents.AfterUpgradeBuy?.Invoke(upgrade);
+        CompanyEvents.AfterUpgradeBuy?.Invoke(upgrade);
     }
 
     // Modificadores Ship
@@ -92,9 +91,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.MaxArmor *= upgrade.ActualValue;
-
-            ShipState.Ship.CurrentArmor = ShipState.Ship.MaxArmor;
+            ShipState.Ship.BaseArmor *= upgrade.ActualValue;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
@@ -104,9 +101,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.MaxArmor += upgrade.ActualValue;
-
-            ShipState.Ship.CurrentArmor = ShipState.Ship.MaxArmor;
+            ShipState.Ship.BaseArmor += upgrade.ActualValue;
         }
     }
 
@@ -119,9 +114,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.MaxLife *= upgrade.ActualValue;
-
-            ShipState.Ship.CurrentLife = ShipState.Ship.MaxLife;
+            ShipState.Ship.BaseLife *= upgrade.ActualValue;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
@@ -131,34 +124,19 @@ public class ExpeditionUpgradeService : MonoBehaviour
                 upgrade.ActualValue += upgrade.UpgradeValue;
             }
 
-            ShipState.Ship.MaxLife += upgrade.ActualValue;
-
-            ShipState.Ship.CurrentLife = ShipState.Ship.MaxLife;
+            ShipState.Ship.BaseLife += upgrade.ActualValue;
         }
     }
 
     // Events
     void OnEnable()
     {
-        ShipEvents.OnUpgradeBuy += UpgradeBought;
-        RunEvents.OnExpeditionEnd += ResetExpeditionUpgrades;
+        CompanyEvents.OnUpgradeBuy += UpgradeBought;
     }
 
     void OnDisable()
     {
-        ShipEvents.OnUpgradeBuy -= UpgradeBought;
-        RunEvents.OnExpeditionEnd -= ResetExpeditionUpgrades;
-    }
-
-    void ResetExpeditionUpgrades()
-    {
-        foreach(var upgrade in ActiveUpgrades)
-        {
-            upgrade.Value.ActualBuy = 0;
-        }
-
-        Recalculate();
-        ActiveUpgrades.Clear();
+        CompanyEvents.OnUpgradeBuy -= UpgradeBought;
     }
 
     void UpgradeBought(UpgradeInstance upgrade)
@@ -166,5 +144,3 @@ public class ExpeditionUpgradeService : MonoBehaviour
         AddUpgrade(upgrade);
     }
 }
-
-

@@ -12,9 +12,14 @@ public class GameCreationService : MonoBehaviour
         GameState = gs;
         DataBase = db;
 
+        GameState.CompanyCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
+        GameState.CompanyUpgrades = new Dictionary<string, UpgradeInstance>();
+
         CreateDataState(db);
         BuildShips();
+        BuildCurrencies();
         BuildBuildings();
+        BuildCompanyUpgrades();
     }
 
     private void CreateDataState(GameDatabase DataBase)
@@ -145,13 +150,32 @@ public class GameCreationService : MonoBehaviour
 
             foreach (var upgrade in GameState.DataState.upgrades)
             {
-                if (upgrade.Value.Scope != UpgradeHelper.UpgradeScope.Permanent)
-                    continue;
-
                 if (upgrade.Value.Building != building.Value.Type)
                     continue;
 
                 building.Value.Upgrades.Add(upgrade.Value);
+            }
+        }
+    }
+
+    public void BuildCurrencies()
+    {
+        foreach (var currency in GameState.DataState.currencies)
+        {
+            if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                GameState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
+            }
+        }
+    }
+
+    public void BuildCompanyUpgrades()
+    {
+        foreach (var upgrade in GameState.DataState.upgrades)
+        {
+            if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                GameState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
             }
         }
     }

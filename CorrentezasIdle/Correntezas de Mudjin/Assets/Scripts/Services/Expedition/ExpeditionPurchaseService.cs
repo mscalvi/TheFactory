@@ -6,11 +6,11 @@ public class ExpeditionPurchaseService : MonoBehaviour
 {
     private ExpeditionState ExpeditionState;
     private DataState DataState;
-    private CurrencyService CurrencyService;
+    private ExpeditionCurrencyService CurrencyService;
 
     private Dictionary<string, UpgradeInstance> ActiveUpgrades;
 
-    public void Initialize(ExpeditionState expeditionState, DataState dataState, CurrencyService currencyService)
+    public void Initialize(ExpeditionState expeditionState, DataState dataState, ExpeditionCurrencyService currencyService)
     {
         ExpeditionState = expeditionState;
 

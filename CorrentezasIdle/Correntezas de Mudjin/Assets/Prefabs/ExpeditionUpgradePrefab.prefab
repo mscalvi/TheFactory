@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 4530837522473744564}
   - component: {fileID: 8966528119039474826}
   m_Layer: 5
-  m_Name: UpgradePanel
+  m_Name: ExpeditionUpgradePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

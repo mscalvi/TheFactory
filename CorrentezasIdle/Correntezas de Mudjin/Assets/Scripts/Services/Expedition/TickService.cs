@@ -19,7 +19,7 @@ public class TickService : MonoBehaviour
     
     public void Initialize()
     {
-        Debug.Log("TickService On");
+
     }
 
     public void Subscribe(ITickable t)
