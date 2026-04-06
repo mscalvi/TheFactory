@@ -15,4 +15,7 @@ public class GameState
 
     public GameHelper.ExpeditionStatus ExpeditionStatus;
     public bool FirstExpedition = true;
+
+    // Dado programável?
+    public DestinationInstance CurrentBase;
 }

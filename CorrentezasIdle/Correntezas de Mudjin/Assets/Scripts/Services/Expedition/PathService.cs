@@ -1,0 +1,104 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PathService : MonoBehaviour
+{
+    private GameState GameState;
+    private ShipState ShipState;
+    private DataState DataState;
+    private ExpeditionState ExpeditionState;
+
+    private List<DestinationInstance> DestinationOptions;
+    private List<PathInstance> PathOptions;
+
+    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DataState db)
+    {
+        ExpeditionState = expedition;
+        ShipState = ship;
+        GameState = game;
+        DataState = db;
+
+        DestinationOptions = new List<DestinationInstance>();
+        PathOptions = new List<PathInstance>();
+    }
+
+    public void NewDestinationChose(DestinationInstance selected)
+    {
+        if (ExpeditionState.CurrentDestination != null)
+        {
+            ExpeditionState.OldDestination = ExpeditionState.CurrentDestination;
+        }
+
+        if (GameState.FirstExpedition)
+        {
+            ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
+        }
+        else
+        {
+            ExpeditionState.CurrentPath = CalculatePath();
+        }
+        
+        ExpeditionState.NewDestination = selected;
+
+        ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
+    }
+
+    public void NewPathChose(PathInstance selected)
+    {
+        ExpeditionState.OldDestination = ExpeditionState.CurrentDestination;
+        ExpeditionState.NewDestination = null;
+        ExpeditionState.CurrentDestination = null;
+
+        ExpeditionState.CurrentPath = selected;
+
+        ExpeditionState.DestinationArrival = 0;
+    }
+
+    private PathInstance CalculatePath() 
+    {
+        PathModel model = new PathModel();
+        PathInstance path = new PathInstance(model);
+
+        // Fazer!
+
+        return path;
+    }
+
+    // Helpers
+    private int CalculateDays(PathInstance Path, ShipInstance Ship)
+    {
+        int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.BaseSpeed);
+
+        return RealDistance;
+    }
+
+    // Events
+
+    void OnEnable()
+    {
+        RunEvents.OnDestinationArrival += CalculatePathOptions;
+    }
+
+    void OnDisable()
+    {
+        RunEvents.OnDestinationArrival -= CalculatePathOptions;
+    }
+
+    void CalculatePathOptions()
+    {
+        ExpeditionState.CurrentDestination = ExpeditionState.NewDestination;
+        Debug.Log($"Destination Atual: {ExpeditionState.CurrentDestination.Name}");
+
+        if (!GameState.FirstExpedition)
+        {
+            RunEvents.OnPathOptionsCalculated?.Invoke();
+        }
+        else
+        {
+            ExpeditionState.ExpeditionStatus = GameHelper.ExpeditionStatus.Finished;
+            RunEvents.OnExpeditionEnd?.Invoke();
+        }
+    }
+}

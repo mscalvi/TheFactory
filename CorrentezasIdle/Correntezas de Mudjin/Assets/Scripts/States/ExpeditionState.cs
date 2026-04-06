@@ -12,6 +12,7 @@ public class ExpeditionState
 
     // Destination
     public DestinationInstance OldDestination;
+    public DestinationInstance CurrentDestination;
     public DestinationInstance NewDestination;
     public PathInstance CurrentPath;
     public int DestinationArrival = 0;

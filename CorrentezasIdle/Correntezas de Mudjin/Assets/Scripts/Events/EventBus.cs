@@ -18,7 +18,9 @@ public static class RunEvents
     public static Action OnDayFinish;
     public static Action OnNightFinish;
 
+    public static Action OnDestinationChose;
     public static Action OnDestinationArrival;
+    public static Action OnPathOptionsCalculated;
 
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 }

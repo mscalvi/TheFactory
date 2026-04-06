@@ -9,6 +9,8 @@ public class DestinationModel : ScriptableObject
     public string Name;
     public string Description;
 
+    public List<string> CloseDestinations;
+
     public DestinationHelper.DestinationType DestinationType;
     public DestinationHelper.DestinationRegion DestinationRegion;
 

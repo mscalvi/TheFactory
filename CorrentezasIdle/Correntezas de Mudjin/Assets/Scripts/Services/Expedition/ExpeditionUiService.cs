@@ -49,8 +49,15 @@ public class ExpeditionUiService : MonoBehaviour
 
     public void DestinationTextSet()
     {
-        DestinationText.text = ExpeditionState.NewDestination.Name;
-        DaysToGoText.text = ExpeditionState.DestinationArrival.ToString();
+        if(ExpeditionState.DestinationArrival > 0)
+        {
+            DaysToGoText.text = ExpeditionState.DestinationArrival.ToString();
+            DestinationText.text = ExpeditionState.NewDestination.Name;
+        } else
+        {
+            DaysToGoText.text = "";
+            DestinationText.text = ExpeditionState.CurrentPath.Name;
+        }
 
         DayCycleTextSet();
         LifeTextSet();
@@ -208,7 +215,6 @@ public class ExpeditionUiService : MonoBehaviour
     {
         CombatEvents.OnEnemySpawn += RefreshEnemiesUi;
         CombatEvents.OnEnemyDeath += RefreshEnemiesUi;
-        RunEvents.OnCurrencyChange += RefreshCurrencyUi;
 
         ShipEvents.OnAtributeChange += RefreshShipUi;
         ShipEvents.OnUpgradeBuy += RefreshUpgradeUi;
@@ -216,13 +222,16 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.OnCanBuyChange += RefreshUpgradeUi;
 
         RunEvents.OnExpeditionStart += RefreshUi;
+        RunEvents.OnCurrencyChange += RefreshCurrencyUi;
+        RunEvents.OnDestinationChose += DestinationTextSet;
+        RunEvents.OnDayFinish += DayCycleTextSet;
+        RunEvents.OnNightFinish += DayCycleTextSet;
     }
 
     void OnDisable()
     {
         CombatEvents.OnEnemySpawn -= RefreshEnemiesUi;
         CombatEvents.OnEnemyDeath -= RefreshEnemiesUi;
-        RunEvents.OnCurrencyChange -= RefreshCurrencyUi;
 
         ShipEvents.OnAtributeChange -= RefreshShipUi;
         ShipEvents.OnUpgradeBuy -= RefreshUpgradeUi;
@@ -230,6 +239,10 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.OnCanBuyChange -= RefreshUpgradeUi;
 
         RunEvents.OnExpeditionStart -= RefreshUi;
+        RunEvents.OnCurrencyChange -= RefreshCurrencyUi;
+        RunEvents.OnDestinationChose -= DestinationTextSet;
+        RunEvents.OnDayFinish -= DayCycleTextSet;
+        RunEvents.OnNightFinish -= DayCycleTextSet;
     }
 
     void RefreshUi()

@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\Controller\GameController.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\CombatService.cs" />
     <Compile Include="Assets\Scripts\Services\Landing\LandingUiService.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\PathService.cs" />
     <Compile Include="Assets\Scripts\Instances\UpgradeInstance.cs" />
     <Compile Include="Assets\Scripts\States\ShipState.cs" />
     <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />

@@ -67,6 +67,249 @@ public class DecisionsPopUpDesigner : MonoBehaviour
         }
     }
 
+    public void ShowPaths(List<PathInstance> options, Action<PathInstance> onSelected)
+    {
+        Hide();
+
+        Opt1Btn.onClick.RemoveAllListeners();
+        Opt2Btn.onClick.RemoveAllListeners();
+        Opt3Btn.onClick.RemoveAllListeners();
+        Opt4Btn.onClick.RemoveAllListeners();
+
+        Debug.Log("Painel de Deciões Chamado");
+
+        DecisionPanel.SetActive(true);
+
+        Title.text = "Escolha o próximo Caminho";
+
+        if (options.Count > 0)
+        {
+            Opt1Btn.gameObject.SetActive(true);
+            Opt1Title.text = options[0].Name;
+            Opt1Btn.onClick.AddListener(() => onSelected(options[0]));
+        }
+
+        if (options.Count > 1)
+        {
+            Opt2Btn.gameObject.SetActive(true);
+            Opt2Title.text = options[1].Name;
+            Opt2Btn.onClick.AddListener(() => onSelected(options[1]));
+        }
+
+        if (options.Count > 2)
+        {
+            Opt3Btn.gameObject.SetActive(true);
+            Opt3Title.text = options[2].Name;
+            Opt3Btn.onClick.AddListener(() => onSelected(options[2]));
+        }
+
+        if (options.Count > 3)
+        {
+            Opt4Btn.gameObject.SetActive(true);
+            Opt4Title.text = options[3].Name;
+            Opt4Btn.onClick.AddListener(() => onSelected(options[3]));
+        }
+    }
+
+    public void ShowOptions(List<DestinationInstance> Destinations, List<PathInstance> Paths, Action<DestinationInstance> onDestSelected, Action<PathInstance> onPathSelected)
+    {
+        Hide();
+
+        Opt1Btn.onClick.RemoveAllListeners();
+        Opt2Btn.onClick.RemoveAllListeners();
+        Opt3Btn.onClick.RemoveAllListeners();
+        Opt4Btn.onClick.RemoveAllListeners();
+
+        Debug.Log("Painel de Deciões Chamado");
+
+        int totalDest = Destinations.Count;
+        int totalPath = Paths.Count;
+
+        DecisionPanel.SetActive(true);
+
+        Title.text = "Escolha o próximo Caminho";
+
+        switch (totalDest, totalPath)
+        {
+            case (0, 0):
+                break;
+            case (1, 0):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+                break;
+            case (2, 0):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Destinations[1].Name;
+                Opt2Btn.onClick.AddListener(() => onDestSelected(Destinations[1]));
+                break;
+            case (3, 0):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Destinations[1].Name;
+                Opt2Btn.onClick.AddListener(() => onDestSelected(Destinations[1]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Destinations[2].Name;
+                Opt3Btn.onClick.AddListener(() => onDestSelected(Destinations[2]));
+                break;
+            case (4, 0):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Destinations[1].Name;
+                Opt2Btn.onClick.AddListener(() => onDestSelected(Destinations[1]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Destinations[2].Name;
+                Opt3Btn.onClick.AddListener(() => onDestSelected(Destinations[2]));
+
+                Opt4Btn.gameObject.SetActive(true);
+                Opt4Title.text = Destinations[3].Name;
+                Opt4Btn.onClick.AddListener(() => onDestSelected(Destinations[3]));
+                break;
+            case (0, 1):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Paths[0].Name;
+                Opt1Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+                break;
+            case (1, 1):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Paths[0].Name;
+                Opt2Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+                break;
+            case (2, 1):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Destinations[1].Name;
+                Opt2Btn.onClick.AddListener(() => onDestSelected(Destinations[1]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Paths[0].Name;
+                Opt3Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+                break;
+            case (3, 1):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Destinations[1].Name;
+                Opt2Btn.onClick.AddListener(() => onDestSelected(Destinations[1]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Destinations[2].Name;
+                Opt3Btn.onClick.AddListener(() => onDestSelected(Destinations[2]));
+
+                Opt4Btn.gameObject.SetActive(true);
+                Opt4Title.text = Paths[0].Name;
+                Opt4Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+                break;
+            case (0, 2):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Paths[0].Name;
+                Opt1Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Paths[1].Name;
+                Opt2Btn.onClick.AddListener(() => onPathSelected(Paths[1]));
+                break;
+            case (1, 2):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Paths[0].Name;
+                Opt2Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Paths[1].Name;
+                Opt3Btn.onClick.AddListener(() => onPathSelected(Paths[1]));
+                break;
+            case (2, 2):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Destinations[1].Name;
+                Opt2Btn.onClick.AddListener(() => onDestSelected(Destinations[1]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Paths[0].Name;
+                Opt3Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+
+                Opt4Btn.gameObject.SetActive(true);
+                Opt4Title.text = Paths[1].Name;
+                Opt4Btn.onClick.AddListener(() => onPathSelected(Paths[1]));
+                break;
+            case (0, 3):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Paths[0].Name;
+                Opt1Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Paths[1].Name;
+                Opt2Btn.onClick.AddListener(() => onPathSelected(Paths[1]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Paths[2].Name;
+                Opt3Btn.onClick.AddListener(() => onPathSelected(Paths[2]));
+                break;
+            case (1, 3):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Destinations[0].Name;
+                Opt1Btn.onClick.AddListener(() => onDestSelected(Destinations[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Paths[0].Name;
+                Opt2Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Paths[2].Name;
+                Opt3Btn.onClick.AddListener(() => onPathSelected(Paths[1]));
+
+                Opt4Btn.gameObject.SetActive(true);
+                Opt4Title.text = Paths[2].Name;
+                Opt4Btn.onClick.AddListener(() => onPathSelected(Paths[2]));
+                break;
+            case (0, 4):
+                Opt1Btn.gameObject.SetActive(true);
+                Opt1Title.text = Paths[0].Name;
+                Opt1Btn.onClick.AddListener(() => onPathSelected(Paths[0]));
+
+                Opt2Btn.gameObject.SetActive(true);
+                Opt2Title.text = Paths[1].Name;
+                Opt2Btn.onClick.AddListener(() => onPathSelected(Paths[1]));
+
+                Opt3Btn.gameObject.SetActive(true);
+                Opt3Title.text = Paths[2].Name;
+                Opt3Btn.onClick.AddListener(() => onPathSelected(Paths[2]));
+
+                Opt4Btn.gameObject.SetActive(true);
+                Opt4Title.text = Paths[3].Name;
+                Opt4Btn.onClick.AddListener(() => onPathSelected(Paths[3]));
+                break;
+        }
+    }
+
     public void Hide()
     {
         Debug.Log("Painel de Deciões Oculto");

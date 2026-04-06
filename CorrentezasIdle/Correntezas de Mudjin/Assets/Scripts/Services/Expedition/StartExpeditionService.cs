@@ -13,6 +13,7 @@ public class StartExpeditionService : MonoBehaviour
 
         LoadExpedition(GameState);
         LoadCurrency(GameState);
+        LoadDestination(GameState);
     }
 
     void LoadExpedition(GameState Game)
@@ -39,6 +40,14 @@ public class StartExpeditionService : MonoBehaviour
             };
 
             Game.ExpeditionState.ExpeditionCurrency.Add(currency.Key, clone);
+        }
+    }
+
+    void LoadDestination(GameState Game)
+    {
+        if (!Game.FirstExpedition)
+        {
+            Game.ExpeditionState.CurrentDestination = Game.CurrentBase;
         }
     }
 }

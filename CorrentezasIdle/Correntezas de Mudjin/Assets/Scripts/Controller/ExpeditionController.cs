@@ -20,6 +20,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] EnemySpawnerService EnemySpawnerService;
     [SerializeField] EnemyControllerService EnemyControllerService;
     [SerializeField] ExpeditionPricingService ExpeditionPricingService;
+    [SerializeField] PathService PathService;
 
     // Ship
     [SerializeField] ShipControlService ShipControlService;
@@ -80,7 +81,7 @@ public class ExpeditionController : MonoBehaviour
         ExpeditionUiService.Initialize(Expedition, Ship, Game, db, ExpeditionPurchaseService);
 
         // Expedition
-        DaysCycleService.Initialize(Game, Expedition, TickService, ExpeditionUiService);
+        DaysCycleService.Initialize(Game, Expedition, TickService);
 
         EnemyProgressService.Initialize(Expedition);
 
@@ -90,6 +91,8 @@ public class ExpeditionController : MonoBehaviour
 
         ExpeditionPricingService.Initialize(Expedition, db);
 
+        PathService.Initialize(Expedition, Ship, Game, db);
+
         // Ship
         ShipControlService.Initialize(Ship, Game, TickService);
 
@@ -98,14 +101,14 @@ public class ExpeditionController : MonoBehaviour
         // Ambos
         CombatService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
 
-        ExpeditionService.Initialize(Expedition, Ship, Game, TickService, ExpeditionUiService);
+        ExpeditionService.Initialize(Expedition, Ship, Game, TickService);
 
         WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
 
         ExpeditionUpgradeService.Initialize(Expedition, db, Ship);
 
         // Outros
-        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, ExpeditionService, FinalPanel);
+        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, FinalPanel, PathService);
 
         EndExpeditionService.Initialize(Expedition, Game, DecisionsService);
 

@@ -1,4 +1,5 @@
 using Unity.VisualScripting;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DestinationInstance
@@ -8,6 +9,9 @@ public class DestinationInstance
     public string Id;
     public string Name;
     public string Description;
+
+    public List<string> CloseDestinationsList;
+    public Dictionary<DestinationInstance, PathInstance> CloseDestinations;
 
     public DestinationHelper.DestinationType DestinationType;
     public DestinationHelper.DestinationRegion DestinationRegion;
@@ -19,6 +23,9 @@ public class DestinationInstance
         Id = model.Id;
         Name = model.Name;
         Description = model.Description;
+
+        CloseDestinationsList = model.CloseDestinations;
+        CloseDestinations = new Dictionary<DestinationInstance, PathInstance>();
 
         DestinationType = model.DestinationType;
         DestinationRegion = model.DestinationRegion;

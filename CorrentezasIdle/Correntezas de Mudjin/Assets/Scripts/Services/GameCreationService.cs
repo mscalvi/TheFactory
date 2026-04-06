@@ -20,6 +20,9 @@ public class GameCreationService : MonoBehaviour
         BuildCurrencies();
         BuildBuildings();
         BuildCompanyUpgrades();
+        BuildDestinations();
+
+        GameState.CurrentBase = GameState.DataState.destinations.GetValueOrDefault("d101");
     }
 
     private void CreateDataState(GameDatabase DataBase)
@@ -158,7 +161,7 @@ public class GameCreationService : MonoBehaviour
         }
     }
 
-    public void BuildCurrencies()
+    private void BuildCurrencies()
     {
         foreach (var currency in GameState.DataState.currencies)
         {
@@ -169,7 +172,7 @@ public class GameCreationService : MonoBehaviour
         }
     }
 
-    public void BuildCompanyUpgrades()
+    private void BuildCompanyUpgrades()
     {
         foreach (var upgrade in GameState.DataState.upgrades)
         {
@@ -178,5 +181,43 @@ public class GameCreationService : MonoBehaviour
                 GameState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
             }
         }
+    }
+
+    private void BuildDestinations()
+    {
+        foreach (var destination in GameState.DataState.destinations)
+        {
+            foreach (var close in destination.Value.CloseDestinationsList)
+            {
+                var path = PathLocator(destination.Key, close);
+                
+                destination.Value.CloseDestinations.Add(GameState.DataState.destinations.GetValueOrDefault(close), GameState.DataState.paths.GetValueOrDefault(path));
+            }
+        }
+    }
+
+
+    private string PathLocator(string Origin, string Destiny)
+    {
+        string pathId = "";
+
+        foreach (var path in GameState.DataState.paths)
+        {
+            if (path.Value.Destination1.Id == Origin)
+            {
+                if (path.Value.Destination2.Id ==  Destiny)
+                {
+                    pathId = path.Key;
+                }
+            } else if (path.Value.Destination1.Id == Destiny)
+            {
+                if (path.Value.Destination2.Id == Origin)
+                {
+                    pathId = path.Key;
+                }
+            }
+        }
+
+        return pathId;
     }
 }

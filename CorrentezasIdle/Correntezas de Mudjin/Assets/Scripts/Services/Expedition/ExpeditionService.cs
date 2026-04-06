@@ -5,12 +5,11 @@ using static GameHelper;
 public class ExpeditionService : MonoBehaviour, ITickable
 {
     private TickService TickService;
-    private ExpeditionUiService UiService;
     private ShipState ShipState;
     private GameState GameState;
     private ExpeditionState ExpeditionState;
 
-    public void Initialize(ExpeditionState expeditionState, ShipState shipState, GameState game, TickService Tick, ExpeditionUiService ui)
+    public void Initialize(ExpeditionState expeditionState, ShipState shipState, GameState game, TickService Tick)
     {
         ShipState = shipState;
 
@@ -19,8 +18,6 @@ public class ExpeditionService : MonoBehaviour, ITickable
         GameState = game;
 
         TickService = Tick;
-
-        UiService = ui;
 
         TickService.Subscribe(this);
     }
@@ -41,15 +38,16 @@ public class ExpeditionService : MonoBehaviour, ITickable
     public void Death()
     {
         Debug.Log("Game Over!");
+
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.GameOver;
+
         RunEvents.OnExpeditionEnd?.Invoke();
+
         TickService.Pause();
     }
 
     public void NewDestinationChose()
     {
         ExpeditionState.DestinationDayCounter = 1;
-
-        UiService.DestinationTextSet();
     }
 }

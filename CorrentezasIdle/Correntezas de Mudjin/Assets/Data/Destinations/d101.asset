@@ -15,5 +15,11 @@ MonoBehaviour:
   Id: d101
   Name: Grande Isme
   Description: Grande Isme
+  CloseDestinations:
+  - d102
+  - d104
+  - d000
+  - d000
   DestinationType: 0
   DestinationRegion: 0
+  UnlockStatus: 0

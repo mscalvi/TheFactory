@@ -9,19 +9,15 @@ public class DaysCycleService : MonoBehaviour, ITickable
     private GameState GameState;
     private ExpeditionState ExpeditionState;
 
-    private ExpeditionUiService UiService;
-
     int tickCounter = 0;
 
-    public void Initialize(GameState gameState, ExpeditionState expeditionState, TickService Tick, ExpeditionUiService ui)
+    public void Initialize(GameState gameState, ExpeditionState expeditionState, TickService Tick)
     {
         GameState = gameState;
 
         ExpeditionState = expeditionState;
 
         TickService = Tick;
-
-        UiService = ui;
 
         TickService.Subscribe(this);
     }
@@ -51,22 +47,13 @@ public class DaysCycleService : MonoBehaviour, ITickable
                 RunEvents.OnDayFinish?.Invoke();
             }
 
-            if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)
+            if (ExpeditionState.DestinationArrival > 0)
             {
-                if (!GameState.FirstExpedition)
+                if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)
                 {
-                    ExpeditionState.ExpeditionStatus = ExpeditionStatus.Arrival;
-                    RunEvents.OnDestinationArrival?.Invoke();
-                } else
-                {
-                    ExpeditionState.ExpeditionStatus = ExpeditionStatus.Finished;
                     Debug.Log($"Rota Finalizada");
-                    RunEvents.OnExpeditionEnd?.Invoke();
+                    RunEvents.OnDestinationArrival?.Invoke();
                 }
-            }
-            else
-            {
-                UiService.DayCycleTextSet();
             }
         }
     }

@@ -5,11 +5,12 @@ using System.IO;
 using UnityEditor.SearchService;
 using UnityEngine;
 using static GameHelper;
+using static UnityEditor.Progress;
 
 public class DecisionsService : MonoBehaviour
 {
     private TickService TickService;
-    private ExpeditionService ExpeditionService;
+    private PathService PathService;
 
     private GameState GameState;
     private ShipState ShipState;
@@ -20,11 +21,12 @@ public class DecisionsService : MonoBehaviour
     private FinalPopUpDesigner FinalPanel;
 
     private List<DestinationInstance> DestinationOptions;
+    private List<PathInstance> PathOptions;
 
-    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, DataState db, ExpeditionService expeditionService, FinalPopUpDesigner finalpanel)
+    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, DataState db, FinalPopUpDesigner finalpanel, PathService path)
     {
         TickService = tick;
-        ExpeditionService = expeditionService;
+        PathService = path;
 
         ExpeditionState = expedition;
         ShipState = ship;
@@ -35,68 +37,75 @@ public class DecisionsService : MonoBehaviour
         FinalPanel = finalpanel;
 
         DestinationOptions = new List<DestinationInstance>();
+        PathOptions = new List<PathInstance>();
 
         if (GameState.FirstExpedition)
         {
-            GameState.FirstExpedition = true;
-
             DestinationOptions.Clear();
-            DestinationOptions.Add(DataState.destinations.GetValueOrDefault("d101"));
-            FirstDecision(DestinationOptions);
+            DestinationSelection(DataState.destinations.GetValueOrDefault("d101"));
+        } else
+        {
+            TickService.Pause();
 
-            PlayerPrefs.SetInt("HasInitialized", 1);
-            PlayerPrefs.Save();
+            GameModeDecision();
         }
     }
 
-    public void FirstDecision(List<DestinationInstance> options)
+    private void GameModeDecision()
     {
-        TickService.Pause();
+        if (ExpeditionState.CurrentDestination != null)
+        {
+            DestinationOptions.Clear();
+            PathOptions.Clear();
 
-        // Removido, deixar entrada automática
-        //DecisionPanel.ShowDestinations(options, FirstSelection);
+            foreach (var destination in ExpeditionState.CurrentDestination.CloseDestinations)
+            {
+                if (destination.Key.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+                {
+                    DestinationOptions.Add(destination.Key);
+                }
+                else
+                {
+                    PathOptions.Add(destination.Value);
+                }
+            }
 
-        FirstSelection(DataState.destinations.GetValueOrDefault("d101"));
-    }
-
-    private void FirstSelection(DestinationInstance selected)
-    {
-        ExpeditionState.OldDestination = DataState.destinations.GetValueOrDefault("d000");
-        ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
-        ExpeditionState.NewDestination = selected;
-
-        ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
-
-        DecisionPanel.Hide();
-
-        ExpeditionState.ExpeditionStatus = ExpeditionStatus.Running;
-
-        TickService.Resume();
-
-        ExpeditionService.NewDestinationChose();
-    }
-
-    public void DestinationDecision(List<DestinationInstance> options)
-    {
-        TickService.Pause();
-
-        DecisionPanel.ShowDestinations(options, DestinationSelection);
+            DecisionPanel.ShowOptions(DestinationOptions, PathOptions, DestinationSelection, PathSelection);
+        } else
+        {
+            Debug.Log("Ship não possui Destination atual");
+        }
     }
 
     private void DestinationSelection(DestinationInstance selected)
     {
-        ExpeditionState.OldDestination = ExpeditionState.NewDestination;
-        // trocar para PathService e definir rota entre os dois destinos
-        ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
-        ExpeditionState.NewDestination = selected;
+        PathService.NewDestinationChose(selected);
 
-        ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
+        if (ExpeditionState.CurrentDestination == null)
+        {
+            DecisionPanel.Hide();
 
-        DecisionPanel.Hide();
+            TickService.Resume();
 
-        TickService.Resume();
+            RunEvents.OnDestinationChose?.Invoke();
+        }
     }
 
+    private void PathSelection(PathInstance selected)
+    {
+        PathService.NewPathChose(selected);
+
+        if (ExpeditionState.CurrentDestination == null)
+        {
+            DecisionPanel.Hide();
+
+            TickService.Resume();
+
+            RunEvents.OnDestinationChose?.Invoke();
+        }
+    }
+
+    // Game Over
     public void LastDecision(bool victory)
     {
         TickService.Pause();
@@ -109,27 +118,27 @@ public class DecisionsService : MonoBehaviour
         RunEvents.OnFinalPopUpClose?.Invoke();
     }
 
-    private int CalculateDays(PathInstance Path, ShipInstance Ship)
-    {
-        int RealDistance = (int)Math.Ceiling(Path.Distance / Ship.BaseSpeed);
-
-        return RealDistance;
-    }
+    // Events
 
     void OnEnable()
     {
-        RunEvents.OnDestinationArrival += ChooseDestination;
+        RunEvents.OnDestinationArrival += PauseShip;
+        RunEvents.OnPathOptionsCalculated += SendShip;
     }
 
     void OnDisable()
     {
-        RunEvents.OnDestinationArrival += ChooseDestination;
+        RunEvents.OnDestinationArrival -= PauseShip;
+        RunEvents.OnPathOptionsCalculated -= SendShip;
     }
 
-    void ChooseDestination()
+    private void PauseShip()
     {
-        // OptionsService.Destinations();
-        // DestinationDecision();
         TickService.Pause();
+    }
+
+    private void SendShip()
+    {
+        GameModeDecision();
     }
 }

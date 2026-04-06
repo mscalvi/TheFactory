@@ -11,7 +11,6 @@ public class GameHelper
         Paused,
         Running,
         GameOver,
-        Arrival,
         Finished,
     }
 }

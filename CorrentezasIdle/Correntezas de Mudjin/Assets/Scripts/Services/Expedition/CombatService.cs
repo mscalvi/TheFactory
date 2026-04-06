@@ -63,6 +63,7 @@ public class CombatService : MonoBehaviour, ITickable
 
     public void ShipDamage(WeaponRoomInstance room, EnemyInstance target, double damage)
     {
+        Debug.Log($"{room.Id} atirou em {target.Name}, dano: {damage}");
         target.CurrentLife -= damage;
     }
 }

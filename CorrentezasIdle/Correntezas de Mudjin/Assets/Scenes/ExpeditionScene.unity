@@ -2634,6 +2634,7 @@ MonoBehaviour:
   EnemySpawnerService: {fileID: 991191067}
   EnemyControllerService: {fileID: 991191068}
   ExpeditionPricingService: {fileID: 1083699791}
+  PathService: {fileID: 1083699792}
   ShipControlService: {fileID: 1425499447}
   UnnamedTripulationService: {fileID: 1425499446}
   WeaponRoomsService: {fileID: 1425499449}
@@ -3030,6 +3031,7 @@ GameObject:
   - component: {fileID: 1083699788}
   - component: {fileID: 1083699790}
   - component: {fileID: 1083699791}
+  - component: {fileID: 1083699792}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -3183,6 +3185,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a5d0353e8ed4e24c917abe996085ada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1083699792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1516ed28ab02545962b39c0400eb30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1099042370
