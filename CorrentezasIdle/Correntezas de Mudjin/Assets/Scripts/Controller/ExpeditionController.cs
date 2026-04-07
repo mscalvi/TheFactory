@@ -63,6 +63,8 @@ public class ExpeditionController : MonoBehaviour
 
         var Ship = GameController.Instance.GameState.ShipState;
 
+        Debug.Log($"{Ship.Ship.CurrentLife} / {Ship.Ship.MaxLife}");
+
         if (Ship == null)
         {
             Debug.LogError("ShipState NULL -> Criando Nova");

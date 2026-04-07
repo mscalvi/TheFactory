@@ -15,5 +15,10 @@ MonoBehaviour:
   Id: d104
   Name: Bella Keara
   Description: Bella Keara
+  CloseDestinations:
+  - d101
+  - d103
+  - d201
   DestinationType: 0
   DestinationRegion: 0
+  UnlockStatus: 0

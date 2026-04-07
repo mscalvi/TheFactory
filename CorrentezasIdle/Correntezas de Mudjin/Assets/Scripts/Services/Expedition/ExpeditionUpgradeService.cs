@@ -155,6 +155,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
         foreach (var upgrade in upgrades)
         {
             upgrade.Value.ActualBuy = 0;
+            upgrade.Value.ActualCost = upgrade.Value.Cost;
         }
 
         Recalculate();

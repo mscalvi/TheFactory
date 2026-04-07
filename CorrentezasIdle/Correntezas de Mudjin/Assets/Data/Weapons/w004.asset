@@ -22,4 +22,4 @@ MonoBehaviour:
   CriticalDamage: 1.3
   Special: Piercing
   AmmoType: 0
-  UnlockStatus: 1
+  UnlockStatus: 0

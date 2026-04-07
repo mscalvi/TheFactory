@@ -16,6 +16,11 @@ public class DestinationHelper
     public enum DestinationRegion 
     {
         LapaLiandra,
+        Verzassio,
+        TrêsSinos,
+        União,
+        Terivat,
+        Baia,
     }
 
 }

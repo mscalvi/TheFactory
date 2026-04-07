@@ -37,7 +37,7 @@ public class PathService : MonoBehaviour
         }
         else
         {
-            ExpeditionState.CurrentPath = CalculatePath();
+            ExpeditionState.CurrentPath = CalculatePath(selected);
         }
         
         ExpeditionState.NewDestination = selected;
@@ -56,14 +56,28 @@ public class PathService : MonoBehaviour
         ExpeditionState.DestinationArrival = 0;
     }
 
-    private PathInstance CalculatePath() 
+    private PathInstance CalculatePath(DestinationInstance newDestination)
     {
-        PathModel model = new PathModel();
-        PathInstance path = new PathInstance(model);
+        var oldDestination = GameState.ExpeditionState.OldDestination;
 
-        // Fazer!
+        foreach (var path in GameState.DataState.paths)
+        {
+            var p = path.Value;
 
-        return path;
+            bool forward = p.Destination1.Id == oldDestination.Id &&
+                           p.Destination2.Id == newDestination.Id;
+
+            bool backward = p.Destination2.Id == oldDestination.Id &&
+                            p.Destination1.Id == newDestination.Id;
+
+            if (forward || backward)
+            {
+                return p;
+            }
+        }
+
+        Debug.LogError("Path não encontrado!");
+        return null;
     }
 
     // Helpers

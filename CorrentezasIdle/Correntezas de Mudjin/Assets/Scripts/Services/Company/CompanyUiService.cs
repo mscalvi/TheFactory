@@ -186,7 +186,7 @@ public class CompanyUiService : MonoBehaviour
     {
         CompanyEvents.OnCurrencyChange -= RefreshCurrencyUi;
         CompanyEvents.AfterUpgradeBuy -= RefreshUpgradeUi;
-        CompanyEvents.OnCanBuyChange += RefreshUpgradeUi;
+        CompanyEvents.OnCanBuyChange -= RefreshUpgradeUi;
     }
 
     void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)

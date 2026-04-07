@@ -1,6 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class GameCreationService : MonoBehaviour
 {
@@ -189,35 +191,40 @@ public class GameCreationService : MonoBehaviour
         {
             foreach (var close in destination.Value.CloseDestinationsList)
             {
-                var path = PathLocator(destination.Key, close);
-                
-                destination.Value.CloseDestinations.Add(GameState.DataState.destinations.GetValueOrDefault(close), GameState.DataState.paths.GetValueOrDefault(path));
+                var pathId = PathLocator(destination.Key, close);
+
+                var target = GameState.DataState.destinations.GetValueOrDefault(close);
+                var path = GameState.DataState.paths.GetValueOrDefault(pathId);
+
+                if (target == null)
+                {
+                    continue;
+                }
+
+                if (path == null)
+                {
+                    continue;
+                }
+
+                destination.Value.CloseDestinations.Add(target, path);
             }
         }
     }
 
-
-    private string PathLocator(string Origin, string Destiny)
+    private string PathLocator(string origin, string destiny)
     {
-        string pathId = "";
-
         foreach (var path in GameState.DataState.paths)
         {
-            if (path.Value.Destination1.Id == Origin)
-            {
-                if (path.Value.Destination2.Id ==  Destiny)
-                {
-                    pathId = path.Key;
-                }
-            } else if (path.Value.Destination1.Id == Destiny)
-            {
-                if (path.Value.Destination2.Id == Origin)
-                {
-                    pathId = path.Key;
-                }
-            }
+            var p = path.Value;
+
+
+            bool forward = p.Destination1.Id == origin && p.Destination2.Id == destiny;
+            bool backward = p.Destination2.Id == origin && p.Destination1.Id == destiny;
+
+            if (forward || backward)
+                return path.Key;
         }
 
-        return pathId;
+        return null;
     }
 }

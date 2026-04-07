@@ -29,4 +29,4 @@ MonoBehaviour:
   Cost: 5
   CostGrowth: 1.11
   Currency: 0
-  UnlockStatus: 4
+  UnlockStatus: 3

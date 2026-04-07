@@ -19,7 +19,10 @@ public class EndExpeditionService : MonoBehaviour
     {
         foreach (var currency in ExpeditionState.ExpeditionCurrency)
         {
-            GameState.CompanyCurrency[currency.Key] = currency.Value;
+            if(currency.Key != CurrencyHelper.CurrencyType.Experience)
+            {
+                GameState.CompanyCurrency[currency.Key] = currency.Value;
+            }
         }
     }
 

@@ -23,5 +23,4 @@ MonoBehaviour:
   Wis: 0
   Type: 2
   Jobs: 0
-  Weapon: {fileID: 0}
-  UnlockStatus: 1
+  UnlockStatus: 0

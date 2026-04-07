@@ -31,7 +31,6 @@ public static class ShipEvents
     public static Action<UpgradeInstance> OnUpgradeBuy;
     public static Action<UpgradeInstance> AfterUpgradeBuy;
     public static Action<UpgradeInstance> OnCanBuyChange;
-
 }
 
 public static class CompanyEvents

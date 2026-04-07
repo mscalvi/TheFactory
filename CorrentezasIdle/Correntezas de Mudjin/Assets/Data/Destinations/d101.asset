@@ -18,8 +18,7 @@ MonoBehaviour:
   CloseDestinations:
   - d102
   - d104
-  - d000
-  - d000
+  - d301
   DestinationType: 0
   DestinationRegion: 0
   UnlockStatus: 0

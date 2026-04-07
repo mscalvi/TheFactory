@@ -15,5 +15,9 @@ MonoBehaviour:
   Id: d103
   Name: "S\xF3maba"
   Description: "S\xF3maba"
+  CloseDestinations:
+  - d102
+  - d104
   DestinationType: 0
   DestinationRegion: 0
+  UnlockStatus: 0

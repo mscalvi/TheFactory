@@ -18,4 +18,4 @@ MonoBehaviour:
   Type: 0
   Damage: 7
   Special: Slow
-  UnlockStatus: 1
+  UnlockStatus: 0

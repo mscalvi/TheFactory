@@ -14,11 +14,13 @@ public class StartExpeditionService : MonoBehaviour
         LoadExpedition(GameState);
         LoadCurrency(GameState);
         LoadDestination(GameState);
+        LoadShip(GameState);
     }
 
     void LoadExpedition(GameState Game)
     {
         Game.ExpeditionState = new ExpeditionState();
+        Game.ExpeditionState.ActiveEnemies.Clear();
     }
 
     void LoadCurrency(GameState Game)
@@ -49,5 +51,11 @@ public class StartExpeditionService : MonoBehaviour
         {
             Game.ExpeditionState.CurrentDestination = Game.CurrentBase;
         }
+    }
+
+    void LoadShip(GameState Game)
+    {
+        Game.ShipState.Ship.MaxLife = Game.ShipState.Ship.BaseLife;
+        Game.ShipState.Ship.CurrentLife = Game.ShipState.Ship.MaxLife;
     }
 }

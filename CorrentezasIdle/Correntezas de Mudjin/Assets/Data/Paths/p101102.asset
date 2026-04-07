@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: p101102
   m_EditorClassIdentifier: 
   Id: p101102
-  Name: Sul de Liandra
+  Name: Rota Sul de Liandra
   Description: 
-  Distance: 1000
+  Distance: 750
   Destination1: {fileID: 11400000, guid: 03dc437ba5f4db4419c08ed4e68d0435, type: 2}
   Destination2: {fileID: 11400000, guid: 70c1eb38ac495fd4bad268d9475d85bb, type: 2}
   DestinationRegion1: 0
   DestinationRegion2: 0
-  RegionType: 5
   PathType: 2
+  UnlockStatus: 0

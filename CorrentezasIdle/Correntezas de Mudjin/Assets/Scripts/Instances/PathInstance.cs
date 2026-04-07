@@ -17,7 +17,6 @@ public class PathInstance
     public DestinationHelper.DestinationRegion DestinationRegion1;
     public DestinationHelper.DestinationRegion DestinationRegion2;
 
-    public PathHelper.RegionType RegionType;
     public PathHelper.PathType PathType;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
@@ -36,7 +35,6 @@ public class PathInstance
         DestinationRegion1 = model.DestinationRegion1;
         DestinationRegion2 = model.DestinationRegion2;
 
-        RegionType = model.RegionType;
         PathType = model.PathType;
 
         UnlockStatus = model.UnlockStatus;

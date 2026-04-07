@@ -40,8 +40,6 @@ public class ExpeditionPurchaseService : MonoBehaviour
 
             CurrencyService.Spend(upgrade.Currency, upgrade.ActualCost);
 
-            CanBuyCheck(upgrade.Currency);
-
             ShipEvents.OnUpgradeBuy?.Invoke(upgrade);
         }
     }
@@ -66,6 +64,14 @@ public class ExpeditionPurchaseService : MonoBehaviour
                 ShipEvents.OnCanBuyChange?.Invoke(upgrade.Value);
             }
         }
+    }
+
+    public bool CanBuyUpgrade(UpgradeInstance upgrade)
+    {
+        if (!ExpeditionState.ExpeditionCurrency.TryGetValue(upgrade.Currency, out var currency))
+            return false;
+
+        return currency.Amount >= upgrade.ActualCost;
     }
 
 

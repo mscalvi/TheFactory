@@ -15,5 +15,10 @@ MonoBehaviour:
   Id: d102
   Name: Madre Liandra
   Description: Madre Liandra
+  CloseDestinations:
+  - d101
+  - d103
+  - d502
   DestinationType: 2
   DestinationRegion: 0
+  UnlockStatus: 0

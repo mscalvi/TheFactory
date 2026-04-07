@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: p101104
   m_EditorClassIdentifier: 
   Id: p101104
-  Name: Leste de Liandra
+  Name: Rota Leste de Liandra
   Description: 
   Distance: 350
   Destination1: {fileID: 11400000, guid: 03dc437ba5f4db4419c08ed4e68d0435, type: 2}
   Destination2: {fileID: 11400000, guid: ce263e952cfb89645b655dd39e398265, type: 2}
   DestinationRegion1: 0
   DestinationRegion2: 0
-  RegionType: 5
   PathType: 2
+  UnlockStatus: 0

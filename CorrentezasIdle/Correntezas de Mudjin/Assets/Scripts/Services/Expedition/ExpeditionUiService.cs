@@ -110,15 +110,13 @@ public class ExpeditionUiService : MonoBehaviour
 
     public void UpgradesSet(CurrencyHelper.CurrencyType type)
     {
-        var upgrades = DataState.upgrades;
-
-        foreach (var upgrade in upgrades)
+        foreach (var upgrade in DataState.upgrades)
         {
             if (upgrade.Value.Currency != type)
-                return;
+                continue;
 
             if (!shipUpgradeUI.TryGetValue(upgrade.Value.Id, out var ui))
-                return;
+                continue;
 
             ui.Setup(upgrade.Value, ExpeditionPurchaseService);            
         }
@@ -126,8 +124,6 @@ public class ExpeditionUiService : MonoBehaviour
 
     public void UpgradeSet(UpgradeInstance upgrade)
     {
-        var upgrades = DataState.upgrades;
-
         if (!shipUpgradeUI.TryGetValue(upgrade.Id, out var ui))
             return;
 
@@ -140,6 +136,7 @@ public class ExpeditionUiService : MonoBehaviour
         BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
         BuildCurrencies(CurrencyScope.Expedition, ExpeditionCurrencyPanel);
     }
+
     public void BuildCurrencies(CurrencyScope scope, Transform parent)
     {
         var currencies = ExpeditionState.ExpeditionCurrency;
@@ -183,6 +180,7 @@ public class ExpeditionUiService : MonoBehaviour
             }
         }
     }
+
     public void BuildShipUpgrades(Transform parent)
     {
         var upgrades = DataState.upgrades;
@@ -221,7 +219,7 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.AfterUpgradeBuy += RefreshUpgradeUi;
         ShipEvents.OnCanBuyChange += RefreshUpgradeUi;
 
-        RunEvents.OnExpeditionStart += RefreshUi;
+        RunEvents.OnExpeditionStart += GameStart;
         RunEvents.OnCurrencyChange += RefreshCurrencyUi;
         RunEvents.OnDestinationChose += DestinationTextSet;
         RunEvents.OnDayFinish += DayCycleTextSet;
@@ -238,17 +236,25 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.AfterUpgradeBuy -= RefreshUpgradeUi;
         ShipEvents.OnCanBuyChange -= RefreshUpgradeUi;
 
-        RunEvents.OnExpeditionStart -= RefreshUi;
+        RunEvents.OnExpeditionStart -= GameStart;
         RunEvents.OnCurrencyChange -= RefreshCurrencyUi;
         RunEvents.OnDestinationChose -= DestinationTextSet;
         RunEvents.OnDayFinish -= DayCycleTextSet;
         RunEvents.OnNightFinish -= DayCycleTextSet;
     }
 
-    void RefreshUi()
+    void GameStart()
     {
         CurrenciesBuild();
         BuildShipUpgrades(ExpeditionShipUpgradesPanel);
+
+        foreach (var upgrade in GameState.DataState.upgrades)
+        {
+            if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                RefreshUpgradeUi(upgrade.Value);
+            }
+        }
     }
 
     void RefreshEnemiesUi(EnemyInstance enemy)

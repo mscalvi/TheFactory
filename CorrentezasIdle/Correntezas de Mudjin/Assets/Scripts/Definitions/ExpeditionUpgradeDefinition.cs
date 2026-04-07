@@ -48,8 +48,7 @@ public class ExpeditionUpgradeDefinition : MonoBehaviour
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);
 
-        CanBuyUpgrade = upgrade.CanBuy;
-
+        CanBuyUpgrade = ExpeditionPurchaseService.CanBuyUpgrade(upgrade);
         UpgradeButton.interactable = CanBuyUpgrade;
     }
 

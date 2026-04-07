@@ -22,4 +22,4 @@ MonoBehaviour:
   CriticalDamage: 1.15
   Special: 
   AmmoType: 0
-  UnlockStatus: 4
+  UnlockStatus: 3

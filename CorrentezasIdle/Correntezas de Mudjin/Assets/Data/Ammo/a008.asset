@@ -18,4 +18,4 @@ MonoBehaviour:
   Type: 0
   Damage: 9
   Special: Piercing
-  UnlockStatus: 1
+  UnlockStatus: 0

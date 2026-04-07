@@ -20,7 +20,4 @@ MonoBehaviour:
   AngleMin: 90
   AngleMax: 180
   Type: 5
-  Status: 0
-  Target: 0
-  User: {fileID: 0}
-  UnlockStatus: 4
+  UnlockStatus: 3

@@ -15,5 +15,8 @@ MonoBehaviour:
   Id: d000
   Name: GameStart
   Description: Game Start
+  CloseDestinations:
+  - d101
   DestinationType: 3
   DestinationRegion: 0
+  UnlockStatus: 3

@@ -17,7 +17,6 @@ public class PathModel : ScriptableObject
     public DestinationHelper.DestinationRegion DestinationRegion1;
     public DestinationHelper.DestinationRegion DestinationRegion2;
 
-    public PathHelper.RegionType RegionType;
     public PathHelper.PathType PathType;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
