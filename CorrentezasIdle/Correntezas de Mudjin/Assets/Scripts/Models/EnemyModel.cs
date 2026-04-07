@@ -32,11 +32,13 @@ public class EnemyModel : ScriptableObject
     public double Experience;
 
     public double Rarity;
+    public double Cost;
+    public EnemyHelper.EnemyStage Stage;
 
     public EnemyHelper.EnemyState State;
 
     public EnemyHelper.EnemyType EnemyType;
-    public PathHelper.EnemiesType PathType;
+    public PathHelper.PathType PathType;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

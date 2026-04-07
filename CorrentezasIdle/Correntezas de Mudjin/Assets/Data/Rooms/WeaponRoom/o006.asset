@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: Canto Esquerdo
   RangeFactor: 0.9
   Angle: 90
-  AngleMin: 90
-  AngleMax: 180
+  AngleMin: 180
+  AngleMax: 270
   Type: 5
   UnlockStatus: 3

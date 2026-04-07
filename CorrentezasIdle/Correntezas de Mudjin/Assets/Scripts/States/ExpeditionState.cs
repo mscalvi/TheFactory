@@ -22,6 +22,10 @@ public class ExpeditionState
     public double BaseSpawnDistance = 1.5;
     public double BaseSpawnChance = 1;
     public int BaseTicksPerSpawn = 15;
+    public double BaseSpawnBudget = 5;
+    public double BaseSpawnBudgetGrowth = 1.05;
+    public double BossThreshold = 200;
+    public EnemyHelper.EnemyStage EnemySpawnStage = EnemyHelper.EnemyStage.Early;
 
     public List<EnemyInstance> ActiveEnemies = new();
 

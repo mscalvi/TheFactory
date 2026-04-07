@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: Direita
   RangeFactor: 1
   Angle: 120
-  AngleMin: -30
-  AngleMax: 80
+  AngleMin: 30
+  AngleMax: 150
   Type: 4
   UnlockStatus: 3

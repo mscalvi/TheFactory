@@ -6,7 +6,7 @@ using UnityEngine;
 public class PathHelper
 {
     [Flags]
-    public enum EnemiesType
+    public enum PathType
     {
         None = 0,
         Sea = 1 << 0,
@@ -15,24 +15,5 @@ public class PathHelper
         Urban = 1 << 3,
         Cold = 1 << 4,
         River = 1 << 5,
-    }
-
-    public enum PathType
-    {
-        Sea,
-        HighSea,
-        Entrilhas,
-        Urban,
-        Cold,
-        River,
-    }
-
-    [Flags]
-    public enum RegionType
-    {
-        None = 0,
-        Wild = 1 << 0,
-        Urban = 1 << 1,
-        LapaLiandra = 1 << 2,
     }
 }

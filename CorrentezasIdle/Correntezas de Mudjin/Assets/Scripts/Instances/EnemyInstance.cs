@@ -32,12 +32,16 @@ public class EnemyInstance
     public double Experience;
 
     public double Rarity;
+    public double Cost;
+    public EnemyHelper.EnemyStage Stage;
 
     public EnemyHelper.EnemyState State;
 
     public EnemyHelper.EnemyType EnemyType;
+    public PathHelper.PathType PathType;
 
     public double Distance;
+    public double Angle;
     public double Cooldown;
     public double CurrentLife;
 
@@ -70,12 +74,16 @@ public class EnemyInstance
         Experience = model.Experience;
 
         Rarity = model.Rarity;
+        Cost = model.Cost;
+        Stage = model.Stage;
 
         State = EnemyHelper.EnemyState.Moving;
 
         EnemyType = model.EnemyType;
+        PathType = model.PathType;
 
         Distance = model.SpawnDistance;
+        Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
         CurrentLife = model.Life;
     }
@@ -109,12 +117,15 @@ public class EnemyInstance
         Experience = model.Experience;
 
         Rarity = model.Rarity;
+        Cost = model.Cost;
+        Stage = model.Stage;
 
         State = EnemyHelper.EnemyState.Moving;
 
         EnemyType = model.EnemyType;
 
         Distance = model.SpawnDistance;
+        Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
         CurrentLife = model.Life;
     }

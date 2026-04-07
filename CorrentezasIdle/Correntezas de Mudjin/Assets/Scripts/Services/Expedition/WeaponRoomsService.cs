@@ -82,6 +82,9 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
             if (enemy.Distance > room.Weapon.Range)
                 continue;
 
+            if (!IsAngleInRange(enemy.Angle, room.AngleMin, room.AngleMax))
+                continue;
+
             valid.Add(enemy);
         }
 
@@ -149,8 +152,18 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
 
         double damage = room.Weapon.Damage + room.Ammo.Damage;
 
+        Debug.Log($"Navio Atacou - {room.Id}, {room.Weapon.Name} - {damage}");
+
         CombatService.ShipDamage(room, target, damage);
 
         room.Cooldown = 1 / room.Weapon.AttackSpeed;
+    }
+
+    bool IsAngleInRange(double angle, double min, double max)
+    {
+        if (angle >= min && angle <= max)
+            return true;
+        else
+            return false;
     }
 }

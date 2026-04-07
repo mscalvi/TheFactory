@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using static GameHelper;
 
 public class EnemySpawnerService : MonoBehaviour, ITickable
 {
@@ -14,15 +11,13 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     public Dictionary<string, double> EnemyWeights = new();
 
     int tickCounter = 0;
+    double accumulatedBudget = 0;
 
     public void Initialize(ExpeditionState expeditionState, TickService Tick, DataState db, EnemyProgressService progress)
     {
         Expedition = expeditionState;
-
         TickService = Tick;
-
         ProgressService = progress;
-
         DataState = db;
 
         TickService.Subscribe(this);
@@ -40,65 +35,136 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         if (tickCounter >= Expedition.BaseTicksPerSpawn)
         {
             tickCounter = 0;
-            SpawnEnemy();
+            ProcessWave();
         }
     }
 
-    void SpawnEnemy()
+    void ProcessWave()
     {
-        float spawn = Random.Range(0, 100);
+        double waveBudget = GenerateWaveBudget();
 
-        if (spawn < Expedition.BaseSpawnChance)
+        float roll = Random.Range(0f, 100f);
+
+        if (roll < Expedition.BaseSpawnChance)
         {
-            IncreaseChance();
-
+            accumulatedBudget += waveBudget;
+            Debug.Log($"Wave acumulada. Budget total: {accumulatedBudget}");
             return;
         }
 
+        double totalBudget = waveBudget + accumulatedBudget;
+        accumulatedBudget = 0;
+
+        SpendBudget(totalBudget);
+
+        CheckSpecialEvent();
+    }
+
+    double GenerateWaveBudget()
+    {
+        double baseBud = Expedition.BaseSpawnBudget;
+        double growth = Expedition.BaseSpawnBudgetGrowth;
+        double actualBud = baseBud * System.Math.Pow(growth, Expedition.DayCounter);
+
+        return actualBud;
+    }
+        
+    void SpendBudget(double budget)
+    {
         var validEnemies = SpawnChance();
 
         if (validEnemies.Count == 0)
-        {
             return;
-        }
 
+        double cheapest = GetCheapestCost(validEnemies);
+
+        while (budget >= cheapest)
+        {
+            var chosen = ChooseEnemy(validEnemies);
+
+            if (chosen == null)
+                break;
+
+            double cost = chosen.Cost;
+
+            if (budget < cost)
+                break;
+
+            budget -= cost;
+
+            SpawnInstance(chosen);
+        }
+    }
+
+    EnemyInstance ChooseEnemy(Dictionary<string, EnemyInstance> validEnemies)
+    {
         float totalWeight = 0;
 
         foreach (var enemy in validEnemies)
-        {
             totalWeight += (float)EnemyWeights[enemy.Key];
-        }
 
         float roll = Random.Range(0, totalWeight);
-        EnemyInstance chosen = null;
 
         foreach (var enemy in validEnemies)
         {
             roll -= (float)EnemyWeights[enemy.Key];
 
             if (roll <= 0)
-            {
-                chosen = enemy.Value;
-                break;
-            }
+                return enemy.Value;
         }
 
-        if (chosen == null)
+        return null;
+    }
+
+    double GetCheapestCost(Dictionary<string, EnemyInstance> enemies)
+    {
+        double min = double.MaxValue;
+
+        foreach (var e in enemies)
         {
-            return;
+            if (e.Value.Cost < min)
+                min = e.Value.Cost;
         }
 
+        return min;
+    }
+
+    void SpawnInstance(EnemyInstance chosen)
+    {
         EnemyInstance instance = new EnemyInstance(chosen);
 
         instance.Distance *= Expedition.BaseSpawnDistance;
+        instance.Angle = SpawnAngle(30, 330);
 
         ProgressService.ApplyProgression(instance);
 
         Expedition.ActiveEnemies.Add(instance);
 
         CombatEvents.OnEnemySpawn?.Invoke(instance);
+    }
 
-        Debug.Log($"{instance.Name} Spawnado. Vida: {instance.Life}. Dano: {instance.Damage}");
+    double SpawnAngle(double min, double max)
+    {
+        min %= 360;
+        max %= 360;
+
+        if (min <= max)
+        {
+            return Random.Range((float)min, (float)max);
+        }
+        else
+        {
+            double range1 = 360 - min;
+            double range2 = max;
+
+            double total = range1 + range2;
+            double roll = Random.Range(0f, (float)total);
+
+            if (roll < range1)
+                return min + roll;
+            else
+                return roll - range1;
+        }
     }
 
     Dictionary<string, EnemyInstance> SpawnChance()
@@ -107,34 +173,31 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var enemy in DataState.enemies)
         {
-            if (enemy.Value.Rarity > 0)
-            {
-                if (Expedition.IsDay && enemy.Value.DayEnemy)
-                {
-                    // Checar também região/tipo...
-                    validEnemies.Add(enemy.Key, enemy.Value);
-                }
-                else if (!Expedition.IsDay && !enemy.Value.DayEnemy)
-                {
-                    validEnemies.Add(enemy.Key, enemy.Value);
-                }
-            }
+            if (enemy.Value.Rarity <= 0)
+                continue;
+
+            if ((enemy.Value.PathType & Expedition.CurrentPath.PathType) == 0)
+                continue;
+
+            if (enemy.Value.Stage > Expedition.EnemySpawnStage)
+                continue;
+
+            if (Expedition.IsDay && enemy.Value.DayEnemy)
+                validEnemies.Add(enemy.Key, enemy.Value);
+            else if (!Expedition.IsDay && !enemy.Value.DayEnemy)
+                validEnemies.Add(enemy.Key, enemy.Value);
         }
 
         return validEnemies;
     }
 
-    void IncreaseChance()
+    void CheckSpecialEvent()
     {
-        var keys = new List<string>(EnemyWeights.Keys);
-
-        foreach (var key in keys)
+        if (accumulatedBudget >= Expedition.BossThreshold)
         {
-            if (EnemyWeights[key] > 0)
-            {
-                var oldValue = EnemyWeights[key];
-                EnemyWeights[key] = EnemyWeights[key] + ((1f / EnemyWeights[key]) * 0.1f);
-            }
+            Debug.Log("Boss disparado!");
+
+            accumulatedBudget = 0;
         }
     }
 }

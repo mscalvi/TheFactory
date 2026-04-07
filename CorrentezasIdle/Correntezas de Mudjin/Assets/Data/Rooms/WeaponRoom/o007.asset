@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: Canto Direito
   RangeFactor: 0.9
   Angle: 90
-  AngleMin: 0
-  AngleMax: 90
+  AngleMin: 90
+  AngleMax: 180
   Type: 6
   UnlockStatus: 3

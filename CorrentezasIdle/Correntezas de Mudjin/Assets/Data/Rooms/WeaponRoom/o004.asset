@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: Esquerda
   RangeFactor: 1
   Angle: 120
-  AngleMin: 100
-  AngleMax: 220
+  AngleMin: 210
+  AngleMax: 330
   Type: 3
   UnlockStatus: 3

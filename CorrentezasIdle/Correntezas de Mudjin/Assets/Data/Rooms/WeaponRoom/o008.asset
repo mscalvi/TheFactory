@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: Frente
   RangeFactor: 1
   Angle: 60
-  AngleMin: 60
-  AngleMax: 120
+  AngleMin: 150
+  AngleMax: 210
   Type: 7
   UnlockStatus: 3

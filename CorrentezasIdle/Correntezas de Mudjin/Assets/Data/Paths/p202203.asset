@@ -20,5 +20,5 @@ MonoBehaviour:
   Destination2: {fileID: 11400000, guid: 61b909d0eee32494eb0992f7890e06f4, type: 2}
   DestinationRegion1: 1
   DestinationRegion2: 1
-  PathType: 2
+  PathType: 4
   UnlockStatus: 0

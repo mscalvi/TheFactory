@@ -34,8 +34,10 @@ MonoBehaviour:
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
   Experience: 1
-  Rarity: 100
+  Rarity: 10000
+  Cost: 5
+  Stage: 1
   State: 0
-  EnemyType: 1
-  PathType: 0
+  EnemyType: 0
+  PathType: -1
   UnlockStatus: 0
