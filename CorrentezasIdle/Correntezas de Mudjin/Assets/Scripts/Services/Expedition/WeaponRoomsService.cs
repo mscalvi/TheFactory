@@ -154,6 +154,8 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
 
         Debug.Log($"Navio Atacou - {room.Id}, {room.Weapon.Name} - {damage}");
 
+        CombatEvents.OnShoot?.Invoke(room, target);
+
         CombatService.ShipDamage(room, target, damage);
 
         room.Cooldown = 1 / room.Weapon.AttackSpeed;

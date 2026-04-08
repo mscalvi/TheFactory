@@ -26,6 +26,8 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] ShipControlService ShipControlService;
     [SerializeField] UnnamedTripulationService UnnamedTripulationService;
     [SerializeField] WeaponRoomsService WeaponRoomsService;
+    [SerializeField] RangeViewService RangeViewService;
+    [SerializeField] ProjectileService ProjectileService;
 
     // Ambos
     [SerializeField] ExpeditionService ExpeditionService;
@@ -99,6 +101,8 @@ public class ExpeditionController : MonoBehaviour
         ShipControlService.Initialize(Ship, Game, TickService);
 
         UnnamedTripulationService.Initialize(Ship, TickService);
+
+        RangeViewService.Initialize(Ship.Ship.WeaponsRooms);
 
         // Ambos
         CombatService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);

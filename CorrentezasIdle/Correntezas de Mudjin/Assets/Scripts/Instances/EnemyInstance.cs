@@ -29,6 +29,8 @@ public class EnemyInstance
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
 
+    public Sprite Sprite;
+
     public double Experience;
 
     public double Rarity;
@@ -70,6 +72,8 @@ public class EnemyInstance
         AttackSpeedGrowth = model.AttackSpeedGrowth;
         SpawnDistance = model.SpawnDistance;
         SpawnDistanceGrowth = model.SpawnDistanceGrowth;
+
+        Sprite = model.Sprite;
 
         Experience = model.Experience;
 

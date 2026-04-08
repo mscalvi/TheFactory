@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\Controller\ExpeditionController.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\UnnamedTripulationService.cs" />
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
+    <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
     <Compile Include="Assets\Scripts\Definitions\BuildingDefinition.cs" />
     <Compile Include="Assets\Scripts\Controller\GameController.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\CombatService.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Assets\Scripts\Models\OtherRoomModel.cs" />
     <Compile Include="Assets\Scripts\States\DataState.cs" />
     <Compile Include="Assets\Scripts\Helpers\CurrencyHelper.cs" />
+    <Compile Include="Assets\Scripts\Helpers\UiHelper.cs" />
     <Compile Include="Assets\Scripts\Designer\ExpeditionPageDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EnemyProgressService.cs" />
     <Compile Include="Assets\Scripts\Services\Company\CompanyPricingService.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\DecisionsService.cs" />
     <Compile Include="Assets\Scripts\Designer\LandingPageDesigner.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\RangeViewService.cs" />
     <Compile Include="Assets\Scripts\Controller\CompanyBuildingsController.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
@@ -123,9 +126,12 @@
     <Compile Include="Assets\Scripts\Services\Company\CompanyCurrencyService.cs" />
     <Compile Include="Assets\Scripts\Instances\ShipInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ShipControlService.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\ProjectileService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionPricingService.cs" />
+    <Compile Include="Assets\Scripts\Views\EnemyView.cs" />
     <Compile Include="Assets\Scripts\Models\DestinationModel.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponRoomModel.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\EnemyViewService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionCurrencyService.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponRoomInstance.cs" />

@@ -29,6 +29,8 @@ public class EnemyModel : ScriptableObject
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
 
+    public Sprite Sprite;
+
     public double Experience;
 
     public double Rarity;

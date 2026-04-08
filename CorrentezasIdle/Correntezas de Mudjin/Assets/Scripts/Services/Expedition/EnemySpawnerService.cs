@@ -140,6 +140,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         Expedition.ActiveEnemies.Add(instance);
 
+        Debug.Log($"Inimigo Spawnado: {instance.Name}");
+
         CombatEvents.OnEnemySpawn?.Invoke(instance);
     }
 
