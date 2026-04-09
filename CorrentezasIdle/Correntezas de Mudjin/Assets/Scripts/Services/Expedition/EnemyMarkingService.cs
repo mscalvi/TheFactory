@@ -1,0 +1,69 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EnemyMarkingService : MonoBehaviour
+{
+    private List<EnemyInstance> markedEnemies = new();
+
+    private ExpeditionState ExpeditionState;
+
+    public void Initialize(ExpeditionState expedition)
+    {
+        ExpeditionState = expedition;
+    }
+
+    void HandleClick(EnemyInstance enemy)
+    {
+        if (enemy == null) return;
+
+        if (!enemy.MarkedEnemy && markedEnemies.Count >= ExpeditionState.MaxMarkedEnemies)
+        {
+            Unmark(markedEnemies[0]);
+        }
+
+        if (enemy.MarkedEnemy)
+        {
+            return;
+        }
+        else
+        {
+            Mark(enemy);
+        }
+    }
+
+    void Mark(EnemyInstance enemy)
+    {
+        enemy.MarkedEnemy = true;
+        Debug.Log($"{enemy.Name} Marcado -> {enemy.MarkedEnemy}");
+        markedEnemies.Add(enemy);
+    }
+
+    void Unmark(EnemyInstance enemy)
+    {
+        enemy.MarkedEnemy = false;
+        Debug.Log($"{enemy.Name} Marcado -> {enemy.MarkedEnemy}");
+        markedEnemies.Remove(enemy);
+    }
+
+    void HandleDeath(EnemyInstance enemy)
+    {
+        if (enemy.MarkedEnemy)
+        {
+            CombatEvents.OnMarkedEnemyDeath?.Invoke(enemy);
+            enemy.MarkedEnemy = false;
+            markedEnemies.Remove(enemy);
+        }
+    }
+
+    void OnEnable()
+    {
+        CombatEvents.OnEnemyClicked += HandleClick;
+        CombatEvents.OnEnemyDeath += HandleDeath;
+    }
+
+    void OnDisable()
+    {
+        CombatEvents.OnEnemyClicked -= HandleClick;
+        CombatEvents.OnEnemyDeath -= HandleDeath;
+    }
+}

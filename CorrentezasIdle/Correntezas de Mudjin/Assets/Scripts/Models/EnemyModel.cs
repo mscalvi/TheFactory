@@ -32,6 +32,10 @@ public class EnemyModel : ScriptableObject
     public Sprite Sprite;
 
     public double Experience;
+    public IngredientHelper.IngredientType CommonIngredient;
+    public IngredientHelper.IngredientType UncommonIngredient;
+    public IngredientHelper.IngredientType RareIngredient;
+    public IngredientHelper.IngredientType LegendaryIngredient;
 
     public double Rarity;
     public double Cost;

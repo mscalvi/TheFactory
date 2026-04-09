@@ -11,6 +11,7 @@ public class GameState
     public ExpeditionState ExpeditionState;
 
     public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> CompanyCurrency;
+    public Dictionary<IngredientHelper.IngredientType, IngredientInstance> CompanyIngredients;
     public Dictionary<string, UpgradeInstance> CompanyUpgrades;
 
     public GameHelper.ExpeditionStatus ExpeditionStatus;

@@ -11,6 +11,7 @@ public class ExpeditionController : MonoBehaviour
     // Base
     [SerializeField] TickService TickService;
     [SerializeField] ExpeditionCurrencyService CurrencyService;
+    [SerializeField] IngredientService IngredientService;
     [SerializeField] ExpeditionPurchaseService ExpeditionPurchaseService;
     [SerializeField] ExpeditionUiService ExpeditionUiService;
 
@@ -19,6 +20,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] EnemyProgressService EnemyProgressService;
     [SerializeField] EnemySpawnerService EnemySpawnerService;
     [SerializeField] EnemyControllerService EnemyControllerService;
+    [SerializeField] EnemyMarkingService EnemyMarkingService;
     [SerializeField] ExpeditionPricingService ExpeditionPricingService;
     [SerializeField] PathService PathService;
 
@@ -78,7 +80,9 @@ public class ExpeditionController : MonoBehaviour
         // Base
         TickService.Initialize();
 
-        CurrencyService.Initialize(Expedition);
+        CurrencyService.Initialize(Expedition, Game);
+
+        IngredientService.Initialize(Game, Expedition);
 
         ExpeditionPurchaseService.Initialize(Expedition, db, CurrencyService);
 
@@ -92,6 +96,8 @@ public class ExpeditionController : MonoBehaviour
         EnemySpawnerService.Initialize(Expedition, TickService, db, EnemyProgressService);
 
         EnemyControllerService.Initialize(Expedition, TickService);
+
+        EnemyMarkingService.Initialize(Expedition);
 
         ExpeditionPricingService.Initialize(Expedition, db);
 

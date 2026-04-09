@@ -20,7 +20,7 @@ public class DataState
     public Dictionary<string, PathInstance> paths;
 
     public Dictionary<string, CurrencyInstance> currencies;
-
+    public Dictionary<string, IngredientInstance> ingredients;
     public Dictionary<string, UpgradeInstance> upgrades;
 
     public Dictionary<string, BuildingInstance> buildings;

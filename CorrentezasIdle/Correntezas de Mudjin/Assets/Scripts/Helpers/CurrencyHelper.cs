@@ -7,10 +7,7 @@ public class CurrencyHelper
     public enum CurrencyType
     {
         Experience,
-        Spoils,
         Marcos,
-        Jades,
-        Opals,
     }
 
     public enum CurrencyScope

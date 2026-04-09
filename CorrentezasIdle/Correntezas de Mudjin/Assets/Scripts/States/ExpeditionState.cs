@@ -5,7 +5,7 @@ using UnityEngine;
 public class ExpeditionState
 {
     // Day/Night Service
-    public int BaseTicksPerPhase = 20; // mudar pra 150
+    public int BaseTicksPerPhase = 150;
     public bool IsDay { get; set; } = true;
     public int DestinationDayCounter = 1;
     public int DayCounter = 1;
@@ -26,7 +26,6 @@ public class ExpeditionState
     public double BaseSpawnBudgetGrowth = 1.05;
     public double BossThreshold = 200;
     public EnemyHelper.EnemyStage EnemySpawnStage = EnemyHelper.EnemyStage.Early;
-
     public List<EnemyInstance> ActiveEnemies = new();
 
     // Currency
@@ -36,4 +35,11 @@ public class ExpeditionState
 
     // Upgrades
     public Dictionary<string, UpgradeInstance> ExpeditionUpgrades;
+
+    // Ingredients
+    public int MaxMarkedEnemies = 1;
+    public int MaxMarkedLoot = 1;
+    public double NextLootChance = 0;
+    public double NextLootDecay = 0;
+    public Dictionary<IngredientHelper.IngredientRarity, float> RarityBaseWeights;
 }

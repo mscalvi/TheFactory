@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\Controller\GameController.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\CombatService.cs" />
     <Compile Include="Assets\Scripts\Services\Landing\LandingUiService.cs" />
+    <Compile Include="Assets\Scripts\Instances\IngredientInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\PathService.cs" />
     <Compile Include="Assets\Scripts\Instances\UpgradeInstance.cs" />
     <Compile Include="Assets\Scripts\States\ShipState.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Assets\Scripts\Configurations\WeaponRoomInitialConfiguration.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EndExpeditionService.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\IngredientService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\TickService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\StartExpeditionService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionService.cs" />
@@ -113,7 +115,9 @@
     <Compile Include="Assets\Scripts\Controller\CompanyBuildingsController.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
+    <Compile Include="Assets\Scripts\Helpers\IngredientHelper.cs" />
     <Compile Include="Assets\Scripts\Models\AmmoModel.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\EnemyMarkingService.cs" />
     <Compile Include="Assets\Scripts\Designer\CompanyDesigner.cs" />
     <Compile Include="Assets\Scripts\Instances\BuildingInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Company\CompanyPurchaseService.cs" />
@@ -136,6 +140,7 @@
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponRoomInstance.cs" />
     <Compile Include="Assets\Scripts\Configurations\ShipInitialConfiguration.cs" />
+    <Compile Include="Assets\Scripts\Models\IngredientModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\PathHelper.cs" />
     <Compile Include="Assets\Scripts\Definitions\ExpeditionUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EnemyControlService.cs" />

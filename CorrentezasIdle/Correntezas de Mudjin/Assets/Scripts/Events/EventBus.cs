@@ -6,8 +6,10 @@ using UnityEngine;
 public static class CombatEvents
 {
     public static Action<EnemyInstance> OnEnemyDeath;
+    public static Action<EnemyInstance> OnMarkedEnemyDeath;
     public static Action<EnemyInstance> OnEnemySpawn;
     public static Action<WeaponRoomInstance, EnemyInstance> OnShoot;
+    public static Action<EnemyInstance> OnEnemyClicked;
 }
 
 public static class RunEvents

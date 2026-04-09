@@ -2674,12 +2674,14 @@ MonoBehaviour:
   StartExpeditionService: {fileID: 1083699784}
   TickService: {fileID: 1083699780}
   CurrencyService: {fileID: 1083699786}
+  IngredientService: {fileID: 1083699793}
   ExpeditionPurchaseService: {fileID: 1083699789}
   ExpeditionUiService: {fileID: 183470226}
   DaysCycleService: {fileID: 1083699781}
   EnemyProgressService: {fileID: 991191069}
   EnemySpawnerService: {fileID: 991191067}
   EnemyControllerService: {fileID: 991191068}
+  EnemyMarkingService: {fileID: 991191070}
   ExpeditionPricingService: {fileID: 1083699791}
   PathService: {fileID: 1083699792}
   ShipControlService: {fileID: 1425499447}
@@ -2817,6 +2819,7 @@ GameObject:
   - component: {fileID: 991191067}
   - component: {fileID: 991191068}
   - component: {fileID: 991191069}
+  - component: {fileID: 991191070}
   m_Layer: 0
   m_Name: EnemySystems
   m_TagString: Untagged
@@ -2873,6 +2876,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1ffe1096615f46448d789bd9577e262, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &991191070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991191063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5021408e64e24254d8eff9f5944b5a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1040310787
@@ -3081,6 +3096,7 @@ GameObject:
   - component: {fileID: 1083699790}
   - component: {fileID: 1083699791}
   - component: {fileID: 1083699792}
+  - component: {fileID: 1083699793}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -3246,6 +3262,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e1516ed28ab02545962b39c0400eb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1083699793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 866685af86420b247a00f17c07cc1b3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1099042370

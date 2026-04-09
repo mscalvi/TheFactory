@@ -11,6 +11,7 @@ public class EnemyInstance
 
     public bool DayEnemy;
     public bool BossEnemy;
+    public bool MarkedEnemy;
 
     public double Life;
     public double LifeGrowth;
@@ -32,6 +33,10 @@ public class EnemyInstance
     public Sprite Sprite;
 
     public double Experience;
+    public IngredientHelper.IngredientType CommonIngredient;
+    public IngredientHelper.IngredientType UncommonIngredient;
+    public IngredientHelper.IngredientType RareIngredient;
+    public IngredientHelper.IngredientType LegendaryIngredient;
 
     public double Rarity;
     public double Cost;
@@ -55,6 +60,7 @@ public class EnemyInstance
 
         DayEnemy = model.DayEnemy;
         BossEnemy = model.BossEnemy;
+        MarkedEnemy = false;
 
         Life = model.Life;
         LifeGrowth = model.LifeGrowth;
@@ -76,6 +82,10 @@ public class EnemyInstance
         Sprite = model.Sprite;
 
         Experience = model.Experience;
+        CommonIngredient = model.CommonIngredient;
+        UncommonIngredient = model.UncommonIngredient;
+        RareIngredient = model.RareIngredient;
+        LegendaryIngredient = model.LegendaryIngredient;
 
         Rarity = model.Rarity;
         Cost = model.Cost;
@@ -100,6 +110,7 @@ public class EnemyInstance
 
         DayEnemy = model.DayEnemy;
         BossEnemy = model.BossEnemy;
+        MarkedEnemy = false;
 
         Life = model.Life;
         LifeGrowth = model.LifeGrowth;
@@ -118,7 +129,13 @@ public class EnemyInstance
         SpawnDistance = model.SpawnDistance;
         SpawnDistanceGrowth = model.SpawnDistanceGrowth;
 
+        Sprite = model.Sprite;
+
         Experience = model.Experience;
+        CommonIngredient = model.CommonIngredient;
+        UncommonIngredient = model.UncommonIngredient;
+        RareIngredient = model.RareIngredient;
+        LegendaryIngredient = model.LegendaryIngredient;
 
         Rarity = model.Rarity;
         Cost = model.Cost;
@@ -127,6 +144,7 @@ public class EnemyInstance
         State = EnemyHelper.EnemyState.Moving;
 
         EnemyType = model.EnemyType;
+        PathType = model.PathType;
 
         Distance = model.SpawnDistance;
         Angle = 0;

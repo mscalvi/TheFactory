@@ -33,7 +33,12 @@ MonoBehaviour:
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
+  Sprite: {fileID: 0}
   Experience: 6
+  CommonIngredient: 3
+  UncommonIngredient: 0
+  RareIngredient: 0
+  LegendaryIngredient: 0
   Rarity: 10
   Cost: 50
   Stage: 2

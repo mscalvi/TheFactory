@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: c002
   Type: 1
-  Scope: 0
+  Scope: 1
   Image: 
   Logo: 
-  UnlockStatus: 1
+  UnlockStatus: 3

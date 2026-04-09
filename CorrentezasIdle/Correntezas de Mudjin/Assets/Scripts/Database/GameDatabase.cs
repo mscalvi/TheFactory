@@ -19,6 +19,7 @@ public class GameDatabase : ScriptableObject
     public PathModel[] paths;
 
     public CurrencyModel[] currency;
+    public IngredientModel[] ingredients;
 
     public UpgradeModel[] upgrade;
 

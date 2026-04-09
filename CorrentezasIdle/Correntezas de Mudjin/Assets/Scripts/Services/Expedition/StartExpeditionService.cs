@@ -15,6 +15,7 @@ public class StartExpeditionService : MonoBehaviour
         LoadCurrency(GameState);
         LoadDestination(GameState);
         LoadShip(GameState);
+        LoadIngredients(GameState);
     }
 
     void LoadExpedition(GameState Game)
@@ -57,5 +58,18 @@ public class StartExpeditionService : MonoBehaviour
     {
         Game.ShipState.Ship.MaxLife = Game.ShipState.Ship.BaseLife;
         Game.ShipState.Ship.CurrentLife = Game.ShipState.Ship.MaxLife;
+    }
+
+    void LoadIngredients(GameState Game)
+    {
+        Game.ExpeditionState.RarityBaseWeights = new Dictionary<IngredientHelper.IngredientRarity, float>()
+        {
+            { IngredientHelper.IngredientRarity.Common, 100 },
+            { IngredientHelper.IngredientRarity.Uncommon, 0 },
+            { IngredientHelper.IngredientRarity.Rare, 0 },
+            { IngredientHelper.IngredientRarity.Legendary, 0 }
+        };
+
+        // Conferir e Aplicar Upgrades na CompanyUpgrades
     }
 }

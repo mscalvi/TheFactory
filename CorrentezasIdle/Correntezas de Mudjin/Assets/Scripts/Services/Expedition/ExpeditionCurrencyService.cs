@@ -6,10 +6,12 @@ using static CurrencyHelper;
 public class ExpeditionCurrencyService : MonoBehaviour
 {
     private ExpeditionState ExpeditionState;
+    private GameState GameState;
 
-    public void Initialize(ExpeditionState expedition)
+    public void Initialize(ExpeditionState expedition, GameState game)
     {
         ExpeditionState = expedition;
+        GameState = game;
     }
 
     public double Get(CurrencyType type)
@@ -23,8 +25,19 @@ public class ExpeditionCurrencyService : MonoBehaviour
         return currencyAmount;
     }
 
-    public void Add(CurrencyType type, double amount)
+    public void AddCurrency(CurrencyType type, double amount)
     {
+        var dataCurrencies = GameState.DataState.currencies;
+
+        foreach(var currency in dataCurrencies)
+        {
+            if (currency.Value.Type == type)
+            {
+                if (currency.Value.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+                    return;
+            }
+        }
+        
         var currencies = ExpeditionState.ExpeditionCurrency;
 
         currencies[type].Amount = Get(type) + amount;
@@ -65,18 +78,18 @@ public class ExpeditionCurrencyService : MonoBehaviour
 
     void EnemyDeathReward(EnemyInstance enemy)
     {
-        Add(CurrencyHelper.CurrencyType.Experience, enemy.Experience);
+        AddCurrency(CurrencyHelper.CurrencyType.Experience, enemy.Experience);
     }
 
     void DayFinishReward()
     {
         double reward = ExpeditionState.BaseDayReward;
-        Add(CurrencyHelper.CurrencyType.Marcos, reward);
+        AddCurrency(CurrencyHelper.CurrencyType.Marcos, reward);
     }
 
     void NightFinishReward()
     {
         double reward = ExpeditionState.BaseNightReward;
-        Add(CurrencyHelper.CurrencyType.Experience, reward);
+        AddCurrency(CurrencyHelper.CurrencyType.Experience, reward);
     }
 }

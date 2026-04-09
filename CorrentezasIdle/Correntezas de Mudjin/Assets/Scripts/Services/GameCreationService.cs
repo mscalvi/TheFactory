@@ -15,11 +15,13 @@ public class GameCreationService : MonoBehaviour
         DataBase = db;
 
         GameState.CompanyCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
+        GameState.CompanyIngredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
         GameState.CompanyUpgrades = new Dictionary<string, UpgradeInstance>();
 
         CreateDataState(db);
         BuildShips();
         BuildCurrencies();
+        BuildIngredients();
         BuildBuildings();
         BuildCompanyUpgrades();
         BuildDestinations();
@@ -41,6 +43,7 @@ public class GameCreationService : MonoBehaviour
         var destinations = new Dictionary<string, DestinationInstance>();
         var paths = new Dictionary<string, PathInstance>();
         var currencies = new Dictionary<string, CurrencyInstance>();
+        var ingredients = new Dictionary<string, IngredientInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
         var buildings = new Dictionary<string, BuildingInstance>();
 
@@ -98,6 +101,12 @@ public class GameCreationService : MonoBehaviour
             currencies.Add(currency.Id, instance);
         }
 
+        foreach (var ingrediente in DataBase.ingredients)
+        {
+            var instance = new IngredientInstance(ingrediente);
+            ingredients.Add(ingrediente.Id, instance);
+        }
+
         foreach (var upgrade in DataBase.upgrade)
         {
             var instance = new UpgradeInstance(upgrade);
@@ -119,6 +128,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.destinations = destinations;
         GameState.DataState.paths = paths;
         GameState.DataState.currencies = currencies;
+        GameState.DataState.ingredients = ingredients;
         GameState.DataState.upgrades = upgrades;
         GameState.DataState.buildings = buildings;
     }
@@ -167,10 +177,15 @@ public class GameCreationService : MonoBehaviour
     {
         foreach (var currency in GameState.DataState.currencies)
         {
-            if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-            {
-                GameState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
-            }
+            GameState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
+        }
+    }
+
+    private void BuildIngredients()
+    {
+        foreach (var ingredient in GameState.DataState.ingredients)
+        {
+            GameState.CompanyIngredients.Add(ingredient.Value.Type, ingredient.Value);
         }
     }
 
@@ -178,10 +193,7 @@ public class GameCreationService : MonoBehaviour
     {
         foreach (var upgrade in GameState.DataState.upgrades)
         {
-            if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-            {
-                GameState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
-            }
+            GameState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
         }
     }
 

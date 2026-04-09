@@ -112,9 +112,10 @@ MonoBehaviour:
   currency:
   - {fileID: 11400000, guid: 2beb39628b2135a4ebe139c89b246c0f, type: 2}
   - {fileID: 11400000, guid: 2f6d4727acdb57e4495f1bf42339a9fc, type: 2}
-  - {fileID: 11400000, guid: e5ef551a97b6eed4a986ece6290b95a8, type: 2}
-  - {fileID: 11400000, guid: 201d8dfb2dbdf684c8524d79e8419b42, type: 2}
-  - {fileID: 11400000, guid: 4e0f6721496387e40a290232cefe3479, type: 2}
+  ingredients:
+  - {fileID: 11400000, guid: eaf96e050977890409379023ae09d4c1, type: 2}
+  - {fileID: 11400000, guid: 2fecb987cd0deba4e9672d19700e7147, type: 2}
+  - {fileID: 11400000, guid: 838c402b5f389ea409d68ab6180a0b49, type: 2}
   upgrade:
   - {fileID: 11400000, guid: 34cfd73021a80574ca259d7ba4f1c078, type: 2}
   - {fileID: 11400000, guid: 3e6b7c4db95db604695bf3e66cc7e9c2, type: 2}
