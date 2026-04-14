@@ -13,4 +13,12 @@ public class GameHelper
         GameOver,
         Finished,
     }
+
+    public enum DecisionType
+    {
+        GameMode,
+        Destination,
+        Local,
+        Event,
+    }
 }

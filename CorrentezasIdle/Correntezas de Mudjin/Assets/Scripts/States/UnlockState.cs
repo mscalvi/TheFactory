@@ -10,6 +10,8 @@ public class UnlockState
     public bool Ship = false;
     public bool Map = false;
 
+    public bool Weapons = false;
+
     public bool Click = false;
     public bool Ingredients = false;
     public bool Missions = false;

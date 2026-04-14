@@ -80,6 +80,22 @@ public class PathService : MonoBehaviour
         return null;
     }
 
+    void CalculatePathOptions()
+    {
+        ExpeditionState.CurrentDestination = ExpeditionState.NewDestination;
+
+        if (GameState.ProgressState.m000)
+        {
+            RunEvents.OnPathOptionsCalculated?.Invoke();
+        }
+        else
+        {
+            ExpeditionState.ExpeditionStatus = GameHelper.ExpeditionStatus.Finished;
+            ProgressEvents.OnFirstExpeditionFinish?.Invoke();
+            RunEvents.OnExpeditionEnd?.Invoke();
+        }
+    }
+
     // Helpers
     private int CalculateDays(PathInstance Path, ShipInstance Ship)
     {
@@ -98,21 +114,5 @@ public class PathService : MonoBehaviour
     void OnDisable()
     {
         RunEvents.OnDestinationArrival -= CalculatePathOptions;
-    }
-
-    void CalculatePathOptions()
-    {
-        ExpeditionState.CurrentDestination = ExpeditionState.NewDestination;
-
-        if (GameState.ProgressState.m000)
-        {
-            RunEvents.OnPathOptionsCalculated?.Invoke();
-        }
-        else
-        {
-            ExpeditionState.ExpeditionStatus = GameHelper.ExpeditionStatus.Finished;
-            ProgressEvents.OnFirstExpeditionFinish?.Invoke();
-            RunEvents.OnExpeditionEnd?.Invoke();
-        }
     }
 }

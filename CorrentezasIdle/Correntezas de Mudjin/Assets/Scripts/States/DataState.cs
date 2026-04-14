@@ -24,4 +24,6 @@ public class DataState
     public Dictionary<string, UpgradeInstance> upgrades;
 
     public Dictionary<string, BuildingInstance> buildings;
+
+    public Dictionary<string, EventInstance> events;
 }

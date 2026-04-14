@@ -25,6 +25,8 @@ public static class RunEvents
     public static Action OnDestinationArrival;
     public static Action OnPathOptionsCalculated;
 
+    public static Action<EventInstance> OnEventTrigger;
+
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 }
 

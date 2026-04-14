@@ -17,13 +17,17 @@ public class DecisionsService : MonoBehaviour
     private DataState DataState;
     private ExpeditionState ExpeditionState;
 
+    private EventPopUpDesigner EventPanel;
     private DecisionsPopUpDesigner DecisionPanel;
     private FinalPopUpDesigner FinalPanel;
 
     private List<DestinationInstance> DestinationOptions;
     private List<PathInstance> PathOptions;
 
-    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, DataState db, FinalPopUpDesigner finalpanel, PathService path)
+    private Queue<EventInstance> eventQueue = new Queue<EventInstance>();
+    private bool isShowingEvent = false;
+
+    public void Initialize(ExpeditionState expedition, ShipState ship, GameState game, DecisionsPopUpDesigner panel, TickService tick, DataState db, FinalPopUpDesigner finalpanel, PathService path, EventPopUpDesigner eventpanel)
     {
         TickService = tick;
         PathService = path;
@@ -35,6 +39,7 @@ public class DecisionsService : MonoBehaviour
 
         DecisionPanel = panel;
         FinalPanel = finalpanel;
+        EventPanel = eventpanel;
 
         DestinationOptions = new List<DestinationInstance>();
         PathOptions = new List<PathInstance>();
@@ -75,6 +80,35 @@ public class DecisionsService : MonoBehaviour
         {
             Debug.Log("Ship não possui Destination atual");
         }
+    }
+
+    private void EventHappen(EventInstance eventInstance)
+    {
+        eventQueue.Enqueue(eventInstance);
+
+        TryShowNextEvent();
+    }
+
+    private void TryShowNextEvent()
+    {
+        if (isShowingEvent) return;
+
+        if (eventQueue.Count == 0) return;
+
+        var nextEvent = eventQueue.Dequeue();
+
+        isShowingEvent = true;
+
+        EventPanel.ShowEvent(nextEvent, EventConfirm);
+    }
+
+    private void EventConfirm(bool Confirmed)
+    {
+        EventPanel.Hide();
+
+        isShowingEvent = false;
+
+        TryShowNextEvent();
     }
 
     private void DestinationSelection(DestinationInstance selected)
@@ -124,12 +158,14 @@ public class DecisionsService : MonoBehaviour
     {
         RunEvents.OnDestinationArrival += PauseShip;
         RunEvents.OnPathOptionsCalculated += SendShip;
+        RunEvents.OnEventTrigger += EventHappen;
     }
 
     void OnDisable()
     {
         RunEvents.OnDestinationArrival -= PauseShip;
         RunEvents.OnPathOptionsCalculated -= SendShip;
+        RunEvents.OnEventTrigger -= EventHappen;
     }
 
     private void PauseShip()

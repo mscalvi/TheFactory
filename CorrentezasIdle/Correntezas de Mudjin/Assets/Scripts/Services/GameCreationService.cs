@@ -46,6 +46,7 @@ public class GameCreationService : MonoBehaviour
         var ingredients = new Dictionary<string, IngredientInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
         var buildings = new Dictionary<string, BuildingInstance>();
+        var events = new Dictionary<string, EventInstance>();
 
         foreach (var ship in DataBase.ships)
         {
@@ -119,6 +120,12 @@ public class GameCreationService : MonoBehaviour
             buildings.Add(building.Id, instance);
         }
 
+        foreach (var eventModel in DataBase.events)
+        {
+            var instance = new EventInstance(eventModel);
+            events.Add(eventModel.Id, instance);
+        }
+
         GameState.DataState.ships = ships;
         GameState.DataState.tripulations = tripulation;
         GameState.DataState.weapons = weapons;
@@ -131,6 +138,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.ingredients = ingredients;
         GameState.DataState.upgrades = upgrades;
         GameState.DataState.buildings = buildings;
+        GameState.DataState.events = events;
     }
 
     private void BuildShips()

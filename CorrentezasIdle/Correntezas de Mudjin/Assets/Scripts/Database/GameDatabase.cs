@@ -24,4 +24,6 @@ public class GameDatabase : ScriptableObject
     public UpgradeModel[] upgrade;
 
     public BuildingModel[] buildings;
+
+    public EventModel[] events;
 }

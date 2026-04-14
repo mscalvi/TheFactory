@@ -128,3 +128,6 @@ MonoBehaviour:
   buildings:
   - {fileID: 11400000, guid: e07cdbe7b04c89e4787a1be2f1e93619, type: 2}
   - {fileID: 11400000, guid: 0c143775c11eae349a3870df8ec2761d, type: 2}
+  events:
+  - {fileID: 11400000, guid: 84d939543abbc964da7c3b711635d6af, type: 2}
+  - {fileID: 11400000, guid: 872a368c74ba6824fa03e7ecd2ffd1e5, type: 2}

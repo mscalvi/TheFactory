@@ -39,8 +39,10 @@ public class ExpeditionController : MonoBehaviour
 
     // Outros Mecanismos Úteis
     [SerializeField] DecisionsPopUpDesigner DecisionsPanel;
+    [SerializeField] EventPopUpDesigner EventPanel;
     [SerializeField] FinalPopUpDesigner FinalPanel;
     [SerializeField] EndExpeditionService EndExpeditionService;
+    [SerializeField] EventService EventService;
 
     private void Awake()
     {
@@ -120,9 +122,11 @@ public class ExpeditionController : MonoBehaviour
         ExpeditionUpgradeService.Initialize(Expedition, db, Ship);
 
         // Outros
-        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, FinalPanel, PathService);
+        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, FinalPanel, PathService, EventPanel);
 
         EndExpeditionService.Initialize(Expedition, Game, DecisionsService);
+
+        EventService.Initialize(Game, db, Expedition);
 
         // Events
         RunEvents.OnExpeditionStart?.Invoke();

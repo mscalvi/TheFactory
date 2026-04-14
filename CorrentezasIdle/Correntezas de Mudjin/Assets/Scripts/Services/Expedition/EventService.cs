@@ -1,0 +1,72 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
+
+public class EventService : MonoBehaviour
+{
+    private GameState GameState;
+    private DataState DataState;
+    private ExpeditionState ExpeditionState;
+
+
+    public void Initialize(GameState gameState, DataState dataState, ExpeditionState expeditionState)
+    {
+        GameState = gameState;
+
+        ExpeditionState = expeditionState;
+
+        DataState = dataState;
+    }
+
+    private void CheckEvents()
+    {
+        if (!GameState.ProgressState.m000)
+        {
+            return;
+        }
+
+        if (!GameState.UnlockState.Click)
+        {
+            if (ExpeditionState.DayCounter == 3)
+            {
+                TriggerEvent(DataState.events["e001"]);
+                return;
+            }
+        }
+
+        if (!GameState.UnlockState.Weapons)
+        {
+            if (ExpeditionState.DayCounter == 10)
+            {
+                TriggerEvent(DataState.events["e002"]);
+                return;
+            }
+        }
+
+        // Conferir probabilidade
+        // Chamar
+    }
+
+    private void TriggerEvent(EventInstance eventInstance)
+    {
+        RunEvents.OnEventTrigger?.Invoke(eventInstance);
+    }
+
+
+    private void EventChance()
+    {
+
+    }
+
+    // Events
+    void OnEnable()
+    {
+        RunEvents.OnNightFinish += CheckEvents;
+    }
+
+    void OnDisable()
+    {
+        RunEvents.OnNightFinish -= CheckEvents;
+    }
+}

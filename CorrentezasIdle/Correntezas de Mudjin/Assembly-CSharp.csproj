@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\Instances\AmmoInstance.cs" />
     <Compile Include="Assets\Scripts\Controller\ExpeditionController.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\UnnamedTripulationService.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\EventService.cs" />
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
     <Compile Include="Assets\Scripts\Definitions\BuildingDefinition.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
     <Compile Include="Assets\Scripts\States\CompanyState.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\DecisionsService.cs" />
+    <Compile Include="Assets\Scripts\Models\EventModel.cs" />
     <Compile Include="Assets\Scripts\Designer\LandingPageDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\RangeViewService.cs" />
     <Compile Include="Assets\Scripts\Controller\CompanyBuildingsController.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
     <Compile Include="Assets\Scripts\Helpers\IngredientHelper.cs" />
     <Compile Include="Assets\Scripts\Models\AmmoModel.cs" />
+    <Compile Include="Assets\Scripts\Instances\EventInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EnemyMarkingService.cs" />
     <Compile Include="Assets\Scripts\Designer\CompanyDesigner.cs" />
     <Compile Include="Assets\Scripts\Instances\BuildingInstance.cs" />
@@ -128,6 +131,7 @@
     <Compile Include="Assets\Scripts\Models\PathModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
     <Compile Include="Assets\Scripts\Helpers\DestinationHelper.cs" />
+    <Compile Include="Assets\Scripts\Designer\EventPopUpDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionUpgradeService.cs" />
     <Compile Include="Assets\Scripts\Services\Landing\LandingService.cs" />
     <Compile Include="Assets\Scripts\Services\Company\CompanyCurrencyService.cs" />
