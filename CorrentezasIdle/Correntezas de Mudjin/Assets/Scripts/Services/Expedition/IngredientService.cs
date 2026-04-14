@@ -16,7 +16,7 @@ public class IngredientService : MonoBehaviour
 
     public double Get(IngredientHelper.IngredientType type)
     {
-        var ingredients = GameState.CompanyIngredients;
+        var ingredients = GameState.CompanyState.CompanyIngredients;
 
         var ingredient = ingredients.TryGetValue(type, out var value) ? value.Amount : 0;
 
@@ -38,7 +38,7 @@ public class IngredientService : MonoBehaviour
             }
         }
 
-        var ingredients = GameState.CompanyIngredients;
+        var ingredients = GameState.CompanyState.CompanyIngredients;
 
         ingredients[type].Amount = Get(type) + amount;
 
@@ -47,7 +47,7 @@ public class IngredientService : MonoBehaviour
 
     public bool Spend(IngredientHelper.IngredientType type, double amount)
     {
-        var ingredients = GameState.CompanyIngredients;
+        var ingredients = GameState.CompanyState.CompanyIngredients;
         double current = Get(type);
 
         if (current < amount)

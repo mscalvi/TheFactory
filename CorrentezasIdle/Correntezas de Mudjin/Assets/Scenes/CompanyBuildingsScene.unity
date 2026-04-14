@@ -285,6 +285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f53f96658ce3943819bf58b0cb29f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NextButton: {fileID: 988437583}
+  PreviousButton: {fileID: 50278075}
   CompanyCurrencyPanel: {fileID: 1461295571}
   CurrencyPrefab: {fileID: 3482011983423526568, guid: 5a5cc63ebf05daf45a8cb02204514361, type: 3}
   UpgradesPanel: {fileID: 1925337336}
@@ -319,6 +321,7 @@ GameObject:
   - component: {fileID: 66670639}
   - component: {fileID: 66670638}
   - component: {fileID: 66670640}
+  - component: {fileID: 66670641}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -387,6 +390,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1afd9b156777330418373a14d29e42a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &66670641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66670635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e647c6d38f0fa3d4581fc9e4937c6ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &165194367
@@ -1977,6 +1992,7 @@ MonoBehaviour:
   CompanyUpgradeService: {fileID: 66670638}
   CompanyCurrencyService: {fileID: 66670639}
   CompanyPricingService: {fileID: 66670640}
+  UnlockService: {fileID: 66670641}
 --- !u!1 &1435810811
 GameObject:
   m_ObjectHideFlags: 0

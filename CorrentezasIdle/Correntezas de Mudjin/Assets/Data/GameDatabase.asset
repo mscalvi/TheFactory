@@ -117,11 +117,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2fecb987cd0deba4e9672d19700e7147, type: 2}
   - {fileID: 11400000, guid: 838c402b5f389ea409d68ab6180a0b49, type: 2}
   upgrade:
+  - {fileID: 11400000, guid: d73006c303236a642b8761b1f470a6d7, type: 2}
+  - {fileID: 11400000, guid: 73d2a047d9859fd4e876a22ace158c4e, type: 2}
+  - {fileID: 11400000, guid: c49a978a541887943b3c5a89c6aa7400, type: 2}
+  - {fileID: 11400000, guid: 05ee464b27c540146896b44cecaa23b0, type: 2}
   - {fileID: 11400000, guid: 34cfd73021a80574ca259d7ba4f1c078, type: 2}
   - {fileID: 11400000, guid: 3e6b7c4db95db604695bf3e66cc7e9c2, type: 2}
-  - {fileID: 11400000, guid: 765be19125fe5b54cb80e770cfbbf83c, type: 2}
-  - {fileID: 11400000, guid: 34ba763f25b72c74ca9b070693ea83f7, type: 2}
-  - {fileID: 11400000, guid: cbe04692ffd2e0d4faa0416814226a51, type: 2}
+  - {fileID: 11400000, guid: 989aeac2582473e498bf7e0b71ec3a50, type: 2}
+  - {fileID: 11400000, guid: 9dbc49c51d4b9b043b5ce7e352467c5a, type: 2}
   buildings:
   - {fileID: 11400000, guid: e07cdbe7b04c89e4787a1be2f1e93619, type: 2}
   - {fileID: 11400000, guid: 0c143775c11eae349a3870df8ec2761d, type: 2}

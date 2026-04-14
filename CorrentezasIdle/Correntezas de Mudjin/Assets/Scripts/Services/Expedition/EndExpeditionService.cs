@@ -21,7 +21,7 @@ public class EndExpeditionService : MonoBehaviour
         {
             if(currency.Key != CurrencyHelper.CurrencyType.Experience)
             {
-                GameState.CompanyCurrency[currency.Key] = currency.Value;
+                GameState.CompanyState.CompanyCurrency[currency.Key] = currency.Value;
             }
         }
     }
@@ -33,7 +33,6 @@ public class EndExpeditionService : MonoBehaviour
             DecisionsService.LastDecision(false);
         } else if (ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Finished)
         {
-            GameState.FirstExpedition = false;
             DecisionsService.LastDecision(true);
         }
     }

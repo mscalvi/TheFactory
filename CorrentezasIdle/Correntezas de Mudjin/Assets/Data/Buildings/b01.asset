@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: b01
   m_EditorClassIdentifier: 
   Id: b01
-  Name: Company Room
-  Type: 1
-  UnlockStatus: 3
+  Name: "Sala de Constru\xE7\xF5es"
+  Type: 2
+  UnlockStatus: 1

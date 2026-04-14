@@ -19,9 +19,26 @@ public class LandingUiService : MonoBehaviour
         GameState = gameState;
         DataState = db;
 
-        if (GameState.FirstExpedition)
+        BlockButtons();
+
+        if (GameState.UnlockState.Crew)
         {
-            BlockButtons();
+            CrewButton.enabled = true;
+        }
+
+        if (GameState.UnlockState.Company)
+        {
+            CompanyButton.enabled = true;
+        }
+
+        if (GameState.UnlockState.Ship)
+        {
+            ShipButton.enabled = true;
+        }
+
+        if (GameState.UnlockState.Map)
+        {
+            MapButton.enabled = true;
         }
     }
 

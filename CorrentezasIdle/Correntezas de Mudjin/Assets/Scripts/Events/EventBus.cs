@@ -40,6 +40,11 @@ public static class CompanyEvents
 {
     public static Action<UpgradeInstance> OnUpgradeBuy;
     public static Action<UpgradeInstance> AfterUpgradeBuy;
-    public static Action<UpgradeInstance> OnCanBuyChange;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
+    public static Action OnBuildingUnlock;
+}
+
+public static class ProgressEvents
+{
+    public static Action OnFirstExpeditionFinish;
 }

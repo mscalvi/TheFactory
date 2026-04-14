@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: usp02
+  m_Name: umc03
   m_EditorClassIdentifier: 
-  Id: usp02
-  Name: Ship Inicial Armor
-  Description: 
-  UpgradeType: 0
+  Id: umc03
+  Name: 'Aumento da Recompensa em Quantidade '
+  Description: "Aumenta a recompensa das Miss\xF5es"
+  UpgradeType: 1
   EffectType: 2
   Scope: 1
   ExpeditionMenu: 0
   Building: 1
-  UpgradeValue: 0.4
-  StartValue: 0
-  TargetType: 1
+  UpgradeValue: 0.01
+  StartValue: 1
+  TargetType: 5
   TargetId: 
-  UnlockId: 0
-  MaxBuy: 0
-  Cost: 2
-  CostGrowth: 1.13
-  Currency: 2
-  UnlockStatus: 3
+  UnlockId: uuu01
+  MaxBuy: 100
+  Cost: 50
+  CostGrowth: 1.2
+  Currency: 1
+  UnlockStatus: 1

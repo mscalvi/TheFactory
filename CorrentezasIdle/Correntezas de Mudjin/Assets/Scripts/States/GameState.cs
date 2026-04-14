@@ -8,18 +8,13 @@ public class GameState
 
     public DataState DataState;
     public ShipState ShipState;
+    public UnlockState UnlockState;
+    public ProgressState ProgressState;
+    public CompanyState CompanyState;
     public ExpeditionState ExpeditionState;
 
-    public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> CompanyCurrency;
-    public Dictionary<IngredientHelper.IngredientType, IngredientInstance> CompanyIngredients;
-    public Dictionary<string, UpgradeInstance> CompanyUpgrades;
-
     public GameHelper.ExpeditionStatus ExpeditionStatus;
-    public bool FirstExpedition = true;
 
     // Informações Necessárias
     public float WorldScale = 0.2f;
-
-    // Dado programável?
-    public DestinationInstance CurrentBase;
 }

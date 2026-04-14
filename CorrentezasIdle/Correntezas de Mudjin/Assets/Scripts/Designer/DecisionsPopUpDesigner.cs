@@ -120,8 +120,6 @@ public class DecisionsPopUpDesigner : MonoBehaviour
         Opt3Btn.onClick.RemoveAllListeners();
         Opt4Btn.onClick.RemoveAllListeners();
 
-        Debug.Log("Painel de Deciões Chamado");
-
         int totalDest = Destinations.Count;
         int totalPath = Paths.Count;
 
@@ -312,7 +310,6 @@ public class DecisionsPopUpDesigner : MonoBehaviour
 
     public void Hide()
     {
-        Debug.Log("Painel de Deciões Oculto");
         DecisionPanel.SetActive(false);
         Opt1Btn.gameObject.SetActive(false);
         Opt2Btn.gameObject.SetActive(false);

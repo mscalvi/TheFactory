@@ -190,7 +190,7 @@ public class ExpeditionUiService : MonoBehaviour
 
         foreach (var upgrade in upgrades)
         {
-            if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+            if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
                 continue;
 
             if (upgrade.Value.Scope != UpgradeHelper.UpgradeScope.Expedition)

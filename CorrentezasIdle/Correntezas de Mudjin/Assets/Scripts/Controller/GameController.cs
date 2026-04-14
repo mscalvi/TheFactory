@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
     public GameDatabase Database;
 
     [SerializeField] GameCreationService GameCreationService;
+    [SerializeField] public GameProgressService GameProgressService;
 
     bool FirstInitialization = true;
 
@@ -33,6 +34,9 @@ public class GameController : MonoBehaviour
         {
             GameState = new GameState();
             GameState.DataState = new DataState();
+            GameState.ProgressState = new ProgressState();
+            GameState.CompanyState = new CompanyState();
+            GameState.UnlockState = new UnlockState();
         } else
         {
             FirstInitialization = false;
@@ -41,6 +45,7 @@ public class GameController : MonoBehaviour
         if (FirstInitialization)
         {
             GameCreationService.Initialize(GameState, Database);
+            GameProgressService.Initialize(GameState);
         } else
         {
             // service de Load

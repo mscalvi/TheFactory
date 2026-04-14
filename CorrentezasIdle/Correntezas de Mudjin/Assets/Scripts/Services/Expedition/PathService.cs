@@ -31,7 +31,7 @@ public class PathService : MonoBehaviour
             ExpeditionState.OldDestination = ExpeditionState.CurrentDestination;
         }
 
-        if (GameState.FirstExpedition)
+        if (!GameState.ProgressState.m000)
         {
             ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
         }
@@ -103,15 +103,15 @@ public class PathService : MonoBehaviour
     void CalculatePathOptions()
     {
         ExpeditionState.CurrentDestination = ExpeditionState.NewDestination;
-        Debug.Log($"Destination Atual: {ExpeditionState.CurrentDestination.Name}");
 
-        if (!GameState.FirstExpedition)
+        if (GameState.ProgressState.m000)
         {
             RunEvents.OnPathOptionsCalculated?.Invoke();
         }
         else
         {
             ExpeditionState.ExpeditionStatus = GameHelper.ExpeditionStatus.Finished;
+            ProgressEvents.OnFirstExpeditionFinish?.Invoke();
             RunEvents.OnExpeditionEnd?.Invoke();
         }
     }

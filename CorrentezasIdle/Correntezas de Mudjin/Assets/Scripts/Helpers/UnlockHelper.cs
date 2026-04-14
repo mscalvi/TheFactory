@@ -7,10 +7,10 @@ public class UnlockHelper
 {
     public enum UnlockStatus
     {
-        Unknow,
-        Blocked,
-        Available,
-        Unlocked,
-        Deleted,
+        Unknow,     // Não visto ainda
+        Blocked,    // Visto, mas indisponível
+        Available,  // Visto e disponível
+        Unlocked,   // Completamente conhecido
+        Deleted,    // Dados obsoletos
     }
 }

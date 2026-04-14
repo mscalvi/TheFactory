@@ -7,7 +7,8 @@ public class UpgradeHelper
     public enum UpgradeScope
     {
         Expedition,
-        Permanent,
+        Company,
+        Meta,
     }
 
     public enum UpgradeMenu
@@ -29,11 +30,14 @@ public class UpgradeHelper
     {
         Additive,
         Multiplicative,
+        Change,
     }
 
     public enum EffectType
     {
+        None,
         Unlock,
+        Missions,
         ShipLife,
         ShipArmor,
     }
@@ -41,8 +45,11 @@ public class UpgradeHelper
     public enum TargetType 
     {
         None,
+        Meta,
         Ship,
         Weapon,
+        Building,
+        Missions,
     }
 
 }

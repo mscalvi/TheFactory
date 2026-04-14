@@ -13,20 +13,20 @@ MonoBehaviour:
   m_Name: use02
   m_EditorClassIdentifier: 
   Id: use02
-  Name: Ship Absolute Armor
+  Name: "Resist\xEAncia do Navio"
   Description: 
   UpgradeType: 0
-  EffectType: 2
+  EffectType: 4
   Scope: 0
   ExpeditionMenu: 1
   Building: 0
   UpgradeValue: 0.4
   StartValue: 0
-  TargetType: 1
+  TargetType: 2
   TargetId: 
-  UnlockId: 0
+  UnlockId: 
   MaxBuy: 0
   Cost: 5
   CostGrowth: 1.13
   Currency: 0
-  UnlockStatus: 3
+  UnlockStatus: 2

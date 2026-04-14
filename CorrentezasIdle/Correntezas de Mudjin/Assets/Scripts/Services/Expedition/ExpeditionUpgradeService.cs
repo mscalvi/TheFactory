@@ -26,6 +26,8 @@ public class ExpeditionUpgradeService : MonoBehaviour
             upgrades[upgrade.Id] = upgrade;
         }
 
+        upgrade.ActualBuy++;
+
         Recalculate();
     }
 
@@ -138,13 +140,13 @@ public class ExpeditionUpgradeService : MonoBehaviour
     // Events
     void OnEnable()
     {
-        ShipEvents.OnUpgradeBuy += UpgradeBought;
+        ShipEvents.OnUpgradeBuy += AddUpgrade;
         RunEvents.OnExpeditionEnd += ResetExpeditionUpgrades;
     }
 
     void OnDisable()
     {
-        ShipEvents.OnUpgradeBuy -= UpgradeBought;
+        ShipEvents.OnUpgradeBuy -= AddUpgrade;
         RunEvents.OnExpeditionEnd -= ResetExpeditionUpgrades;
     }
 
@@ -161,11 +163,6 @@ public class ExpeditionUpgradeService : MonoBehaviour
         Recalculate();
 
         ExpeditionState.ExpeditionUpgrades.Clear();
-    }
-
-    void UpgradeBought(UpgradeInstance upgrade)
-    {
-        AddUpgrade(upgrade);
     }
 }
 

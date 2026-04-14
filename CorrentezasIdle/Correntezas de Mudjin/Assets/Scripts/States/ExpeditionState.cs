@@ -5,7 +5,7 @@ using UnityEngine;
 public class ExpeditionState
 {
     // Day/Night Service
-    public int BaseTicksPerPhase = 150;
+    public int BaseTicksPerPhase = 30; // Padrão: 150
     public bool IsDay { get; set; } = true;
     public int DestinationDayCounter = 1;
     public int DayCounter = 1;

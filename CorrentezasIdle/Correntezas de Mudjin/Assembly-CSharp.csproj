@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
     <Compile Include="Assets\Scripts\Definitions\BuildingDefinition.cs" />
+    <Compile Include="Assets\Scripts\Services\GameProgressService.cs" />
     <Compile Include="Assets\Scripts\Controller\GameController.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\CombatService.cs" />
     <Compile Include="Assets\Scripts\Services\Landing\LandingUiService.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Assets\Scripts\Models\OtherRoomModel.cs" />
     <Compile Include="Assets\Scripts\States\DataState.cs" />
     <Compile Include="Assets\Scripts\Helpers\CurrencyHelper.cs" />
+    <Compile Include="Assets\Scripts\Services\Company\UnlockService.cs" />
     <Compile Include="Assets\Scripts\Helpers\UiHelper.cs" />
     <Compile Include="Assets\Scripts\Designer\ExpeditionPageDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EnemyProgressService.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
     <Compile Include="Assets\Scripts\Instances\CurrencyInstance.cs" />
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
+    <Compile Include="Assets\Scripts\States\CompanyState.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\DecisionsService.cs" />
     <Compile Include="Assets\Scripts\Designer\LandingPageDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\RangeViewService.cs" />
@@ -138,6 +141,7 @@
     <Compile Include="Assets\Scripts\Services\Expedition\EnemyViewService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionCurrencyService.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
+    <Compile Include="Assets\Scripts\States\UnlockState.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponRoomInstance.cs" />
     <Compile Include="Assets\Scripts\Configurations\ShipInitialConfiguration.cs" />
     <Compile Include="Assets\Scripts\Models\IngredientModel.cs" />
@@ -147,6 +151,7 @@
     <Compile Include="Assets\Scripts\Controller\LandingController.cs" />
     <Compile Include="Assets\Scripts\Models\BuildingModel.cs" />
     <Compile Include="Assets\Scripts\Models\TripulationModel.cs" />
+    <Compile Include="Assets\Scripts\States\ProgressState.cs" />
     <Compile Include="Assets\Scripts\Models\ShipModel.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionUiService.cs" />
     <Compile Include="Assets\Scripts\Services\Company\CompanyUiService.cs" />

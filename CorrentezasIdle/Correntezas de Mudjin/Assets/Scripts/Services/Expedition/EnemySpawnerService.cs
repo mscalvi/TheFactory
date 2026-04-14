@@ -48,7 +48,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         if (roll < Expedition.BaseSpawnChance)
         {
             accumulatedBudget += waveBudget;
-            Debug.Log($"Wave acumulada. Budget total: {accumulatedBudget}");
             return;
         }
 
@@ -64,6 +63,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     {
         double baseBud = Expedition.BaseSpawnBudget;
         double growth = Expedition.BaseSpawnBudgetGrowth;
+
         double actualBud = baseBud * System.Math.Pow(growth, Expedition.DayCounter);
 
         return actualBud;
@@ -139,8 +139,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         ProgressService.ApplyProgression(instance);
 
         Expedition.ActiveEnemies.Add(instance);
-
-        Debug.Log($"Inimigo Spawnado: {instance.Name}");
 
         CombatEvents.OnEnemySpawn?.Invoke(instance);
     }

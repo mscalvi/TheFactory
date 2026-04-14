@@ -9,6 +9,7 @@ public class CompanyBuildingsController : MonoBehaviour
     [SerializeField] CompanyUpgradeService CompanyUpgradeService;
     [SerializeField] CompanyCurrencyService CompanyCurrencyService;
     [SerializeField] CompanyPricingService CompanyPricingService;
+    [SerializeField] UnlockService UnlockService;
 
     private void Awake()
     {
@@ -36,13 +37,15 @@ public class CompanyBuildingsController : MonoBehaviour
             return;
         }
 
-        CompanyCurrencyService.Initialize(Game, Data);
+        CompanyCurrencyService.Initialize(Game);
 
         CompanyPurchaseService.Initialize(Game, Data, CompanyCurrencyService);
 
         CompanyUiService.Initialize(Game, Data, CompanyPurchaseService);
 
-        CompanyUpgradeService.Initialize(Game, Data, Ship);
+        UnlockService.Initialize(Game, Data);
+
+        CompanyUpgradeService.Initialize(Game, Data, Ship, UnlockService);
 
         CompanyPricingService.Initialize(Game, Data);
     }

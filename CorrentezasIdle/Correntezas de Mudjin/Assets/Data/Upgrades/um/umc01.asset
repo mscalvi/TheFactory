@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: usp03
+  m_Name: umc01
   m_EditorClassIdentifier: 
-  Id: usp03
-  Name: Ship Fuckyou
-  Description: 
-  UpgradeType: 1
+  Id: umc01
+  Name: "Quantidade de Miss\xF5es Simult\xE2neas"
+  Description: "Aumenta a quantidade de Miss\xF5es abertas"
+  UpgradeType: 0
   EffectType: 2
   Scope: 1
   ExpeditionMenu: 0
-  Building: 2
-  UpgradeValue: 0.2
-  StartValue: 1
-  TargetType: 1
+  Building: 1
+  UpgradeValue: 1
+  StartValue: 0
+  TargetType: 5
   TargetId: 
-  UnlockId: 0
-  MaxBuy: 0
-  Cost: 3
-  CostGrowth: 1.13
-  Currency: 2
-  UnlockStatus: 3
+  UnlockId: uuu01
+  MaxBuy: 9
+  Cost: 9999
+  CostGrowth: 1
+  Currency: 1
+  UnlockStatus: 1

@@ -39,7 +39,7 @@ public class DecisionsService : MonoBehaviour
         DestinationOptions = new List<DestinationInstance>();
         PathOptions = new List<PathInstance>();
 
-        if (GameState.FirstExpedition)
+        if (!GameState.ProgressState.m000)
         {
             DestinationOptions.Clear();
             DestinationSelection(DataState.destinations.GetValueOrDefault("d101"));

@@ -28,7 +28,7 @@ public class CompanyUpgradeDefinition : MonoBehaviour
         UpgradeName.text = upgrade.Name;
         UpgradeDescription.text = upgrade.Description;
 
-        if (upgrade.Scope == UpgradeHelper.UpgradeScope.Permanent)
+        if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
         {
             if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {

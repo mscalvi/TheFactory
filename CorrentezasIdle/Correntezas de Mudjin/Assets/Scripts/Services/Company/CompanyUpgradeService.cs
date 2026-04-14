@@ -7,19 +7,22 @@ public class CompanyUpgradeService : MonoBehaviour
     private GameState GameState;
     private DataState DataState;
     private ShipState ShipState;
+    private UnlockService UnlockService;
 
-    public void Initialize (GameState gameState, DataState dataState, ShipState shipState)
+    public void Initialize (GameState gameState, DataState dataState, ShipState shipState, UnlockService unlock)
     {
         GameState = gameState;
 
         DataState = dataState;
 
         ShipState = shipState;
+
+        UnlockService = unlock;
     }
 
     public void AddUpgrade(UpgradeInstance upgrade)
     {
-        var upgrades = GameState.CompanyUpgrades;
+        var upgrades = GameState.CompanyState.CompanyUpgrades;
 
         if (!upgrades.TryGetValue(upgrade.Id, out var instance))
         {
@@ -29,14 +32,25 @@ public class CompanyUpgradeService : MonoBehaviour
 
         instance.ActualBuy++;
 
-        Recalculate();
+        if (instance.ActualBuy >= instance.MaxBuy && instance.MaxBuy > 0)
+        {
+            instance.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        }
+
+        if(instance.EffectType != UpgradeHelper.EffectType.Unlock)
+        {
+            Recalculate();
+        } else
+        {
+            UnlockService.UnlockUpgrade(instance);
+        }
     }
 
     private void Recalculate()
     {
         ApplyBaseStats();
 
-        foreach (var upgrade in GameState.CompanyUpgrades)
+        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
@@ -44,7 +58,7 @@ public class CompanyUpgradeService : MonoBehaviour
             }
         }
 
-        foreach (var upgrade in GameState.CompanyUpgrades)
+        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
             {
@@ -131,16 +145,11 @@ public class CompanyUpgradeService : MonoBehaviour
     // Events
     void OnEnable()
     {
-        CompanyEvents.OnUpgradeBuy += UpgradeBought;
+        CompanyEvents.OnUpgradeBuy += AddUpgrade;
     }
 
     void OnDisable()
     {
-        CompanyEvents.OnUpgradeBuy -= UpgradeBought;
-    }
-
-    void UpgradeBought(UpgradeInstance upgrade)
-    {
-        AddUpgrade(upgrade);
+        CompanyEvents.OnUpgradeBuy -= AddUpgrade;
     }
 }

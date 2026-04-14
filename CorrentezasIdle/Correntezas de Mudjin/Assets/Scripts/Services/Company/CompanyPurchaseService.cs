@@ -16,11 +16,16 @@ public class CompanyPurchaseService : MonoBehaviour
         DataState = dataState;
 
         CompanyCurrencyService = currencyService;
+
+        foreach (var currency in GameState.DataState.currencies)
+        {
+            CanBuyCheck(currency.Value.Type);
+        }
     }
 
     public void BuyUpgrade(UpgradeInstance upgrade)
     {
-        if (!GameState.CompanyCurrency.TryGetValue(upgrade.Currency, out var Currency))
+        if (!GameState.CompanyState.CompanyCurrency.TryGetValue(upgrade.Currency, out var Currency))
             return;
 
         if (Currency.Amount >= upgrade.ActualCost)
@@ -35,10 +40,10 @@ public class CompanyPurchaseService : MonoBehaviour
 
     public void CanBuyCheck(CurrencyHelper.CurrencyType type)
     {
-        if (!GameState.CompanyCurrency.TryGetValue(type, out var Currency))
+        if (!GameState.CompanyState.CompanyCurrency.TryGetValue(type, out var Currency))
             return;
 
-        foreach (var upgrade in GameState.CompanyUpgrades)
+        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
         {
             if (upgrade.Value.Currency == type)
             {
@@ -50,8 +55,6 @@ public class CompanyPurchaseService : MonoBehaviour
                 {
                     upgrade.Value.CanBuy = false;
                 }
-
-                CompanyEvents.OnCanBuyChange?.Invoke(upgrade.Value);
             }
         }
     }

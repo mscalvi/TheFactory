@@ -52,6 +52,8 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
+        var GameProgress = GameController.Instance.GameProgressService;
+
         StartExpeditionService.Initialize(Game);
 
         var Expedition = GameController.Instance.GameState.ExpeditionState;
@@ -66,8 +68,6 @@ public class ExpeditionController : MonoBehaviour
         Expedition.ExpeditionUpgrades = new Dictionary<string, UpgradeInstance>();
 
         var Ship = GameController.Instance.GameState.ShipState;
-
-        Debug.Log($"{Ship.Ship.CurrentLife} / {Ship.Ship.MaxLife}");
 
         if (Ship == null)
         {

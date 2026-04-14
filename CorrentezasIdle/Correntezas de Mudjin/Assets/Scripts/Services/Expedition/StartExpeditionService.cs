@@ -33,7 +33,7 @@ public class StartExpeditionService : MonoBehaviour
             Game.ExpeditionState.ExpeditionCurrency.Clear();
         }
 
-        foreach (var currency in Game.CompanyCurrency)
+        foreach (var currency in Game.CompanyState.CompanyCurrency)
         {
             var original = currency.Value;
 
@@ -48,9 +48,9 @@ public class StartExpeditionService : MonoBehaviour
 
     void LoadDestination(GameState Game)
     {
-        if (!Game.FirstExpedition)
+        if (GameState.ProgressState.m000)
         {
-            Game.ExpeditionState.CurrentDestination = Game.CurrentBase;
+            Game.ExpeditionState.CurrentDestination = Game.CompanyState.CurrentBase;
         }
     }
 

@@ -55,7 +55,6 @@ public class CombatService : MonoBehaviour, ITickable
                 enemy.Cooldown = 1.0 / enemy.AttackSpeed;
                 enemy.State = EnemyHelper.EnemyState.Cooldown;
 
-                Debug.Log($"{enemy.Name} atacou: {enemy.Damage}");
                 UiService.LifeTextSet();
             }
         }
@@ -63,7 +62,6 @@ public class CombatService : MonoBehaviour, ITickable
 
     public void ShipDamage(WeaponRoomInstance room, EnemyInstance target, double damage)
     {
-        Debug.Log($"{room.Id} atirou em {target.Name}, dano: {damage}");
         target.CurrentLife -= damage;
     }
 }

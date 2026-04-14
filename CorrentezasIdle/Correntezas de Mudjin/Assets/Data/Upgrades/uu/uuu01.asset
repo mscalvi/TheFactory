@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: use01
+  m_Name: uuu01
   m_EditorClassIdentifier: 
-  Id: use01
-  Name: Vida do Navio
-  Description: 
-  UpgradeType: 1
-  EffectType: 3
-  Scope: 0
-  ExpeditionMenu: 1
-  Building: 0
-  UpgradeValue: 0.1
-  StartValue: 1
-  TargetType: 2
+  Id: uuu01
+  Name: Procurar Trabalho
+  Description: "Desbloqueia as Miss\xF5es"
+  UpgradeType: 2
+  EffectType: 1
+  Scope: 2
+  ExpeditionMenu: 0
+  Building: 1
+  UpgradeValue: 0
+  StartValue: 0
+  TargetType: 1
   TargetId: 
-  UnlockId: 
-  MaxBuy: 0
-  Cost: 5
-  CostGrowth: 1.11
-  Currency: 0
-  UnlockStatus: 2
+  UnlockId: m000
+  MaxBuy: 1
+  Cost: 1
+  CostGrowth: 1
+  Currency: 1
+  UnlockStatus: 1

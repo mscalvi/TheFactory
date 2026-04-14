@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static CurrencyHelper;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
@@ -11,6 +12,9 @@ public class CompanyUiService : MonoBehaviour
     private DataState DataState;
 
     private CompanyPurchaseService CompanyPurchaseService;
+
+    [SerializeField] Button NextButton;
+    [SerializeField] Button PreviousButton;
 
     [SerializeField] Transform CompanyCurrencyPanel;
     [SerializeField] CompanyCurrencyDefinition CurrencyPrefab;
@@ -57,6 +61,12 @@ public class CompanyUiService : MonoBehaviour
             ShowBuilding(currentIndex);
         }
 
+        if(unlockedBuildings.Count < 2)
+        {
+            NextButton.enabled = false;
+            PreviousButton.enabled = false;
+        }
+
         BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
     }
 
@@ -67,6 +77,12 @@ public class CompanyUiService : MonoBehaviour
         BuildingName.text = building.building.Name;
 
         PopulateUpgrades(building);
+
+        if (unlockedBuildings.Count > 1)
+        {
+            NextButton.enabled = true;
+            PreviousButton.enabled = true;
+        }
     }
 
     void PopulateUpgrades(BuildingDefinition building)
@@ -76,18 +92,21 @@ public class CompanyUiService : MonoBehaviour
 
         foreach (var upgrade in building.Upgrades)
         {
-            var go = Instantiate(CompanyUpgradeDefinition, UpgradesPanel.transform);
-            var ui = go.GetComponent<CompanyUpgradeDefinition>();
+            if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Available)
+            {
+                var go = Instantiate(CompanyUpgradeDefinition, UpgradesPanel.transform);
+                var ui = go.GetComponent<CompanyUpgradeDefinition>();
 
-            ui.Setup(upgrade, CompanyPurchaseService);
+                ui.Setup(upgrade, CompanyPurchaseService);
 
-            upgradeUI[upgrade.Id] = ui;
+                upgradeUI[upgrade.Id] = ui;
+            }
         }
     }
 
     public void CurrencySet(CurrencyType type)
     {
-        var currencies = GameState.CompanyCurrency;
+        var currencies = GameState.CompanyState.CompanyCurrency;
 
         if (!currencies.TryGetValue(type, out var currency))
             return;
@@ -104,7 +123,7 @@ public class CompanyUiService : MonoBehaviour
     // Helpers
     public void BuildCurrencies(CurrencyScope scope, Transform parent)
     {
-        var currencies = GameState.CompanyCurrency;
+        var currencies = GameState.CompanyState.CompanyCurrency;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
@@ -137,8 +156,59 @@ public class CompanyUiService : MonoBehaviour
         }
     }
 
+    void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)
+    {
+        CurrencySet(type);
+
+        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
+        {
+            if (upgrade.Value.Currency == type)
+            {
+                RefreshUpgradeUi(upgrade.Value);
+            }
+        }
+    }
+
+    void RefreshUpgradeUi(UpgradeInstance upgrade)
+    {
+        if (upgradeUI.TryGetValue(upgrade.Id, out var ui))
+        {
+            if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                ShowBuilding(currentIndex);
+                return;
+            }
+
+            ui.Setup(upgrade, CompanyPurchaseService);
+        }
+    }
+
+    void RefreshBuildings()
+    {
+        unlockedBuildings.Clear();
+
+        foreach (var building in DataState.buildings)
+        {
+            if (building.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                var obj = Instantiate(BuildingDefinition);
+
+                var ui = obj.GetComponent<BuildingDefinition>();
+
+                ui.Setup(building.Value);
+
+                unlockedBuildings.Add(ui);
+            }
+        }
+    }
+
     public void GoNext()
     {
+        if (unlockedBuildings.Count == 1)
+        {
+            return;
+        }
+
         if (currentIndex < unlockedBuildings.Count - 1)
         {
             currentIndex++;
@@ -153,6 +223,11 @@ public class CompanyUiService : MonoBehaviour
 
     public void GoPrevious()
     {
+        if (unlockedBuildings.Count == 1)
+        {
+            return;
+        }
+
         if (currentIndex > 0)
         {
             currentIndex--;
@@ -179,34 +254,15 @@ public class CompanyUiService : MonoBehaviour
     {
         CompanyEvents.OnCurrencyChange += RefreshCurrencyUi;
         CompanyEvents.AfterUpgradeBuy += RefreshUpgradeUi;
-        CompanyEvents.OnCanBuyChange += RefreshUpgradeUi;
+        CompanyEvents.OnBuildingUnlock += RefreshBuildings;
     }
 
     void OnDisable()
     {
         CompanyEvents.OnCurrencyChange -= RefreshCurrencyUi;
         CompanyEvents.AfterUpgradeBuy -= RefreshUpgradeUi;
-        CompanyEvents.OnCanBuyChange -= RefreshUpgradeUi;
+        CompanyEvents.OnBuildingUnlock -= RefreshBuildings;
     }
 
-    void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)
-    {
-        CurrencySet(type);
 
-        foreach (var upgrade in GameState.CompanyUpgrades)
-        {
-            if (upgrade.Value.Currency == type)
-            {
-                RefreshUpgradeUi(upgrade.Value);
-            }
-        }
-    }
-
-    void RefreshUpgradeUi(UpgradeInstance upgrade)
-    {
-        if (upgradeUI.TryGetValue(upgrade.Id, out var ui))
-        {
-            ui.Setup(upgrade, CompanyPurchaseService);
-        }
-    }
 }

@@ -36,8 +36,6 @@ public class ExpeditionPurchaseService : MonoBehaviour
 
         if (Currency.Amount >= upgrade.ActualCost)
         {
-            upgrade.ActualBuy++;
-
             CurrencyService.Spend(upgrade.Currency, upgrade.ActualCost);
 
             ShipEvents.OnUpgradeBuy?.Invoke(upgrade);

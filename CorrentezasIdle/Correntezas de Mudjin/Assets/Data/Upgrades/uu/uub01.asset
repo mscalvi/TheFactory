@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: use01
+  m_Name: uub01
   m_EditorClassIdentifier: 
-  Id: use01
-  Name: Vida do Navio
-  Description: 
-  UpgradeType: 1
-  EffectType: 3
-  Scope: 0
-  ExpeditionMenu: 1
-  Building: 0
-  UpgradeValue: 0.1
-  StartValue: 1
-  TargetType: 2
-  TargetId: 
-  UnlockId: 
-  MaxBuy: 0
-  Cost: 5
-  CostGrowth: 1.11
-  Currency: 0
-  UnlockStatus: 2
+  Id: uub01
+  Name: "Construir a Sala de Constru\xE7\xF5es"
+  Description: "Libera a Sala de Constru\xE7\xF5es"
+  UpgradeType: 2
+  EffectType: 1
+  Scope: 1
+  ExpeditionMenu: 0
+  Building: 1
+  UpgradeValue: 0
+  StartValue: 0
+  TargetType: 4
+  TargetId: b01
+  UnlockId: m000
+  MaxBuy: 1
+  Cost: 10
+  CostGrowth: 0
+  Currency: 1
+  UnlockStatus: 1

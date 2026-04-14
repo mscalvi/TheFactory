@@ -14,9 +14,9 @@ public class GameCreationService : MonoBehaviour
         GameState = gs;
         DataBase = db;
 
-        GameState.CompanyCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
-        GameState.CompanyIngredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
-        GameState.CompanyUpgrades = new Dictionary<string, UpgradeInstance>();
+        GameState.CompanyState.CompanyCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
+        GameState.CompanyState.CompanyIngredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
+        GameState.CompanyState.CompanyUpgrades = new Dictionary<string, UpgradeInstance>();
 
         CreateDataState(db);
         BuildShips();
@@ -26,7 +26,7 @@ public class GameCreationService : MonoBehaviour
         BuildCompanyUpgrades();
         BuildDestinations();
 
-        GameState.CurrentBase = GameState.DataState.destinations.GetValueOrDefault("d101");
+        GameState.CompanyState.CurrentBase = GameState.DataState.destinations.GetValueOrDefault("d101");
     }
 
     private void CreateDataState(GameDatabase DataBase)
@@ -177,7 +177,7 @@ public class GameCreationService : MonoBehaviour
     {
         foreach (var currency in GameState.DataState.currencies)
         {
-            GameState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
+            GameState.CompanyState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
         }
     }
 
@@ -185,7 +185,7 @@ public class GameCreationService : MonoBehaviour
     {
         foreach (var ingredient in GameState.DataState.ingredients)
         {
-            GameState.CompanyIngredients.Add(ingredient.Value.Type, ingredient.Value);
+            GameState.CompanyState.CompanyIngredients.Add(ingredient.Value.Type, ingredient.Value);
         }
     }
 
@@ -193,7 +193,7 @@ public class GameCreationService : MonoBehaviour
     {
         foreach (var upgrade in GameState.DataState.upgrades)
         {
-            GameState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
+            GameState.CompanyState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
         }
     }
 

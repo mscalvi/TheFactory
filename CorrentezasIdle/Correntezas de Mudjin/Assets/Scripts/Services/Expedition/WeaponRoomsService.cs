@@ -152,8 +152,6 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
 
         double damage = room.Weapon.Damage + room.Ammo.Damage;
 
-        Debug.Log($"Navio Atacou - {room.Id}, {room.Weapon.Name} - {damage}");
-
         CombatEvents.OnShoot?.Invoke(room, target);
 
         CombatService.ShipDamage(room, target, damage);
