@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
+  m_Name: umc05
+  m_EditorClassIdentifier: 
+  Id: umc05
+  Name: "Cancelamento de Miss\xF5es"
+  Description: "Aumenta a quantidade Miss\xF5es que podem ser Canceladas por dia "
+  UpgradeType: 0
+  EffectType: 2
+  Scope: 1
+  ExpeditionMenu: 0
+  Building: 1
+  UpgradeValue: 1
+  StartValue: 0
+  TargetType: 5
+  TargetId: 
+  UnlockId: uuu01
+  MaxBuy: 4
+  Cost: 500
+  CostGrowth: 1.1
+  Currency: 1
+  UnlockStatus: 1

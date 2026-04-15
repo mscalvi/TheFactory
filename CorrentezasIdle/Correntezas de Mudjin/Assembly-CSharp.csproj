@@ -92,6 +92,7 @@
     <Compile Include="Assets\Scripts\Definitions\ExpeditionCurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
     <Compile Include="Assets\Scripts\Models\OtherRoomModel.cs" />
+    <Compile Include="Assets\Scripts\Helpers\MissionHelper.cs" />
     <Compile Include="Assets\Scripts\States\DataState.cs" />
     <Compile Include="Assets\Scripts\Helpers\CurrencyHelper.cs" />
     <Compile Include="Assets\Scripts\Services\Company\UnlockService.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Assets\Scripts\Models\EventModel.cs" />
     <Compile Include="Assets\Scripts\Designer\LandingPageDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\RangeViewService.cs" />
+    <Compile Include="Assets\Scripts\Models\MissionModel.cs" />
     <Compile Include="Assets\Scripts\Controller\CompanyBuildingsController.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="Assets\Scripts\Helpers\TripulationHelper.cs" />
     <Compile Include="Assets\Scripts\Models\PathModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
+    <Compile Include="Assets\Scripts\Services\Company\MissionsService.cs" />
     <Compile Include="Assets\Scripts\Helpers\DestinationHelper.cs" />
     <Compile Include="Assets\Scripts\Designer\EventPopUpDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionUpgradeService.cs" />
@@ -146,6 +149,8 @@
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionCurrencyService.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
     <Compile Include="Assets\Scripts\States\UnlockState.cs" />
+    <Compile Include="Assets\Scripts\Services\Company\MissionsTrackerService.cs" />
+    <Compile Include="Assets\Scripts\States\MissionsState.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponRoomInstance.cs" />
     <Compile Include="Assets\Scripts\Configurations\ShipInitialConfiguration.cs" />
     <Compile Include="Assets\Scripts\Models\IngredientModel.cs" />
@@ -157,6 +162,7 @@
     <Compile Include="Assets\Scripts\Models\TripulationModel.cs" />
     <Compile Include="Assets\Scripts\States\ProgressState.cs" />
     <Compile Include="Assets\Scripts\Models\ShipModel.cs" />
+    <Compile Include="Assets\Scripts\Instances\MissionInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionUiService.cs" />
     <Compile Include="Assets\Scripts\Services\Company\CompanyUiService.cs" />
     <Compile Include="Assets\Scripts\Events\EventBus.cs" />
