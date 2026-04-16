@@ -19,7 +19,7 @@ public class MissionInstance
 
     public double TargetValue;
     public double CurrentValue;
-    public MissionHelper.TargetType TargetType;
+    // public List<string> TargetsIds;
 
     public MissionInstance(MissionModel model)
     {
@@ -30,12 +30,12 @@ public class MissionInstance
         MissionRarity = model.MissionRarity;
         MissionType = model.MissionType;
         MissionStatus = model.MissionStatus;
-        TargetType = model.TargetType;
 
         UnlockId = model.UnlockId;
 
         Description = "";
-        TargetValue = 0;
-        CurrentValue = 1;
+        TargetValue = 1;
+        CurrentValue = 0;
+        //TargetsIds 
     }
 }

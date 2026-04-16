@@ -32,11 +32,4 @@ public class MissionHelper
         Rare,
         Legendary,
     }
-
-    public enum TargetType
-    {
-        Enemy,
-        Currency,
-        Days,
-    }
 }

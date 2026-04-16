@@ -13,7 +13,6 @@ public class MissionModel : ScriptableObject
 
     public MissionHelper.MissionType MissionType;
     public MissionHelper.MissionStatus MissionStatus;
-    public MissionHelper.TargetType TargetType;
 
     public string UnlockId;
 }
