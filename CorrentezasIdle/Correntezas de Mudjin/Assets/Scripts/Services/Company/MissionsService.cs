@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static EnemyHelper;
 using static MissionHelper;
@@ -7,13 +8,38 @@ using static MissionHelper;
 public class MissionsService : MonoBehaviour
 {
     private MissionsState MissionsState;
+    private DataState DataState;
+    private GameState GameState;
     private List<MissionInstance> ActiveMissions;
 
-    public void Initialize(MissionsState missionState)
+    public void Initialize(GameState gameState, DataState dataState, MissionsState missionState)
     {
+        GameState = gameState;
+
+        DataState = dataState;
+
         MissionsState = missionState;
 
         ActiveMissions = MissionsState.ActiveMissions;
+    }
+
+    public List<MissionInstance> GenerateMissionOptions(int MaxMissionOptions)
+    {
+        List<MissionInstance> missionOptions = new();
+
+        for (int i = 0; i < MaxMissionOptions; i++)
+        {
+            MissionInstance mission;
+            do
+            {
+                mission = CreateMissionsFromTemplate();
+            }
+            while (missionOptions.Any(m => MissionDuplicate(m, mission)));
+
+            missionOptions.Add(mission);
+        }
+
+        return missionOptions;
     }
 
     public void CompleteMission(MissionInstance mission)
@@ -21,4 +47,151 @@ public class MissionsService : MonoBehaviour
 
     }
 
+    // Helpers
+    private MissionInstance CreateMissionsFromTemplate()
+    {
+        var Templates = new List<MissionInstance>();
+
+        foreach (var missionTemplate in DataState.missions)
+        {
+            if (missionTemplate.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                Templates.Add(missionTemplate.Value);
+            }
+        }
+
+        // Trocar para ter pesos por raridade
+        var template = Templates[Random.Range(0, Templates.Count)];
+
+        var mission = new MissionInstance(template);
+
+        switch (mission.MissionType)
+        {
+            case MissionType.EnemyKilling:
+                EnemyKillingPrepare(mission);
+                break;
+
+            case MissionType.DaySurvival:
+                DaySurvivalPrepare(mission);
+                break;
+
+            case MissionType.DayNoDamage:
+                DayNoDamagePrepare(mission);
+                break;
+
+            case MissionType.IngredientFinding:
+                IngredientFindingPrepare(mission);
+                break;
+        }
+
+        switch (mission.MissionRarity)
+        {
+            case MissionRarity.Common:
+                mission.Reward = 25;
+                break;
+            case MissionRarity.Uncommon:
+                mission.Reward = 40;
+                break;
+        }
+
+        return mission;
+    }
+
+    private bool MissionDuplicate(MissionInstance a, MissionInstance b)
+    {
+        if (a.MissionType != b.MissionType)
+            return false;
+
+        if (a.TargetsIds.Count != b.TargetsIds.Count)
+            return false;
+
+        return a.TargetsIds.SequenceEqual(b.TargetsIds);
+    }
+
+    // Missions Types
+    private void EnemyKillingPrepare(MissionInstance mission)
+    {
+        var validTargets = new List<EnemyInstance>();
+
+        foreach (var enemy in DataState.enemies)
+        {
+            if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                validTargets.Add(enemy.Value);
+            }
+        }
+
+        var chosenTarget = validTargets[Random.Range(0, validTargets.Count)];
+
+        mission.TargetsIds.Add(chosenTarget.Id);
+
+        double targetValue = 100 / chosenTarget.Cost;
+
+        int realValue = (int)targetValue;
+
+        if (realValue < 1)
+        {
+            realValue = 1;
+        }
+
+        mission.TargetValue = realValue;
+    }
+
+
+    private void DaySurvivalPrepare(MissionInstance mission)
+    {
+        int maxSurvival = GameState.RecordsState.MaxDaysTraveling;
+
+        int nextSurvival = 0;
+
+        if (maxSurvival * 0.1 < 1)
+        {
+            nextSurvival = maxSurvival + 1;
+        } else
+        {
+            nextSurvival = maxSurvival + (int)(maxSurvival * 0.1);
+        }
+
+        mission.TargetValue = nextSurvival;
+    }
+
+    private void DayNoDamagePrepare(MissionInstance mission)
+    {
+        int maxSurvival = GameState.RecordsState.MaxDaysTraveling;
+
+        mission.TargetValue = maxSurvival / 2;
+    }
+
+    private void IngredientFindingPrepare(MissionInstance mission)
+    {
+        var validTargets = new List<IngredientInstance>();
+
+        foreach (var ingredient in DataState.ingredients)
+        {
+            if (ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                validTargets.Add(ingredient.Value);
+            }
+        }
+
+        var chosenTarget = validTargets[Random.Range(0, validTargets.Count)];
+
+        mission.TargetsIds.Add(chosenTarget.Id);
+
+        switch (chosenTarget.Rarity)
+        {
+            case IngredientHelper.IngredientRarity.Common:
+                mission.TargetValue = 100;
+                break;
+            case IngredientHelper.IngredientRarity.Uncommon:
+                mission.TargetValue = 50;
+                break;
+            case IngredientHelper.IngredientRarity.Rare:
+                mission.TargetValue = 10;
+                break;
+            case IngredientHelper.IngredientRarity.Legendary:
+                mission.TargetValue = 1;
+                break;
+        }
+    }
 }

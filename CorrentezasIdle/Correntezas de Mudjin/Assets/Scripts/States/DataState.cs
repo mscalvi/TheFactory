@@ -26,4 +26,6 @@ public class DataState
     public Dictionary<string, BuildingInstance> buildings;
 
     public Dictionary<string, EventInstance> events;
+
+    public Dictionary<string, MissionInstance> missions;
 }

@@ -7,14 +7,10 @@ public class MissionHelper
 {
     public enum MissionType
     {
-        EnemiesKilling,
-        BossHunt,
+        EnemyKilling,
         DaySurvival,
         DayNoDamage,
         IngredientFinding,
-        CoinFinding,
-        EventTrigger,
-        LocalFinding,
     }
 
     public enum MissionStatus

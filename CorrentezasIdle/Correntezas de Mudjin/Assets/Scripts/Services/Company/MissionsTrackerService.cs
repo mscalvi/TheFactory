@@ -20,12 +20,15 @@ public class MissionsTrackerService : MonoBehaviour
     }
 
     // Missions Tracker
-    private void OnEnemyKilled(EnemyType type)
+    private void OnEnemyKilled(EnemyInstance enemy)
     {
         foreach (var mission in ActiveMissions)
         {
-            if (mission.MissionType == MissionType.EnemiesKilling)
+            if (mission.MissionType == MissionType.EnemyKilling)
             {
+                if (!mission.TargetsIds.Contains(enemy.Id))
+                    continue;
+
                 mission.CurrentValue++;
 
                 if (mission.CurrentValue >= mission.TargetValue)

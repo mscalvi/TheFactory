@@ -52,6 +52,8 @@ public class EnemyInstance
     public double Cooldown;
     public double CurrentLife;
 
+    public UnlockHelper.UnlockStatus UnlockStatus;
+
     public EnemyInstance(EnemyModel model)
     {
         Id = model.Id;
@@ -100,6 +102,8 @@ public class EnemyInstance
         Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
         CurrentLife = model.Life;
+
+        UnlockStatus = model.UnlockStatus;
     }
 
     public EnemyInstance(EnemyInstance model)
@@ -150,5 +154,7 @@ public class EnemyInstance
         Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
         CurrentLife = model.Life;
+
+        UnlockStatus = model.UnlockStatus;
     }
 }

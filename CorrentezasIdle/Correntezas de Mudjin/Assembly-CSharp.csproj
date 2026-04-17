@@ -158,6 +158,7 @@
     <Compile Include="Assets\Scripts\Definitions\ExpeditionUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EnemyControlService.cs" />
     <Compile Include="Assets\Scripts\Controller\LandingController.cs" />
+    <Compile Include="Assets\Scripts\States\RecordsState.cs" />
     <Compile Include="Assets\Scripts\Models\BuildingModel.cs" />
     <Compile Include="Assets\Scripts\Models\TripulationModel.cs" />
     <Compile Include="Assets\Scripts\States\ProgressState.cs" />

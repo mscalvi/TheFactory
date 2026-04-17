@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class MissionInstance
     public MissionHelper.MissionRarity MissionRarity;
     public MissionHelper.MissionType MissionType;
     public MissionHelper.MissionStatus MissionStatus;
+    public UnlockHelper.UnlockStatus UnlockStatus;
 
     public string UnlockId;
 
@@ -19,7 +21,9 @@ public class MissionInstance
 
     public double TargetValue;
     public double CurrentValue;
-    // public List<string> TargetsIds;
+    public double Reward;
+
+    public List<string> TargetsIds;
 
     public MissionInstance(MissionModel model)
     {
@@ -31,11 +35,33 @@ public class MissionInstance
         MissionType = model.MissionType;
         MissionStatus = model.MissionStatus;
 
+        UnlockStatus = UnlockHelper.UnlockStatus.Blocked;
         UnlockId = model.UnlockId;
 
         Description = "";
         TargetValue = 1;
         CurrentValue = 0;
-        //TargetsIds 
+        Reward = 0;
+        TargetsIds = new List<string>();
+    }
+
+    public MissionInstance(MissionInstance model)
+    {
+        Id = model.Id;
+        Name = model.Name;
+        RewardFactor = model.RewardFactor;
+
+        MissionRarity = model.MissionRarity;
+        MissionType = model.MissionType;
+        MissionStatus = model.MissionStatus;
+
+        UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        UnlockId = model.UnlockId;
+
+        Description = "";
+        TargetValue = 1;
+        CurrentValue = 0;
+        Reward = 0;
+        TargetsIds = new List<string>();
     }
 }

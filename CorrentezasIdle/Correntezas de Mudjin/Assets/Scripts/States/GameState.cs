@@ -11,6 +11,7 @@ public class GameState
     public UnlockState UnlockState;
     public ProgressState ProgressState;
     public CompanyState CompanyState;
+    public RecordsState RecordsState;
     public ExpeditionState ExpeditionState;
 
     public GameHelper.ExpeditionStatus ExpeditionStatus;
