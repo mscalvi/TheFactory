@@ -14,6 +14,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] IngredientService IngredientService;
     [SerializeField] ExpeditionPurchaseService ExpeditionPurchaseService;
     [SerializeField] ExpeditionUiService ExpeditionUiService;
+    [SerializeField] MissionsTrackerService MissionsTrackerService;
 
     // Expedition
     [SerializeField] DaysCycleService DaysCycleService;
@@ -54,7 +55,8 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        var GameProgress = GameController.Instance.GameProgressService;
+        var GameRecords = GameController.Instance.GameRecordsService;
+        var Missions = GameController.Instance.MissionsService;
 
         StartExpeditionService.Initialize(Game);
 
@@ -77,7 +79,8 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        var db = GameController.Instance.GameState.DataState;
+        var Data = GameController.Instance.GameState.DataState;
+        var Unlock = GameController.Instance.GameState.UnlockState;
 
         // Base
         TickService.Initialize();
@@ -86,24 +89,26 @@ public class ExpeditionController : MonoBehaviour
 
         IngredientService.Initialize(Game, Expedition);
 
-        ExpeditionPurchaseService.Initialize(Expedition, db, CurrencyService);
+        ExpeditionPurchaseService.Initialize(Expedition, Data, CurrencyService);
 
-        ExpeditionUiService.Initialize(Expedition, Ship, Game, db, ExpeditionPurchaseService);
+        ExpeditionUiService.Initialize(Expedition, Ship, Game, Data, ExpeditionPurchaseService);
+
+        MissionsTrackerService.Initialize(Game.MissionsState, Missions, Expedition);
 
         // Expedition
         DaysCycleService.Initialize(Game, Expedition, TickService);
 
         EnemyProgressService.Initialize(Expedition);
 
-        EnemySpawnerService.Initialize(Expedition, TickService, db, EnemyProgressService);
+        EnemySpawnerService.Initialize(Expedition, TickService, Data, EnemyProgressService);
 
         EnemyControllerService.Initialize(Expedition, TickService);
 
-        EnemyMarkingService.Initialize(Expedition);
+        EnemyMarkingService.Initialize(Expedition, Unlock);
 
-        ExpeditionPricingService.Initialize(Expedition, db);
+        ExpeditionPricingService.Initialize(Expedition, Data);
 
-        PathService.Initialize(Expedition, Ship, Game, db);
+        PathService.Initialize(Expedition, Ship, Game, Data);
 
         // Ship
         ShipControlService.Initialize(Ship, Game, TickService);
@@ -119,14 +124,14 @@ public class ExpeditionController : MonoBehaviour
 
         WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
 
-        ExpeditionUpgradeService.Initialize(Expedition, db, Ship);
+        ExpeditionUpgradeService.Initialize(Expedition, Data, Ship);
 
         // Outros
-        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, db, FinalPanel, PathService, EventPanel);
+        DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, Data, FinalPanel, PathService, EventPanel);
 
         EndExpeditionService.Initialize(Expedition, Game, DecisionsService);
 
-        EventService.Initialize(Game, db, Expedition);
+        EventService.Initialize(Game, Data, Expedition);
 
         // Events
         RunEvents.OnExpeditionStart?.Invoke();

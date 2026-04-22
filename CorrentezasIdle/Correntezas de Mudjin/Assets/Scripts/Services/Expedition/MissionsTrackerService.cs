@@ -8,13 +8,16 @@ public class MissionsTrackerService : MonoBehaviour
 {
     private MissionsState MissionsState;
     private MissionsService MissionsService;
+    private ExpeditionState ExpeditionState;
     private List<MissionInstance> ActiveMissions;
 
-    public void Initialize(MissionsState missionState, MissionsService missions)
+    public void Initialize(MissionsState missionState, MissionsService missions, ExpeditionState expedition)
     {
         MissionsService = missions;
 
         MissionsState = missionState;
+
+        ExpeditionState = expedition;
 
         ActiveMissions = MissionsState.ActiveMissions;
     }
@@ -33,6 +36,31 @@ public class MissionsTrackerService : MonoBehaviour
 
                 if (mission.CurrentValue >= mission.TargetValue)
                     MissionsService.CompleteMission(mission);
+            }
+        }
+    }
+
+    private void OnDayFinish()
+    {
+        foreach ( var mission in ActiveMissions)
+        {
+            if (mission.MissionType == MissionType.DaySurvival)
+            {
+                mission.CurrentValue++;
+
+                if (mission.CurrentValue >= mission.TargetValue)
+                    MissionsService.CompleteMission(mission);
+            }
+
+            if (mission.MissionType == MissionType.DayNoDamage)
+            {
+                if (!ExpeditionState.DamageTaken)
+                {
+                    mission.CurrentValue++;
+
+                    if (mission.CurrentValue >= mission.TargetValue)
+                        MissionsService.CompleteMission(mission);
+                }
             }
         }
     }

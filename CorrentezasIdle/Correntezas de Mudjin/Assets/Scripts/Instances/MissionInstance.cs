@@ -38,7 +38,7 @@ public class MissionInstance
         UnlockStatus = UnlockHelper.UnlockStatus.Blocked;
         UnlockId = model.UnlockId;
 
-        Description = "";
+        Description = model.Description;
         TargetValue = 1;
         CurrentValue = 0;
         Reward = 0;
@@ -55,10 +55,10 @@ public class MissionInstance
         MissionType = model.MissionType;
         MissionStatus = model.MissionStatus;
 
-        UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        UnlockStatus = UnlockHelper.UnlockStatus.Available;
         UnlockId = model.UnlockId;
 
-        Description = "";
+        Description = model.Description;
         TargetValue = 1;
         CurrentValue = 0;
         Reward = 0;

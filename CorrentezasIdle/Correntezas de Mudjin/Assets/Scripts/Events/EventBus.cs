@@ -12,6 +12,14 @@ public static class CombatEvents
     public static Action<EnemyInstance> OnEnemyClicked;
 }
 
+public static class ShipEvents
+{
+    public static Action OnAtributeChange;
+    public static Action<UpgradeInstance> OnUpgradeBuy;
+    public static Action<UpgradeInstance> AfterUpgradeBuy;
+    public static Action<UpgradeInstance> OnCanBuyChange;
+}
+
 public static class RunEvents
 {
     public static Action OnExpeditionStart;
@@ -30,23 +38,22 @@ public static class RunEvents
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 }
 
-public static class ShipEvents
-{
-    public static Action OnAtributeChange;
-    public static Action<UpgradeInstance> OnUpgradeBuy;
-    public static Action<UpgradeInstance> AfterUpgradeBuy;
-    public static Action<UpgradeInstance> OnCanBuyChange;
-}
-
 public static class CompanyEvents
 {
     public static Action<UpgradeInstance> OnUpgradeBuy;
     public static Action<UpgradeInstance> AfterUpgradeBuy;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
     public static Action OnBuildingUnlock;
+    public static Action<EnemyInstance> NewEnemySeen;
 }
 
 public static class ProgressEvents
 {
-    public static Action OnFirstExpeditionFinish;
+    public static Action OnDestinationArrival;
 }
+
+public static class RecordsEvents
+{
+    public static Action NewDayRecord;
+}
+

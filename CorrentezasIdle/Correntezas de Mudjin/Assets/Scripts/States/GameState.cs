@@ -13,9 +13,11 @@ public class GameState
     public CompanyState CompanyState;
     public RecordsState RecordsState;
     public ExpeditionState ExpeditionState;
+    public MissionsState MissionsState;
 
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 
     // Informações Necessárias
     public float WorldScale = 0.2f;
+    public MissionInstance MainMission;
 }

@@ -54,7 +54,7 @@ public class MissionsService : MonoBehaviour
 
         foreach (var missionTemplate in DataState.missions)
         {
-            if (missionTemplate.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            if (missionTemplate.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
                 Templates.Add(missionTemplate.Value);
             }

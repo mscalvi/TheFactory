@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 82595291}
   - component: {fileID: 82595293}
   - component: {fileID: 82595292}
+  - component: {fileID: 82595294}
   m_Layer: 5
   m_Name: SecondMissionPanel
   m_TagString: Untagged
@@ -198,6 +199,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82595290}
   m_CullTransparentMesh: 1
+--- !u!114 &82595294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82595290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 190, y: 175}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &211441655
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,6 +285,11 @@ MonoBehaviour:
   ShipButton: {fileID: 1402389086}
   MapButton: {fileID: 2081216210}
   ExpeditionButton: {fileID: 1267980981}
+  MainMissionPanel: {fileID: 460443604}
+  MainMissionDefiniton: {fileID: 803685557927115239, guid: 723cc11386558af47b0175f51e5ba82c, type: 3}
+  SecondaryMissionPanel: {fileID: 82595291}
+  SecondaryMissionDefiniton: {fileID: 0}
+  SecondaryMissionButtonDefiniton: {fileID: 0}
 --- !u!1 &289718575
 GameObject:
   m_ObjectHideFlags: 0

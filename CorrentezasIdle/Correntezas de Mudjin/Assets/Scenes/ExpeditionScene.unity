@@ -686,7 +686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Container: {fileID: 1930427086}
   Ship: {fileID: 1099042372}
-  EnemyPrefab: {fileID: 4349402148979829969, guid: f1b3e0a3bcdef8948b802ea091d20d0e, type: 3}
+  EnemyPrefab: {fileID: 5754783404534756835, guid: f1b3e0a3bcdef8948b802ea091d20d0e, type: 3}
 --- !u!114 &183470231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2906,6 +2906,7 @@ MonoBehaviour:
   IngredientService: {fileID: 1083699793}
   ExpeditionPurchaseService: {fileID: 1083699789}
   ExpeditionUiService: {fileID: 183470226}
+  MissionsTrackerService: {fileID: 1083699795}
   DaysCycleService: {fileID: 1083699781}
   EnemyProgressService: {fileID: 991191069}
   EnemySpawnerService: {fileID: 991191067}
@@ -3463,6 +3464,7 @@ GameObject:
   - component: {fileID: 1083699792}
   - component: {fileID: 1083699793}
   - component: {fileID: 1083699794}
+  - component: {fileID: 1083699795}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -3652,6 +3654,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05e46508470fcd841acfa5682fbeabce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1083699795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083699777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02586a2a3b89b144e98481d09b678526, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1099042370

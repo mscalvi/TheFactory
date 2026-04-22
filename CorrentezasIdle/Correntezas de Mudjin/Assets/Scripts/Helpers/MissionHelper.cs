@@ -7,6 +7,7 @@ public class MissionHelper
 {
     public enum MissionType
     {
+        MainMission,
         EnemyKilling,
         DaySurvival,
         DayNoDamage,

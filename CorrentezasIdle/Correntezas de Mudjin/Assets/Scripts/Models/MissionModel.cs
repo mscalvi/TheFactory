@@ -7,6 +7,8 @@ public class MissionModel : ScriptableObject
 {
     public string Id;
     public string Name;
+    public string Description;
+
     public double RewardFactor;
 
     public MissionHelper.MissionRarity MissionRarity;
@@ -15,4 +17,5 @@ public class MissionModel : ScriptableObject
     public MissionHelper.MissionStatus MissionStatus;
 
     public string UnlockId;
+    public UnlockHelper.UnlockStatus UnlockStatus;
 }

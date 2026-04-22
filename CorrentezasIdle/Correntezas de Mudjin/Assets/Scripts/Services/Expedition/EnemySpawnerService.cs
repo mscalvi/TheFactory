@@ -141,6 +141,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         Expedition.ActiveEnemies.Add(instance);
 
         CombatEvents.OnEnemySpawn?.Invoke(instance);
+
+        if (instance.UnlockStatus == UnlockHelper.UnlockStatus.Unknow)
+            EnemyKnow(chosen);
     }
 
     double SpawnAngle(double min, double max)
@@ -173,7 +176,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var enemy in DataState.enemies)
         {
-            if (enemy.Value.Rarity <= 0)
+            if (enemy.Value.BossEnemy)
                 continue;
 
             if ((enemy.Value.PathType & Expedition.CurrentPath.PathType) == 0)
@@ -199,5 +202,18 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
             accumulatedBudget = 0;
         }
+    }
+
+    private void EnemyKnow(EnemyInstance enemy)
+    {
+        if (enemy == null)
+            return;
+
+        if (enemy.UnlockStatus != UnlockHelper.UnlockStatus.Unknow)
+            return;
+
+        enemy.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+
+        CompanyEvents.NewEnemySeen?.Invoke(enemy);
     }
 }

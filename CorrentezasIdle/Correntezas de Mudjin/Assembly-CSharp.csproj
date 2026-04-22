@@ -67,13 +67,14 @@
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
     <Compile Include="Assets\Scripts\Definitions\BuildingDefinition.cs" />
-    <Compile Include="Assets\Scripts\Services\GameProgressService.cs" />
+    <Compile Include="Assets\Scripts\Services\MissionsService.cs" />
     <Compile Include="Assets\Scripts\Controller\GameController.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\CombatService.cs" />
     <Compile Include="Assets\Scripts\Services\Landing\LandingUiService.cs" />
     <Compile Include="Assets\Scripts\Instances\IngredientInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\PathService.cs" />
     <Compile Include="Assets\Scripts\Instances\UpgradeInstance.cs" />
+    <Compile Include="Assets\Scripts\Services\GameRecordsService.cs" />
     <Compile Include="Assets\Scripts\States\ShipState.cs" />
     <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
@@ -84,10 +85,12 @@
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EndExpeditionService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\IngredientService.cs" />
+    <Compile Include="Assets\Scripts\Definitions\SecondaryMissionDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\TickService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\StartExpeditionService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionService.cs" />
     <Compile Include="Assets\Scripts\Designer\FinalPopUpDesigner.cs" />
+    <Compile Include="Assets\Scripts\Services\MainMissionsTrackerService.cs" />
     <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
     <Compile Include="Assets\Scripts\Definitions\ExpeditionCurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
@@ -106,7 +109,9 @@
     <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
     <Compile Include="Assets\Scripts\Instances\DestinationInstance.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreationService.cs" />
+    <Compile Include="Assets\Scripts\Definitions\MainMissionDefinition.cs" />
     <Compile Include="Assets\Scripts\Helpers\RoomHelper.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\MissionsTrackerService.cs" />
     <Compile Include="Assets\Scripts\Definitions\CompanyCurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\WeaponRoomsService.cs" />
     <Compile Include="Assets\Scripts\Definitions\CompanyUpgradesDefinition.cs" />
@@ -132,7 +137,6 @@
     <Compile Include="Assets\Scripts\Helpers\TripulationHelper.cs" />
     <Compile Include="Assets\Scripts\Models\PathModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
-    <Compile Include="Assets\Scripts\Services\Company\MissionsService.cs" />
     <Compile Include="Assets\Scripts\Helpers\DestinationHelper.cs" />
     <Compile Include="Assets\Scripts\Designer\EventPopUpDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionUpgradeService.cs" />
@@ -149,7 +153,6 @@
     <Compile Include="Assets\Scripts\Services\Expedition\ExpeditionCurrencyService.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
     <Compile Include="Assets\Scripts\States\UnlockState.cs" />
-    <Compile Include="Assets\Scripts\Services\Company\MissionsTrackerService.cs" />
     <Compile Include="Assets\Scripts\States\MissionsState.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponRoomInstance.cs" />
     <Compile Include="Assets\Scripts\Configurations\ShipInitialConfiguration.cs" />
@@ -157,6 +160,7 @@
     <Compile Include="Assets\Scripts\Helpers\PathHelper.cs" />
     <Compile Include="Assets\Scripts\Definitions\ExpeditionUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\EnemyControlService.cs" />
+    <Compile Include="Assets\Scripts\Definitions\SecondaryMissionButtonDefinition.cs" />
     <Compile Include="Assets\Scripts\Controller\LandingController.cs" />
     <Compile Include="Assets\Scripts\States\RecordsState.cs" />
     <Compile Include="Assets\Scripts\Models\BuildingModel.cs" />

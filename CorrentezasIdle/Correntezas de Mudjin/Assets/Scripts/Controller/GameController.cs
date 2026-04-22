@@ -9,7 +9,9 @@ public class GameController : MonoBehaviour
     public GameDatabase Database;
 
     [SerializeField] GameCreationService GameCreationService;
-    [SerializeField] public GameProgressService GameProgressService;
+    [SerializeField] public GameRecordsService GameRecordsService;
+    [SerializeField] public MissionsService MissionsService;
+    [SerializeField] MainMissionsTrakerService MainMissionsTrakerService;
 
     bool FirstInitialization = true;
 
@@ -34,9 +36,12 @@ public class GameController : MonoBehaviour
         {
             GameState = new GameState();
             GameState.DataState = new DataState();
+            GameState.ExpeditionState = new ExpeditionState();
             GameState.ProgressState = new ProgressState();
             GameState.CompanyState = new CompanyState();
             GameState.UnlockState = new UnlockState();
+            GameState.RecordsState = new RecordsState();
+            GameState.MissionsState = new MissionsState();
         } else
         {
             FirstInitialization = false;
@@ -45,7 +50,9 @@ public class GameController : MonoBehaviour
         if (FirstInitialization)
         {
             GameCreationService.Initialize(GameState, Database);
-            GameProgressService.Initialize(GameState);
+            GameRecordsService.Initialize(GameState);
+            MissionsService.Initialize(GameState, GameState.DataState, GameState.MissionsState);
+            MainMissionsTrakerService.Initialize(GameState, GameState.DataState);
         } else
         {
             // service de Load

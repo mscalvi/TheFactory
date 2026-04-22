@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -25,6 +26,7 @@ public class GameCreationService : MonoBehaviour
         BuildBuildings();
         BuildCompanyUpgrades();
         BuildDestinations();
+        BuildMission();
 
         GameState.CompanyState.CurrentBase = GameState.DataState.destinations.GetValueOrDefault("d101");
     }
@@ -47,6 +49,7 @@ public class GameCreationService : MonoBehaviour
         var upgrades = new Dictionary<string, UpgradeInstance>();
         var buildings = new Dictionary<string, BuildingInstance>();
         var events = new Dictionary<string, EventInstance>();
+        var missions = new Dictionary<string, MissionInstance>();
 
         foreach (var ship in DataBase.ships)
         {
@@ -126,6 +129,12 @@ public class GameCreationService : MonoBehaviour
             events.Add(eventModel.Id, instance);
         }
 
+        foreach (var missiomModel in DataBase.missions)
+        {
+            var instance = new MissionInstance(missiomModel);
+            missions.Add(missiomModel.Id, instance);
+        }
+
         GameState.DataState.ships = ships;
         GameState.DataState.tripulations = tripulation;
         GameState.DataState.weapons = weapons;
@@ -139,6 +148,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.upgrades = upgrades;
         GameState.DataState.buildings = buildings;
         GameState.DataState.events = events;
+        GameState.DataState.missions = missions;
     }
 
     private void BuildShips()
@@ -246,5 +256,10 @@ public class GameCreationService : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void BuildMission()
+    {
+        GameState.MainMission = GameState.DataState.missions.GetValueOrDefault("m000");
     }
 }

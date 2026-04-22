@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Game Database")]
+[CreateAssetMenu(menuName = "Game/GameDatabase")]
 public class GameDatabase : ScriptableObject
 {
     public ShipModel[] ships;
@@ -26,4 +26,5 @@ public class GameDatabase : ScriptableObject
     public BuildingModel[] buildings;
 
     public EventModel[] events;
+    public MissionModel[] missions;
 }

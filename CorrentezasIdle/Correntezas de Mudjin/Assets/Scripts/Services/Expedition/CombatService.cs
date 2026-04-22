@@ -50,7 +50,14 @@ public class CombatService : MonoBehaviour, ITickable
 
             if (enemy.State == EnemyHelper.EnemyState.Damaging)
             {
-                ShipState.Ship.CurrentLife -= enemy.Damage;
+                double AbsoluteArmor = ShipState.Ship.CurrentArmor;
+                double RelativeArmor = 0;
+
+                double RealDamage = (enemy.Damage - (enemy.Damage * RelativeArmor)) - AbsoluteArmor;
+
+                ShipState.Ship.CurrentLife -= RealDamage;
+
+                Expedition.DamageTaken = true;
 
                 enemy.Cooldown = 1.0 / enemy.AttackSpeed;
                 enemy.State = EnemyHelper.EnemyState.Cooldown;

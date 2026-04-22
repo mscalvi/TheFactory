@@ -87,11 +87,12 @@ public class PathService : MonoBehaviour
         if (GameState.ProgressState.m000)
         {
             RunEvents.OnPathOptionsCalculated?.Invoke();
+            Debug.LogError("Descobrir o que acontece aqui!");
         }
         else
         {
             ExpeditionState.ExpeditionStatus = GameHelper.ExpeditionStatus.Finished;
-            ProgressEvents.OnFirstExpeditionFinish?.Invoke();
+            ProgressEvents.OnDestinationArrival?.Invoke();
             RunEvents.OnExpeditionEnd?.Invoke();
         }
     }

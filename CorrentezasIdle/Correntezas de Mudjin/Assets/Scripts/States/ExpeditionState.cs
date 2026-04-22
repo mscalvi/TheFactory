@@ -19,6 +19,7 @@ public class ExpeditionState
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 
     // Controlador de Inimigos
+    public bool DamageTaken = false;
     public double BaseSpawnDistance = 1.5;
     public double BaseSpawnChance = 1;
     public int BaseTicksPerSpawn = 15;

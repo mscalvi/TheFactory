@@ -7,14 +7,20 @@ public class EnemyMarkingService : MonoBehaviour
 
     private ExpeditionState ExpeditionState;
 
-    public void Initialize(ExpeditionState expedition)
+    private UnlockState UnlockState;
+
+    public void Initialize(ExpeditionState expedition, UnlockState unlock)
     {
         ExpeditionState = expedition;
+
+        UnlockState = unlock;
     }
 
     void HandleClick(EnemyInstance enemy)
     {
         if (enemy == null) return;
+
+        if (!UnlockState.Click) return;
 
         if (!enemy.MarkedEnemy && markedEnemies.Count >= ExpeditionState.MaxMarkedEnemies)
         {

@@ -132,3 +132,10 @@ MonoBehaviour:
   events:
   - {fileID: 11400000, guid: 84d939543abbc964da7c3b711635d6af, type: 2}
   - {fileID: 11400000, guid: 872a368c74ba6824fa03e7ecd2ffd1e5, type: 2}
+  missions:
+  - {fileID: 11400000, guid: 98ec91abea1f95c4fbfa8432d74efd20, type: 2}
+  - {fileID: 11400000, guid: 0cf9b2e67c5afb841b90e1509dd4ce8b, type: 2}
+  - {fileID: 11400000, guid: c11fc3d49425e034bbe8d2e2267fdf8a, type: 2}
+  - {fileID: 11400000, guid: 7a01be8c3ef59054fac8ed33258489e3, type: 2}
+  - {fileID: 11400000, guid: cf739a9e9964f2e4fa272c8f6b095ec9, type: 2}
+  - {fileID: 11400000, guid: 7bc7047f9bb8af84282a1de173188528, type: 2}
