@@ -7,21 +7,16 @@ using static MissionHelper;
 
 public class MissionsService : MonoBehaviour
 {
-    private MissionsState MissionsState;
-    private DataState DataState;
     private GameState GameState;
     private List<MissionInstance> ActiveMissions;
 
-    public void Initialize(GameState gameState, DataState dataState, MissionsState missionState)
+    public void Initialize(GameState gameState)
     {
         GameState = gameState;
 
-        DataState = dataState;
-
-        MissionsState = missionState;
-
-        ActiveMissions = MissionsState.ActiveMissions;
+        ActiveMissions = GameState.MissionsState.ActiveMissions;
     }
+
 
     public List<MissionInstance> GenerateMissionOptions(int MaxMissionOptions)
     {
@@ -52,7 +47,7 @@ public class MissionsService : MonoBehaviour
     {
         var Templates = new List<MissionInstance>();
 
-        foreach (var missionTemplate in DataState.missions)
+        foreach (var missionTemplate in GameState.DataState.missions)
         {
             if (missionTemplate.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
@@ -113,7 +108,7 @@ public class MissionsService : MonoBehaviour
     {
         var validTargets = new List<EnemyInstance>();
 
-        foreach (var enemy in DataState.enemies)
+        foreach (var enemy in GameState.DataState.enemies)
         {
             if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
@@ -166,7 +161,7 @@ public class MissionsService : MonoBehaviour
     {
         var validTargets = new List<IngredientInstance>();
 
-        foreach (var ingredient in DataState.ingredients)
+        foreach (var ingredient in GameState.DataState.ingredients)
         {
             if (ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {

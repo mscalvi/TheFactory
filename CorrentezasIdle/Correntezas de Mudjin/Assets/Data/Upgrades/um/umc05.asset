@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: "Cancelamento de Miss\xF5es"
   Description: "Aumenta a quantidade Miss\xF5es que podem ser Canceladas por dia "
   UpgradeType: 0
-  EffectType: 2
+  EffectType: 5
   Scope: 1
   ExpeditionMenu: 0
   Building: 1

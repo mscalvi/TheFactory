@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: 'Aumento da Recompensa em Qualidade '
   Description: "Aumenta a variedade de itens nas recompensas das Miss\xF5es"
   UpgradeType: 0
-  EffectType: 2
+  EffectType: 3
   Scope: 1
   ExpeditionMenu: 0
   Building: 1
@@ -26,7 +26,7 @@ MonoBehaviour:
   TargetId: 
   UnlockId: uuu01
   MaxBuy: 3
-  Cost: 9999
-  CostGrowth: 1
+  Cost: 5000
+  CostGrowth: 2
   Currency: 1
   UnlockStatus: 1

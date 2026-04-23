@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
         {
             GameCreationService.Initialize(GameState, Database);
             GameRecordsService.Initialize(GameState);
-            MissionsService.Initialize(GameState, GameState.DataState, GameState.MissionsState);
+            MissionsService.Initialize(GameState);
             MainMissionsTrakerService.Initialize(GameState, GameState.DataState);
         } else
         {

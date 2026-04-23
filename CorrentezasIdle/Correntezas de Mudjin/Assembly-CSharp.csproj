@@ -174,6 +174,7 @@
     <Compile Include="Assets\Scripts\Services\Company\CompanyUpgradeService.cs" />
     <Compile Include="Assets\Scripts\Models\CurrencyModel.cs" />
     <Compile Include="Assets\Scripts\Designer\DecisionsPopUpDesigner.cs" />
+    <Compile Include="Assets\Scripts\Designer\MissionPopUpDesigner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Vida do Navio
   Description: 
   UpgradeType: 1
-  EffectType: 3
+  EffectType: 6
   Scope: 0
   ExpeditionMenu: 1
   Building: 0

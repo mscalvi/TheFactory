@@ -7,6 +7,8 @@ public class LandingController : MonoBehaviour
 {
     [SerializeField] LandingService LandingService;
     [SerializeField] LandingUiService UiService;
+    
+    [SerializeField] MissionPopUpDesigner MissionsPanel;
 
     private void Awake()
     {
@@ -26,8 +28,10 @@ public class LandingController : MonoBehaviour
             return;
         }
 
+        var Missions = GameController.Instance.MissionsService;
+
         // Landing
-        UiService.Initialize(Game, Data);
+        UiService.Initialize(Game, Data, Missions, MissionsPanel);
 
         LandingService.Initialize(Game, Data);
 

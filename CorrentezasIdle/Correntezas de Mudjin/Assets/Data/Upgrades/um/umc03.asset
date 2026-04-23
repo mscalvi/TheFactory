@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: 'Aumento da Recompensa em Quantidade '
   Description: "Aumenta a recompensa das Miss\xF5es"
   UpgradeType: 1
-  EffectType: 2
+  EffectType: 3
   Scope: 1
   ExpeditionMenu: 0
   Building: 1

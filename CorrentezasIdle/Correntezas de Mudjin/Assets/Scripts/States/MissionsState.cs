@@ -5,7 +5,7 @@ using UnityEngine;
 public class MissionsState
 {
     // Progresso das Missões Secondárias
-    public List<MissionInstance> ActiveMissions;
+    public List<MissionInstance> ActiveMissions = new List<MissionInstance>();
 
     public int MaxOnGoingMissions = 0;
     public int MaxRewardItens = 1;

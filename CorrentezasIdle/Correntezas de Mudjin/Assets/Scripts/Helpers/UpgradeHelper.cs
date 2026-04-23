@@ -37,9 +37,12 @@ public class UpgradeHelper
     {
         None,
         Unlock,
-        Missions,
-        ShipLife,
-        ShipArmor,
+        MissionsMax,
+        MissionsReward,
+        MissionsOptions,
+        MissionsCancel,
+        ShipMaxLife,
+        ShipAbsoluteArmor,
     }
 
     public enum TargetType 

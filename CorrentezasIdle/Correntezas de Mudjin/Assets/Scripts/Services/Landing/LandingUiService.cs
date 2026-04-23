@@ -9,6 +9,8 @@ public class LandingUiService : MonoBehaviour
     private GameState GameState;
     private DataState DataState;
 
+    private MissionsService MissionsService;
+
     [SerializeField] Button CrewButton;
     [SerializeField] Button CompanyButton;
     [SerializeField] Button ShipButton;
@@ -22,10 +24,15 @@ public class LandingUiService : MonoBehaviour
     [SerializeField] SecondaryMissionDefinition SecondaryMissionDefinition;
     [SerializeField] SecondaryMissionButtonDefinition SecondaryMissionButtonDefinition;
 
-    public void Initialize(GameState gameState, DataState db)
+    [SerializeField] MissionPopUpDesigner MissionsPanel;
+
+    public void Initialize(GameState gameState, DataState db, MissionsService missionsService, MissionPopUpDesigner missionPanel)
     {
         GameState = gameState;
         DataState = db;
+        MissionsService = missionsService;
+
+        MissionsPanel = missionPanel;
 
         BlockButtons();
         MainMissionSet();
@@ -50,6 +57,21 @@ public class LandingUiService : MonoBehaviour
         {
             MapButton.enabled = true;
         }
+    }
+
+    public void SelectNewMission()
+    {
+        Debug.Log($"MissionsState: {GameState.MissionsState}");
+        Debug.Log($"MissionsPanel: {MissionsPanel}");
+
+        var missionsOptions = MissionsService.GenerateMissionOptions(GameState.MissionsState.MaxMissionsOptions);
+
+        MissionsPanel.ShowMissions(missionsOptions, MissionsSelection);
+    }
+
+    private void MissionsSelection(MissionInstance selected)
+    {
+        GameState.MissionsState.ActiveMissions.Add(selected);
     }
 
     private void BlockButtons()
@@ -93,7 +115,7 @@ public class LandingUiService : MonoBehaviour
                 var go = Instantiate(SecondaryMissionButtonDefinition, SecondaryMissionPanel);
                 var ui = go.GetComponent<SecondaryMissionButtonDefinition>();
 
-                ui.Setup();
+                ui.Setup(this);
             }
         }
     }

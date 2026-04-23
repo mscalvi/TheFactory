@@ -69,11 +69,11 @@ public class ExpeditionUpgradeService : MonoBehaviour
             case UpgradeHelper.TargetType.Ship:
                 switch (upgrade.EffectType)
                 {
-                    case UpgradeHelper.EffectType.ShipArmor:
-                        ShipArmorModifier(upgrade);
+                    case UpgradeHelper.EffectType.ShipAbsoluteArmor:
+                        ShipAbsoluteArmorModifier(upgrade);
                         break;
-                    case UpgradeHelper.EffectType.ShipLife:
-                        ShipLifeModifier(upgrade);
+                    case UpgradeHelper.EffectType.ShipMaxLife:
+                        ShipMaxLifeModifier(upgrade);
                         break;
                 }
                 break;
@@ -83,7 +83,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
     }
 
     // Modificadores Ship
-    private void ShipArmorModifier(UpgradeInstance upgrade)
+    private void ShipAbsoluteArmorModifier(UpgradeInstance upgrade)
     {
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {
@@ -110,7 +110,7 @@ public class ExpeditionUpgradeService : MonoBehaviour
         }
     }
 
-    private void ShipLifeModifier(UpgradeInstance upgrade)
+    private void ShipMaxLifeModifier(UpgradeInstance upgrade)
     {
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {

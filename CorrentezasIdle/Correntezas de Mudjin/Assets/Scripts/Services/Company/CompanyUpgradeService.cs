@@ -22,6 +22,8 @@ public class CompanyUpgradeService : MonoBehaviour
 
     public void AddUpgrade(UpgradeInstance upgrade)
     {
+        Debug.Log($"Adicionando Upgrade: {upgrade.Id}");
+
         var upgrades = GameState.CompanyState.CompanyUpgrades;
 
         if (!upgrades.TryGetValue(upgrade.Id, out var instance))
@@ -71,6 +73,12 @@ public class CompanyUpgradeService : MonoBehaviour
     {
         ShipState.Ship.BaseLife = ShipState.Ship.StartLife;
         ShipState.Ship.BaseArmor = ShipState.Ship.StartArmor;
+
+        GameState.MissionsState.MaxCancelableMissions = 0;
+        GameState.MissionsState.MaxOnGoingMissions = 0;
+        GameState.MissionsState.MaxRewardItens = 1;
+        GameState.MissionsState.RewardBonus = 1;
+        GameState.MissionsState.MaxMissionsOptions = 1;
     }
 
     private void ApplyUpgrade(UpgradeInstance upgrade)
@@ -82,11 +90,38 @@ public class CompanyUpgradeService : MonoBehaviour
             case UpgradeHelper.TargetType.Ship:
                 switch (upgrade.EffectType)
                 {
-                    case UpgradeHelper.EffectType.ShipArmor:
-                        ShipArmorModifier(upgrade);
+                    case UpgradeHelper.EffectType.ShipAbsoluteArmor:
+                        ShipAbsoluteArmorModifier(upgrade);
                         break;
-                    case UpgradeHelper.EffectType.ShipLife:
+                    case UpgradeHelper.EffectType.ShipMaxLife:
                         ShipLifeModifier(upgrade);
+                        break;
+                }
+                break;
+
+            case UpgradeHelper.TargetType.Missions:
+                Debug.Log($"MaxMissions: {GameState.MissionsState.MaxOnGoingMissions}");
+                Debug.Log($"RewardedItens: {GameState.MissionsState.MaxRewardItens}");
+                Debug.Log($"MissionsOptions: {GameState.MissionsState.MaxMissionsOptions}");
+                Debug.Log($"CancelableMissions: {GameState.MissionsState.MaxCancelableMissions}");
+                Debug.Log($"Upgrade de Missions Detectado");
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.MissionsMax:
+                        MissionsMaxModifier(upgrade);
+                        Debug.Log($"Novo MaxMissions: {GameState.MissionsState.MaxOnGoingMissions}");
+                        break;
+                    case UpgradeHelper.EffectType.MissionsReward:
+                        MissionsRewardModifier(upgrade);
+                        Debug.Log($"Novo RewardedItens: {GameState.MissionsState.MaxRewardItens}");
+                        break;
+                    case UpgradeHelper.EffectType.MissionsOptions:
+                        MissionsOptionsModifier(upgrade);
+                        Debug.Log($"Novo MissionsOptions: {GameState.MissionsState.MaxMissionsOptions}");
+                        break;
+                    case UpgradeHelper.EffectType.MissionsCancel:
+                        MissionsCancelModifier(upgrade);
+                        Debug.Log($"Novo CancelableMissions: {GameState.MissionsState.MaxCancelableMissions}");
                         break;
                 }
                 break;
@@ -96,7 +131,7 @@ public class CompanyUpgradeService : MonoBehaviour
     }
 
     // Modificadores Ship
-    private void ShipArmorModifier(UpgradeInstance upgrade)
+    private void ShipAbsoluteArmorModifier(UpgradeInstance upgrade)
     {
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {
@@ -139,6 +174,69 @@ public class CompanyUpgradeService : MonoBehaviour
             }
 
             ShipState.Ship.BaseLife += upgrade.ActualValue;
+        }
+    }
+
+    // Modificadores Missions
+    private void MissionsMaxModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxOnGoingMissions += (int)upgrade.ActualValue;
+        }
+    }
+
+    private void MissionsRewardModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.RewardBonus *= (int)upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxRewardItens += (int)upgrade.ActualValue;
+        }
+    }
+
+    private void MissionsOptionsModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxMissionsOptions += (int)upgrade.ActualValue;
+        }
+    }
+
+    private void MissionsCancelModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxCancelableMissions += (int)upgrade.ActualValue;
         }
     }
 

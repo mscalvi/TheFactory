@@ -8,10 +8,13 @@ public class SecondaryMissionButtonDefinition : MonoBehaviour
 {
     public Button Button;
 
-    public void Setup()
-    {
-        Button.onClick.RemoveAllListeners();
+    private LandingUiService LandingUiService;
 
+    public void Setup(LandingUiService landingUiService)
+    {
+        LandingUiService = landingUiService;
+
+        Button.onClick.RemoveAllListeners();
         Button.interactable = true;
 
         Button.onClick.AddListener(OnBuyClicked);
@@ -19,6 +22,6 @@ public class SecondaryMissionButtonDefinition : MonoBehaviour
 
     void OnBuyClicked()
     {
-
+        LandingUiService.SelectNewMission();
     }
 }

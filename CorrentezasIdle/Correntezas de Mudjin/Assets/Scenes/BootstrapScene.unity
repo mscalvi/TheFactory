@@ -189,6 +189,7 @@ MonoBehaviour:
   GameRecordsService: {fileID: 349874781}
   MissionsService: {fileID: 349874780}
   MainMissionsTrakerService: {fileID: 349874782}
+  MissionsPanel: {fileID: 0}
 --- !u!114 &349874778
 MonoBehaviour:
   m_ObjectHideFlags: 0
