@@ -49,6 +49,9 @@ public class MissionsService : MonoBehaviour
 
         foreach (var missionTemplate in GameState.DataState.missions)
         {
+            if (missionTemplate.Value.MissionType == MissionType.MainMission)
+                continue;
+
             if (missionTemplate.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
                 Templates.Add(missionTemplate.Value);
@@ -108,11 +111,21 @@ public class MissionsService : MonoBehaviour
     {
         var validTargets = new List<EnemyInstance>();
 
+        string targets = "";
+
+        int counter = 0;
+
         foreach (var enemy in GameState.DataState.enemies)
         {
             if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 validTargets.Add(enemy.Value);
+                counter++;
+                if (counter > 1)
+                {
+                    targets += ", ";
+                }
+                targets += enemy.Value.Name;
             }
         }
 
@@ -130,6 +143,8 @@ public class MissionsService : MonoBehaviour
         }
 
         mission.TargetValue = realValue;
+
+        mission.Description = "Eliminar " + mission.TargetValue + " " + targets + ".";
     }
 
 

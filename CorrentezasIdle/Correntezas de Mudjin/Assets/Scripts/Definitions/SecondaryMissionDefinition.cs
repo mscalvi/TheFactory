@@ -13,6 +13,7 @@ public class SecondaryMissionDefinition : MonoBehaviour
     public void Setup(MissionInstance mission)
     {
         Name.text = mission.Name;
+
         Description.text = mission.Description;
 
         double progress = mission.TargetValue - mission.CurrentValue;

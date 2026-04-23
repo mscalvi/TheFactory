@@ -24,7 +24,7 @@ public class LandingUiService : MonoBehaviour
     [SerializeField] SecondaryMissionDefinition SecondaryMissionDefinition;
     [SerializeField] SecondaryMissionButtonDefinition SecondaryMissionButtonDefinition;
 
-    [SerializeField] MissionPopUpDesigner MissionsPanel;
+    [SerializeField] MissionPopUpDesigner MissionsPopUp;
 
     public void Initialize(GameState gameState, DataState db, MissionsService missionsService, MissionPopUpDesigner missionPanel)
     {
@@ -32,7 +32,7 @@ public class LandingUiService : MonoBehaviour
         DataState = db;
         MissionsService = missionsService;
 
-        MissionsPanel = missionPanel;
+        MissionsPopUp = missionPanel;
 
         BlockButtons();
         MainMissionSet();
@@ -62,16 +62,20 @@ public class LandingUiService : MonoBehaviour
     public void SelectNewMission()
     {
         Debug.Log($"MissionsState: {GameState.MissionsState}");
-        Debug.Log($"MissionsPanel: {MissionsPanel}");
+        Debug.Log($"MissionsPanel: {MissionsPopUp}");
 
         var missionsOptions = MissionsService.GenerateMissionOptions(GameState.MissionsState.MaxMissionsOptions);
 
-        MissionsPanel.ShowMissions(missionsOptions, MissionsSelection);
+        MissionsPopUp.ShowMissions(missionsOptions, MissionsSelection);
     }
 
     private void MissionsSelection(MissionInstance selected)
     {
         GameState.MissionsState.ActiveMissions.Add(selected);
+
+        MissionsPopUp.Hide();
+
+        SecondaryMissionSet();
     }
 
     private void BlockButtons()

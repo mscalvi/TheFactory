@@ -52,9 +52,17 @@ public class MainMissionsTrakerService : MonoBehaviour
 
         foreach (var upgrade in GameState.DataState.upgrades)
         {
-            if (upgrade.Value.UnlockId == "m000")
+            if (upgrade.Value.UnlockId == currentMission.Id)
             {
                 upgrade.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
+
+        foreach (var mission in GameState.DataState.missions)
+        {
+            if (mission.Value.UnlockId == currentMission.Id)
+            {
+                mission.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
             }
         }
     }
