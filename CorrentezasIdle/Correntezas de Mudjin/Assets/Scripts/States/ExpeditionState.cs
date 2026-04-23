@@ -11,10 +11,12 @@ public class ExpeditionState
     public int DayCounter = 1;
 
     // Destination
-    public DestinationInstance OldDestination;
-    public DestinationInstance CurrentDestination;
-    public DestinationInstance NewDestination;
-    public PathInstance CurrentPath;
+    public DestinationInstance OldDestination;      // De onde veio
+    public DestinationInstance NewDestination;      // Para onde vai
+
+    public DestinationInstance ActualDestination;  // Onde está parado
+    public PathInstance ActualPath;                // Onde está durante viagem
+
     public int DestinationArrival = 0;
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 

@@ -26,32 +26,33 @@ public class PathService : MonoBehaviour
 
     public void NewDestinationChose(DestinationInstance selected)
     {
-        if (ExpeditionState.CurrentDestination != null)
+        if (ExpeditionState.ActualDestination != null)
         {
-            ExpeditionState.OldDestination = ExpeditionState.CurrentDestination;
+            ExpeditionState.OldDestination = ExpeditionState.ActualDestination;
+            ExpeditionState.ActualDestination = null;
         }
 
         if (!GameState.ProgressState.m000)
         {
-            ExpeditionState.CurrentPath = DataState.paths.GetValueOrDefault("p000101");
+            ExpeditionState.ActualPath = DataState.paths.GetValueOrDefault("p000101");
         }
         else
         {
-            ExpeditionState.CurrentPath = CalculatePath(selected);
+            ExpeditionState.ActualPath = CalculatePath(selected);
         }
         
         ExpeditionState.NewDestination = selected;
 
-        ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.CurrentPath, ShipState.Ship);
+        ExpeditionState.DestinationArrival = CalculateDays(ExpeditionState.ActualPath, ShipState.Ship);
     }
 
     public void NewPathChose(PathInstance selected)
     {
-        ExpeditionState.OldDestination = ExpeditionState.CurrentDestination;
+        ExpeditionState.OldDestination = ExpeditionState.ActualDestination;
         ExpeditionState.NewDestination = null;
-        ExpeditionState.CurrentDestination = null;
+        ExpeditionState.ActualDestination = null;
 
-        ExpeditionState.CurrentPath = selected;
+        ExpeditionState.ActualPath = selected;
 
         ExpeditionState.DestinationArrival = 0;
     }
@@ -76,25 +77,26 @@ public class PathService : MonoBehaviour
             }
         }
 
-        Debug.LogError("Path não encontrado!");
+        Debug.LogError("Expedition PathService - Path não encontrado!");
         return null;
     }
 
     void CalculatePathOptions()
     {
-        ExpeditionState.CurrentDestination = ExpeditionState.NewDestination;
+        ExpeditionState.ActualDestination = ExpeditionState.NewDestination;
 
         if (GameState.ProgressState.m000)
         {
-            RunEvents.OnPathOptionsCalculated?.Invoke();
-            Debug.LogError("Descobrir o que acontece aqui!");
+            ExpeditionEvents.OnPathOptionsCalculated?.Invoke();
+            Debug.LogError("Expedition PathService - Descobrir o que acontece aqui!");
         }
         else
         {
             ExpeditionState.ExpeditionStatus = GameHelper.ExpeditionStatus.Finished;
-            ProgressEvents.OnDestinationArrival?.Invoke();
-            RunEvents.OnExpeditionEnd?.Invoke();
+            ExpeditionEvents.OnExpeditionEnd?.Invoke();
         }
+
+        GameEvents.OnDestinationArrival?.Invoke(ExpeditionState.ActualDestination);
     }
 
     // Helpers
@@ -109,11 +111,11 @@ public class PathService : MonoBehaviour
 
     void OnEnable()
     {
-        RunEvents.OnDestinationArrival += CalculatePathOptions;
+        ExpeditionEvents.OnDestinationArrival += CalculatePathOptions;
     }
 
     void OnDisable()
     {
-        RunEvents.OnDestinationArrival -= CalculatePathOptions;
+        ExpeditionEvents.OnDestinationArrival -= CalculatePathOptions;
     }
 }

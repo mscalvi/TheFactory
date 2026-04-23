@@ -50,14 +50,13 @@ public class StartExpeditionService : MonoBehaviour
     {
         if (GameState.ProgressState.m000)
         {
-            Game.ExpeditionState.CurrentDestination = Game.CompanyState.CurrentBase;
+            Game.ExpeditionState.ActualDestination = Game.CompanyState.CurrentBase;
         }
     }
 
     void LoadShip(GameState Game)
     {
-        Game.ShipState.Ship.MaxLife = Game.ShipState.Ship.BaseLife;
-        Game.ShipState.Ship.CurrentLife = Game.ShipState.Ship.MaxLife;
+
     }
 
     void LoadIngredients(GameState Game)

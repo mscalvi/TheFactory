@@ -21,5 +21,5 @@ MonoBehaviour:
   Precision: 0.01
   CriticalDamage: 1.15
   Special: 
-  AmmoType: 0
+  AmmoType: 3
   UnlockStatus: 3

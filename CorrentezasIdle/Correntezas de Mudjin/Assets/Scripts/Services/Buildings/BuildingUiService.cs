@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using static CurrencyHelper;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
-public class CompanyUiService : MonoBehaviour
+public class BuildingUiService : MonoBehaviour
 {
     private GameState GameState;
     private DataState DataState;
@@ -31,11 +31,11 @@ public class CompanyUiService : MonoBehaviour
     int currentIndex = 0;
     List<BuildingDefinition> unlockedBuildings;
 
-    public void Initialize(GameState gameState, DataState dataState, CompanyPurchaseService purchaseService)
+    public void Initialize(GameState gameState, CompanyPurchaseService purchaseService)
     {
         GameState = gameState;
 
-        DataState = dataState;
+        DataState = GameState.DataState;
 
         CompanyPurchaseService = purchaseService;
 
@@ -89,6 +89,14 @@ public class CompanyUiService : MonoBehaviour
     {
         ClearContainer();
         upgradeUI.Clear();
+
+        foreach (var currency in GameState.DataState.currencies)
+        {
+            if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            {
+                CompanyPurchaseService.CanBuyCheck(currency.Value.Type);
+            }
+        }
 
         foreach (var upgrade in building.Upgrades)
         {

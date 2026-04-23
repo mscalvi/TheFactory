@@ -29,7 +29,7 @@ public class LandingPageDesigner : MonoBehaviour
 
     public void CompanyButton()
     {
-        SceneManager.LoadScene("CompanyBuildingsScene");
+        SceneManager.LoadScene("BuildingsScene");
     }
 
     public void MapButton()

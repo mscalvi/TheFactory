@@ -162,6 +162,10 @@ public class GameCreationService : MonoBehaviour
                 string subId = ship.Value.Id + i.ToString();
                 var instance = new WeaponRoomInstance(ship.Value.WeaponRoomSlots[i].WeaponRoomModel, subId);
 
+                instance.Weapon = GameState.DataState.weapons["w001"];
+
+                instance.Ammo = GameState.DataState.ammos["a001"];
+
                 ship.Value.WeaponsRooms.Add(instance);
             }
 

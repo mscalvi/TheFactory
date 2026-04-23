@@ -64,4 +64,17 @@ public class MissionsTrackerService : MonoBehaviour
             }
         }
     }
+
+    // Events
+    void OnEnable()
+    {
+        CombatEvents.OnEnemyDeath += OnEnemyKilled;
+        ExpeditionEvents.OnNightFinish += OnDayFinish;
+    }
+
+    void OnDisable()
+    {
+        CombatEvents.OnEnemyDeath -= OnEnemyKilled;
+        ExpeditionEvents.OnNightFinish -= OnDayFinish;
+    }
 }

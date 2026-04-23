@@ -44,14 +44,14 @@ public class EndExpeditionService : MonoBehaviour
 
     void OnEnable()
     {
-        RunEvents.OnExpeditionEnd += EndExpedition;
-        RunEvents.OnFinalPopUpClose += EndScene;
+        ExpeditionEvents.OnExpeditionEnd += EndExpedition;
+        ExpeditionEvents.OnFinalPopUpClose += EndScene;
     }
 
     void OnDisable()
     {
-        RunEvents.OnExpeditionEnd -= EndExpedition;
-        RunEvents.OnFinalPopUpClose -= EndScene;
+        ExpeditionEvents.OnExpeditionEnd -= EndExpedition;
+        ExpeditionEvents.OnFinalPopUpClose -= EndScene;
     }
 
     void EndExpedition()

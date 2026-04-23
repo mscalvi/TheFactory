@@ -16,6 +16,10 @@ MonoBehaviour:
   Name: Chegada em Grande Isme
   Description: Encontre a cidade de Grande Isme para fundar sua Companhia
   RewardFactor: 1
+  RewardType1: 1
+  RewardType2: 1
+  RewardType3: 1
+  RewardType4: 1
   MissionRarity: 0
   MissionType: 0
   MissionStatus: 0

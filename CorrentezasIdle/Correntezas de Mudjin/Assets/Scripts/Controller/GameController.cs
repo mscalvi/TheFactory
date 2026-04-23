@@ -11,7 +11,13 @@ public class GameController : MonoBehaviour
     [SerializeField] GameCreationService GameCreationService;
     [SerializeField] public GameRecordsService GameRecordsService;
     [SerializeField] public MissionsService MissionsService;
-    [SerializeField] MainMissionsTrakerService MainMissionsTrakerService;
+    [SerializeField] public CompanyCurrencyService CompanyCurrencyService;
+    [SerializeField] public MainMissionsTrakerService MainMissionsTrakerService;
+    [SerializeField] public CompanyPurchaseService CompanyPurchaseService;
+    [SerializeField] public CompanyUpgradeService CompanyUpgradeService;
+    [SerializeField] public CompanyPricingService CompanyPricingService;
+    [SerializeField] public ShipInitializeService ShipInitializeService;
+    [SerializeField] public UnlockService UnlockService;
 
     bool FirstInitialization = true;
 
@@ -29,7 +35,7 @@ public class GameController : MonoBehaviour
 
         if (Database == null)
         {
-            Debug.LogError("GameDatabase NÃO atribuída no GameController!");
+            Debug.LogError("GameController - GameDatabase NÃO atribuída no GameController!");
         }
 
         if (GameState == null)
@@ -42,6 +48,7 @@ public class GameController : MonoBehaviour
             GameState.UnlockState = new UnlockState();
             GameState.RecordsState = new RecordsState();
             GameState.MissionsState = new MissionsState();
+            GameState.ShipState = new ShipState();
         } else
         {
             FirstInitialization = false;
@@ -53,6 +60,12 @@ public class GameController : MonoBehaviour
             GameRecordsService.Initialize(GameState);
             MissionsService.Initialize(GameState);
             MainMissionsTrakerService.Initialize(GameState, GameState.DataState);
+            CompanyCurrencyService.Initialize(GameState);
+            CompanyPurchaseService.Initialize(GameState, GameState.DataState, CompanyCurrencyService);
+            UnlockService.Initialize(GameState, GameState.DataState);
+            CompanyUpgradeService.Initialize(GameState, GameState.DataState, GameState.ShipState, UnlockService);
+            CompanyPricingService.Initialize(GameState, GameState.DataState);
+            ShipInitializeService.Initialize(GameState);
         } else
         {
             // service de Load

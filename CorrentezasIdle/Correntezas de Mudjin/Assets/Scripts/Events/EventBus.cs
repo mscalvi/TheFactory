@@ -20,7 +20,7 @@ public static class ShipEvents
     public static Action<UpgradeInstance> OnCanBuyChange;
 }
 
-public static class RunEvents
+public static class ExpeditionEvents
 {
     public static Action OnExpeditionStart;
     public static Action OnExpeditionEnd;
@@ -47,13 +47,12 @@ public static class CompanyEvents
     public static Action<EnemyInstance> NewEnemySeen;
 }
 
-public static class ProgressEvents
+public static class GameEvents
 {
-    public static Action OnDestinationArrival;
-}
-
-public static class RecordsEvents
-{
+    public static Action<DestinationInstance> OnDestinationArrival;
+    public static Action<MissionInstance> OnMissionComplete;
+    public static Action<MissionInstance> OnMissionCanceled;
     public static Action NewDayRecord;
+    public static Action<MissionInstance> MainMissionFinished;
 }
 

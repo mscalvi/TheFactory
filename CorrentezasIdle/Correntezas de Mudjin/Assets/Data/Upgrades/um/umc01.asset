@@ -26,7 +26,7 @@ MonoBehaviour:
   TargetId: 
   UnlockId: uuu01
   MaxBuy: 9
-  Cost: 5
-  CostGrowth: 1.3
+  Cost: 1
+  CostGrowth: 3.5
   Currency: 1
   UnlockStatus: 1

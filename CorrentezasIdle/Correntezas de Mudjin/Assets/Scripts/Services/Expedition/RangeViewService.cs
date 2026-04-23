@@ -12,6 +12,9 @@ public class RangeViewService : MonoBehaviour
     public void Initialize(List<WeaponRoomInstance> rooms)
     {
         Rooms = rooms;
+
+        Debug.Log($"Expedition RangeViewService - Room Carregado: {Rooms.Count}");
+
         DrawAll();
     }
 
@@ -19,12 +22,15 @@ public class RangeViewService : MonoBehaviour
     {
         foreach (var room in Rooms)
         {
+            Debug.Log($"Expedition RangeViewService - Desenhando Room: {room.Name}");
             DrawRoom(room);
         }
     }
 
     void DrawRoom(WeaponRoomInstance room)
     {
+        Debug.Log($"Expedition RangeViewService - Arma Identificada: {room.Weapon.Name}");
+
         DrawCircle(room.Weapon.Range);
 
         if (room.Angle < 360)

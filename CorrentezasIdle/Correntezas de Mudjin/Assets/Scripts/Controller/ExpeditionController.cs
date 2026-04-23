@@ -51,7 +51,7 @@ public class ExpeditionController : MonoBehaviour
 
         if (Game == null)
         {
-            Debug.LogError("Game NULL!");
+            Debug.LogError("ExpeditionController - Game NULL!");
             return;
         }
 
@@ -64,7 +64,7 @@ public class ExpeditionController : MonoBehaviour
 
         if (Expedition == null)
         {
-            Debug.LogError("ExpeditionState NULL!");
+            Debug.Log("ExpeditionController - ExpeditionState NULL!");
             return;
         }
 
@@ -75,8 +75,12 @@ public class ExpeditionController : MonoBehaviour
 
         if (Ship == null)
         {
-            Debug.LogError("ShipState NULL -> Criando Nova");
+            Debug.Log("ExpeditionController - ShipState NULL");
             return;
+        }
+        else
+        {
+            Debug.Log($"ExpeditionController - Navio Carregado: {Ship.Ship.Name}");
         }
 
         var Data = GameController.Instance.GameState.DataState;
@@ -134,6 +138,6 @@ public class ExpeditionController : MonoBehaviour
         EventService.Initialize(Game, Data, Expedition);
 
         // Events
-        RunEvents.OnExpeditionStart?.Invoke();
+        ExpeditionEvents.OnExpeditionStart?.Invoke();
     }
 }

@@ -76,12 +76,12 @@ public class ExpeditionPurchaseService : MonoBehaviour
     // Eventos
     void OnEnable()
     {
-        RunEvents.OnCurrencyChange += CurrencyCheck;
+        ExpeditionEvents.OnCurrencyChange += CurrencyCheck;
     }
 
     void OnDisable()
     {
-        RunEvents.OnCurrencyChange -= CurrencyCheck;
+        ExpeditionEvents.OnCurrencyChange -= CurrencyCheck;
     }
 
     void CurrencyCheck(CurrencyHelper.CurrencyType type, CurrencyHelper.CurrencyScope scope)

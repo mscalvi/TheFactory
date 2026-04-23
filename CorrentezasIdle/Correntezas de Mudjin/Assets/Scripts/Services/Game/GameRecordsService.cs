@@ -16,7 +16,7 @@ public class GameRecordsService : MonoBehaviour
         if (GameState.RecordsState.MaxDaysTraveling < GameState.ExpeditionState.DayCounter)
         {
             GameState.RecordsState.MaxDaysTraveling = GameState.ExpeditionState.DayCounter;
-            RecordsEvents.NewDayRecord?.Invoke();
+            GameEvents.NewDayRecord?.Invoke();
         }
     }
 
@@ -24,11 +24,11 @@ public class GameRecordsService : MonoBehaviour
     // Events
     void OnEnable()
     {
-        RunEvents.OnExpeditionEnd += DayRecordCheck;
+        ExpeditionEvents.OnExpeditionEnd += DayRecordCheck;
     }
 
     void OnDisable()
     {
-        RunEvents.OnExpeditionEnd -= DayRecordCheck;
+        ExpeditionEvents.OnExpeditionEnd -= DayRecordCheck;
     }
 }

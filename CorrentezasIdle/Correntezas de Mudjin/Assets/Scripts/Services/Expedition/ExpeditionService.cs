@@ -41,7 +41,7 @@ public class ExpeditionService : MonoBehaviour, ITickable
 
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.GameOver;
 
-        RunEvents.OnExpeditionEnd?.Invoke();
+        ExpeditionEvents.OnExpeditionEnd?.Invoke();
 
         TickService.Pause();
     }

@@ -50,7 +50,7 @@ public class EventService : MonoBehaviour
 
     private void TriggerEvent(EventInstance eventInstance)
     {
-        RunEvents.OnEventTrigger?.Invoke(eventInstance);
+        ExpeditionEvents.OnEventTrigger?.Invoke(eventInstance);
     }
 
 
@@ -62,11 +62,11 @@ public class EventService : MonoBehaviour
     // Events
     void OnEnable()
     {
-        RunEvents.OnNightFinish += CheckEvents;
+        ExpeditionEvents.OnNightFinish += CheckEvents;
     }
 
     void OnDisable()
     {
-        RunEvents.OnNightFinish -= CheckEvents;
+        ExpeditionEvents.OnNightFinish -= CheckEvents;
     }
 }

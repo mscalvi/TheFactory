@@ -39,7 +39,33 @@ public class MissionsService : MonoBehaviour
 
     public void CompleteMission(MissionInstance mission)
     {
+        mission.MissionStatus = MissionStatus.Finished;
 
+        GameEvents.OnMissionComplete?.Invoke(mission);
+
+        RemoveMission(mission);
+    }
+
+    public void CancelMission(MissionInstance mission)
+    {
+        mission.MissionStatus = MissionStatus.Canceled;
+
+        GameEvents.OnMissionCanceled?.Invoke(mission);
+
+        RemoveMission(mission);
+    }
+
+    private void RemoveMission(MissionInstance mission)
+    {
+        if (mission.MissionStatus == MissionStatus.Finished)
+        {
+            GameState.MissionsState.CompletedMissions++;
+        } else
+        {
+            GameState.MissionsState.CanceledMissions++;
+        }
+
+        GameState.MissionsState.ActiveMissions.Remove(mission);
     }
 
     // Helpers
@@ -85,10 +111,16 @@ public class MissionsService : MonoBehaviour
         switch (mission.MissionRarity)
         {
             case MissionRarity.Common:
-                mission.Reward = 25;
+                mission.Reward1Ammount = 25;
+                mission.Reward2Ammount = 25;
+                mission.Reward3Ammount = 25;
+                mission.Reward4Ammount = 25;
                 break;
             case MissionRarity.Uncommon:
-                mission.Reward = 40;
+                mission.Reward1Ammount = 45;
+                mission.Reward2Ammount = 45;
+                mission.Reward3Ammount = 45;
+                mission.Reward4Ammount = 45;
                 break;
         }
 

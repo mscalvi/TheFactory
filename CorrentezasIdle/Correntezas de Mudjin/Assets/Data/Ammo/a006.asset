@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a006
   Name: Crude Bolt
   Description: Dardo Simples
-  Type: 0
+  Type: 8
   Damage: 5
   Special: 
   UnlockStatus: 0

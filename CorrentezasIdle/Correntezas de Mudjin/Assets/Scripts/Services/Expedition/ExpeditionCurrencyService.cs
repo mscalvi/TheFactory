@@ -42,7 +42,7 @@ public class ExpeditionCurrencyService : MonoBehaviour
 
         currencies[type].Amount = Get(type) + amount;
 
-        RunEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
+        ExpeditionEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
     }
 
     public bool Spend(CurrencyType type, double amount)
@@ -55,7 +55,7 @@ public class ExpeditionCurrencyService : MonoBehaviour
 
         currencies[type].Amount = current - amount;
 
-        RunEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
+        ExpeditionEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
 
         return true;
     }
@@ -65,15 +65,15 @@ public class ExpeditionCurrencyService : MonoBehaviour
     void OnEnable()
     {
         CombatEvents.OnEnemyDeath += EnemyDeathReward;
-        RunEvents.OnDayFinish += DayFinishReward;
-        RunEvents.OnNightFinish += NightFinishReward;
+        ExpeditionEvents.OnDayFinish += DayFinishReward;
+        ExpeditionEvents.OnNightFinish += NightFinishReward;
     }
 
     void OnDisable()
     {
         CombatEvents.OnEnemyDeath -= EnemyDeathReward;
-        RunEvents.OnDayFinish -= DayFinishReward;
-        RunEvents.OnNightFinish -= NightFinishReward;
+        ExpeditionEvents.OnDayFinish -= DayFinishReward;
+        ExpeditionEvents.OnNightFinish -= NightFinishReward;
     }
 
     void EnemyDeathReward(EnemyInstance enemy)

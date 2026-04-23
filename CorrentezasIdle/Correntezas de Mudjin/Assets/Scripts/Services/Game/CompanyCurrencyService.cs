@@ -61,14 +61,33 @@ public class CompanyCurrencyService : MonoBehaviour
     }
 
     // Event
-
     void OnEnable()
     {
-
+        GameEvents.OnMissionComplete += MissionComplete;
     }
 
     void OnDisable()
     {
+        GameEvents.OnMissionComplete -= MissionComplete;
+    }
 
+    private void MissionComplete(MissionInstance mission)
+    {
+        if (GameState.MissionsState.MaxRewardItens > 0)
+        {
+            Add(mission.RewardType1, mission.Reward1Ammount);
+        }
+        if (GameState.MissionsState.MaxRewardItens > 1)
+        {
+            Add(mission.RewardType2, mission.Reward2Ammount);
+        }
+        if (GameState.MissionsState.MaxRewardItens > 2)
+        {
+            Add(mission.RewardType3, mission.Reward3Ammount);
+        }
+        if (GameState.MissionsState.MaxRewardItens > 3)
+        {
+            Add(mission.RewardType4, mission.Reward4Ammount);
+        }
     }
 }

@@ -56,12 +56,12 @@ public class TickService : MonoBehaviour
     public void Pause()
     {
         isPaused = true;
-        Debug.Log("TickService Pausado");
+        Debug.Log("Expedition TickService - Pausado");
     }
 
     public void Resume()
     {
         isPaused = false;
-        Debug.Log("TickService Retomado");
+        Debug.Log("Expedition TickService - Ligado");
     }
 }

@@ -37,7 +37,8 @@ public class UnnamedTripulationService : MonoBehaviour, ITickable
             if (ShipState.Ship.RepairPerTripulation > 0)
             {
                 double TotalRepair = ShipState.Ship.TotalTripulation * ShipState.Ship.RepairPerTripulation;
-                Debug.Log($"{TotalRepair} Reparados");
+
+                Debug.Log($"Expedition UnnamedTripulationService - {TotalRepair} Reparados");
 
                 ShipState.Ship.CurrentLife += TotalRepair;
             }

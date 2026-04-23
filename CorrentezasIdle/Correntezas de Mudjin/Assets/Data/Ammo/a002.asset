@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a002
   Name: Shipped Stone
   Description: Pedra Lascada
-  Type: 0
+  Type: 1
   Damage: 2
   Special: 
   UnlockStatus: 0

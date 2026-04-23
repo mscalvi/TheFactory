@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a003
   Name: Crude Arrow
   Description: Flecha Simples
-  Type: 0
+  Type: 4
   Damage: 3
   Special: 
   UnlockStatus: 0

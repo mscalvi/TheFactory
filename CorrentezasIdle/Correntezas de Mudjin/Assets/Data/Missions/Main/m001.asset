@@ -16,6 +16,10 @@ MonoBehaviour:
   Name: Encontre Madre Liandra
   Description: Navegue para Oeste e encontre a cidade de Madre Liandra
   RewardFactor: 1
+  RewardType1: 1
+  RewardType2: 1
+  RewardType3: 1
+  RewardType4: 1
   MissionRarity: 0
   MissionType: 0
   MissionStatus: 0

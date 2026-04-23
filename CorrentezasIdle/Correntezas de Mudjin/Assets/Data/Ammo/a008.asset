@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a008
   Name: Braided Bolt
   Description: "Dardo Tran\xE7ado"
-  Type: 0
+  Type: 8
   Damage: 9
   Special: Piercing
   UnlockStatus: 0

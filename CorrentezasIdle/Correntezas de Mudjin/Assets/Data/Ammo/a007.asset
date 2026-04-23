@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a007
   Name: Bolt
   Description: Dardo Normal
-  Type: 0
+  Type: 8
   Damage: 7
   Special: 
   UnlockStatus: 0

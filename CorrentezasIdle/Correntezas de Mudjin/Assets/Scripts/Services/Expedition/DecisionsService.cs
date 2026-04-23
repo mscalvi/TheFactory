@@ -58,12 +58,12 @@ public class DecisionsService : MonoBehaviour
 
     private void GameModeDecision()
     {
-        if (ExpeditionState.CurrentDestination != null)
+        if (ExpeditionState.ActualDestination != null)
         {
             DestinationOptions.Clear();
             PathOptions.Clear();
 
-            foreach (var destination in ExpeditionState.CurrentDestination.CloseDestinations)
+            foreach (var destination in ExpeditionState.ActualDestination.CloseDestinations)
             {
                 if (destination.Key.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
                 {
@@ -78,7 +78,7 @@ public class DecisionsService : MonoBehaviour
             DecisionPanel.ShowOptions(DestinationOptions, PathOptions, DestinationSelection, PathSelection);
         } else
         {
-            Debug.Log("Ship não possui Destination atual");
+            Debug.Log("Expedition DecisionService - Ship não possui Destination atual.");
         }
     }
 
@@ -115,13 +115,13 @@ public class DecisionsService : MonoBehaviour
     {
         PathService.NewDestinationChose(selected);
 
-        if (ExpeditionState.CurrentDestination == null)
+        if (ExpeditionState.ActualDestination == null)
         {
             DecisionPanel.Hide();
 
             TickService.Resume();
 
-            RunEvents.OnDestinationChose?.Invoke();
+            ExpeditionEvents.OnDestinationChose?.Invoke();
         }
     }
 
@@ -129,13 +129,13 @@ public class DecisionsService : MonoBehaviour
     {
         PathService.NewPathChose(selected);
 
-        if (ExpeditionState.CurrentDestination == null)
+        if (ExpeditionState.ActualDestination == null)
         {
             DecisionPanel.Hide();
 
             TickService.Resume();
 
-            RunEvents.OnDestinationChose?.Invoke();
+            ExpeditionEvents.OnDestinationChose?.Invoke();
         }
     }
 
@@ -149,23 +149,23 @@ public class DecisionsService : MonoBehaviour
 
     private void LastSelecion(bool victory)
     {
-        RunEvents.OnFinalPopUpClose?.Invoke();
+        ExpeditionEvents.OnFinalPopUpClose?.Invoke();
     }
 
     // Events
 
     void OnEnable()
     {
-        RunEvents.OnDestinationArrival += PauseShip;
-        RunEvents.OnPathOptionsCalculated += SendShip;
-        RunEvents.OnEventTrigger += EventHappen;
+        ExpeditionEvents.OnDestinationArrival += PauseShip;
+        ExpeditionEvents.OnPathOptionsCalculated += SendShip;
+        ExpeditionEvents.OnEventTrigger += EventHappen;
     }
 
     void OnDisable()
     {
-        RunEvents.OnDestinationArrival -= PauseShip;
-        RunEvents.OnPathOptionsCalculated -= SendShip;
-        RunEvents.OnEventTrigger -= EventHappen;
+        ExpeditionEvents.OnDestinationArrival -= PauseShip;
+        ExpeditionEvents.OnPathOptionsCalculated -= SendShip;
+        ExpeditionEvents.OnEventTrigger -= EventHappen;
     }
 
     private void PauseShip()

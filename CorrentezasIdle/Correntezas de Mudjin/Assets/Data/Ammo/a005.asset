@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a005
   Name: Dented Arrow
   Description: Flecha Serrilhada
-  Type: 0
+  Type: 4
   Damage: 7
   Special: Slow
   UnlockStatus: 0

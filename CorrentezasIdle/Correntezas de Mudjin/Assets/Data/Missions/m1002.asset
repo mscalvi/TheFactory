@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: m1002
   Name: "Sobreviv\xEAncia"
+  Description: 
   RewardFactor: 1
+  RewardType1: 1
+  RewardType2: 1
+  RewardType3: 1
+  RewardType4: 1
   MissionRarity: 0
   MissionType: 2
   MissionStatus: 0

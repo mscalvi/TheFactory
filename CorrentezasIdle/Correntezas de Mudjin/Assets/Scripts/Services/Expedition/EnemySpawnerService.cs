@@ -179,7 +179,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             if (enemy.Value.BossEnemy)
                 continue;
 
-            if ((enemy.Value.PathType & Expedition.CurrentPath.PathType) == 0)
+            if ((enemy.Value.PathType & Expedition.ActualPath.PathType) == 0)
                 continue;
 
             if (enemy.Value.Stage > Expedition.EnemySpawnStage)

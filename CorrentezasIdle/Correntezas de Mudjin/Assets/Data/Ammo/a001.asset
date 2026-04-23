@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a001
   Name: Small Stone
   Description: Pedregulho
-  Type: 0
+  Type: 1
   Damage: 1
   Special: 
   UnlockStatus: 3

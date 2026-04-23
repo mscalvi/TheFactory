@@ -141,13 +141,13 @@ public class ExpeditionUpgradeService : MonoBehaviour
     void OnEnable()
     {
         ShipEvents.OnUpgradeBuy += AddUpgrade;
-        RunEvents.OnExpeditionEnd += ResetExpeditionUpgrades;
+        ExpeditionEvents.OnExpeditionEnd += ResetExpeditionUpgrades;
     }
 
     void OnDisable()
     {
         ShipEvents.OnUpgradeBuy -= AddUpgrade;
-        RunEvents.OnExpeditionEnd -= ResetExpeditionUpgrades;
+        ExpeditionEvents.OnExpeditionEnd -= ResetExpeditionUpgrades;
     }
 
     void ResetExpeditionUpgrades()

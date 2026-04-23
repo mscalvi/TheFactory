@@ -10,6 +10,10 @@ public class MissionModel : ScriptableObject
     public string Description;
 
     public double RewardFactor;
+    public CurrencyHelper.CurrencyType RewardType1;
+    public CurrencyHelper.CurrencyType RewardType2;
+    public CurrencyHelper.CurrencyType RewardType3;
+    public CurrencyHelper.CurrencyType RewardType4;
 
     public MissionHelper.MissionRarity MissionRarity;
 

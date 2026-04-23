@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: a004
   Name: Arrow
   Description: Flecha Comum
-  Type: 0
+  Type: 4
   Damage: 5
   Special: 
   UnlockStatus: 0

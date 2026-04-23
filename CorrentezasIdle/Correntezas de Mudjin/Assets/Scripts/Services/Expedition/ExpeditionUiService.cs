@@ -56,7 +56,7 @@ public class ExpeditionUiService : MonoBehaviour
         } else
         {
             DaysToGoText.text = "";
-            DestinationText.text = ExpeditionState.CurrentPath.Name;
+            DestinationText.text = ExpeditionState.ActualPath.Name;
         }
 
         DayCycleTextSet();
@@ -219,11 +219,11 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.AfterUpgradeBuy += RefreshUpgradeUi;
         ShipEvents.OnCanBuyChange += RefreshUpgradeUi;
 
-        RunEvents.OnExpeditionStart += GameStart;
-        RunEvents.OnCurrencyChange += RefreshCurrencyUi;
-        RunEvents.OnDestinationChose += DestinationTextSet;
-        RunEvents.OnDayFinish += DayCycleTextSet;
-        RunEvents.OnNightFinish += DayCycleTextSet;
+        ExpeditionEvents.OnExpeditionStart += GameStart;
+        ExpeditionEvents.OnCurrencyChange += RefreshCurrencyUi;
+        ExpeditionEvents.OnDestinationChose += DestinationTextSet;
+        ExpeditionEvents.OnDayFinish += DayCycleTextSet;
+        ExpeditionEvents.OnNightFinish += DayCycleTextSet;
     }
 
     void OnDisable()
@@ -236,11 +236,11 @@ public class ExpeditionUiService : MonoBehaviour
         ShipEvents.AfterUpgradeBuy -= RefreshUpgradeUi;
         ShipEvents.OnCanBuyChange -= RefreshUpgradeUi;
 
-        RunEvents.OnExpeditionStart -= GameStart;
-        RunEvents.OnCurrencyChange -= RefreshCurrencyUi;
-        RunEvents.OnDestinationChose -= DestinationTextSet;
-        RunEvents.OnDayFinish -= DayCycleTextSet;
-        RunEvents.OnNightFinish -= DayCycleTextSet;
+        ExpeditionEvents.OnExpeditionStart -= GameStart;
+        ExpeditionEvents.OnCurrencyChange -= RefreshCurrencyUi;
+        ExpeditionEvents.OnDestinationChose -= DestinationTextSet;
+        ExpeditionEvents.OnDayFinish -= DayCycleTextSet;
+        ExpeditionEvents.OnNightFinish -= DayCycleTextSet;
     }
 
     void GameStart()

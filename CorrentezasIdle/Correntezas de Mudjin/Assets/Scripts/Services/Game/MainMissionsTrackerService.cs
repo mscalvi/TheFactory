@@ -16,16 +16,20 @@ public class MainMissionsTrakerService : MonoBehaviour
         GameState = gameState;
 
         DataState = dataState;
+
+        Debug.Log($"Game MainMissionTrackerService - On");
     }
 
-    private void DestinationMissions()
+    private void DestinationMissions(DestinationInstance actualDestination)
     {
+        Debug.Log($"Game MainMissionTrackerService - Destination Mission Chamado");
+
         var currentMission = GameState.MainMission;
 
         switch (currentMission.Id)
         {
-            case "m000":                
-                if (GameState.ExpeditionState.CurrentDestination.Id == "d101")
+            case "m000":
+                if (actualDestination.Id == "d101")
                 {
                     GameState.ProgressState.m000 = true;
                     GameState.UnlockState.Company = true;
@@ -35,7 +39,7 @@ public class MainMissionsTrakerService : MonoBehaviour
                 break;
             case "m001":
                 // Trocar para ver o Status da Destination?
-                if (GameState.ExpeditionState.CurrentDestination.Id == "d102")
+                if (actualDestination.Id == "d102")
                 {
                     GameState.ProgressState.m001 = true;
                     MissionFinisher(currentMission);
@@ -65,6 +69,8 @@ public class MainMissionsTrakerService : MonoBehaviour
                 mission.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
             }
         }
+
+        GameEvents.MainMissionFinished?.Invoke(currentMission);
     }
 
     private void MissionLoader(string missionId)
@@ -83,11 +89,11 @@ public class MainMissionsTrakerService : MonoBehaviour
     //Events
     void OnEnable()
     {
-        ProgressEvents.OnDestinationArrival += DestinationMissions;
+        GameEvents.OnDestinationArrival += DestinationMissions;
     }
 
     void OnDisable()
     {
-        ProgressEvents.OnDestinationArrival -= DestinationMissions;
+        GameEvents.OnDestinationArrival -= DestinationMissions;
     }
 }

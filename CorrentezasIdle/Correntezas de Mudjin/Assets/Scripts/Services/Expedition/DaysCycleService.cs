@@ -41,18 +41,18 @@ public class DaysCycleService : MonoBehaviour, ITickable
             {
                 ExpeditionState.DayCounter++;
                 ExpeditionState.DestinationDayCounter++;
-                RunEvents.OnNightFinish?.Invoke();
+                ExpeditionEvents.OnNightFinish?.Invoke();
             } else
             {
-                RunEvents.OnDayFinish?.Invoke();
+                ExpeditionEvents.OnDayFinish?.Invoke();
             }
 
             if (ExpeditionState.DestinationArrival > 0)
             {
                 if (ExpeditionState.DayCounter > ExpeditionState.DestinationArrival)
                 {
-                    Debug.Log($"Rota Finalizada");
-                    RunEvents.OnDestinationArrival?.Invoke();
+                    Debug.Log($"Expedition DaysCycleService - Rota Finalizada");
+                    ExpeditionEvents.OnDestinationArrival?.Invoke();
                 }
             }
         }
