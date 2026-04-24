@@ -8,7 +8,6 @@ public class UpgradeHelper
     {
         Expedition,
         Company,
-        Meta,
     }
 
     public enum UpgradeMenu

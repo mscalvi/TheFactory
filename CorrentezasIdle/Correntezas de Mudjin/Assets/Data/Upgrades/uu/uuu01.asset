@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: "Desbloqueia as Miss\xF5es"
   UpgradeType: 2
   EffectType: 1
-  Scope: 2
+  Scope: 1
   ExpeditionMenu: 0
   Building: 1
   UpgradeValue: 0

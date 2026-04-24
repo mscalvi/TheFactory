@@ -32,17 +32,16 @@ public class ExpeditionState
     public List<EnemyInstance> ActiveEnemies = new();
 
     // Currency
-    public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> ExpeditionCurrency;
     public double BaseDayReward = 1;
     public double BaseNightReward = 1;
 
     // Upgrades
-    public Dictionary<string, UpgradeInstance> ExpeditionUpgrades;
+    public Dictionary<string, UpgradeInstance> ExpeditionUpgrades = new Dictionary<string, UpgradeInstance>();
 
     // Ingredients
     public int MaxMarkedEnemies = 1;
     public int MaxMarkedLoot = 1;
     public double NextLootChance = 0;
     public double NextLootDecay = 0;
-    public Dictionary<IngredientHelper.IngredientRarity, float> RarityBaseWeights;
+    public Dictionary<IngredientHelper.IngredientRarity, float> IngredientRarityBaseWeights;
 }

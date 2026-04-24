@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: m001
   m_EditorClassIdentifier: 
   Id: m001
-  Name: Encontre Madre Liandra
-  Description: Navegue para Oeste e encontre a cidade de Madre Liandra
+  Name: "Tripula\xE7\xE3o Inicial"
+  Description: "Encontre duas pessoas dispostas a trabalharem com voc\xEA."
   RewardFactor: 1
   RewardType1: 1
   RewardType2: 1

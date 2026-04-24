@@ -158,17 +158,19 @@ public class DecisionsService : MonoBehaviour
     {
         ExpeditionEvents.OnDestinationArrival += PauseShip;
         ExpeditionEvents.OnPathOptionsCalculated += SendShip;
-        ExpeditionEvents.OnEventTrigger += EventHappen;
+        ExpeditionEvents.OnShipDeath += LastDecision;
+        GameEvents.OnEventTrigger += EventHappen;
     }
 
     void OnDisable()
     {
         ExpeditionEvents.OnDestinationArrival -= PauseShip;
         ExpeditionEvents.OnPathOptionsCalculated -= SendShip;
-        ExpeditionEvents.OnEventTrigger -= EventHappen;
+        ExpeditionEvents.OnShipDeath -= LastDecision;
+        GameEvents.OnEventTrigger -= EventHappen;
     }
 
-    private void PauseShip()
+    private void PauseShip(DestinationInstance destination)
     {
         TickService.Pause();
     }

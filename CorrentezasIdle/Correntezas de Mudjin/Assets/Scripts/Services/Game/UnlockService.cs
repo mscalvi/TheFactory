@@ -24,33 +24,16 @@ public class UnlockService : MonoBehaviour
             }
         }
 
-        switch (upgrade.Scope)
-        {
-            case UpgradeHelper.UpgradeScope.Meta:
-                MetaUnlock(upgrade);
-                break;
-            case UpgradeHelper.UpgradeScope.Company:
-                CompanyUnlock(upgrade);
-                break;
-            case UpgradeHelper.UpgradeScope.Expedition:
-                ExpeditionUnlock(upgrade);
-                break;
-        }
+        Unlock(upgrade);
     }
 
-    private void MetaUnlock(UpgradeInstance upgrade)
+    private void Unlock(UpgradeInstance upgrade)
     {
-        switch (upgrade.Id) 
+        if (upgrade.Id == "uuu01")
         {
-            case "uuu01":
-                Debug.Log("Desbloquear Missões!");
-                GameState.UnlockState.Missions = true;
-                break;
+            GameState.UnlockState.Missions = true;
         }
-    }
 
-    private void CompanyUnlock(UpgradeInstance upgrade)
-    {
         if (upgrade.Id.StartsWith("uub"))
         {
             foreach (var building in DataState.buildings)
@@ -58,14 +41,9 @@ public class UnlockService : MonoBehaviour
                 if (building.Value.Id == upgrade.TargetId)
                 {
                     building.Value.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
-                    CompanyEvents.OnBuildingUnlock?.Invoke();
+                    GameEvents.OnBuildingUnlock?.Invoke();
                 }
             }
         }
-    }
-
-    private void ExpeditionUnlock(UpgradeInstance upgrade)
-    {
-
     }
 }

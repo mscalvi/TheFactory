@@ -3,56 +3,54 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class CombatEvents
-{
-    public static Action<EnemyInstance> OnEnemyDeath;
-    public static Action<EnemyInstance> OnMarkedEnemyDeath;
-    public static Action<EnemyInstance> OnEnemySpawn;
-    public static Action<WeaponRoomInstance, EnemyInstance> OnShoot;
-    public static Action<EnemyInstance> OnEnemyClicked;
-}
-
-public static class ShipEvents
-{
-    public static Action OnAtributeChange;
-    public static Action<UpgradeInstance> OnUpgradeBuy;
-    public static Action<UpgradeInstance> AfterUpgradeBuy;
-    public static Action<UpgradeInstance> OnCanBuyChange;
-}
-
 public static class ExpeditionEvents
 {
+    // Enemy Events
+    public static Action<EnemyInstance> OnEnemySpawn;
+    public static Action<EnemyInstance> OnEnemyClicked;
+    public static Action<EnemyInstance> OnEnemyDeath;
+    public static Action<EnemyInstance> OnMarkedEnemyDeath;
+
+    // Ship Events
+    public static Action<WeaponRoomInstance, EnemyInstance> OnShoot;
+    public static Action OnShipAtributeChange;
+
+    // Expedition Status Events
     public static Action OnExpeditionStart;
     public static Action OnExpeditionEnd;
     public static Action OnFinalPopUpClose;
+    public static Action<bool> OnShipDeath;
 
-    public static Action OnDayFinish;
-    public static Action OnNightFinish;
-
+    // Destination Events
     public static Action OnDestinationChose;
-    public static Action OnDestinationArrival;
+    public static Action<DestinationInstance> OnDestinationArrival;
     public static Action OnPathOptionsCalculated;
 
-    public static Action<EventInstance> OnEventTrigger;
-
-    public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
-}
-
-public static class CompanyEvents
-{
-    public static Action<UpgradeInstance> OnUpgradeBuy;
-    public static Action<UpgradeInstance> AfterUpgradeBuy;
-    public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
-    public static Action OnBuildingUnlock;
-    public static Action<EnemyInstance> NewEnemySeen;
+    // Day Cycle Events
+    public static Action OnDayFinish;
+    public static Action OnNightFinish;
 }
 
 public static class GameEvents
 {
-    public static Action<DestinationInstance> OnDestinationArrival;
+    // Mission Events
+    public static Action<MissionInstance> MainMissionFinished;
     public static Action<MissionInstance> OnMissionComplete;
     public static Action<MissionInstance> OnMissionCanceled;
+
+    // Records Events
     public static Action NewDayRecord;
-    public static Action<MissionInstance> MainMissionFinished;
+
+    // Unlock Events
+    public static Action<EnemyInstance> NewEnemySeen;
+    public static Action OnBuildingUnlock;
+
+    // Event Events
+    public static Action<EventInstance> OnEventTrigger;
+
+    // Purchase Events
+    public static Action<UpgradeInstance> OnUpgradeBuy;
+    public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCanBuyChange;
+    public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 }
 

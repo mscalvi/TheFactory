@@ -18,8 +18,6 @@ public class EventPopUpDesigner : MonoBehaviour
 
         Btn.onClick.RemoveAllListeners();
 
-        Debug.Log("Painel de Eventos Chamado");
-
         DecisionPanel.SetActive(true);
 
         Btn.gameObject.SetActive(true);

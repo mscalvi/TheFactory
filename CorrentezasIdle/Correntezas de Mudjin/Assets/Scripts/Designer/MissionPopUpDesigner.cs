@@ -32,8 +32,6 @@ public class MissionPopUpDesigner : MonoBehaviour
         Opt3Btn.onClick.RemoveAllListeners();
         Opt4Btn.onClick.RemoveAllListeners();
 
-        Debug.Log("Painel de Missões Chamado");
-
         DecisionPanel.SetActive(true);
 
         Title.text = "Escolha um Trabalho";

@@ -81,22 +81,9 @@ public class PathService : MonoBehaviour
         return null;
     }
 
-    void CalculatePathOptions()
+    void CalculatePathOptions(DestinationInstance destination)
     {
-        ExpeditionState.ActualDestination = ExpeditionState.NewDestination;
-
-        if (GameState.ProgressState.m000)
-        {
-            ExpeditionEvents.OnPathOptionsCalculated?.Invoke();
-            Debug.LogError("Expedition PathService - Descobrir o que acontece aqui!");
-        }
-        else
-        {
-            ExpeditionState.ExpeditionStatus = GameHelper.ExpeditionStatus.Finished;
-            ExpeditionEvents.OnExpeditionEnd?.Invoke();
-        }
-
-        GameEvents.OnDestinationArrival?.Invoke(ExpeditionState.ActualDestination);
+        // Calcular opções de Path depois de uma Destination
     }
 
     // Helpers

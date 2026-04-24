@@ -6,44 +6,32 @@ using static GameHelper;
 
 public class ExpeditionController : MonoBehaviour
 {
-    [SerializeField] StartExpeditionService StartExpeditionService;
-
     // Base
     [SerializeField] TickService TickService;
-    [SerializeField] ExpeditionCurrencyService CurrencyService;
-    [SerializeField] IngredientService IngredientService;
-    [SerializeField] ExpeditionPurchaseService ExpeditionPurchaseService;
+    [SerializeField] ExpeditionControlService ExpeditionControlService;
     [SerializeField] ExpeditionUiService ExpeditionUiService;
-    [SerializeField] MissionsTrackerService MissionsTrackerService;
-
-    // Expedition
+    [SerializeField] PathService PathService;
     [SerializeField] DaysCycleService DaysCycleService;
+    [SerializeField] DecisionsService DecisionsService;
+    [SerializeField] EventService EventService;
+
+    // Enemy
     [SerializeField] EnemyProgressService EnemyProgressService;
     [SerializeField] EnemySpawnerService EnemySpawnerService;
     [SerializeField] EnemyControllerService EnemyControllerService;
     [SerializeField] EnemyMarkingService EnemyMarkingService;
-    [SerializeField] ExpeditionPricingService ExpeditionPricingService;
-    [SerializeField] PathService PathService;
 
     // Ship
-    [SerializeField] ShipControlService ShipControlService;
     [SerializeField] UnnamedTripulationService UnnamedTripulationService;
     [SerializeField] WeaponRoomsService WeaponRoomsService;
     [SerializeField] RangeViewService RangeViewService;
     [SerializeField] ProjectileService ProjectileService;
-
-    // Ambos
-    [SerializeField] ExpeditionService ExpeditionService;
     [SerializeField] CombatService CombatService;
-    [SerializeField] DecisionsService DecisionsService;
-    [SerializeField] ExpeditionUpgradeService ExpeditionUpgradeService;
 
     // Outros Mecanismos Úteis
     [SerializeField] DecisionsPopUpDesigner DecisionsPanel;
     [SerializeField] EventPopUpDesigner EventPanel;
     [SerializeField] FinalPopUpDesigner FinalPanel;
-    [SerializeField] EndExpeditionService EndExpeditionService;
-    [SerializeField] EventService EventService;
 
     private void Awake()
     {
@@ -55,10 +43,14 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        var GameRecords = GameController.Instance.GameRecordsService;
-        var Missions = GameController.Instance.MissionsService;
+        TickService.Initialize();
 
-        StartExpeditionService.Initialize(Game);
+        var GameRecords = GameController.Instance.RecordesService;
+        var Missions = GameController.Instance.MissionsService;
+        var CurrencyService = GameController.Instance.CurrencyService;
+        var PurchaseService = GameController.Instance.PurchaseService;
+
+        ExpeditionControlService.Initialize(Game, TickService);
 
         var Expedition = GameController.Instance.GameState.ExpeditionState;
 
@@ -87,17 +79,8 @@ public class ExpeditionController : MonoBehaviour
         var Unlock = GameController.Instance.GameState.UnlockState;
 
         // Base
-        TickService.Initialize();
 
-        CurrencyService.Initialize(Expedition, Game);
-
-        IngredientService.Initialize(Game, Expedition);
-
-        ExpeditionPurchaseService.Initialize(Expedition, Data, CurrencyService);
-
-        ExpeditionUiService.Initialize(Expedition, Ship, Game, Data, ExpeditionPurchaseService);
-
-        MissionsTrackerService.Initialize(Game.MissionsState, Missions, Expedition);
+        ExpeditionUiService.Initialize(Expedition, Ship, Game, Data, PurchaseService);
 
         // Expedition
         DaysCycleService.Initialize(Game, Expedition, TickService);
@@ -110,12 +93,9 @@ public class ExpeditionController : MonoBehaviour
 
         EnemyMarkingService.Initialize(Expedition, Unlock);
 
-        ExpeditionPricingService.Initialize(Expedition, Data);
-
         PathService.Initialize(Expedition, Ship, Game, Data);
 
         // Ship
-        ShipControlService.Initialize(Ship, Game, TickService);
 
         UnnamedTripulationService.Initialize(Ship, TickService);
 
@@ -124,16 +104,10 @@ public class ExpeditionController : MonoBehaviour
         // Ambos
         CombatService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
 
-        ExpeditionService.Initialize(Expedition, Ship, Game, TickService);
-
         WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
-
-        ExpeditionUpgradeService.Initialize(Expedition, Data, Ship);
 
         // Outros
         DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, Data, FinalPanel, PathService, EventPanel);
-
-        EndExpeditionService.Initialize(Expedition, Game, DecisionsService);
 
         EventService.Initialize(Game, Data, Expedition);
 

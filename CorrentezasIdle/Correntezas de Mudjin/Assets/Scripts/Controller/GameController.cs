@@ -9,14 +9,15 @@ public class GameController : MonoBehaviour
     public GameDatabase Database;
 
     [SerializeField] GameCreationService GameCreationService;
-    [SerializeField] public GameRecordsService GameRecordsService;
     [SerializeField] public MissionsService MissionsService;
-    [SerializeField] public CompanyCurrencyService CompanyCurrencyService;
-    [SerializeField] public MainMissionsTrakerService MainMissionsTrakerService;
-    [SerializeField] public CompanyPurchaseService CompanyPurchaseService;
-    [SerializeField] public CompanyUpgradeService CompanyUpgradeService;
-    [SerializeField] public CompanyPricingService CompanyPricingService;
-    [SerializeField] public ShipInitializeService ShipInitializeService;
+    [SerializeField] public MissionsPrimaryTrackerService MissionsPrimaryTrackerService;
+    [SerializeField] public MissionsSecondaryTrackerService MissionsSecondaryTrackerService;
+    [SerializeField] public RecordesService RecordesService;
+    [SerializeField] public CurrencyService CurrencyService;
+    [SerializeField] public PurchaseService PurchaseService;
+    [SerializeField] public IngredientService IngredientService;
+    [SerializeField] public PermanentUpgradeService PermanentUpgradeService;
+    [SerializeField] public TemporaryUpgradeService TemporaryUpgradeService;
     [SerializeField] public UnlockService UnlockService;
 
     bool FirstInitialization = true;
@@ -57,15 +58,16 @@ public class GameController : MonoBehaviour
         if (FirstInitialization)
         {
             GameCreationService.Initialize(GameState, Database);
-            GameRecordsService.Initialize(GameState);
+            RecordesService.Initialize(GameState);
             MissionsService.Initialize(GameState);
-            MainMissionsTrakerService.Initialize(GameState, GameState.DataState);
-            CompanyCurrencyService.Initialize(GameState);
-            CompanyPurchaseService.Initialize(GameState, GameState.DataState, CompanyCurrencyService);
+            MissionsPrimaryTrackerService.Initialize(GameState, GameState.DataState);
+            MissionsSecondaryTrackerService.Initialize(GameState.MissionsState, MissionsService, GameState.ExpeditionState);
+            CurrencyService.Initialize(GameState);
+            PurchaseService.Initialize(GameState, GameState.DataState, CurrencyService);
             UnlockService.Initialize(GameState, GameState.DataState);
-            CompanyUpgradeService.Initialize(GameState, GameState.DataState, GameState.ShipState, UnlockService);
-            CompanyPricingService.Initialize(GameState, GameState.DataState);
-            ShipInitializeService.Initialize(GameState);
+            PermanentUpgradeService.Initialize(GameState, GameState.DataState, GameState.ShipState, UnlockService);
+            TemporaryUpgradeService.Initialize(GameState.ExpeditionState, GameState.DataState, GameState.ShipState);
+            IngredientService.Initialize(GameState);
         } else
         {
             // service de Load

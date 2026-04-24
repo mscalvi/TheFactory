@@ -17,7 +17,7 @@ public class BuildingController : MonoBehaviour
             return;
         }
 
-        var PurchaseService = GameController.Instance.CompanyPurchaseService;
+        var PurchaseService = GameController.Instance.PurchaseService;
 
         BuildingUiService.Initialize(Game, PurchaseService);
     }

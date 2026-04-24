@@ -55,7 +55,7 @@ public class EnemyView : MonoBehaviour
     void OnMouseDown()
     {
         if (Enemy == null) return;
-        CombatEvents.OnEnemyClicked?.Invoke(Enemy);
+        ExpeditionEvents.OnEnemyClicked?.Invoke(Enemy);
     }
 
     void UpdateMarkedVisual()

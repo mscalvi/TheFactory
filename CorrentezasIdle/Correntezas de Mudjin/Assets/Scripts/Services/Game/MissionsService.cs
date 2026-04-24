@@ -25,11 +25,8 @@ public class MissionsService : MonoBehaviour
         for (int i = 0; i < MaxMissionOptions; i++)
         {
             MissionInstance mission;
-            do
-            {
-                mission = CreateMissionsFromTemplate();
-            }
-            while (missionOptions.Any(m => MissionDuplicate(m, mission)));
+            
+            mission = CreateMissionsFromTemplate();
 
             missionOptions.Add(mission);
         }
@@ -39,8 +36,6 @@ public class MissionsService : MonoBehaviour
 
     public void CompleteMission(MissionInstance mission)
     {
-        mission.MissionStatus = MissionStatus.Finished;
-
         GameEvents.OnMissionComplete?.Invoke(mission);
 
         RemoveMission(mission);
@@ -127,37 +122,18 @@ public class MissionsService : MonoBehaviour
         return mission;
     }
 
-    private bool MissionDuplicate(MissionInstance a, MissionInstance b)
-    {
-        if (a.MissionType != b.MissionType)
-            return false;
-
-        if (a.TargetsIds.Count != b.TargetsIds.Count)
-            return false;
-
-        return a.TargetsIds.SequenceEqual(b.TargetsIds);
-    }
 
     // Missions Types
     private void EnemyKillingPrepare(MissionInstance mission)
     {
         var validTargets = new List<EnemyInstance>();
 
-        string targets = "";
-
-        int counter = 0;
-
         foreach (var enemy in GameState.DataState.enemies)
         {
             if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 validTargets.Add(enemy.Value);
-                counter++;
-                if (counter > 1)
-                {
-                    targets += ", ";
-                }
-                targets += enemy.Value.Name;
+
             }
         }
 
@@ -176,7 +152,7 @@ public class MissionsService : MonoBehaviour
 
         mission.TargetValue = realValue;
 
-        mission.Description = "Eliminar " + mission.TargetValue + " " + targets + ".";
+        mission.Description = "Eliminar " + mission.TargetValue + " " + chosenTarget.Name;
     }
 
 
@@ -186,7 +162,7 @@ public class MissionsService : MonoBehaviour
 
         int nextSurvival = 0;
 
-        if (maxSurvival * 0.1 < 1)
+        if (maxSurvival < 10)
         {
             nextSurvival = maxSurvival + 1;
         } else
