@@ -23,4 +23,5 @@ MonoBehaviour:
   Wis: 0
   Type: 1
   Jobs: 0
+  UnlockId: m000
   UnlockStatus: 0

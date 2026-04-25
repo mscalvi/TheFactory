@@ -2950,7 +2950,7 @@ MonoBehaviour:
   PathService: {fileID: 1083699792}
   DaysCycleService: {fileID: 1083699781}
   DecisionsService: {fileID: 1083699785}
-  EventService: {fileID: 1083699794}
+  EventTriggerService: {fileID: 1083699794}
   EnemyProgressService: {fileID: 991191069}
   EnemySpawnerService: {fileID: 991191067}
   EnemyControllerService: {fileID: 991191068}

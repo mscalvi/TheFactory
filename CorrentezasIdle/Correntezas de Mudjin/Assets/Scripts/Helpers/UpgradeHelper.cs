@@ -23,6 +23,9 @@ public class UpgradeHelper
         None,
         CompanyRoom,
         PlanningRoom,
+        FishingRoom,
+        ArmoryRoom,
+        LivingRoom,
     }
 
     public enum UpgradeType

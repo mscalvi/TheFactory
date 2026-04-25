@@ -41,7 +41,7 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
         }
     }
 
-    private void TripulationMission(int Tripulation)
+    private void TripulationMission(TripulationInstance Tripulation)
     {
         Debug.Log($"Game MainMissionTrackerService - Tripulation Mission Chamado");
 
@@ -50,7 +50,7 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
         switch (currentMission.Id)
         {
             case "m001":
-                if (Tripulation > 2)
+                if (GameState.TripulationState.ActiveTripulation.Count > 2)
                 {
                     GameState.ProgressState.m001 = true;
                     MissionFinisher(currentMission);
@@ -82,6 +82,14 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
             }
         }
 
+        foreach (var tripulation in GameState.DataState.tripulations)
+        {
+            if (tripulation.Value.UnlockId == currentMission.Id)
+            {
+                tripulation.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
+
         GameEvents.MainMissionFinished?.Invoke(currentMission);
     }
 
@@ -102,10 +110,12 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
     void OnEnable()
     {
         ExpeditionEvents.OnDestinationArrival += DestinationMissions;
+        GameEvents.OnTripulationChange += TripulationMission;
     }
 
     void OnDisable()
     {
         ExpeditionEvents.OnDestinationArrival -= DestinationMissions;
+        GameEvents.OnTripulationChange -= TripulationMission;
     }
 }

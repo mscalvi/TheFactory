@@ -36,9 +36,10 @@ MonoBehaviour:
   tripulation:
   - {fileID: 11400000, guid: ae9a960b70176f442af15f92333041d5, type: 2}
   - {fileID: 11400000, guid: 95a29357cdf28a842b6177e98f6bab25, type: 2}
-  - {fileID: 11400000, guid: d98aec02088e07f429955df0b6e521bc, type: 2}
+  - {fileID: 11400000, guid: ab3bc35410ec6de45bae5e535659cd5e, type: 2}
   - {fileID: 11400000, guid: 0a44d21394a66aa479acc75ffd70a392, type: 2}
   - {fileID: 11400000, guid: 73efef6c2c85873469a3db469dba144c, type: 2}
+  - {fileID: 11400000, guid: d98aec02088e07f429955df0b6e521bc, type: 2}
   weaponsRooms:
   - {fileID: 11400000, guid: b36f8917ccb9df041880bf4a54bf6990, type: 2}
   - {fileID: 11400000, guid: e36c58bec8882e14ca7b82e3b987fa09, type: 2}
@@ -125,10 +126,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 34cfd73021a80574ca259d7ba4f1c078, type: 2}
   - {fileID: 11400000, guid: 3e6b7c4db95db604695bf3e66cc7e9c2, type: 2}
   - {fileID: 11400000, guid: 989aeac2582473e498bf7e0b71ec3a50, type: 2}
+  - {fileID: 11400000, guid: f21f837a403163a4d8438d56e85077aa, type: 2}
+  - {fileID: 11400000, guid: 6b29954ecbc37ae429d674f579a6a303, type: 2}
+  - {fileID: 11400000, guid: c47135f3f4c8ebf4b86f777388853dd3, type: 2}
   - {fileID: 11400000, guid: 9dbc49c51d4b9b043b5ce7e352467c5a, type: 2}
   buildings:
   - {fileID: 11400000, guid: e07cdbe7b04c89e4787a1be2f1e93619, type: 2}
   - {fileID: 11400000, guid: 0c143775c11eae349a3870df8ec2761d, type: 2}
+  - {fileID: 11400000, guid: 655403d300585c848a8e47a1e34ed56b, type: 2}
+  - {fileID: 11400000, guid: c0913e44a4c6e5f4b9c664cd263e001b, type: 2}
+  - {fileID: 11400000, guid: 3aed5d31b281fdf4bbe57319563198c4, type: 2}
   events:
   - {fileID: 11400000, guid: 84d939543abbc964da7c3b711635d6af, type: 2}
   - {fileID: 11400000, guid: 872a368c74ba6824fa03e7ecd2ffd1e5, type: 2}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
-public class EventService : MonoBehaviour
+public class EventTriggerService : MonoBehaviour
 {
     private GameState GameState;
     private DataState DataState;
@@ -19,7 +19,7 @@ public class EventService : MonoBehaviour
         DataState = dataState;
     }
 
-    private void CheckEvents()
+    private void CheckDayFixEvents()
     {
         if (!GameState.ProgressState.m000)
         {
@@ -64,11 +64,11 @@ public class EventService : MonoBehaviour
     // Events
     void OnEnable()
     {
-        ExpeditionEvents.OnNightFinish += CheckEvents;
+        ExpeditionEvents.OnNightFinish += CheckDayFixEvents;
     }
 
     void OnDisable()
     {
-        ExpeditionEvents.OnNightFinish -= CheckEvents;
+        ExpeditionEvents.OnNightFinish -= CheckDayFixEvents;
     }
 }

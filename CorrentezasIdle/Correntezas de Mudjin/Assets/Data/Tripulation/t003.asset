@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: t003
   m_EditorClassIdentifier: 
   Id: t003
-  Name: William Guibson
+  Name: 'Margareth Ativud '
   Description: 
   Str: 0
   Dex: 0
@@ -21,6 +21,7 @@ MonoBehaviour:
   Luk: 0
   Cha: 0
   Wis: 0
-  Type: 1
+  Type: 2
   Jobs: 0
+  UnlockId: m000
   UnlockStatus: 0

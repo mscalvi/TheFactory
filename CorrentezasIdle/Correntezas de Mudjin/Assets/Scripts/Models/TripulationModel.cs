@@ -19,5 +19,6 @@ public class TripulationModel : ScriptableObject
     public TripulationHelper.Type Type;
     public TripulationHelper.Jobs Jobs;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

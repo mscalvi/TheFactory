@@ -14,6 +14,7 @@ public class GameState
     public RecordsState RecordsState;
     public ExpeditionState ExpeditionState;
     public MissionsState MissionsState;
+    public TripulationState TripulationState;
 
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 

@@ -63,7 +63,6 @@
     <Compile Include="Assets\Scripts\Instances\AmmoInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Combat\UnnamedTripulationService.cs" />
     <Compile Include="Assets\Scripts\Controller\ExpeditionController.cs" />
-    <Compile Include="Assets\Scripts\Services\Expedition\EventService.cs" />
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Combat\ProjectileService.cs" />
@@ -87,10 +86,12 @@
     <Compile Include="Assets\Scripts\Designer\FinalPopUpDesigner.cs" />
     <Compile Include="Assets\Scripts\Services\Game\TemporaryUpgradeService.cs" />
     <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
+    <Compile Include="Assets\Scripts\Services\Game\EventService.cs" />
     <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Enemy\EnemyProgressService.cs" />
     <Compile Include="Assets\Scripts\Prefabs Definitions\ExpeditionCurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Prefabs Definitions\CompanyCurrencyDefinition.cs" />
+    <Compile Include="Assets\Scripts\States\TripulationState.cs" />
     <Compile Include="Assets\Scripts\Services\Game\PermanentUpgradeService.cs" />
     <Compile Include="Assets\Scripts\Models\OtherRoomModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\MissionHelper.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Assets\Scripts\Services\Expedition\Enemy\EnemyViewService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Enemy\EnemySpawnerService.cs" />
     <Compile Include="Assets\Scripts\Models\MissionModel.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\EventTriggerService.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Combat\CombatService.cs" />
@@ -160,6 +162,7 @@
     <Compile Include="Assets\Scripts\States\RecordsState.cs" />
     <Compile Include="Assets\Scripts\Models\BuildingModel.cs" />
     <Compile Include="Assets\Scripts\Models\TripulationModel.cs" />
+    <Compile Include="Assets\Scripts\Services\Game\TripulationService.cs" />
     <Compile Include="Assets\Scripts\States\ProgressState.cs" />
     <Compile Include="Assets\Scripts\Models\ShipModel.cs" />
     <Compile Include="Assets\Scripts\Instances\MissionInstance.cs" />

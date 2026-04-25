@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.MPE;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -13,7 +14,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] PathService PathService;
     [SerializeField] DaysCycleService DaysCycleService;
     [SerializeField] DecisionsService DecisionsService;
-    [SerializeField] EventService EventService;
+    [SerializeField] EventTriggerService EventTriggerService;
 
     // Enemy
     [SerializeField] EnemyProgressService EnemyProgressService;
@@ -109,7 +110,7 @@ public class ExpeditionController : MonoBehaviour
         // Outros
         DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, Data, FinalPanel, PathService, EventPanel);
 
-        EventService.Initialize(Game, Data, Expedition);
+        EventTriggerService.Initialize(Game, Data, Expedition);
 
         // Events
         ExpeditionEvents.OnExpeditionStart?.Invoke();

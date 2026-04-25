@@ -53,5 +53,8 @@ public static class GameEvents
     public static Action<UpgradeInstance> OnUpgradeBuy;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCanBuyChange;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
+
+    // Tripulation Events
+    public static Action<TripulationInstance> OnTripulationChange;
 }
 

@@ -19,6 +19,7 @@ public class TripulationInstance
     public TripulationHelper.Type Type;
     public TripulationHelper.Jobs Jobs;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public TripulationInstance(TripulationModel model)
@@ -38,5 +39,6 @@ public class TripulationInstance
         Jobs = model.Jobs;
 
         UnlockStatus = model.UnlockStatus;
+        UnlockId = model.UnlockId;
     }
 }
