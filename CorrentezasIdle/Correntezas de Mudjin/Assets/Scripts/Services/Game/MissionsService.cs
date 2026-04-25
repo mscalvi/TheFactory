@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using static EnemyHelper;
 using static MissionHelper;
@@ -8,15 +9,21 @@ using static MissionHelper;
 public class MissionsService : MonoBehaviour
 {
     private GameState GameState;
-    private List<MissionInstance> ActiveMissions;
 
     public void Initialize(GameState gameState)
     {
         GameState = gameState;
 
-        ActiveMissions = GameState.MissionsState.ActiveMissions;
+        GenerateSlots();
     }
 
+    private void GenerateSlots()
+    {
+        for (int i = 0; i < GameState.MissionsState.MaxOnGoingMissions; i++)
+        {
+            GameState.MissionsState.Slots.Add(new MissionSlotModel());
+        }
+    }
 
     public List<MissionInstance> GenerateMissionOptions(int MaxMissionOptions)
     {
@@ -34,33 +41,49 @@ public class MissionsService : MonoBehaviour
         return missionOptions;
     }
 
+    private MissionSlotModel GetSlot(MissionInstance mission)
+    {
+        return GameState.MissionsState.Slots
+            .FirstOrDefault(s => s.ActiveMission == mission);
+    }
+
     public void CompleteMission(MissionInstance mission)
     {
+        var slot = GetSlot(mission);
+        if (slot == null) return;
+
+        mission.MissionStatus = MissionStatus.Finished;
+
         GameEvents.OnMissionComplete?.Invoke(mission);
 
-        RemoveMission(mission);
+        GameState.MissionsState.CompletedMissions++;
+
+        ApplyCooldown(slot);
     }
 
     public void CancelMission(MissionInstance mission)
     {
+        var slot = GetSlot(mission);
+        if (slot == null) return;
+
         mission.MissionStatus = MissionStatus.Canceled;
 
         GameEvents.OnMissionCanceled?.Invoke(mission);
 
-        RemoveMission(mission);
+        GameState.MissionsState.CanceledMissions++;
+
+        ApplyCooldown(slot);
     }
 
-    private void RemoveMission(MissionInstance mission)
+    private void ApplyCooldown(MissionSlotModel slot)
     {
-        if (mission.MissionStatus == MissionStatus.Finished)
-        {
-            GameState.MissionsState.CompletedMissions++;
-        } else
-        {
-            GameState.MissionsState.CanceledMissions++;
-        }
+        slot.ActiveMission = null;
+        slot.CooldownEnd = System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 86400;
+    }
 
-        GameState.MissionsState.ActiveMissions.Remove(mission);
+    public void AssignMissionToSlot(MissionInstance mission, MissionSlotModel slot)
+    {
+        slot.ActiveMission = mission;
     }
 
     // Helpers
@@ -211,5 +234,16 @@ public class MissionsService : MonoBehaviour
                 mission.TargetValue = 1;
                 break;
         }
+    }
+
+    // Events
+    void OnEnable()
+    {
+        GameEvents.MissionSlotAtualize += GenerateSlots;
+    }
+
+    void OnDisable()
+    {
+        GameEvents.MissionSlotAtualize += GenerateSlots;
     }
 }

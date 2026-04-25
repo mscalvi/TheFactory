@@ -37,6 +37,7 @@ public static class GameEvents
     public static Action<MissionInstance> MainMissionFinished;
     public static Action<MissionInstance> OnMissionComplete;
     public static Action<MissionInstance> OnMissionCanceled;
+    public static Action MissionSlotAtualize;
 
     // Records Events
     public static Action NewDayRecord;

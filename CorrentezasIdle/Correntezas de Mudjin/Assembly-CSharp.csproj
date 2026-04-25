@@ -143,6 +143,7 @@
     <Compile Include="Assets\Scripts\Models\WeaponRoomModel.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Combat\RangeViewService.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
+    <Compile Include="Assets\Scripts\Models\MissionSlotModel.cs" />
     <Compile Include="Assets\Scripts\States\UnlockState.cs" />
     <Compile Include="Assets\Scripts\Services\Game\CurrencyService.cs" />
     <Compile Include="Assets\Scripts\Prefabs Definitions\CompanyUpgradesDefinition.cs" />

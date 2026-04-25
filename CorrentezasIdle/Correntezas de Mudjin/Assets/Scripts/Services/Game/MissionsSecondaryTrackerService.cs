@@ -9,19 +9,18 @@ public class MissionsSecondaryTrackerService : MonoBehaviour
     private MissionsState MissionsState;
     private MissionsService MissionsService;
     private ExpeditionState ExpeditionState;
-    private List<MissionInstance> ActiveMissions;
 
-    List<MissionInstance> toComplete = new();
+    private List<MissionSlotModel> Slots;
+
+    private List<MissionInstance> toComplete = new();
 
     public void Initialize(MissionsState missionState, MissionsService missions, ExpeditionState expedition)
     {
         MissionsService = missions;
-
         MissionsState = missionState;
-
         ExpeditionState = expedition;
 
-        ActiveMissions = MissionsState.ActiveMissions;
+        Slots = MissionsState.Slots;
 
         toComplete.Clear();
     }
@@ -31,33 +30,43 @@ public class MissionsSecondaryTrackerService : MonoBehaviour
         toComplete.Clear();
     }
 
-    // Missions Tracker
     private void OnEnemyKilled(EnemyInstance enemy)
     {
-        foreach (var mission in ActiveMissions)
+        toComplete.Clear();
+
+        foreach (var slot in Slots)
         {
-            if (mission.MissionType == MissionType.EnemyKilling)
-            {
-                if (!mission.TargetsIds.Contains(enemy.Id))
-                    continue;
+            var mission = slot.ActiveMission;
 
-                mission.CurrentValue++;
+            if (mission == null)
+                continue;
 
-                if (mission.CurrentValue >= mission.TargetValue)
-                    toComplete.Add(mission);
-            }
+            if (mission.MissionType != MissionType.EnemyKilling)
+                continue;
+
+            if (!mission.TargetsIds.Contains(enemy.Id))
+                continue;
+
+            mission.CurrentValue++;
+
+            if (mission.CurrentValue >= mission.TargetValue)
+                toComplete.Add(mission);
         }
 
-        foreach (var mission in toComplete)
-        {
-            MissionsService.CompleteMission(mission);
-        }
+        CompleteQueued();
     }
 
     private void OnDayFinish()
     {
-        foreach ( var mission in ActiveMissions)
+        toComplete.Clear();
+
+        foreach (var slot in Slots)
         {
+            var mission = slot.ActiveMission;
+
+            if (mission == null)
+                continue;
+
             if (mission.MissionType == MissionType.DaySurvival)
             {
                 mission.CurrentValue++;
@@ -78,13 +87,20 @@ public class MissionsSecondaryTrackerService : MonoBehaviour
             }
         }
 
+        CompleteQueued();
+    }
+
+
+    private void CompleteQueued()
+    {
         foreach (var mission in toComplete)
         {
             MissionsService.CompleteMission(mission);
         }
+
+        toComplete.Clear();
     }
 
-    // Events
     void OnEnable()
     {
         ExpeditionEvents.OnEnemyDeath += OnEnemyKilled;

@@ -122,6 +122,8 @@ public class PermanentUpgradeService : MonoBehaviour
                         MissionsCancelModifier(upgrade);
                         break;
                 }
+
+                // mexendo nas missions, evento pra criar slots?
                 break;
         }
     }
@@ -185,6 +187,8 @@ public class PermanentUpgradeService : MonoBehaviour
 
             GameState.MissionsState.MaxOnGoingMissions += (int)upgrade.ActualValue;
         }
+
+        GameEvents.MissionSlotAtualize?.Invoke();
     }
 
     private void MissionsRewardModifier(UpgradeInstance upgrade)

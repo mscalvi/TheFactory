@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,19 +6,25 @@ public class SecondaryMissionButtonDefinition : MonoBehaviour
     public Button Button;
 
     private LandingUiService LandingUiService;
+    private MissionSlotModel Slot;
 
-    public void Setup(LandingUiService landingUiService)
+    public void Setup(LandingUiService uiService, MissionSlotModel missionSlot)
     {
-        LandingUiService = landingUiService;
+        LandingUiService = uiService;
+        Slot = missionSlot;
 
         Button.onClick.RemoveAllListeners();
-        Button.interactable = true;
+        Button.onClick.AddListener(OnClick);
 
-        Button.onClick.AddListener(OnBuyClicked);
+        long now = System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        bool isOnCooldown = Slot.CooldownEnd > now;
+
+        Button.interactable = !isOnCooldown;
     }
 
-    void OnBuyClicked()
+    void OnClick()
     {
-        LandingUiService.SelectNewMission();
+        LandingUiService.SelectNewMission(Slot);
     }
 }
