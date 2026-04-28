@@ -9,4 +9,9 @@ public class EventModel : ScriptableObject
     public string Id;
     public string Title;
     public string Info;
+
+    public string Target;
+
+    public EventHelper.EventFrequency EventFrequency;
+    public EventHelper.EventType EventType;
 }

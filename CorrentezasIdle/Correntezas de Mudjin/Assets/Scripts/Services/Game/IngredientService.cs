@@ -77,12 +77,12 @@ public class IngredientService : MonoBehaviour
 
     private IngredientHelper.IngredientRarity RollRarity()
     {
-        var w = GameState.ExpeditionState.IngredientRarityBaseWeights;
+        var weight = GameState.ExpeditionState.IngredientRarityBaseWeights;
 
-        float common = w[IngredientHelper.IngredientRarity.Common];
-        float uncommon = w[IngredientHelper.IngredientRarity.Uncommon];
-        float rare = w[IngredientHelper.IngredientRarity.Rare];
-        float legendary = w[IngredientHelper.IngredientRarity.Legendary];
+        float common = weight[IngredientHelper.IngredientRarity.Common];
+        float uncommon = weight[IngredientHelper.IngredientRarity.Uncommon];
+        float rare = weight[IngredientHelper.IngredientRarity.Rare];
+        float legendary = weight[IngredientHelper.IngredientRarity.Legendary];
 
         float total = common + uncommon + rare + legendary;
         float roll = UnityEngine.Random.value * total;
@@ -107,7 +107,7 @@ public class IngredientService : MonoBehaviour
     {
         float roll = UnityEngine.Random.value;
 
-        float chance = (float)(GameState.ExpeditionState.NextLootChance * Mathf.Pow((float)GameState.ExpeditionState.NextLootDecay, time));
+        float chance = (float)(GameState.ExpeditionState.ActualNextLootChance * Mathf.Pow((float)GameState.ExpeditionState.ActualNextLootDecay, time));
 
         if (roll < chance)
         {
@@ -135,7 +135,7 @@ public class IngredientService : MonoBehaviour
         {
             bool Luck = true;
 
-            for (int i = 0; i < GameState.ExpeditionState.MaxMarkedLoot; i++)
+            for (int i = 0; i < GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
             {
                 if (i > 1)
                 {

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65b17450f74180644af44b6fd06dceb8, type: 3}
+  m_Name: m002
+  m_EditorClassIdentifier: 
+  Id: m002
+  Name: Encontre Madre Liandra
+  Description: Viaje pela Rota Sul de Lapa Liandra e encontre a cidade de Madre Liadnra
+  RewardFactor: 1
+  RewardType1: 0
+  RewardType2: 0
+  RewardType3: 0
+  RewardType4: 0
+  MissionRarity: 0
+  MissionType: 0
+  MissionStatus: 0
+  UnlockId: 
+  UnlockStatus: 0

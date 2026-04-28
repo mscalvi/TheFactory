@@ -53,11 +53,9 @@ public class DaysCycleService : MonoBehaviour, ITickable
                 {
                     if (GameState.ProgressState.m000)
                     {
-                        Debug.Log($"Expedition DaysCycleService - Rota Finalizada");
                         ExpeditionEvents.OnDestinationArrival?.Invoke(GameState.ExpeditionState.NewDestination);
                     } else
                     {
-                        Debug.Log($"Expedition DaysCycleService - Rota Finalizada");
                         ExpeditionEvents.OnDestinationArrival?.Invoke(GameState.ExpeditionState.NewDestination);
                         ForcedEndExpedition();
                     }
@@ -68,11 +66,7 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
     public void ForcedEndExpedition()
     {
-        Debug.Log("Expedition ExpeditionService - Finalizado!");
-
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.Finished;
-
-        Debug.Log($"Expedition EndExpeditionService - Zerando Experience");
 
         GameState.CompanyState.CompanyCurrency[CurrencyHelper.CurrencyType.Experience].Amount = 0;
 

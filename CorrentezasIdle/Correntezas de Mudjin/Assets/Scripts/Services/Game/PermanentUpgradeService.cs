@@ -27,8 +27,6 @@ public class PermanentUpgradeService : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Game PermanentUpgradeService - Adicionando Upgrade: {upgrade.Id}");
-
         var upgrades = GameState.CompanyState.CompanyUpgrades;
 
         if (!upgrades.TryGetValue(upgrade.Id, out var instance))
@@ -37,8 +35,6 @@ public class PermanentUpgradeService : MonoBehaviour
             instance = upgrade;
         }
 
-        Debug.Log($"Game PermanentUpgradeService - Localizando Upgrade: {instance.Id}");
-
         if (instance.ActualBuy >= instance.MaxBuy && instance.MaxBuy > 0)
         {
             instance.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
@@ -46,11 +42,9 @@ public class PermanentUpgradeService : MonoBehaviour
 
         if(instance.EffectType != UpgradeHelper.EffectType.Unlock)
         {
-            Debug.Log($"Game PermanentUpgradeService - Recualculando");
             Recalculate();
         } else
         {
-            Debug.Log($"Game PermanentUpgradeService - Unlocking");
             UnlockService.UnlockUpgrade(instance);
         }
     }

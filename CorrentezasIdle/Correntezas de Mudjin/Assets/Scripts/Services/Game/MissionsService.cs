@@ -21,6 +21,9 @@ public class MissionsService : MonoBehaviour
     {
         for (int i = 0; i < GameState.MissionsState.MaxOnGoingMissions; i++)
         {
+            if (GameState.MissionsState.Slots.Count > i)
+                continue;
+
             GameState.MissionsState.Slots.Add(new MissionSlotModel());
         }
     }
@@ -51,8 +54,6 @@ public class MissionsService : MonoBehaviour
     {
         var slot = GetSlot(mission);
         if (slot == null) return;
-
-        mission.MissionStatus = MissionStatus.Finished;
 
         GameEvents.OnMissionComplete?.Invoke(mission);
 

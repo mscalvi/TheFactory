@@ -32,7 +32,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     {
         tickCounter++;
 
-        if (tickCounter >= Expedition.BaseTicksPerSpawn)
+        if (tickCounter >= Expedition.ActualTicksPerSpawn)
         {
             tickCounter = 0;
             ProcessWave();
@@ -45,7 +45,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         float roll = Random.Range(0f, 100f);
 
-        if (roll < Expedition.BaseSpawnChance)
+        if (roll < Expedition.ActualSpawnChance)
         {
             accumulatedBudget += waveBudget;
             return;
@@ -61,8 +61,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     double GenerateWaveBudget()
     {
-        double baseBud = Expedition.BaseSpawnBudget;
-        double growth = Expedition.BaseSpawnBudgetGrowth;
+        double baseBud = Expedition.ActualSpawnBudget;
+        double growth = Expedition.ActualSpawnBudgetGrowth;
 
         double actualBud = baseBud * System.Math.Pow(growth, Expedition.DayCounter);
 
@@ -133,7 +133,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     {
         EnemyInstance instance = new EnemyInstance(chosen);
 
-        instance.Distance *= Expedition.BaseSpawnDistance;
+        instance.Distance *= Expedition.ActualSpawnDistance;
         instance.Angle = SpawnAngle(30, 330);
 
         ProgressService.ApplyProgression(instance);
@@ -182,7 +182,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             if ((enemy.Value.PathType & Expedition.ActualPath.PathType) == 0)
                 continue;
 
-            if (enemy.Value.Stage > Expedition.EnemySpawnStage)
+            if (enemy.Value.Stage > Expedition.ActualEnemySpawnStage)
                 continue;
 
             if (Expedition.IsDay && enemy.Value.DayEnemy)
@@ -196,7 +196,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     void CheckSpecialEvent()
     {
-        if (accumulatedBudget >= Expedition.BossThreshold)
+        if (accumulatedBudget >= Expedition.ActualBossThreshold)
         {
             Debug.Log("Boss disparado!");
 

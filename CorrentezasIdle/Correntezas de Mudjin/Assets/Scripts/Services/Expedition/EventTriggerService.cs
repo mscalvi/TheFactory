@@ -31,7 +31,6 @@ public class EventTriggerService : MonoBehaviour
             if (ExpeditionState.DayCounter == 3)
             {
                 TriggerEvent(DataState.events["e001"]);
-                GameState.UnlockState.Click = true;
                 return;
             }
         }
@@ -41,7 +40,6 @@ public class EventTriggerService : MonoBehaviour
             if (ExpeditionState.DayCounter == 10)
             {
                 TriggerEvent(DataState.events["e002"]);
-                GameState.UnlockState.Weapons = true;
                 return;
             }
         }

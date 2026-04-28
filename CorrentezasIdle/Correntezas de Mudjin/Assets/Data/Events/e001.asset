@@ -16,3 +16,6 @@ MonoBehaviour:
   Title: Um Pescador pede Emprego
   Info: "De uma praia deserta, um homem balan\xE7a a m\xE3o para voc\xEA, e quando
     voc\xEA se aproxima ele implora por um emprego. Quem sabe ele pode ser \xFAtil?"
+  Target: t002
+  EventFrequency: 0
+  EventType: 0

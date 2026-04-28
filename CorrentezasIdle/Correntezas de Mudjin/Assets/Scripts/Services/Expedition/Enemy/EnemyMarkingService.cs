@@ -22,7 +22,7 @@ public class EnemyMarkingService : MonoBehaviour
 
         if (!UnlockState.Click) return;
 
-        if (!enemy.MarkedEnemy && markedEnemies.Count >= ExpeditionState.MaxMarkedEnemies)
+        if (!enemy.MarkedEnemy && markedEnemies.Count >= ExpeditionState.ActualMaxMarkedEnemies)
         {
             Unmark(markedEnemies[0]);
         }

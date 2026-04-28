@@ -24,7 +24,7 @@ MonoBehaviour:
   StartValue: 0
   TargetType: 4
   TargetId: b03
-  UnlockId: m001
+  UnlockId: t003
   MaxBuy: 1
   Cost: 80
   CostGrowth: 1

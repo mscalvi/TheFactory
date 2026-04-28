@@ -16,8 +16,6 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
         GameState = gameState;
 
         DataState = dataState;
-
-        Debug.Log($"Game MainMissionTrackerService - On");
     }
 
     private void DestinationMissions(DestinationInstance actualDestination)
@@ -35,8 +33,18 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
                     GameState.UnlockState.Company = true;
                     MissionFinisher(currentMission);
                     MissionLoader("m001");
+                    Debug.Log($"Game MainMissionTrackerService - Missão 0 Fechada");
                 }
-                Debug.Log($"Game MainMissionTrackerService - Missão 0 Fechada");
+                break;
+            case "m002":
+                if (actualDestination.Id == "d102")
+                {
+                    GameState.ProgressState.m002 = true;
+                    GameState.UnlockState.Company = true;
+                    MissionFinisher(currentMission);
+                    MissionLoader("m001");
+                    Debug.Log($"Game MainMissionTrackerService - Missão 2 Fechada");
+                }
                 break;
         }
     }
@@ -55,8 +63,8 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
                     GameState.ProgressState.m001 = true;
                     MissionFinisher(currentMission);
                     MissionLoader("m002");
+                    Debug.Log($"Game MainMissionTrackerService - Missão 1 Fechada");
                 }
-                Debug.Log($"Game MainMissionTrackerService - Missão 1 Fechada");
                 break;
         }
     }

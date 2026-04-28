@@ -7,11 +7,14 @@ public class UnnamedTripulationService : MonoBehaviour, ITickable
 {
     private TickService TickService;
     private ShipState ShipState;
+    private GameState GameState;
 
     int tickCounter = 0;
 
-    public void Initialize(ShipState shipState, TickService Tick)
+    public void Initialize(GameState gameState, ShipState shipState, TickService Tick)
     {
+        GameState = gameState;
+
         ShipState = shipState;
 
         TickService = Tick;
@@ -34,9 +37,9 @@ public class UnnamedTripulationService : MonoBehaviour, ITickable
     {
         if (ShipState.Ship.CurrentLife < ShipState.Ship.MaxLife)
         {
-            if (ShipState.Ship.RepairPerTripulation > 0)
+            if (ShipState.Ship.CurrentRepairPerTripulation > 0)
             {
-                double TotalRepair = ShipState.Ship.TotalTripulation * ShipState.Ship.RepairPerTripulation;
+                double TotalRepair = GameState.ShipState.Ship.ActualUnnamedTripulation * ShipState.Ship.CurrentRepairPerTripulation;
 
                 Debug.Log($"Expedition UnnamedTripulationService - {TotalRepair} Reparados");
 

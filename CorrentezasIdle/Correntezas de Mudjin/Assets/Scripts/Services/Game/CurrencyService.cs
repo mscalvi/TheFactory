@@ -84,13 +84,13 @@ public class CurrencyService : MonoBehaviour
 
     void DayFinishReward()
     {
-        double reward = GameState.ExpeditionState.BaseDayReward;
+        double reward = GameState.ExpeditionState.ActualDayReward;
         Add(CurrencyHelper.CurrencyType.Marcos, reward);
     }
 
     void NightFinishReward()
     {
-        double reward = GameState.ExpeditionState.BaseNightReward;
+        double reward = GameState.ExpeditionState.ActualNightReward;
         Add(CurrencyHelper.CurrencyType.Experience, reward);
     }
 

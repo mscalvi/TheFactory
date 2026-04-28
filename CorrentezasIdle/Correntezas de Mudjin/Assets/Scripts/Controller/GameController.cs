@@ -52,6 +52,8 @@ public class GameController : MonoBehaviour
             GameState.RecordsState = new RecordsState();
             GameState.MissionsState = new MissionsState();
             GameState.ShipState = new ShipState();
+            GameState.TripulationState = new TripulationState();
+            GameState.BestiaryState = new BestiaryState();
         } else
         {
             FirstInitialization = false;
@@ -70,8 +72,8 @@ public class GameController : MonoBehaviour
             PermanentUpgradeService.Initialize(GameState, GameState.DataState, GameState.ShipState, UnlockService);
             TemporaryUpgradeService.Initialize(GameState.ExpeditionState, GameState.DataState, GameState.ShipState);
             IngredientService.Initialize(GameState);
-            EventService.Initialize(GameState);
             TripulationService.Initialize(GameState);
+            EventService.Initialize(GameState, TripulationService, UnlockService);
         } else
         {
             // service de Load

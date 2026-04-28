@@ -33,9 +33,16 @@ MonoBehaviour:
   AttackSpeedGrowth: 0
   SpawnDistance: 20
   SpawnDistanceGrowth: 0
+  Sprite: {fileID: 0}
   Experience: 50
+  CommonIngredient: 0
+  UncommonIngredient: 0
+  RareIngredient: 0
+  LegendaryIngredient: 0
   Rarity: 0
+  Cost: 0
+  Stage: 0
   State: 0
-  EnemyType: 6
+  EnemyType: 5
   PathType: 0
   UnlockStatus: 0

@@ -25,8 +25,6 @@ public class TemporaryUpgradeService : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Expedition TemporaryUpgradeService - Adicionando Upgrade: {upgrade.Id}");
-
         var upgrades = ExpeditionState.ExpeditionUpgrades;
 
         if (!upgrades.TryGetValue(upgrade.Id, out var upgradeInstance))

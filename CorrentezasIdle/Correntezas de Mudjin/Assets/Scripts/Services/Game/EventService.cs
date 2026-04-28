@@ -7,15 +7,55 @@ public class EventService : MonoBehaviour
 {
     private GameState GameState;
 
+    private TripulationService TripulationService;
+    private UnlockService UnlockService;
 
-    public void Initialize(GameState gameState)
+
+    public void Initialize(GameState gameState, TripulationService tripulationService, UnlockService unlockService)
     {
         GameState = gameState;
+
+        TripulationService = tripulationService;
+
+        UnlockService = unlockService;
     }
 
     private void EventHandler(EventInstance eventInstance)
     {
-        Debug.Log($"Game EventService - Ok");
+        switch (eventInstance.EventFrequency)
+        {
+            case EventHelper.EventFrequency.Unique:
+                MainEventHandler(eventInstance);
+                break;
+            case EventHelper.EventFrequency.Common:
+                break;
+            case EventHelper.EventFrequency.Uncommon:
+                break;
+            case EventHelper.EventFrequency.Rare:
+                break;
+            case EventHelper.EventFrequency.Legendary:
+                break;
+        }
+    }
+
+    private void MainEventHandler(EventInstance eventInstance)
+    {
+        switch (eventInstance.Id)
+        {
+            case "e001":
+                UnlockService.UnlockTripulation(GameState.DataState.tripulations[eventInstance.Target]);
+                GameState.UnlockState.Click = true;
+                TripulationService.AddTripulationToActive(GameState.DataState.tripulations[eventInstance.Target]);
+                GameEvents.OnMechanicUnlock?.Invoke("Click");
+                break;
+            case "e002":
+                UnlockService.UnlockTripulation(GameState.DataState.tripulations[eventInstance.Target]);
+                GameState.UnlockState.Weapons = true;
+                TripulationService.AddTripulationToActive(GameState.DataState.tripulations[eventInstance.Target]);
+                GameEvents.OnMechanicUnlock?.Invoke("Weapons");
+                break;
+        }
+
     }
 
     // Events

@@ -43,6 +43,6 @@ MonoBehaviour:
   Cost: 15
   Stage: 2
   State: 0
-  EnemyType: 0
+  EnemyType: 1
   PathType: -1
   UnlockStatus: 0

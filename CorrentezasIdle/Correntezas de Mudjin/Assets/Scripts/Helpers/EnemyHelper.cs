@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class EnemyHelper
 {
-    [Flags]
     public enum EnemyType
     {
-        None = 0,
-        Small = 1 << 0,
-        Big = 1 << 1,
-        Human = 1 << 2,
-        Monster = 1 << 3,
+        Fish,
+        Snake,
+        Shark,
+        Squid,
+        Bird,
+        Human,
+        Monster,
     }
 
     public enum EnemyState

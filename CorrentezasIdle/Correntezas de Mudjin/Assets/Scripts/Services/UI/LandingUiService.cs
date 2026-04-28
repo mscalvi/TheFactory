@@ -73,14 +73,6 @@ public class LandingUiService : MonoBehaviour
         return slot.CooldownEnd > now;
     }
 
-    private void BlockButtons()
-    {
-        CrewButton.enabled = false;
-        CompanyButton.enabled = false;
-        ShipButton.enabled = false;
-        MapButton.enabled = false;
-    }
-
     private void MainMissionSet()
     {
         var mission = GameState.MainMission;
@@ -116,5 +108,13 @@ public class LandingUiService : MonoBehaviour
                 ui.Setup(this, slot);
             }
         }
+    }
+
+    private void BlockButtons()
+    {
+        CrewButton.enabled = false;
+        CompanyButton.enabled = false;
+        ShipButton.enabled = false;
+        MapButton.enabled = false;
     }
 }

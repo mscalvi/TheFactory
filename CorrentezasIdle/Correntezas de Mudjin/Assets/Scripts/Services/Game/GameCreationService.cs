@@ -27,6 +27,7 @@ public class GameCreationService : MonoBehaviour
         BuildCompanyUpgrades();
         BuildDestinations();
         BuildMission();
+        BuildBestiary();
 
         GameState.CompanyState.CurrentBase = GameState.DataState.destinations.GetValueOrDefault("d101");
     }
@@ -291,5 +292,13 @@ public class GameCreationService : MonoBehaviour
     private void BuildMission()
     {
         GameState.MainMission = GameState.DataState.missions.GetValueOrDefault("m000");
+    }
+
+    private void BuildBestiary()
+    {
+        foreach (var enemy in GameState.DataState.enemies)
+        {
+            GameState.BestiaryState.Bestiary.Add(enemy.Value, new BestiaryEntry());
+        }
     }
 }

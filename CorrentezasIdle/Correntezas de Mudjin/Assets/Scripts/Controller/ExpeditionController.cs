@@ -71,10 +71,6 @@ public class ExpeditionController : MonoBehaviour
             Debug.Log("ExpeditionController - ShipState NULL");
             return;
         }
-        else
-        {
-            Debug.Log($"ExpeditionController - Navio Carregado: {Ship.Ship.Name}");
-        }
 
         var Data = GameController.Instance.GameState.DataState;
         var Unlock = GameController.Instance.GameState.UnlockState;
@@ -98,7 +94,7 @@ public class ExpeditionController : MonoBehaviour
 
         // Ship
 
-        UnnamedTripulationService.Initialize(Ship, TickService);
+        UnnamedTripulationService.Initialize(Game, Ship, TickService);
 
         RangeViewService.Initialize(Ship.Ship.WeaponsRooms);
 

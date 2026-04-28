@@ -17,3 +17,6 @@ MonoBehaviour:
   Info: "Em uma parada de descanso voc\xEA \xE9 abordado por uma ca\xE7adora. Ela
     oferece ajuda, em troca de um bom sal\xE1rio e um grupo ao qual pertencer. Ela
     parece habilidosa, e disposta a compartilhar suas per\xEDcias."
+  Target: t003
+  EventFrequency: 0
+  EventType: 0

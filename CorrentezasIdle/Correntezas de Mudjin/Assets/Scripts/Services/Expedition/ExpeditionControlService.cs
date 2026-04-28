@@ -42,8 +42,24 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
 
     void LoadExpedition(GameState Game)
     {
-        Game.ExpeditionState = new ExpeditionState();
         Game.ExpeditionState.ActiveEnemies.Clear();
+
+        Game.ExpeditionState.DayCounter = Game.ExpeditionState.StartDay;
+        Game.ExpeditionState.DestinationDayCounter = Game.ExpeditionState.StartDay;
+
+        Game.ExpeditionState.ActualSpawnDistance = Game.ExpeditionState.BaseSpawnDistance;
+        Game.ExpeditionState.ActualSpawnChance = Game.ExpeditionState.BaseSpawnChance;
+        Game.ExpeditionState.ActualTicksPerSpawn = Game.ExpeditionState.BaseTicksPerSpawn;
+        Game.ExpeditionState.ActualSpawnBudget = Game.ExpeditionState.BaseSpawnBudget;
+        Game.ExpeditionState.ActualSpawnBudgetGrowth = Game.ExpeditionState.BaseSpawnBudgetGrowth;
+        Game.ExpeditionState.ActualBossThreshold = Game.ExpeditionState.BaseBossThreshold;
+        Game.ExpeditionState.ActualEnemySpawnStage = Game.ExpeditionState.BaseEnemySpawnStage;
+        Game.ExpeditionState.ActualDayReward = Game.ExpeditionState.BaseDayReward;
+        Game.ExpeditionState.ActualNightReward = Game.ExpeditionState.BaseNightReward;
+        Game.ExpeditionState.ActualMaxMarkedEnemies = Game.ExpeditionState.BaseMaxMarkedEnemies;
+        Game.ExpeditionState.ActualMaxMarkedLoot = Game.ExpeditionState.BaseMaxMarkedLoot;
+        Game.ExpeditionState.ActualNextLootChance = Game.ExpeditionState.BaseNextLootChance;
+        Game.ExpeditionState.ActualNextLootDecay = Game.ExpeditionState.BaseNextLootDecay;
     }
 
     void LoadDestination(GameState Game)

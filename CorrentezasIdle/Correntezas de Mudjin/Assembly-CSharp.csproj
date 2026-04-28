@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Prefabs Definitions\SecondaryMissionDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\DaysCycleService.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
+    <Compile Include="Assets\Scripts\Helpers\EventHelper.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\TickService.cs" />
     <Compile Include="Assets\Scripts\Services\Game\IngredientService.cs" />
     <Compile Include="Assets\Scripts\Designer\FinalPopUpDesigner.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Assets\Scripts\Instances\DestinationInstance.cs" />
     <Compile Include="Assets\Scripts\Services\Game\MissionsSecondaryTrackerService.cs" />
     <Compile Include="Assets\Scripts\Helpers\RoomHelper.cs" />
+    <Compile Include="Assets\Scripts\States\BestiaryState.cs" />
     <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
     <Compile Include="Assets\Scripts\Instances\CurrencyInstance.cs" />
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
