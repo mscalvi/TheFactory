@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: umc04
+  m_Name: use01
   m_EditorClassIdentifier: 
-  Id: umc04
-  Name: "Quantidade de Miss\xF5es para Escolha "
-  Description: "Aumenta a quantidade de Miss\xF5es para serem escolhidas"
-  UpgradeType: 0
-  EffectType: 4
-  Scope: 1
-  ExpeditionMenu: 0
-  Building: 1
-  UpgradeValue: 1
-  StartValue: 0
-  TargetType: 5
+  Id: use01
+  Name: Vida do Navio
+  Description: 
+  UpgradeType: 1
+  EffectType: 6
+  Scope: 0
+  ExpeditionMenu: 1
+  Building: 0
+  UpgradeValue: 0.25
+  StartValue: 1
+  TargetType: 2
   TargetId: 
-  UnlockId: uuu01
-  MaxBuy: 3
-  Cost: 200
-  CostGrowth: 1.3
-  Currency: 1
-  UnlockStatus: 1
+  UnlockId: 
+  MaxBuy: 0
+  Cost: 5
+  CostGrowth: 1.11
+  Currency: 0
+  UnlockStatus: 2

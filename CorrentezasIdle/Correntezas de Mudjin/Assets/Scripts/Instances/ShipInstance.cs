@@ -68,7 +68,7 @@ public class ShipInstance
         StartLife = model.Life;
         BaseLife = model.Life;
         MaxLife = model.Life;
-        CurrentLife = model.Life;
+        CurrentLife = (int)model.Life;
 
         StartSpeed = model.Speed;
         BaseSpeed = model.Speed;

@@ -45,6 +45,10 @@ public class UpgradeHelper
         MissionsCancel,
         ShipMaxLife,
         ShipAbsoluteArmor,
+        ClickTarget,
+        ClickRarity,
+        ClickMax,
+        WeaponDamage,
     }
 
     public enum TargetType 

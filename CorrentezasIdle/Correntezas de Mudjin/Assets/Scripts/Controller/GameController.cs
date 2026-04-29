@@ -74,6 +74,9 @@ public class GameController : MonoBehaviour
             IngredientService.Initialize(GameState);
             TripulationService.Initialize(GameState);
             EventService.Initialize(GameState, TripulationService, UnlockService);
+
+            TripulationService.AddTripulationToActive(GameState.DataState.tripulations["t001"]);
+            TripulationService.AlocTripulationInWeaponRoom(GameState.DataState.tripulations["t001"], GameState.ShipState.Ship.WeaponsRooms[0]);
         } else
         {
             // service de Load

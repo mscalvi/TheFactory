@@ -40,14 +40,12 @@ public class EnemyMarkingService : MonoBehaviour
     void Mark(EnemyInstance enemy)
     {
         enemy.MarkedEnemy = true;
-        Debug.Log($"Expedition EnemyMarkingService - {enemy.Name} Marcado -> {enemy.MarkedEnemy}");
         markedEnemies.Add(enemy);
     }
 
     void Unmark(EnemyInstance enemy)
     {
         enemy.MarkedEnemy = false;
-        Debug.Log($"Expedition EnemyMarkingService - {enemy.Name} Desmarcado -> {enemy.MarkedEnemy}");
         markedEnemies.Remove(enemy);
     }
 

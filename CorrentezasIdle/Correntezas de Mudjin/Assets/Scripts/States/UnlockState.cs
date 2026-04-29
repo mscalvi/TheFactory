@@ -14,7 +14,10 @@ public class UnlockState
 
     public bool Click = false;
     public bool Ingredients = false;
+    public bool Bestiary = false;
     public bool Missions = false;
+    public bool Currency = false;
 
     public bool Locals = false;
+
 }

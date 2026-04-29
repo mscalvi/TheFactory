@@ -26,7 +26,7 @@ public class RangeViewService : MonoBehaviour
 
     void DrawRoom(WeaponRoomInstance room)
     {
-        DrawCircle(room.Weapon.Range);
+        DrawCircle(room.Weapon.ActualRange);
 
         if (room.Angle < 360)
         {
@@ -63,7 +63,7 @@ public class RangeViewService : MonoBehaviour
 
     void DrawAngle(WeaponRoomInstance room)
     {
-        float radius = (float)room.Weapon.Range * UiHelper.Scale;
+        float radius = (float)room.Weapon.ActualRange * UiHelper.Scale;
 
         DrawLine(Vector3.zero, AngleToPosition(room.AngleMin, radius));
         DrawLine(Vector3.zero, AngleToPosition(room.AngleMax, radius));

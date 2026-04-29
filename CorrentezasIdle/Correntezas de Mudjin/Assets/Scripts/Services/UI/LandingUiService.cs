@@ -15,6 +15,7 @@ public class LandingUiService : MonoBehaviour
     [SerializeField] Button ShipButton;
     [SerializeField] Button MapButton;
     [SerializeField] Button ExpeditionButton;
+    [SerializeField] Button BestiaryButton;
 
     [SerializeField] Transform MainMissionPanel;
     [SerializeField] MainMissionDefiniton MainMissionDefiniton;
@@ -48,6 +49,9 @@ public class LandingUiService : MonoBehaviour
 
         if (GameState.UnlockState.Map)
             MapButton.enabled = true;
+
+        if (GameState.UnlockState.Bestiary)
+            BestiaryButton.enabled = true;
     }
 
     public void SelectNewMission(MissionSlotModel slot)
@@ -116,5 +120,6 @@ public class LandingUiService : MonoBehaviour
         CompanyButton.enabled = false;
         ShipButton.enabled = false;
         MapButton.enabled = false;
+        BestiaryButton.enabled = false;
     }
 }

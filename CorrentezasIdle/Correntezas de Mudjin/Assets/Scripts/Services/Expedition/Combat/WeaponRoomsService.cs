@@ -6,13 +6,17 @@ using static UnityEngine.GraphicsBuffer;
 public class WeaponRoomsService : MonoBehaviour, ITickable
 {
     private TickService TickService;
+    private GameState GameState;
     private ShipState ShipState;
     private ExpeditionState ExpeditionState;
     private CombatService CombatService;
 
-    public void Initialize(ExpeditionState expeditionState, ShipState shipState, TickService Tick, CombatService combatService)
+    public void Initialize(GameState gameState, ExpeditionState expeditionState, ShipState shipState, TickService Tick, CombatService combatService)
     {
+        GameState = gameState;
+
         ShipState = shipState;
+
         ExpeditionState = expeditionState;
 
         TickService = Tick;
@@ -35,6 +39,22 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
 
     void UpdateRoom(WeaponRoomInstance room, float dt)
     {
+        if (room.Weapon == null)
+            return;
+
+        bool RoomInUse = false;
+
+        foreach (var rooms in GameState.TripulationState.TripulationWeaponAssignment)
+        {
+            if (rooms.Value.Id == room.Id)
+            {
+                RoomInUse = true;
+            }
+        }
+
+        if (!RoomInUse)
+            return;
+
         ValidateTarget(room);
 
         AcquireTarget(room);
@@ -58,7 +78,7 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
             return;
         }
 
-        if (room.CurrentTarget.Distance > room.Weapon.Range)
+        if (room.CurrentTarget.Distance > room.Weapon.ActualRange)
         {
             room.CurrentTarget = null;
         }
@@ -78,7 +98,7 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
             if (enemy.State == EnemyHelper.EnemyState.Dead)
                 continue;
 
-            if (enemy.Distance > room.Weapon.Range)
+            if (enemy.Distance > room.Weapon.ActualRange)
                 continue;
 
             if (!IsAngleInRange(enemy.Angle, room.AngleMin, room.AngleMax))
@@ -138,8 +158,21 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
 
     bool CanShoot(WeaponRoomInstance room)
     {
-        return room.CurrentTarget != null &&
-               room.Cooldown <= 0;
+        if (room.CurrentTarget != null)
+        {
+            if (room.Cooldown <= 0)
+            {
+                if (room.CurrentTarget.Life > 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (GameState.ExpeditionState.ActiveEnemies.Count <= 0)
+            return false;
+
+        return false;
     }
 
     void ShootTarget(WeaponRoomInstance room)
@@ -149,13 +182,21 @@ public class WeaponRoomsService : MonoBehaviour, ITickable
         if (target == null)
             return;
 
-        double damage = room.Weapon.Damage + room.Ammo.Damage;
+        if (target.Life < 0)
+            return;
+
+        double damage = room.Weapon.ActualDamage + room.Ammo.Damage;
 
         ExpeditionEvents.OnShoot?.Invoke(room, target);
 
+        if (target.MarkedEnemy)
+        {
+            damage *= 2;
+        }
+
         CombatService.ShipDamage(room, target, damage);
 
-        room.Cooldown = 1 / room.Weapon.AttackSpeed;
+        room.Cooldown = 1 / room.Weapon.ActualAttackSpeed;
     }
 
     bool IsAngleInRange(double angle, double min, double max)

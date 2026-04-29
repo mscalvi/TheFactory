@@ -20,15 +20,28 @@ public class RecordesService : MonoBehaviour
         }
     }
 
+    private void BestiaryCheck()
+    {
+        var Bestiary = GameState.BestiaryState.Bestiary;
+
+        foreach (var entry in Bestiary)
+        {
+            entry.Value.KilledLastExpedition = entry.Value.KilledExpedition;
+            entry.Value.KilledExpedition = 0;
+        }
+    }
+
 
     // Events
     void OnEnable()
     {
         ExpeditionEvents.OnExpeditionEnd += DayRecordeCheck;
+        ExpeditionEvents.OnExpeditionEnd += BestiaryCheck;
     }
 
     void OnDisable()
     {
         ExpeditionEvents.OnExpeditionEnd -= DayRecordeCheck;
+        ExpeditionEvents.OnExpeditionEnd -= BestiaryCheck;
     }
 }

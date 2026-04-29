@@ -45,14 +45,20 @@ public class EventService : MonoBehaviour
             case "e001":
                 UnlockService.UnlockTripulation(GameState.DataState.tripulations[eventInstance.Target]);
                 GameState.UnlockState.Click = true;
-                TripulationService.AddTripulationToActive(GameState.DataState.tripulations[eventInstance.Target]);
+                TripulationService.AddTripulationToCrew(GameState.DataState.tripulations[eventInstance.Target]);
                 GameEvents.OnMechanicUnlock?.Invoke("Click");
                 break;
             case "e002":
                 UnlockService.UnlockTripulation(GameState.DataState.tripulations[eventInstance.Target]);
                 GameState.UnlockState.Weapons = true;
-                TripulationService.AddTripulationToActive(GameState.DataState.tripulations[eventInstance.Target]);
+                TripulationService.AddTripulationToCrew(GameState.DataState.tripulations[eventInstance.Target]);
                 GameEvents.OnMechanicUnlock?.Invoke("Weapons");
+                break;
+            case "e003":
+                UnlockService.UnlockTripulation(GameState.DataState.tripulations[eventInstance.Target]);
+                GameState.UnlockState.Currency = true;
+                TripulationService.AddTripulationToCrew(GameState.DataState.tripulations[eventInstance.Target]);
+                GameEvents.OnMechanicUnlock?.Invoke("Income");
                 break;
         }
 

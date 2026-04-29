@@ -20,8 +20,6 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
 
     private void DestinationMissions(DestinationInstance actualDestination)
     {
-        Debug.Log($"Game MainMissionTrackerService - Destination Mission Chamado");
-
         var currentMission = GameState.MainMission;
 
         switch (currentMission.Id)
@@ -40,7 +38,6 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
                 if (actualDestination.Id == "d102")
                 {
                     GameState.ProgressState.m002 = true;
-                    GameState.UnlockState.Company = true;
                     MissionFinisher(currentMission);
                     MissionLoader("m001");
                     Debug.Log($"Game MainMissionTrackerService - Missão 2 Fechada");
@@ -51,16 +48,18 @@ public class MissionsPrimaryTrackerService : MonoBehaviour
 
     private void TripulationMission(TripulationInstance Tripulation)
     {
-        Debug.Log($"Game MainMissionTrackerService - Tripulation Mission Chamado");
+        int tripulation = GameState.TripulationState.ActiveTripulation.Count + GameState.TripulationState.InactiveTripulation.Count;
+        Debug.Log($"Game MainMissionTrackerService - Tripulation Mission Chamado: {tripulation}");
 
         var currentMission = GameState.MainMission;
 
         switch (currentMission.Id)
         {
             case "m001":
-                if (GameState.TripulationState.ActiveTripulation.Count > 2)
+                if (tripulation > 2)
                 {
                     GameState.ProgressState.m001 = true;
+                    GameState.UnlockState.Bestiary = true;
                     MissionFinisher(currentMission);
                     MissionLoader("m002");
                     Debug.Log($"Game MainMissionTrackerService - Missão 1 Fechada");

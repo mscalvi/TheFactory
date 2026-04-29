@@ -178,24 +178,8 @@ public class GameCreationService : MonoBehaviour
             //    var instance = new OtherRoomInstance(ship.Value.OtherRoomSlots[i].OtherRoomModel, subId);
             //}
         }
-
-        if (GameState.ProgressState.m000)
-        {
-            LoadShip();
-        }
-        else
-        {
-            FirstShip();
-        }
-    }
-    private void FirstShip()
-    {
+                
         GameState.ShipState.Ship = GameState.DataState.ships["s001"];
-    }
-
-    private void LoadShip()
-    {
-
     }
 
     private void BuildBuildings()
@@ -298,7 +282,7 @@ public class GameCreationService : MonoBehaviour
     {
         foreach (var enemy in GameState.DataState.enemies)
         {
-            GameState.BestiaryState.Bestiary.Add(enemy.Value, new BestiaryEntry());
+            GameState.BestiaryState.Bestiary.Add(enemy.Value.Id, new BestiaryEntry());
         }
     }
 }

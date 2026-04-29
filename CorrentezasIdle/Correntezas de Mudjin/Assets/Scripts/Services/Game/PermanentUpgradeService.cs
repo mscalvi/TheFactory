@@ -80,6 +80,15 @@ public class PermanentUpgradeService : MonoBehaviour
         GameState.MissionsState.MaxRewardItens = 1;
         GameState.MissionsState.RewardBonus = 1;
         GameState.MissionsState.MaxMissionsOptions = 1;
+
+        foreach (var weapon in DataState.weapons)
+        {
+            weapon.Value.BaseDamage = weapon.Value.StartDamage;
+            weapon.Value.BaseRange = weapon.Value.StartRange;
+            weapon.Value.BaseAttackSpeed = weapon.Value.StartAttackSpeed;
+            weapon.Value.BasePrecision = weapon.Value.StartPrecision;
+            weapon.Value.BaseCriticalDamage = weapon.Value.StartCriticalDamage;
+        }
     }
 
     private void ApplyUpgrade(UpgradeInstance upgrade)
@@ -96,6 +105,15 @@ public class PermanentUpgradeService : MonoBehaviour
                         break;
                     case UpgradeHelper.EffectType.ShipMaxLife:
                         ShipLifeModifier(upgrade);
+                        break;
+                }
+                break;
+
+            case UpgradeHelper.TargetType.Weapon:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.WeaponDamage:
+                        WeaponDamageModifier(upgrade);
                         break;
                 }
                 break;
@@ -166,6 +184,32 @@ public class PermanentUpgradeService : MonoBehaviour
             }
 
             ShipState.Ship.BaseLife += upgrade.ActualValue;
+        }
+    }
+
+    // Modificadores Weapons
+    private void WeaponDamageModifier(UpgradeInstance upgrade)
+    {
+        GameState.DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            weapon.BaseDamage *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            weapon.BaseDamage += upgrade.ActualValue;
         }
     }
 

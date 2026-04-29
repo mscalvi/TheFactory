@@ -73,19 +73,25 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
     void LoadShip(GameState Game)
     {
         Game.ShipState.Ship.CurrentArmor = Game.ShipState.Ship.BaseArmor;
-        Game.ShipState.Ship.CurrentLife = Game.ShipState.Ship.BaseLife;
+        Game.ShipState.Ship.CurrentLife = (int)Game.ShipState.Ship.BaseLife;
         Game.ShipState.Ship.CurrentSpeed = Game.ShipState.Ship.BaseSpeed;
+
+        foreach (var room in Game.ShipState.Ship.WeaponsRooms)
+        {
+            room.Weapon.ActualDamage = room.Weapon.BaseDamage;
+            room.Weapon.ActualAttackSpeed = room.Weapon.BaseAttackSpeed;
+            room.Weapon.ActualRange = room.Weapon.BaseRange;
+            room.Weapon.ActualCriticalDamage = room.Weapon.BaseCriticalDamage;
+            room.Weapon.ActualPrecision = room.Weapon.BasePrecision;
+        }
     }
 
     public void Death()
     {
-        Debug.Log("Expedition ExpeditionService - Game Over!");
-
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.GameOver;
 
-        Debug.Log($"Expedition EndExpeditionService - Zerando Experience");
-
         GameState.CompanyState.CompanyCurrency[CurrencyHelper.CurrencyType.Experience].Amount = 0;
+
 
         ExpeditionEvents.OnShipDeath?.Invoke(false);
     }

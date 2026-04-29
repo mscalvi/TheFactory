@@ -69,9 +69,7 @@ public class MissionsSecondaryTrackerService : MonoBehaviour
 
             if (mission.MissionType == MissionType.DaySurvival)
             {
-                mission.CurrentValue++;
-
-                if (mission.CurrentValue >= mission.TargetValue)
+                if (ExpeditionState.DayCounter >= mission.TargetValue)
                     toComplete.Add(mission);
             }
 
@@ -79,9 +77,7 @@ public class MissionsSecondaryTrackerService : MonoBehaviour
             {
                 if (!ExpeditionState.DamageTaken)
                 {
-                    mission.CurrentValue++;
-
-                    if (mission.CurrentValue >= mission.TargetValue)
+                    if (ExpeditionState.DayCounter >= mission.TargetValue)
                         toComplete.Add(mission);
                 }
             }

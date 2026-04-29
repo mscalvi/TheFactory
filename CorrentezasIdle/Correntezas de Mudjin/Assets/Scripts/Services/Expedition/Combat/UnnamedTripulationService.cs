@@ -41,9 +41,16 @@ public class UnnamedTripulationService : MonoBehaviour, ITickable
             {
                 double TotalRepair = GameState.ShipState.Ship.ActualUnnamedTripulation * ShipState.Ship.CurrentRepairPerTripulation;
 
-                Debug.Log($"Expedition UnnamedTripulationService - {TotalRepair} Reparados");
+                ShipState.Ship.CurrentLife += (int)TotalRepair;
 
-                ShipState.Ship.CurrentLife += TotalRepair;
+                if (ShipState.Ship.CurrentLife > ShipState.Ship.MaxLife)
+                {
+                    ShipState.Ship.CurrentLife = (int)ShipState.Ship.MaxLife;
+                }
+
+                ExpeditionEvents.OnShipAtributeChange?.Invoke();
+
+                Debug.Log($"Expedition UnnamedTripulationService - {TotalRepair} Reparados");
             }
         }
     }

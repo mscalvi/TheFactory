@@ -17,6 +17,7 @@ public class LandingPageDesigner : MonoBehaviour
         SceneManager.LoadScene("ExpeditionScene");
     }
 
+
     public void ShipButton()
     {
         SceneManager.LoadScene("ShipConfigScene");
@@ -35,5 +36,11 @@ public class LandingPageDesigner : MonoBehaviour
     public void MapButton()
     {
         SceneManager.LoadScene("MapScene");
+    }
+
+
+    public void BestiaryButton()
+    {
+        SceneManager.LoadScene("BestiaryScene");
     }
 }

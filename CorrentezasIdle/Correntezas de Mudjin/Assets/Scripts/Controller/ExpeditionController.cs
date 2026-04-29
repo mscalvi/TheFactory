@@ -21,6 +21,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] EnemySpawnerService EnemySpawnerService;
     [SerializeField] EnemyControllerService EnemyControllerService;
     [SerializeField] EnemyMarkingService EnemyMarkingService;
+    [SerializeField] BestiaryTrackerService BestiaryTrackerService;
 
     // Ship
     [SerializeField] UnnamedTripulationService UnnamedTripulationService;
@@ -62,7 +63,6 @@ public class ExpeditionController : MonoBehaviour
         }
 
         Expedition.ExpeditionStatus = ExpeditionStatus.Paused;
-        Expedition.ExpeditionUpgrades = new Dictionary<string, UpgradeInstance>();
 
         var Ship = GameController.Instance.GameState.ShipState;
 
@@ -92,6 +92,8 @@ public class ExpeditionController : MonoBehaviour
 
         PathService.Initialize(Expedition, Ship, Game, Data);
 
+        BestiaryTrackerService.Initialize(Game);
+
         // Ship
 
         UnnamedTripulationService.Initialize(Game, Ship, TickService);
@@ -101,14 +103,16 @@ public class ExpeditionController : MonoBehaviour
         // Ambos
         CombatService.Initialize(Expedition, Ship, TickService, ExpeditionUiService);
 
-        WeaponRoomsService.Initialize(Expedition, Ship, TickService, CombatService);
+        WeaponRoomsService.Initialize(Game, Expedition, Ship, TickService, CombatService);
 
         // Outros
         DecisionsService.Initialize(Expedition, Ship, Game, DecisionsPanel, TickService, Data, FinalPanel, PathService, EventPanel);
 
         EventTriggerService.Initialize(Game, Data, Expedition);
+    }
 
-        // Events
+    private void Start()
+    {
         ExpeditionEvents.OnExpeditionStart?.Invoke();
     }
 }

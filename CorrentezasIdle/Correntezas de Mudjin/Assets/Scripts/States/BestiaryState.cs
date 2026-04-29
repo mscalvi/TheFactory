@@ -18,5 +18,5 @@ public class BestiaryEntry
 
 public class BestiaryState
 {
-    public Dictionary<EnemyInstance, BestiaryEntry> Bestiary = new Dictionary<EnemyInstance, BestiaryEntry>();
+    public Dictionary<string, BestiaryEntry> Bestiary = new Dictionary<string, BestiaryEntry>();
 }

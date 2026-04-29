@@ -28,6 +28,8 @@ public class ExpeditionUiService : MonoBehaviour
     [SerializeField] ExpeditionCurrencyDefinition CurrencyPrefab;
 
     [SerializeField] Transform ExpeditionShipUpgradesPanel;
+    [SerializeField] Transform ExpeditionCrewUpgradesPanel;
+    [SerializeField] Transform ExpeditionRoomUpgradesPanel;
     [SerializeField] ExpeditionUpgradeDefinition UpgradePrefab;
 
     Dictionary<CurrencyType, ExpeditionCurrencyDefinition> companyUI = new();
@@ -207,6 +209,59 @@ public class ExpeditionUiService : MonoBehaviour
             shipUpgradeUI[upgrade.Value.Id] = ui;
         }
     }
+    public void BuildCrewUpgrades(Transform parent)
+    {
+        var upgrades = DataState.upgrades;
+
+        foreach (Transform child in parent)
+            Destroy(child.gameObject);
+
+        foreach (var upgrade in upgrades)
+        {
+            if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
+            if (upgrade.Value.Scope != UpgradeHelper.UpgradeScope.Expedition)
+                continue;
+
+            if (upgrade.Value.ExpeditionMenu != UpgradeHelper.UpgradeMenu.Crew)
+                continue;
+
+            var obj = Instantiate(UpgradePrefab, parent);
+            var ui = obj.GetComponent<ExpeditionUpgradeDefinition>();
+
+            ui.Setup(upgrade.Value, PurchaseService);
+
+            shipUpgradeUI[upgrade.Value.Id] = ui;
+        }
+    }
+
+    public void BuildRoomUpgrades(Transform parent)
+    {
+        var upgrades = DataState.upgrades;
+
+        foreach (Transform child in parent)
+            Destroy(child.gameObject);
+
+        foreach (var upgrade in upgrades)
+        {
+            if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
+            if (upgrade.Value.Scope != UpgradeHelper.UpgradeScope.Expedition)
+                continue;
+
+            if (upgrade.Value.ExpeditionMenu != UpgradeHelper.UpgradeMenu.Room)
+                continue;
+
+            var obj = Instantiate(UpgradePrefab, parent);
+            var ui = obj.GetComponent<ExpeditionUpgradeDefinition>();
+
+            ui.Setup(upgrade.Value, PurchaseService);
+
+            shipUpgradeUI[upgrade.Value.Id] = ui;
+        }
+    }
 
     // Eventos
     void OnEnable()
@@ -245,6 +300,8 @@ public class ExpeditionUiService : MonoBehaviour
     {
         CurrenciesBuild();
         BuildShipUpgrades(ExpeditionShipUpgradesPanel);
+        BuildCrewUpgrades(ExpeditionCrewUpgradesPanel);
+        BuildRoomUpgrades(ExpeditionRoomUpgradesPanel);
 
         foreach (var upgrade in GameState.DataState.upgrades)
         {

@@ -79,7 +79,7 @@ public class WeaponRoomInstance
     {
         if (Weapon != null)
         {
-            Cooldown = 1 / Weapon.AttackSpeed;
+            Cooldown = 1 / Weapon.ActualAttackSpeed;
         }
     }
 }

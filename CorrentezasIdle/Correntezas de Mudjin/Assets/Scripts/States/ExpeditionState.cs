@@ -52,9 +52,6 @@ public class ExpeditionState
     public double ActualDayReward = 1;
     public double ActualNightReward = 1;
 
-    // Upgrades
-    public Dictionary<string, UpgradeInstance> ExpeditionUpgrades = new Dictionary<string, UpgradeInstance>();
-
     // Ingredients
     public int ActualMaxMarkedEnemies = 1;
     public int ActualMaxMarkedLoot = 1;

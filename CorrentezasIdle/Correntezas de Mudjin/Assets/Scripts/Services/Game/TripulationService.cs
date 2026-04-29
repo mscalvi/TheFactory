@@ -10,6 +10,18 @@ public class TripulationService : MonoBehaviour
     {
         GameState = gameState;
     }
+    public void AddTripulationToCrew(TripulationInstance crew)
+    {
+        Debug.Log($"Game TripulationService - Tentando Adicionar {crew.Name}");
+
+        if (crew == null)
+            return;
+
+        GameState.TripulationState.InactiveTripulation.Add(crew);
+
+        GameEvents.OnTripulationChange?.Invoke(crew);
+    }
+
 
     public void AddTripulationToActive(TripulationInstance crew)
     {
@@ -20,6 +32,7 @@ public class TripulationService : MonoBehaviour
             return;
 
         GameState.TripulationState.ActiveTripulation.Add(crew);
+        GameState.TripulationState.InactiveTripulation.Remove(crew);
 
         GameEvents.OnTripulationChange?.Invoke(crew);
     }
