@@ -56,14 +56,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
-    <Analyzer Include="C:\Users\Marcelo Scalvi\Desktop\Marcelo\Programas\TheFactory\CorrentezasIdle\AstraTraveler\Library\PackageCache\com.unity.collab-proxy@2.12.4\Lib\Editor\Unity.Plastic.Newtonsoft.Json.dll" />
-    <Analyzer Include="C:\Users\Marcelo Scalvi\Desktop\Marcelo\Programas\TheFactory\CorrentezasIdle\AstraTraveler\Library\PackageCache\com.unity.collab-proxy@2.12.4\Lib\Editor\log4netPlastic.dll" />
-    <Analyzer Include="C:\Users\Marcelo Scalvi\Desktop\Marcelo\Programas\TheFactory\CorrentezasIdle\AstraTraveler\Library\PackageCache\com.unity.collab-proxy@2.12.4\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.23f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.23f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionControlService.cs" />
     <Compile Include="Assets\Scripts\Instances\AmmoInstance.cs" />
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
@@ -77,8 +73,8 @@
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\ProjectileService.cs" />
     <Compile Include="Assets\Scripts\Instances\PathInstance.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
-    <Compile Include="Assets\Scripts\Helpers\EventHelper.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\DestinationsPopUp.cs" />
+    <Compile Include="Assets\Scripts\Helpers\EventHelper.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\BestiaryTrackerService.cs" />
     <Compile Include="Assets\Scripts\Controllers\LandingController.cs" />
     <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
@@ -154,6 +150,7 @@
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemySpawnerService.cs" />
     <Compile Include="Assets\Scripts\Models\CurrencyModel.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\GameCreationService.cs" />
+    <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionControlService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -1127,12 +1124,12 @@
       <HintPath>Library\ScriptAssemblies\Unity.Collections.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.2D.Psdimporter.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.2D.Psdimporter.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.2D.Psdimporter.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Psdimporter.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.InternalAPIEditorBridge.001">
