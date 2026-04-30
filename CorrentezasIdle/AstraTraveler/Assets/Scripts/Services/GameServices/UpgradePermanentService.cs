@@ -1,0 +1,227 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class UpgradePermanentService : MonoBehaviour
+{
+    private GameState GameState;
+    private DataState DataState;
+    private UnlockService UnlockService;
+
+    public void Initialize(GameState game, UnlockService unlock)
+    {
+        GameState = game;
+
+        DataState = GameState.DataState;
+
+        UnlockService = unlock;
+    }
+
+    public void AddUpgrade(UpgradeInstance upgrade)
+    {
+        if(upgrade.Scope != UpgradeHelper.UpgradeScope.Company)
+        {
+            return;
+        }
+
+        var upgrades = GameState.CompanyState.CompanyUpgrades;
+
+        if (!upgrades.TryGetValue(upgrade.Id, out var instance))
+        {
+            upgrades[upgrade.Id] = upgrade;
+            instance = upgrade;
+        }
+
+        if (instance.ActualBuy >= instance.MaxBuy && instance.MaxBuy > 0)
+        {
+            instance.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        }
+
+        if(instance.EffectType != UpgradeHelper.EffectType.Unlock)
+        {
+            Recalculate();
+        } else
+        {
+            UnlockService.UnlockUpgrade(instance);
+        }
+    }
+
+    private void Recalculate()
+    {
+        ApplyBaseStats();
+
+        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
+        {
+            if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+            {
+                ApplyUpgrade(upgrade.Value);
+            }
+        }
+
+        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
+        {
+            if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+            {
+                ApplyUpgrade(upgrade.Value);
+            }
+        }
+    }
+
+    private void ApplyBaseStats()
+    {
+        GameState.MissionsState.MaxCancelableMissions = 0;
+        GameState.MissionsState.MaxOnGoingMissions = 0;
+        GameState.MissionsState.MaxRewardItens = 1;
+        GameState.MissionsState.RewardBonus = 1;
+        GameState.MissionsState.MaxMissionsOptions = 1;
+
+        foreach (var weapon in DataState.weapons)
+        {
+            weapon.Value.BaseDamage = weapon.Value.StartDamage;
+            weapon.Value.BaseRange = weapon.Value.StartRange;
+            weapon.Value.BaseAttackSpeed = weapon.Value.StartAttackSpeed;
+            weapon.Value.BasePrecision = weapon.Value.StartPrecision;
+            weapon.Value.BaseCriticalDamage = weapon.Value.StartCriticalDamage;
+        }
+    }
+
+    private void ApplyUpgrade(UpgradeInstance upgrade)
+    {
+        upgrade.ActualValue = upgrade.StartValue;
+
+        switch (upgrade.TargetType)
+        {
+            case UpgradeHelper.TargetType.Weapon:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.WeaponDamage:
+                        WeaponDamageModifier(upgrade);
+                        break;
+                }
+                break;
+
+            case UpgradeHelper.TargetType.Missions:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.MissionsMax:
+                        MissionsMaxModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.MissionsReward:
+                        MissionsRewardModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.MissionsOptions:
+                        MissionsOptionsModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.MissionsCancel:
+                        MissionsCancelModifier(upgrade);
+                        break;
+                }
+                break;
+        }
+    }
+
+    // Modificadores Ship
+
+
+    // Modificadores Weapons
+    private void WeaponDamageModifier(UpgradeInstance upgrade)
+    {
+        GameState.DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            weapon.BaseDamage *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            weapon.BaseDamage += upgrade.ActualValue;
+        }
+    }
+
+    // Modificadores Missions
+    private void MissionsMaxModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxOnGoingMissions += (int)upgrade.ActualValue;
+        }
+
+        GameEvents.MissionSlotAtualize?.Invoke();
+    }
+
+    private void MissionsRewardModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.RewardBonus *= (int)upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxRewardItens += (int)upgrade.ActualValue;
+        }
+    }
+
+    private void MissionsOptionsModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxMissionsOptions += (int)upgrade.ActualValue;
+        }
+    }
+
+    private void MissionsCancelModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.MissionsState.MaxCancelableMissions += (int)upgrade.ActualValue;
+        }
+    }
+
+    // Events
+    void OnEnable()
+    {
+        GameEvents.OnUpgradeBuy += AddUpgrade;
+    }
+
+    void OnDisable()
+    {
+        GameEvents.OnUpgradeBuy -= AddUpgrade;
+    }
+}

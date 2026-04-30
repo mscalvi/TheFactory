@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11340bdf841b9ad4183cb8f83f41d441, type: 3}
+  m_Name: s002
+  m_EditorClassIdentifier: 
+  Id: s002
+  Name: Skiff
+  Description: Batel
+  Life: 15
+  Speed: 3
+  Armor: 0
+  Size: 1
+  UnnamedTripulation: 0
+  NamedTripulation: 2
+  WeaponRoomSlots:
+  - WeaponRoomModel: {fileID: 11400000, guid: e36c58bec8882e14ca7b82e3b987fa09, type: 2}
+  OtherRoomSlots:
+  - OtherRoomModel: {fileID: 11400000, guid: fdc3c7cba06298042a802db146aa6788, type: 2}
+  UnlockStatus: 0

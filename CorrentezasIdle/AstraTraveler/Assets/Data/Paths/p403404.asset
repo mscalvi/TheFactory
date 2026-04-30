@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c9c3499389ff9419aecd4cbaac17c5, type: 3}
+  m_Name: p403404
+  m_EditorClassIdentifier: 
+  Id: p403404
+  Name: Rota Sem Nome
+  Description: 
+  Distance: 450
+  Destination1: {fileID: 11400000, guid: 71e4d9a68bab0e647844ee970d08c9ef, type: 2}
+  Destination2: {fileID: 11400000, guid: 5570fb6c97f18be45bcbf9f0bd982a6c, type: 2}
+  DestinationRegion1: 3
+  DestinationRegion2: 3
+  PathType: 4
+  UnlockStatus: 0

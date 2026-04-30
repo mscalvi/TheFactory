@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47671aa188fedda418bf27a62b448dec, type: 3}
+  m_Name: e001
+  m_EditorClassIdentifier: 
+  Id: e001
+  Title: Um Pescador pede Emprego
+  Info: "De uma praia deserta, um homem balan\xE7a a m\xE3o para voc\xEA, e quando
+    voc\xEA se aproxima ele implora por um emprego. Quem sabe ele pode ser \xFAtil?"
+  Target: t002
+  EventFrequency: 0
+  EventType: 0

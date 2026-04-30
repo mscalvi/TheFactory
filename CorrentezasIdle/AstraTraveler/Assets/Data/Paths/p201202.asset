@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c9c3499389ff9419aecd4cbaac17c5, type: 3}
+  m_Name: p201202
+  m_EditorClassIdentifier: 
+  Id: p201202
+  Name: Rota da Capital
+  Description: 
+  Distance: 250
+  Destination1: {fileID: 11400000, guid: 04d7cfc740ebbd349ac774255810db8e, type: 2}
+  Destination2: {fileID: 11400000, guid: c0e3de435b36275408cb5a4ec33a6b5d, type: 2}
+  DestinationRegion1: 1
+  DestinationRegion2: 1
+  PathType: 4
+  UnlockStatus: 0

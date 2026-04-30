@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c9c3499389ff9419aecd4cbaac17c5, type: 3}
+  m_Name: p101102
+  m_EditorClassIdentifier: 
+  Id: p101102
+  Name: Rota Sul de Liandra
+  Description: 
+  Distance: 750
+  Destination1: {fileID: 11400000, guid: 03dc437ba5f4db4419c08ed4e68d0435, type: 2}
+  Destination2: {fileID: 11400000, guid: 70c1eb38ac495fd4bad268d9475d85bb, type: 2}
+  DestinationRegion1: 0
+  DestinationRegion2: 0
+  PathType: 4
+  UnlockStatus: 0

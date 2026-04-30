@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class MissionPopUpDesigner : MonoBehaviour
 {
-    [SerializeField] GameObject DecisionPanel;
+    [SerializeField] GameObject MissionPanel;
     [SerializeField] Button CancelButton;
     [SerializeField] Button Opt1Btn;
     [SerializeField] Button Opt2Btn;
@@ -21,7 +21,6 @@ public class MissionPopUpDesigner : MonoBehaviour
     [SerializeField] TextMeshProUGUI Opt3Text;
     [SerializeField] TextMeshProUGUI Opt4Text;
     [SerializeField] TextMeshProUGUI Title;
-    [SerializeField] TextMeshProUGUI Info;
 
     public void ShowMissions(List<MissionInstance> options, Action<MissionInstance> onSelected)
     {
@@ -32,7 +31,7 @@ public class MissionPopUpDesigner : MonoBehaviour
         Opt3Btn.onClick.RemoveAllListeners();
         Opt4Btn.onClick.RemoveAllListeners();
 
-        DecisionPanel.SetActive(true);
+        MissionPanel.SetActive(true);
 
         Title.text = "Escolha um Trabalho";
 
@@ -71,12 +70,11 @@ public class MissionPopUpDesigner : MonoBehaviour
 
     public void Hide()
     {
-        DecisionPanel.SetActive(false);
+        MissionPanel.SetActive(false);
         Opt1Btn.gameObject.SetActive(false);
         Opt2Btn.gameObject.SetActive(false);
         Opt3Btn.gameObject.SetActive(false);
         Opt4Btn.gameObject.SetActive(false);
         Title.text = null;
-        Info.text = null;
     }
 }
