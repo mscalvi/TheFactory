@@ -26,6 +26,7 @@ public class UpgradeHelper
         FishingRoom,
         ArmoryRoom,
         LivingRoom,
+        TreasureRoom,
     }
 
     public enum UpgradeType
@@ -49,6 +50,12 @@ public class UpgradeHelper
         ClickRarity,
         ClickMax,
         WeaponDamage,
+        ExperienceGain,
+        ExperienceChance,
+        ExperienceIncome,
+        MarcosGain,
+        MarcosChance,
+        MarclosIncome,
     }
 
     public enum TargetType 

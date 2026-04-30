@@ -59,7 +59,7 @@ public class MissionsService : MonoBehaviour
 
         GameState.MissionsState.CompletedMissions++;
 
-        ApplyCooldown(slot);
+        slot.ActiveMission = null;
     }
 
     public void CancelMission(MissionInstance mission)
@@ -245,6 +245,6 @@ public class MissionsService : MonoBehaviour
 
     void OnDisable()
     {
-        GameEvents.MissionSlotAtualize += GenerateSlots;
+        GameEvents.MissionSlotAtualize -= GenerateSlots;
     }
 }

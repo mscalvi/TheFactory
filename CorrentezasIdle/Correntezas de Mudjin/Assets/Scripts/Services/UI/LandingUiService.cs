@@ -103,13 +103,19 @@ public class LandingUiService : MonoBehaviour
 
                 ui.Setup(slot.ActiveMission);
             }
+            else if (IsSlotOnCooldown(slot))
+            {
+                var go = Instantiate(SecondaryMissionButtonDefinition, SecondaryMissionPanel);
+                var ui = go.GetComponent<SecondaryMissionButtonDefinition>();
 
+                ui.SetupCooldown(slot);
+            }
             else
             {
                 var go = Instantiate(SecondaryMissionButtonDefinition, SecondaryMissionPanel);
                 var ui = go.GetComponent<SecondaryMissionButtonDefinition>();
 
-                ui.Setup(this, slot);
+                ui.SetupAvailable(this, slot);
             }
         }
     }

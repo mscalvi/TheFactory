@@ -37,7 +37,7 @@ public class EventTriggerService : MonoBehaviour
 
         if (!GameState.UnlockState.Weapons)
         {
-            if (ExpeditionState.DayCounter == 15)
+            if (ExpeditionState.DayCounter == 10)
             {
                 TriggerEvent(DataState.events["e002"]);
                 return;
@@ -46,7 +46,7 @@ public class EventTriggerService : MonoBehaviour
 
         if (!GameState.UnlockState.Currency)
         {
-            if (ExpeditionState.DayCounter == 25)
+            if (ExpeditionState.DayCounter == 20)
             {
                 TriggerEvent(DataState.events["e003"]);
                 return;

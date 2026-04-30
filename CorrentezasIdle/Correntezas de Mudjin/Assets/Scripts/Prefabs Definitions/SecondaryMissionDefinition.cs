@@ -20,4 +20,5 @@ public class SecondaryMissionDefinition : MonoBehaviour
 
         Progress.text = progress.ToString("N0");
     }
+
 }

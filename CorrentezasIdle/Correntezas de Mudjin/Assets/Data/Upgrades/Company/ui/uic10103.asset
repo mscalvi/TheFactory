@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: uub04
+  m_Name: uic10103
   m_EditorClassIdentifier: 
-  Id: uub04
-  Name: "Construir Sala de Confraterniza\xE7\xE3o"
-  Description: "Permite comprar melhorias para o tamanho da Tripula\xE7\xE3o"
-  UpgradeType: 2
-  EffectType: 1
+  Id: uic10103
+  Name: "Valoriza\xE7\xE3o da Recompensa "
+  Description: 'Aumenta a quantidade de Marcos da recompensa por abate '
+  UpgradeType: 0
+  EffectType: 16
   Scope: 1
   ExpeditionMenu: 0
-  Building: 2
-  UpgradeValue: 0
+  Building: 6
+  UpgradeValue: 1
   StartValue: 0
-  TargetType: 4
-  TargetId: b04
-  UnlockId: m001
-  MaxBuy: 1
-  Cost: 80
-  CostGrowth: 1
+  TargetType: 1
+  TargetId: 
+  UnlockId: t004
+  MaxBuy: 0
+  Cost: 5
+  CostGrowth: 1.15
   Currency: 1
-  UnlockStatus: 0
+  UnlockStatus: 1
