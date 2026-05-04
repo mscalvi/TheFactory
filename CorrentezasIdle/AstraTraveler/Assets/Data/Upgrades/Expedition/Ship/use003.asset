@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
+  m_Name: use003
+  m_EditorClassIdentifier: 
+  Id: use003
+  Name: "Reist\xEAncia "
+  Description: "Aumenta a Reist\xEAncia do Navio em "
+  UpgradeType: 0
+  EffectType: 8
+  Scope: 0
+  ExpeditionMenu: 1
+  Building: 0
+  UpgradeValue: 0.5
+  StartValue: 0
+  TargetType: 2
+  TargetId: 
+  UnlockId: 
+  MaxBuy: 100
+  Cost: 12
+  CostGrowth: 1.11
+  Currency: 0
+  UnlockStatus: 2

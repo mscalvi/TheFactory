@@ -15,7 +15,10 @@ public class WeaponModel : ScriptableObject
     public double Precision;
     public double CriticalDamage;
     public string Special;
+
     public WeaponHelper.AmmoType AmmoType;
+    public AmmoInstance Ammo;
+    public double ProjectileSpeed;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

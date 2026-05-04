@@ -111,6 +111,7 @@
     <Compile Include="Assets\Scripts\Models\MissionModel.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
+    <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\WeaponsService.cs" />
     <Compile Include="Assets\Scripts\Helpers\IngredientHelper.cs" />
     <Compile Include="Assets\Scripts\Models\AmmoModel.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\UpgradePermanentService.cs" />

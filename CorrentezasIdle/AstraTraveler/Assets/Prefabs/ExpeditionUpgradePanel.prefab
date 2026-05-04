@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 8826996776467617787}
   - component: {fileID: 8457899164329637969}
   m_Layer: 5
-  m_Name: BuuyUpgradeBtn
+  m_Name: BuyUpgradeBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

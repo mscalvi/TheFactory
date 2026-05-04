@@ -12,7 +12,8 @@ public static class ExpeditionEvents
     public static Action<EnemyInstance> OnMarkedEnemyDeath;
 
     // Ship Events
-    //public static Action<WeaponRoomInstance, EnemyInstance> OnShoot;
+    public static Action<WeaponInstance, EnemyInstance> OnShoot;
+    public static Action<EnemyInstance> OnProjectileHit;
     public static Action OnShipAtributeChange;
 
     // Expedition Status Events

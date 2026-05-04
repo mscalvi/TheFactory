@@ -25,7 +25,6 @@ public class GameCreationService : MonoBehaviour
         BuildIngredients();
         BuildBuildings();
         BuildCompanyUpgrades();
-        BuildDestinations();
         BuildBestiary();
     }
 
@@ -38,7 +37,6 @@ public class GameCreationService : MonoBehaviour
         var weapons = new Dictionary<string, WeaponInstance>();
         var ammos = new Dictionary<string, AmmoInstance>();
         var enemies = new Dictionary<string, EnemyInstance>();        
-        var destinations = new Dictionary<string, DestinationInstance>();
         var paths = new Dictionary<string, PathInstance>();
         var currencies = new Dictionary<string, CurrencyInstance>();
         var ingredients = new Dictionary<string, IngredientInstance>();
@@ -83,12 +81,6 @@ public class GameCreationService : MonoBehaviour
             paths.Add(path.Id, instance);
         }
 
-        foreach (var dest in DataBase.destinations)
-        {
-            var instance = new DestinationInstance(dest);
-            destinations.Add(dest.Id, instance);
-        }
-
         foreach (var currency in DataBase.currency)
         {
             var instance = new CurrencyInstance(currency);
@@ -101,7 +93,7 @@ public class GameCreationService : MonoBehaviour
             ingredients.Add(ingrediente.Id, instance);
         }
 
-        foreach (var upgrade in DataBase.upgrade)
+        foreach (var upgrade in DataBase.upgrades)
         {
             var instance = new UpgradeInstance(upgrade);
             upgrades.Add(upgrade.Id, instance);
@@ -130,7 +122,6 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.weapons = weapons;
         GameState.DataState.ammos = ammos;
         GameState.DataState.enemies = enemies;
-        GameState.DataState.destinations = destinations;
         GameState.DataState.paths = paths;
         GameState.DataState.currencies = currencies;
         GameState.DataState.ingredients = ingredients;
@@ -143,6 +134,9 @@ public class GameCreationService : MonoBehaviour
     private void BuildShips()
     {                
         GameState.ExpeditionState.Ship = GameState.DataState.ships["s001"];
+        GameState.ExpeditionState.Ship.Weapons = new List<WeaponInstance>();
+        GameState.ExpeditionState.Ship.Weapons.Add(GameState.DataState.weapons["w001"]);
+        GameState.ExpeditionState.Ship.Weapons[0].Ammo = GameState.DataState.ammos["a001"];
     }
 
     private void BuildBuildings()
@@ -191,49 +185,6 @@ public class GameCreationService : MonoBehaviour
         {
             GameState.CompanyState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
         }
-    }
-
-    private void BuildDestinations()
-    {
-        foreach (var destination in GameState.DataState.destinations)
-        {
-            foreach (var close in destination.Value.CloseDestinationsList)
-            {
-                var pathId = PathLocator(destination.Key, close);
-
-                var target = GameState.DataState.destinations.GetValueOrDefault(close);
-                var path = GameState.DataState.paths.GetValueOrDefault(pathId);
-
-                if (target == null)
-                {
-                    continue;
-                }
-
-                if (path == null)
-                {
-                    continue;
-                }
-
-                destination.Value.CloseDestinations.Add(target, path);
-            }
-        }
-    }
-
-    private string PathLocator(string origin, string destiny)
-    {
-        foreach (var path in GameState.DataState.paths)
-        {
-            var p = path.Value;
-
-
-            bool forward = p.Destination1.Id == origin && p.Destination2.Id == destiny;
-            bool backward = p.Destination2.Id == origin && p.Destination1.Id == destiny;
-
-            if (forward || backward)
-                return path.Key;
-        }
-
-        return null;
     }
 
     private void BuildBestiary()

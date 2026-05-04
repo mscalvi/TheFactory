@@ -41,8 +41,10 @@ public class ExpeditionState
     public double ActualSpawnBudgetGrowth = 1.05;
     public double ActualBossThreshold = 200;
     public List<EnemyInstance> ActiveEnemies = new();
+    public List<ProjectileView> ActiveProjectiles = new();
 
     // Currency
+    public double ExperienceKillBonus = 1;
     public double ActualDayReward = 1;
     public double ActualNightReward = 1;
 

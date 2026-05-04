@@ -12,9 +12,17 @@ public class ShipModel : ScriptableObject
     public double Life;
     public double Speed;
     public double Armor;
+    public double Resistence;
     public int Size;
-    public int UnnamedTripulation;
-    public int NamedTripulation;
+    public int Tripulation;
+
+    public List<WeaponSlot> WeaponSlots;
+
+    [System.Serializable]
+    public class WeaponSlot
+    {
+        public WeaponModel WeaponModel;
+    }
 
     // Na Instance
     public UnlockHelper.UnlockStatus UnlockStatus;

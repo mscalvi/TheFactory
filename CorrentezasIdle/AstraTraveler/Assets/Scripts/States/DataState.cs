@@ -13,7 +13,6 @@ public class DataState
 
     public Dictionary<string, EnemyInstance> enemies;
 
-    public Dictionary<string, DestinationInstance> destinations;
     public Dictionary<string, PathInstance> paths;
     
     public Dictionary<string, CurrencyInstance> currencies;

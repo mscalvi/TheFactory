@@ -7,41 +7,42 @@ public class EnemyViewService : MonoBehaviour
     public Transform Ship;
     public GameObject EnemyPrefab;
 
-    //private Dictionary<EnemyInstance, EnemyView> views = new();
+    private Dictionary<EnemyInstance, EnemyView> views = new();
 
-    //public EnemyView GetView(EnemyInstance enemy)
-    //{
-    //    return views.TryGetValue(enemy, out var view) ? view : null;
-    //}
+    public EnemyView GetView(EnemyInstance enemy)
+    {
+        return views.TryGetValue(enemy, out var view) ? view : null;
+    }
 
-    //void SpawnEnemy(EnemyInstance enemy)
-    //{
-    //    var obj = Instantiate(EnemyPrefab, Container);
-    //    var view = obj.GetComponent<EnemyView>();
+    void SpawnEnemy(EnemyInstance enemy)
+    {
+        var obj = Instantiate(EnemyPrefab, Container);
+        var view = obj.GetComponent<EnemyView>();
 
-    //    view.Setup(enemy, Ship);
+        view.Setup(enemy, Ship);
 
-    //    views[enemy] = view;
-    //}
+        views[enemy] = view;
+    }
 
-    //void RemoveEnemy(EnemyInstance enemy)
-    //{
-    //    if (!views.TryGetValue(enemy, out var view))
-    //        return;
+    void RemoveEnemy(EnemyInstance enemy)
+    {
+        if (!views.TryGetValue(enemy, out var view))
+            return;
 
-    //    Destroy(view.gameObject);
-    //    views.Remove(enemy);
-    //}
+        Destroy(view.gameObject);
 
-    //void OnEnable()
-    //{
-    //    ExpeditionEvents.OnEnemySpawn += SpawnEnemy;
-    //    ExpeditionEvents.OnEnemyDeath += RemoveEnemy;
-    //}
+        views.Remove(enemy);
+    }
 
-    //void OnDisable()
-    //{
-    //    ExpeditionEvents.OnEnemySpawn -= SpawnEnemy;
-    //    ExpeditionEvents.OnEnemyDeath -= RemoveEnemy;
-    //}
+    void OnEnable()
+    {
+        ExpeditionEvents.OnEnemySpawn += SpawnEnemy;
+        ExpeditionEvents.OnEnemyDeath += RemoveEnemy;
+    }
+
+    void OnDisable()
+    {
+        ExpeditionEvents.OnEnemySpawn -= SpawnEnemy;
+        ExpeditionEvents.OnEnemyDeath -= RemoveEnemy;
+    }
 }

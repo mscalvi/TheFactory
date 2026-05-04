@@ -19,39 +19,6 @@ public class EventTriggerService : MonoBehaviour
         DataState = GameState.DataState;
     }
 
-    private void CheckDayFixEvents()
-    {
-        if (!GameState.UnlockState.Click)
-        {
-            if (ExpeditionState.DayCounter == 2)
-            {
-                TriggerEvent(DataState.events["e001"]);
-                return;
-            }
-        }
-
-        if (!GameState.UnlockState.Weapons)
-        {
-            if (ExpeditionState.DayCounter == 10)
-            {
-                TriggerEvent(DataState.events["e002"]);
-                return;
-            }
-        }
-
-        if (!GameState.UnlockState.Currency)
-        {
-            if (ExpeditionState.DayCounter == 20)
-            {
-                TriggerEvent(DataState.events["e003"]);
-                return;
-            }
-        }
-
-        // Conferir probabilidade
-        // Chamar
-    }
-
     private void TriggerEvent(EventInstance eventInstance)
     {
         GameEvents.OnEventTrigger?.Invoke(eventInstance);
@@ -66,11 +33,11 @@ public class EventTriggerService : MonoBehaviour
     // Events
     void OnEnable()
     {
-        ExpeditionEvents.OnNightFinish += CheckDayFixEvents;
+
     }
 
     void OnDisable()
     {
-        ExpeditionEvents.OnNightFinish -= CheckDayFixEvents;
+
     }
 }

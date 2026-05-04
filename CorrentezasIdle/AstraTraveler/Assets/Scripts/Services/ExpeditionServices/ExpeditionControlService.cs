@@ -61,14 +61,14 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
         Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.BaseLife;
         Game.ExpeditionState.Ship.CurrentSpeed = Game.ExpeditionState.Ship.BaseSpeed;
 
-        //foreach (var weapon in Game.ExpeditionState.Ship.Weapons)
-        //{
-        //    weapon.ActualDamage = weapon.BaseDamage;
-        //    weapon.ActualAttackSpeed = weapon.BaseAttackSpeed;
-        //    weapon.ActualRange = weapon.BaseRange;
-        //    weapon.ActualCriticalDamage = weapon.BaseCriticalDamage;
-        //    weapon.ActualPrecision = weapon.BasePrecision;
-        //}
+        foreach (var weapon in Game.ExpeditionState.Ship.Weapons)
+        {
+            weapon.ActualDamage = weapon.BaseDamage;
+            weapon.ActualAttackSpeed = weapon.BaseAttackSpeed;
+            weapon.ActualRange = weapon.BaseRange;
+            weapon.ActualCriticalDamage = weapon.BaseCriticalDamage;
+            weapon.ActualPrecision = weapon.BasePrecision;
+        }
     }
 
     public void Death()
@@ -76,7 +76,6 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.GameOver;
 
         GameState.CompanyState.CompanyCurrency[CurrencyHelper.CurrencyType.Experience].Amount = 0;
-
 
         ExpeditionEvents.OnShipDeath?.Invoke(false);
     }

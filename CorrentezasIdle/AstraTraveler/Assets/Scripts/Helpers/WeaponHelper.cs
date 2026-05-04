@@ -16,4 +16,17 @@ public class WeaponHelper
         Siege = 1 << 4,
         Special = 1 << 5,
     }
+
+    public enum WeaponTarget
+    {
+        None,
+        Closest,
+        Farest,
+        LowestHp,
+        HighestHp,
+        BossFirst,
+        SpecialFirst,
+        HighestLevel,
+        LowerLevel,
+    }
 }

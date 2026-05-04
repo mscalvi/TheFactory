@@ -2,43 +2,55 @@ using UnityEngine;
 
 public class ProjectileService : MonoBehaviour
 {
+    private GameState GameState;
+
     public GameObject ProjectilePrefab;
     public Transform Container;
     public Transform Ship;
 
-    // Substituir por versão da arma
-    public float ProjectileSpeed = 10f;
+    public void Initialize(GameState game)
+    {
+        GameState = game;
+    }
+
+    private void Update()
+    {
+        CheckHit();
+    }
 
     void SpawnProjectile(WeaponInstance weapon, EnemyInstance enemy)
     {
-        //if (enemy == null)
-        //    return;
+        var obj = Instantiate(ProjectilePrefab, Container);
+        var proj = obj.GetComponent<ProjectileView>();
 
-        //var obj = Instantiate(ProjectilePrefab, Container);
-        //var proj = obj.GetComponent<ProjectileView>();
+        Vector3 origin = Ship.position;
 
-        //Vector3 origin = Ship.position;
+        float radius = UiHelper.ToWorld(enemy.Distance);
+        float angleRad = (float)(enemy.Angle * Mathf.Deg2Rad);
 
-        //float radius = (float)enemy.Distance * UiHelper.Scale;
-        //float angleRad = (float)(enemy.Angle * Mathf.Deg2Rad);
+        float x = Mathf.Sin(angleRad) * radius;
+        float y = -Mathf.Cos(angleRad) * radius;
 
-        //float x = Mathf.Sin(angleRad) * radius;
-        //float y = -Mathf.Cos(angleRad) * radius;
+        Vector3 target = Ship.position + new Vector3(x, y, 0);
 
-        //Vector3 target = Ship.position + new Vector3(x, y, 0);
+        proj.Setup(origin, target, (float)weapon.ProjectileSpeed, GameState.ExpeditionState, Ship, enemy);
+    }
 
-        //proj.Setup(origin, target, ProjectileSpeed);
+    private void CheckHit()
+    {
+        foreach (var projectile in GameState.ExpeditionState.ActiveProjectiles)
+        {
 
-        //proj.Setup(origin, target, room.Weapon.ProjectileSpeed);
+        }
     }
 
     void OnEnable()
     {
-        //ExpeditionEvents.OnShoot += SpawnProjectile;
+        ExpeditionEvents.OnShoot += SpawnProjectile;
     }
 
     void OnDisable()
     {
-        //ExpeditionEvents.OnShoot -= SpawnProjectile;
+        ExpeditionEvents.OnShoot -= SpawnProjectile;
     }
 }

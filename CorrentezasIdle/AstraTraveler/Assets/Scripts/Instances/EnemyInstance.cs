@@ -13,7 +13,7 @@ public class EnemyInstance
     public bool BossEnemy;
     public bool MarkedEnemy;
 
-    public double Life;
+    public double StartLife;
     public double LifeGrowth;
     public double LifeRegen;
     public double LifeRegenGrowth;
@@ -64,7 +64,7 @@ public class EnemyInstance
         BossEnemy = model.BossEnemy;
         MarkedEnemy = false;
 
-        Life = model.Life;
+        StartLife = model.Life;
         LifeGrowth = model.LifeGrowth;
         LifeRegen = model.LifeRegen;
         LifeRegenGrowth = model.LifeRegenGrowth;
@@ -116,7 +116,7 @@ public class EnemyInstance
         BossEnemy = model.BossEnemy;
         MarkedEnemy = false;
 
-        Life = model.Life;
+        StartLife = model.StartLife;
         LifeGrowth = model.LifeGrowth;
         LifeRegen = model.LifeRegen;
         LifeRegenGrowth = model.LifeRegenGrowth;
@@ -153,7 +153,7 @@ public class EnemyInstance
         Distance = model.SpawnDistance;
         Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
-        CurrentLife = model.Life;
+        CurrentLife = model.StartLife;
 
         UnlockStatus = model.UnlockStatus;
     }

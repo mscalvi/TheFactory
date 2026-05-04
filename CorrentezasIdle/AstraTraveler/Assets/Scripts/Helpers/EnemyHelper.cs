@@ -23,6 +23,7 @@ public class EnemyHelper
         Damaging,
         Cooldown,
         Dead,
+        Dying,
     }
 
     public enum EnemyStage

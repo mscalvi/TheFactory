@@ -26,6 +26,7 @@ public class ExpeditionController : MonoBehaviour
     // Ship
     [SerializeField] ProjectileService ProjectileService;
     [SerializeField] CombatService CombatService;
+    [SerializeField] WeaponsService WeaponsService;
 
     private void Awake()
     {
@@ -61,11 +62,8 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        // Base
-
         ExpeditionUiService.Initialize(Game, PurchaseService);
 
-        // Expedition
         DaysCycleService.Initialize(Game, TickService);
 
         EnemyProgressService.Initialize(Game);
@@ -80,10 +78,12 @@ public class ExpeditionController : MonoBehaviour
 
         BestiaryTrackerService.Initialize(Game);
 
-        // Ambos
         CombatService.Initialize(Game, TickService);
 
-        // Outros
+        WeaponsService.Initialize(Game, TickService, CombatService);
+
+        ProjectileService.Initialize(Game);
+
         DecisionsService.Initialize(Game, TickService, PathService);
 
         EventTriggerService.Initialize(Game);

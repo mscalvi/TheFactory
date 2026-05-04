@@ -13,7 +13,7 @@ public class ExpeditionUi : MonoBehaviour
 
     [SerializeField] GameObject ShipPanel;
     [SerializeField] GameObject CrewPanel;
-    [SerializeField] GameObject RoomsPanel;
+    [SerializeField] GameObject ItensPanel;
     [SerializeField] GameObject SettingsPanel;
 
     [SerializeField] TextMeshProUGUI DaysPastText;
@@ -66,7 +66,7 @@ public class ExpeditionUi : MonoBehaviour
     public void OpenRoomMenu()
     {
         HideAllMenus();
-        RoomsPanel.SetActive(true);
+        ItensPanel.SetActive(true);
     }
     public void OpenSettingMenu()
     {
@@ -77,7 +77,7 @@ public class ExpeditionUi : MonoBehaviour
     {
         ShipPanel.SetActive(false);
         CrewPanel.SetActive(false);
-        RoomsPanel.SetActive(false);
+        ItensPanel.SetActive(false);
         SettingsPanel.SetActive(false);
     }
 
@@ -242,7 +242,7 @@ public class ExpeditionUi : MonoBehaviour
             if (upgrade.Value.Scope != UpgradeHelper.UpgradeScope.Expedition)
                 continue;
 
-            if (upgrade.Value.ExpeditionMenu != UpgradeHelper.UpgradeMenu.Room)
+            if (upgrade.Value.ExpeditionMenu != UpgradeHelper.UpgradeMenu.Itens)
                 continue;
 
             var obj = Instantiate(UpgradePrefab, parent);

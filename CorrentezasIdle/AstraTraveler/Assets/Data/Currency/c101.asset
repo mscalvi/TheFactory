@@ -9,18 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 555f45d1306f46e42824d6f71166e081, type: 3}
-  m_Name: w001
+  m_Script: {fileID: 11500000, guid: c808f055112a03540aaf68cea779ce64, type: 3}
+  m_Name: c101
   m_EditorClassIdentifier: 
-  Id: w001
-  Name: Sling
-  Description: Estilingue
-  Damage: 1
-  Range: 10
-  AttackSpeed: 1.2
-  Precision: 0.01
-  CriticalDamage: 1.15
-  Special: 
-  AmmoType: 3
-  ProjectileSpeed: 3
+  Id: c101
+  Type: 1
+  Scope: 1
+  Image: 
+  Logo: 
   UnlockStatus: 3

@@ -26,9 +26,9 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        EnemyDie(dt);
         EnemyContact(dt);
         EnemyMove(dt);
+        EnemyDamage(dt);
     }
 
     void EnemyMove(float dt)
@@ -40,7 +40,7 @@ public class EnemyControllerService : MonoBehaviour, ITickable
             var enemy = enemies[i];
 
             // Chegou na Área de Ataque ao Navio
-            if (enemy.State == EnemyHelper.EnemyState.Moving)
+            if (enemy.State == EnemyHelper.EnemyState.Moving || enemy.State == EnemyHelper.EnemyState.Dying)
             {
                 if (enemy.Distance - enemy.Range > enemy.Speed * dt)
                 {
@@ -52,7 +52,10 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
                 if (enemy.Distance <= enemy.Range)
                 {
-                    enemy.State = EnemyHelper.EnemyState.Arrival;
+                    if (enemy.State != EnemyHelper.EnemyState.Dying)
+                    {
+                        enemy.State = EnemyHelper.EnemyState.Arrival;
+                    }
                 }
             }
         }
@@ -75,29 +78,70 @@ public class EnemyControllerService : MonoBehaviour, ITickable
         }
     }
 
-    void EnemyDie(float dt)
+    void EnemyDamage(float dt)
     {
-        var enemies = Expedition.ActiveEnemies;
+        var enemies = GameState.ExpeditionState.ActiveEnemies;
 
         for (int i = enemies.Count - 1; i >= 0; i--)
         {
             var enemy = enemies[i];
 
-            if (enemy.CurrentLife <= 0)
+            enemy.Cooldown -= dt;
+
+            if (enemy.State == EnemyHelper.EnemyState.Cooldown && enemy.Cooldown <= 0)
             {
-                KillEnemy(enemy);
-                enemies.RemoveAt(i);
+                enemy.State = EnemyHelper.EnemyState.Damaging;
+            }
+
+            if (enemy.State == EnemyHelper.EnemyState.Damaging)
+            {
+                double AbsoluteArmor = GameState.ExpeditionState.Ship.CurrentArmor;
+                double RelativeArmor = GameState.ExpeditionState.Ship.CurrentResistence;
+
+                double RealDamage = (enemy.Damage - (enemy.Damage * RelativeArmor)) - AbsoluteArmor;
+
+                Debug.Log($"Dano no Navio: {RealDamage} -> {enemy.Damage} - {RelativeArmor}% - {AbsoluteArmor}");
+
+                GameState.ExpeditionState.Ship.CurrentLife -= RealDamage;
+
+                GameState.ExpeditionState.DamageTaken = true;
+
+                enemy.Cooldown = 1.0 / enemy.AttackSpeed;
+
+                enemy.State = EnemyHelper.EnemyState.Cooldown;
+
+                ExpeditionEvents.OnShipAtributeChange?.Invoke();
             }
         }
     }
 
-    void KillEnemy(EnemyInstance enemy)
+    void CheckEnemyLife(EnemyInstance enemy)
     {
+        var enemies = Expedition.ActiveEnemies;
+
         if (enemy.State == EnemyHelper.EnemyState.Dead)
             return;
 
-        enemy.State = EnemyHelper.EnemyState.Dead;
+        if (enemy.State == EnemyHelper.EnemyState.Dying || enemy.CurrentLife <= 0)
+        {
+            Debug.Log($"Projétil Atingiu {enemy.Name}. Matando.");
+            enemy.State = EnemyHelper.EnemyState.Dead;
+            ExpeditionEvents.OnEnemyDeath?.Invoke(enemy);
+            enemies.Remove(enemy);
+        }
+        else
+        {
+            Debug.Log($"Faltam {enemy.CurrentLife}");
+        }
+    }
 
-        ExpeditionEvents.OnEnemyDeath?.Invoke(enemy);
+    void OnEnable()
+    {
+        ExpeditionEvents.OnProjectileHit += CheckEnemyLife;
+    }
+
+    void OnDisable()
+    {
+        ExpeditionEvents.OnProjectileHit -= CheckEnemyLife;
     }
 }

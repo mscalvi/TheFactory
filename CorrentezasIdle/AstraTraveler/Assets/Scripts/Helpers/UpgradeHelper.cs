@@ -15,7 +15,7 @@ public class UpgradeHelper
         None,
         Ship,
         Crew,
-        Room,
+        Itens,
     }
 
     public enum UpgradeBuilding
@@ -45,17 +45,20 @@ public class UpgradeHelper
         MissionsOptions,
         MissionsCancel,
         ShipMaxLife,
-        ShipAbsoluteArmor,
+        ShipArmor,
+        ShipResistence,
+        ShipRepair,
         ClickTarget,
         ClickRarity,
         ClickMax,
         WeaponDamage,
+        WeaponAtackSpeed,
         ExperienceGain,
         ExperienceChance,
         ExperienceIncome,
         MarcosGain,
         MarcosChance,
-        MarclosIncome,
+        MarcosIncome,
     }
 
     public enum TargetType 

@@ -28,7 +28,14 @@ public class WeaponInstance
     public double BaseCriticalDamage;
 
     public string Special;
+
     public WeaponHelper.AmmoType AmmoType;
+    public AmmoInstance Ammo;
+    public double ProjectileSpeed;
+
+    public WeaponHelper.WeaponTarget TargetType;
+    public EnemyInstance CurrentTarget;
+    public double Cooldown;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
 
@@ -58,6 +65,12 @@ public class WeaponInstance
 
         Special = model.Special;
         AmmoType = model.AmmoType;
+        Ammo = model.Ammo;
+        ProjectileSpeed = model.ProjectileSpeed;
+
+        TargetType = WeaponHelper.WeaponTarget.Closest;
+        CurrentTarget = null;
+        Cooldown = 0;
 
         UnlockStatus = model.UnlockStatus;
     }

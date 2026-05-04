@@ -82,6 +82,13 @@ public class UpgradeTemporaryService : MonoBehaviour
 
     private void ApplyBaseStats()
     {
+        var Ship = GameState.ExpeditionState.Ship;
+
+        Ship.MaxLife = Ship.BaseLife;
+        Ship.MaxArmor = Ship.BaseArmor;
+        Ship.MaxResistence = Ship.BaseResistence;
+        Ship.MaxRepairPerTripulation = Ship.BaseRepairPerTripulation;
+
         foreach (var weapon in DataState.weapons)
         {
             weapon.Value.ActualDamage = weapon.Value.BaseDamage;
@@ -96,20 +103,159 @@ public class UpgradeTemporaryService : MonoBehaviour
     {
         upgrade.ActualValue = upgrade.StartValue;
 
-        switch (upgrade.TargetType) 
-        { 
+        switch (upgrade.TargetType)
+        {
+            case UpgradeHelper.TargetType.Ship:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.ShipMaxLife:
+                        ShipMaxLifeModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ShipArmor:
+                        ShipArmorModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ShipResistence:
+                        ShipResistenceModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ShipRepair:
+                        ShipRepairModifier(upgrade);
+                        break;
+                }
+                break;
             case UpgradeHelper.TargetType.Weapon:
                 switch (upgrade.EffectType)
                 {
                     case UpgradeHelper.EffectType.WeaponDamage:
                         WeaponDamageModifier(upgrade);
                         break;
+                    case UpgradeHelper.EffectType.WeaponAtackSpeed:
+                        WeaponAtkSpeedModifier(upgrade);
+                        break;
                 }
                 break;
+            case UpgradeHelper.TargetType.Meta:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.ExperienceGain:
+                        ExperienceKillModifier(upgrade);
+                        break;
+                }
+                break;
+
         }
     }
 
     // Modificadores Ship
+    private void ShipMaxLifeModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+        double actualLife = ship.CurrentLife;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            ship.MaxLife *= upgrade.ActualValue;
+            ship.CurrentLife = actualLife + (ship.MaxLife * upgrade.UpgradeValue);
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            ship.MaxLife += upgrade.ActualValue;
+            ship.CurrentLife = actualLife + upgrade.UpgradeValue;
+        }
+
+        if (ship.CurrentLife > ship.MaxLife)
+        {
+            ship.CurrentLife = ship.MaxLife;
+        }
+    }
+    private void ShipArmorModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            ship.MaxArmor *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            ship.MaxArmor += upgrade.ActualValue;
+        }
+
+        ship.CurrentArmor = ship.MaxArmor;
+    }
+    private void ShipResistenceModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            ship.MaxResistence *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            ship.MaxResistence += upgrade.ActualValue;
+        }
+
+        ship.CurrentResistence = ship.MaxResistence;
+    }
+    private void ShipRepairModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            ship.MaxRepairPerTripulation *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            ship.MaxRepairPerTripulation += upgrade.ActualValue;
+        }
+
+        ship.CurrentRepairPerTripulation = ship.MaxRepairPerTripulation;
+    }
 
     // Modificadores Weapons
     private void WeaponDamageModifier(UpgradeInstance upgrade)
@@ -134,6 +280,54 @@ public class UpgradeTemporaryService : MonoBehaviour
             }
 
             weapon.ActualDamage += upgrade.ActualValue;
+        }
+    }
+    private void WeaponAtkSpeedModifier(UpgradeInstance upgrade)
+    {
+        DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            weapon.ActualAttackSpeed *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            weapon.ActualAttackSpeed += upgrade.ActualValue;
+        }
+    }
+
+    // Modificadores Meta
+    private void ExperienceKillModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            GameState.ExpeditionState.ExperienceKillBonus *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            GameState.ExpeditionState.ExperienceKillBonus += upgrade.ActualValue;
         }
     }
 

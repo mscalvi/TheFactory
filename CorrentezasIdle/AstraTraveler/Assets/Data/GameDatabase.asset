@@ -14,15 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ships:
   - {fileID: 11400000, guid: b3fefa50996da144d8f747f928f92e96, type: 2}
-  weapons: []
-  ammos: []
-  tripulation: []
-  enemies: []
-  destinations: []
+  weapons:
+  - {fileID: 11400000, guid: feab01c77eb5a8b40b8663abec2e0cb8, type: 2}
+  ammos:
+  - {fileID: 11400000, guid: c64ef2df1c3fcf84097c386307dd65f4, type: 2}
+  tripulation:
+  - {fileID: 11400000, guid: ae9a960b70176f442af15f92333041d5, type: 2}
+  enemies:
+  - {fileID: 11400000, guid: 7a12713d66d5e2a448af0b0c2794dd8b, type: 2}
+  - {fileID: 11400000, guid: 14a87b453d7d7ab469a6a19c7ec361bf, type: 2}
   paths: []
-  currency: []
+  currency:
+  - {fileID: 11400000, guid: 2beb39628b2135a4ebe139c89b246c0f, type: 2}
+  - {fileID: 11400000, guid: 2f6d4727acdb57e4495f1bf42339a9fc, type: 2}
   ingredients: []
-  upgrade: []
+  upgrades:
+  - {fileID: 11400000, guid: 383591b6413b0d040960262b44677e93, type: 2}
+  - {fileID: 11400000, guid: bd087a161a8d3bf48aef339cb9190781, type: 2}
+  - {fileID: 11400000, guid: 731f62c790fcb774db248b34da820a93, type: 2}
+  - {fileID: 11400000, guid: 019e71ed81eed41408dfc41075299bb2, type: 2}
+  - {fileID: 11400000, guid: ccb44e82cbd50144ea98d10554f58eb8, type: 2}
+  - {fileID: 11400000, guid: bcdd526f5597bcd4cbe8c9128189e61c, type: 2}
+  - {fileID: 11400000, guid: e348ea1d9b2221e46985629859d82b5c, type: 2}
   buildings: []
   events: []
   missions: []

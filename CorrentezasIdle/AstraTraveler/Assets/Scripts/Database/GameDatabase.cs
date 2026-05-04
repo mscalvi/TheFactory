@@ -12,13 +12,12 @@ public class GameDatabase : ScriptableObject
 
     public EnemyModel[] enemies;
 
-    public DestinationModel[] destinations;
     public PathModel[] paths;
 
     public CurrencyModel[] currency;
     public IngredientModel[] ingredients;
 
-    public UpgradeModel[] upgrade;
+    public UpgradeModel[] upgrades;
 
     public BuildingModel[] buildings;
 

@@ -16,8 +16,8 @@ public class EnemyProgressService : MonoBehaviour
     {
         int days = Expedition.DayCounter - 1;
 
-        enemy.Life = Calculate(enemy.Life, enemy.LifeGrowth, days);
-        enemy.CurrentLife = enemy.Life;
+        enemy.StartLife = Calculate(enemy.StartLife, enemy.LifeGrowth, days);
+        enemy.CurrentLife = enemy.StartLife;
 
         enemy.LifeRegen = Calculate(enemy.LifeRegen, enemy.LifeRegenGrowth, days);
         enemy.Speed = Calculate(enemy.Speed, enemy.SpeedGrowth, days);

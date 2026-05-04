@@ -177,13 +177,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         Dictionary<string, EnemyInstance> validEnemies = new();
 
         foreach (var enemy in DataState.enemies)
-        {
-            if (enemy.Value.BossEnemy)
-                continue;
-
-            if ((enemy.Value.PathType & Expedition.ActualPath.PathType) == 0)
-                continue;
-
+        {            
             if (Expedition.IsDay && enemy.Value.DayEnemy)
                 validEnemies.Add(enemy.Key, enemy.Value);
             else if (!Expedition.IsDay && !enemy.Value.DayEnemy)

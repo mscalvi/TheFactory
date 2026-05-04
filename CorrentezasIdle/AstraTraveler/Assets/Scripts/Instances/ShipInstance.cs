@@ -12,36 +12,38 @@ public class ShipInstance
     public string Description;
 
     public int Size;
-    public int MaxUnnamedTripulation;
-    public int MaxNamedTripulation;
-    public int MaxTotalTripulation;
-    public int ActualUnnamedTripulation;
-    public int ActualNamedTripulation;
-    public int ActualTotalTripulation;
+    public int MaxTripulation;
 
     // Model Base
     public double StartLife;
     public double StartSpeed;
     public double StartArmor;
+    public double StartResistence;
     public double StartRepairPerTripulation;
 
     // Permanent Increase
     public double BaseLife;
     public double BaseSpeed;
     public double BaseArmor;
+    public double BaseResistence;
     public double BaseRepairPerTripulation;
 
     // Expedition Increase
     public double MaxLife;
     public double MaxSpeed;
     public double MaxArmor;
+    public double MaxResistence;
     public double MaxRepairPerTripulation;
 
     // Actual Value
     public double CurrentLife;
     public double CurrentSpeed;
     public double CurrentArmor;
+    public double CurrentResistence;
     public double CurrentRepairPerTripulation;
+
+    public List<WeaponSlot> WeaponSlots;
+    public List<WeaponInstance> Weapons;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
 
@@ -52,12 +54,7 @@ public class ShipInstance
         Description = model.Description;
 
         Size = model.Size;
-        MaxUnnamedTripulation = model.UnnamedTripulation;
-        MaxNamedTripulation = model.NamedTripulation;
-        MaxTotalTripulation = model.UnnamedTripulation + model.NamedTripulation;
-        ActualUnnamedTripulation = 0;
-        ActualNamedTripulation = 0;
-        ActualTotalTripulation = 0;
+        MaxTripulation = model.Tripulation;
 
         StartLife = model.Life;
         BaseLife = model.Life;
@@ -68,6 +65,11 @@ public class ShipInstance
         BaseSpeed = model.Speed;
         MaxSpeed = model.Speed;
         CurrentSpeed = model.Speed;
+
+        StartResistence = model.Resistence;
+        BaseResistence = model.Resistence;
+        MaxResistence = model.Resistence;
+        CurrentResistence = model.Resistence;
 
         StartRepairPerTripulation = 0;
         BaseRepairPerTripulation = 0;

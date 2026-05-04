@@ -41,6 +41,8 @@ public class CurrencyService : MonoBehaviour
         currencies[type].Amount = (int)currencies[type].Amount;
 
         GameEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
+
+        //Debug.Log($"{currencies[type].Type}: {currencies[type].Amount}");
     }
 
     public bool Spend(CurrencyType type, double amount)
@@ -62,7 +64,8 @@ public class CurrencyService : MonoBehaviour
 
     void EnemyDeathReward(EnemyInstance enemy)
     {
-        Add(CurrencyHelper.CurrencyType.Experience, enemy.Experience);
+        var total = enemy.Experience * GameState.ExpeditionState.ExperienceKillBonus;
+        Add(CurrencyHelper.CurrencyType.Experience, total);
     }
 
     void DayFinishReward()
