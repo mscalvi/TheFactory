@@ -22,7 +22,7 @@ public class UpgradeTemporaryService : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Adicionando {upgrade.Id}");
+        Debug.Log($"Adicionando {upgrade.Name}");
 
         var upgrades = DataState.upgrades;
 
@@ -97,6 +97,8 @@ public class UpgradeTemporaryService : MonoBehaviour
             weapon.Value.ActualPrecision = weapon.Value.BasePrecision;
             weapon.Value.ActualCriticalDamage = weapon.Value.BaseCriticalDamage;
         }
+
+        GameState.ExpeditionState.ActualExperienceKillBonus = GameState.ExpeditionState.BaseExperienceKillBonus;
     }
 
     private void ApplyUpgrade(UpgradeInstance upgrade)
@@ -317,7 +319,7 @@ public class UpgradeTemporaryService : MonoBehaviour
                 upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
             }
 
-            GameState.ExpeditionState.ExperienceKillBonus *= upgrade.ActualValue;
+            GameState.ExpeditionState.ActualExperienceKillBonus *= upgrade.ActualValue;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
@@ -327,7 +329,7 @@ public class UpgradeTemporaryService : MonoBehaviour
                 upgrade.ActualValue += upgrade.UpgradeValue;
             }
 
-            GameState.ExpeditionState.ExperienceKillBonus += upgrade.ActualValue;
+            GameState.ExpeditionState.ActualExperienceKillBonus += upgrade.ActualValue;
         }
     }
 

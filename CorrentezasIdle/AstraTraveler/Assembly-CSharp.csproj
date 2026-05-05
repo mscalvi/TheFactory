@@ -91,6 +91,7 @@
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyProgressService.cs" />
     <Compile Include="Assets\Scripts\Helpers\UiHelper.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\EventTriggerService.cs" />
+    <Compile Include="Assets\Scripts\Models\ProjectileModel.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\PurchaseService.cs" />
     <Compile Include="Assets\Scripts\States\GameState.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyControlService.cs" />
     <Compile Include="Assets\Scripts\Views\EnemyView.cs" />
     <Compile Include="Assets\Scripts\Models\DestinationModel.cs" />
+    <Compile Include="Assets\Scripts\Instances\ProjectileInstance.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
     <Compile Include="Assets\Scripts\Models\MissionSlotModel.cs" />
     <Compile Include="Assets\Scripts\States\UnlockState.cs" />

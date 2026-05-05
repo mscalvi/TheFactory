@@ -6,6 +6,20 @@ public class ExpeditionState
 {
     // Valores Base
     public int StartDay = 1;
+
+    public double StartSpawnChance = 1;
+    public int StartTicksPerSpawn = 15;
+    public double StartSpawnBudget = 5;
+    public double StartSpawnBudgetGrowth = 1.05;
+    public double StartBossThreshold = 200;
+    public double StartDayReward = 1;
+    public double StartNightReward = 1;
+    public int StartMaxMarkedEnemies = 1;
+    public int StartMaxMarkedLoot = 1;
+    public double StartNextLootChance = 0;
+    public double StartNextLootDecay = 0;
+    public double StartExperienceKillBonus = 1;
+
     public double BaseSpawnChance = 1;
     public int BaseTicksPerSpawn = 15;
     public double BaseSpawnBudget = 5;
@@ -17,6 +31,7 @@ public class ExpeditionState
     public int BaseMaxMarkedLoot = 1;
     public double BaseNextLootChance = 0;
     public double BaseNextLootDecay = 0;
+    public double BaseExperienceKillBonus = 1;
 
     // Main
     public GameHelper.ExpeditionStatus ExpeditionStatus;
@@ -41,10 +56,9 @@ public class ExpeditionState
     public double ActualSpawnBudgetGrowth = 1.05;
     public double ActualBossThreshold = 200;
     public List<EnemyInstance> ActiveEnemies = new();
-    public List<ProjectileView> ActiveProjectiles = new();
 
     // Currency
-    public double ExperienceKillBonus = 1;
+    public double ActualExperienceKillBonus = 1;
     public double ActualDayReward = 1;
     public double ActualNightReward = 1;
 

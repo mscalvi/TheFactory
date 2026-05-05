@@ -9,14 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd3fb238145ae41409cacd89d22b1ac6, type: 3}
-  m_Name: a001
+  m_Script: {fileID: 11500000, guid: 2b47b459a7d211c419ac21af3105d21d, type: 3}
+  m_Name: r001
   m_EditorClassIdentifier: 
-  Id: a001
-  Name: Small Stone
-  Description: Pedregulho
+  Id: r001
+  Name: Small Rock
   Type: 1
-  Damage: 1
-  Special: 
-  Projectile: {fileID: 11400000, guid: 2004a0be7d0ff4f4da42ba0406b58ecc, type: 2}
-  UnlockStatus: 3
+  HitRadius: 1
+  Sprite: {fileID: 0}

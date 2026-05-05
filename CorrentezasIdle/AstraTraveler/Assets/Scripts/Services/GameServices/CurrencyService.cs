@@ -38,11 +38,9 @@ public class CurrencyService : MonoBehaviour
 
         currencies[type].Amount = Get(type) + amount;
 
-        currencies[type].Amount = (int)currencies[type].Amount;
-
         GameEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
 
-        //Debug.Log($"{currencies[type].Type}: {currencies[type].Amount}");
+        Debug.Log($"Total Atual {currencies[type].Amount} de {type}");
     }
 
     public bool Spend(CurrencyType type, double amount)
@@ -55,28 +53,35 @@ public class CurrencyService : MonoBehaviour
 
         currencies[type].Amount = current - amount;
 
-        currencies[type].Amount = (int)currencies[type].Amount;
-
         GameEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
+
+        Debug.Log($"Gasto de {amount} de {type} Computado");
+
+        Debug.Log($"Total Atual: {currencies[type].Amount} de {type}");
 
         return true;
     }
 
     void EnemyDeathReward(EnemyInstance enemy)
     {
-        var total = enemy.Experience * GameState.ExpeditionState.ExperienceKillBonus;
+        var total = enemy.Experience * GameState.ExpeditionState.ActualExperienceKillBonus;
+
+        Debug.Log($"Adicionando: {total} Experience - Inimigo Morreu");
         Add(CurrencyHelper.CurrencyType.Experience, total);
     }
 
     void DayFinishReward()
     {
         double reward = GameState.ExpeditionState.ActualDayReward;
+
+        Debug.Log($"Adicionando: {reward} Marcos - Fim do Dia");
         Add(CurrencyHelper.CurrencyType.Marcos, reward);
     }
 
     void NightFinishReward()
     {
         double reward = GameState.ExpeditionState.ActualNightReward;
+        Debug.Log($"Adicionando: {reward} Experience - Fim da Noite");
         Add(CurrencyHelper.CurrencyType.Experience, reward);
     }
 

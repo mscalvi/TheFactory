@@ -174,8 +174,6 @@ public class WeaponsService : MonoBehaviour, ITickable
 
     private void ShipDamage(WeaponInstance weapon, EnemyInstance target)
     {
-        Debug.Log($"Tiro do Navio: {target.Name} com {target.CurrentLife} de Vida. {target.State}.");
-
         double damage = weapon.ActualDamage + weapon.Ammo.Damage;
 
         if (target.MarkedEnemy)
@@ -189,7 +187,5 @@ public class WeaponsService : MonoBehaviour, ITickable
         {
             target.State = EnemyHelper.EnemyState.Dying;
         }
-
-        Debug.Log($"Dano do Navio: x{damage} -> {target.Name} com {target.CurrentLife} de Vida. {target.State}.");
     }
 }

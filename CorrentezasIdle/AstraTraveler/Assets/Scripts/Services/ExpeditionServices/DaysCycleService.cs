@@ -37,23 +37,16 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
             ExpeditionState.IsDay = !ExpeditionState.IsDay;
 
-            if (ExpeditionState.IsDay) 
+            if (ExpeditionState.IsDay)
             {
+                Debug.Log($"Dia Nasceu!");
                 ExpeditionState.DayCounter++;
                 ExpeditionEvents.OnNightFinish?.Invoke();
             } else
             {
+                Debug.Log($"Virou Noite!");
                 ExpeditionEvents.OnDayFinish?.Invoke();
             }
         }
-    }
-
-    public void ForcedEndExpedition()
-    {
-        ExpeditionState.ExpeditionStatus = ExpeditionStatus.Finished;
-
-        GameState.CompanyState.CompanyCurrency[CurrencyHelper.CurrencyType.Experience].Amount = 0;
-
-        ExpeditionEvents.OnShipDeath?.Invoke(true);
     }
 }

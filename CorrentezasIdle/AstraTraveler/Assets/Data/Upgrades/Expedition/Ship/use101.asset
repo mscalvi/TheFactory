@@ -16,13 +16,13 @@ MonoBehaviour:
   Name: "Experi\xEAncia por Abate "
   Description: "Aumenta a Experi\xEAncia por Abate em "
   UpgradeType: 1
-  EffectType: 9
+  EffectType: 15
   Scope: 0
   ExpeditionMenu: 2
   Building: 0
   UpgradeValue: 0.1
   StartValue: 1
-  TargetType: 2
+  TargetType: 1
   TargetId: 
   UnlockId: 
   MaxBuy: 0

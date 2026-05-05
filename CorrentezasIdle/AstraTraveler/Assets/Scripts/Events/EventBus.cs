@@ -13,7 +13,7 @@ public static class ExpeditionEvents
 
     // Ship Events
     public static Action<WeaponInstance, EnemyInstance> OnShoot;
-    public static Action<EnemyInstance> OnProjectileHit;
+    public static Action<ProjectileInstance, EnemyInstance> OnProjectileHit;
     public static Action OnShipAtributeChange;
 
     // Expedition Status Events

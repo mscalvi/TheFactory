@@ -18,6 +18,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: feab01c77eb5a8b40b8663abec2e0cb8, type: 2}
   ammos:
   - {fileID: 11400000, guid: c64ef2df1c3fcf84097c386307dd65f4, type: 2}
+  projectiles:
+  - {fileID: 11400000, guid: 2004a0be7d0ff4f4da42ba0406b58ecc, type: 2}
   tripulation:
   - {fileID: 11400000, guid: ae9a960b70176f442af15f92333041d5, type: 2}
   enemies:

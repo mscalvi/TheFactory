@@ -14,6 +14,8 @@ public class AmmoInstance
     public double Damage;
     public string Special;
 
+    public ProjectileModel Projectile;
+
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public AmmoInstance(AmmoModel model)
@@ -24,6 +26,8 @@ public class AmmoInstance
 
         Damage = model.Damage;
         Special = model.Special;
+
+        Projectile = model.Projectile;
 
         UnlockStatus = model.UnlockStatus;
     }

@@ -102,20 +102,21 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
                 Debug.Log($"Dano no Navio: {RealDamage} -> {enemy.Damage} - {RelativeArmor}% - {AbsoluteArmor}");
 
-                GameState.ExpeditionState.Ship.CurrentLife -= RealDamage;
-
-                GameState.ExpeditionState.DamageTaken = true;
+                if (RealDamage > 0)
+                {
+                    GameState.ExpeditionState.Ship.CurrentLife -= RealDamage;
+                    GameState.ExpeditionState.DamageTaken = true;
+                    ExpeditionEvents.OnShipAtributeChange?.Invoke();
+                }
 
                 enemy.Cooldown = 1.0 / enemy.AttackSpeed;
 
                 enemy.State = EnemyHelper.EnemyState.Cooldown;
-
-                ExpeditionEvents.OnShipAtributeChange?.Invoke();
             }
         }
     }
 
-    void CheckEnemyLife(EnemyInstance enemy)
+    void CheckEnemyLife(ProjectileInstance projectile, EnemyInstance enemy)
     {
         var enemies = Expedition.ActiveEnemies;
 
@@ -124,14 +125,9 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
         if (enemy.State == EnemyHelper.EnemyState.Dying || enemy.CurrentLife <= 0)
         {
-            Debug.Log($"Projétil Atingiu {enemy.Name}. Matando.");
             enemy.State = EnemyHelper.EnemyState.Dead;
             ExpeditionEvents.OnEnemyDeath?.Invoke(enemy);
             enemies.Remove(enemy);
-        }
-        else
-        {
-            Debug.Log($"Faltam {enemy.CurrentLife}");
         }
     }
 

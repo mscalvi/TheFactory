@@ -23,29 +23,8 @@ public class ProjectileView : MonoBehaviour
         enemy = enemyInstance;
     }
 
-    void Update()
+    public void SetPosition(Vector3 pos)
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-
-        Vector3 enemyPos = GetEnemyWorldPosition(enemy);
-
-        if (Vector3.Distance(transform.position, enemyPos) <= hitRadius)
-        {
-            ExpeditionEvents.OnProjectileHit?.Invoke(enemy);
-
-            Destroy(this.gameObject);
-            return;
-        }
-    }
-
-    Vector3 GetEnemyWorldPosition(EnemyInstance enemy)
-    {
-        float radius = UiHelper.ToWorld(enemy.Distance);
-        float angleRad = (float)(enemy.Angle * Mathf.Deg2Rad);
-
-        float x = Mathf.Sin(angleRad) * radius;
-        float y = -Mathf.Cos(angleRad) * radius;
-
-        return ship.position + new Vector3(x, y, 0);
-    }
+        transform.position = pos;
+    }    
 }

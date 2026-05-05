@@ -14,5 +14,7 @@ public class AmmoModel : ScriptableObject
     public double Damage;
     public string Special;
 
+    public ProjectileModel Projectile;
+
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

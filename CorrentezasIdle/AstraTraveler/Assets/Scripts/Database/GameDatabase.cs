@@ -7,6 +7,7 @@ public class GameDatabase : ScriptableObject
 
     public WeaponModel[] weapons;
     public AmmoModel[] ammos;
+    public ProjectileModel[] projectiles;
 
     public TripulationModel[] tripulation;
 

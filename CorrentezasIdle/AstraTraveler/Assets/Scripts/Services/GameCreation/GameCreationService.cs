@@ -36,6 +36,7 @@ public class GameCreationService : MonoBehaviour
         var tripulation = new Dictionary<string, TripulationInstance>();
         var weapons = new Dictionary<string, WeaponInstance>();
         var ammos = new Dictionary<string, AmmoInstance>();
+        var projectiles = new Dictionary<string, ProjectileInstance>();
         var enemies = new Dictionary<string, EnemyInstance>();        
         var paths = new Dictionary<string, PathInstance>();
         var currencies = new Dictionary<string, CurrencyInstance>();
@@ -67,6 +68,12 @@ public class GameCreationService : MonoBehaviour
         {
             var instance = new AmmoInstance(ammo);
             ammos.Add(ammo.Id, instance);
+        }
+
+        foreach (var projectile in DataBase.projectiles)
+        {
+            var instance = new ProjectileInstance(projectile);
+            projectiles.Add(projectile.Id, instance);
         }
 
         foreach (var enemy in DataBase.enemies)
@@ -121,6 +128,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.tripulations = tripulation;
         GameState.DataState.weapons = weapons;
         GameState.DataState.ammos = ammos;
+        GameState.DataState.projectiles = projectiles;
         GameState.DataState.enemies = enemies;
         GameState.DataState.paths = paths;
         GameState.DataState.currencies = currencies;
