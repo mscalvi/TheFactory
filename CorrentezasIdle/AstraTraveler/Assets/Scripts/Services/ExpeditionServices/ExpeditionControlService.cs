@@ -77,7 +77,7 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
 
         GameState.CompanyState.CompanyCurrency[CurrencyHelper.CurrencyType.Experience].Amount = 0;
 
-        ExpeditionEvents.OnShipDeath?.Invoke(false);
+        ExpeditionEvents.OnExpeditionEnd?.Invoke();
     }
 
     public void LoadLandingPage()

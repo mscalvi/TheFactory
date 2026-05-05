@@ -281,7 +281,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 130640400}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 478217384}
+        m_TargetAssemblyTypeName: LandingUi, Assembly-CSharp
+        m_MethodName: StudiesButtonFuncion
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &130640400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1265,7 +1277,7 @@ GameObject:
   - component: {fileID: 478217383}
   - component: {fileID: 478217384}
   m_Layer: 0
-  m_Name: UiServices
+  m_Name: Ui
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2526,7 +2538,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 886852704}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 478217384}
+        m_TargetAssemblyTypeName: LandingUi, Assembly-CSharp
+        m_MethodName: UpgradesButtonFuncion
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &886852704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3887,7 +3911,6 @@ MonoBehaviour:
   Opt3Text: {fileID: 697238122}
   Opt4Text: {fileID: 2136090983}
   Title: {fileID: 1938169169}
-  Info: {fileID: 0}
 --- !u!1 &1314718626
 GameObject:
   m_ObjectHideFlags: 0

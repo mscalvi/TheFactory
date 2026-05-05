@@ -37,8 +37,7 @@ public class GameCreationService : MonoBehaviour
         var weapons = new Dictionary<string, WeaponInstance>();
         var ammos = new Dictionary<string, AmmoInstance>();
         var projectiles = new Dictionary<string, ProjectileInstance>();
-        var enemies = new Dictionary<string, EnemyInstance>();        
-        var paths = new Dictionary<string, PathInstance>();
+        var enemies = new Dictionary<string, EnemyInstance>();     
         var currencies = new Dictionary<string, CurrencyInstance>();
         var ingredients = new Dictionary<string, IngredientInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
@@ -80,12 +79,6 @@ public class GameCreationService : MonoBehaviour
         {
             var instance = new EnemyInstance(enemy);
             enemies.Add(enemy.Id, instance);
-        }
-
-        foreach (var path in DataBase.paths)
-        {
-            var instance = new PathInstance(path);
-            paths.Add(path.Id, instance);
         }
 
         foreach (var currency in DataBase.currency)
@@ -130,7 +123,6 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.ammos = ammos;
         GameState.DataState.projectiles = projectiles;
         GameState.DataState.enemies = enemies;
-        GameState.DataState.paths = paths;
         GameState.DataState.currencies = currencies;
         GameState.DataState.ingredients = ingredients;
         GameState.DataState.upgrades = upgrades;

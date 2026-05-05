@@ -45,6 +45,8 @@ public class EnemyModel : ScriptableObject
 
     public EnemyHelper.EnemyType EnemyType;
     public PathHelper.PathType PathType;
+    public PathHelper.PathEnvironment PathEnvironment;
+    public PathHelper.PathModifier PathModifier;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

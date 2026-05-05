@@ -8,9 +8,8 @@ public class WeaponsService : MonoBehaviour, ITickable
     private TickService TickService;
     private GameState GameState;
     private ExpeditionState ExpeditionState;
-    private CombatService CombatService;
 
-    public void Initialize(GameState gameState, TickService Tick, CombatService combatService)
+    public void Initialize(GameState gameState, TickService Tick)
     {
         GameState = gameState;
 
@@ -19,8 +18,6 @@ public class WeaponsService : MonoBehaviour, ITickable
         TickService = Tick;
 
         TickService.Subscribe(this);
-
-        CombatService = combatService;
     }
 
     public void OnTick(float dt)

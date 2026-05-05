@@ -46,6 +46,8 @@ public class EnemyInstance
 
     public EnemyHelper.EnemyType EnemyType;
     public PathHelper.PathType PathType;
+    public PathHelper.PathModifier PathModifier;
+    public PathHelper.PathEnvironment PathEnvironment;
 
     public double Distance;
     public double Angle;
@@ -97,6 +99,8 @@ public class EnemyInstance
 
         EnemyType = model.EnemyType;
         PathType = model.PathType;
+        PathEnvironment = model.PathEnvironment;
+        PathModifier = model.PathModifier;
 
         Distance = model.SpawnDistance;
         Angle = 0;
@@ -149,6 +153,8 @@ public class EnemyInstance
 
         EnemyType = model.EnemyType;
         PathType = model.PathType;
+        PathEnvironment = model.PathEnvironment;
+        PathModifier = model.PathModifier;
 
         Distance = model.SpawnDistance;
         Angle = 0;

@@ -10,6 +10,7 @@ public static class ExpeditionEvents
     public static Action<EnemyInstance> OnEnemyClicked;
     public static Action<EnemyInstance> OnEnemyDeath;
     public static Action<EnemyInstance> OnMarkedEnemyDeath;
+    public static Action NoWaveSpawn;
 
     // Ship Events
     public static Action<WeaponInstance, EnemyInstance> OnShoot;
@@ -20,10 +21,9 @@ public static class ExpeditionEvents
     public static Action OnExpeditionStart;
     public static Action OnExpeditionEnd;
     public static Action OnFinalPopUpClose;
-    public static Action<bool> OnShipDeath;
 
     // Destination Events
-    public static Action<DestinationInstance> OnDestinationArrival;
+    public static Action OnDestinationArrival;
     public static Action OnPathOptionsCalculated;
 
     // Day Cycle Events

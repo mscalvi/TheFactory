@@ -13,6 +13,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     int tickCounter = 0;
     double accumulatedBudget = 0;
+    int spawnTickCounter = 0;
+    Queue<EnemyInstance> spawnQueue = new();
 
     public void Initialize(GameState gameState, TickService Tick, EnemyProgressService progress)
     {
@@ -40,6 +42,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             tickCounter = 0;
             ProcessWave();
         }
+
+        ProcessSpawnQueue();
     }
 
     void ProcessWave()
@@ -51,28 +55,51 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         if (roll < Expedition.ActualSpawnChance)
         {
             accumulatedBudget += waveBudget;
+            ExpeditionEvents.NoWaveSpawn?.Invoke();
             return;
         }
 
         double totalBudget = waveBudget + accumulatedBudget;
         accumulatedBudget = 0;
 
-        SpendBudget(totalBudget);
-
-        CheckSpecialEvent();
+        FillSpawnQueue(totalBudget);
     }
 
-    double GenerateWaveBudget()
+    void ProcessSpawnQueue()
     {
-        double baseBud = Expedition.ActualSpawnBudget;
-        double growth = Expedition.ActualSpawnBudgetGrowth;
+        if (spawnQueue.Count == 0)
+            return;
 
-        double actualBud = baseBud * System.Math.Pow(growth, Expedition.DayCounter);
+        spawnTickCounter++;
 
-        return actualBud;
+        if (spawnTickCounter < GameState.ExpeditionState.ticksBetweenSpawns)
+            return;
+
+        spawnTickCounter = 0;
+
+        var instance = spawnQueue.Dequeue();
+
+        instance.Angle = SpawnAngle(30, 330);
+
+        ProgressService.ApplyProgression(instance);
+
+        Expedition.ActiveEnemies.Add(instance);
+
+        ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
+
+        if (instance.UnlockStatus == UnlockHelper.UnlockStatus.Unknow)
+        {
+            foreach (var enemy in DataState.enemies)
+            {
+                if (enemy.Key == instance.Id)
+                {
+                    EnemyKnow(enemy.Value);
+                }
+            }
+        }
     }
-        
-    void SpendBudget(double budget)
+
+    void FillSpawnQueue(double budget)
     {
         var validEnemies = SpawnChance();
 
@@ -94,6 +121,48 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
                 break;
 
             budget -= cost;
+
+            spawnQueue.Enqueue(new EnemyInstance(chosen));
+        }
+    }
+
+    double GenerateWaveBudget()
+    {
+        double baseBud = Expedition.ActualSpawnBudget;
+        double growth = Expedition.ActualSpawnBudgetGrowth;
+
+        double actualBud = baseBud * (1 + Expedition.DayCounter * growth);
+
+        return actualBud;
+    }
+        
+    void SpendBudget(double budget)
+    {
+        var validEnemies = SpawnChance();
+
+        int maxEnemiesPerWave = 20;
+        int spawned = 0;
+
+        if (validEnemies.Count == 0)
+            return;
+
+        double cheapest = GetCheapestCost(validEnemies);
+
+        while (budget >= cheapest && spawned < maxEnemiesPerWave)
+        {
+            var chosen = ChooseEnemy(validEnemies);
+
+            if (chosen == null)
+                break;
+
+            double cost = chosen.Cost;
+
+            if (budget < cost)
+                break;
+
+            budget -= cost;
+
+            spawned++;
 
             SpawnInstance(chosen);
         }
@@ -206,6 +275,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             return;
 
         enemy.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+
+
+        Debug.Log($"{enemy.Name}: Inimigo Avistado!");
 
         GameEvents.NewEnemySeen?.Invoke(enemy);
     }

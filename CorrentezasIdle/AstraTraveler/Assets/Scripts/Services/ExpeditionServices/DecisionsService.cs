@@ -18,7 +18,7 @@ public class DecisionsService : MonoBehaviour
 
     //[SerializeField] EventPopUp EventPanel;
     [SerializeField] DestinationsPopUp DecisionPanel;
-    //[SerializeField] FinalPopUp FinalPanel;
+    [SerializeField] FinalPopUp FinalPanel;
 
     private Queue<EventInstance> eventQueue = new Queue<EventInstance>();
     private bool isShowingEvent = false;
@@ -64,17 +64,17 @@ public class DecisionsService : MonoBehaviour
     }
 
     // Destination
-    private void DestinationOptions(DestinationInstance destination)
+    private void DestinationOptions()
     {
         TickService.Pause();
     }
 
     // Game Over
-    public void LastDecision(bool victory)
+    public void LastDecision()
     {
         TickService.Pause();
 
-        //FinalPanel.ShowResults(victory, ExpeditionState, LastSelecion);
+        FinalPanel.ShowResults(ExpeditionState, LastSelecion);
     }
 
     private void LastSelecion(bool victory)
@@ -87,14 +87,14 @@ public class DecisionsService : MonoBehaviour
     void OnEnable()
     {
         ExpeditionEvents.OnDestinationArrival += DestinationOptions;
-        ExpeditionEvents.OnShipDeath += LastDecision;
+        ExpeditionEvents.OnExpeditionEnd += LastDecision;
         GameEvents.OnEventTrigger += EventHappen;
     }
 
     void OnDisable()
     {
         ExpeditionEvents.OnDestinationArrival -= DestinationOptions;
-        ExpeditionEvents.OnShipDeath -= LastDecision;
+        ExpeditionEvents.OnExpeditionEnd -= LastDecision;
         GameEvents.OnEventTrigger -= EventHappen;
     }
 }

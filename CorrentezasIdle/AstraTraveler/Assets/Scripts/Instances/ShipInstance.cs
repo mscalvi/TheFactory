@@ -12,6 +12,7 @@ public class ShipInstance
     public string Description;
 
     public int Size;
+    public int ActualTripulation;
     public int MaxTripulation;
 
     // Model Base
@@ -55,6 +56,7 @@ public class ShipInstance
 
         Size = model.Size;
         MaxTripulation = model.Tripulation;
+        ActualTripulation = 0;
 
         StartLife = model.Life;
         BaseLife = model.Life;

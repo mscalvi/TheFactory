@@ -27,6 +27,7 @@ public class UpgradeHelper
         ArmoryRoom,
         LivingRoom,
         TreasureRoom,
+        TrainingRoom,
     }
 
     public enum UpgradeType
@@ -34,6 +35,7 @@ public class UpgradeHelper
         Additive,
         Multiplicative,
         Change,
+        Study,
     }
 
     public enum EffectType

@@ -39,8 +39,6 @@ public class CurrencyService : MonoBehaviour
         currencies[type].Amount = Get(type) + amount;
 
         GameEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
-
-        Debug.Log($"Total Atual {currencies[type].Amount} de {type}");
     }
 
     public bool Spend(CurrencyType type, double amount)
@@ -55,8 +53,6 @@ public class CurrencyService : MonoBehaviour
 
         GameEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
 
-        Debug.Log($"Gasto de {amount} de {type} Computado");
-
         Debug.Log($"Total Atual: {currencies[type].Amount} de {type}");
 
         return true;
@@ -66,7 +62,6 @@ public class CurrencyService : MonoBehaviour
     {
         var total = enemy.Experience * GameState.ExpeditionState.ActualExperienceKillBonus;
 
-        Debug.Log($"Adicionando: {total} Experience - Inimigo Morreu");
         Add(CurrencyHelper.CurrencyType.Experience, total);
     }
 
@@ -85,7 +80,7 @@ public class CurrencyService : MonoBehaviour
         Add(CurrencyHelper.CurrencyType.Experience, reward);
     }
 
-    private void MissionComplete(MissionInstance mission)
+    private void MissionCompleteReward(MissionInstance mission)
     {
         if (mission.MissionStatus == MissionHelper.MissionStatus.Finished)
         {
@@ -118,13 +113,19 @@ public class CurrencyService : MonoBehaviour
         }
     }
 
+    private void EnemyAvailableReward(EnemyInstance enemy)
+    {
+        Add(CurrencyType.Knowledge, enemy.Rarity);
+    }
+
     // Event
     void OnEnable()
     {
         ExpeditionEvents.OnEnemyDeath += EnemyDeathReward;
         ExpeditionEvents.OnDayFinish += DayFinishReward;
         ExpeditionEvents.OnNightFinish += NightFinishReward;
-        GameEvents.OnMissionComplete += MissionComplete;
+        GameEvents.OnMissionComplete += MissionCompleteReward;
+        GameEvents.NewEnemySeen += EnemyAvailableReward;
     }
 
     void OnDisable()
@@ -132,6 +133,7 @@ public class CurrencyService : MonoBehaviour
         ExpeditionEvents.OnEnemyDeath -= EnemyDeathReward;
         ExpeditionEvents.OnDayFinish -= DayFinishReward;
         ExpeditionEvents.OnNightFinish -= NightFinishReward;
-        GameEvents.OnMissionComplete -= MissionComplete;
+        GameEvents.OnMissionComplete -= MissionCompleteReward;
+        GameEvents.NewEnemySeen -= EnemyAvailableReward;
     }
 }

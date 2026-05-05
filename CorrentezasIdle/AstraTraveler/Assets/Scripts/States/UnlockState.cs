@@ -5,19 +5,24 @@ using UnityEngine;
 public class UnlockState
 {
     // Unlock de Mecânicas
-    public bool Crew = false;
-    public bool Company = false;
+    public bool Studies = false;
+    public bool Upgrades = false;
+    public bool Acquisitions = false;
+    public bool Training = false;
     public bool Ship = false;
-    public bool Map = false;
+    public bool Alchemy = false;
 
-    public bool Weapons = false;
+    public bool Bestiary = false;
 
+    public bool Missions = false;
     public bool Click = false;
     public bool Ingredients = false;
-    public bool Bestiary = false;
-    public bool Missions = false;
     public bool Currency = false;
 
-    public bool Locals = false;
 
+    // ?
+    public bool Locals = false;
+    public bool Crew = false;
+    public bool Company = false;
+    public bool Weapons = false;
 }

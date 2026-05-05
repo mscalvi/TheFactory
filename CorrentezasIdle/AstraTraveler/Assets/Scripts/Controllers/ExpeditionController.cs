@@ -14,7 +14,6 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] PathService PathService;
     [SerializeField] DaysCycleService DaysCycleService;
     [SerializeField] DecisionsService DecisionsService;
-    [SerializeField] EventTriggerService EventTriggerService;
 
     // Enemy
     [SerializeField] EnemyProgressService EnemyProgressService;
@@ -25,7 +24,6 @@ public class ExpeditionController : MonoBehaviour
 
     // Ship
     [SerializeField] ProjectileService ProjectileService;
-    [SerializeField] CombatService CombatService;
     [SerializeField] WeaponsService WeaponsService;
 
     private void Awake()
@@ -78,15 +76,11 @@ public class ExpeditionController : MonoBehaviour
 
         BestiaryTrackerService.Initialize(Game);
 
-        CombatService.Initialize(Game, TickService);
-
-        WeaponsService.Initialize(Game, TickService, CombatService);
+        WeaponsService.Initialize(Game, TickService);
 
         ProjectileService.Initialize(Game);
 
         DecisionsService.Initialize(Game, TickService, PathService);
-
-        EventTriggerService.Initialize(Game);
     }
 
     private void Start()

@@ -13,8 +13,6 @@ public class GameDatabase : ScriptableObject
 
     public EnemyModel[] enemies;
 
-    public PathModel[] paths;
-
     public CurrencyModel[] currency;
     public IngredientModel[] ingredients;
 

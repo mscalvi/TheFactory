@@ -33,6 +33,7 @@ public class LandingUi : MonoBehaviour
         MissionsService = missionsService;
 
         BlockButtons();
+        ReleaseButtons();
         MissionSet();
     }
 
@@ -97,6 +98,27 @@ public class LandingUi : MonoBehaviour
     private void BlockButtons()
     {
         BestiaryButton.enabled = false;
+        UpgradesButton.enabled = false;
+    }
+
+    private void ReleaseButtons()
+    {
+        var Unlock = GameState.UnlockState;
+
+        if (Unlock.Company)
+        {
+            UpgradesButton.enabled = true;
+        }
+
+        if (Unlock.Bestiary)
+        {
+            BestiaryButton.enabled = true;
+        }
+
+        if (Unlock.Studies)
+        {
+            StudyButton.enabled = true;
+        }
     }
 
     public void ExpeditionButtonFunction()
@@ -104,8 +126,20 @@ public class LandingUi : MonoBehaviour
         SceneManager.LoadScene("ExpeditionScene");
     }
 
+
     public void BestiaryButtonFunction()
     {
         SceneManager.LoadScene("BestiaryScene");
+    }
+
+
+    public void StudiesButtonFuncion()
+    {
+        SceneManager.LoadScene("StudiesScene");
+    }
+
+    public void UpgradesButtonFuncion()
+    {
+        SceneManager.LoadScene("BuildingsScene");
     }
 }

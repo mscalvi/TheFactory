@@ -52,7 +52,7 @@ public class MissionInstance
         MissionType = model.MissionType;
         MissionStatus = model.MissionStatus;
 
-        UnlockStatus = UnlockHelper.UnlockStatus.Blocked;
+        UnlockStatus = model.UnlockStatus;
         UnlockId = model.UnlockId;
 
         Description = model.Description;
@@ -80,7 +80,7 @@ public class MissionInstance
         MissionType = model.MissionType;
         MissionStatus = model.MissionStatus;
 
-        UnlockStatus = UnlockHelper.UnlockStatus.Available;
+        UnlockStatus = model.UnlockStatus;
         UnlockId = model.UnlockId;
 
         Description = model.Description;

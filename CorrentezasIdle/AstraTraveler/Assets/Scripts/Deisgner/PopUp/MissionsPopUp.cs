@@ -22,7 +22,6 @@ public class MissionsPopUp : MonoBehaviour
     [SerializeField] TextMeshProUGUI Opt3Text;
     [SerializeField] TextMeshProUGUI Opt4Text;
     [SerializeField] TextMeshProUGUI Title;
-    [SerializeField] TextMeshProUGUI Info;
 
     public void ShowMissions(List<MissionInstance> options, Action<MissionInstance> onSelected)
     {
@@ -78,6 +77,5 @@ public class MissionsPopUp : MonoBehaviour
         Opt3Btn.gameObject.SetActive(false);
         Opt4Btn.gameObject.SetActive(false);
         Title.text = null;
-        Info.text = null;
     }
 }

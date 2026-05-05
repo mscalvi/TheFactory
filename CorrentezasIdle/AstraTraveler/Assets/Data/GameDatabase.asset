@@ -25,10 +25,11 @@ MonoBehaviour:
   enemies:
   - {fileID: 11400000, guid: 7a12713d66d5e2a448af0b0c2794dd8b, type: 2}
   - {fileID: 11400000, guid: 14a87b453d7d7ab469a6a19c7ec361bf, type: 2}
-  paths: []
   currency:
   - {fileID: 11400000, guid: 2beb39628b2135a4ebe139c89b246c0f, type: 2}
   - {fileID: 11400000, guid: 2f6d4727acdb57e4495f1bf42339a9fc, type: 2}
+  - {fileID: 11400000, guid: 998b41bd8e319f04cb42323be8abe9db, type: 2}
+  - {fileID: 11400000, guid: 5610e10e3a19a6f4684f440e38003fc9, type: 2}
   ingredients: []
   upgrades:
   - {fileID: 11400000, guid: 383591b6413b0d040960262b44677e93, type: 2}
@@ -38,6 +39,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ccb44e82cbd50144ea98d10554f58eb8, type: 2}
   - {fileID: 11400000, guid: bcdd526f5597bcd4cbe8c9128189e61c, type: 2}
   - {fileID: 11400000, guid: e348ea1d9b2221e46985629859d82b5c, type: 2}
-  buildings: []
+  - {fileID: 11400000, guid: 513417f8c34c24f4ab9bc934d940c4b4, type: 2}
+  - {fileID: 11400000, guid: cdda83349bbd57d4b9cfe5b92e48e184, type: 2}
+  - {fileID: 11400000, guid: 5ff7d6512e2d9b443aea4cbe1d4f9bc5, type: 2}
+  - {fileID: 11400000, guid: dfeba97c6dc15ef4394b080ff243873e, type: 2}
+  buildings:
+  - {fileID: 11400000, guid: e07cdbe7b04c89e4787a1be2f1e93619, type: 2}
+  - {fileID: 11400000, guid: 0c143775c11eae349a3870df8ec2761d, type: 2}
+  - {fileID: 11400000, guid: 655403d300585c848a8e47a1e34ed56b, type: 2}
+  - {fileID: 11400000, guid: c0913e44a4c6e5f4b9c664cd263e001b, type: 2}
+  - {fileID: 11400000, guid: 3aed5d31b281fdf4bbe57319563198c4, type: 2}
+  - {fileID: 11400000, guid: a9ddc653d8b0ab048962b99963b863f4, type: 2}
+  - {fileID: 11400000, guid: fce550b53561e3645bf43fe4c194584e, type: 2}
   events: []
-  missions: []
+  missions:
+  - {fileID: 11400000, guid: c11fc3d49425e034bbe8d2e2267fdf8a, type: 2}
+  - {fileID: 11400000, guid: 7a01be8c3ef59054fac8ed33258489e3, type: 2}
+  - {fileID: 11400000, guid: cf739a9e9964f2e4fa272c8f6b095ec9, type: 2}
+  - {fileID: 11400000, guid: 7bc7047f9bb8af84282a1de173188528, type: 2}

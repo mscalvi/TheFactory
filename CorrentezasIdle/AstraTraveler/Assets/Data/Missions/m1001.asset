@@ -23,5 +23,5 @@ MonoBehaviour:
   MissionRarity: 0
   MissionType: 1
   MissionStatus: 0
-  UnlockId: m000
-  UnlockStatus: 0
+  UnlockId: 
+  UnlockStatus: 2

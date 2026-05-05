@@ -8,6 +8,8 @@ public class CurrencyHelper
     {
         Experience,
         Marcos,
+        Knowledge,
+        Prestige,
     }
 
     public enum CurrencyScope

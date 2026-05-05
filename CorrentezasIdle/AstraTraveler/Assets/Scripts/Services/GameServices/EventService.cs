@@ -35,14 +35,25 @@ public class EventService : MonoBehaviour
         }
     }
 
+    private void ExpeditionEndEvent()
+    {
+        if (GameState.ExpeditionState.DayCounter > 1)
+        {
+            GameState.UnlockState.Company = true;
+            GameState.UnlockState.Studies = true;
+        }
+    }
+
     // Events
     void OnEnable()
     {
+        ExpeditionEvents.OnExpeditionEnd += ExpeditionEndEvent;
         GameEvents.OnEventTrigger += EventHandler;
     }
 
     void OnDisable()
     {
+        ExpeditionEvents.OnExpeditionEnd -= ExpeditionEndEvent;
         GameEvents.OnEventTrigger -= EventHandler;
     }
 }

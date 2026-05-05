@@ -13,8 +13,6 @@ public class DataState
     public Dictionary<string, TripulationInstance> tripulations;
 
     public Dictionary<string, EnemyInstance> enemies;
-
-    public Dictionary<string, PathInstance> paths;
     
     public Dictionary<string, CurrencyInstance> currencies;
     public Dictionary<string, IngredientInstance> ingredients;
