@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public UpgradePermanentService UpgradePermanentService;
     [SerializeField] public UpgradeTemporaryService UpgradeTemporaryService;
     [SerializeField] public EventService EventService;
+    [SerializeField] public AcquisitonsService AcquisitonsService;
 
     bool FirstInitialization = true;
 
@@ -68,6 +69,7 @@ public class GameController : MonoBehaviour
             UpgradeTemporaryService.Initialize(GameState);
             IngredientService.Initialize(GameState);
             EventService.Initialize(GameState, UnlockService);
+            AcquisitonsService.Initialize(GameState);
         } else
         {
             // service de Load

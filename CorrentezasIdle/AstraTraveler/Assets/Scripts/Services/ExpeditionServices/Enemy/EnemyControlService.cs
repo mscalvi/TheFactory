@@ -100,8 +100,6 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
                 double RealDamage = (enemy.Damage - (enemy.Damage * (RelativeArmor / 100))) - AbsoluteArmor;
 
-                Debug.Log($"Dano no Navio: {RealDamage} -> {enemy.Damage} - {RelativeArmor}% - {AbsoluteArmor}");
-
                 if (RealDamage > 0)
                 {
                     GameState.ExpeditionState.Ship.CurrentLife -= RealDamage;

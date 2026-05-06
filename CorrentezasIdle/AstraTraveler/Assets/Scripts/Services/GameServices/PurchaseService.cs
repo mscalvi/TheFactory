@@ -22,7 +22,7 @@ public class PurchaseService : MonoBehaviour
 
     public void BuyUpgrade(UpgradeInstance upgrade)
     {
-        if (!GameState.CompanyState.CompanyCurrency.TryGetValue(upgrade.Currency, out var Currency))
+        if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var Currency))
             return;
 
         if (Currency.Amount >= upgrade.ActualCost)
@@ -39,16 +39,36 @@ public class PurchaseService : MonoBehaviour
         CanBuyCurrency(upgrade.Currency);
     }
 
+    public void BuyAcquisition(AcquisitionInstance upgrade)
+    {
+        if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var Currency))
+            return;
+
+        Debug.Log("Chegamos no Purchase");
+
+        if (Currency.Amount >= upgrade.Cost)
+        {
+            CurrencyService.Spend(upgrade.Currency, upgrade.Cost);
+
+            GameEvents.OnAcquisitionBuy?.Invoke(upgrade);
+        }
+
+        CanBuyCurrency(upgrade.Currency);
+    }
+
     public void CanBuyCurrency(CurrencyHelper.CurrencyType type)
     {
-        if (!GameState.CompanyState.CompanyCurrency.TryGetValue(type, out var Currency))
+        if (!GameState.DataState.currencies.TryGetValue(type, out var Currency))
             return;
 
         bool needAtt = false;
         bool initialState = false;
 
-        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
+        foreach (var upgrade in GameState.DataState.upgrades)
         {
+            if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
             if (upgrade.Value.Currency == type)
             {
                 initialState = upgrade.Value.CanBuy;
@@ -80,10 +100,26 @@ public class PurchaseService : MonoBehaviour
 
     public bool CanBuyUpgrade(UpgradeInstance upgrade)
     {
-        if (!GameState.CompanyState.CompanyCurrency.TryGetValue(upgrade.Currency, out var currency))
+        if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var currency))
             return false;
 
         return currency.Amount >= upgrade.ActualCost;
+    }
+
+    public bool CanBuyAcquisition(AcquisitionInstance upgrade)
+    {
+        if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var currency))
+            return false;
+
+        if (GameState.CompanyState.ActiveAcquisitons.Count >= GameState.CompanyState.MaxAcquisitionsSlots)
+        {
+            if (GameState.CompanyState.AcquisitionsQueue.Count >= GameState.CompanyState.MaxAcquisitonsQueue)
+            {
+                return false;
+            }
+        }
+
+        return currency.Amount >= upgrade.Cost;
     }
 
     private void AtualizePrice(UpgradeInstance upgrade)

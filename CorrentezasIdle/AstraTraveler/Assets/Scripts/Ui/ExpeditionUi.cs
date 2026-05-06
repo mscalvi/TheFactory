@@ -43,6 +43,9 @@ public class ExpeditionUi : MonoBehaviour
         DataState = GameState.DataState;
 
         PurchaseService = purchaseService;
+
+        DaysPastText.text = ExpeditionState.DayCounter.ToString("N0");
+        CycleText.text = "Dia";
     }
 
     void Start()
@@ -101,7 +104,7 @@ public class ExpeditionUi : MonoBehaviour
 
     private void CurrencySet(CurrencyType type)
     {
-        var currencies = GameState.CompanyState.CompanyCurrency;
+        var currencies = GameState.DataState.currencies;
 
         if (!currencies.TryGetValue(type, out var currency))
             return;
@@ -145,7 +148,7 @@ public class ExpeditionUi : MonoBehaviour
 
     private void BuildCurrencies(Transform parent)
     {
-        var currencies = GameState.CompanyState.CompanyCurrency;
+        var currencies = GameState.DataState.currencies;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
@@ -157,6 +160,9 @@ public class ExpeditionUi : MonoBehaviour
         foreach (var pair in currencies)
         {
             var c = pair.Value;
+
+            if (c.Scope != CurrencyScope.Expedition)
+                continue;
 
             ordered.Add(c);
         }

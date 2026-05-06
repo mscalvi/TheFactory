@@ -10,7 +10,8 @@ public class UnlockHelper
         Unknow,     // Não visto ainda
         Blocked,    // Visto, mas indisponível
         Available,  // Visto e disponível
-        Unlocked,   // Completamente conhecido
+        Unlocked,   // Completamente Comprado - Uso Único
         Deleted,    // Dados obsoletos
+        Finished,   // Completamente Comprado
     }
 }

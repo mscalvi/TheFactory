@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Instances\AmmoInstance.cs" />
+    <Compile Include="Assets\Scripts\Ui\AcquisitonsUi.cs" />
     <Compile Include="Assets\Scripts\Controllers\StudiesController.cs" />
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
@@ -75,9 +76,9 @@
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\ProjectileService.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
+    <Compile Include="Assets\Scripts\Ui\StudiesUi.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\DestinationsPopUp.cs" />
     <Compile Include="Assets\Scripts\Helpers\EventHelper.cs" />
-    <Compile Include="Assets\Scripts\Ui\StudiesUi.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\BestiaryTrackerService.cs" />
     <Compile Include="Assets\Scripts\Controllers\LandingController.cs" />
     <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Assets\Scripts\Models\ProjectileModel.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\PurchaseService.cs" />
     <Compile Include="Assets\Scripts\States\GameState.cs" />
+    <Compile Include="Assets\Scripts\Models\AcquisitionModel.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
     <Compile Include="Assets\Scripts\Definitions\MissionDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\DaysCycleService.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
     <Compile Include="Assets\Scripts\Instances\CurrencyInstance.cs" />
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
+    <Compile Include="Assets\Scripts\Services\GameServices\AcquisitonsService.cs" />
     <Compile Include="Assets\Scripts\States\CompanyState.cs" />
     <Compile Include="Assets\Scripts\Models\EventModel.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\CurrencyService.cs" />
@@ -129,6 +132,7 @@
     <Compile Include="Assets\Scripts\Instances\BuildingInstance.cs" />
     <Compile Include="Assets\Scripts\Helpers\TripulationHelper.cs" />
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
+    <Compile Include="Assets\Scripts\Controllers\AcquisitonsController.cs" />
     <Compile Include="Assets\Scripts\Helpers\DestinationHelper.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyViewService.cs" />
     <Compile Include="Assets\Scripts\Instances\ShipInstance.cs" />
@@ -138,6 +142,7 @@
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
     <Compile Include="Assets\Scripts\Models\MissionSlotModel.cs" />
     <Compile Include="Assets\Scripts\States\UnlockState.cs" />
+    <Compile Include="Assets\Scripts\Definitions\AcquisitonDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\Trackers\MissionsTrackerService.cs" />
     <Compile Include="Assets\Scripts\States\MissionsState.cs" />
     <Compile Include="Assets\Scripts\Models\IngredientModel.cs" />
@@ -151,6 +156,7 @@
     <Compile Include="Assets\Scripts\States\ProgressState.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\UpgradeTemporaryService.cs" />
     <Compile Include="Assets\Scripts\Models\ShipModel.cs" />
+    <Compile Include="Assets\Scripts\Instances\AcquisitionInstance.cs" />
     <Compile Include="Assets\Scripts\Instances\MissionInstance.cs" />
     <Compile Include="Assets\Scripts\Events\EventBus.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemySpawnerService.cs" />

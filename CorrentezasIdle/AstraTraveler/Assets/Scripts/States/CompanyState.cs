@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class CompanyState
 {
-    public Dictionary<string, UpgradeInstance> CompanyUpgrades;
+    // Acquisitons
+    public Dictionary<string, AcquisitionInstance> CompanyAcquisitions = new Dictionary<string, AcquisitionInstance>();
 
-    public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> CompanyCurrency;
+    public List<AcquisitionInstance> ActiveAcquisitons = new List<AcquisitionInstance>();
 
-    public Dictionary<IngredientHelper.IngredientType, IngredientInstance> CompanyIngredients;
+    public Queue<AcquisitionInstance> AcquisitionsQueue = new Queue<AcquisitionInstance>();
+
+    public int MaxAcquisitionsSlots = 1;
+    public int MaxAcquisitonsQueue = 0;
+    public float AcquistionTime = 0;
 }

@@ -98,11 +98,8 @@ public class MissionsService : MonoBehaviour
             if (missionTemplate.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
                 Templates.Add(missionTemplate.Value);
-                Debug.Log(missionTemplate.Value.Name + " Adicionada");
             }
         }
-
-        Debug.Log(Templates.Count);
 
         // Trocar para ter pesos por raridade
         var template = Templates[Random.Range(0, Templates.Count)];
@@ -155,8 +152,6 @@ public class MissionsService : MonoBehaviour
 
         foreach (var enemy in GameState.DataState.enemies)
         {
-            Debug.Log($"{enemy.Key} -> {enemy.Value.UnlockStatus}");
-
             if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 validTargets.Add(enemy.Value);

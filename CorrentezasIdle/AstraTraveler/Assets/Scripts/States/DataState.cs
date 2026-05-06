@@ -14,9 +14,11 @@ public class DataState
 
     public Dictionary<string, EnemyInstance> enemies;
     
-    public Dictionary<string, CurrencyInstance> currencies;
-    public Dictionary<string, IngredientInstance> ingredients;
+    public Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance> currencies;
+    public Dictionary<IngredientHelper.IngredientType, IngredientInstance> ingredients;
+
     public Dictionary<string, UpgradeInstance> upgrades;
+    public Dictionary<string, AcquisitionInstance> acquisitions;
 
     public Dictionary<string, BuildingInstance> buildings;
 

@@ -9,7 +9,6 @@ public class UpgradeModel : ScriptableObject
     public string Name;
     public string Description;
 
-
     public UpgradeHelper.UpgradeType UpgradeType;
     public UpgradeHelper.EffectType EffectType;
 

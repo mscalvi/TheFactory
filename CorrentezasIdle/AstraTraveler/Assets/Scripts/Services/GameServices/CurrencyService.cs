@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using static CurrencyHelper;
 
@@ -14,7 +15,7 @@ public class CurrencyService : MonoBehaviour
 
     public double Get(CurrencyType type)
     {
-        var currencies = GameState.CompanyState.CompanyCurrency;
+        var currencies = GameState.DataState.currencies;
 
         var currency = currencies.TryGetValue(type, out var value) ? value.Amount : 0;
 
@@ -25,7 +26,7 @@ public class CurrencyService : MonoBehaviour
 
     public void Add(CurrencyType type, double amount)
     {
-        var currencies = GameState.CompanyState.CompanyCurrency;
+        var currencies = GameState.DataState.currencies;
 
         foreach (var currency in currencies)
         {
@@ -43,7 +44,7 @@ public class CurrencyService : MonoBehaviour
 
     public bool Spend(CurrencyType type, double amount)
     {
-        var currencies = GameState.CompanyState.CompanyCurrency;
+        var currencies = GameState.DataState.currencies;
         double current = Get(type);
 
         if (current < amount)
@@ -52,8 +53,6 @@ public class CurrencyService : MonoBehaviour
         currencies[type].Amount = current - amount;
 
         GameEvents.OnCurrencyChange?.Invoke(type, currencies[type].Scope);
-
-        Debug.Log($"Total Atual: {currencies[type].Amount} de {type}");
 
         return true;
     }
@@ -68,15 +67,12 @@ public class CurrencyService : MonoBehaviour
     void DayFinishReward()
     {
         double reward = GameState.ExpeditionState.ActualDayReward;
-
-        Debug.Log($"Adicionando: {reward} Marcos - Fim do Dia");
         Add(CurrencyHelper.CurrencyType.Marcos, reward);
     }
 
     void NightFinishReward()
     {
         double reward = GameState.ExpeditionState.ActualNightReward;
-        Debug.Log($"Adicionando: {reward} Experience - Fim da Noite");
         Add(CurrencyHelper.CurrencyType.Experience, reward);
     }
 
@@ -118,12 +114,26 @@ public class CurrencyService : MonoBehaviour
         Add(CurrencyType.Knowledge, enemy.Rarity);
     }
 
+    private void DestinationArrivalEvent()
+    {
+        var prestige = GameState.DataState.currencies[CurrencyHelper.CurrencyType.Prestige];
+
+        if (prestige.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+        {
+            prestige.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        }
+
+        Add(CurrencyType.Prestige, GameState.ExpeditionState.ReachedDestinations);
+    }
+
+
     // Event
     void OnEnable()
     {
         ExpeditionEvents.OnEnemyDeath += EnemyDeathReward;
         ExpeditionEvents.OnDayFinish += DayFinishReward;
         ExpeditionEvents.OnNightFinish += NightFinishReward;
+        ExpeditionEvents.OnDestinationArrival += DestinationArrivalEvent;
         GameEvents.OnMissionComplete += MissionCompleteReward;
         GameEvents.NewEnemySeen += EnemyAvailableReward;
     }
@@ -133,6 +143,7 @@ public class CurrencyService : MonoBehaviour
         ExpeditionEvents.OnEnemyDeath -= EnemyDeathReward;
         ExpeditionEvents.OnDayFinish -= DayFinishReward;
         ExpeditionEvents.OnNightFinish -= NightFinishReward;
+        ExpeditionEvents.OnDestinationArrival -= DestinationArrivalEvent;
         GameEvents.OnMissionComplete -= MissionCompleteReward;
         GameEvents.NewEnemySeen -= EnemyAvailableReward;
     }

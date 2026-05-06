@@ -276,9 +276,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         enemy.UnlockStatus = UnlockHelper.UnlockStatus.Available;
 
-
-        Debug.Log($"{enemy.Name}: Inimigo Avistado!");
-
         GameEvents.NewEnemySeen?.Invoke(enemy);
     }
 }

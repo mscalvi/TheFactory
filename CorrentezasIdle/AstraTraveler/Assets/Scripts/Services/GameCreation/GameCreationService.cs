@@ -15,16 +15,10 @@ public class GameCreationService : MonoBehaviour
         GameState = gs;
         DataBase = db;
 
-        GameState.CompanyState.CompanyCurrency = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
-        GameState.CompanyState.CompanyIngredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
-        GameState.CompanyState.CompanyUpgrades = new Dictionary<string, UpgradeInstance>();
-
         CreateDataState(db);
         BuildShips();
-        BuildCurrencies();
         BuildIngredients();
         BuildBuildings();
-        BuildCompanyUpgrades();
         BuildBestiary();
     }
 
@@ -38,9 +32,10 @@ public class GameCreationService : MonoBehaviour
         var ammos = new Dictionary<string, AmmoInstance>();
         var projectiles = new Dictionary<string, ProjectileInstance>();
         var enemies = new Dictionary<string, EnemyInstance>();     
-        var currencies = new Dictionary<string, CurrencyInstance>();
-        var ingredients = new Dictionary<string, IngredientInstance>();
+        var currencies = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
+        var ingredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
+        var acquisitions = new Dictionary<string, AcquisitionInstance>();
         var buildings = new Dictionary<string, BuildingInstance>();
         var events = new Dictionary<string, EventInstance>();
         var missions = new Dictionary<string, MissionInstance>();
@@ -84,19 +79,25 @@ public class GameCreationService : MonoBehaviour
         foreach (var currency in DataBase.currency)
         {
             var instance = new CurrencyInstance(currency);
-            currencies.Add(currency.Id, instance);
+            currencies.Add(currency.Type, instance);
         }
 
         foreach (var ingrediente in DataBase.ingredients)
         {
             var instance = new IngredientInstance(ingrediente);
-            ingredients.Add(ingrediente.Id, instance);
+            ingredients.Add(ingrediente.Type, instance);
         }
 
         foreach (var upgrade in DataBase.upgrades)
         {
             var instance = new UpgradeInstance(upgrade);
             upgrades.Add(upgrade.Id, instance);
+        }
+
+        foreach (var acquisition in DataBase.acquisition)
+        {
+            var instance = new AcquisitionInstance(acquisition);
+            acquisitions.Add(acquisition.Id, instance);
         }
 
         foreach (var building in DataBase.buildings)
@@ -126,6 +127,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.currencies = currencies;
         GameState.DataState.ingredients = ingredients;
         GameState.DataState.upgrades = upgrades;
+        GameState.DataState.acquisitions = acquisitions;
         GameState.DataState.buildings = buildings;
         GameState.DataState.events = events;
         GameState.DataState.missions = missions;
@@ -155,21 +157,8 @@ public class GameCreationService : MonoBehaviour
         }
     }
 
-    private void BuildCurrencies()
-    {
-        foreach (var currency in GameState.DataState.currencies)
-        {
-            GameState.CompanyState.CompanyCurrency.Add(currency.Value.Type, currency.Value);
-        }
-    }
-
     private void BuildIngredients()
     {
-        foreach (var ingredient in GameState.DataState.ingredients)
-        {
-            GameState.CompanyState.CompanyIngredients.Add(ingredient.Value.Type, ingredient.Value);
-        }
-
         GameState.ExpeditionState.IngredientRarityBaseWeights = new Dictionary<IngredientHelper.IngredientRarity, float>()
         {
             { IngredientHelper.IngredientRarity.Common, 100 },
@@ -177,14 +166,6 @@ public class GameCreationService : MonoBehaviour
             { IngredientHelper.IngredientRarity.Rare, 0 },
             { IngredientHelper.IngredientRarity.Legendary, 0 }
         };
-    }
-
-    private void BuildCompanyUpgrades()
-    {
-        foreach (var upgrade in GameState.DataState.upgrades)
-        {
-            GameState.CompanyState.CompanyUpgrades.Add(upgrade.Value.Id, upgrade.Value);
-        }
     }
 
     private void BuildBestiary()

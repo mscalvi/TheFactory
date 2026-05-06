@@ -33,6 +33,10 @@ public static class ExpeditionEvents
 
 public static class GameEvents
 {
+    // Main Events
+    public static Action OnGameSave;
+    public static Action OnGameLoad;
+
     // Mission Events
     public static Action<MissionInstance> OnMissionComplete;
     public static Action<MissionInstance> OnMissionCanceled;
@@ -46,12 +50,14 @@ public static class GameEvents
     public static Action OnBuildingUnlock;
     public static Action OnTripulationUnlock;
     public static Action<string> OnMechanicUnlock;
+    public static Action<AcquisitionInstance> OnAcquisitionFinished;
 
     // Event Events
     public static Action<EventInstance> OnEventTrigger;
 
     // Purchase Events
     public static Action<UpgradeInstance> OnUpgradeBuy;
+    public static Action<AcquisitionInstance> OnAcquisitionBuy;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCanBuyChange;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 

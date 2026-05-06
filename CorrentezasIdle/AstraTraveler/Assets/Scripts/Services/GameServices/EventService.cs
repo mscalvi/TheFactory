@@ -22,7 +22,6 @@ public class EventService : MonoBehaviour
         switch (eventInstance.EventFrequency)
         {
             case EventHelper.EventFrequency.Unique:
-
                 break;
             case EventHelper.EventFrequency.Common:
                 break;
@@ -43,7 +42,6 @@ public class EventService : MonoBehaviour
             GameState.UnlockState.Studies = true;
         }
     }
-
     // Events
     void OnEnable()
     {

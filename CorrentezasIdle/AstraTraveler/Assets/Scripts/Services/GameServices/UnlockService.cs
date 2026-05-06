@@ -24,6 +24,11 @@ public class UnlockService : MonoBehaviour
             }
         }
 
+        if (upgrade.Id.StartsWith("uu"))
+        {
+            StudyUpgrade(upgrade);
+        }
+
         if (upgrade.Id.StartsWith("ub"))
         {
             foreach (var building in DataState.buildings)
@@ -78,5 +83,15 @@ public class UnlockService : MonoBehaviour
         }
 
         GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+    }
+
+    private void StudyUpgrade(UpgradeInstance upgrade)
+    {
+        switch (upgrade.Id)
+        {
+            case "uub001":
+                GameState.UnlockState.Acquisitions = true;
+                break;
+        }
     }
 }

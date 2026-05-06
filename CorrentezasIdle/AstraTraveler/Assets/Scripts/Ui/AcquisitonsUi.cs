@@ -3,26 +3,27 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using static CurrencyHelper;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
 
-public class StudiesUi : MonoBehaviour
+public class AcquisitonsUi : MonoBehaviour
 {
     private GameState GameState;
     private DataState DataState;
 
     private PurchaseService PurchaseService;
 
+    public TMP_Text Slots;
+    public TMP_Text Queue;
+
     [SerializeField] Transform CompanyCurrencyPanel;
     [SerializeField] CompanyCurrencyDefinition CurrencyPrefab;
 
     [SerializeField] GameObject UpgradesPanel;
 
-    [SerializeField] StudyDefinition StudyDefinition;
+    [SerializeField] AcquisitonDefinition AcquisitonDefinition;
 
-    Dictionary<string, StudyDefinition> studyUi = new();
-    Dictionary<CurrencyType, CompanyCurrencyDefinition> companyUI = new();
+    Dictionary<string, AcquisitonDefinition> acquisitonUi = new();
+    Dictionary<CurrencyType, CompanyCurrencyDefinition> currencyUI = new();
 
     public void Initialize(GameState gameState, PurchaseService purchaseService)
     {
@@ -32,6 +33,10 @@ public class StudiesUi : MonoBehaviour
 
         PurchaseService = purchaseService;
 
+        Queue.text = GameState.CompanyState.AcquisitionsQueue.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitonsQueue.ToString("N0");
+
+        Slots.text = GameState.CompanyState.ActiveAcquisitons.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitionsSlots.ToString("N0");
+
         BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
 
         PopulateUpgrades();
@@ -40,7 +45,7 @@ public class StudiesUi : MonoBehaviour
     void PopulateUpgrades()
     {
         ClearContainer();
-        studyUi.Clear();
+        acquisitonUi.Clear();
 
         foreach (var currency in GameState.DataState.currencies)
         {
@@ -50,19 +55,16 @@ public class StudiesUi : MonoBehaviour
             }
         }
 
-        foreach (var upgrade in GameState.DataState.upgrades)
+        foreach (var upgrade in GameState.DataState.acquisitions)
         {
-            if (upgrade.Value.UpgradeType != UpgradeHelper.UpgradeType.Study)
-                continue;
-
             if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
-                var go = Instantiate(StudyDefinition, UpgradesPanel.transform);
-                var ui = go.GetComponent<StudyDefinition>();
+                var go = Instantiate(AcquisitonDefinition, UpgradesPanel.transform);
+                var ui = go.GetComponent<AcquisitonDefinition>();
 
                 ui.Setup(upgrade.Value, PurchaseService);
 
-                studyUi[upgrade.Value.Id] = ui;
+                acquisitonUi[upgrade.Value.Id] = ui;
             }
         }
     }
@@ -76,12 +78,13 @@ public class StudiesUi : MonoBehaviour
 
         if (currency.Scope == CurrencyScope.Company)
         {
-            if (!companyUI.TryGetValue(type, out var ui))
+            if (!currencyUI.TryGetValue(type, out var ui))
                 return;
 
             ui.Setup(currency, DataState);
         }
     }
+
 
     // Helpers
     public void BuildCurrencies(CurrencyScope scope, Transform parent)
@@ -92,7 +95,7 @@ public class StudiesUi : MonoBehaviour
             Destroy(child.gameObject);
 
         if (scope == CurrencyScope.Company)
-            companyUI.Clear();
+            currencyUI.Clear();
 
         var ordered = new List<CurrencyInstance>();
 
@@ -115,7 +118,7 @@ public class StudiesUi : MonoBehaviour
             var ui = obj.GetComponent<CompanyCurrencyDefinition>();
             ui.Setup(currency, DataState);
 
-            companyUI[currency.Type] = ui;
+            currencyUI[currency.Type] = ui;
         }
     }
 
@@ -123,8 +126,11 @@ public class StudiesUi : MonoBehaviour
     {
         CurrencySet(type);
 
-        foreach (var upgrade in GameState.DataState.upgrades)
+        foreach (var upgrade in GameState.DataState.acquisitions)
         {
+            if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
             if (upgrade.Value.Currency == type)
             {
                 RefreshUpgradeUi(upgrade.Value);
@@ -132,9 +138,9 @@ public class StudiesUi : MonoBehaviour
         }
     }
 
-    void RefreshUpgradeUi(UpgradeInstance upgrade)
+    void RefreshUpgradeUi(AcquisitionInstance upgrade)
     {
-        if (studyUi.TryGetValue(upgrade.Id, out var ui))
+        if (acquisitonUi.TryGetValue(upgrade.Id, out var ui))
         {
             ui.Setup(upgrade, PurchaseService);
         }
@@ -159,13 +165,13 @@ public class StudiesUi : MonoBehaviour
     {
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
-        GameEvents.OnUpgradeBuy += RefreshUpgradeUi;
+        GameEvents.OnAcquisitionFinished += RefreshUpgradeUi;
     }
 
     void OnDisable()
     {
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
-        GameEvents.OnUpgradeBuy -= RefreshUpgradeUi;
+        GameEvents.OnAcquisitionFinished -= RefreshUpgradeUi;
     }
 }

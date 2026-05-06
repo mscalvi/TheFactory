@@ -12,7 +12,7 @@ public class LandingUi : MonoBehaviour
 
     [SerializeField] Button StudyButton;
     [SerializeField] Button UpgradesButton;
-    [SerializeField] Button AquisitionsButton;
+    [SerializeField] Button AcquisitionsButton;
     [SerializeField] Button TrainingButton;
     [SerializeField] Button ShipButton;
     [SerializeField] Button AlchemyButton;
@@ -97,28 +97,27 @@ public class LandingUi : MonoBehaviour
     // Buttons
     private void BlockButtons()
     {
-        BestiaryButton.enabled = false;
-        UpgradesButton.enabled = false;
+        BestiaryButton.interactable = false;
+
+        StudyButton.interactable = false;
+        UpgradesButton.interactable = false;
+        AcquisitionsButton.interactable = false;
+        ShipButton.interactable = false;
+        TrainingButton.interactable = false;
+        AlchemyButton.interactable = false;
     }
 
     private void ReleaseButtons()
     {
         var Unlock = GameState.UnlockState;
 
-        if (Unlock.Company)
-        {
-            UpgradesButton.enabled = true;
-        }
-
-        if (Unlock.Bestiary)
-        {
-            BestiaryButton.enabled = true;
-        }
-
-        if (Unlock.Studies)
-        {
-            StudyButton.enabled = true;
-        }
+        StudyButton.interactable = Unlock.Studies;
+        UpgradesButton.interactable = Unlock.Company;
+        AcquisitionsButton.interactable = Unlock.Acquisitions;
+        ShipButton.interactable = Unlock.Ship;
+        TrainingButton.interactable = Unlock.Training;
+        AlchemyButton.interactable = Unlock.Alchemy;
+        BestiaryButton.interactable = Unlock.Bestiary;
     }
 
     public void ExpeditionButtonFunction()
@@ -137,9 +136,24 @@ public class LandingUi : MonoBehaviour
     {
         SceneManager.LoadScene("StudiesScene");
     }
-
     public void UpgradesButtonFuncion()
     {
         SceneManager.LoadScene("BuildingsScene");
+    }
+    public void AcquisitionButtonFuncion()
+    {
+        SceneManager.LoadScene("AcquisitionsScene");
+    }
+    public void ShipButtonFuncion()
+    {
+        SceneManager.LoadScene("ShipScene");
+    }
+    public void TrainingButtonFuncion()
+    {
+        SceneManager.LoadScene("TrainingScene");
+    }
+    public void AlchemyButtonFuncion()
+    {
+        SceneManager.LoadScene("AlchemyScene");
     }
 }

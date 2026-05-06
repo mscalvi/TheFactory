@@ -75,7 +75,7 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
     {
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.GameOver;
 
-        GameState.CompanyState.CompanyCurrency[CurrencyHelper.CurrencyType.Experience].Amount = 0;
+        GameState.DataState.currencies[CurrencyHelper.CurrencyType.Experience].Amount = 0;
 
         ExpeditionEvents.OnExpeditionEnd?.Invoke();
     }

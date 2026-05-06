@@ -39,12 +39,16 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
             if (ExpeditionState.IsDay)
             {
-                Debug.Log($"Dia Nasceu!");
                 ExpeditionState.DayCounter++;
                 ExpeditionEvents.OnNightFinish?.Invoke();
+
+                if (ExpeditionState.DayCounter >= ExpeditionState.NextDestination)
+                {
+                    ExpeditionState.ReachedDestinations++;
+                    ExpeditionEvents.OnDestinationArrival?.Invoke();
+                }
             } else
             {
-                Debug.Log($"Virou Noite!");
                 ExpeditionEvents.OnDayFinish?.Invoke();
             }
         }

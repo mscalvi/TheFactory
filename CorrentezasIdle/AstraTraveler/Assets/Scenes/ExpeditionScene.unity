@@ -1614,7 +1614,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000019073486, y: 0.00002543481}
+  m_AnchoredPosition: {x: -0.000019073486, y: 0.0006831953}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &525673656
@@ -4900,7 +4900,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1193086832}
-  - component: {fileID: 1193086834}
   - component: {fileID: 1193086833}
   - component: {fileID: 1193086835}
   m_Layer: 0
@@ -4940,18 +4939,6 @@ MonoBehaviour:
   ProjectilePrefab: {fileID: 8183879959470611209, guid: 660449f917cc4d44a8fc3751d6866a57, type: 3}
   Container: {fileID: 1195618672}
   Ship: {fileID: 583734790}
---- !u!114 &1193086834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1193086831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d81d95ee832461348a159fb98af07e92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1193086835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6378,7 +6365,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1324866098}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99965966
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

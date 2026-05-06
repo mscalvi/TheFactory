@@ -17,6 +17,7 @@ public class ExpeditionState
     public int StartDay = 1;
     public int NextDestination = 0;
     public int ActualDestination = 0;
+    public int ReachedDestinations = 0;
     public PathHelper.PathTagSet LastPath = new PathHelper.PathTagSet();
     public PathHelper.PathTagSet ActualPath = new PathHelper.PathTagSet();
 

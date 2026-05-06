@@ -115,7 +115,7 @@ public class BuildingUi : MonoBehaviour
 
     public void CurrencySet(CurrencyType type)
     {
-        var currencies = GameState.CompanyState.CompanyCurrency;
+        var currencies = GameState.DataState.currencies;
 
         if (!currencies.TryGetValue(type, out var currency))
             return;
@@ -132,7 +132,7 @@ public class BuildingUi : MonoBehaviour
     // Helpers
     public void BuildCurrencies(CurrencyScope scope, Transform parent)
     {
-        var currencies = GameState.CompanyState.CompanyCurrency;
+        var currencies = GameState.DataState.currencies;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
@@ -169,7 +169,7 @@ public class BuildingUi : MonoBehaviour
     {
         CurrencySet(type);
 
-        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
+        foreach (var upgrade in GameState.DataState.upgrades)
         {
             if (upgrade.Value.Currency == type)
             {

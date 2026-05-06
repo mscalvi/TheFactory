@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
   m_Name: uub001
   m_EditorClassIdentifier: 
-  Id: 'uub001 '
+  Id: uub001
   Name: "Estudar a Contru\xE7\xE3o de Edif\xEDcios "
   Description: "Libera a aquisi\xE7\xE3o de novas salas e edif\xEDcios para a Companhia,
-    no menu de Melhorias "
+    constru\xEDdas no Menu Aquisi\xE7\xF5es"
   UpgradeType: 3
   EffectType: 1
   Scope: 1

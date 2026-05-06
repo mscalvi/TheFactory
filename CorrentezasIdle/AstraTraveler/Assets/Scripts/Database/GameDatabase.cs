@@ -17,6 +17,7 @@ public class GameDatabase : ScriptableObject
     public IngredientModel[] ingredients;
 
     public UpgradeModel[] upgrades;
+    public AcquisitionModel[] acquisition;
 
     public BuildingModel[] buildings;
 

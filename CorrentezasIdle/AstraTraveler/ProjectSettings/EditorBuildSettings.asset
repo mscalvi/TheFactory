@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/StudiesScene.unity
     guid: 1dd1fa401222a45408ea3f67d7f45b15
+  - enabled: 1
+    path: Assets/Scenes/AcquisitionsScene.unity
+    guid: 4ed2df3631374df4f91d2e41efea6637
   m_configObjects: {}

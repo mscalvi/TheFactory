@@ -24,7 +24,7 @@ public class UpgradePermanentService : MonoBehaviour
             return;
         }
 
-        var upgrades = GameState.CompanyState.CompanyUpgrades;
+        var upgrades = GameState.DataState.upgrades;
 
         if (!upgrades.TryGetValue(upgrade.Id, out var instance))
         {
@@ -34,7 +34,7 @@ public class UpgradePermanentService : MonoBehaviour
 
         if (instance.ActualBuy >= instance.MaxBuy && instance.MaxBuy > 0)
         {
-            instance.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+            instance.UnlockStatus = UnlockHelper.UnlockStatus.Finished;
         }
 
         if(instance.EffectType != UpgradeHelper.EffectType.Unlock)
@@ -50,7 +50,7 @@ public class UpgradePermanentService : MonoBehaviour
     {
         ApplyBaseStats();
 
-        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
+        foreach (var upgrade in GameState.DataState.upgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
@@ -58,7 +58,7 @@ public class UpgradePermanentService : MonoBehaviour
             }
         }
 
-        foreach (var upgrade in GameState.CompanyState.CompanyUpgrades)
+        foreach (var upgrade in GameState.DataState.upgrades)
         {
             if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
             {
