@@ -9,6 +9,7 @@ public class WeaponsService : MonoBehaviour, ITickable
     private GameState GameState;
     private ExpeditionState ExpeditionState;
 
+    double maxDamage = 0;
     public void Initialize(GameState gameState, TickService Tick)
     {
         GameState = gameState;
@@ -164,6 +165,7 @@ public class WeaponsService : MonoBehaviour, ITickable
             return;
 
         ExpeditionEvents.OnShoot?.Invoke(weapon, target);
+
         ShipDamage(weapon, target);
 
         weapon.Cooldown = 1 / weapon.ActualAttackSpeed;
@@ -183,6 +185,11 @@ public class WeaponsService : MonoBehaviour, ITickable
         if (target.CurrentLife <= 0)
         {
             target.State = EnemyHelper.EnemyState.Dying;
+        }
+
+        if(maxDamage < damage)
+        {
+            maxDamage = damage;
         }
     }
 }

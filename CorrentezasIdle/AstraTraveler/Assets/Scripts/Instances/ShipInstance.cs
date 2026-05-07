@@ -84,5 +84,8 @@ public class ShipInstance
         CurrentArmor = model.Armor;
 
         UnlockStatus = model.UnlockStatus;
+
+        WeaponSlots = model.WeaponSlots;
+        Weapons = new List<WeaponInstance>();
     }
 }

@@ -44,8 +44,6 @@ public class PurchaseService : MonoBehaviour
         if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var Currency))
             return;
 
-        Debug.Log("Chegamos no Purchase");
-
         if (Currency.Amount >= upgrade.Cost)
         {
             CurrencyService.Spend(upgrade.Currency, upgrade.Cost);

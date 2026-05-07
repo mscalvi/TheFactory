@@ -96,6 +96,7 @@ public class UpgradeTemporaryService : MonoBehaviour
             weapon.Value.ActualAttackSpeed = weapon.Value.BaseAttackSpeed;
             weapon.Value.ActualPrecision = weapon.Value.BasePrecision;
             weapon.Value.ActualCriticalDamage = weapon.Value.BaseCriticalDamage;
+
         }
 
         GameState.ExpeditionState.ActualExperienceKillBonus = GameState.ExpeditionState.BaseExperienceKillBonus;
@@ -337,13 +338,13 @@ public class UpgradeTemporaryService : MonoBehaviour
     void OnEnable()
     {
         GameEvents.OnUpgradeBuy += AddUpgrade;
-        ExpeditionEvents.OnExpeditionStart += ResetExpeditionUpgrades;
+        ExpeditionEvents.OnExpeditionEnd += ResetExpeditionUpgrades;
     }
 
     void OnDisable()
     {
         GameEvents.OnUpgradeBuy -= AddUpgrade;
-        ExpeditionEvents.OnExpeditionStart -= ResetExpeditionUpgrades;
+        ExpeditionEvents.OnExpeditionEnd -= ResetExpeditionUpgrades;
     }
 }
 

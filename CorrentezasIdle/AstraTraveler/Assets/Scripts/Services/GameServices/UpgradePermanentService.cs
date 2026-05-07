@@ -174,7 +174,7 @@ public class UpgradePermanentService : MonoBehaviour
                 upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
             }
 
-            GameState.MissionsState.RewardBonus *= (int)upgrade.ActualValue;
+            GameState.MissionsState.RewardBonus *= upgrade.ActualValue;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
@@ -184,7 +184,7 @@ public class UpgradePermanentService : MonoBehaviour
                 upgrade.ActualValue += upgrade.UpgradeValue;
             }
 
-            GameState.MissionsState.MaxRewardItens += (int)upgrade.ActualValue;
+            GameState.MissionsState.RewardBonus += (int)upgrade.ActualValue;
         }
     }
 
