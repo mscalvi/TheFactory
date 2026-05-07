@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,54 +22,46 @@ public class AcquisitonDefinition : MonoBehaviour
 
     private bool CanBuyUpgrade;
 
-    private AcquisitionInstance upgrade;
+    private AcquisitionInstance Acquisition;
     private PurchaseService PurchaseService;
 
-    public void Setup(AcquisitionInstance upgradeInstance, PurchaseService purchaseService)
+    public void Setup(AcquisitionInstance acq, PurchaseService purchaseService)
     {
-        upgrade = upgradeInstance;
+        Acquisition = acq;
         PurchaseService = purchaseService;
 
-        UpgradeName.text = upgrade.Name;
-        UpgradeDescription.text = upgrade.Description;
-        TotalTime.text = upgrade.TotalTime.ToString("N0");
-        UpgradePrice.text = upgrade.Cost.ToString("N0");
+        UpgradeName.text = Acquisition.Name;
+        UpgradeDescription.text = Acquisition.Description;
+
+        string time = FormatTime(acq.TotalTime);
+        TotalTime.text = time;
+
+        UpgradePrice.text = Acquisition.Cost.ToString("N0");
 
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);
 
-        UpgradeButton.interactable = PurchaseService.CanBuyAcquisition(upgrade);
+        UpgradeButton.interactable = PurchaseService.CanBuyAcquisition(Acquisition);
 
         RefreshState();
     }
 
     void OnBuyClicked()
     {
-        PurchaseService.BuyAcquisition(upgrade);
+        PurchaseService.BuyAcquisition(Acquisition);
 
         RefreshState();
     }
 
-    void Update()
-    {
-        if (upgrade == null) return;
-
-        if (upgrade.IsRunning)
-        {
-            UpdateProgress();
-        }
-    }
-
     void RefreshState()
     {
-        if (upgrade.IsRunning)
+        if (Acquisition.IsRunning)
         {
             BuyContainer.SetActive(false);
             ProgressContainer.SetActive(true);
         }
-        else if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+        else if (Acquisition.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
         {
-            // opcional: esconder tudo ou mostrar "Completo"
             BuyContainer.SetActive(false);
             ProgressContainer.SetActive(false);
         }
@@ -78,24 +71,7 @@ public class AcquisitonDefinition : MonoBehaviour
             ProgressContainer.SetActive(false);
         }
 
-        UpgradeButton.interactable = PurchaseService.CanBuyAcquisition(upgrade);
-    }
-
-    void UpdateProgress()
-    {
-        if (!upgrade.IsRunning) return;
-
-        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-        double total = upgrade.TotalTime;
-        double remaining = upgrade.FinishTimestamp - now;
-        double elapsed = total - remaining;
-
-        float progress = (float)(elapsed / total);
-
-        ProgressBar.value = Mathf.Clamp01(progress);
-
-        ProgressTimeText.text = FormatTime(remaining);
+        UpgradeButton.interactable = PurchaseService.CanBuyAcquisition(Acquisition);
     }
 
     string FormatTime(double seconds)
@@ -109,20 +85,31 @@ public class AcquisitonDefinition : MonoBehaviour
 
         return $"{t.Minutes:D2}:{t.Seconds:D2}";
     }
+
+    void OnChange(AcquisitionInstance acq)
+    {
+        if (acq.Id != Acquisition.Id) return;
+
+        RefreshState();
+    }
+
+    void OnProgress(AcquisitionInstance acq, float progress, double remaining)
+    {
+        if (acq.Id != Acquisition.Id) return;
+
+        ProgressBar.value = progress;
+        ProgressTimeText.text = FormatTime(remaining);
+    }
+
     void OnEnable()
     {
-        GameEvents.OnAcquisitionFinished += OnFinished;
+        GameEvents.OnAcquisitionStarted += OnChange;
+        GameEvents.OnAcquisitionProgress += OnProgress;
     }
 
     void OnDisable()
     {
-        GameEvents.OnAcquisitionFinished -= OnFinished;
-    }
-
-    void OnFinished(AcquisitionInstance acq)
-    {
-        if (acq.Id != upgrade.Id) return;
-
-        RefreshState();
+        GameEvents.OnAcquisitionStarted -= OnChange;
+        GameEvents.OnAcquisitionProgress -= OnProgress;
     }
 }

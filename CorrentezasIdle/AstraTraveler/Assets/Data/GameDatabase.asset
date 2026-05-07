@@ -30,7 +30,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2f6d4727acdb57e4495f1bf42339a9fc, type: 2}
   - {fileID: 11400000, guid: 998b41bd8e319f04cb42323be8abe9db, type: 2}
   - {fileID: 11400000, guid: 5610e10e3a19a6f4684f440e38003fc9, type: 2}
-  ingredients: []
+  ingredients:
+  - {fileID: 11400000, guid: eaf96e050977890409379023ae09d4c1, type: 2}
+  - {fileID: 11400000, guid: 2fecb987cd0deba4e9672d19700e7147, type: 2}
+  - {fileID: 11400000, guid: 838c402b5f389ea409d68ab6180a0b49, type: 2}
   upgrades:
   - {fileID: 11400000, guid: 383591b6413b0d040960262b44677e93, type: 2}
   - {fileID: 11400000, guid: bd087a161a8d3bf48aef339cb9190781, type: 2}

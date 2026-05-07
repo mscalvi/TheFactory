@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using static CurrencyHelper;
 
 public class AcquisitonsUi : MonoBehaviour
@@ -146,6 +147,11 @@ public class AcquisitonsUi : MonoBehaviour
         }
     }
 
+    private void ReloadScreen(AcquisitionInstance acq)
+    {
+        PopulateUpgrades();
+    }
+
     private void ClearContainer()
     {
         foreach (Transform child in UpgradesPanel.transform)
@@ -159,19 +165,22 @@ public class AcquisitonsUi : MonoBehaviour
         SceneManager.LoadScene("LandingScene");
     }
 
-
     // Eventos
     void OnEnable()
     {
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
-        GameEvents.OnAcquisitionFinished += RefreshUpgradeUi;
+        GameEvents.OnAcquisitionBuy += ReloadScreen;
+        GameEvents.OnAcquisitionFinished += ReloadScreen;
+        GameEvents.OnAcquisitionStarted += RefreshUpgradeUi;
     }
 
     void OnDisable()
     {
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
-        GameEvents.OnAcquisitionFinished -= RefreshUpgradeUi;
+        GameEvents.OnAcquisitionBuy -= ReloadScreen;
+        GameEvents.OnAcquisitionFinished -= ReloadScreen;
+        GameEvents.OnAcquisitionStarted -= RefreshUpgradeUi;
     }
 }

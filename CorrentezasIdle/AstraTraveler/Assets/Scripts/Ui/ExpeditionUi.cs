@@ -43,9 +43,6 @@ public class ExpeditionUi : MonoBehaviour
         DataState = GameState.DataState;
 
         PurchaseService = purchaseService;
-
-        DaysPastText.text = ExpeditionState.DayCounter.ToString("N0");
-        CycleText.text = "Dia";
     }
 
     void Start()
@@ -53,6 +50,10 @@ public class ExpeditionUi : MonoBehaviour
         // Inicialização dos Paineis
         HideAllMenus();
         ShipPanel.SetActive(true);
+
+        DaysPastText.text = ExpeditionState.DayCounter.ToString("N0");
+        CycleText.text = "Dia";
+        PathText.text = GameState.ExpeditionState.ActualPath.Type.ToString() + " " + GameState.ExpeditionState.ActualPath.Environment.ToString();
     }
 
     // Troca de Menu de Upgrades
@@ -260,6 +261,11 @@ public class ExpeditionUi : MonoBehaviour
         }
     }
 
+    private void PathChangeSet()
+    {
+        PathText.text = GameState.ExpeditionState.ActualPath.Type.ToString() + " " + GameState.ExpeditionState.ActualPath.Environment.ToString();
+    }
+
     // Eventos
     void OnEnable()
     {
@@ -271,6 +277,8 @@ public class ExpeditionUi : MonoBehaviour
         ExpeditionEvents.OnExpeditionStart += GameStart;
         ExpeditionEvents.OnDayFinish += DayCycleTextSet;
         ExpeditionEvents.OnNightFinish += DayCycleTextSet;
+
+        ExpeditionEvents.OnDestinationArrival += PathChangeSet;
     }
 
     void OnDisable()
@@ -283,6 +291,8 @@ public class ExpeditionUi : MonoBehaviour
         ExpeditionEvents.OnExpeditionStart -= GameStart;
         ExpeditionEvents.OnDayFinish -= DayCycleTextSet;
         ExpeditionEvents.OnNightFinish -= DayCycleTextSet;
+
+        ExpeditionEvents.OnDestinationArrival -= PathChangeSet;
     }
 
     void GameStart()

@@ -50,7 +50,11 @@ public static class GameEvents
     public static Action OnBuildingUnlock;
     public static Action OnTripulationUnlock;
     public static Action<string> OnMechanicUnlock;
+
+    // Acquisition Events
     public static Action<AcquisitionInstance> OnAcquisitionFinished;
+    public static Action<AcquisitionInstance> OnAcquisitionStarted;
+    public static Action<AcquisitionInstance, float, double> OnAcquisitionProgress;
 
     // Event Events
     public static Action<EventInstance> OnEventTrigger;

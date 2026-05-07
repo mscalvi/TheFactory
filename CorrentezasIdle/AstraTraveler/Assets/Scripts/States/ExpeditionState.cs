@@ -43,8 +43,8 @@ public class ExpeditionState
     public double StartNextLootChance = 0;
     public double StartNextLootDecay = 0;
 
-    public int StartMinimalDestinationGap = 10;
-    public int StartMaximalDestinationGap = 15;
+    public int StartMinimalDestinationGap = 5;
+    public int StartMaximalDestinationGap = 10;
     public int StartDestinationGapIncrease = 2;
 
     // Valores Base
@@ -64,14 +64,14 @@ public class ExpeditionState
     public double BaseNextLootChance = 0;
     public double BaseNextLootDecay = 0;
 
-    public int BaseMinimalDestinationGap = 10;
-    public int BaseMaximalDestinationGap = 15;
+    public int BaseMinimalDestinationGap = 5;
+    public int BaseMaximalDestinationGap = 10;
     public int BaseDestinationGapIncrease = 2;
 
 
     // Valores Atuais
-    public int ActualMinimalDestinationGap = 10;
-    public int ActualMaximalDestinationGap = 15;
+    public int ActualMinimalDestinationGap = 5;
+    public int ActualMaximalDestinationGap = 10;
     public int ActualDestinationGapIncrease = 2;
 
     public double ActualSpawnChance = 1;

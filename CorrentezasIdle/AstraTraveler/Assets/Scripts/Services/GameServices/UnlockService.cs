@@ -29,18 +29,6 @@ public class UnlockService : MonoBehaviour
             StudyUpgrade(upgrade);
         }
 
-        if (upgrade.Id.StartsWith("ub"))
-        {
-            foreach (var building in DataState.buildings)
-            {
-                if (building.Value.Id == upgrade.TargetId)
-                {                    
-                    UnlockBuilding(building.Value);
-                    GameEvents.OnBuildingUnlock?.Invoke();
-                }
-            }
-        }
-
         if (upgrade.Id.StartsWith("ut"))
         {
             foreach (var tripulation in DataState.tripulations)
@@ -93,5 +81,39 @@ public class UnlockService : MonoBehaviour
                 GameState.UnlockState.Acquisitions = true;
                 break;
         }
+    }
+
+    private void AcquisitonUpgrade(AcquisitionInstance acq) 
+    {
+        string acqId = acq.Id.Substring(0,2);
+
+        switch (acqId)
+        {
+            case "a1":
+                BuildingAcquisition(acq);
+                break;
+        }
+    }
+
+    private void BuildingAcquisition(AcquisitionInstance acq)
+    {
+        foreach (var building in GameState.DataState.buildings)
+        {
+            if (building.Value.Id == acq.TargetId)
+            {
+                building.Value.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                Debug.Log(building.Value.Name + " -> " + building.Value.UnlockStatus);
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnAcquisitionFinished += AcquisitonUpgrade;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnAcquisitionFinished -= AcquisitonUpgrade;
     }
 }

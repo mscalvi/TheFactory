@@ -36,11 +36,9 @@ public class IngredientService : MonoBehaviour
             }
         }
 
-        var ingredients = GameState.DataState.ingredients;
+        dataIngredients[type].Amount = Get(type) + amount;
 
-        ingredients[type].Amount = Get(type) + amount;
-
-        Debug.Log($"Adicionando {type} > {amount}. Novo total: {ingredients[type].Amount}");
+        Debug.Log($"Adicionando {type} > {amount}. Novo total: {dataIngredients[type].Amount}");
     }
 
     public bool Spend(IngredientHelper.IngredientType type, double amount)

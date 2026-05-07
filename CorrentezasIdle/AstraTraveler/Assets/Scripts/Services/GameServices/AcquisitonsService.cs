@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class AcquisitonsService : MonoBehaviour
 {
@@ -25,6 +26,10 @@ public class AcquisitonsService : MonoBehaviour
             if (now >= acq.FinishTimestamp)
             {
                 toFinish.Add(acq);
+            }
+            else
+            {
+                UpdateProgress(acq);
             }
         }
 
@@ -59,6 +64,20 @@ public class AcquisitonsService : MonoBehaviour
                 Debug.LogError("AcquisitionsService - Sem slots e sem fila!");
             }
         }
+    }
+
+    void UpdateProgress(AcquisitionInstance acq)
+    {
+        if (!acq.IsRunning) return;
+        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        double total = acq.TotalTime;
+        double remaining = acq.FinishTimestamp - now;
+        double elapsed = total - remaining;
+
+        float progress = (float)(elapsed / total);
+
+        GameEvents.OnAcquisitionProgress?.Invoke(acq, progress, remaining);
     }
 
     void Finish(AcquisitionInstance acq)
@@ -116,6 +135,8 @@ public class AcquisitonsService : MonoBehaviour
 
         acq.StartTimestamp = now;
         acq.FinishTimestamp = now + (long)Math.Ceiling(acq.TotalTime);
+
+        GameEvents.OnAcquisitionStarted?.Invoke(acq);
     }
 
     long GetNow()
