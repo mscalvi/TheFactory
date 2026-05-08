@@ -29,18 +29,6 @@ public class UnlockService : MonoBehaviour
             StudyUpgrade(upgrade);
         }
 
-        if (upgrade.Id.StartsWith("ut"))
-        {
-            foreach (var tripulation in DataState.tripulations)
-            {
-                if (tripulation.Value.Id == upgrade.TargetId)
-                {
-                    UnlockTripulation(tripulation.Value);
-                    GameEvents.OnTripulationUnlock?.Invoke();
-                }
-            }
-        }
-
         if(upgrade.ActualBuy >= upgrade.MaxBuy)
         {
             GameState.DataState.upgrades[upgrade.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
@@ -69,6 +57,8 @@ public class UnlockService : MonoBehaviour
                 upgradeData.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
             }
         }
+
+        TripulationUpgrade(tripulationInstance);
 
         GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
     }
@@ -101,9 +91,30 @@ public class UnlockService : MonoBehaviour
         {
             if (building.Value.Id == acq.TargetId)
             {
-                building.Value.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                UnlockBuilding(building.Value);
                 Debug.Log(building.Value.Name + " -> " + building.Value.UnlockStatus);
             }
+        }
+    }
+
+    private void TripulationUpgrade(TripulationInstance tripulation)
+    {
+        switch (tripulation.Type)
+        {
+            case TripulationHelper.Type.Shipbuilder:
+                break;
+            case TripulationHelper.Type.Hunter:
+                break;
+            case TripulationHelper.Type.Merchant:
+                break;
+            case TripulationHelper.Type.Alchemist:
+                break;
+            case TripulationHelper.Type.Fisherman:
+                break;
+            case TripulationHelper.Type.Coach:
+                break;
+            case TripulationHelper.Type.Weaponsmith:
+                break;
         }
     }
 
