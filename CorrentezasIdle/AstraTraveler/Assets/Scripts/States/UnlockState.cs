@@ -16,4 +16,5 @@ public class UnlockState
 
     public bool Click = true;
     public bool Ingredients = false;
+    public bool Recruiting = false;
 }

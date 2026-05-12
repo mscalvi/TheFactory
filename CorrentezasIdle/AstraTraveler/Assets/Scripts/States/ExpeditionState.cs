@@ -68,12 +68,7 @@ public class ExpeditionState
     public int BaseMaximalDestinationGap = 10;
     public int BaseDestinationGapIncrease = 2;
 
-
     // Valores Atuais
-    public int ActualMinimalDestinationGap = 5;
-    public int ActualMaximalDestinationGap = 10;
-    public int ActualDestinationGapIncrease = 2;
-
     public double ActualSpawnChance = 1;
     public int ActualTicksPerSpawn = 10;
     public double ActualSpawnBudget = 3;
@@ -89,4 +84,8 @@ public class ExpeditionState
     public int ActualMaxMarkedLoot = 1;
     public double ActualNextLootChance = 0;
     public double ActualNextLootDecay = 0;
+
+    public int ActualMinimalDestinationGap = 5;
+    public int ActualMaximalDestinationGap = 10;
+    public int ActualDestinationGapIncrease = 2;
 }

@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98c00e8d0a618bd4c976cd1c2c425b6e, type: 3}
-  m_Name: a1002
+  m_Name: a1005
   m_EditorClassIdentifier: 
-  Id: a1002
-  Name: Construir a Ferraria
-  Description: "Constr\xF3i a Ferraria, que permite comprar melhorias para Armas"
+  Id: a1005
+  Name: "Construir Sala de Confraterniza\xE7\xE3o "
+  Description: "Constr\xF3i a Sala de Confraterniza\xE7\xE3o, que permite comprar
+    melhorias para aumentar o tamanho da Tripula\xE7\xE3o e atrair melhores Tripulantes "
   TargetType: 4
-  TargetId: b03
+  TargetId: b04
   UnlockId: 
-  Cost: 10
+  Cost: 500
   Currency: 1
-  Time: 300
-  UnlockStatus: 2
+  Time: 1200
+  UnlockStatus: 0

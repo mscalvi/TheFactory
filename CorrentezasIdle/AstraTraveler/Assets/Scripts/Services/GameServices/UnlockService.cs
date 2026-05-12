@@ -69,6 +69,17 @@ public class UnlockService : MonoBehaviour
         {
             case "uub001":
                 GameState.UnlockState.Acquisitions = true;
+                GameState.UnlockState.Training = true;
+                Debug.Log("Não esquece de arrumar");
+                break;
+            case "uub002":
+                GameState.UnlockState.Alchemy = true;
+                break;
+            case "uub003":
+                GameState.UnlockState.Training = true;
+                break;
+            case "uub004":
+                GameState.UnlockState.Recruiting = true;
                 break;
         }
     }
@@ -95,6 +106,14 @@ public class UnlockService : MonoBehaviour
                 Debug.Log(building.Value.Name + " -> " + building.Value.UnlockStatus);
             }
         }
+
+        foreach (var acquistion in GameState.DataState.acquisitions)
+        {
+            if (acquistion.Value.UnlockId == acq.Id)
+            {
+                acquistion.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
     }
 
     private void TripulationUpgrade(TripulationInstance tripulation)
@@ -102,29 +121,46 @@ public class UnlockService : MonoBehaviour
         switch (tripulation.Type)
         {
             case TripulationHelper.Type.Shipbuilder:
+                GameState.ProgressState.Shipbuilder = true;
                 break;
             case TripulationHelper.Type.Hunter:
+                GameState.ProgressState.Hunter = true;
                 break;
             case TripulationHelper.Type.Merchant:
+                GameState.ProgressState.Merchant = true;
                 break;
             case TripulationHelper.Type.Alchemist:
+                GameState.ProgressState.Alchemist = true;
                 break;
             case TripulationHelper.Type.Fisherman:
+                GameState.ProgressState.Fisherman = true;
                 break;
             case TripulationHelper.Type.Coach:
+                GameState.ProgressState.Coach = true;
                 break;
             case TripulationHelper.Type.Weaponsmith:
+                GameState.ProgressState.Weaponsmith = true;
                 break;
         }
-    }
+
+        foreach (var acquistion in GameState.DataState.acquisitions)
+        {
+            if (acquistion.Value.UnlockType == tripulation.Type)
+            {
+                acquistion.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
+    } 
 
     private void OnEnable()
     {
         GameEvents.OnAcquisitionFinished += AcquisitonUpgrade;
+        GameEvents.OnTripulationPurchase += UnlockTripulation;
     }
 
     private void OnDisable()
     {
         GameEvents.OnAcquisitionFinished -= AcquisitonUpgrade;
+        GameEvents.OnTripulationPurchase -= UnlockTripulation;
     }
 }

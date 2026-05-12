@@ -48,7 +48,7 @@ public static class GameEvents
     // Unlock Events
     public static Action<EnemyInstance> NewEnemySeen;
     public static Action OnBuildingUnlock;
-    public static Action<TripulationInstance> OnTripulationUnlock;
+    public static Action<TripulationInstance> OnTripulationPurchase;
     public static Action<string> OnMechanicUnlock;
 
     // Acquisition Events

@@ -45,12 +45,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 513417f8c34c24f4ab9bc934d940c4b4, type: 2}
   - {fileID: 11400000, guid: cdda83349bbd57d4b9cfe5b92e48e184, type: 2}
   - {fileID: 11400000, guid: 5ff7d6512e2d9b443aea4cbe1d4f9bc5, type: 2}
-  - {fileID: 11400000, guid: dfeba97c6dc15ef4394b080ff243873e, type: 2}
   - {fileID: 11400000, guid: 82a40d25cf950b241b97ae6f902ddb8b, type: 2}
   - {fileID: 11400000, guid: e1c73789520b9724b88350b36b32e7d7, type: 2}
+  - {fileID: 11400000, guid: dfeba97c6dc15ef4394b080ff243873e, type: 2}
+  - {fileID: 11400000, guid: f65cb7e7e3e91cd44bcb9c5400a2a903, type: 2}
+  - {fileID: 11400000, guid: b5fd3bcea4e89ee47931c358d1b785f6, type: 2}
+  - {fileID: 11400000, guid: 83c595d2d03397f4fa9f7fd0c2decb21, type: 2}
   acquisition:
   - {fileID: 11400000, guid: 5fbb357a9e2ccbe42b955d10ee4c5e38, type: 2}
   - {fileID: 11400000, guid: 2110980f36f244440a48f990debbb5ce, type: 2}
+  - {fileID: 11400000, guid: ca4d341c5b2d95c4ba03fa2efcf24af6, type: 2}
+  - {fileID: 11400000, guid: af09a516fd4a2eb41bcafdf6a1585e25, type: 2}
+  - {fileID: 11400000, guid: 9a146765557ca644abbc85ce8808cadb, type: 2}
+  - {fileID: 11400000, guid: 0db8a6e3f44384447b11cd6002e5f134, type: 2}
+  - {fileID: 11400000, guid: 8928b19f19e364643957edebdfd6ef8c, type: 2}
+  - {fileID: 11400000, guid: ab9824a264c92954990b41f321888db2, type: 2}
   buildings:
   - {fileID: 11400000, guid: e07cdbe7b04c89e4787a1be2f1e93619, type: 2}
   - {fileID: 11400000, guid: 0c143775c11eae349a3870df8ec2761d, type: 2}
@@ -59,6 +68,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3aed5d31b281fdf4bbe57319563198c4, type: 2}
   - {fileID: 11400000, guid: a9ddc653d8b0ab048962b99963b863f4, type: 2}
   - {fileID: 11400000, guid: fce550b53561e3645bf43fe4c194584e, type: 2}
+  - {fileID: 11400000, guid: 129c5b236cb637f42982b742f0838c05, type: 2}
   events: []
   missions:
   - {fileID: 11400000, guid: c11fc3d49425e034bbe8d2e2267fdf8a, type: 2}

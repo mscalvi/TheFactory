@@ -150,7 +150,7 @@ public class LandingUi : MonoBehaviour
     }
     public void TrainingButtonFuncion()
     {
-        SceneManager.LoadScene("TrainingScene");
+        SceneManager.LoadScene("TripulationScene");
     }
     public void AlchemyButtonFuncion()
     {

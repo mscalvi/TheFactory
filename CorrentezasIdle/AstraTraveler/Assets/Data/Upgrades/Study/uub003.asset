@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774395c7483d09241ad86eef3b4e1d1d, type: 3}
-  m_Name: use004
+  m_Name: uub003
   m_EditorClassIdentifier: 
-  Id: use004
-  Name: 'Reparos '
-  Description: "Aumenta o Reparo do Navio de acordo com o tamanho da Tripula\xE7\xE3o "
-  UpgradeType: 0
-  EffectType: 9
-  Scope: 0
-  ExpeditionMenu: 1
+  Id: uub003
+  Name: 'Estudar o Treino Corporal '
+  Description: "Libera a Academia, que permite treinar a Tripula\xE7\xE3o "
+  UpgradeType: 3
+  EffectType: 1
+  Scope: 1
+  ExpeditionMenu: 0
   Building: 0
-  UpgradeValue: 1
+  UpgradeValue: 0
   StartValue: 0
-  TargetType: 2
+  TargetType: 1
   TargetId: 
-  UnlockId: 
-  MaxBuy: 0
-  Cost: 8
-  CostGrowth: 1.11
-  Currency: 0
-  UnlockStatus: 2
+  UnlockId: a1007
+  MaxBuy: 1
+  Cost: 10
+  CostGrowth: 0
+  Currency: 2
+  UnlockStatus: 0

@@ -23,7 +23,7 @@ MonoBehaviour:
   Building: 0
   UpgradeValue: 0
   StartValue: 0
-  TargetType: 0
+  TargetType: 1
   TargetId: 
   UnlockId: 
   MaxBuy: 1

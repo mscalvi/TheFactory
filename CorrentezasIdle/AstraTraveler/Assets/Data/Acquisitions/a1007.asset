@@ -10,15 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98c00e8d0a618bd4c976cd1c2c425b6e, type: 3}
-  m_Name: a1002
+  m_Name: a1007
   m_EditorClassIdentifier: 
-  Id: a1002
-  Name: Construir a Ferraria
-  Description: "Constr\xF3i a Ferraria, que permite comprar melhorias para Armas"
-  TargetType: 4
-  TargetId: b03
+  Id: a1007
+  Name: 'Construir a Academia '
+  Description: "Constr\xF3i a Academia, que permite comprar melhorias para os treinamentos
+    oferecidos para a Tripula\xE7\xE3o "
+  TargetType: 1
+  TargetId: b06
   UnlockId: 
-  Cost: 10
+  Cost: 2500
   Currency: 1
-  Time: 300
-  UnlockStatus: 2
+  Time: 3600
+  Type: 7
+  UnlockStatus: 0

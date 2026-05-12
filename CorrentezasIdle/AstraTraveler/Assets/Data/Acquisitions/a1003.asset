@@ -10,15 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98c00e8d0a618bd4c976cd1c2c425b6e, type: 3}
-  m_Name: a1002
+  m_Name: a1003
   m_EditorClassIdentifier: 
-  Id: a1002
-  Name: Construir a Ferraria
-  Description: "Constr\xF3i a Ferraria, que permite comprar melhorias para Armas"
+  Id: a1003
+  Name: "Construir Escrit\xF3rio de Planejamento "
+  Description: "Constr\xF3i o Escrit\xF3rio de Planejamentos, que permite comprar
+    melhorias para ganhar mais Experi\xEAncia "
   TargetType: 4
-  TargetId: b03
+  TargetId: b01
   UnlockId: 
-  Cost: 10
+  Cost: 500
   Currency: 1
-  Time: 300
-  UnlockStatus: 2
+  Time: 1200
+  Type: 3
+  UnlockStatus: 0

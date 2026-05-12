@@ -28,6 +28,7 @@ public class UpgradeHelper
         LivingRoom,
         TreasureRoom,
         TrainingRoom,
+        LaboratoryRoom,
     }
 
     public enum UpgradeType

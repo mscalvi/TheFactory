@@ -41,6 +41,11 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
         Game.ExpeditionState.ActiveEnemies.Clear();
 
         Game.ExpeditionState.DayCounter = Game.ExpeditionState.StartDay;
+        Game.ExpeditionState.NextDestination = 0;
+        Game.ExpeditionState.ActualDestination = 0;
+        Game.ExpeditionState.ReachedDestinations = 0;
+        Game.ExpeditionState.LastPath = new PathHelper.PathTagSet();
+        Game.ExpeditionState.ActualPath = new PathHelper.PathTagSet();
 
         Game.ExpeditionState.ActualSpawnChance = Game.ExpeditionState.BaseSpawnChance;
         Game.ExpeditionState.ActualTicksPerSpawn = Game.ExpeditionState.BaseTicksPerSpawn;

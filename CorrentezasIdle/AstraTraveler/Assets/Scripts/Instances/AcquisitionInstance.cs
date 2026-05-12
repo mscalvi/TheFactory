@@ -26,6 +26,7 @@ public class AcquisitionInstance : MonoBehaviour
     public long StartTimestamp;
     public long FinishTimestamp;
 
+    public TripulationHelper.Type UnlockType;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public AcquisitionInstance(AcquisitionModel model)
@@ -52,6 +53,7 @@ public class AcquisitionInstance : MonoBehaviour
 
         CanBuy = false;
 
+        UnlockType = model.Type;
         UnlockStatus = model.UnlockStatus;
     }
 }

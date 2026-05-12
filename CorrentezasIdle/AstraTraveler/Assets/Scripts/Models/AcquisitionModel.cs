@@ -19,5 +19,6 @@ public class AcquisitionModel : ScriptableObject
 
     public float Time;
 
+    public TripulationHelper.Type Type;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }
