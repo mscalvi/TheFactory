@@ -27,6 +27,14 @@ public class UnlockService : MonoBehaviour
         if (upgrade.Id.StartsWith("uu"))
         {
             StudyUpgrade(upgrade);
+
+            foreach (var acquistion in GameState.DataState.acquisitions.Values)
+            {
+                if (acquistion.UnlockId == upgrade.Id)
+                {
+                    acquistion.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                }
+            }
         }
 
         if(upgrade.ActualBuy >= upgrade.MaxBuy)
@@ -50,6 +58,8 @@ public class UnlockService : MonoBehaviour
 
     public void UnlockTripulation(TripulationInstance tripulationInstance)
     {
+        var ship = GameState.ExpeditionState.Ship;
+
         foreach (var upgradeData in DataState.upgrades)
         {
             if (upgradeData.Value.UnlockId == tripulationInstance.Id)
@@ -58,67 +68,7 @@ public class UnlockService : MonoBehaviour
             }
         }
 
-        TripulationUpgrade(tripulationInstance);
-
-        GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
-    }
-
-    private void StudyUpgrade(UpgradeInstance upgrade)
-    {
-        switch (upgrade.Id)
-        {
-            case "uub001":
-                GameState.UnlockState.Acquisitions = true;
-                GameState.UnlockState.Training = true;
-                Debug.Log("Não esquece de arrumar");
-                break;
-            case "uub002":
-                GameState.UnlockState.Alchemy = true;
-                break;
-            case "uub003":
-                GameState.UnlockState.Training = true;
-                break;
-            case "uub004":
-                GameState.UnlockState.Recruiting = true;
-                break;
-        }
-    }
-
-    private void AcquisitonUpgrade(AcquisitionInstance acq) 
-    {
-        string acqId = acq.Id.Substring(0,2);
-
-        switch (acqId)
-        {
-            case "a1":
-                BuildingAcquisition(acq);
-                break;
-        }
-    }
-
-    private void BuildingAcquisition(AcquisitionInstance acq)
-    {
-        foreach (var building in GameState.DataState.buildings)
-        {
-            if (building.Value.Id == acq.TargetId)
-            {
-                UnlockBuilding(building.Value);
-                Debug.Log(building.Value.Name + " -> " + building.Value.UnlockStatus);
-            }
-        }
-
-        foreach (var acquistion in GameState.DataState.acquisitions)
-        {
-            if (acquistion.Value.UnlockId == acq.Id)
-            {
-                acquistion.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-            }
-        }
-    }
-
-    private void TripulationUpgrade(TripulationInstance tripulation)
-    {
-        switch (tripulation.Type)
+        switch (tripulationInstance.Type)
         {
             case TripulationHelper.Type.Shipbuilder:
                 GameState.ProgressState.Shipbuilder = true;
@@ -145,12 +95,72 @@ public class UnlockService : MonoBehaviour
 
         foreach (var acquistion in GameState.DataState.acquisitions)
         {
-            if (acquistion.Value.UnlockType == tripulation.Type)
+            if (acquistion.Value.UnlockType == tripulationInstance.Type)
             {
                 acquistion.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
             }
         }
-    } 
+
+        ship.ActiveTripulation.Add(tripulationInstance);
+
+        ship.ActiveRecruits.Clear();
+
+        GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+    }
+
+    private void StudyUpgrade(UpgradeInstance upgrade)
+    {
+        switch (upgrade.Id)
+        {
+            case "uub001":
+                GameState.UnlockState.Acquisitions = true;
+                break;
+            case "uub002":
+                GameState.UnlockState.Alchemy = true;
+                break;
+            case "uub003":
+                GameState.UnlockState.Training = true;
+                break;
+            case "uub004":
+                GameState.UnlockState.Recruiting = true;
+                break;
+        }
+    }
+
+    private void AcquisitonUpgrade(AcquisitionInstance acq) 
+    {
+        string acqId = acq.Id.Substring(0,2);
+
+        switch (acqId)
+        {
+            case "a1":
+                foreach (var building in GameState.DataState.buildings)
+                {
+                    if (building.Value.Id == acq.TargetId)
+                    {
+                        UnlockBuilding(building.Value);
+                        Debug.Log(building.Value.Name + " -> " + building.Value.UnlockStatus);
+                    }
+                }
+                break;
+        }
+
+        foreach (var upgrade in GameState.DataState.upgrades.Values)
+        {
+            if (upgrade.UnlockId == acq.Id)
+            {
+                upgrade.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
+
+        foreach (var acquistion in GameState.DataState.acquisitions.Values)
+        {
+            if (acquistion.UnlockId == acq.Id)
+            {
+                acquistion.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
+    }
 
     private void OnEnable()
     {

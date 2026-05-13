@@ -12,6 +12,6 @@ public class EventModel : ScriptableObject
 
     public string Target;
 
-    public EventHelper.EventFrequency EventFrequency;
+    public GameHelper.ItemRarity EventFrequency;
     public EventHelper.EventType EventType;
 }

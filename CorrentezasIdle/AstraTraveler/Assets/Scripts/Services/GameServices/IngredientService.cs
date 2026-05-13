@@ -60,45 +60,45 @@ public class IngredientService : MonoBehaviour
 
         switch (rarity)
         {
-            case IngredientHelper.IngredientRarity.Common:
+            case GameHelper.ItemRarity.Common:
                 return enemy.CommonIngredient;
-            case IngredientHelper.IngredientRarity.Uncommon:
+            case GameHelper.ItemRarity.Uncommon:
                 return enemy.UncommonIngredient;
-            case IngredientHelper.IngredientRarity.Rare:
+            case GameHelper.ItemRarity.Rare:
                 return enemy.RareIngredient;
-            case IngredientHelper.IngredientRarity.Legendary:
+            case GameHelper.ItemRarity.Legendary:
                 return enemy.LegendaryIngredient;
         }
 
         return enemy.CommonIngredient;
     }
 
-    private IngredientHelper.IngredientRarity RollRarity()
+    private GameHelper.ItemRarity RollRarity()
     {
-        var weight = GameState.ExpeditionState.IngredientRarityBaseWeights;
+        var weight = GameState.ExpeditionState.ActualIngredientRarityWeights;
 
-        float common = weight[IngredientHelper.IngredientRarity.Common];
-        float uncommon = weight[IngredientHelper.IngredientRarity.Uncommon];
-        float rare = weight[IngredientHelper.IngredientRarity.Rare];
-        float legendary = weight[IngredientHelper.IngredientRarity.Legendary];
+        float common = weight[GameHelper.ItemRarity.Common];
+        float uncommon = weight[GameHelper.ItemRarity.Uncommon];
+        float rare = weight[GameHelper.ItemRarity.Rare];
+        float legendary = weight[GameHelper.ItemRarity.Legendary];
 
         float total = common + uncommon + rare + legendary;
         float roll = UnityEngine.Random.value * total;
 
         if (roll < common)
-            return IngredientHelper.IngredientRarity.Common;
+            return GameHelper.ItemRarity.Common;
 
         roll -= common;
 
         if (roll < uncommon)
-            return IngredientHelper.IngredientRarity.Uncommon;
+            return GameHelper.ItemRarity.Uncommon;
 
         roll -= uncommon;
 
         if (roll < rare)
-            return IngredientHelper.IngredientRarity.Rare;
+            return GameHelper.ItemRarity.Rare;
 
-        return IngredientHelper.IngredientRarity.Legendary;
+        return GameHelper.ItemRarity.Legendary;
     }
 
     private bool RollChance(int time)

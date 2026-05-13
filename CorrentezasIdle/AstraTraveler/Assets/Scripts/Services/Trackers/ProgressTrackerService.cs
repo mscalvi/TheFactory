@@ -31,7 +31,6 @@ public class ProgressTrackerService : MonoBehaviour
         }
     }
 
-
     // Events
     void OnEnable()
     {

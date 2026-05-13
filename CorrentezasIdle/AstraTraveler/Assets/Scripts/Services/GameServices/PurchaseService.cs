@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static CurrencyHelper;
 
 public class PurchaseService : MonoBehaviour
 {
@@ -54,6 +55,11 @@ public class PurchaseService : MonoBehaviour
         CanBuyCurrency(upgrade.Currency);
     }
 
+    private void BuyTripulation(TripulationInstance tripulation)
+    {
+        CurrencyService.Spend(CurrencyType.Prestige, GameState.ExpeditionState.Ship.ActiveTripulation.Count);
+    }
+
     public void CanBuyCurrency(CurrencyHelper.CurrencyType type)
     {
         if (!GameState.DataState.currencies.TryGetValue(type, out var Currency))
@@ -104,6 +110,17 @@ public class PurchaseService : MonoBehaviour
         return currency.Amount >= upgrade.ActualCost;
     }
 
+    public bool CanBuyRecruit()
+    {
+        if (GameState.DataState.currencies[CurrencyHelper.CurrencyType.Prestige].Amount >= GameState.ExpeditionState.Ship.ActiveTripulation.Count)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
     public bool CanBuyAcquisition(AcquisitionInstance upgrade)
     {
         if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var currency))
@@ -133,11 +150,13 @@ public class PurchaseService : MonoBehaviour
     void OnEnable()
     {
         GameEvents.OnCurrencyChange += CurrencyCheck;
+        GameEvents.OnTripulationPurchase += BuyTripulation;
     }
 
     void OnDisable()
     {
         GameEvents.OnCurrencyChange -= CurrencyCheck;
+        GameEvents.OnTripulationPurchase -= BuyTripulation;
     }
 
     void CurrencyCheck(CurrencyHelper.CurrencyType type, CurrencyHelper.CurrencyScope scope)

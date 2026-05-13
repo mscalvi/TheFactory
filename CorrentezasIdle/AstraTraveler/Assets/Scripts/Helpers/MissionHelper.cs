@@ -21,12 +21,4 @@ public class MissionHelper
         Finished,
         Canceled,
     }
-
-    public enum MissionRarity
-    {
-        Common,
-        Uncommon,
-        Rare,
-        Legendary,
-    }
 }

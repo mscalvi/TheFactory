@@ -13,9 +13,14 @@ public class TripulationUi : MonoBehaviour
     private DataState DataState;
 
     private UnlockService UnlockService;
+    private RecruitmentService RecruitmentService;
+    private PurchaseService PurchaseService;
+    private CurrencyService CurrencyService;
 
     public TMP_Text Name;
     public TMP_Text TripulationName;
+    
+    public Button CancelButton;
 
     [SerializeField] Transform Tripulation;
     [SerializeField] TripulationDefinition TripulationPrefab;
@@ -27,13 +32,22 @@ public class TripulationUi : MonoBehaviour
     [SerializeField] GameObject TrainingPanel;
     [SerializeField] GameObject RecruitPanel;
 
-    public void Initialize(GameState gameState, UnlockService unlockService)
+    public void Initialize(GameState gameState, UnlockService unlockService, RecruitmentService recruitmentService, PurchaseService purchase, CurrencyService currency)
     {
         GameState = gameState;
 
         DataState = GameState.DataState;
 
         UnlockService = unlockService;
+
+        RecruitmentService = recruitmentService;
+
+        PurchaseService = purchase;
+
+        CurrencyService = currency;
+
+        TrainingPanel.SetActive(false);
+        RecruitPanel.SetActive(false);
 
         Populate();
     }
@@ -62,7 +76,7 @@ public class TripulationUi : MonoBehaviour
 
         for (int i = 0; i < remainingSlots; i++)
         {
-            var go = Instantiate(RecruitPrefab, Recruit);
+            var go = Instantiate(TripulationButtonPrefab, Tripulation);
 
             var ui = go.GetComponent<TripulationButtonDefinition>();
 
@@ -85,6 +99,9 @@ public class TripulationUi : MonoBehaviour
 
     public void ShowTraining(TripulationInstance tripulation)
     {
+        if (GameState.UnlockState.Training)
+            return;
+
         TrainingPanel.SetActive(true);
         RecruitPanel.SetActive(false);
 
@@ -93,16 +110,57 @@ public class TripulationUi : MonoBehaviour
 
     public void ShowRecruit()
     {
+        if (GameState.UnlockState.Recruiting)
+            return;
+
         TrainingPanel.SetActive(false);
         RecruitPanel.SetActive(true);
 
         TripulationName.text = "Novo Recruta!";
+
+        RecruitmentService.GenerateRecruitOptions();
+
+        PopulateRecruitOptions();
+    }
+
+    void PopulateRecruitOptions()
+    {
+        foreach (Transform child in Recruit)
+        {
+            Destroy(child.gameObject);
+        }
+
+        var options = GameState.ExpeditionState.Ship.ActiveRecruits;
+
+        foreach (var option in options)
+        {
+            var go = Instantiate(RecruitPrefab, Recruit);
+
+            var ui = go.GetComponent<RecruitDefinition>();
+
+            ui.Setup(option, PurchaseService);
+        }
+    }
+
+    public void Cancel()
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        ship.ActiveRecruits.Clear();
+
+        var prestige = GameState.DataState.currencies[CurrencyType.Prestige];
+
+        double loss = Mathf.CeilToInt((float)(prestige.Amount * 0.5f));
+
+        loss = Mathf.Min((float)loss, (float)prestige.Amount);
+
+        CurrencyService.Spend(CurrencyType.Prestige, loss);
+
+        RecruitPanel.SetActive(false);
     }
 
     public void Return()
     {
         SceneManager.LoadScene("LandingScene");
     }
-
-
 }

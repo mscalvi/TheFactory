@@ -37,7 +37,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     {
         tickCounter++;
 
-        if (tickCounter >= Expedition.ActualTicksPerSpawn)
+        if (tickCounter >= Expedition.ActualSpawnInterval)
         {
             tickCounter = 0;
             ProcessWave();

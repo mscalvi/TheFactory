@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class LandingUi : MonoBehaviour
 {
@@ -44,6 +45,11 @@ public class LandingUi : MonoBehaviour
             return;
 
         var missionsOptions = MissionsService.GenerateMissionOptions(GameState.MissionsState.MaxMissionsOptions);
+
+        if (missionsOptions.Count == 0)
+        {
+            return;
+        }
 
         MissionsPopUp.ShowMissions(missionsOptions, (selected) =>
         {
@@ -115,7 +121,7 @@ public class LandingUi : MonoBehaviour
         UpgradesButton.interactable = Unlock.Company;
         AcquisitionsButton.interactable = Unlock.Acquisitions;
         ShipButton.interactable = Unlock.Ship;
-        TrainingButton.interactable = Unlock.Training;
+        TrainingButton.interactable = Unlock.Training || Unlock.Recruiting;
         AlchemyButton.interactable = Unlock.Alchemy;
         BestiaryButton.interactable = Unlock.Bestiary;
     }

@@ -22,6 +22,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2004a0be7d0ff4f4da42ba0406b58ecc, type: 2}
   tripulation:
   - {fileID: 11400000, guid: ae9a960b70176f442af15f92333041d5, type: 2}
+  - {fileID: 11400000, guid: b4ebfe40b8fcb3849a37eea90c6344da, type: 2}
+  - {fileID: 11400000, guid: d0c7e28d7e19e604caff8d7f015cb359, type: 2}
+  - {fileID: 11400000, guid: 3790d19604ca80645b12dce6a6df26a9, type: 2}
+  - {fileID: 11400000, guid: efa8f16117894104b85f8a26177da4b3, type: 2}
+  - {fileID: 11400000, guid: e866b4e2a1732154b90e6b3caacc81ae, type: 2}
+  - {fileID: 11400000, guid: 6b9e302414b497841bbf33bf610b4326, type: 2}
+  - {fileID: 11400000, guid: 12eb6c0401fd000498d19c8675f86da6, type: 2}
+  - {fileID: 11400000, guid: f3cf6a65daebc5b47aeebd6972b34294, type: 2}
   enemies:
   - {fileID: 11400000, guid: 7a12713d66d5e2a448af0b0c2794dd8b, type: 2}
   - {fileID: 11400000, guid: 14a87b453d7d7ab469a6a19c7ec361bf, type: 2}
@@ -69,6 +77,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a9ddc653d8b0ab048962b99963b863f4, type: 2}
   - {fileID: 11400000, guid: fce550b53561e3645bf43fe4c194584e, type: 2}
   - {fileID: 11400000, guid: 129c5b236cb637f42982b742f0838c05, type: 2}
+  - {fileID: 11400000, guid: f1fbd3edbc2f4754bb841749d73ae034, type: 2}
   events: []
   missions:
   - {fileID: 11400000, guid: c11fc3d49425e034bbe8d2e2267fdf8a, type: 2}

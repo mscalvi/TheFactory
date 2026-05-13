@@ -51,9 +51,9 @@ public class ExpeditionUi : MonoBehaviour
         HideAllMenus();
         ShipPanel.SetActive(true);
 
-        DaysPastText.text = ExpeditionState.DayCounter.ToString("N0");
-        CycleText.text = "Dia";
-        PathText.text = GameState.ExpeditionState.ActualPath.Type.ToString() + " " + GameState.ExpeditionState.ActualPath.Environment.ToString();
+        DayCycleTextSet();
+        PathChangeSet();
+        LifeTextSet();
     }
 
     // Troca de Menu de Upgrades
@@ -96,11 +96,18 @@ public class ExpeditionUi : MonoBehaviour
         {
             CycleText.text = "Noite";
         }
+
+        DaysPastText.text = ExpeditionState.DayCounter.ToString("N0") + " / " + ExpeditionState.NextDestination.ToString("N0");
     }
 
     private void LifeTextSet()
     {
-        CurrentLifeText.text = ExpeditionState.Ship.CurrentLife.ToString("N0") + " / " + ExpeditionState.Ship.MaxLife.ToString("N0");
+        CurrentLifeText.text = ExpeditionState.Ship.ActualLife.ToString("N0") + " / " + ExpeditionState.Ship.MaxLife.ToString("N0");
+    }
+
+    private void PathChangeSet()
+    {
+        PathText.text = GameState.ExpeditionState.ActualPath.Type.ToString() + " " + GameState.ExpeditionState.ActualPath.Environment.ToString();
     }
 
     private void CurrencySet(CurrencyType type)
@@ -140,6 +147,7 @@ public class ExpeditionUi : MonoBehaviour
 
         ui.Setup(upgrade, PurchaseService);
     }
+
 
     // Starter Builders
     private void CurrenciesBuild()
@@ -259,11 +267,6 @@ public class ExpeditionUi : MonoBehaviour
 
             shipUpgradeUI[upgrade.Value.Id] = ui;
         }
-    }
-
-    private void PathChangeSet()
-    {
-        PathText.text = GameState.ExpeditionState.ActualPath.Type.ToString() + " " + GameState.ExpeditionState.ActualPath.Environment.ToString();
     }
 
     // Eventos

@@ -5,9 +5,10 @@ using static GameHelper;
 
 public class ExpeditionControlService : MonoBehaviour, ITickable
 {
-    private TickService TickService;
     private GameState GameState;
     private ExpeditionState ExpeditionState;
+
+    private TickService TickService;
 
     public void Initialize(GameState game, TickService Tick)
     {
@@ -18,9 +19,6 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
         TickService = Tick;
 
         TickService.Subscribe(this);
-
-        LoadExpedition(GameState);
-        LoadShip(GameState);
     }
 
     void OnDestroy()
@@ -30,49 +28,9 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        if (ExpeditionState.Ship.CurrentLife <= 0)
+        if (ExpeditionState.Ship.ActualLife <= 0)
         {
             Death();
-        }
-    }
-
-    void LoadExpedition(GameState Game)
-    {
-        Game.ExpeditionState.ActiveEnemies.Clear();
-
-        Game.ExpeditionState.DayCounter = Game.ExpeditionState.StartDay;
-        Game.ExpeditionState.NextDestination = 0;
-        Game.ExpeditionState.ActualDestination = 0;
-        Game.ExpeditionState.ReachedDestinations = 0;
-        Game.ExpeditionState.LastPath = new PathHelper.PathTagSet();
-        Game.ExpeditionState.ActualPath = new PathHelper.PathTagSet();
-
-        Game.ExpeditionState.ActualSpawnChance = Game.ExpeditionState.BaseSpawnChance;
-        Game.ExpeditionState.ActualTicksPerSpawn = Game.ExpeditionState.BaseTicksPerSpawn;
-        Game.ExpeditionState.ActualSpawnBudget = Game.ExpeditionState.BaseSpawnBudget;
-        Game.ExpeditionState.ActualSpawnBudgetGrowth = Game.ExpeditionState.BaseSpawnBudgetGrowth;
-        Game.ExpeditionState.ActualBossThreshold = Game.ExpeditionState.BaseBossThreshold;
-        Game.ExpeditionState.ActualDayReward = Game.ExpeditionState.BaseDayReward;
-        Game.ExpeditionState.ActualNightReward = Game.ExpeditionState.BaseNightReward;
-        Game.ExpeditionState.ActualMaxMarkedEnemies = Game.ExpeditionState.BaseMaxMarkedEnemies;
-        Game.ExpeditionState.ActualMaxMarkedLoot = Game.ExpeditionState.BaseMaxMarkedLoot;
-        Game.ExpeditionState.ActualNextLootChance = Game.ExpeditionState.BaseNextLootChance;
-        Game.ExpeditionState.ActualNextLootDecay = Game.ExpeditionState.BaseNextLootDecay;
-    }
-
-    void LoadShip(GameState Game)
-    {
-        Game.ExpeditionState.Ship.CurrentArmor = Game.ExpeditionState.Ship.BaseArmor;
-        Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.BaseLife;
-        Game.ExpeditionState.Ship.CurrentSpeed = Game.ExpeditionState.Ship.BaseSpeed;
-
-        foreach (var weapon in Game.ExpeditionState.Ship.Weapons)
-        {
-            weapon.ActualDamage = weapon.BaseDamage;
-            weapon.ActualAttackSpeed = weapon.BaseAttackSpeed;
-            weapon.ActualRange = weapon.BaseRange;
-            weapon.ActualCriticalDamage = weapon.BaseCriticalDamage;
-            weapon.ActualPrecision = weapon.BasePrecision;
         }
     }
 
@@ -87,6 +45,7 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
 
     public void LoadLandingPage()
     {
+        ExpeditionState.ExpeditionStatus = ExpeditionStatus.Finished;
         SceneManager.LoadScene("LandingScene");
     }
 

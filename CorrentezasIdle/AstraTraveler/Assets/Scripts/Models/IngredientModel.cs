@@ -6,7 +6,7 @@ public class IngredientModel : ScriptableObject
 {
     public string Id;
     public IngredientHelper.IngredientType Type;
-    public IngredientHelper.IngredientRarity Rarity;
+    public GameHelper.ItemRarity Rarity;
     public IngredientHelper.IngredientClass Class;
     public string Image;
     public string Logo;

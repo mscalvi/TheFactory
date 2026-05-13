@@ -17,8 +17,9 @@ MonoBehaviour:
   Description: "Constr\xF3i a Ferraria, que permite comprar melhorias para Armas"
   TargetType: 4
   TargetId: b03
-  UnlockId: 
+  UnlockId: uub001
   Cost: 10
   Currency: 1
   Time: 300
-  UnlockStatus: 2
+  Type: 0
+  UnlockStatus: 0

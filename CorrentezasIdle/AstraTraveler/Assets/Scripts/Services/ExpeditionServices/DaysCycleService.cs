@@ -9,7 +9,7 @@ public class DaysCycleService : MonoBehaviour, ITickable
     private GameState GameState;
     private ExpeditionState ExpeditionState;
 
-    int tickCounter = 0;
+    float phaseTimer = 0f;
 
     public void Initialize(GameState gameState, TickService Tick)
     {
@@ -29,11 +29,11 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        tickCounter++;
+        phaseTimer += dt;
 
-        if (tickCounter >= ExpeditionState.BaseTicksPerPhase)
+        if (phaseTimer >= ExpeditionState.PhaseDuration)
         {
-            tickCounter = 0;
+            phaseTimer -= ExpeditionState.PhaseDuration;
 
             ExpeditionState.IsDay = !ExpeditionState.IsDay;
 

@@ -24,9 +24,9 @@ MonoBehaviour:
   StartValue: 0
   TargetType: 1
   TargetId: 
-  UnlockId: 
+  UnlockId: a1001
   MaxBuy: 1
   Cost: 1
   CostGrowth: 0
   Currency: 2
-  UnlockStatus: 2
+  UnlockStatus: 0

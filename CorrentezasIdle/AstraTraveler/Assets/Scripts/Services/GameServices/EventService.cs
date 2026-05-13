@@ -21,27 +21,37 @@ public class EventService : MonoBehaviour
     {
         switch (eventInstance.EventFrequency)
         {
-            case EventHelper.EventFrequency.Unique:
+            case GameHelper.ItemRarity.Unique:
                 break;
-            case EventHelper.EventFrequency.Common:
+            case GameHelper.ItemRarity.Common:
                 break;
-            case EventHelper.EventFrequency.Uncommon:
+            case GameHelper.ItemRarity.Uncommon:
                 break;
-            case EventHelper.EventFrequency.Rare:
+            case GameHelper.ItemRarity.Rare:
                 break;
-            case EventHelper.EventFrequency.Legendary:
+            case GameHelper.ItemRarity.Legendary:
                 break;
         }
     }
 
     private void ExpeditionEndEvent()
     {
-        if (GameState.ExpeditionState.DayCounter > 1)
+        if (GameState.UnlockState.Company)
+        {
+            if (!GameState.UnlockState.Studies)
+            {
+                GameState.UnlockState.Studies = true;
+                GameState.DataState.missions["m1002"].UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                GameState.DataState.missions["m1003"].UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
+
+        if (!GameState.UnlockState.Company)
         {
             GameState.UnlockState.Company = true;
-            GameState.UnlockState.Studies = true;
         }
     }
+
     // Events
     void OnEnable()
     {

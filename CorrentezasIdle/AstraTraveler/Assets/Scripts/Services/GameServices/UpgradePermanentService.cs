@@ -97,6 +97,9 @@ public class UpgradePermanentService : MonoBehaviour
                     case UpgradeHelper.EffectType.WeaponDamage:
                         WeaponDamageModifier(upgrade);
                         break;
+                    case UpgradeHelper.EffectType.WeaponAtackSpeed:
+                        WeaponAtkSpeedModifier(upgrade);
+                        break;
                 }
                 break;
 
@@ -149,6 +152,31 @@ public class UpgradePermanentService : MonoBehaviour
         }
     }
 
+    private void WeaponAtkSpeedModifier(UpgradeInstance upgrade)
+    {
+        DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.ActualValue * upgrade.UpgradeValue;
+            }
+
+            weapon.BaseAttackSpeed *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+
+            weapon.BaseAttackSpeed += upgrade.ActualValue;
+        }
+    }
+
     // Modificadores Missions
     private void MissionsMaxModifier(UpgradeInstance upgrade)
     {
@@ -184,7 +212,7 @@ public class UpgradePermanentService : MonoBehaviour
                 upgrade.ActualValue += upgrade.UpgradeValue;
             }
 
-            GameState.MissionsState.RewardBonus += (int)upgrade.ActualValue;
+            GameState.MissionsState.RewardBonus += upgrade.ActualValue;
         }
     }
 

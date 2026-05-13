@@ -11,14 +11,14 @@ public class RecruitDefinition : MonoBehaviour
     public Button UpgradeButton;
 
     private TripulationInstance tripulation;
-    private UnlockService UnlockService;
+    private PurchaseService PurchaseService;
 
-    public void Setup(TripulationInstance tripulationInstance, UnlockService unlockService)
+    public void Setup(TripulationInstance tripulationInstance, PurchaseService purchaseService)
     {
 
         tripulation = tripulationInstance;
 
-        UnlockService = unlockService;
+        PurchaseService = purchaseService;
 
         Name.text = tripulation.Name;
         Description.text = tripulation.Type.ToString();
@@ -29,6 +29,13 @@ public class RecruitDefinition : MonoBehaviour
 
     void OnBuyClicked()
     {
-        UnlockService.UnlockTripulation(tripulation);
+        if (PurchaseService.CanBuyRecruit())
+        {
+            Debug.Log("Contratando!");
+            GameEvents.OnTripulationPurchase?.Invoke(tripulation);
+        } else
+        {
+            Debug.Log("Te falta prestígio!");
+        }
     }
 }

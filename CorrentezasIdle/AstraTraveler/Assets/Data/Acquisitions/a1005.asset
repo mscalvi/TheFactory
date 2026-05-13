@@ -18,8 +18,9 @@ MonoBehaviour:
     melhorias para aumentar o tamanho da Tripula\xE7\xE3o e atrair melhores Tripulantes "
   TargetType: 4
   TargetId: b04
-  UnlockId: 
+  UnlockId: uub001
   Cost: 500
   Currency: 1
   Time: 1200
+  Type: 0
   UnlockStatus: 0

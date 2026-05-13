@@ -12,6 +12,7 @@ public class GameHelper
         Running,
         GameOver,
         Finished,
+        Loading,
     }
 
     public enum DecisionType
@@ -21,4 +22,14 @@ public class GameHelper
         Local,
         Event,
     }
+
+    public enum ItemRarity
+    {
+        Common,
+        Uncommon,
+        Rare,
+        Legendary,
+        Unique,
+    }
+
 }

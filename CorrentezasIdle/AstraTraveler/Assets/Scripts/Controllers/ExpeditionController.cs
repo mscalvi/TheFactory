@@ -14,6 +14,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] PathService PathService;
     [SerializeField] DaysCycleService DaysCycleService;
     [SerializeField] DecisionsService DecisionsService;
+    [SerializeField] ExpeditionStartService StartService;
 
     // Enemy
     [SerializeField] EnemyProgressService EnemyProgressService;
@@ -25,6 +26,7 @@ public class ExpeditionController : MonoBehaviour
     // Ship
     [SerializeField] ProjectileService ProjectileService;
     [SerializeField] WeaponsService WeaponsService;
+    [SerializeField] RepairService RepairService;
 
     private void Awake()
     {
@@ -36,13 +38,13 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        TickService.Initialize();
+        TickService.Initialize(Game);
 
         var Missions = GameController.Instance.MissionsService;
         var CurrencyService = GameController.Instance.CurrencyService;
         var PurchaseService = GameController.Instance.PurchaseService;
 
-        ExpeditionControlService.Initialize(Game, TickService);
+        PathService.Initialize(Game);
 
         var Expedition = GameController.Instance.GameState.ExpeditionState;
         if (Expedition == null)
@@ -51,7 +53,9 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        Expedition.ExpeditionStatus = ExpeditionStatus.Paused;
+        Expedition.ExpeditionStatus = ExpeditionStatus.Loading;
+
+        StartService.Initialize(Game, PathService);
 
         var Ship = GameController.Instance.GameState.ExpeditionState.Ship;
         if (Ship == null)
@@ -59,6 +63,8 @@ public class ExpeditionController : MonoBehaviour
             Debug.Log("ExpeditionController - ShipState NULL");
             return;
         }
+
+        ExpeditionControlService.Initialize(Game, TickService);
 
         ExpeditionUiService.Initialize(Game, PurchaseService);
 
@@ -72,8 +78,6 @@ public class ExpeditionController : MonoBehaviour
 
         EnemyMarkingService.Initialize(Game);
 
-        PathService.Initialize(Game);
-
         BestiaryTrackerService.Initialize(Game);
 
         WeaponsService.Initialize(Game, TickService);
@@ -81,10 +85,10 @@ public class ExpeditionController : MonoBehaviour
         ProjectileService.Initialize(Game);
 
         DecisionsService.Initialize(Game, TickService, PathService);
-    }
 
-    private void Start()
-    {
+        RepairService.Initialize(Game);
+
         ExpeditionEvents.OnExpeditionStart?.Invoke();
+        Expedition.ExpeditionStatus = ExpeditionStatus.Running;
     }
 }

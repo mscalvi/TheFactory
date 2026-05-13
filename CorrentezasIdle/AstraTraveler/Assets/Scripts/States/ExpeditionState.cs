@@ -9,7 +9,7 @@ public class ExpeditionState
     public ShipInstance Ship;
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 
-    public int BaseTicksPerPhase = 100; // Padrão: 5t = 1s
+    public float PhaseDuration = 15f;
     public int ticksBetweenSpawns = 1;
 
     public bool IsDay { get; set; } = true;
@@ -24,11 +24,12 @@ public class ExpeditionState
     public List<EnemyInstance> ActiveEnemies = new();
     public bool DamageTaken = false;
 
-    public Dictionary<IngredientHelper.IngredientRarity, float> IngredientRarityBaseWeights;
 
     // Valores Start
+    public Dictionary<GameHelper.ItemRarity, float> StartIngredientRarityWeights;
+
     public double StartSpawnChance = 1;
-    public int StartTicksPerSpawn = 10;
+    public float StartSpawnInterval = 10f;
     public double StartSpawnBudget = 3;
     public double StartSpawnBudgetGrowth = 0.69;
     public double StartBossThreshold = 200;
@@ -44,12 +45,13 @@ public class ExpeditionState
     public double StartNextLootDecay = 0;
 
     public int StartMinimalDestinationGap = 5;
-    public int StartMaximalDestinationGap = 10;
+    public int StartMaximalDestinationGap = 7;
     public int StartDestinationGapIncrease = 2;
 
     // Valores Base
+    public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights;
     public double BaseSpawnChance = 1;
-    public int BaseTicksPerSpawn = 10;
+    public float BaseSpawnInterval = 10f;
     public double BaseSpawnBudget = 3;
     public double BaseSpawnBudgetGrowth = 0.69;
     public double BaseBossThreshold = 200;
@@ -65,12 +67,14 @@ public class ExpeditionState
     public double BaseNextLootDecay = 0;
 
     public int BaseMinimalDestinationGap = 5;
-    public int BaseMaximalDestinationGap = 10;
+    public int BaseMaximalDestinationGap = 7;
     public int BaseDestinationGapIncrease = 2;
 
     // Valores Atuais
+    public Dictionary<GameHelper.ItemRarity, float> ActualIngredientRarityWeights;
+
     public double ActualSpawnChance = 1;
-    public int ActualTicksPerSpawn = 10;
+    public float ActualSpawnInterval = 10f;
     public double ActualSpawnBudget = 3;
     public double ActualSpawnBudgetGrowth = 0.69;
     public double ActualBossThreshold = 200;
@@ -86,6 +90,6 @@ public class ExpeditionState
     public double ActualNextLootDecay = 0;
 
     public int ActualMinimalDestinationGap = 5;
-    public int ActualMaximalDestinationGap = 10;
+    public int ActualMaximalDestinationGap = 7;
     public int ActualDestinationGapIncrease = 2;
 }

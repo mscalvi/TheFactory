@@ -237,6 +237,8 @@ GameObject:
   - component: {fileID: 764383321}
   - component: {fileID: 764383320}
   - component: {fileID: 764383330}
+  - component: {fileID: 764383331}
+  - component: {fileID: 764383332}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -296,6 +298,8 @@ MonoBehaviour:
   UpgradeTemporaryService: {fileID: 764383322}
   EventService: {fileID: 764383328}
   AcquisitonsService: {fileID: 764383330}
+  RecruitmentService: {fileID: 764383331}
+  RewardService: {fileID: 764383332}
 --- !u!114 &764383320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,6 +430,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8158316220af53e4183b922d2094fd36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &764383331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764383316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce911046e805e74bac61d04a18d36bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &764383332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764383316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34fb083383438c8469e412bde9b07431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2066613554

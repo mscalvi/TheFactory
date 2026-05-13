@@ -20,6 +20,8 @@ public class GameController : MonoBehaviour
     [SerializeField] public UpgradeTemporaryService UpgradeTemporaryService;
     [SerializeField] public EventService EventService;
     [SerializeField] public AcquisitonsService AcquisitonsService;
+    [SerializeField] public RecruitmentService RecruitmentService;
+    [SerializeField] public RewardService RewardService;
 
     bool FirstInitialization = true;
 
@@ -70,6 +72,8 @@ public class GameController : MonoBehaviour
             IngredientService.Initialize(GameState);
             EventService.Initialize(GameState, UnlockService);
             AcquisitonsService.Initialize(GameState);
+            RecruitmentService.Initialize(GameState);
+            RewardService.Initialize(GameState, CurrencyService);
         } else
         {
             // service de Load

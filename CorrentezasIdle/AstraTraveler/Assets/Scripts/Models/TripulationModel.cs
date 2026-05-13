@@ -17,7 +17,7 @@ public class TripulationModel : ScriptableObject
     public double Wis;
 
     public TripulationHelper.Type Type;
-    public TripulationHelper.Jobs Jobs;
+    public GameHelper.ItemRarity Rarity;
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;

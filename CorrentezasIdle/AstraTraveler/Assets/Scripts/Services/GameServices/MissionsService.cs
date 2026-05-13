@@ -26,20 +26,80 @@ public class MissionsService : MonoBehaviour
         }
     }
 
-    public List<MissionInstance> GenerateMissionOptions(int MaxMissionOptions)
+    public List<MissionInstance> GenerateMissionOptions(int maxMissionOptions)
     {
         List<MissionInstance> missionOptions = new();
 
-        for (int i = 0; i < MaxMissionOptions; i++)
-        {
-            MissionInstance mission;
+        int safety = 100;
 
-            mission = CreateMissionsFromTemplate();
+        while (missionOptions.Count < maxMissionOptions && safety > 0)
+        {
+            safety--;
+
+            var mission = CreateMissionsFromTemplate();
+
+            ApplyHistoricScaling(mission);
+
+            string key = mission.GetMissionKey();
+
+            bool alreadyInOptions =
+                missionOptions.Any(m => m.GetMissionKey() == key);
+
+            bool alreadyActive =
+                GameState.MissionsState.Slots
+                    .Where(s => s.ActiveMission != null)
+                    .Any(s => s.ActiveMission.GetMissionKey() == key);
+
+            if (alreadyInOptions || alreadyActive)
+                continue;
 
             missionOptions.Add(mission);
         }
 
         return missionOptions;
+    }
+
+    private void ApplyHistoricScaling(MissionInstance mission)
+    {
+        switch (mission.MissionType)
+        {
+            case MissionType.EnemyKilling:
+                break;
+
+            case MissionType.IngredientFinding:
+                break;
+
+            default:
+                return;
+        }
+
+        string targetId =
+            mission.TargetsIds.Count > 0
+            ? mission.TargetsIds[0]
+            : "none";
+
+        var key = (mission.Id, targetId);
+
+        if (!GameState.MissionsState.MissionHistoric.ContainsKey(key))
+            return;
+
+        int completedTimes =
+            GameState.MissionsState.MissionHistoric[key];
+
+        double multiplier = 1 + (completedTimes * 0.5);
+
+        mission.TargetMultiplier = multiplier;
+
+        switch (mission.MissionType)
+        {
+            case MissionType.EnemyKilling:
+                EnemyKillingPrepare(mission);
+                break;
+
+            case MissionType.IngredientFinding:
+                IngredientFindingPrepare(mission);
+                break;
+        }
     }
 
     private MissionSlotModel GetSlot(MissionInstance mission)
@@ -56,6 +116,20 @@ public class MissionsService : MonoBehaviour
         GameEvents.OnMissionComplete?.Invoke(mission);
 
         GameState.MissionsState.CompletedMissions++;
+
+        string targetId =
+            mission.TargetsIds.Count > 0
+            ? mission.TargetsIds[0]
+            : "none";
+
+        var key = (mission.Id, targetId);
+
+        if (!GameState.MissionsState.MissionHistoric.ContainsKey(key))
+        {
+            GameState.MissionsState.MissionHistoric[key] = 0;
+        }
+
+        GameState.MissionsState.MissionHistoric[key]++;
 
         slot.ActiveMission = null;
     }
@@ -101,7 +175,6 @@ public class MissionsService : MonoBehaviour
             }
         }
 
-        // Trocar para ter pesos por raridade
         var template = Templates[Random.Range(0, Templates.Count)];
 
         var mission = new MissionInstance(template);
@@ -127,13 +200,13 @@ public class MissionsService : MonoBehaviour
 
         switch (mission.MissionRarity)
         {
-            case MissionRarity.Common:
+            case GameHelper.ItemRarity.Common:
                 mission.Reward1Ammount = 25;
                 mission.Reward2Ammount = 25;
                 mission.Reward3Ammount = 25;
                 mission.Reward4Ammount = 25;
                 break;
-            case MissionRarity.Uncommon:
+            case GameHelper.ItemRarity.Uncommon:
                 mission.Reward1Ammount = 45;
                 mission.Reward2Ammount = 45;
                 mission.Reward3Ammount = 45;
@@ -152,17 +225,30 @@ public class MissionsService : MonoBehaviour
 
         foreach (var enemy in GameState.DataState.enemies)
         {
-            if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available
+                || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 validTargets.Add(enemy.Value);
             }
         }
 
-        var chosenTarget = validTargets[Random.Range(0, validTargets.Count)];
+        EnemyInstance chosenTarget;
 
-        mission.TargetsIds.Add(chosenTarget.Id);
+        if (mission.TargetsIds.Count > 0)
+        {
+            chosenTarget = validTargets
+                .First(e => e.Id == mission.TargetsIds[0]);
+        }
+        else
+        {
+            chosenTarget = validTargets[Random.Range(0, validTargets.Count)];
+
+            mission.TargetsIds.Add(chosenTarget.Id);
+        }
 
         double targetValue = 100 / chosenTarget.Cost;
+
+        targetValue *= mission.TargetMultiplier;
 
         int realValue = (int)targetValue;
 
@@ -173,9 +259,9 @@ public class MissionsService : MonoBehaviour
 
         mission.TargetValue = realValue;
 
-        mission.Description = "Eliminar " + mission.TargetValue + " " + chosenTarget.Name;
+        mission.Description =
+            "Eliminar " + mission.TargetValue + " " + chosenTarget.Name + ".";
     }
-
 
     private void DaySurvivalPrepare(MissionInstance mission)
     {
@@ -193,6 +279,8 @@ public class MissionsService : MonoBehaviour
         }
 
         mission.TargetValue = nextSurvival;
+
+        mission.Description = "Sobreviver por " + mission.TargetValue + " dias.";
     }
 
     private void DayNoDamagePrepare(MissionInstance mission)
@@ -200,6 +288,8 @@ public class MissionsService : MonoBehaviour
         int maxSurvival = GameState.ProgressState.MaxDaysTraveling;
 
         mission.TargetValue = maxSurvival / 2;
+
+        mission.Description = "Sobreviver por " + mission.TargetValue + " dias sem receber dano.";
     }
 
     private void IngredientFindingPrepare(MissionInstance mission)
@@ -208,31 +298,49 @@ public class MissionsService : MonoBehaviour
 
         foreach (var ingredient in GameState.DataState.ingredients)
         {
-            if (ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available || ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+            if (ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available
+                || ingredient.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 validTargets.Add(ingredient.Value);
             }
         }
 
-        var chosenTarget = validTargets[Random.Range(0, validTargets.Count)];
+        IngredientInstance chosenTarget;
 
-        mission.TargetsIds.Add(chosenTarget.Id);
+        if (mission.TargetsIds.Count > 0)
+        {
+            chosenTarget = validTargets
+                .First(i => i.Id == mission.TargetsIds[0]);
+        }
+        else
+        {
+            chosenTarget = validTargets[Random.Range(0, validTargets.Count)];
+
+            mission.TargetsIds.Add(chosenTarget.Id);
+        }
+
+        double realValue = 0;
 
         switch (chosenTarget.Rarity)
         {
-            case IngredientHelper.IngredientRarity.Common:
-                mission.TargetValue = 100;
+            case GameHelper.ItemRarity.Common:
+                realValue = 100 * mission.TargetMultiplier;
                 break;
-            case IngredientHelper.IngredientRarity.Uncommon:
-                mission.TargetValue = 50;
+
+            case GameHelper.ItemRarity.Uncommon:
+                realValue = 50 * mission.TargetMultiplier;
                 break;
-            case IngredientHelper.IngredientRarity.Rare:
-                mission.TargetValue = 10;
+
+            case GameHelper.ItemRarity.Rare:
+                realValue = 10 * mission.TargetMultiplier;
                 break;
-            case IngredientHelper.IngredientRarity.Legendary:
-                mission.TargetValue = 1;
+
+            case GameHelper.ItemRarity.Legendary:
+                realValue = 1 * mission.TargetMultiplier;
                 break;
         }
+
+        mission.TargetValue = (int)realValue;
     }
 
     // Events

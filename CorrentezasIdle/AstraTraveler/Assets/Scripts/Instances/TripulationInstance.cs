@@ -17,7 +17,7 @@ public class TripulationInstance
     public double Wis;
 
     public TripulationHelper.Type Type;
-    public TripulationHelper.Jobs Jobs;
+    public GameHelper.ItemRarity Rarity;
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
@@ -36,7 +36,7 @@ public class TripulationInstance
         Wis = model.Wis;
 
         Type = model.Type;
-        Jobs = model.Jobs;
+        Rarity = model.Rarity;
 
         UnlockStatus = model.UnlockStatus;
         UnlockId = model.UnlockId;

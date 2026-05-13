@@ -19,4 +19,5 @@ public class GameState
 
     // Informações Necessárias
     public float WorldScale = 0.2f;
+    public float GameSpeed = 2;
 }

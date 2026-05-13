@@ -9,7 +9,9 @@ public interface ITickable
 
 public class TickService : MonoBehaviour
 {
-    [SerializeField] float tickInterval = 0.2f;
+    private GameState GameState;
+
+    [SerializeField] float tickInterval = 1f / 30f;
 
     float timer = 0f;
 
@@ -17,9 +19,9 @@ public class TickService : MonoBehaviour
 
     readonly List<ITickable> tickables = new();
     
-    public void Initialize()
+    public void Initialize(GameState game)
     {
-
+        GameState = game;
     }
 
     public void Subscribe(ITickable t)
@@ -38,16 +40,17 @@ public class TickService : MonoBehaviour
         if (isPaused)
             return;
 
-        timer += Time.deltaTime;
+        float scaledDelta = Time.deltaTime * GameState.GameSpeed;
 
-        if (timer >= tickInterval)
+        timer += scaledDelta;
+
+        while (timer >= tickInterval)
         {
-            float dt = timer;
-            timer = 0f;
+            timer -= tickInterval;
 
             foreach (var t in tickables)
             {
-                t.OnTick(dt);
+                t.OnTick(tickInterval);
             }
         }
     }

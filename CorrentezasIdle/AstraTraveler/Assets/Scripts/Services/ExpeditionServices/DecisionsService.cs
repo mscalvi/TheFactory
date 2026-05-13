@@ -63,12 +63,6 @@ public class DecisionsService : MonoBehaviour
         TryShowNextEvent();
     }
 
-    // Destination
-    private void DestinationOptions()
-    {
-        TickService.Pause();
-    }
-
     // Game Over
     public void LastDecision()
     {
@@ -86,14 +80,12 @@ public class DecisionsService : MonoBehaviour
 
     void OnEnable()
     {
-        ExpeditionEvents.OnDestinationArrival += DestinationOptions;
         ExpeditionEvents.OnExpeditionEnd += LastDecision;
         GameEvents.OnEventTrigger += EventHappen;
     }
 
     void OnDisable()
     {
-        ExpeditionEvents.OnDestinationArrival -= DestinationOptions;
         ExpeditionEvents.OnExpeditionEnd -= LastDecision;
         GameEvents.OnEventTrigger -= EventHappen;
     }

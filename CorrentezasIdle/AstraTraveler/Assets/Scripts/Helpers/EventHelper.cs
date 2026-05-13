@@ -8,13 +8,4 @@ public class EventHelper
     {
 
     }
-
-    public enum EventFrequency
-    {
-        Unique,
-        Common,
-        Uncommon,
-        Rare,
-        Legendary,
-    }
 }

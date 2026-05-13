@@ -8,14 +8,6 @@ public class IngredientHelper
         Bones,
     }
 
-    public enum IngredientRarity
-    {
-        Common,
-        Uncommon,
-        Rare,
-        Legendary,
-    }
-
     public enum IngredientClass
     { 
         AnimalProduct,

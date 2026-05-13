@@ -6,18 +6,14 @@ using UnityEngine;
 public class PathService : MonoBehaviour
 {
     private GameState GameState;
-    private PathHelper PathHelper;
+
 
     public void Initialize(GameState game)
     {
         GameState = game;
-
-        PathHelper = new PathHelper();
-
-        GenerateNextDestination();
     }
 
-    private void GenerateNextDestination()
+    public void GenerateNextDestination()
     {
         int minGap = GameState.ExpeditionState.ActualMinimalDestinationGap;
         int maxGap = GameState.ExpeditionState.ActualMaximalDestinationGap;

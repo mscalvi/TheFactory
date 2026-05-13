@@ -9,7 +9,7 @@ public class EventInstance
     public string Title;
     public string Info;
     public string Target;
-    public EventHelper.EventFrequency EventFrequency;
+    public GameHelper.ItemRarity EventFrequency;
     public EventHelper.EventType EventType;
 
     public EventInstance(EventModel model)

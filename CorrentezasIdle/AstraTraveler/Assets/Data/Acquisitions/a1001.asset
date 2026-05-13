@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: a1001
   m_EditorClassIdentifier: 
   Id: a1001
-  Name: Construir a Sala de Planejamento
-  Description: "Constr\xF3i a Sala de Planejamentos, que permite comprar melhorias
-    para Constru\xE7\xF5es"
+  Name: 'Construir a Marcenaria '
+  Description: "Constr\xF3i a Marcenaria, que permite comprar melhorias para o Navio "
   TargetType: 4
-  TargetId: b01
-  UnlockId: 
+  TargetId: b08
+  UnlockId: uub001
   Cost: 10
   Currency: 1
   Time: 300
-  UnlockStatus: 2
+  Type: 0
+  UnlockStatus: 0

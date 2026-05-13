@@ -95,14 +95,14 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
             if (enemy.State == EnemyHelper.EnemyState.Damaging)
             {
-                double AbsoluteArmor = GameState.ExpeditionState.Ship.CurrentArmor;
-                double RelativeArmor = GameState.ExpeditionState.Ship.CurrentResistence;
+                double AbsoluteArmor = GameState.ExpeditionState.Ship.ActualArmor;
+                double RelativeArmor = GameState.ExpeditionState.Ship.ActualResistence;
 
                 double RealDamage = (enemy.Damage - (enemy.Damage * (RelativeArmor / 100))) - AbsoluteArmor;
 
                 if (RealDamage > 0)
                 {
-                    GameState.ExpeditionState.Ship.CurrentLife -= RealDamage;
+                    GameState.ExpeditionState.Ship.ActualLife -= RealDamage;
                     GameState.ExpeditionState.DamageTaken = true;
                     ExpeditionEvents.OnShipAtributeChange?.Invoke();
                 }

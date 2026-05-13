@@ -20,6 +20,7 @@ public class GameCreationService : MonoBehaviour
         BuildIngredients();
         BuildBuildings();
         BuildBestiary();
+        BuildTripulation();
     }
 
     private void CreateDataState(GameDatabase DataBase)
@@ -158,13 +159,16 @@ public class GameCreationService : MonoBehaviour
 
     private void BuildIngredients()
     {
-        GameState.ExpeditionState.IngredientRarityBaseWeights = new Dictionary<IngredientHelper.IngredientRarity, float>()
+        GameState.ExpeditionState.StartIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>()
         {
-            { IngredientHelper.IngredientRarity.Common, 100 },
-            { IngredientHelper.IngredientRarity.Uncommon, 0 },
-            { IngredientHelper.IngredientRarity.Rare, 0 },
-            { IngredientHelper.IngredientRarity.Legendary, 0 }
+            { GameHelper.ItemRarity.Common, 100 },
+            { GameHelper.ItemRarity.Uncommon, 0 },
+            { GameHelper.ItemRarity.Rare, 0 },
+            { GameHelper.ItemRarity.Legendary, 0 }
         };
+
+        GameState.ExpeditionState.BaseIngredientRarityWeights = GameState.ExpeditionState.StartIngredientRarityWeights;
+        GameState.ExpeditionState.ActualIngredientRarityWeights = GameState.ExpeditionState.StartIngredientRarityWeights;
     }
 
     private void BuildBestiary()
@@ -173,5 +177,10 @@ public class GameCreationService : MonoBehaviour
         {
             GameState.BestiaryState.Bestiary.Add(enemy.Value.Id, new BestiaryEntry());
         }
+    }
+
+    private void BuildTripulation()
+    {
+        GameState.ExpeditionState.Ship.ActiveTripulation.Add(GameState.DataState.tripulations["t001"]);
     }
 }

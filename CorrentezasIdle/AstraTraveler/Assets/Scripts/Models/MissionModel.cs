@@ -15,7 +15,7 @@ public class MissionModel : ScriptableObject
     public CurrencyHelper.CurrencyType RewardType3;
     public CurrencyHelper.CurrencyType RewardType4;
 
-    public MissionHelper.MissionRarity MissionRarity;
+    public GameHelper.ItemRarity MissionRarity;
 
     public MissionHelper.MissionType MissionType;
     public MissionHelper.MissionStatus MissionStatus;

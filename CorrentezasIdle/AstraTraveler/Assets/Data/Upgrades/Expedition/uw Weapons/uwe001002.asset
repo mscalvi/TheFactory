@@ -27,6 +27,6 @@ MonoBehaviour:
   UnlockId: 
   MaxBuy: 0
   Cost: 15
-  CostGrowth: 1.11
+  CostGrowth: 1.3
   Currency: 0
   UnlockStatus: 2

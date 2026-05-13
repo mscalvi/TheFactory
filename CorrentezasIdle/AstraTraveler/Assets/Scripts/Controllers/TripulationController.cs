@@ -18,7 +18,9 @@ public class TripulationController : MonoBehaviour
 
         var PurchaseService = GameController.Instance.PurchaseService;
         var UnlockService = GameController.Instance.UnlockService;
+        var RecruitmentService = GameController.Instance.RecruitmentService;
+        var CurrencyService = GameController.Instance.CurrencyService;
 
-        TripulationUi.Initialize(Game, UnlockService);
+        TripulationUi.Initialize(Game, UnlockService, RecruitmentService, PurchaseService, CurrencyService);
     }
 }

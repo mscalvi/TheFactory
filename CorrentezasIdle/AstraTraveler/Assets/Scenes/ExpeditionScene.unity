@@ -1614,7 +1614,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000019073486, y: 0.0006831953}
+  m_AnchoredPosition: {x: -0.000019073486, y: 0.000047947233}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &525673656
@@ -2104,6 +2104,7 @@ GameObject:
   - component: {fileID: 569419327}
   - component: {fileID: 569419326}
   - component: {fileID: 569419325}
+  - component: {fileID: 569419332}
   m_Layer: 0
   m_Name: ExpeditionServices
   m_TagString: Untagged
@@ -2199,6 +2200,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76b877004b80d0546b39e165fa90bb6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &569419332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569419323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff83ac7ac3afdc347ab454d663d0d020, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &583734788
@@ -4902,6 +4915,7 @@ GameObject:
   - component: {fileID: 1193086832}
   - component: {fileID: 1193086833}
   - component: {fileID: 1193086835}
+  - component: {fileID: 1193086836}
   m_Layer: 0
   m_Name: ShipServices
   m_TagString: Untagged
@@ -4949,6 +4963,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 959a1cce180e7a24099e511d8ca779fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1193086836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193086831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65b810afd00ed944f8590eab99384a8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1195618671
@@ -6365,7 +6391,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1324866098}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99965966
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7117,6 +7143,7 @@ MonoBehaviour:
   PathService: {fileID: 569419326}
   DaysCycleService: {fileID: 569419330}
   DecisionsService: {fileID: 569419329}
+  StartService: {fileID: 569419332}
   EnemyProgressService: {fileID: 1429887533}
   EnemySpawnerService: {fileID: 1429887532}
   EnemyControllerService: {fileID: 1429887535}
@@ -7124,6 +7151,7 @@ MonoBehaviour:
   BestiaryTrackerService: {fileID: 569419331}
   ProjectileService: {fileID: 1193086833}
   WeaponsService: {fileID: 1193086835}
+  RepairService: {fileID: 1193086836}
 --- !u!1 &1688878582
 GameObject:
   m_ObjectHideFlags: 0

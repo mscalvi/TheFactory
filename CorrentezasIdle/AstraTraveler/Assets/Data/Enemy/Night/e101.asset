@@ -18,7 +18,7 @@ MonoBehaviour:
   DayEnemy: 0
   BossEnemy: 0
   Life: 1
-  LifeGrowth: 0.08
+  LifeGrowth: 0.008
   LifeRegen: 0
   LifeRegenGrowth: 0
   Speed: 5
@@ -28,7 +28,7 @@ MonoBehaviour:
   Range: 0
   RangeGrowth: 0
   Damage: 2
-  DamageGrowth: 0.15
+  DamageGrowth: 0.015
   AttackSpeed: 1
   AttackSpeedGrowth: 0
   SpawnDistance: 20

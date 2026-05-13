@@ -12,8 +12,9 @@ public class ShipInstance
     public string Description;
 
     public int Size;
-    public int ActualTripulation;
     public int MaxTripulation;
+    public List<TripulationInstance> ActiveTripulation;
+    public List<TripulationInstance> ActiveRecruits;
 
     // Model Base
     public double StartLife;
@@ -37,11 +38,11 @@ public class ShipInstance
     public double MaxRepairPerTripulation;
 
     // Actual Value
-    public double CurrentLife;
-    public double CurrentSpeed;
-    public double CurrentArmor;
-    public double CurrentResistence;
-    public double CurrentRepairPerTripulation;
+    public double ActualLife;
+    public double ActualSpeed;
+    public double ActualArmor;
+    public double ActualResistence;
+    public double ActualRepairPerTripulation;
 
     public List<WeaponSlot> WeaponSlots;
     public List<WeaponInstance> Weapons;
@@ -55,33 +56,34 @@ public class ShipInstance
         Description = model.Description;
 
         Size = model.Size;
-        MaxTripulation = model.Tripulation;
-        ActualTripulation = 0;
+        MaxTripulation = 2;
+        ActiveTripulation = new List<TripulationInstance>();
+        ActiveRecruits = new List<TripulationInstance>();
 
         StartLife = model.Life;
         BaseLife = model.Life;
         MaxLife = model.Life;
-        CurrentLife = model.Life;
+        ActualLife = model.Life;
 
         StartSpeed = model.Speed;
         BaseSpeed = model.Speed;
         MaxSpeed = model.Speed;
-        CurrentSpeed = model.Speed;
+        ActualSpeed = model.Speed;
 
         StartResistence = model.Resistence;
         BaseResistence = model.Resistence;
         MaxResistence = model.Resistence;
-        CurrentResistence = model.Resistence;
+        ActualResistence = model.Resistence;
 
         StartRepairPerTripulation = 0;
         BaseRepairPerTripulation = 0;
         MaxRepairPerTripulation = 0;
-        CurrentRepairPerTripulation = 0;
+        ActualRepairPerTripulation = 0;
 
         StartArmor = model.Armor;
         BaseArmor = model.Armor;
         MaxArmor = model.Armor;
-        CurrentArmor = model.Armor;
+        ActualArmor = model.Armor;
 
         UnlockStatus = model.UnlockStatus;
 

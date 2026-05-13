@@ -19,7 +19,7 @@ public class MissionInstance
     public CurrencyHelper.CurrencyType RewardType3;
     public CurrencyHelper.CurrencyType RewardType4;
 
-    public MissionHelper.MissionRarity MissionRarity;
+    public GameHelper.ItemRarity MissionRarity;
     public MissionHelper.MissionType MissionType;
     public MissionHelper.MissionStatus MissionStatus;
     public UnlockHelper.UnlockStatus UnlockStatus;
@@ -29,6 +29,7 @@ public class MissionInstance
     public string Description;
 
     public double TargetValue;
+    public double TargetMultiplier;
     public double CurrentValue;
 
     public List<string> TargetsIds;
@@ -57,6 +58,7 @@ public class MissionInstance
 
         Description = model.Description;
         TargetValue = 1;
+        TargetMultiplier = 1;
         CurrentValue = 0;
         TargetsIds = new List<string>();
     }
@@ -85,7 +87,15 @@ public class MissionInstance
 
         Description = model.Description;
         TargetValue = 1;
+        TargetMultiplier = 1;
         CurrentValue = 0;
         TargetsIds = new List<string>();
+    }
+
+    public string GetMissionKey()
+    {
+        string targetId = TargetsIds.Count > 0 ? TargetsIds[0] : "none";
+
+        return $"{Id}_{targetId}";
     }
 }

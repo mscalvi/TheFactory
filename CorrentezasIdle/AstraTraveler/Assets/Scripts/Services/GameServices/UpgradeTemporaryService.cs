@@ -22,8 +22,6 @@ public class UpgradeTemporaryService : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Adicionando {upgrade.Name}");
-
         var upgrades = DataState.upgrades;
 
         if (!upgrades.TryGetValue(upgrade.Id, out var upgradeInstance))
@@ -152,7 +150,7 @@ public class UpgradeTemporaryService : MonoBehaviour
     private void ShipMaxLifeModifier(UpgradeInstance upgrade)
     {
         var ship = GameState.ExpeditionState.Ship;
-        double actualLife = ship.CurrentLife;
+        double healthPercent = ship.ActualLife / ship.MaxLife;
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {
@@ -162,7 +160,6 @@ public class UpgradeTemporaryService : MonoBehaviour
             }
 
             ship.MaxLife *= upgrade.ActualValue;
-            ship.CurrentLife = actualLife + (ship.MaxLife * upgrade.UpgradeValue);
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
@@ -173,12 +170,12 @@ public class UpgradeTemporaryService : MonoBehaviour
             }
 
             ship.MaxLife += upgrade.ActualValue;
-            ship.CurrentLife = actualLife + upgrade.UpgradeValue;
         }
 
-        if (ship.CurrentLife > ship.MaxLife)
+        ship.ActualLife = ship.MaxLife * healthPercent;
+        if (ship.ActualLife > ship.MaxLife)
         {
-            ship.CurrentLife = ship.MaxLife;
+            ship.ActualLife = ship.MaxLife;
         }
     }
     private void ShipArmorModifier(UpgradeInstance upgrade)
@@ -205,7 +202,7 @@ public class UpgradeTemporaryService : MonoBehaviour
             ship.MaxArmor += upgrade.ActualValue;
         }
 
-        ship.CurrentArmor = ship.MaxArmor;
+        ship.ActualArmor = ship.MaxArmor;
     }
     private void ShipResistenceModifier(UpgradeInstance upgrade)
     {
@@ -231,7 +228,7 @@ public class UpgradeTemporaryService : MonoBehaviour
             ship.MaxResistence += upgrade.ActualValue;
         }
 
-        ship.CurrentResistence = ship.MaxResistence;
+        ship.ActualResistence = ship.MaxResistence;
     }
     private void ShipRepairModifier(UpgradeInstance upgrade)
     {
@@ -257,7 +254,7 @@ public class UpgradeTemporaryService : MonoBehaviour
             ship.MaxRepairPerTripulation += upgrade.ActualValue;
         }
 
-        ship.CurrentRepairPerTripulation = ship.MaxRepairPerTripulation;
+        ship.ActualRepairPerTripulation = ship.MaxRepairPerTripulation;
     }
 
     // Modificadores Weapons
