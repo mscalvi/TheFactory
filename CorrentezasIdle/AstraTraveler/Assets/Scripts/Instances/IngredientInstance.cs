@@ -17,6 +17,7 @@ public class IngredientInstance
 
     public double Amount;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public IngredientInstance(IngredientModel model)
@@ -27,26 +28,12 @@ public class IngredientInstance
         Rarity = model.Rarity;
         Class = model.Class;
 
-        Image = model.Image;
-        Logo = model.Logo;
+        Image = "";
+        Logo = "";
 
         Amount = 0;
 
-        UnlockStatus = model.UnlockStatus;
-    }
-
-    public IngredientInstance(IngredientInstance model)
-    {
-        Id = model.Id;
-        Type = model.Type;
-        Rarity = model.Rarity;
-        Class = model.Class;
-
-        Image = model.Image;
-        Logo = model.Logo;
-
-        Amount = 0;
-
+        UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 }

@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(menuName = "Game/Buildings")]
-public class BuildingModel : ScriptableObject
+public class BuildingModel
 {
     public string Id;
 
-    public string Name;
+    public string NamePT;
+    public string NameEN;
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public UpgradeHelper.UpgradeBuilding Type;
 
-    public List<UpgradeInstance> Upgrades;
-
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

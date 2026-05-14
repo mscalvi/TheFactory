@@ -21,11 +21,8 @@ public class AmmoInstance
     public AmmoInstance(AmmoModel model)
     {
         Id = model.Id;
-        Name = model.Name;
-        Description = model.Description;
 
         Damage = model.Damage;
-        Special = model.Special;
 
         Projectile = model.Projectile;
 

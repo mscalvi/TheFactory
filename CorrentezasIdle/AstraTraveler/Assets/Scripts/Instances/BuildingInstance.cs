@@ -22,11 +22,9 @@ public class BuildingInstance
     {
         Id = model.Id;
 
-        Name = model.Name;
+        Name = model.NameEN;
 
         Note = false;
-
-        Upgrades = model.Upgrades;
 
         Type = model.Type;
 

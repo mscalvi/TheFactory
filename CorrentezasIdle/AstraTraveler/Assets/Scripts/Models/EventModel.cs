@@ -2,16 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-[CreateAssetMenu(menuName = "Game/Events")]
-public class EventModel : ScriptableObject
+public class EventModel
 {
     public string Id;
-    public string Title;
-    public string Info;
+
+    public string TitleEN;
+    public string TitlePT;
+
+    public string InfoEN;
+    public string InfoPT;
 
     public string Target;
+    public string Trigger;
 
-    public GameHelper.ItemRarity EventFrequency;
+    public GameHelper.ItemRarity Frequency;
     public EventHelper.EventType EventType;
+
+    public string UnlockId;
+    public UnlockHelper.UnlockStatus UnlockStatus;
 }

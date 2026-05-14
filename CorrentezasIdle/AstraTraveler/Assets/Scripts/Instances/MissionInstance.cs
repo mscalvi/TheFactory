@@ -37,9 +37,7 @@ public class MissionInstance
     public MissionInstance(MissionModel model)
     {
         Id = model.Id;
-        Name = model.Name;
 
-        RewardFactor = model.RewardFactor;
         Reward1Ammount = 0;
         Reward2Ammount = 0;
         Reward3Ammount = 0;
@@ -56,7 +54,6 @@ public class MissionInstance
         UnlockStatus = model.UnlockStatus;
         UnlockId = model.UnlockId;
 
-        Description = model.Description;
         TargetValue = 1;
         TargetMultiplier = 1;
         CurrentValue = 0;

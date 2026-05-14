@@ -33,4 +33,16 @@ public class WeaponHelper
         Piercing,
     }
 
+    public enum BehaviorType
+    {
+        Vanish,
+        Explode,
+    }
+
+    public enum PathType
+    {
+        Straight,
+        Elipse,
+    }
+
 }

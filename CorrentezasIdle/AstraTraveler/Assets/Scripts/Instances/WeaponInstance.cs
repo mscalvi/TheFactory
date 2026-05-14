@@ -42,8 +42,6 @@ public class WeaponInstance
     public WeaponInstance(WeaponModel model)
     {
         Id = model.Id;
-        Name = model.Name;
-        Description = model.Description;
 
         StartDamage = model.Damage;
         StartRange = model.Range;
@@ -63,10 +61,7 @@ public class WeaponInstance
         BasePrecision = model.Precision;
         BaseCriticalDamage = model.CriticalDamage;
 
-        Special = model.Special;
         AmmoType = model.AmmoType;
-        Ammo = model.Ammo;
-        ProjectileSpeed = model.ProjectileSpeed;
 
         TargetType = WeaponHelper.WeaponTarget.Closest;
         CurrentTarget = null;

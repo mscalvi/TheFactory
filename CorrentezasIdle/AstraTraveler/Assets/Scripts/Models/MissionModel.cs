@@ -6,16 +6,21 @@ using UnityEngine;
 public class MissionModel : ScriptableObject
 {
     public string Id;
-    public string Name;
-    public string Description;
 
-    public double RewardFactor;
+    public string NamePT;
+    public string NameEN;
+
+    public string DescriptionPT;
+    public string DescriptionEN;
+
+    public int Level;
+    public GameHelper.ItemRarity MissionRarity;
+
     public CurrencyHelper.CurrencyType RewardType1;
     public CurrencyHelper.CurrencyType RewardType2;
     public CurrencyHelper.CurrencyType RewardType3;
     public CurrencyHelper.CurrencyType RewardType4;
 
-    public GameHelper.ItemRarity MissionRarity;
 
     public MissionHelper.MissionType MissionType;
     public MissionHelper.MissionStatus MissionStatus;

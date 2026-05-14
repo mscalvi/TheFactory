@@ -15,11 +15,8 @@ public class EventInstance
     public EventInstance(EventModel model)
     {
         Id = model.Id;
-        Title = model.Title;
-        Info = model.Info;
         Target = model.Target;
 
-        EventFrequency = model.EventFrequency;
         EventType = model.EventType;
     }
 }

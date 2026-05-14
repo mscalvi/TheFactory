@@ -285,8 +285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86a69f5b0bee444e92454c1189db616, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Database: {fileID: 11400000, guid: e22d49a8002492940ba0df9efa0144e2, type: 2}
   GameCreationService: {fileID: 764383318}
+  DatabaseService: {fileID: 0}
   ProgressTrackerService: {fileID: 764383320}
   MissionsService: {fileID: 764383326}
   MissionsTrackerService: {fileID: 764383321}

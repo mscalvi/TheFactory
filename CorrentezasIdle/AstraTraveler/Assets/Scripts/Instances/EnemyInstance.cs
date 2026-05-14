@@ -59,8 +59,6 @@ public class EnemyInstance
     public EnemyInstance(EnemyModel model)
     {
         Id = model.Id;
-        Name = model.Name;
-        Description = model.Description;
 
         DayEnemy = model.DayEnemy;
         BossEnemy = model.BossEnemy;
@@ -83,7 +81,6 @@ public class EnemyInstance
         SpawnDistance = model.SpawnDistance;
         SpawnDistanceGrowth = model.SpawnDistanceGrowth;
 
-        Sprite = model.Sprite;
 
         Experience = model.Experience;
         CommonIngredient = model.CommonIngredient;
@@ -92,15 +89,10 @@ public class EnemyInstance
         LegendaryIngredient = model.LegendaryIngredient;
 
         Rarity = model.Rarity;
-        Cost = model.Cost;
-        Stage = model.Stage;
 
         State = EnemyHelper.EnemyState.Moving;
 
         EnemyType = model.EnemyType;
-        PathType = model.PathType;
-        PathEnvironment = model.PathEnvironment;
-        PathModifier = model.PathModifier;
 
         Distance = model.SpawnDistance;
         Angle = 0;

@@ -26,11 +26,9 @@ public class ProjectileInstance
     public ProjectileInstance(ProjectileModel model)
     {
         Id = model.Id;
-        Name = model.Name;
 
         ammoType = model.Type;
         HitRadius = model.HitRadius;
-        Sprite = model.Sprite;
 
         Speed = 0;
         Position = new Vector3();

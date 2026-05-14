@@ -28,12 +28,17 @@ public class EnemyHelper
 
     public enum EnemyStage
     {
-        Early = 1,
-        MidEarly = 2,
-        Mid = 3,
-        MidLate = 4,
-        Late = 5,
-        UltraLate = 6,
-        HighUltraLate = 7,
+        Early,
+        MidEarly,
+        Mid,
+        MidLate,
+        Late,
+        UltraLate,
+        HighUltraLate,
+    }
+
+    public enum EnemySpecial
+    {
+        
     }
 }

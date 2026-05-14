@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Enemy")]
-public class EnemyModel : ScriptableObject
+public class EnemyModel
 {
     public string Id;
-    public string Name;
-    public string Description;
+    public string NamePT;
+    public string NameEN;
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public bool DayEnemy;
     public bool BossEnemy;
+    public EnemyHelper.EnemyType EnemyType;
 
     public double Life;
     public double LifeGrowth;
@@ -29,24 +31,23 @@ public class EnemyModel : ScriptableObject
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
 
-    public Sprite Sprite;
-
     public double Experience;
+
+    public EnemyHelper.EnemySpecial Special;
+
     public IngredientHelper.IngredientType CommonIngredient;
     public IngredientHelper.IngredientType UncommonIngredient;
     public IngredientHelper.IngredientType RareIngredient;
     public IngredientHelper.IngredientType LegendaryIngredient;
 
     public double Rarity;
-    public double Cost;
-    public EnemyHelper.EnemyStage Stage;
+    public double SpawnCost;
+    public List<EnemyHelper.EnemyStage> Stage;
 
-    public EnemyHelper.EnemyState State;
+    public List<PathHelper.PathType> PathTypes;
+    public List<PathHelper.PathEnvironment> PathEnvironments;
+    public List<PathHelper.PathModifier> PathModifiers;
 
-    public EnemyHelper.EnemyType EnemyType;
-    public PathHelper.PathType PathType;
-    public PathHelper.PathEnvironment PathEnvironment;
-    public PathHelper.PathModifier PathModifier;
-
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }
