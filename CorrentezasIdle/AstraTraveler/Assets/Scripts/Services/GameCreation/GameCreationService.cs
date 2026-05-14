@@ -41,79 +41,79 @@ public class GameCreationService : MonoBehaviour
         var events = new Dictionary<string, EventInstance>();
         var missions = new Dictionary<string, MissionInstance>();
 
-        foreach (var ship in DataBase.ships)
+        foreach (var ship in DataBase.ships.Values)
         {
             var instance = new ShipInstance(ship);
             ships.Add(ship.Id, instance);
         }
 
-        foreach (var trip in DataBase.tripulation)
+        foreach (var trip in DataBase.tripulations.Values)
         {
             var instance = new TripulationInstance(trip);
             tripulation.Add(trip.Id, instance);
         }
 
-        foreach (var weapon in DataBase.weapons)
+        foreach (var weapon in DataBase.weapons.Values)
         {
             var instance = new WeaponInstance(weapon);
             weapons.Add(weapon.Id, instance);
         }
 
-        foreach (var ammo in DataBase.ammos)
+        foreach (var ammo in DataBase.ammos.Values)
         {
             var instance = new AmmoInstance(ammo);
             ammos.Add(ammo.Id, instance);
         }
 
-        foreach (var projectile in DataBase.projectiles)
+        foreach (var projectile in DataBase.projectiles.Values)
         {
             var instance = new ProjectileInstance(projectile);
             projectiles.Add(projectile.Id, instance);
         }
 
-        foreach (var enemy in DataBase.enemies)
+        foreach (var enemy in DataBase.enemies.Values)
         {
             var instance = new EnemyInstance(enemy);
             enemies.Add(enemy.Id, instance);
         }
 
-        foreach (var currency in DataBase.currency)
+        foreach (var currency in DataBase.currencies.Values)
         {
             var instance = new CurrencyInstance(currency);
             currencies.Add(currency.Type, instance);
         }
 
-        foreach (var ingrediente in DataBase.ingredients)
+        foreach (var ingrediente in DataBase.ingredients.Values)
         {
             var instance = new IngredientInstance(ingrediente);
             ingredients.Add(ingrediente.Type, instance);
         }
 
-        foreach (var upgrade in DataBase.upgrades)
+        foreach (var upgrade in DataBase.upgrades.Values)
         {
             var instance = new UpgradeInstance(upgrade);
             upgrades.Add(upgrade.Id, instance);
         }
 
-        foreach (var acquisition in DataBase.acquisition)
+        foreach (var acquisition in DataBase.acquisitions.Values)
         {
             var instance = new AcquisitionInstance(acquisition);
             acquisitions.Add(acquisition.Id, instance);
         }
 
-        foreach (var building in DataBase.buildings)
+        foreach (var building in DataBase.buildings.Values)
         {
             var instance = new BuildingInstance(building);
             buildings.Add(building.Id, instance);
         }
 
-        foreach (var eventModel in DataBase.events)
+        foreach (var eventModel in DataBase.events.Values)
         {
             var instance = new EventInstance(eventModel);
             events.Add(eventModel.Id, instance);
         }
 
-        foreach (var missiomModel in DataBase.missions)
+        foreach (var missiomModel in DataBase.missions.Values)
         {
             var instance = new MissionInstance(missiomModel);
             missions.Add(missiomModel.Id, instance);

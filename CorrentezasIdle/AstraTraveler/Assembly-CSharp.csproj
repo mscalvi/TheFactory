@@ -104,6 +104,7 @@
     <Compile Include="Assets\Scripts\States\GameState.cs" />
     <Compile Include="Assets\Scripts\Models\AcquisitionModel.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
+    <Compile Include="Assets\Scripts\Services\GameCreation\DatabaseService.cs" />
     <Compile Include="Assets\Scripts\Definitions\MissionDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\DaysCycleService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyMarkingService.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
     <Compile Include="Assets\Scripts\Controllers\AcquisitonsController.cs" />
     <Compile Include="Assets\Scripts\Definitions\RecruitDefinition.cs" />
+    <Compile Include="Assets\Scripts\Data\TripulationData.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyViewService.cs" />
     <Compile Include="Assets\Scripts\Instances\ShipInstance.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyControlService.cs" />

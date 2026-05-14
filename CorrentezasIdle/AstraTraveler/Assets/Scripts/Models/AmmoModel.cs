@@ -2,19 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Ammo")]
-public class AmmoModel : ScriptableObject
+public class AmmoModel
 {
     public string Id;
-    public string Name;
-    public string Description;
+
+    public string NamePT;
+    public string NameEN;
+
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public WeaponHelper.AmmoType Type;
 
     public double Damage;
-    public string Special;
+    public double Recharge;
+    public int Ammount;
+    public WeaponHelper.SpecialType Special;
 
     public ProjectileModel Projectile;
+    public float ProjectileSpeed;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

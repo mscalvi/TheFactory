@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
     public GameDatabase Database;
 
     [SerializeField] GameCreationService GameCreationService;
+    [SerializeField] DatabaseService DatabaseService;
     [SerializeField] public ProgressTrackerService ProgressTrackerService;
     [SerializeField] public MissionsService MissionsService;
     [SerializeField] public MissionsTrackerService MissionsTrackerService;
@@ -39,7 +40,7 @@ public class GameController : MonoBehaviour
 
         if (Database == null)
         {
-            Debug.LogError("GameController - GameDatabase NÃO atribuída no GameController!");
+            Database = DatabaseService.Initialize();
         }
 
         if (GameState == null)

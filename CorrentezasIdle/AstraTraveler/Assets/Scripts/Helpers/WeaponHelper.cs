@@ -4,17 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponHelper
-{
-    [Flags]
-    public enum AmmoType
+{    public enum AmmoType
     {
-        None = 0,
-        Rocks = 1 << 0,
-        Vials = 1 << 1,
-        Arrows = 1 << 2,
-        Bolts = 1 << 3,
-        Siege = 1 << 4,
-        Special = 1 << 5,
+        None,
+        Throw,
+        Arrows,
+        Bolts,
+        Siege,
+        Special,
     }
 
     public enum WeaponTarget
@@ -29,4 +26,11 @@ public class WeaponHelper
         HighestLevel,
         LowerLevel,
     }
+
+    public enum SpecialType
+    {
+        None,
+        Piercing,
+    }
+
 }

@@ -13,6 +13,8 @@ public class ShipInstance
 
     public int Size;
     public int MaxTripulation;
+
+    // Tirar Daqui
     public List<TripulationInstance> ActiveTripulation;
     public List<TripulationInstance> ActiveRecruits;
 
@@ -44,7 +46,7 @@ public class ShipInstance
     public double ActualResistence;
     public double ActualRepairPerTripulation;
 
-    public List<WeaponSlot> WeaponSlots;
+    public int WeaponSlots;
     public List<WeaponInstance> Weapons;
 
     public UnlockHelper.UnlockStatus UnlockStatus;
@@ -52,8 +54,8 @@ public class ShipInstance
     public ShipInstance(ShipModel model)
     {
         Id = model.Id;
-        Name = model.Name;
-        Description = model.Description;
+        Name = model.NameEN;
+        Description = model.DescriptionEN;
 
         Size = model.Size;
         MaxTripulation = 2;

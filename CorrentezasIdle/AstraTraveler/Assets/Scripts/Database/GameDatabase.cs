@@ -1,26 +1,26 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/GameDatabase")]
-public class GameDatabase : ScriptableObject
+public class GameDatabase
 {
-    public ShipModel[] ships;
+    public Dictionary<string, TripulationModel> tripulations;
 
-    public WeaponModel[] weapons;
-    public AmmoModel[] ammos;
-    public ProjectileModel[] projectiles;
+    public Dictionary<string, ShipModel> ships;
+    public Dictionary<string, WeaponModel> weapons;
+    public Dictionary<string, AmmoModel> ammos;
+    public Dictionary<string, ProjectileModel> projectiles;
 
-    public TripulationModel[] tripulation;
+    public Dictionary<string, EnemyModel> enemies;
 
-    public EnemyModel[] enemies;
+    public Dictionary<CurrencyHelper.CurrencyType, CurrencyModel> currencies;
+    public Dictionary<IngredientHelper.IngredientType, IngredientModel> ingredients;
 
-    public CurrencyModel[] currency;
-    public IngredientModel[] ingredients;
+    public Dictionary<string, UpgradeModel> upgrades;
+    public Dictionary<string, AcquisitionModel> acquisitions;
 
-    public UpgradeModel[] upgrades;
-    public AcquisitionModel[] acquisition;
+    public Dictionary<string, BuildingModel> buildings;
 
-    public BuildingModel[] buildings;
-
-    public EventModel[] events;
-    public MissionModel[] missions;
+    public Dictionary<string, EventModel> events;
+    public Dictionary<string, MissionModel> missions;
 }

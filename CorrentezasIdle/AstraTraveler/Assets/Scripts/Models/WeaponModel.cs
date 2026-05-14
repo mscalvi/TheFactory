@@ -2,23 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Weapon")]
-public class WeaponModel : ScriptableObject
+public class WeaponModel
 {
     public string Id;
-    public string Name;
-    public string Description;
+
+    public string NamePT;
+    public string NameEN;
+
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public double Damage;
     public double Range;
     public double AttackSpeed;
     public double Precision;
     public double CriticalDamage;
-    public string Special;
+    public WeaponHelper.SpecialType Special;
+
+    public int Angle;
+    public int AngleMin;
+    public int AngleMax;
 
     public WeaponHelper.AmmoType AmmoType;
-    public AmmoInstance Ammo;
-    public double ProjectileSpeed;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Tripulation")]
-public class TripulationModel : ScriptableObject
+public class TripulationModel
 {
     public string Id;
     public string Name;

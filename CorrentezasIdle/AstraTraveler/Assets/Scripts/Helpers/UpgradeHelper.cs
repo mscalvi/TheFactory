@@ -52,6 +52,8 @@ public class UpgradeHelper
         ShipArmor,
         ShipResistence,
         ShipRepair,
+        ShipRepairValue,
+        ShipRepairCost,
         ClickTarget,
         ClickRarity,
         ClickMax,
