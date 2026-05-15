@@ -75,6 +75,7 @@ public class UpgradeHelper
         Weapon,
         Building,
         Missions,
+        Upgrade,
     }
 
 }

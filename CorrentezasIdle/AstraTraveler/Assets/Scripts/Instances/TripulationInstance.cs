@@ -15,7 +15,7 @@ public class TripulationInstance
     public double Int;
     public double Luk;
     public double Cha;
-    public double Wis;
+    public double Con;
 
     public TripulationHelper.Type Type;
     public GameHelper.ItemRarity Rarity;
@@ -35,7 +35,7 @@ public class TripulationInstance
         Int = model.Int;
         Luk = model.Luk;
         Cha = model.Cha;
-        Wis = model.Wis;
+        Con = model.Con;
 
         Type = model.Type;
         Rarity = model.Rarity;

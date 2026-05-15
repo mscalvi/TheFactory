@@ -20,18 +20,18 @@ public class ExpeditionState
     public PathHelper.PathTagSet LastPath = new PathHelper.PathTagSet();
     public PathHelper.PathTagSet ActualPath = new PathHelper.PathTagSet();
 
-    public List<EnemyInstance> ActiveEnemies = new();
+    public List<EnemyInstance> ActiveEnemies = new List<EnemyInstance>();
     public bool DamageTaken = false;
 
-    public List<TripulationInstance> ActiveTripulation;
-    public List<TripulationInstance> ActiveRecruits;
+    public List<TripulationInstance> ActiveTripulation = new List<TripulationInstance>();
+    public List<TripulationInstance> ActiveRecruits = new List<TripulationInstance>();
 
 
     // Valores Start
-    public Dictionary<GameHelper.ItemRarity, float> StartIngredientRarityWeights;
+    public Dictionary<GameHelper.ItemRarity, float> StartIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
 
     public double StartSpawnChance = 1;
-    public float StartSpawnInterval = 10f;
+    public float StartSpawnInterval = 5f;
     public double StartSpawnBudget = 3;
     public double StartSpawnBudgetGrowth = 0.69;
     public double StartBossThreshold = 200;
@@ -51,9 +51,9 @@ public class ExpeditionState
     public int StartDestinationGapIncrease = 2;
 
     // Valores Base
-    public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights;
+    public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
     public double BaseSpawnChance = 1;
-    public float BaseSpawnInterval = 10f;
+    public float BaseSpawnInterval = 5f;
     public double BaseSpawnBudget = 3;
     public double BaseSpawnBudgetGrowth = 0.69;
     public double BaseBossThreshold = 200;
@@ -73,10 +73,10 @@ public class ExpeditionState
     public int BaseDestinationGapIncrease = 2;
 
     // Valores Atuais
-    public Dictionary<GameHelper.ItemRarity, float> ActualIngredientRarityWeights;
+    public Dictionary<GameHelper.ItemRarity, float> ActualIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
 
     public double ActualSpawnChance = 1;
-    public float ActualSpawnInterval = 10f;
+    public float ActualSpawnInterval = 5f;
     public double ActualSpawnBudget = 3;
     public double ActualSpawnBudgetGrowth = 0.69;
     public double ActualBossThreshold = 200;

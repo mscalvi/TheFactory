@@ -19,7 +19,6 @@ public class AmmoModel
     public int Ammount;
     public WeaponHelper.SpecialType Special;
 
-    public ProjectileModel Projectile;
     public float ProjectileSpeed;
 
     public string UnlockId;

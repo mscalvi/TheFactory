@@ -39,6 +39,6 @@ public class EnemyHelper
 
     public enum EnemySpecial
     {
-        
+        None,
     }
 }

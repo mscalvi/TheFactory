@@ -37,8 +37,28 @@ public class ProjectileInstance
         AmmoType = model.Type;
 
         Speed = 0;
-        HitRadius = model.HitRadius;
-        Lifetime = model.Lifetime;
+        //HitRadius = model.HitRadius;
+        //Lifetime = model.Lifetime;
+
+        SpritePath = model.SpritePath;
+        BehaviorType = model.BehaviorType;
+
+        Position = new Vector3();
+        Target = null;
+    }
+
+    public ProjectileInstance(ProjectileInstance model)
+    {
+        Id = model.Id;
+
+        NameEN = model.NameEN;
+        NamePT = model.NamePT;
+
+        AmmoType = model.AmmoType;
+
+        Speed = 0;
+        //HitRadius = model.HitRadius;
+        //Lifetime = model.Lifetime;
 
         SpritePath = model.SpritePath;
         BehaviorType = model.BehaviorType;

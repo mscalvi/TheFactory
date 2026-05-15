@@ -57,7 +57,7 @@ public class MissionInstance
 
         MissionRarity = model.MissionRarity;
         MissionType = model.MissionType;
-        MissionStatus = model.MissionStatus;
+        MissionStatus = MissionHelper.MissionStatus.Available;
 
         TargetValue = 1;
         TargetMultiplier = 1;

@@ -1,0 +1,9 @@
+﻿Id;NamePT;NameEN;DescriptionEN;DescriptionPT;Cost;Currency;Time;Type;TargetType;UnlockId;UnlockStatus
+a1002;Construir a Ferraria;;;Constrói a Ferraria, que permite comprar melhorias para Armas;10;Marcos;300;Captain;Building;uub001;Unknow
+a1001;Construir a Marcenaria;;;Constrói a Marcenaria, que permite comprar melhorias para o Navio;10;Marcos;300;Captain;Building;uub001;Unknow
+a1003;Construir Escritório de Planejamento;;;Constrói o Escritório de Planejamentos, que permite comprar melhorias para ganhar mais Experiência;500;Marcos;1200;Captain;Building;uub001;Unknow
+a1004;Construir Sala de Pescaria;;;Constrói a Sala de Pescaria, que permite comprar melhorias para a observação e o aproveitamento de Peixes;500;Marcos;1200;Fisherman;Building;uub001;Unknow
+a1005;Construir Sala de Confraternização;;;Constrói a Sala de Confraternização, que permite comprar melhorias para aumentar o tamanho da Tripulação e atrair melhores Tripulantes;500;Marcos;1200;Captain;Building;uub001;Unknow
+a1006;Construir Sala do Tesouro;;;Contrói a Sala do Tesouro, que permite comprar melhorias para ganhar mais Marcos;500;Marcos;1200;Merchant;Building;uub001;Unknow
+a1007;Construir a Academia;;;Constrói a Academia, que permite comprar melhorias para os treinamentos oferecidos para a Tripulação;2500;Marcos;3600;Coach;Building;uub001;Unknow
+a1008;Construir o Laboratório;;;Constrói o Laboratório, que permite comprar melhorias para as pesquisas realizadas;2500;Marcos;3600;Alchemist;Building;uub001;Unknow

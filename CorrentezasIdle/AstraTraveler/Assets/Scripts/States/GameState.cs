@@ -16,7 +16,7 @@ public class GameState
 
     // Informações Necessárias
     public float WorldScale = 0.2f;
-    public float GameSpeed = 2;
+    public float GameSpeed = 1;
 
     // Linguagem
     public Language ActualLanguage = Language.English;

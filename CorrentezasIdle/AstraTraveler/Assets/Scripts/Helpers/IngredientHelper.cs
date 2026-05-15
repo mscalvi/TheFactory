@@ -3,9 +3,9 @@ public class IngredientHelper
     public enum IngredientType
     {
         None,
-        Scales,
-        Feathers,
-        Bones,
+        Scale,
+        Feather,
+        Bone,
     }
 
     public enum IngredientClass

@@ -6,8 +6,8 @@ public class EventModel
 {
     public string Id;
 
-    public string TitleEN;
-    public string TitlePT;
+    public string NameEN;
+    public string NamePT;
 
     public string DescriptionEN;
     public string DescriptionPT;

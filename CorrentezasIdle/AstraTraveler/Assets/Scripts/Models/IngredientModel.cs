@@ -1,8 +1,7 @@
 
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Ingredient")]
-public class IngredientModel : ScriptableObject
+public class IngredientModel
 {
     public string Id;
 

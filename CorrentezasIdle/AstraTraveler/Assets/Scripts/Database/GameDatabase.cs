@@ -13,8 +13,8 @@ public class GameDatabase
 
     public Dictionary<string, EnemyModel> enemies;
 
-    public Dictionary<CurrencyHelper.CurrencyType, CurrencyModel> currencies;
-    public Dictionary<IngredientHelper.IngredientType, IngredientModel> ingredients;
+    public Dictionary<string, CurrencyModel> currencies;
+    public Dictionary<string, IngredientModel> ingredients;
 
     public Dictionary<string, UpgradeModel> upgrades;
     public Dictionary<string, AcquisitionModel> acquisitions;

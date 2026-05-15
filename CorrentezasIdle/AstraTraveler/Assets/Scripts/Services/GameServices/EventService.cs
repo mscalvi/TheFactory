@@ -41,8 +41,6 @@ public class EventService : MonoBehaviour
             if (!GameState.UnlockState.Studies)
             {
                 GameState.UnlockState.Studies = true;
-                GameState.DataState.missions["m1002"].UnlockStatus = UnlockHelper.UnlockStatus.Available;
-                GameState.DataState.missions["m1003"].UnlockStatus = UnlockHelper.UnlockStatus.Available;
             }
         }
 

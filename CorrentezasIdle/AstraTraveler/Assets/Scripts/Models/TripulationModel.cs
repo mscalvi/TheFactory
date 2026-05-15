@@ -14,7 +14,7 @@ public class TripulationModel
     public double Int;
     public double Luk;
     public double Cha;
-    public double Wis;
+    public double Con;
 
     public TripulationHelper.Type Type;
     public GameHelper.ItemRarity Rarity;

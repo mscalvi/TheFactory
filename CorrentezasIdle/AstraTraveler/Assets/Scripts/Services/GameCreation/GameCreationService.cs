@@ -20,6 +20,7 @@ public class GameCreationService : MonoBehaviour
         BuildIngredients();
         BuildBestiary();
         BuildTripulation();
+        BuildAmmos();
     }
 
     private void CreateDataState(GameDatabase DataBase)
@@ -165,5 +166,13 @@ public class GameCreationService : MonoBehaviour
     private void BuildTripulation()
     {
         GameState.ExpeditionState.ActiveTripulation.Add(GameState.DataState.tripulations["t001"]);
+    }
+
+    private void BuildAmmos()
+    {
+        foreach (var ammo in GameState.DataState.ammos.Values)
+        {
+            ammo.Projectile = GameState.DataState.projectiles["r001"];
+        }
     }
 }

@@ -13,8 +13,8 @@ public class ProjectileModel
 
 
     // Gameplay
-    public float HitRadius;
-    public float Lifetime;
+    //public float HitRadius;
+    //public float Lifetime;
 
     // Visual
     public WeaponHelper.PathType SpritePath;

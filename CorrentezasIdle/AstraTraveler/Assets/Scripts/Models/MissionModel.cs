@@ -21,7 +21,6 @@ public class MissionModel
     public CurrencyHelper.CurrencyType RewardType4;
 
     public MissionHelper.MissionType MissionType;
-    public MissionHelper.MissionStatus MissionStatus;
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;

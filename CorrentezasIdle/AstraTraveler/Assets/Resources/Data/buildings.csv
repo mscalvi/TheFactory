@@ -1,0 +1,10 @@
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Type;UnlockId;UnlockStatus
+b00;;Salão da Companhia;;;CompanyRoom;Start;Unlocked
+b01;;Escritório de Planejamento;;;PlanningRoom;a1003;Available
+b02;;Sala de Pescaria;;;FishingRoom;a1004;Available
+b03;;Ferraria;;;ArmoryRoom;a1002;Available
+b04;;Sala de Confraternização;;;LivingRoom;a1005;Available
+b05;;Sala do Tesouro;;;TreasureRoom;a1006;Available
+b06;;Academia;;;TrainingRoom;a1007;Available
+b07;;Laboratório;;;LaboratoryRoom;a1008;Available
+b08;;Marcenaria;;;ShipImproveRoom;a1001;Available

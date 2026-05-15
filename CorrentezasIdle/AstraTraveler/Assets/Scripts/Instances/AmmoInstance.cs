@@ -28,7 +28,7 @@ public class AmmoInstance
 
     public WeaponHelper.SpecialType Special;
 
-    public ProjectileModel Projectile;
+    public ProjectileInstance Projectile;
 
     public float StartProjectileSpeed;
     public float BaseProjectileSpeed;
@@ -62,7 +62,7 @@ public class AmmoInstance
 
         Special = model.Special;
 
-        Projectile = model.Projectile;
+        Projectile = null;
 
         StartProjectileSpeed = model.ProjectileSpeed;
         BaseProjectileSpeed = model.ProjectileSpeed;

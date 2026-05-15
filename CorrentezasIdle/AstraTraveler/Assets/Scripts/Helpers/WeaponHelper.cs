@@ -31,6 +31,7 @@ public class WeaponHelper
     {
         None,
         Piercing,
+        Slow,
     }
 
     public enum BehaviorType
@@ -44,5 +45,4 @@ public class WeaponHelper
         Straight,
         Elipse,
     }
-
 }

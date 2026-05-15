@@ -14,6 +14,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     int tickCounter = 0;
     double accumulatedBudget = 0;
     int spawnTickCounter = 0;
+    float spawnTimer = 0;
+
     Queue<EnemyInstance> spawnQueue = new();
 
     public void Initialize(GameState gameState, TickService Tick, EnemyProgressService progress)
@@ -35,11 +37,11 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        tickCounter++;
+        spawnTimer += dt;
 
-        if (tickCounter >= Expedition.ActualSpawnInterval)
+        if (spawnTimer >= Expedition.ActualSpawnInterval)
         {
-            tickCounter = 0;
+            spawnTimer = 0;
             ProcessWave();
         }
 
@@ -56,6 +58,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         {
             accumulatedBudget += waveBudget;
             ExpeditionEvents.NoWaveSpawn?.Invoke();
+            Debug.Log("Sem Wave! Se Prepare!");
             return;
         }
 
@@ -87,6 +90,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
 
+        Debug.Log($"Spawn: {instance.NamePT} \n-Vida: {instance.ActualLife} -Dano: {instance.Damage} -Speed: {instance.Speed}");
+
         if (instance.UnlockStatus == UnlockHelper.UnlockStatus.Unknow)
         {
             foreach (var enemy in DataState.enemies)
@@ -106,7 +111,13 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         if (validEnemies.Count == 0)
             return;
 
-        double cheapest = GetCheapestCost(validEnemies);
+        double cheapest = double.MaxValue;
+
+        foreach (var e in validEnemies)
+        {
+            if (e.Value.SpawnCost < cheapest)
+                cheapest = e.Value.SpawnCost;
+        }
 
         while (budget >= cheapest)
         {
@@ -131,41 +142,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         double baseBud = Expedition.ActualSpawnBudget;
         double growth = Expedition.ActualSpawnBudgetGrowth;
 
-        double actualBud = baseBud * (1 + Expedition.DayCounter * growth);
+        double actualBud = baseBud * (Expedition.DayCounter * growth);
 
         return actualBud;
-    }
-        
-    void SpendBudget(double budget)
-    {
-        var validEnemies = SpawnChance();
-
-        int maxEnemiesPerWave = 20;
-        int spawned = 0;
-
-        if (validEnemies.Count == 0)
-            return;
-
-        double cheapest = GetCheapestCost(validEnemies);
-
-        while (budget >= cheapest && spawned < maxEnemiesPerWave)
-        {
-            var chosen = ChooseEnemy(validEnemies);
-
-            if (chosen == null)
-                break;
-
-            double cost = chosen.SpawnCost;
-
-            if (budget < cost)
-                break;
-
-            budget -= cost;
-
-            spawned++;
-
-            SpawnInstance(chosen);
-        }
     }
 
     EnemyInstance ChooseEnemy(Dictionary<string, EnemyInstance> validEnemies)
@@ -186,35 +165,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         }
 
         return null;
-    }
-
-    double GetCheapestCost(Dictionary<string, EnemyInstance> enemies)
-    {
-        double min = double.MaxValue;
-
-        foreach (var e in enemies)
-        {
-            if (e.Value.SpawnCost < min)
-                min = e.Value.SpawnCost;
-        }
-
-        return min;
-    }
-
-    void SpawnInstance(EnemyInstance chosen)
-    {
-        EnemyInstance instance = new EnemyInstance(chosen);
-
-        instance.Angle = SpawnAngle(30, 330);
-
-        ProgressService.ApplyProgression(instance);
-
-        Expedition.ActiveEnemies.Add(instance);
-
-        ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
-
-        if (instance.UnlockStatus == UnlockHelper.UnlockStatus.Unknow)
-            EnemyKnow(chosen);
     }
 
     double SpawnAngle(double min, double max)
@@ -247,6 +197,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var enemy in DataState.enemies)
         {            
+            if (enemy.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
             if (Expedition.IsDay && enemy.Value.DayEnemy)
                 validEnemies.Add(enemy.Key, enemy.Value);
             else if (!Expedition.IsDay && !enemy.Value.DayEnemy)
@@ -254,16 +207,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         }
 
         return validEnemies;
-    }
-
-    void CheckSpecialEvent()
-    {
-        if (accumulatedBudget >= Expedition.ActualBossThreshold)
-        {
-            Debug.Log("Boss disparado!");
-
-            accumulatedBudget = 0;
-        }
     }
 
     private void EnemyKnow(EnemyInstance enemy)

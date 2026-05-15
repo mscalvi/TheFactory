@@ -25,8 +25,8 @@ public class EventInstance
     public EventInstance(EventModel model)
     {
         Id = model.Id;
-        TitleEN = model.TitleEN;
-        TitlePT = model.TitlePT;
+        TitleEN = model.NameEN;
+        TitlePT = model.NamePT;
         DescriptionEN = model.DescriptionEN;
         DescriptionPT = model.DescriptionPT;
 

@@ -72,24 +72,40 @@ public class EnemyView : MonoBehaviour
 
         switch (Enemy.Id)
         {
-            case "e001":
+            case "e0001":
                 spriteRenderer.color = Color.cyan;
                 break;
 
-            case "e002":
+            case "e0002":
                 spriteRenderer.color = Color.green;
                 break;
 
-            case "e101":
+            case "e0003":
+                spriteRenderer.color = Color.gray;
+                break;
+
+            case "e0004":
                 spriteRenderer.color = Color.blue;
                 break;
 
-            case "102":
+            case "e1001":
+                spriteRenderer.color = Color.yellow;
+                break;
+
+            case "e1002":
                 spriteRenderer.color = Color.magenta;
                 break;
 
-            default:
+            case "e1003":
                 spriteRenderer.color = Color.red;
+                break;
+
+            case "e1004":
+                spriteRenderer.color = Color.grey;
+                break;
+
+            default:
+                spriteRenderer.color = Color.black;
                 break;
         }
     }

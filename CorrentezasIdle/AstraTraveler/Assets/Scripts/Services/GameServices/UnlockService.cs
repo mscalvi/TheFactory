@@ -24,6 +24,14 @@ public class UnlockService : MonoBehaviour
             }
         }
 
+        foreach (var mission in DataState.missions.Values)
+        {
+            if (mission.UnlockId == upgrade.Id)
+            {
+                mission.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+            }
+        }
+
         if (upgrade.Id.StartsWith("uu"))
         {
             StudyUpgrade(upgrade);

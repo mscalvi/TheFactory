@@ -1,15 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DatabaseService : MonoBehaviour
 {
+    public GameDatabase Database;
+
     public GameDatabase Initialize()
     {
-        var db = new GameDatabase();
+        Database = new GameDatabase();
 
-        db.tripulations = TripulationData.All;
+        TripulationData.Load();
+        EnemiesData.Load();
 
-        return db;
-    }
+        ShipData.Load();
+        WeaponsData.Load();
+        AmmoData.Load();
+        ProjectilesData.Load();
+
+        AcquisitionsData.Load();
+        BuildingsData.Load();
+        UpgradesData.Load();
+
+        CurrenciesData.Load();
+        IngredientsData.Load();
+
+        EventsData.Load();
+        MissionsData.Load();
+
+        Database.tripulations = TripulationData.All;
+        Database.enemies = EnemiesData.All;
+
+        Database.ships = ShipData.All;
+        Database.weapons = WeaponsData.All;
+        Database.ammos = AmmoData.All;
+        Database.projectiles = ProjectilesData.All;
+
+        Database.acquisitions = AcquisitionsData.All;
+        Database.buildings = BuildingsData.All;
+        Database.upgrades = UpgradesData.All;
+
+        Database.currencies = CurrenciesData.All;
+        Database.ingredients = IngredientsData.All;
+
+        Database.events = EventsData.All;
+        Database.missions = MissionsData.All;
+
+        return Database;
+    }  
 }
