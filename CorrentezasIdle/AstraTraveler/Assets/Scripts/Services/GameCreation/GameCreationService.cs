@@ -18,7 +18,6 @@ public class GameCreationService : MonoBehaviour
         CreateDataState(db);
         BuildShips();
         BuildIngredients();
-        BuildBuildings();
         BuildBestiary();
         BuildTripulation();
     }
@@ -141,22 +140,6 @@ public class GameCreationService : MonoBehaviour
         GameState.ExpeditionState.Ship.Weapons[0].Ammo = GameState.DataState.ammos["a001"];
     }
 
-    private void BuildBuildings()
-    {
-        foreach (var building in GameState.DataState.buildings)
-        {
-            building.Value.Upgrades = new List<UpgradeInstance>();
-
-            foreach (var upgrade in GameState.DataState.upgrades)
-            {
-                if (upgrade.Value.Building != building.Value.Type)
-                    continue;
-
-                building.Value.Upgrades.Add(upgrade.Value);
-            }
-        }
-    }
-
     private void BuildIngredients()
     {
         GameState.ExpeditionState.StartIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>()
@@ -181,6 +164,6 @@ public class GameCreationService : MonoBehaviour
 
     private void BuildTripulation()
     {
-        GameState.ExpeditionState.Ship.ActiveTripulation.Add(GameState.DataState.tripulations["t001"]);
+        GameState.ExpeditionState.ActiveTripulation.Add(GameState.DataState.tripulations["t001"]);
     }
 }

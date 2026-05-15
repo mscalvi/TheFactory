@@ -136,7 +136,7 @@ public class ExpeditionUi : MonoBehaviour
             if (!shipUpgradeUI.TryGetValue(upgrade.Value.Id, out var ui))
                 continue;
 
-            ui.Setup(upgrade.Value, PurchaseService);            
+            ui.Setup(upgrade.Value, PurchaseService, GameState);            
         }
     }
 
@@ -145,7 +145,7 @@ public class ExpeditionUi : MonoBehaviour
         if (!shipUpgradeUI.TryGetValue(upgrade.Id, out var ui))
             return;
 
-        ui.Setup(upgrade, PurchaseService);
+        ui.Setup(upgrade, PurchaseService, GameState);
     }
 
 
@@ -210,7 +210,7 @@ public class ExpeditionUi : MonoBehaviour
             var obj = Instantiate(UpgradePrefab, parent);
             var ui = obj.GetComponent<ExpeditionUpgradeDefinition>();
 
-            ui.Setup(upgrade.Value, PurchaseService);
+            ui.Setup(upgrade.Value, PurchaseService, GameState);
 
             shipUpgradeUI[upgrade.Value.Id] = ui;
         }
@@ -236,7 +236,7 @@ public class ExpeditionUi : MonoBehaviour
             var obj = Instantiate(UpgradePrefab, parent);
             var ui = obj.GetComponent<ExpeditionUpgradeDefinition>();
 
-            ui.Setup(upgrade.Value, PurchaseService);
+            ui.Setup(upgrade.Value, PurchaseService, GameState);
 
             shipUpgradeUI[upgrade.Value.Id] = ui;
         }
@@ -263,7 +263,7 @@ public class ExpeditionUi : MonoBehaviour
             var obj = Instantiate(UpgradePrefab, parent);
             var ui = obj.GetComponent<ExpeditionUpgradeDefinition>();
 
-            ui.Setup(upgrade.Value, PurchaseService);
+            ui.Setup(upgrade.Value, PurchaseService, GameState);
 
             shipUpgradeUI[upgrade.Value.Id] = ui;
         }

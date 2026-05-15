@@ -35,7 +35,7 @@ public class DestinationsPopUp : MonoBehaviour
         {
             Opt1Btn.gameObject.SetActive(true);
             Opt1Title.text = options[0].Name;
-            Opt1Text.text = options[0].Description;
+            Opt1Text.text = options[0].DescriptionPT;
             Opt1Btn.onClick.AddListener(() => onSelected(options[0]));
         }
 
@@ -43,7 +43,7 @@ public class DestinationsPopUp : MonoBehaviour
         {
             Opt2Btn.gameObject.SetActive(true);
             Opt2Title.text = options[1].Name;
-            Opt2Text.text = options[1].Description;
+            Opt2Text.text = options[1].DescriptionPT;
             Opt2Btn.onClick.AddListener(() => onSelected(options[1]));
         }
 
@@ -51,7 +51,7 @@ public class DestinationsPopUp : MonoBehaviour
         {
             Opt3Btn.gameObject.SetActive(true);
             Opt3Title.text = options[2].Name;
-            Opt3Text.text = options[2].Description;
+            Opt3Text.text = options[2].DescriptionPT;
             Opt3Btn.onClick.AddListener(() => onSelected(options[2]));
         }
     }

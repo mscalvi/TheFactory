@@ -52,7 +52,6 @@ public class GameController : MonoBehaviour
             GameState.CompanyState = new CompanyState();
             GameState.UnlockState = new UnlockState();
             GameState.MissionsState = new MissionsState();
-            GameState.TripulationState = new TripulationState();
             GameState.BestiaryState = new BestiaryState();
         } else
         {

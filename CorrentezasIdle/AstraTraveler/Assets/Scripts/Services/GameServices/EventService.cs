@@ -19,7 +19,7 @@ public class EventService : MonoBehaviour
 
     private void EventHandler(EventInstance eventInstance)
     {
-        switch (eventInstance.EventFrequency)
+        switch (eventInstance.Frequency)
         {
             case GameHelper.ItemRarity.Unique:
                 break;

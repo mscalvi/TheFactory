@@ -58,7 +58,7 @@ public class LandingUi : MonoBehaviour
             MissionsPopUp.Hide();
 
             MissionSet();
-        });
+        }, GameState);
     }
 
     private bool IsSlotOnCooldown(MissionSlotModel slot)
@@ -81,7 +81,7 @@ public class LandingUi : MonoBehaviour
                 var go = Instantiate(MissionDefinition, MissionPanel);
                 var ui = go.GetComponent<MissionDefinition>();
 
-                ui.Setup(slot.ActiveMission);
+                ui.Setup(slot.ActiveMission, GameState);
             }
             else if (IsSlotOnCooldown(slot))
             {

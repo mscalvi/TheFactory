@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -6,14 +7,18 @@ public class EnemyInstance
     public EnemyModel Model;
 
     public string Id;
-    public string Name;
-    public string Description;
+    public string NamePT;
+    public string NameEN;
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public bool DayEnemy;
     public bool BossEnemy;
     public bool MarkedEnemy;
+    public EnemyHelper.EnemyType EnemyType;
 
     public double StartLife;
+    public double ActualLife;
     public double LifeGrowth;
     public double LifeRegen;
     public double LifeRegenGrowth;
@@ -30,41 +35,48 @@ public class EnemyInstance
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
 
-    public Sprite Sprite;
-
     public double Experience;
+
+    public EnemyHelper.EnemySpecial Special;
+
     public IngredientHelper.IngredientType CommonIngredient;
     public IngredientHelper.IngredientType UncommonIngredient;
     public IngredientHelper.IngredientType RareIngredient;
     public IngredientHelper.IngredientType LegendaryIngredient;
 
     public double Rarity;
-    public double Cost;
-    public EnemyHelper.EnemyStage Stage;
+    public double SpawnCost;
+    public List<EnemyHelper.EnemyStage> Stage;
 
     public EnemyHelper.EnemyState State;
 
-    public EnemyHelper.EnemyType EnemyType;
-    public PathHelper.PathType PathType;
-    public PathHelper.PathModifier PathModifier;
-    public PathHelper.PathEnvironment PathEnvironment;
+    public List<PathHelper.PathType> PathTypes;
+    public List<PathHelper.PathEnvironment> PathEnvironments;
+    public List<PathHelper.PathModifier> PathModifiers;
 
     public double Distance;
     public double Angle;
     public double Cooldown;
-    public double CurrentLife;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public EnemyInstance(EnemyModel model)
     {
         Id = model.Id;
 
+        NameEN = model.NameEN;
+        NamePT = model.NamePT;
+        DescriptionEN = model.DescriptionEN;
+        DescriptionPT = model.DescriptionPT;
+
         DayEnemy = model.DayEnemy;
         BossEnemy = model.BossEnemy;
         MarkedEnemy = false;
+        EnemyType = model.EnemyType;
 
         StartLife = model.Life;
+        ActualLife = model.Life;
         LifeGrowth = model.LifeGrowth;
         LifeRegen = model.LifeRegen;
         LifeRegenGrowth = model.LifeRegenGrowth;
@@ -81,38 +93,44 @@ public class EnemyInstance
         SpawnDistance = model.SpawnDistance;
         SpawnDistanceGrowth = model.SpawnDistanceGrowth;
 
-
         Experience = model.Experience;
+
+        Special = model.Special;
+
         CommonIngredient = model.CommonIngredient;
         UncommonIngredient = model.UncommonIngredient;
         RareIngredient = model.RareIngredient;
         LegendaryIngredient = model.LegendaryIngredient;
 
         Rarity = model.Rarity;
+        SpawnCost = model.SpawnCost;
 
         State = EnemyHelper.EnemyState.Moving;
-
-        EnemyType = model.EnemyType;
 
         Distance = model.SpawnDistance;
         Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
-        CurrentLife = model.Life;
 
+        UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 
     public EnemyInstance(EnemyInstance model)
     {
         Id = model.Id;
-        Name = model.Name;
-        Description = model.Description;
+
+        NameEN = model.NameEN;
+        NamePT = model.NamePT;
+        DescriptionEN = model.DescriptionEN;
+        DescriptionPT = model.DescriptionPT;
 
         DayEnemy = model.DayEnemy;
         BossEnemy = model.BossEnemy;
         MarkedEnemy = false;
+        EnemyType = model.EnemyType;
 
         StartLife = model.StartLife;
+        ActualLife = model.StartLife;
         LifeGrowth = model.LifeGrowth;
         LifeRegen = model.LifeRegen;
         LifeRegenGrowth = model.LifeRegenGrowth;
@@ -129,30 +147,25 @@ public class EnemyInstance
         SpawnDistance = model.SpawnDistance;
         SpawnDistanceGrowth = model.SpawnDistanceGrowth;
 
-        Sprite = model.Sprite;
-
         Experience = model.Experience;
+
+        Special = model.Special;
+
         CommonIngredient = model.CommonIngredient;
         UncommonIngredient = model.UncommonIngredient;
         RareIngredient = model.RareIngredient;
         LegendaryIngredient = model.LegendaryIngredient;
 
         Rarity = model.Rarity;
-        Cost = model.Cost;
-        Stage = model.Stage;
+        SpawnCost = model.SpawnCost;
 
         State = EnemyHelper.EnemyState.Moving;
-
-        EnemyType = model.EnemyType;
-        PathType = model.PathType;
-        PathEnvironment = model.PathEnvironment;
-        PathModifier = model.PathModifier;
 
         Distance = model.SpawnDistance;
         Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
-        CurrentLife = model.StartLife;
 
+        UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 }

@@ -45,9 +45,9 @@ public class PurchaseService : MonoBehaviour
         if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var Currency))
             return;
 
-        if (Currency.Amount >= upgrade.Cost)
+        if (Currency.Amount >= upgrade.ActualCost)
         {
-            CurrencyService.Spend(upgrade.Currency, upgrade.Cost);
+            CurrencyService.Spend(upgrade.Currency, upgrade.ActualCost);
 
             GameEvents.OnAcquisitionBuy?.Invoke(upgrade);
         }
@@ -57,7 +57,7 @@ public class PurchaseService : MonoBehaviour
 
     private void BuyTripulation(TripulationInstance tripulation)
     {
-        CurrencyService.Spend(CurrencyType.Prestige, GameState.ExpeditionState.Ship.ActiveTripulation.Count);
+        CurrencyService.Spend(CurrencyType.Prestige, GameState.ExpeditionState.ActiveTripulation.Count);
     }
 
     public void CanBuyCurrency(CurrencyHelper.CurrencyType type)
@@ -112,7 +112,7 @@ public class PurchaseService : MonoBehaviour
 
     public bool CanBuyRecruit()
     {
-        if (GameState.DataState.currencies[CurrencyHelper.CurrencyType.Prestige].Amount >= GameState.ExpeditionState.Ship.ActiveTripulation.Count)
+        if (GameState.DataState.currencies[CurrencyHelper.CurrencyType.Prestige].Amount >= GameState.ExpeditionState.ActiveTripulation.Count)
         {
             return true;
         } else
@@ -134,7 +134,7 @@ public class PurchaseService : MonoBehaviour
             }
         }
 
-        return currency.Amount >= upgrade.Cost;
+        return currency.Amount >= upgrade.ActualCost;
     }
 
     private void AtualizePrice(UpgradeInstance upgrade)

@@ -6,26 +6,69 @@ public class AmmoInstance
     public AmmoModel Model;
 
     public string Id;
-    public string Name;
-    public string Description;
+    public string NamePT;
+    public string NameEN;
+
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public WeaponHelper.AmmoType Type;
 
-    public double Damage;
-    public string Special;
+    public double StartDamage;
+    public double BaseDamage;
+    public double ActualDamage;
+
+    public double StartRecharge;
+    public double BaseRecharge;
+    public double ActualRecharge;
+
+    public int StartAmmount;
+    public int BaseAmmount;
+    public int ActualAmmount;
+
+    public WeaponHelper.SpecialType Special;
 
     public ProjectileModel Projectile;
 
+    public float StartProjectileSpeed;
+    public float BaseProjectileSpeed;
+    public float ActualProjectileSpeed;
+
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public AmmoInstance(AmmoModel model)
     {
         Id = model.Id;
 
-        Damage = model.Damage;
+        NamePT = model.NamePT;
+        NameEN = model.NameEN;
+        DescriptionPT = model.DescriptionPT;
+        DescriptionEN = model.DescriptionEN;
+
+        Type = model.Type;
+
+        StartDamage = model.Damage;
+        BaseDamage = model.Damage;
+        ActualDamage = model.Damage;
+
+        StartRecharge = model.Recharge;
+        BaseRecharge = model.Recharge;
+        ActualRecharge = model.Recharge;
+
+        StartAmmount = model.Ammount;
+        BaseAmmount = model.Ammount;
+        ActualAmmount = model.Ammount;
+
+        Special = model.Special;
 
         Projectile = model.Projectile;
 
+        StartProjectileSpeed = model.ProjectileSpeed;
+        BaseProjectileSpeed = model.ProjectileSpeed;
+        ActualProjectileSpeed = model.ProjectileSpeed;
+
+        UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 }

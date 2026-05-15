@@ -49,9 +49,9 @@ public class MissionsTrackerService : MonoBehaviour
             if (!mission.TargetsIds.Contains(enemy.Id))
                 continue;
 
-            mission.CurrentValue++;
+            mission.ActualValue++;
 
-            if (mission.CurrentValue >= mission.TargetValue)
+            if (mission.ActualValue >= mission.TargetValue)
                 toComplete.Add(mission);
         }
 

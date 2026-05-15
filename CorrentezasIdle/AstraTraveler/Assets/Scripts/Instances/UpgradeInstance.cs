@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UpgradeInstance
-{ 
+{
     public UpgradeModel Model;
 
     public string Id;
-    public string Name;
-    public string Description;
+
+    public string NameEN;
+    public string NamePT;
+    public string DescriptionEN;
+    public string DescriptionPT;
+
+    public UpgradeHelper.UpgradeScope Scope;
 
     public UpgradeHelper.UpgradeType UpgradeType;
     public UpgradeHelper.EffectType EffectType;
 
-    public UpgradeHelper.UpgradeScope Scope;
     public UpgradeHelper.UpgradeMenu ExpeditionMenu;
     public UpgradeHelper.UpgradeBuilding Building;
 
@@ -23,31 +27,34 @@ public class UpgradeInstance
 
     public UpgradeHelper.TargetType TargetType;
     public string TargetId;
-    public string UnlockId;
     public int MaxBuy;
+    public int ActualBuy;
 
     public double Cost;
     public double ActualCost;
     public double CostGrowth;
-    public bool CanBuy;
     public CurrencyHelper.CurrencyType Currency;
+    public bool CanBuy;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
-
-    public int ActualBuy;
 
     public UpgradeInstance(UpgradeModel model)
     {
         Id = model.Id;
-        Name = model.Name;
-        Description = model.Description;
+
+        NameEN = model.NameEN;
+        NamePT = model.NamePT;
+        DescriptionEN = model.DescriptionEN;
+        DescriptionPT = model.DescriptionPT;
+
+        Scope = model.Scope;
 
         UpgradeType = model.UpgradeType;
         EffectType = model.EffectType;
 
-        Scope = model.Scope;
-        Building = model.Building;
         ExpeditionMenu = model.ExpeditionMenu;
+        Building = model.Building;
 
         UpgradeValue = model.UpgradeValue;
         StartValue = model.StartValue;
@@ -55,7 +62,6 @@ public class UpgradeInstance
 
         TargetType = model.TargetType;
         TargetId = model.TargetId;
-        UnlockId = model.UnlockId;
 
         ActualBuy = 0;
         MaxBuy = model.MaxBuy;
@@ -63,11 +69,10 @@ public class UpgradeInstance
         Cost = model.Cost;
         ActualCost = model.Cost;
         CostGrowth = model.CostGrowth;
-
         Currency = model.Currency;
-
         CanBuy = false;
 
+        UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 }

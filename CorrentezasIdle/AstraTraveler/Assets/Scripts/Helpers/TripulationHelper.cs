@@ -8,7 +8,7 @@ public class TripulationHelper
     public enum Type
     {
         Captain,        // Principal
-        Shipbuilder,    // Navio     
+        Shipbuilder,    // Navio
         Hunter,         // Bestiário
         Merchant,       // Gemas
         Alchemist,      // Alquimia

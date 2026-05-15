@@ -7,18 +7,24 @@ public class AcquisitionInstance : MonoBehaviour
     public AcquisitionModel Model;
 
     public string Id;
-    public string Name;
-    public string Description;
+    public string NamePT;
+    public string NameEN;
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public UpgradeHelper.TargetType TargetType;
-    public string TargetId;
-    public string UnlockId;
 
-    public double Cost;
+    public double StartCost;
+    public double BaseCost;
+    public double ActualCost;
+
     public bool CanBuy;
     public CurrencyHelper.CurrencyType Currency;
 
-    public float Time;
+    public float StartTime;
+    public float BaseTime;
+    public float ActualTime;
+
     public double TotalTime;
     public double ElapsedTime;
     public bool IsRunning;
@@ -27,23 +33,28 @@ public class AcquisitionInstance : MonoBehaviour
     public long FinishTimestamp;
 
     public TripulationHelper.Type UnlockType;
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public AcquisitionInstance(AcquisitionModel model)
     {
         Id = model.Id;
-        Name = model.Name;
-        Description = model.Description;
+        NamePT = model.NamePT;
+        NameEN = model.NameEN;
+        DescriptionPT = model.DescriptionPT;
+        DescriptionEN = model.DescriptionEN;
 
         TargetType = model.TargetType;
-        TargetId = model.TargetId;
-        UnlockId = model.UnlockId;
 
-        Cost = model.Cost;
-
+        StartCost = model.Cost;
+        BaseCost = model.Cost;
+        ActualCost = model.Cost;
+        CanBuy = false;
         Currency = model.Currency;
 
-        Time = model.Time;
+        StartTime = model.Time;
+        BaseTime = model.Time;
+        ActualTime = model.Time;
         TotalTime = model.Time;
         ElapsedTime = 0;
         IsRunning = false;
@@ -51,9 +62,9 @@ public class AcquisitionInstance : MonoBehaviour
         StartTimestamp = 0;
         FinishTimestamp = 0;
 
-        CanBuy = false;
 
         UnlockType = model.Type;
+        UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 }

@@ -130,7 +130,7 @@ public class TripulationUi : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        var options = GameState.ExpeditionState.Ship.ActiveRecruits;
+        var options = GameState.ExpeditionState.ActiveRecruits;
 
         foreach (var option in options)
         {
@@ -146,7 +146,7 @@ public class TripulationUi : MonoBehaviour
     {
         var ship = GameState.ExpeditionState.Ship;
 
-        ship.ActiveRecruits.Clear();
+        GameState.ExpeditionState.ActiveRecruits.Clear();
 
         var prestige = GameState.DataState.currencies[CurrencyType.Prestige];
 

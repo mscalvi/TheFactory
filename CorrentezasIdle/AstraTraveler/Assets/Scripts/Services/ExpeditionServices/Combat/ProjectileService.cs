@@ -53,7 +53,7 @@ public class ProjectileService : MonoBehaviour
         {
             Position = Ship.position,
             Target = enemy,
-            Speed = (float)weapon.ProjectileSpeed,
+            Speed = (float)weapon.Ammo.ActualProjectileSpeed,
             HitRadius = 0.01f
         };
 

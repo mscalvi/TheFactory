@@ -7,27 +7,32 @@ public class BuildingInstance
     public BuildingModel Model;
 
     public string Id;
-
-    public string Name;
+    public string NamePT;
+    public string NameEN;
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public bool Note;
 
-    public List<UpgradeInstance> Upgrades;
-
     public UpgradeHelper.UpgradeBuilding Type;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public BuildingInstance(BuildingModel model)
     {
         Id = model.Id;
 
-        Name = model.NameEN;
+        NameEN = model.NameEN;
+        NamePT = model.NamePT;
+        DescriptionPT = model.DescriptionPT;
+        DescriptionEN = model.DescriptionEN;
 
         Note = false;
 
         Type = model.Type;
 
+        UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 }

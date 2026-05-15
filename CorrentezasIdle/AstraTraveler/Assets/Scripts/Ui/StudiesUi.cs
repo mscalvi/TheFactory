@@ -60,7 +60,7 @@ public class StudiesUi : MonoBehaviour
                 var go = Instantiate(StudyDefinition, UpgradesPanel.transform);
                 var ui = go.GetComponent<StudyDefinition>();
 
-                ui.Setup(upgrade.Value, PurchaseService);
+                ui.Setup(upgrade.Value, PurchaseService, GameState);
 
                 studyUi[upgrade.Value.Id] = ui;
             }
@@ -136,7 +136,7 @@ public class StudiesUi : MonoBehaviour
     {
         if (studyUi.TryGetValue(upgrade.Id, out var ui))
         {
-            ui.Setup(upgrade, PurchaseService);
+            ui.Setup(upgrade, PurchaseService, GameState);
         }
     }
 

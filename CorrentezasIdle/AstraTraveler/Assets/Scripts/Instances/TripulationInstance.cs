@@ -7,7 +7,8 @@ public class TripulationInstance
 
     public string Id;
     public string Name;
-    public string Description;
+    public string DescriptionPT;
+    public string DescriptionEN;
 
     public double Str;
     public double Dex;
@@ -26,7 +27,8 @@ public class TripulationInstance
     {
         Id = model.Id;
         Name = model.Name;
-        Description = model.Description;
+        DescriptionPT = model.DescriptionPT;
+        DescriptionEN = model.DescriptionEN;
 
         Str = model.Str;
         Dex = model.Dex;
@@ -38,7 +40,7 @@ public class TripulationInstance
         Type = model.Type;
         Rarity = model.Rarity;
 
-        UnlockStatus = model.UnlockStatus;
         UnlockId = model.UnlockId;
+        UnlockStatus = model.UnlockStatus;
     }
 }

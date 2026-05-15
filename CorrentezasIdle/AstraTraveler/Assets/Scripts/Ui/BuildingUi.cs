@@ -14,9 +14,6 @@ public class BuildingUi : MonoBehaviour
 
     private PurchaseService PurchaseService;
 
-    [SerializeField] Button NextButton;
-    [SerializeField] Button PreviousButton;
-
     [SerializeField] Transform CompanyCurrencyPanel;
     [SerializeField] CompanyCurrencyDefinition CurrencyPrefab;
 
@@ -29,7 +26,6 @@ public class BuildingUi : MonoBehaviour
     Dictionary<CurrencyType, CompanyCurrencyDefinition> companyUI = new();
 
     public TMP_Text BuildingName;
-    int currentIndex = 0;
     List<BuildingDefinition> unlockedBuildings;
 
     public void Initialize(GameState gameState, PurchaseService purchaseService)
@@ -56,37 +52,27 @@ public class BuildingUi : MonoBehaviour
             }
         }
 
-        if (unlockedBuildings.Count > 0)
-        {
-            currentIndex = 0;
-            ShowBuilding(currentIndex);
-        }
-
-        if (unlockedBuildings.Count < 2)
-        {
-            NextButton.enabled = false;
-            PreviousButton.enabled = false;
-        }
-
         BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
     }
 
-    void ShowBuilding(int index)
+    void ShowBuilding(int index, BuildingInstance building)
     {
-        var building = unlockedBuildings[index];
+        var buildingDef = unlockedBuildings[index];
 
-        BuildingName.text = building.building.Name;
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            BuildingName.text = buildingDef.building.NameEN;
+        }
+
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            BuildingName.text = buildingDef.building.NamePT;
+        }
 
         PopulateUpgrades(building);
-
-        if (unlockedBuildings.Count > 1)
-        {
-            NextButton.enabled = true;
-            PreviousButton.enabled = true;
-        }
     }
 
-    void PopulateUpgrades(BuildingDefinition building)
+    void PopulateUpgrades(BuildingInstance building)
     {
         ClearContainer();
         upgradeUI.Clear();
@@ -99,14 +85,17 @@ public class BuildingUi : MonoBehaviour
             }
         }
 
-        foreach (var upgrade in building.Upgrades)
+        foreach (var upgrade in GameState.DataState.upgrades.Values)
         {
             if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
+                if (upgrade.Building != building.Type)                
+                    continue;                
+
                 var go = Instantiate(CompanyUpgradeDefinition, UpgradesPanel.transform);
                 var ui = go.GetComponent<CompanyUpgradeDefinition>();
 
-                ui.Setup(upgrade, PurchaseService);
+                ui.Setup(upgrade, PurchaseService, GameState);
 
                 upgradeUI[upgrade.Id] = ui;
             }
@@ -184,11 +173,14 @@ public class BuildingUi : MonoBehaviour
         {
             if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
-                ShowBuilding(currentIndex);
+                Destroy(ui.gameObject);
+
+                upgradeUI.Remove(upgrade.Id);
+
                 return;
             }
 
-            ui.Setup(upgrade, PurchaseService);
+            ui.Setup(upgrade, PurchaseService, GameState);
         }
     }
 
@@ -209,44 +201,6 @@ public class BuildingUi : MonoBehaviour
                 unlockedBuildings.Add(ui);
             }
         }
-    }
-
-    public void GoNext()
-    {
-        if (unlockedBuildings.Count == 1)
-        {
-            return;
-        }
-
-        if (currentIndex < unlockedBuildings.Count - 1)
-        {
-            currentIndex++;
-        }
-        else
-        {
-            currentIndex = 0;
-        }
-
-        ShowBuilding(currentIndex);
-    }
-
-    public void GoPrevious()
-    {
-        if (unlockedBuildings.Count == 1)
-        {
-            return;
-        }
-
-        if (currentIndex > 0)
-        {
-            currentIndex--;
-        }
-        else
-        {
-            currentIndex = unlockedBuildings.Count - 1;
-        }
-
-        ShowBuilding(currentIndex);
     }
 
     private void ClearContainer()

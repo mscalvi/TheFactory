@@ -8,7 +8,6 @@ public class ShipModel
 
     public string NameEN;
     public string DescriptionEN;
-
     public string NamePT;
     public string DescriptionPT;
 

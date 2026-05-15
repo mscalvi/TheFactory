@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Mission")]
-public class MissionModel : ScriptableObject
+public class MissionModel
 {
     public string Id;
 
@@ -20,7 +19,6 @@ public class MissionModel : ScriptableObject
     public CurrencyHelper.CurrencyType RewardType2;
     public CurrencyHelper.CurrencyType RewardType3;
     public CurrencyHelper.CurrencyType RewardType4;
-
 
     public MissionHelper.MissionType MissionType;
     public MissionHelper.MissionStatus MissionStatus;

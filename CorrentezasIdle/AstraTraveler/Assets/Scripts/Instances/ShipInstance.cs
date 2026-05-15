@@ -8,15 +8,13 @@ public class ShipInstance
     public ShipModel Model;
 
     public string Id;
-    public string Name;
-    public string Description;
+    public string NameEN;
+    public string DescriptionEN;
+    public string NamePT;
+    public string DescriptionPT;
 
     public int Size;
     public int MaxTripulation;
-
-    // Tirar Daqui
-    public List<TripulationInstance> ActiveTripulation;
-    public List<TripulationInstance> ActiveRecruits;
 
     // Model Base
     public double StartLife;
@@ -49,18 +47,19 @@ public class ShipInstance
     public int WeaponSlots;
     public List<WeaponInstance> Weapons;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
     public ShipInstance(ShipModel model)
     {
         Id = model.Id;
-        Name = model.NameEN;
-        Description = model.DescriptionEN;
+        NameEN = model.NameEN;
+        DescriptionEN = model.DescriptionEN;
+        NamePT = model.NamePT;
+        DescriptionPT = model.DescriptionPT;
 
         Size = model.Size;
-        MaxTripulation = 2;
-        ActiveTripulation = new List<TripulationInstance>();
-        ActiveRecruits = new List<TripulationInstance>();
+        MaxTripulation = model.Tripulation;
 
         StartLife = model.Life;
         BaseLife = model.Life;
@@ -87,9 +86,10 @@ public class ShipInstance
         MaxArmor = model.Armor;
         ActualArmor = model.Armor;
 
-        UnlockStatus = model.UnlockStatus;
-
         WeaponSlots = model.WeaponSlots;
         Weapons = new List<WeaponInstance>();
+
+        UnlockId = model.UnlockId;
+        UnlockStatus = model.UnlockStatus;
     }
 }

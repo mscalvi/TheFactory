@@ -2,23 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Acquisition")]
-
-public class AcquisitionModel : ScriptableObject
+public class AcquisitionModel
 {
     public string Id;
-    public string Name;
-    public string Description;
 
+    public string NamePT;
+    public string NameEN;
+    public string DescriptionPT;
+    public string DescriptionEN;
+
+    public TripulationHelper.Type Type;
     public UpgradeHelper.TargetType TargetType;
-    public string TargetId;
-    public string UnlockId;
 
     public double Cost;
     public CurrencyHelper.CurrencyType Currency;
 
     public float Time;
 
-    public TripulationHelper.Type Type;
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

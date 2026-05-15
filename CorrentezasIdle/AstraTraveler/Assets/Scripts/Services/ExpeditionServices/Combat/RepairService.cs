@@ -16,7 +16,7 @@ public class RepairService : MonoBehaviour
     {
         var Ship = GameState.ExpeditionState.Ship;
 
-        Ship.ActualLife += Ship.ActualRepairPerTripulation * Ship.ActiveTripulation.Count;
+        Ship.ActualLife += Ship.ActualRepairPerTripulation * GameState.ExpeditionState.ActiveTripulation.Count;
 
         if (Ship.ActualLife > Ship.MaxLife)
         {

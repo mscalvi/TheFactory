@@ -9,8 +9,8 @@ public class EventModel
     public string TitleEN;
     public string TitlePT;
 
-    public string InfoEN;
-    public string InfoPT;
+    public string DescriptionEN;
+    public string DescriptionPT;
 
     public string Target;
     public string Trigger;

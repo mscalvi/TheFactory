@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +25,7 @@ public class MissionsPopUp : MonoBehaviour
     [SerializeField] TextMeshProUGUI Opt4Text;
     [SerializeField] TextMeshProUGUI Title;
 
-    public void ShowMissions(List<MissionInstance> options, Action<MissionInstance> onSelected)
+    public void ShowMissions(List<MissionInstance> options, Action<MissionInstance> onSelected, GameState GameState)
     {
         Hide();
 
@@ -39,32 +41,84 @@ public class MissionsPopUp : MonoBehaviour
         if (options.Count > 0)
         {
             Opt1Btn.gameObject.SetActive(true);
-            Opt1Title.text = options[0].Name;
-            Opt1Text.text = options[0].Description;
+
+            if (GameState.ActualLanguage == GameState.Language.English)
+            {
+                Opt1Title.text = options[0].NameEN;
+
+                Opt1Text.text = options[0].DescriptionEN;
+            }
+
+            if (GameState.ActualLanguage == GameState.Language.Portugues)
+            {
+                Opt1Title.text = options[0].NamePT;
+
+                Opt1Text.text = options[0].DescriptionPT;
+            }
+
             Opt1Btn.onClick.AddListener(() => onSelected(options[0]));
         }
 
         if (options.Count > 1)
         {
             Opt2Btn.gameObject.SetActive(true);
-            Opt2Title.text = options[1].Name;
-            Opt2Text.text = options[1].Description;
+
+            if (GameState.ActualLanguage == GameState.Language.English)
+            {
+                Opt2Title.text = options[1].NameEN;
+
+                Opt2Text.text = options[1].DescriptionEN;
+            }
+
+            if (GameState.ActualLanguage == GameState.Language.Portugues)
+            {
+                Opt2Title.text = options[1].NamePT;
+
+                Opt2Text.text = options[1].DescriptionPT;
+            }
+
             Opt2Btn.onClick.AddListener(() => onSelected(options[1]));
         }
 
         if (options.Count > 2)
         {
             Opt3Btn.gameObject.SetActive(true);
-            Opt3Title.text = options[2].Name;
-            Opt3Text.text = options[2].Description;
+
+            if (GameState.ActualLanguage == GameState.Language.English)
+            {
+                Opt3Title.text = options[2].NameEN;
+
+                Opt3Text.text = options[2].DescriptionEN;
+            }
+
+            if (GameState.ActualLanguage == GameState.Language.Portugues)
+            {
+                Opt3Title.text = options[2].NamePT;
+
+                Opt3Text.text = options[2].DescriptionPT;
+            }
+
             Opt3Btn.onClick.AddListener(() => onSelected(options[2]));
         }
 
         if (options.Count > 3)
         {
             Opt4Btn.gameObject.SetActive(true);
-            Opt4Title.text = options[3].Name;
-            Opt4Text.text = options[3].Description;
+
+            if (GameState.ActualLanguage == GameState.Language.English)
+            {
+                Opt4Title.text = options[3].NameEN;
+
+                Opt4Text.text = options[3].DescriptionEN;
+            }
+
+            if (GameState.ActualLanguage == GameState.Language.Portugues)
+            {
+                Opt4Title.text = options[3].NamePT;
+
+                Opt4Text.text = options[3].DescriptionPT;
+            }
+
             Opt4Btn.onClick.AddListener(() => onSelected(options[3]));
         }
     }

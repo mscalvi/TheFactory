@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ExpeditionState
 {
-
     // Main
     public ShipInstance Ship;
     public GameHelper.ExpeditionStatus ExpeditionStatus;
@@ -23,6 +22,9 @@ public class ExpeditionState
 
     public List<EnemyInstance> ActiveEnemies = new();
     public bool DamageTaken = false;
+
+    public List<TripulationInstance> ActiveTripulation;
+    public List<TripulationInstance> ActiveRecruits;
 
 
     // Valores Start

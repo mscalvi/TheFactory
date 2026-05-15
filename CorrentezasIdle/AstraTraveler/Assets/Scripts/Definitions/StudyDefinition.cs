@@ -17,14 +17,23 @@ public class StudyDefinition : MonoBehaviour
     private UpgradeInstance upgrade;
     private PurchaseService PurchaseService;
 
-    public void Setup(UpgradeInstance upgradeInstance, PurchaseService purchaseService)
+    public void Setup(UpgradeInstance upgradeInstance, PurchaseService purchaseService, GameState GameState)
     {
         upgrade = upgradeInstance;
 
         PurchaseService = purchaseService;
 
-        UpgradeName.text = upgrade.Name;
-        UpgradeDescription.text = upgrade.Description;
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            UpgradeName.text = upgrade.NameEN;
+            UpgradeDescription.text = upgrade.DescriptionEN;
+        }
+
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            UpgradeName.text = upgrade.NamePT;
+            UpgradeDescription.text = upgrade.DescriptionPT;
+        }
 
         if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
         {

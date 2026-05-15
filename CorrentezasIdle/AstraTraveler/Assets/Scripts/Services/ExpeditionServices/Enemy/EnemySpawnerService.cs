@@ -115,7 +115,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             if (chosen == null)
                 break;
 
-            double cost = chosen.Cost;
+            double cost = chosen.SpawnCost;
 
             if (budget < cost)
                 break;
@@ -155,7 +155,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             if (chosen == null)
                 break;
 
-            double cost = chosen.Cost;
+            double cost = chosen.SpawnCost;
 
             if (budget < cost)
                 break;
@@ -194,8 +194,8 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         foreach (var e in enemies)
         {
-            if (e.Value.Cost < min)
-                min = e.Value.Cost;
+            if (e.Value.SpawnCost < min)
+                min = e.Value.SpawnCost;
         }
 
         return min;

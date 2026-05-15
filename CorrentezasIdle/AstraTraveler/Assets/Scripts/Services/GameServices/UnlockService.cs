@@ -101,9 +101,9 @@ public class UnlockService : MonoBehaviour
             }
         }
 
-        ship.ActiveTripulation.Add(tripulationInstance);
+        GameState.ExpeditionState.ActiveTripulation.Add(tripulationInstance);
 
-        ship.ActiveRecruits.Clear();
+        GameState.ExpeditionState.ActiveRecruits.Clear();
 
         GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
     }
@@ -136,10 +136,10 @@ public class UnlockService : MonoBehaviour
             case "a1":
                 foreach (var building in GameState.DataState.buildings)
                 {
-                    if (building.Value.Id == acq.TargetId)
+                    if (building.Value.UnlockId == acq.Id)
                     {
                         UnlockBuilding(building.Value);
-                        Debug.Log(building.Value.Name + " -> " + building.Value.UnlockStatus);
+                        Debug.Log(building.Value.NamePT + " -> " + building.Value.UnlockStatus);
                     }
                 }
                 break;

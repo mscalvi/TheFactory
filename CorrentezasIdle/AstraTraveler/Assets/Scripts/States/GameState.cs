@@ -12,12 +12,18 @@ public class GameState
     public CompanyState CompanyState;
     public ExpeditionState ExpeditionState;
     public MissionsState MissionsState;
-    public TripulationState TripulationState;
     public BestiaryState BestiaryState;
-
-    //public GameHelper.ExpeditionStatus ExpeditionStatus;
 
     // Informações Necessárias
     public float WorldScale = 0.2f;
     public float GameSpeed = 2;
+
+    // Linguagem
+    public Language ActualLanguage = Language.English;
+
+    public enum Language
+    {
+        English,
+        Portugues,
+    }
 }

@@ -63,7 +63,7 @@ public class AcquisitonsUi : MonoBehaviour
                 var go = Instantiate(AcquisitonDefinition, UpgradesPanel.transform);
                 var ui = go.GetComponent<AcquisitonDefinition>();
 
-                ui.Setup(upgrade.Value, PurchaseService);
+                ui.Setup(upgrade.Value, PurchaseService, GameState);
 
                 acquisitonUi[upgrade.Value.Id] = ui;
             }
@@ -143,7 +143,7 @@ public class AcquisitonsUi : MonoBehaviour
     {
         if (acquisitonUi.TryGetValue(upgrade.Id, out var ui))
         {
-            ui.Setup(upgrade, PurchaseService);
+            ui.Setup(upgrade, PurchaseService, GameState);
         }
     }
 

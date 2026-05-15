@@ -246,7 +246,7 @@ public class MissionsService : MonoBehaviour
             mission.TargetsIds.Add(chosenTarget.Id);
         }
 
-        double targetValue = 100 / chosenTarget.Cost;
+        double targetValue = 100 / chosenTarget.SpawnCost;
 
         targetValue *= mission.TargetMultiplier;
 
@@ -258,9 +258,9 @@ public class MissionsService : MonoBehaviour
         }
 
         mission.TargetValue = realValue;
-
-        mission.Description =
-            "Eliminar " + mission.TargetValue + " " + chosenTarget.Name + ".";
+               
+        mission.DescriptionEN = "Eliminate " + mission.TargetValue + " " + chosenTarget.NameEN + ".";
+        mission.DescriptionPT = "Eliminar " + mission.TargetValue + " " + chosenTarget.NamePT + ".";
     }
 
     private void DaySurvivalPrepare(MissionInstance mission)
@@ -280,7 +280,8 @@ public class MissionsService : MonoBehaviour
 
         mission.TargetValue = nextSurvival;
 
-        mission.Description = "Sobreviver por " + mission.TargetValue + " dias.";
+        mission.DescriptionPT = "Sobreviver por " + mission.TargetValue + " dias.";
+        mission.DescriptionEN = "Survive for " + mission.TargetValue + " days.";
     }
 
     private void DayNoDamagePrepare(MissionInstance mission)
@@ -289,7 +290,8 @@ public class MissionsService : MonoBehaviour
 
         mission.TargetValue = maxSurvival / 2;
 
-        mission.Description = "Sobreviver por " + mission.TargetValue + " dias sem receber dano.";
+        mission.DescriptionPT = "Sobreviver por " + mission.TargetValue + " dias sem receber dano.";
+        mission.DescriptionEN = "Survive for " + mission.TargetValue + " days without taking damage.";
     }
 
     private void IngredientFindingPrepare(MissionInstance mission)

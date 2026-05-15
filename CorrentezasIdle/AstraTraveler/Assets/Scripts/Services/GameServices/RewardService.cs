@@ -48,22 +48,22 @@ public class RewardService : MonoBehaviour
 
         if (GameState.MissionsState.MaxRewardItens > 0)
         {
-            Debug.Log($"CurrencyService - Reward da Mission {mission.Name}: {mission.Reward1Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType1}");
+            Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward1Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType1}");
             CurrencyService.Add(mission.RewardType1, mission.Reward1Ammount * GameState.MissionsState.RewardBonus);
         }
         if (GameState.MissionsState.MaxRewardItens > 1)
         {
-            Debug.Log($"CurrencyService - Reward da Mission {mission.Name}: {mission.Reward2Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType2}");
+            Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward2Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType2}");
             CurrencyService.Add(mission.RewardType2, mission.Reward2Ammount * GameState.MissionsState.RewardBonus);
         }
         if (GameState.MissionsState.MaxRewardItens > 2)
         {
-            Debug.Log($"CurrencyService - Reward da Mission {mission.Name}: {mission.Reward3Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType4}");
+            Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward3Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType4}");
             CurrencyService.Add(mission.RewardType3, mission.Reward3Ammount * GameState.MissionsState.RewardBonus);
         }
         if (GameState.MissionsState.MaxRewardItens > 3)
         {
-            Debug.Log($"CurrencyService - Reward da Mission {mission.Name}: {mission.Reward4Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType4}");
+            Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward4Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType4}");
             CurrencyService.Add(mission.RewardType4, mission.Reward4Ammount * GameState.MissionsState.RewardBonus);
         }
     }

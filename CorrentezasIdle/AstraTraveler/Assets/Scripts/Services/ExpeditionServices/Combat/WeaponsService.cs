@@ -109,13 +109,13 @@ public class WeaponsService : MonoBehaviour, ITickable
 
             case WeaponHelper.WeaponTarget.HighestHp:
                 foreach (var e in enemies)
-                    if (e.CurrentLife > best.CurrentLife)
+                    if (e.ActualLife > best.ActualLife)
                         best = e;
                 break;
 
             case WeaponHelper.WeaponTarget.LowestHp:
                 foreach (var e in enemies)
-                    if (e.CurrentLife < best.CurrentLife)
+                    if (e.ActualLife < best.ActualLife)
                         best = e;
                 break;
 
@@ -138,7 +138,7 @@ public class WeaponsService : MonoBehaviour, ITickable
         {
             if (room.Cooldown <= 0)
             {
-                if (room.CurrentTarget.CurrentLife > 0)
+                if (room.CurrentTarget.ActualLife > 0)
                 {
                     return true;
                 }
@@ -161,7 +161,7 @@ public class WeaponsService : MonoBehaviour, ITickable
         if (target.State == EnemyHelper.EnemyState.Dead || target.State == EnemyHelper.EnemyState.Dying)
             return;
 
-        if (target.CurrentLife <= 0)
+        if (target.ActualLife <= 0)
             return;
 
         ExpeditionEvents.OnShoot?.Invoke(weapon, target);
@@ -173,16 +173,16 @@ public class WeaponsService : MonoBehaviour, ITickable
 
     private void ShipDamage(WeaponInstance weapon, EnemyInstance target)
     {
-        double damage = weapon.ActualDamage + weapon.Ammo.Damage;
+        double damage = weapon.ActualDamage + weapon.Ammo.ActualDamage;
 
         if (target.MarkedEnemy)
         {
             damage *= 2;
         }
 
-        target.CurrentLife -= damage;
+        target.ActualLife -= damage;
 
-        if (target.CurrentLife <= 0)
+        if (target.ActualLife <= 0)
         {
             target.State = EnemyHelper.EnemyState.Dying;
         }

@@ -7,9 +7,13 @@ public class MissionInstance
     public MissionModel Model;
 
     public string Id;
-    public string Name;
+    public string NamePT;
+    public string NameEN;
 
-    public double RewardFactor;
+    public string DescriptionPT;
+    public string DescriptionEN;
+
+    public int Level;
     public double Reward1Ammount;
     public double Reward2Ammount;
     public double Reward3Ammount;
@@ -22,22 +26,26 @@ public class MissionInstance
     public GameHelper.ItemRarity MissionRarity;
     public MissionHelper.MissionType MissionType;
     public MissionHelper.MissionStatus MissionStatus;
-    public UnlockHelper.UnlockStatus UnlockStatus;
-
-    public string UnlockId;
-
-    public string Description;
 
     public double TargetValue;
     public double TargetMultiplier;
-    public double CurrentValue;
+    public double ActualValue;
 
     public List<string> TargetsIds;
+
+    public string UnlockId;
+    public UnlockHelper.UnlockStatus UnlockStatus;
 
     public MissionInstance(MissionModel model)
     {
         Id = model.Id;
 
+        NamePT = model.NamePT;
+        NameEN = model.NameEN;
+        DescriptionPT = model.DescriptionPT;
+        DescriptionEN = model.DescriptionEN;
+
+        Level = model.Level;
         Reward1Ammount = 0;
         Reward2Ammount = 0;
         Reward3Ammount = 0;
@@ -51,21 +59,25 @@ public class MissionInstance
         MissionType = model.MissionType;
         MissionStatus = model.MissionStatus;
 
-        UnlockStatus = model.UnlockStatus;
-        UnlockId = model.UnlockId;
-
         TargetValue = 1;
         TargetMultiplier = 1;
-        CurrentValue = 0;
+        ActualValue = 0;
         TargetsIds = new List<string>();
+
+        UnlockStatus = model.UnlockStatus;
+        UnlockId = model.UnlockId;
     }
 
     public MissionInstance(MissionInstance model)
     {
         Id = model.Id;
-        Name = model.Name;
 
-        RewardFactor = model.RewardFactor;
+        NamePT = model.NamePT;
+        NameEN = model.NameEN;
+        DescriptionPT = model.DescriptionPT;
+        DescriptionEN = model.DescriptionEN;
+
+        Level = model.Level;
         Reward1Ammount = 0;
         Reward2Ammount = 0;
         Reward3Ammount = 0;
@@ -79,14 +91,13 @@ public class MissionInstance
         MissionType = model.MissionType;
         MissionStatus = model.MissionStatus;
 
-        UnlockStatus = model.UnlockStatus;
-        UnlockId = model.UnlockId;
-
-        Description = model.Description;
         TargetValue = 1;
         TargetMultiplier = 1;
-        CurrentValue = 0;
+        ActualValue = 0;
         TargetsIds = new List<string>();
+
+        UnlockStatus = model.UnlockStatus;
+        UnlockId = model.UnlockId;
     }
 
     public string GetMissionKey()

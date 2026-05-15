@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MissionDefinition : MonoBehaviour
@@ -9,13 +10,24 @@ public class MissionDefinition : MonoBehaviour
     public TMP_Text Description;
     public TMP_Text Progress;
 
-    public void Setup(MissionInstance mission)
+    public void Setup(MissionInstance mission, GameState GameState)
     {
-        Name.text = mission.Name;
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            Name.text = mission.NameEN;
 
-        Description.text = mission.Description;
+            Description.text = mission.DescriptionEN;
+        }
 
-        double progress = mission.TargetValue - mission.CurrentValue;
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            Name.text = mission.NamePT;
+
+            Description.text = mission.DescriptionPT;
+        }
+
+
+        double progress = mission.TargetValue - mission.ActualValue;
 
         Progress.text = progress.ToString("N0");
     }

@@ -11,13 +11,12 @@ public class ProjectileModel
 
     public WeaponHelper.AmmoType Type;
 
-    // Visual
-    public WeaponHelper.PathType SpritePath;
 
     // Gameplay
-    public float Speed;
     public float HitRadius;
     public float Lifetime;
 
+    // Visual
+    public WeaponHelper.PathType SpritePath;
     public WeaponHelper.BehaviorType BehaviorType;
 }

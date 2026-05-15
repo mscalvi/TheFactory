@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,19 +25,31 @@ public class AcquisitonDefinition : MonoBehaviour
 
     private AcquisitionInstance Acquisition;
     private PurchaseService PurchaseService;
+    private GameState GameState;
 
-    public void Setup(AcquisitionInstance acq, PurchaseService purchaseService)
+    public void Setup(AcquisitionInstance acq, PurchaseService purchaseService, GameState game)
     {
         Acquisition = acq;
         PurchaseService = purchaseService;
+        GameState = game;
 
-        UpgradeName.text = Acquisition.Name;
-        UpgradeDescription.text = Acquisition.Description;
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            UpgradeName.text = Acquisition.NameEN;
+            UpgradeDescription.text = Acquisition.DescriptionEN;
+        }
+
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            UpgradeName.text = Acquisition.NamePT;
+            UpgradeDescription.text = Acquisition.DescriptionPT;
+        }
+
 
         string time = FormatTime(acq.TotalTime);
         TotalTime.text = time;
 
-        UpgradePrice.text = Acquisition.Cost.ToString("N0");
+        UpgradePrice.text = Acquisition.ActualCost.ToString("N0");
 
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);

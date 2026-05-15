@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Upgrade")]
-public class UpgradeModel : ScriptableObject
+public class UpgradeModel
 {
     public string Id;
-    public string Name;
-    public string Description;
+
+    public string NameEN;
+    public string NamePT;
+    public string DescriptionEN;
+    public string DescriptionPT;
+
+    public UpgradeHelper.UpgradeScope Scope;
 
     public UpgradeHelper.UpgradeType UpgradeType;
     public UpgradeHelper.EffectType EffectType;
 
-    public UpgradeHelper.UpgradeScope Scope;
     public UpgradeHelper.UpgradeMenu ExpeditionMenu;
     public UpgradeHelper.UpgradeBuilding Building;
 
@@ -21,12 +24,12 @@ public class UpgradeModel : ScriptableObject
 
     public UpgradeHelper.TargetType TargetType;
     public string TargetId;
-    public string UnlockId;
     public int MaxBuy;
 
     public double Cost;
     public double CostGrowth;
     public CurrencyHelper.CurrencyType Currency;
 
+    public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

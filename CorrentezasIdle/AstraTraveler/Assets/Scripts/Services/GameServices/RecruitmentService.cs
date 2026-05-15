@@ -16,7 +16,7 @@ public class RecruitmentService : MonoBehaviour
     {
         var ship = GameState.ExpeditionState.Ship;
 
-        if (ship.ActiveRecruits.Count > 0)
+        if (GameState.ExpeditionState.ActiveRecruits.Count > 0)
             return;
 
         List<TripulationInstance> available = new();
@@ -35,7 +35,7 @@ public class RecruitmentService : MonoBehaviour
 
         for (int i = 0; i < amount; i++)
         {
-            ship.ActiveRecruits.Add(available[i]);
+            GameState.ExpeditionState.ActiveRecruits.Add(available[i]);
         }
     }
 
