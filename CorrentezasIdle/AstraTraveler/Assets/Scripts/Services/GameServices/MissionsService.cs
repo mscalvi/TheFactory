@@ -246,7 +246,7 @@ public class MissionsService : MonoBehaviour
             mission.TargetsIds.Add(chosenTarget.Id);
         }
 
-        double targetValue = 100 / chosenTarget.SpawnCost;
+        double targetValue = 50 / chosenTarget.SpawnCost;
 
         targetValue *= mission.TargetMultiplier;
 

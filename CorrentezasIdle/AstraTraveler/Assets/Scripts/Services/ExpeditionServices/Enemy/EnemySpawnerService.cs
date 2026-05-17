@@ -92,7 +92,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         Debug.Log($"Spawn: {instance.NamePT} \n-Vida: {instance.ActualLife} -Dano: {instance.Damage} -Speed: {instance.Speed}");
 
-        if (instance.UnlockStatus == UnlockHelper.UnlockStatus.Unknow)
+        if (instance.Known == false)
         {
             foreach (var enemy in DataState.enemies)
             {
@@ -214,10 +214,10 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         if (enemy == null)
             return;
 
-        if (enemy.UnlockStatus != UnlockHelper.UnlockStatus.Unknow)
+        if (enemy.Known)
             return;
 
-        enemy.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+        enemy.Known = true;
 
         GameEvents.NewEnemySeen?.Invoke(enemy);
     }

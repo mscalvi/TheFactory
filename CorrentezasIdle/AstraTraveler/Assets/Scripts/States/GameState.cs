@@ -19,7 +19,7 @@ public class GameState
     public float GameSpeed = 1;
 
     // Linguagem
-    public Language ActualLanguage = Language.English;
+    public Language ActualLanguage = Language.Portugues;
 
     public enum Language
     {

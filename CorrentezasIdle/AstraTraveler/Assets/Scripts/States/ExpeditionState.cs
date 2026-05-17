@@ -9,7 +9,7 @@ public class ExpeditionState
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 
     public float PhaseDuration = 15f;
-    public int ticksBetweenSpawns = 1;
+    public int ticksBetweenSpawns = 5;
 
     public bool IsDay { get; set; } = true;
     public int DayCounter = 1;

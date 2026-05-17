@@ -70,7 +70,7 @@ public class RewardService : MonoBehaviour
 
     private void EnemyAvailableReward(EnemyInstance enemy)
     {
-        CurrencyService.Add(CurrencyType.Knowledge, enemy.Rarity);
+        CurrencyService.Add(CurrencyType.Knowledge, enemy.SpawnCost);
     }
 
     private void DestinationArrivalEvent()

@@ -58,6 +58,8 @@ public class EnemyInstance
     public double Angle;
     public double Cooldown;
 
+    public bool Known;
+
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
@@ -110,6 +112,8 @@ public class EnemyInstance
         Distance = model.SpawnDistance;
         Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
+
+        Known = false;
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
@@ -164,6 +168,8 @@ public class EnemyInstance
         Distance = model.SpawnDistance;
         Angle = 0;
         Cooldown = 1 / model.AttackSpeed;
+
+        Known = false;
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;

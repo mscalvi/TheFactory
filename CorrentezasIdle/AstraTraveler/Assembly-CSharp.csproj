@@ -119,9 +119,9 @@
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionStartService.cs" />
     <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
     <Compile Include="Assets\Scripts\Instances\CurrencyInstance.cs" />
+    <Compile Include="Assets\Scripts\Data\AcquistionsData.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\RepairService.cs" />
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />
-    <Compile Include="Assets\Scripts\Data\AcquistionsData.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\AcquisitonsService.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\CSVLoaderService.cs" />
     <Compile Include="Assets\Scripts\States\CompanyState.cs" />

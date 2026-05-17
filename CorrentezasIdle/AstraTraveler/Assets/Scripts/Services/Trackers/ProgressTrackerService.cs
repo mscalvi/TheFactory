@@ -18,6 +18,16 @@ public class ProgressTrackerService : MonoBehaviour
             GameState.ProgressState.MaxDaysTraveling = GameState.ExpeditionState.DayCounter;
             GameEvents.NewDayRecord?.Invoke();
         }
+
+        foreach (var enemy in GameState.DataState.enemies.Values)
+        {
+            int.TryParse(enemy.UnlockId, out int unlockDay);
+
+            if (unlockDay <= GameState.ExpeditionState.DayCounter)
+            {
+                enemy.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+            }
+        }
     }
 
     private void BestiaryCheck()
