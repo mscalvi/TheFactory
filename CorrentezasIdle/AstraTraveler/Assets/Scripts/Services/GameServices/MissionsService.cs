@@ -86,7 +86,7 @@ public class MissionsService : MonoBehaviour
         int completedTimes =
             GameState.MissionsState.MissionHistoric[key];
 
-        double multiplier = 1 + (completedTimes * 0.5);
+        double multiplier = 1 + (completedTimes * 0.2);
 
         mission.TargetMultiplier = multiplier;
 
@@ -246,7 +246,7 @@ public class MissionsService : MonoBehaviour
             mission.TargetsIds.Add(chosenTarget.Id);
         }
 
-        double targetValue = 50 / chosenTarget.SpawnCost;
+        double targetValue = chosenTarget.SpawnCost * 5;
 
         targetValue *= mission.TargetMultiplier;
 

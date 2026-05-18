@@ -90,7 +90,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
 
-        Debug.Log($"Spawn: {instance.NamePT} \n-Vida: {instance.ActualLife} -Dano: {instance.Damage} -Speed: {instance.Speed}");
+        //Debug.Log($"Spawn: {instance.NamePT} \n-Vida: {instance.ActualLife} -Dano: {instance.Damage} -Speed: {instance.Speed}");
 
         if (instance.Known == false)
         {

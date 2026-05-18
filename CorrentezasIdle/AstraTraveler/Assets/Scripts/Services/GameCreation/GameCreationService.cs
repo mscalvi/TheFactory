@@ -25,8 +25,6 @@ public class GameCreationService : MonoBehaviour
 
     private void CreateDataState(GameDatabase DataBase)
     {
-        GameState.DataState = new DataState();
-
         var ships = new Dictionary<string, ShipInstance>();
         var tripulation = new Dictionary<string, TripulationInstance>();
         var weapons = new Dictionary<string, WeaponInstance>();

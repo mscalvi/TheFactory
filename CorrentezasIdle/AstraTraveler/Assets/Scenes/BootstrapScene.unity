@@ -232,7 +232,6 @@ GameObject:
   - component: {fileID: 764383326}
   - component: {fileID: 764383325}
   - component: {fileID: 764383324}
-  - component: {fileID: 764383323}
   - component: {fileID: 764383322}
   - component: {fileID: 764383321}
   - component: {fileID: 764383320}
@@ -295,8 +294,7 @@ MonoBehaviour:
   CurrencyService: {fileID: 764383329}
   PurchaseService: {fileID: 764383325}
   IngredientService: {fileID: 764383327}
-  UpgradePermanentService: {fileID: 764383323}
-  UpgradeTemporaryService: {fileID: 764383322}
+  UpgradeService: {fileID: 764383322}
   EventService: {fileID: 764383328}
   AcquisitonsService: {fileID: 764383330}
   RecruitmentService: {fileID: 764383331}
@@ -335,18 +333,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7967e6c0d358d65498bcb2be7a13d18a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &764383323
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 764383316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05ca450cb1ca195448e7351fbbcf2276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &764383324

@@ -54,23 +54,50 @@ public class IngredientService : MonoBehaviour
         return true;
     }
 
-    IngredientHelper.IngredientType RollIngredient(EnemyInstance enemy)
+    private IngredientHelper.IngredientType RollIngredient(EnemyInstance enemy)
     {
-        var rarity = RollRarity();
+        GameHelper.ItemRarity rarity = RollRarity();
 
-        switch (rarity)
+        while (true)
         {
-            case GameHelper.ItemRarity.Common:
-                return enemy.CommonIngredient;
-            case GameHelper.ItemRarity.Uncommon:
-                return enemy.UncommonIngredient;
-            case GameHelper.ItemRarity.Rare:
-                return enemy.RareIngredient;
-            case GameHelper.ItemRarity.Legendary:
-                return enemy.LegendaryIngredient;
-        }
+            IngredientHelper.IngredientType ingredient = rarity switch
+            {
+                GameHelper.ItemRarity.Common => enemy.CommonIngredient,
+                GameHelper.ItemRarity.Uncommon => enemy.UncommonIngredient,
+                GameHelper.ItemRarity.Rare => enemy.RareIngredient,
+                GameHelper.ItemRarity.Legendary => enemy.LegendaryIngredient,
+                _ => enemy.CommonIngredient
+            };
 
-        return enemy.CommonIngredient;
+            if (ingredient != IngredientHelper.IngredientType.None)
+            {
+                var instance = GameState.DataState.ingredients[ingredient];
+
+                if (instance.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+                {
+                    return ingredient;
+                }
+            }
+
+            // downgrade
+            switch (rarity)
+            {
+                case GameHelper.ItemRarity.Legendary:
+                    rarity = GameHelper.ItemRarity.Rare;
+                    break;
+
+                case GameHelper.ItemRarity.Rare:
+                    rarity = GameHelper.ItemRarity.Uncommon;
+                    break;
+
+                case GameHelper.ItemRarity.Uncommon:
+                    rarity = GameHelper.ItemRarity.Common;
+                    break;
+
+                default:
+                    return enemy.CommonIngredient;
+            }
+        }
     }
 
     private GameHelper.ItemRarity RollRarity()

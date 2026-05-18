@@ -52,19 +52,22 @@ public class UpgradeHelper
         ShipArmor,
         ShipResistence,
         ShipRepair,
-        ShipRepairValue,
         ShipRepairCost,
         ClickTarget,
         ClickRarity,
         ClickMax,
         WeaponDamage,
         WeaponAtackSpeed,
-        ExperienceGain,
+        WeaponRange,
+        AmmoDamage,
+        ExperiencePerKill,
         ExperienceChance,
         ExperienceIncome,
         MarcosGain,
         MarcosChance,
         MarcosIncome,
+        UpgradeShipRepairRate,
+        UpgradeExperiencePerKillRate,
     }
 
     public enum TargetType 
@@ -76,6 +79,7 @@ public class UpgradeHelper
         Building,
         Missions,
         Upgrade,
+        Ammo,
     }
 
 }

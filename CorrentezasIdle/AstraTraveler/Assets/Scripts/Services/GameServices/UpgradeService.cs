@@ -1,0 +1,758 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class UpgradeService : MonoBehaviour
+{
+    private GameState GameState;
+    private DataState DataState;
+    private UnlockService UnlockService;
+
+    public void Initialize(GameState game, UnlockService unlock)
+    {
+        GameState = game;
+
+        DataState = GameState.DataState;
+
+        UnlockService = unlock;
+    }
+
+    public void AddUpgrade(UpgradeInstance upgrade)
+    {
+        var upgrades = DataState.upgrades;
+
+        if (upgrade.ActualBuy >= upgrade.MaxBuy && upgrade.MaxBuy > 0)
+        {
+            upgrade.UnlockStatus = UnlockHelper.UnlockStatus.Finished;
+        }
+
+        if (upgrade.EffectType != UpgradeHelper.EffectType.Unlock)
+        {
+            Recalculate();
+        }
+        else
+        {
+            UnlockService.UnlockUpgrade(upgrade);
+        }
+    }
+
+    void ResetExpeditionUpgrades()
+    {
+        foreach (var upgrade in DataState.upgrades)
+        {
+            if(upgrade.Value.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                upgrade.Value.ActualBuy = 0;
+                upgrade.Value.ActualCost = upgrade.Value.Cost;
+                upgrade.Value.ActualValue = upgrade.Value.StartValue;
+
+                if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Finished)
+                {
+                    upgrade.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                }
+            }
+        }
+
+        Recalculate();
+    }
+
+    private void Recalculate()
+    {
+        if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running || GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Paused)
+        {
+            Debug.Log($"Recalculando Upgrades de Expedition");
+
+            ApplyBaseStats();
+
+            foreach (var upgrade in DataState.upgrades)
+            {
+                if (upgrade.Value.Scope == UpgradeHelper.UpgradeScope.Expedition)
+                {
+                    if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+                    {
+                        ApplyUpgrade(upgrade.Value);
+                    }
+                }
+            }
+
+            foreach (var upgrade in DataState.upgrades)
+            {
+                if (upgrade.Value.Scope == UpgradeHelper.UpgradeScope.Expedition)
+                {
+                    if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+                    {
+                        ApplyUpgrade(upgrade.Value);
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"Recalculando Upgrades de Company");
+
+            ApplyStartStats();
+
+            foreach (var upgrade in DataState.upgrades)
+            {
+                if (upgrade.Value.Scope == UpgradeHelper.UpgradeScope.Company)
+                {
+                    if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+                    {
+                        ApplyUpgrade(upgrade.Value);
+                    }
+                }
+            }
+
+            foreach (var upgrade in DataState.upgrades)
+            {
+                if (upgrade.Value.Scope == UpgradeHelper.UpgradeScope.Company)
+                {
+                    if (upgrade.Value.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+                    {
+                        ApplyUpgrade(upgrade.Value);
+                    }
+                }
+            }
+        }
+
+        ExpeditionEvents.OnShipAtributeChange?.Invoke();
+    }
+
+    private void ApplyBaseStats()
+    {
+        var Ship = GameState.ExpeditionState.Ship;
+
+        Ship.MaxLife = Ship.BaseLife;
+        Ship.MaxArmor = Ship.BaseArmor;
+        Ship.MaxResistence = Ship.BaseResistence;
+        Ship.MaxRepairPerTripulation = Ship.BaseRepairPerTripulation;
+
+        foreach (var weapon in DataState.weapons)
+        {
+            weapon.Value.ActualDamage = weapon.Value.BaseDamage;
+            weapon.Value.ActualRange = weapon.Value.BaseRange;
+            weapon.Value.ActualAttackSpeed = weapon.Value.BaseAttackSpeed;
+            weapon.Value.ActualPrecision = weapon.Value.BasePrecision;
+            weapon.Value.ActualCriticalDamage = weapon.Value.BaseCriticalDamage;
+        }
+
+        foreach (var ammo in DataState.ammos)
+        {
+            ammo.Value.ActualDamage = ammo.Value.BaseDamage;
+            ammo.Value.ActualRecharge = ammo.Value.BaseRecharge;
+            ammo.Value.ActualAmmount = ammo.Value.BaseAmmount;
+            ammo.Value.ActualProjectileSpeed = ammo.Value.BaseProjectileSpeed;
+        }
+
+        GameState.ExpeditionState.ActualExperienceKillBonus = GameState.ExpeditionState.BaseExperienceKillBonus;
+        GameState.ExpeditionState.ActualDayReward = GameState.ExpeditionState.BaseDayReward;
+        GameState.ExpeditionState.ActualNightReward = GameState.ExpeditionState.BaseNightReward;
+    }
+
+    private void ApplyStartStats()
+    {
+        var Ship = GameState.ExpeditionState.Ship;
+
+        GameState.MissionsState.MaxCancelableMissions = 0;
+        GameState.MissionsState.MaxOnGoingMissions = 0;
+        GameState.MissionsState.MaxRewardItens = 1;
+        GameState.MissionsState.RewardBonus = 1;
+        GameState.MissionsState.MaxMissionsOptions = 1;
+
+        Ship.MaxLife = Ship.BaseLife;
+        Ship.MaxArmor = Ship.BaseArmor;
+        Ship.MaxResistence = Ship.BaseResistence;
+        Ship.MaxRepairPerTripulation = Ship.BaseRepairPerTripulation;
+
+        foreach (var weapon in DataState.weapons)
+        {
+            weapon.Value.BaseDamage = weapon.Value.StartDamage;
+            weapon.Value.BaseRange = weapon.Value.StartRange;
+            weapon.Value.BaseAttackSpeed = weapon.Value.StartAttackSpeed;
+            weapon.Value.BasePrecision = weapon.Value.StartPrecision;
+            weapon.Value.BaseCriticalDamage = weapon.Value.StartCriticalDamage;
+        }
+
+        foreach (var ammo in DataState.ammos)
+        {
+            ammo.Value.BaseDamage = ammo.Value.StartDamage;
+            ammo.Value.BaseRecharge = ammo.Value.StartRecharge;
+            ammo.Value.BaseAmmount = ammo.Value.StartAmmount;
+            ammo.Value.BaseProjectileSpeed = ammo.Value.StartProjectileSpeed;
+        }
+
+        GameState.ExpeditionState.BaseExperienceKillBonus = GameState.ExpeditionState.StartExperienceKillBonus;
+        GameState.ExpeditionState.BaseDayReward = GameState.ExpeditionState.StartDayReward;
+        GameState.ExpeditionState.BaseNightReward = GameState.ExpeditionState.StartNightReward;
+    }
+
+    private void ApplyUpgrade(UpgradeInstance upgrade)
+    {
+        upgrade.ActualValue = upgrade.StartValue;
+
+        switch (upgrade.TargetType)
+        {
+            case UpgradeHelper.TargetType.Ship:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.ShipMaxLife:
+                        ShipMaxLifeModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ShipArmor:
+                        ShipArmorModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ShipResistence:
+                        ShipResistenceModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ShipRepair:
+                        ShipRepairModifier(upgrade);
+                        break;
+                    default:
+                        Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
+                        break;
+                }
+                break;
+            case UpgradeHelper.TargetType.Weapon:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.WeaponDamage:
+                        WeaponDamageModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.WeaponAtackSpeed:
+                        WeaponAtkSpeedModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.WeaponRange:
+                        WeaponRangeModifier(upgrade);
+                        break;
+                    default:
+                        Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
+                        break;
+                }
+                break;
+            case UpgradeHelper.TargetType.Ammo:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.AmmoDamage:
+                        AmmoDamageModifier(upgrade);
+                        break;
+                    default:
+                        Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
+                        break;
+                }
+                break;
+            case UpgradeHelper.TargetType.Missions:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.MissionsMax:
+                        MissionsMaxModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.MissionsReward:
+                        MissionsRewardModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.MissionsOptions:
+                        MissionsOptionsModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.MissionsCancel:
+                        MissionsCancelModifier(upgrade);
+                        break;
+                    default:
+                        Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
+                        break;
+                }
+                break;
+            case UpgradeHelper.TargetType.Meta:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.ExperiencePerKill:
+                        ExperienceKillModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ExperienceIncome:
+                        ExperienceIncomeModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ClickTarget:
+                        ClickTargetModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ClickMax:
+                        ClickMaxModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.ClickRarity:
+                        ClickRarityModifier(upgrade);
+                        break;
+                    default:
+                        Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
+                        break;
+                }
+                break;
+
+        }
+    }
+
+    private void CalculateUpgradeValue(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue *= (1 + upgrade.UpgradeValue);
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            for (int i = 1; i <= upgrade.ActualBuy; i++)
+            {
+                upgrade.ActualValue += upgrade.UpgradeValue;
+            }
+        }
+    }
+
+    // Modificadores Ship
+    private void ShipMaxLifeModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+        double healthPercent = ship.ActualLife / ship.MaxLife;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxLife *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseLife *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxLife += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseLife += upgrade.ActualValue;
+            }
+        }
+
+        ship.ActualLife = ship.MaxLife * healthPercent;
+        if (ship.ActualLife > ship.MaxLife)
+        {
+            ship.ActualLife = ship.MaxLife;
+        }
+    }
+    private void ShipArmorModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxArmor *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseArmor *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxArmor += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseArmor += upgrade.ActualValue;
+            }
+        }
+
+        ship.ActualArmor = ship.MaxArmor;
+    }
+    private void ShipResistenceModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxResistence *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseResistence *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxResistence += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseResistence += upgrade.ActualValue;
+            }
+        }
+
+        ship.ActualResistence = ship.MaxResistence;
+    }
+    private void ShipRepairModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxRepairPerTripulation *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseRepairPerTripulation *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ship.MaxRepairPerTripulation += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ship.BaseRepairPerTripulation += upgrade.ActualValue;
+            }
+        }
+
+        ship.ActualRepairPerTripulation = ship.MaxRepairPerTripulation;
+    }
+
+    // Modificadores Weapons
+    private void WeaponDamageModifier(UpgradeInstance upgrade)
+    {
+        DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                weapon.ActualDamage *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                weapon.BaseDamage *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                weapon.ActualDamage += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                weapon.BaseDamage += upgrade.ActualValue;
+            }
+        }
+    }
+    private void WeaponAtkSpeedModifier(UpgradeInstance upgrade)
+    {
+        DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                weapon.ActualAttackSpeed *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                weapon.BaseAttackSpeed *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                weapon.ActualAttackSpeed += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                weapon.BaseAttackSpeed += upgrade.ActualValue;
+            }
+        }
+    }
+    private void WeaponRangeModifier(UpgradeInstance upgrade)
+    {
+        DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                weapon.ActualRange *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                weapon.BaseRange *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                weapon.ActualRange += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                weapon.BaseRange += upgrade.ActualValue;
+            }
+        }
+    }
+
+    // Modificadores Ammos
+    private void AmmoDamageModifier(UpgradeInstance upgrade)
+    {
+        DataState.ammos.TryGetValue(upgrade.TargetId, out var ammo);
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ammo.ActualDamage *= upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ammo.BaseDamage *= upgrade.ActualValue;
+            }
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                ammo.ActualDamage += upgrade.ActualValue;
+            }
+
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+            {
+                ammo.BaseDamage += upgrade.ActualValue;
+            }
+        }
+    }
+
+    // Modificadores Meta
+    private void ExperienceKillModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.ExpeditionState.ActualExperienceKillBonus *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.ExpeditionState.ActualExperienceKillBonus += upgrade.ActualValue;
+        }
+    }
+    private void ExperienceIncomeModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.ExpeditionState.ActualNightReward *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.ExpeditionState.ActualNightReward += upgrade.ActualValue;
+        }
+    }
+    private void ClickTargetModifier(UpgradeInstance upgrade)
+    {
+        switch (upgrade.TargetId)
+        {
+            case "Fish":
+                foreach (var ingredient in GameState.DataState.ingredients.Values)
+                {
+                    if (ingredient.UnlockId == "Fish")
+                    {
+                        if (ingredient.Rarity != GameHelper.ItemRarity.Common)
+                            continue;
+
+                        ingredient.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                    }
+                }
+                break;
+        }
+    }
+    private void ClickMaxModifier(UpgradeInstance upgrade)
+    {
+        CalculateUpgradeValue(upgrade);
+
+        GameState.ExpeditionState.BaseMaxMarkedEnemies += (int)upgrade.ActualValue;
+    }
+
+    private void ClickRarityModifier(UpgradeInstance upgrade)
+    {
+        switch (upgrade.TargetId)
+        {
+            case "Fish":
+                foreach (var ingredient in GameState.DataState.ingredients.Values)
+                {
+                    if (ingredient.UnlockId == "Fish")
+                    {
+                        if (upgrade.ActualBuy == 1)
+                        {
+                            if (ingredient.Rarity != GameHelper.ItemRarity.Uncommon)
+                                continue;
+
+                            ingredient.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                        }
+                        if (upgrade.ActualBuy == 2)
+                        {
+                            if (ingredient.Rarity != GameHelper.ItemRarity.Rare)
+                                continue;
+
+                            ingredient.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                        }
+                        if (upgrade.ActualBuy == 3)
+                        {
+                            if (ingredient.Rarity != GameHelper.ItemRarity.Legendary)
+                                continue;
+
+                            ingredient.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    // Modificadores Missions
+    private void MissionsMaxModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.MissionsState.MaxOnGoingMissions += (int)upgrade.ActualValue;
+        }
+
+        GameEvents.MissionSlotAtualize?.Invoke();
+
+        Debug.Log($"Missões Simlutãneas: {GameState.MissionsState.MaxOnGoingMissions}");
+    }
+    private void MissionsRewardModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.MissionsState.RewardBonus *= upgrade.ActualValue;
+        }
+
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.MissionsState.RewardBonus += upgrade.ActualValue;
+        }
+    }
+    private void MissionsOptionsModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.MissionsState.MaxMissionsOptions += (int)upgrade.ActualValue;
+        }
+    }
+    private void MissionsCancelModifier(UpgradeInstance upgrade)
+    {
+        if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+        {
+            CalculateUpgradeValue(upgrade);
+
+            GameState.MissionsState.MaxCancelableMissions += (int)upgrade.ActualValue;
+        }
+    }
+
+    // Events
+    void OnEnable()
+    {
+        GameEvents.OnUpgradeBuy += AddUpgrade;
+        ExpeditionEvents.OnExpeditionEnd += ResetExpeditionUpgrades;
+    }
+
+    void OnDisable()
+    {
+        GameEvents.OnUpgradeBuy -= AddUpgrade;
+        ExpeditionEvents.OnExpeditionEnd -= ResetExpeditionUpgrades;
+    }
+}
+
+
