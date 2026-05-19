@@ -92,8 +92,11 @@ public class RewardService : MonoBehaviour
         ExpeditionEvents.OnDayFinish += DayFinishReward;
         ExpeditionEvents.OnNightFinish += NightFinishReward;
         ExpeditionEvents.OnDestinationArrival += DestinationArrivalEvent;
+
         GameEvents.OnMissionComplete += MissionCompleteReward;
         GameEvents.NewEnemySeen += EnemyAvailableReward;
+
+        GameEvents.MoneyTest += MoneyTestEvent;
     }
 
     void OnDisable()
@@ -102,7 +105,15 @@ public class RewardService : MonoBehaviour
         ExpeditionEvents.OnDayFinish -= DayFinishReward;
         ExpeditionEvents.OnNightFinish -= NightFinishReward;
         ExpeditionEvents.OnDestinationArrival -= DestinationArrivalEvent;
+
         GameEvents.OnMissionComplete -= MissionCompleteReward;
         GameEvents.NewEnemySeen -= EnemyAvailableReward;
+
+        GameEvents.MoneyTest -= MoneyTestEvent;
+    }
+
+    private void MoneyTestEvent()
+    {
+        CurrencyService.Add(CurrencyType.Marcos, 100);
     }
 }

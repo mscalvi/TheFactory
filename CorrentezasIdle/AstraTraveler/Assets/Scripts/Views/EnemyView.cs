@@ -18,7 +18,7 @@ public class EnemyView : MonoBehaviour
         Enemy = enemy;
         Ship = ship;
 
-        ApplyDebugColor();
+        ApplySprite();
 
         UpdateTargetPosition();
         transform.position = targetPosition;
@@ -35,6 +35,12 @@ public class EnemyView : MonoBehaviour
             targetPosition,
             10f * Time.deltaTime
         );
+
+        Vector3 direction = Ship.position - transform.position;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        transform.rotation = Quaternion.Euler(0, 0, angle);
 
         UpdateMarkedVisual();
     }
@@ -60,53 +66,21 @@ public class EnemyView : MonoBehaviour
 
     void UpdateMarkedVisual()
     {
+        ApplySprite();
+
         if (Enemy.MarkedEnemy)
-            spriteRenderer.color = Color.white;
-        else
-            ApplyDebugColor();
+        {
+            transform.localScale = Vector3.one * 1.15f;
+        }
     }
 
-    void ApplyDebugColor()
+    void ApplySprite()
     {
         if (Enemy == null) return;
 
-        switch (Enemy.Id)
-        {
-            case "e0001":
-                spriteRenderer.color = Color.cyan;
-                break;
+        Sprite sprite = Resources.Load<Sprite>($"Sprites/Enemies/{Enemy.Id}");
 
-            case "e0002":
-                spriteRenderer.color = Color.green;
-                break;
-
-            case "e0003":
-                spriteRenderer.color = Color.gray;
-                break;
-
-            case "e0004":
-                spriteRenderer.color = Color.blue;
-                break;
-
-            case "e1001":
-                spriteRenderer.color = Color.yellow;
-                break;
-
-            case "e1002":
-                spriteRenderer.color = Color.magenta;
-                break;
-
-            case "e1003":
-                spriteRenderer.color = Color.red;
-                break;
-
-            case "e1004":
-                spriteRenderer.color = Color.grey;
-                break;
-
-            default:
-                spriteRenderer.color = Color.black;
-                break;
-        }
+        if (sprite != null)
+            spriteRenderer.sprite = sprite;
     }
 }

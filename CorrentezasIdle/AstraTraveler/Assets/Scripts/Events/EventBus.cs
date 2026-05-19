@@ -33,6 +33,9 @@ public static class ExpeditionEvents
 
 public static class GameEvents
 {
+    // Test Events
+    public static Action MoneyTest;
+
     // Main Events
     public static Action OnGameSave;
     public static Action OnGameLoad;

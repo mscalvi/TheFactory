@@ -142,6 +142,11 @@ public class LandingUi : MonoBehaviour
         MenusPanel.SetActive(active);
     }
 
+    public void BotaoSecretoDaGrana()
+    {
+        GameEvents.MoneyTest?.Invoke();
+    }
+
 
     public void BestiaryButtonFunction()
     {

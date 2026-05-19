@@ -110,17 +110,11 @@ public class TripulationUi : MonoBehaviour
 
     public void ShowRecruit()
     {
-        Debug.Log($"ShowRecruit Chamado");
-     
-            if (GameState.UnlockState.Recruiting)
+        if (!GameState.UnlockState.Recruiting)
             return;
-
-        Debug.Log($"Recruiting Unlocked");
 
         TrainingPanel.SetActive(false);
         RecruitPanel.SetActive(true);
-
-        Debug.Log($"Painel Recruit Ativo");
 
         TripulationName.text = "Novo Recruta!";
 

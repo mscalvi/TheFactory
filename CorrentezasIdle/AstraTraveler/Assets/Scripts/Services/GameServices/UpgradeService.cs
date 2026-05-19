@@ -326,7 +326,7 @@ public class UpgradeService : MonoBehaviour
     private void ShipMaxLifeModifier(UpgradeInstance upgrade)
     {
         var ship = GameState.ExpeditionState.Ship;
-        double healthPercent = ship.ActualLife / ship.ActualLife;
+        double healthPercent = ship.CurrentLife / ship.ActualLife;
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {
@@ -743,8 +743,6 @@ public class UpgradeService : MonoBehaviour
         }
 
         GameEvents.MissionSlotAtualize?.Invoke();
-
-        Debug.Log($"Missões Simlutãneas: {GameState.MissionsState.MaxOnGoingMissions}");
     }
     private void MissionsRewardModifier(UpgradeInstance upgrade)
     {

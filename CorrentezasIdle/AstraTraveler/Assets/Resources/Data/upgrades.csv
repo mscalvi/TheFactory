@@ -1,7 +1,7 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;StartValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus
 usc101;;Experiência por Dia;;Aumenta o ganho de Experiência ao final de um dia sobrevivido;Company;Additive;ExperienceIncome;None;PlanningRoom;1;0;Meta;;0;2;1,11;Marcos;t003;Unknow
 usc103;;Experiência em Expedição;;Aumenta o ganho de Experiência por abate;Company;Multiplicative;ExperiencePerKill;None;PlanningRoom;0,1;1;Meta;;0;10;1,11;Marcos;t004;Unknow
-umc001;;Trabalhos Simultâneos;;Permite realizar mais um Trabalho simultâneo;Company;Additive;MissionsMax;None;CompanyRoom;1;0;Missions;;4;3;2,1;Marcos;Start;Available
+umc001;;Trabalhos Simultâneos;;Permite realizar mais um Trabalho simultâneo;Company;Additive;MissionsMax;None;CompanyRoom;1;0;Missions;;4;3;1,8;Marcos;Start;Available
 umc003;;Moedas no Pagamento;;Aumenta o número de recompensas ganhas ao finalizar um Trabalho;Company;Additive;MissionsOptions;None;CompanyRoom;1;0;Missions;;3;4000;2,1;Marcos;Start;Available
 umc002;;Pagamento por Trabalho;;Aumenta o total de cada recompensa ganha ao finalizar um Trabalho;Company;Multiplicative;MissionsReward;None;CompanyRoom;0,1;1;Missions;;0;15;1,11;Marcos;Start;Available
 usc002;;Armadura;;Aumenta a Armadura do Navio;Company;Additive;ShipArmor;None;ShipImproveRoom;1;0;Ship;;0;12;1,12;Marcos;;Unknow
