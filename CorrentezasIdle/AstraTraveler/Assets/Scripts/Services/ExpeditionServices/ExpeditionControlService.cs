@@ -28,7 +28,7 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        if (ExpeditionState.Ship.ActualLife <= 0)
+        if (ExpeditionState.Ship.CurrentLife <= 0)
         {
             Death();
         }

@@ -102,7 +102,7 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
                 if (RealDamage > 0)
                 {
-                    GameState.ExpeditionState.Ship.ActualLife -= RealDamage;
+                    GameState.ExpeditionState.Ship.CurrentLife -= RealDamage;
                     GameState.ExpeditionState.DamageTaken = true;
                     ExpeditionEvents.OnShipAtributeChange?.Invoke();
                 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static CurrencyHelper;
 
 public class ExpeditionUi : MonoBehaviour
@@ -10,6 +11,7 @@ public class ExpeditionUi : MonoBehaviour
     private DataState DataState;
     private ExpeditionState ExpeditionState;
     private PurchaseService PurchaseService;
+    private ConfigurationsService ConfigurationsService;
 
     [SerializeField] GameObject ShipPanel;
     [SerializeField] GameObject CrewPanel;
@@ -24,6 +26,10 @@ public class ExpeditionUi : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI CurrentLifeText;
 
+    [SerializeField] TextMeshProUGUI GameSpeedText;
+
+    [SerializeField] TMP_Dropdown LanguageDropdown;
+
     [SerializeField] Transform CurrencyPanel;
     [SerializeField] ExpeditionCurrencyDefinition CurrencyPrefab;
     Dictionary<CurrencyType, ExpeditionCurrencyDefinition> currencyUi = new();
@@ -34,7 +40,7 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] ExpeditionUpgradeDefinition UpgradePrefab;
     Dictionary<string, ExpeditionUpgradeDefinition> shipUpgradeUI = new();
 
-    public void Initialize(GameState gameState, PurchaseService purchaseService)
+    public void Initialize(GameState gameState, PurchaseService purchaseService, ConfigurationsService configs)
     {               
         GameState = gameState;
 
@@ -43,6 +49,8 @@ public class ExpeditionUi : MonoBehaviour
         DataState = GameState.DataState;
 
         PurchaseService = purchaseService;
+
+        ConfigurationsService = configs;
     }
 
     void Start()
@@ -54,6 +62,9 @@ public class ExpeditionUi : MonoBehaviour
         DayCycleTextSet();
         PathChangeSet();
         LifeTextSet();
+
+        LanguagesDropdownSet();
+        GameSpeedText.text = GameState.ActualGameSpeed.ToString();
     }
 
     // Troca de Menu de Upgrades
@@ -85,7 +96,7 @@ public class ExpeditionUi : MonoBehaviour
         SettingsPanel.SetActive(false);
     }
 
-    // Texts
+    // Changers
     private void DayCycleTextSet()
     {
         if (ExpeditionState.IsDay)
@@ -99,17 +110,14 @@ public class ExpeditionUi : MonoBehaviour
 
         DaysPastText.text = ExpeditionState.DayCounter.ToString("N0") + " / " + ExpeditionState.NextDestination.ToString("N0");
     }
-
     private void LifeTextSet()
     {
-        CurrentLifeText.text = ExpeditionState.Ship.ActualLife.ToString("N0") + " / " + ExpeditionState.Ship.MaxLife.ToString("N0");
+        CurrentLifeText.text = ExpeditionState.Ship.CurrentLife.ToString("N0") + " / " + ExpeditionState.Ship.ActualLife.ToString("N0");
     }
-
     private void PathChangeSet()
     {
         PathText.text = GameState.ExpeditionState.ActualPath.Type.ToString() + " " + GameState.ExpeditionState.ActualPath.Environment.ToString();
     }
-
     private void CurrencySet(CurrencyType type)
     {
         var currencies = GameState.DataState.currencies;
@@ -125,7 +133,6 @@ public class ExpeditionUi : MonoBehaviour
             ui.Setup(currency, DataState);
         }
     }
-
     private void UpgradesSet(CurrencyHelper.CurrencyType type)
     {
         foreach (var upgrade in DataState.upgrades)
@@ -139,7 +146,6 @@ public class ExpeditionUi : MonoBehaviour
             ui.Setup(upgrade.Value, PurchaseService, GameState);            
         }
     }
-
     private void UpgradeSet(UpgradeInstance upgrade)
     {
         if (!shipUpgradeUI.TryGetValue(upgrade.Id, out var ui))
@@ -154,7 +160,6 @@ public class ExpeditionUi : MonoBehaviour
     {
         BuildCurrencies(CurrencyPanel);
     }
-
     private void BuildCurrencies(Transform parent)
     {
         var currencies = GameState.DataState.currencies;
@@ -188,7 +193,6 @@ public class ExpeditionUi : MonoBehaviour
             currencyUi[currency.Type] = ui;
         }
     }
-
     private void BuildShipUpgrades(Transform parent)
     {
         var upgrades = DataState.upgrades;
@@ -241,7 +245,6 @@ public class ExpeditionUi : MonoBehaviour
             shipUpgradeUI[upgrade.Value.Id] = ui;
         }
     }
-
     private void BuildItensUpgrades(Transform parent)
     {
         var upgrades = DataState.upgrades;
@@ -269,6 +272,40 @@ public class ExpeditionUi : MonoBehaviour
         }
     }
 
+
+    // Configurações
+    public void InreaseSpeedButton()
+    {
+        ConfigurationsService.IncreaseGameSpeed();
+
+        GameSpeedText.text = GameState.ActualGameSpeed.ToString();
+    }
+    public void DecreaseSpeedButton()
+    {
+        ConfigurationsService.DecreaseGameSpeed();
+
+        GameSpeedText.text = GameState.ActualGameSpeed.ToString();
+    }
+    private void LanguagesDropdownSet()
+    {
+        LanguageDropdown.ClearOptions();
+
+        foreach (GameState.Language language in System.Enum.GetValues(typeof(GameState.Language)))
+        {
+            LanguageDropdown.options.Add(
+                new TMP_Dropdown.OptionData(language.ToString())
+            );
+        }
+
+        LanguageDropdown.SetValueWithoutNotify((int)GameState.ActualLanguage);
+
+        LanguageDropdown.RefreshShownValue();
+    }
+    public void SelectLanguage(int index)
+    {
+        ConfigurationsService.SelectLanguage(index);
+    }
+
     // Eventos
     void OnEnable()
     {
@@ -276,6 +313,8 @@ public class ExpeditionUi : MonoBehaviour
         GameEvents.OnUpgradeBuy += RefreshUpgradeUi;
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
+
+        GameEvents.OnLanguageChange += RefreshLanguageUi;
 
         ExpeditionEvents.OnExpeditionStart += GameStart;
         ExpeditionEvents.OnDayFinish += DayCycleTextSet;
@@ -290,6 +329,8 @@ public class ExpeditionUi : MonoBehaviour
         GameEvents.OnUpgradeBuy -= RefreshUpgradeUi;
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
+
+        GameEvents.OnLanguageChange -= RefreshLanguageUi;
 
         ExpeditionEvents.OnExpeditionStart -= GameStart;
         ExpeditionEvents.OnDayFinish -= DayCycleTextSet;
@@ -328,5 +369,10 @@ public class ExpeditionUi : MonoBehaviour
     void RefreshUpgradeUi(UpgradeInstance upgrade)
     {
         UpgradeSet(upgrade);
+    }
+
+    private void RefreshLanguageUi()
+    {
+        UpgradesSet(CurrencyType.Experience);
     }
 }

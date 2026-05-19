@@ -177,6 +177,7 @@
     <Compile Include="Assets\Scripts\Models\ShipModel.cs" />
     <Compile Include="Assets\Scripts\Instances\AcquisitionInstance.cs" />
     <Compile Include="Assets\Scripts\Instances\MissionInstance.cs" />
+    <Compile Include="Assets\Scripts\Services\GameServices\ConfigurationsService.cs" />
     <Compile Include="Assets\Scripts\Events\EventBus.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemySpawnerService.cs" />
     <Compile Include="Assets\Scripts\Data\WeaponsData.cs" />

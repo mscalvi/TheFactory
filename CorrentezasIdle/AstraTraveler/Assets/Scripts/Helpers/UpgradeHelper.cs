@@ -44,6 +44,7 @@ public class UpgradeHelper
     {
         None,
         Unlock,
+        GameSpeed,
         MissionsMax,
         MissionsReward,
         MissionsOptions,

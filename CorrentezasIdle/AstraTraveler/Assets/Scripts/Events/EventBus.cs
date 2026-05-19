@@ -36,6 +36,7 @@ public static class GameEvents
     // Main Events
     public static Action OnGameSave;
     public static Action OnGameLoad;
+    public static Action OnLanguageChange;
 
     // Mission Events
     public static Action<MissionInstance> OnMissionComplete;

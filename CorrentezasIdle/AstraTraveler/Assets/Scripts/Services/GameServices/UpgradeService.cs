@@ -39,13 +39,15 @@ public class UpgradeService : MonoBehaviour
 
     void ResetExpeditionUpgrades()
     {
+        GameState.ExpeditionState.Ship.CurrentLife = GameState.ExpeditionState.Ship.BaseLife;
+
         foreach (var upgrade in DataState.upgrades)
         {
             if(upgrade.Value.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
                 upgrade.Value.ActualBuy = 0;
-                upgrade.Value.ActualCost = upgrade.Value.Cost;
-                upgrade.Value.ActualValue = upgrade.Value.StartValue;
+                upgrade.Value.ActualCost = upgrade.Value.BaseCost;
+                upgrade.Value.ActualUpgradeValue = upgrade.Value.BaseUpgradeValue;
 
                 if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Finished)
                 {
@@ -61,8 +63,6 @@ public class UpgradeService : MonoBehaviour
     {
         if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running || GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Paused)
         {
-            Debug.Log($"Recalculando Upgrades de Expedition");
-
             ApplyBaseStats();
 
             foreach (var upgrade in DataState.upgrades)
@@ -89,8 +89,6 @@ public class UpgradeService : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Recalculando Upgrades de Company");
-
             ApplyStartStats();
 
             foreach (var upgrade in DataState.upgrades)
@@ -123,10 +121,10 @@ public class UpgradeService : MonoBehaviour
     {
         var Ship = GameState.ExpeditionState.Ship;
 
-        Ship.MaxLife = Ship.BaseLife;
-        Ship.MaxArmor = Ship.BaseArmor;
-        Ship.MaxResistence = Ship.BaseResistence;
-        Ship.MaxRepairPerTripulation = Ship.BaseRepairPerTripulation;
+        Ship.ActualLife = Ship.BaseLife;
+        Ship.ActualArmor = Ship.BaseArmor;
+        Ship.ActualResistence = Ship.BaseResistence;
+        Ship.ActualRepairPerTripulation = Ship.BaseRepairPerTripulation;
 
         foreach (var weapon in DataState.weapons)
         {
@@ -160,10 +158,10 @@ public class UpgradeService : MonoBehaviour
         GameState.MissionsState.RewardBonus = 1;
         GameState.MissionsState.MaxMissionsOptions = 1;
 
-        Ship.MaxLife = Ship.BaseLife;
-        Ship.MaxArmor = Ship.BaseArmor;
-        Ship.MaxResistence = Ship.BaseResistence;
-        Ship.MaxRepairPerTripulation = Ship.BaseRepairPerTripulation;
+        Ship.BaseLife = Ship.StartLife;
+        Ship.BaseArmor = Ship.StartArmor;
+        Ship.BaseResistence = Ship.StartResistence;
+        Ship.BaseRepairPerTripulation = Ship.StartRepairPerTripulation;
 
         foreach (var weapon in DataState.weapons)
         {
@@ -189,7 +187,7 @@ public class UpgradeService : MonoBehaviour
 
     private void ApplyUpgrade(UpgradeInstance upgrade)
     {
-        upgrade.ActualValue = upgrade.StartValue;
+        upgrade.CurrentValue = upgrade.FirstValue;
 
         switch (upgrade.TargetType)
         {
@@ -261,6 +259,20 @@ public class UpgradeService : MonoBehaviour
                         break;
                 }
                 break;
+            case UpgradeHelper.TargetType.Upgrade:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.UpgradeExperiencePerKillRate:
+                        ExperiencePerKillRateModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.UpgradeShipRepairRate:
+                        ShipRepairRateModifier(upgrade);
+                        break;
+                    default:
+                        Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
+                        break;
+                }
+                break;
             case UpgradeHelper.TargetType.Meta:
                 switch (upgrade.EffectType)
                 {
@@ -279,6 +291,9 @@ public class UpgradeService : MonoBehaviour
                     case UpgradeHelper.EffectType.ClickRarity:
                         ClickRarityModifier(upgrade);
                         break;
+                    case UpgradeHelper.EffectType.GameSpeed:
+                        GameSpeedModifier(upgrade);
+                        break;
                     default:
                         Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
                         break;
@@ -294,7 +309,7 @@ public class UpgradeService : MonoBehaviour
         {
             for (int i = 1; i <= upgrade.ActualBuy; i++)
             {
-                upgrade.ActualValue *= (1 + upgrade.UpgradeValue);
+                upgrade.CurrentValue *= (1 + upgrade.ActualUpgradeValue);
             }
         }
 
@@ -302,7 +317,7 @@ public class UpgradeService : MonoBehaviour
         {
             for (int i = 1; i <= upgrade.ActualBuy; i++)
             {
-                upgrade.ActualValue += upgrade.UpgradeValue;
+                upgrade.CurrentValue += upgrade.ActualUpgradeValue;
             }
         }
     }
@@ -311,7 +326,7 @@ public class UpgradeService : MonoBehaviour
     private void ShipMaxLifeModifier(UpgradeInstance upgrade)
     {
         var ship = GameState.ExpeditionState.Ship;
-        double healthPercent = ship.ActualLife / ship.MaxLife;
+        double healthPercent = ship.ActualLife / ship.ActualLife;
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {
@@ -319,12 +334,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxLife *= upgrade.ActualValue;
+                ship.ActualLife *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseLife *= upgrade.ActualValue;
+                ship.BaseLife *= upgrade.CurrentValue;
             }
         }
 
@@ -334,19 +349,19 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxLife += upgrade.ActualValue;
+                ship.ActualLife += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseLife += upgrade.ActualValue;
+                ship.BaseLife += upgrade.CurrentValue;
             }
         }
 
-        ship.ActualLife = ship.MaxLife * healthPercent;
-        if (ship.ActualLife > ship.MaxLife)
+        ship.CurrentLife = ship.ActualLife * healthPercent;
+        if (ship.CurrentLife > ship.ActualLife)
         {
-            ship.ActualLife = ship.MaxLife;
+            ship.CurrentLife = ship.ActualLife;
         }
     }
     private void ShipArmorModifier(UpgradeInstance upgrade)
@@ -359,12 +374,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxArmor *= upgrade.ActualValue;
+                ship.ActualArmor *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseArmor *= upgrade.ActualValue;
+                ship.BaseArmor *= upgrade.CurrentValue;
             }
         }
 
@@ -374,16 +389,14 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxArmor += upgrade.ActualValue;
+                ship.ActualArmor += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseArmor += upgrade.ActualValue;
+                ship.BaseArmor += upgrade.CurrentValue;
             }
         }
-
-        ship.ActualArmor = ship.MaxArmor;
     }
     private void ShipResistenceModifier(UpgradeInstance upgrade)
     {
@@ -395,12 +408,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxResistence *= upgrade.ActualValue;
+                ship.ActualResistence *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseResistence *= upgrade.ActualValue;
+                ship.BaseResistence *= upgrade.CurrentValue;
             }
         }
 
@@ -410,16 +423,14 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxResistence += upgrade.ActualValue;
+                ship.ActualResistence += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseResistence += upgrade.ActualValue;
+                ship.BaseResistence += upgrade.CurrentValue;
             }
         }
-
-        ship.ActualResistence = ship.MaxResistence;
     }
     private void ShipRepairModifier(UpgradeInstance upgrade)
     {
@@ -431,12 +442,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxRepairPerTripulation *= upgrade.ActualValue;
+                ship.ActualRepairPerTripulation *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseRepairPerTripulation *= upgrade.ActualValue;
+                ship.BaseRepairPerTripulation *= upgrade.CurrentValue;
             }
         }
 
@@ -446,16 +457,14 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ship.MaxRepairPerTripulation += upgrade.ActualValue;
+                ship.ActualRepairPerTripulation += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ship.BaseRepairPerTripulation += upgrade.ActualValue;
+                ship.BaseRepairPerTripulation += upgrade.CurrentValue;
             }
         }
-
-        ship.ActualRepairPerTripulation = ship.MaxRepairPerTripulation;
     }
 
     // Modificadores Weapons
@@ -469,12 +478,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                weapon.ActualDamage *= upgrade.ActualValue;
+                weapon.ActualDamage *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                weapon.BaseDamage *= upgrade.ActualValue;
+                weapon.BaseDamage *= upgrade.CurrentValue;
             }
         }
 
@@ -484,12 +493,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                weapon.ActualDamage += upgrade.ActualValue;
+                weapon.ActualDamage += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                weapon.BaseDamage += upgrade.ActualValue;
+                weapon.BaseDamage += upgrade.CurrentValue;
             }
         }
     }
@@ -503,12 +512,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                weapon.ActualAttackSpeed *= upgrade.ActualValue;
+                weapon.ActualAttackSpeed *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                weapon.BaseAttackSpeed *= upgrade.ActualValue;
+                weapon.BaseAttackSpeed *= upgrade.CurrentValue;
             }
         }
 
@@ -518,12 +527,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                weapon.ActualAttackSpeed += upgrade.ActualValue;
+                weapon.ActualAttackSpeed += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                weapon.BaseAttackSpeed += upgrade.ActualValue;
+                weapon.BaseAttackSpeed += upgrade.CurrentValue;
             }
         }
     }
@@ -537,12 +546,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                weapon.ActualRange *= upgrade.ActualValue;
+                weapon.ActualRange *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                weapon.BaseRange *= upgrade.ActualValue;
+                weapon.BaseRange *= upgrade.CurrentValue;
             }
         }
 
@@ -552,12 +561,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                weapon.ActualRange += upgrade.ActualValue;
+                weapon.ActualRange += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                weapon.BaseRange += upgrade.ActualValue;
+                weapon.BaseRange += upgrade.CurrentValue;
             }
         }
     }
@@ -573,12 +582,12 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ammo.ActualDamage *= upgrade.ActualValue;
+                ammo.ActualDamage *= upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ammo.BaseDamage *= upgrade.ActualValue;
+                ammo.BaseDamage *= upgrade.CurrentValue;
             }
         }
 
@@ -588,31 +597,63 @@ public class UpgradeService : MonoBehaviour
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
             {
-                ammo.ActualDamage += upgrade.ActualValue;
+                ammo.ActualDamage += upgrade.CurrentValue;
             }
 
             if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
             {
-                ammo.BaseDamage += upgrade.ActualValue;
+                ammo.BaseDamage += upgrade.CurrentValue;
+            }
+        }
+    }
+
+    // Modificadores de Upgrades
+    private void ExperiencePerKillRateModifier(UpgradeInstance upgrade)
+    {
+        CalculateUpgradeValue(upgrade);
+
+        foreach (var upgradeTarget in GameState.DataState.upgrades.Values)
+        {
+            if (upgradeTarget.Id == upgrade.TargetId)
+            {
+                upgradeTarget.BaseUpgradeValue += upgrade.CurrentValue;
+            }
+        }
+    }
+    private void ShipRepairRateModifier(UpgradeInstance upgrade)
+    {
+        CalculateUpgradeValue(upgrade);
+
+        foreach (var upgradeTarget in GameState.DataState.upgrades.Values)
+        {
+            if (upgradeTarget.Id == upgrade.TargetId)
+            {
+                upgradeTarget.BaseUpgradeValue += upgrade.CurrentValue;
             }
         }
     }
 
     // Modificadores Meta
+    private void GameSpeedModifier(UpgradeInstance upgrade)
+    {
+        CalculateUpgradeValue(upgrade);
+
+        GameState.MaxGameSpeed += (int)upgrade.CurrentValue;
+    }
     private void ExperienceKillModifier(UpgradeInstance upgrade)
     {
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.ExpeditionState.ActualExperienceKillBonus *= upgrade.ActualValue;
+            GameState.ExpeditionState.ActualExperienceKillBonus *= upgrade.CurrentValue;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.ExpeditionState.ActualExperienceKillBonus += upgrade.ActualValue;
+            GameState.ExpeditionState.ActualExperienceKillBonus += upgrade.CurrentValue;
         }
     }
     private void ExperienceIncomeModifier(UpgradeInstance upgrade)
@@ -621,14 +662,14 @@ public class UpgradeService : MonoBehaviour
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.ExpeditionState.ActualNightReward *= upgrade.ActualValue;
+            GameState.ExpeditionState.ActualNightReward *= upgrade.CurrentValue;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.ExpeditionState.ActualNightReward += upgrade.ActualValue;
+            GameState.ExpeditionState.ActualNightReward += upgrade.CurrentValue;
         }
     }
     private void ClickTargetModifier(UpgradeInstance upgrade)
@@ -653,9 +694,8 @@ public class UpgradeService : MonoBehaviour
     {
         CalculateUpgradeValue(upgrade);
 
-        GameState.ExpeditionState.BaseMaxMarkedEnemies += (int)upgrade.ActualValue;
+        GameState.ExpeditionState.BaseMaxMarkedEnemies += (int)upgrade.CurrentValue;
     }
-
     private void ClickRarityModifier(UpgradeInstance upgrade)
     {
         switch (upgrade.TargetId)
@@ -699,7 +739,7 @@ public class UpgradeService : MonoBehaviour
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.MissionsState.MaxOnGoingMissions += (int)upgrade.ActualValue;
+            GameState.MissionsState.MaxOnGoingMissions += (int)upgrade.CurrentValue;
         }
 
         GameEvents.MissionSlotAtualize?.Invoke();
@@ -712,14 +752,14 @@ public class UpgradeService : MonoBehaviour
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.MissionsState.RewardBonus *= upgrade.ActualValue;
+            GameState.MissionsState.RewardBonus *= upgrade.CurrentValue;
         }
 
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.MissionsState.RewardBonus += upgrade.ActualValue;
+            GameState.MissionsState.RewardBonus += upgrade.CurrentValue;
         }
     }
     private void MissionsOptionsModifier(UpgradeInstance upgrade)
@@ -728,7 +768,7 @@ public class UpgradeService : MonoBehaviour
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.MissionsState.MaxMissionsOptions += (int)upgrade.ActualValue;
+            GameState.MissionsState.MaxMissionsOptions += (int)upgrade.CurrentValue;
         }
     }
     private void MissionsCancelModifier(UpgradeInstance upgrade)
@@ -737,7 +777,7 @@ public class UpgradeService : MonoBehaviour
         {
             CalculateUpgradeValue(upgrade);
 
-            GameState.MissionsState.MaxCancelableMissions += (int)upgrade.ActualValue;
+            GameState.MissionsState.MaxCancelableMissions += (int)upgrade.CurrentValue;
         }
     }
 

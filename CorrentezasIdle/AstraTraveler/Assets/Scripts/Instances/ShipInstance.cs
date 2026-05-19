@@ -31,18 +31,14 @@ public class ShipInstance
     public double BaseRepairPerTripulation;
 
     // Expedition Increase
-    public double MaxLife;
-    public double MaxSpeed;
-    public double MaxArmor;
-    public double MaxResistence;
-    public double MaxRepairPerTripulation;
-
-    // Actual Value
     public double ActualLife;
     public double ActualSpeed;
     public double ActualArmor;
     public double ActualResistence;
     public double ActualRepairPerTripulation;
+
+    // Actual Value
+    public double CurrentLife;
 
     public int WeaponSlots;
     public List<WeaponInstance> Weapons;
@@ -63,27 +59,23 @@ public class ShipInstance
 
         StartLife = model.Life;
         BaseLife = model.Life;
-        MaxLife = model.Life;
         ActualLife = model.Life;
+        CurrentLife = model.Life;
 
         StartSpeed = model.Speed;
         BaseSpeed = model.Speed;
-        MaxSpeed = model.Speed;
         ActualSpeed = model.Speed;
 
         StartResistence = model.Resistence;
         BaseResistence = model.Resistence;
-        MaxResistence = model.Resistence;
         ActualResistence = model.Resistence;
 
         StartRepairPerTripulation = 0;
         BaseRepairPerTripulation = 0;
-        MaxRepairPerTripulation = 0;
         ActualRepairPerTripulation = 0;
 
         StartArmor = model.Armor;
         BaseArmor = model.Armor;
-        MaxArmor = model.Armor;
         ActualArmor = model.Armor;
 
         WeaponSlots = model.WeaponSlots;

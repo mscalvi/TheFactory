@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor;
 
 public class GameController : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public AcquisitonsService AcquisitonsService;
     [SerializeField] public RecruitmentService RecruitmentService;
     [SerializeField] public RewardService RewardService;
+    [SerializeField] public ConfigurationsService ConfigurationsService;
 
     bool FirstInitialization = true;
 
@@ -72,6 +74,7 @@ public class GameController : MonoBehaviour
             AcquisitonsService.Initialize(GameState);
             RecruitmentService.Initialize(GameState);
             RewardService.Initialize(GameState, CurrencyService);
+            ConfigurationsService.Initialize(GameState);
         } else
         {
             // service de Load

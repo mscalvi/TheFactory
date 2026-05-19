@@ -22,6 +22,9 @@ public class LandingUi : MonoBehaviour
 
     [SerializeField] Button BestiaryButton;
 
+    [SerializeField] GameObject ConfigsPanel;
+    [SerializeField] GameObject MenusPanel;
+
     [SerializeField] Transform MissionPanel;
     [SerializeField] MissionDefinition MissionDefinition;
     [SerializeField] MissionButtonDefinition MissionButtonDefinition;
@@ -129,6 +132,14 @@ public class LandingUi : MonoBehaviour
     public void ExpeditionButtonFunction()
     {
         SceneManager.LoadScene("ExpeditionScene");
+    }
+
+    public void SettingsButtonFuncion()
+    {
+        bool active = ConfigsPanel.activeSelf;
+
+        ConfigsPanel.SetActive(!active);
+        MenusPanel.SetActive(active);
     }
 
 

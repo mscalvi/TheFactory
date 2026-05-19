@@ -50,7 +50,6 @@ public class MissionsTrackerService : MonoBehaviour
                 continue;
 
             mission.ActualValue++;
-            Debug.Log($"Inimigo Alvo Morto: {enemy.NamePT}. Falram {mission.TargetValue - mission.ActualValue}.");
 
             if (mission.ActualValue >= mission.TargetValue)
                 toComplete.Add(mission);

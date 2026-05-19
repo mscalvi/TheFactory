@@ -138,7 +138,7 @@ public class PurchaseService : MonoBehaviour
 
     private void AtualizePrice(UpgradeInstance upgrade)
     {
-        upgrade.ActualCost = upgrade.Cost * System.Math.Pow(upgrade.ActualBuy + 1, upgrade.CostGrowth);
+        upgrade.ActualCost = upgrade.ActualCost * System.Math.Pow(upgrade.CostGrowth, upgrade.ActualBuy + 1);
 
         upgrade.ActualCost = (int)upgrade.ActualCost;
 

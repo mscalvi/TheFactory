@@ -34,7 +34,7 @@ public class ProjectileService : MonoBehaviour
             proj.Position = Vector3.MoveTowards(
                 proj.Position,
                 targetPos,
-                proj.Speed * Time.deltaTime * GameState.GameSpeed
+                proj.Speed * Time.deltaTime * GameState.ActualGameSpeed
             );
 
             views[proj].SetPosition(proj.Position);

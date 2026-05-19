@@ -64,9 +64,11 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
+        var Configs = GameController.Instance.ConfigurationsService;
+
         ExpeditionControlService.Initialize(Game, TickService);
 
-        ExpeditionUiService.Initialize(Game, PurchaseService);
+        ExpeditionUiService.Initialize(Game, PurchaseService, Configs);
 
         DaysCycleService.Initialize(Game, TickService);
 

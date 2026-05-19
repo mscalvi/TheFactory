@@ -21,16 +21,20 @@ public class UpgradeInstance
     public UpgradeHelper.UpgradeMenu ExpeditionMenu;
     public UpgradeHelper.UpgradeBuilding Building;
 
-    public double UpgradeValue;
-    public double StartValue;
-    public double ActualValue;
+    public double StartUpgradeValue;
+    public double BaseUpgradeValue;
+    public double ActualUpgradeValue;
+
+    public double FirstValue;
+    public double CurrentValue;
 
     public UpgradeHelper.TargetType TargetType;
     public string TargetId;
     public int MaxBuy;
     public int ActualBuy;
 
-    public double Cost;
+    public double StartCost;
+    public double BaseCost;
     public double ActualCost;
     public double CostGrowth;
     public CurrencyHelper.CurrencyType Currency;
@@ -56,9 +60,12 @@ public class UpgradeInstance
         ExpeditionMenu = model.ExpeditionMenu;
         Building = model.Building;
 
-        UpgradeValue = model.UpgradeValue;
-        StartValue = model.StartValue;
-        ActualValue = model.StartValue;
+        StartUpgradeValue = model.UpgradeValue;
+        BaseUpgradeValue = model.UpgradeValue;
+        ActualUpgradeValue = model.UpgradeValue;
+
+        FirstValue = model.StartValue;
+        CurrentValue = model.StartValue;
 
         TargetType = model.TargetType;
         TargetId = model.TargetId;
@@ -66,7 +73,8 @@ public class UpgradeInstance
         ActualBuy = 0;
         MaxBuy = model.MaxBuy;
 
-        Cost = model.Cost;
+        StartCost = model.Cost;
+        BaseCost = model.Cost;
         ActualCost = model.Cost;
         CostGrowth = model.CostGrowth;
         Currency = model.Currency;

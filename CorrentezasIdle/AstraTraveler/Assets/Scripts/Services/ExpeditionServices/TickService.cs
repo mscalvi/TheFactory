@@ -40,7 +40,7 @@ public class TickService : MonoBehaviour
         if (isPaused)
             return;
 
-        float scaledDelta = Time.deltaTime * GameState.GameSpeed;
+        float scaledDelta = Time.deltaTime * GameState.ActualGameSpeed;
 
         timer += scaledDelta;
 

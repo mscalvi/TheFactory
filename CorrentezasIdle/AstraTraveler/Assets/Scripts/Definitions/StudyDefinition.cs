@@ -39,12 +39,12 @@ public class StudyDefinition : MonoBehaviour
         {
             if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
-                UpgradeActualValue.text = "+" + (upgrade.ActualValue).ToString("N2");
+                UpgradeActualValue.text = "+" + (upgrade.ActualUpgradeValue).ToString("N2");
             }
 
             if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
             {
-                UpgradeActualValue.text = "x" + (upgrade.ActualValue).ToString("N2");
+                UpgradeActualValue.text = "x" + (upgrade.ActualUpgradeValue).ToString("N2");
             }
         }
         else

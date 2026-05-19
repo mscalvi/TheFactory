@@ -81,5 +81,7 @@ public class ExpeditionStartService : MonoBehaviour
             weapon.ActualCriticalDamage = weapon.BaseCriticalDamage;
             weapon.ActualPrecision = weapon.BasePrecision;
         }
+
+        Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.ActualLife;
     }
 }
