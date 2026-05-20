@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,15 +13,22 @@ public class LandingUi : MonoBehaviour
     private MissionsService MissionsService;
 
     [SerializeField] Button StudyButton;
+    public TMP_Text StudyName;
     [SerializeField] Button UpgradesButton;
+    public TMP_Text UpgradesName;
     [SerializeField] Button AcquisitionsButton;
+    public TMP_Text AcquisitonsName;
     [SerializeField] Button TrainingButton;
+    public TMP_Text TrainingName;
     [SerializeField] Button ShipButton;
+    public TMP_Text ShipName;
     [SerializeField] Button AlchemyButton;
+    public TMP_Text AlchemyName;
 
     [SerializeField] Button ExpeditionButton;
 
     [SerializeField] Button BestiaryButton;
+    public TMP_Text BestiaryName;
 
     [SerializeField] GameObject ConfigsPanel;
     [SerializeField] GameObject MenusPanel;
@@ -126,7 +134,38 @@ public class LandingUi : MonoBehaviour
         ShipButton.interactable = Unlock.Ship;
         TrainingButton.interactable = Unlock.Training || Unlock.Recruiting;
         AlchemyButton.interactable = Unlock.Alchemy;
+
         BestiaryButton.interactable = Unlock.Bestiary;
+
+        if (Unlock.Studies)
+        {
+            StudyName.text = "Estudos";
+        }
+        if (Unlock.Company)
+        {
+            UpgradesName.text = "Melhorias";
+        }
+        if (Unlock.Acquisitions)
+        {
+            AcquisitonsName.text = "Construções";
+        }
+        if (Unlock.Ship)
+        {
+            ShipName.text = "Navio";
+        }
+        if (Unlock.Training || Unlock.Recruiting)
+        {
+            TrainingName.text = "Tripulação";
+        }
+        if (Unlock.Alchemy)
+        {
+            AlchemyName.text = "Alquimia";
+        }
+
+        if (Unlock.Bestiary)
+        {
+            BestiaryName.text = "Bestiário";
+        }
     }
 
     public void ExpeditionButtonFunction()

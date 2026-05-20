@@ -34,6 +34,13 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
         }
     }
 
+    private void Die()
+    {
+        ExpeditionState.Ship.CurrentLife = 0;
+
+        Death();
+    }
+
     public void Death()
     {
         ExpeditionState.ExpeditionStatus = ExpeditionStatus.GameOver;
@@ -54,10 +61,14 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
     void OnEnable()
     {
         ExpeditionEvents.OnFinalPopUpClose += LoadLandingPage;
+
+        GameEvents.LifeTest += Die;
     }
 
     void OnDisable()
     {
         ExpeditionEvents.OnFinalPopUpClose -= LoadLandingPage;
+
+        GameEvents.LifeTest -= Die;
     }
 }

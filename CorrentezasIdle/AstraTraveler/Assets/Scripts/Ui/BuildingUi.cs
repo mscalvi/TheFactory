@@ -156,6 +156,8 @@ public class BuildingUi : MonoBehaviour
     {
         if (upgradesUI.TryGetValue(upgrade.Id, out var ui))
         {
+            ui.Setup(upgrade, PurchaseService, GameState);
+
             if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 Destroy(ui.gameObject);
@@ -164,8 +166,6 @@ public class BuildingUi : MonoBehaviour
 
                 return;
             }
-
-            ui.Setup(upgrade, PurchaseService, GameState);
         }
     }
 

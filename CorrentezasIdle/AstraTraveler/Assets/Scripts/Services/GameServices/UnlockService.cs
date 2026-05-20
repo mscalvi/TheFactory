@@ -28,7 +28,7 @@ public class UnlockService : MonoBehaviour
         {
             if (mission.UnlockId == upgrade.Id)
             {
-                mission.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                mission.UnlockStatus = UnlockHelper.UnlockStatus.Available;
             }
         }
 
@@ -48,6 +48,8 @@ public class UnlockService : MonoBehaviour
         if(upgrade.ActualBuy >= upgrade.MaxBuy)
         {
             GameState.DataState.upgrades[upgrade.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+            GameEvents.OnCurrencyChange?.Invoke(upgrade.Currency, CurrencyHelper.CurrencyScope.Company);
+            GameEvents.OnCurrencyChange?.Invoke(upgrade.Currency, CurrencyHelper.CurrencyScope.Expedition);
         }
     }
 

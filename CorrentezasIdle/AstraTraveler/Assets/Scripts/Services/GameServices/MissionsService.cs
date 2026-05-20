@@ -282,6 +282,8 @@ public class MissionsService : MonoBehaviour
 
         mission.DescriptionPT = "Sobreviver por " + mission.TargetValue + " dias.";
         mission.DescriptionEN = "Survive for " + mission.TargetValue + " days.";
+
+        mission.Reward1Ammount += mission.TargetValue * 5;
     }
 
     private void DayNoDamagePrepare(MissionInstance mission)
@@ -292,6 +294,8 @@ public class MissionsService : MonoBehaviour
 
         mission.DescriptionPT = "Sobreviver por " + mission.TargetValue + " dias sem receber dano.";
         mission.DescriptionEN = "Survive for " + mission.TargetValue + " days without taking damage.";
+
+        mission.Reward1Ammount += mission.TargetValue * 5;
     }
 
     private void IngredientFindingPrepare(MissionInstance mission)

@@ -52,7 +52,10 @@ public class MissionsTrackerService : MonoBehaviour
             mission.ActualValue++;
 
             if (mission.ActualValue >= mission.TargetValue)
+            {
+                GameEvents.OnMissionUpdate?.Invoke(mission);
                 toComplete.Add(mission);
+            }
         }
 
         CompleteQueued();
@@ -80,7 +83,10 @@ public class MissionsTrackerService : MonoBehaviour
                 if (!ExpeditionState.DamageTaken)
                 {
                     if (ExpeditionState.DayCounter >= mission.TargetValue)
+                    {
                         toComplete.Add(mission);
+                        GameEvents.OnMissionUpdate?.Invoke(mission);
+                    }
                 }
             }
         }

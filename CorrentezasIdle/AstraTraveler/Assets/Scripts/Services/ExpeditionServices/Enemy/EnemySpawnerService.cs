@@ -11,10 +11,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     public Dictionary<string, double> EnemyWeights = new();
 
-    int tickCounter = 0;
     double accumulatedBudget = 0;
     int spawnTickCounter = 0;
-    float spawnTimer = 0;
+    float spawnTimer = 4f;
 
     Queue<EnemyInstance> spawnQueue = new();
 

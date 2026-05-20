@@ -314,7 +314,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -855,9 +855,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Melhorias
-
-'
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1127,7 +1125,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1260,7 +1258,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1323,13 +1321,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StudyButton: {fileID: 130640399}
+  StudyName: {fileID: 926282684}
   UpgradesButton: {fileID: 886852703}
+  UpgradesName: {fileID: 219518372}
   AcquisitionsButton: {fileID: 374657812}
+  AcquisitonsName: {fileID: 506706753}
   TrainingButton: {fileID: 561188967}
+  TrainingName: {fileID: 1445572214}
   ShipButton: {fileID: 1325985025}
+  ShipName: {fileID: 1819959478}
   AlchemyButton: {fileID: 1814262223}
+  AlchemyName: {fileID: 484490011}
   ExpeditionButton: {fileID: 1314718628}
   BestiaryButton: {fileID: 349739378}
+  BestiaryName: {fileID: 1060135899}
   ConfigsPanel: {fileID: 1677803061}
   MenusPanel: {fileID: 642795475}
   MissionPanel: {fileID: 552867241}
@@ -1393,9 +1398,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Alquimia
-
-'
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1650,7 +1653,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Aquisi\xE7\xF5es"
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1942,7 +1945,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2622,7 +2625,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2697,7 +2700,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Estudos
+  m_text: '---
 
 '
   m_isRightToLeft: 0
@@ -3302,7 +3305,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Besti\xE1rio"
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3392,7 +3395,7 @@ GameObject:
   - component: {fileID: 1088306845}
   - component: {fileID: 1088306844}
   m_Layer: 5
-  m_Name: SalesBtn
+  m_Name: MarcosBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3487,7 +3490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9499908, g: 1, b: 0.3726415, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4131,9 +4134,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -175}
-  m_SizeDelta: {x: 125, y: 68.0522}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -175.00006}
+  m_SizeDelta: {x: 152.5409, y: 78.067}
+  m_Pivot: {x: 0.49999997, y: 0.5}
 --- !u!114 &1314718628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4210,7 +4213,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 222a70f251da3d049861d51a56204def, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0e0f484da2ca0a143803c31dbdb25c3f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4343,7 +4346,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4476,7 +4479,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4685,7 +4688,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Promo\xE7\xE3o"
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4819,9 +4822,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Treinamento
-
-'
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5089,7 +5090,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Configura\xE7\xF5es"
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6156,7 +6157,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6231,9 +6232,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Navio
-
-'
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6563,7 +6562,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a908324226fbdba4fa8acbb17b573bcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7be8c05ff4f5e14a875d572fcbdab41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

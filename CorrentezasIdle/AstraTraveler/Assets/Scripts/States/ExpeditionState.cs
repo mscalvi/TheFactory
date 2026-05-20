@@ -8,6 +8,7 @@ public class ExpeditionState
     public ShipInstance Ship;
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 
+    public float phaseTimer = 0f;
     public float PhaseDuration = 15f;
     public int ticksBetweenSpawns = 5;
 
@@ -50,6 +51,8 @@ public class ExpeditionState
     public int StartMaximalDestinationGap = 7;
     public int StartDestinationGapIncrease = 2;
 
+    public int StartMaxTripulation = 1;
+
     // Valores Base
     public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
     public double BaseSpawnChance = 1;
@@ -72,6 +75,8 @@ public class ExpeditionState
     public int BaseMaximalDestinationGap = 7;
     public int BaseDestinationGapIncrease = 2;
 
+    public int BaseMaxTripulation = 1;
+    
     // Valores Atuais
     public Dictionary<GameHelper.ItemRarity, float> ActualIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
 
@@ -94,4 +99,6 @@ public class ExpeditionState
     public int ActualMinimalDestinationGap = 5;
     public int ActualMaximalDestinationGap = 7;
     public int ActualDestinationGapIncrease = 2;
+
+    public int ActualMaxTripulation = 1;
 }

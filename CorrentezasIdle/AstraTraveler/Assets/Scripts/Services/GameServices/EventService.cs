@@ -36,14 +36,6 @@ public class EventService : MonoBehaviour
 
     private void ExpeditionEndEvent()
     {
-        if (GameState.UnlockState.Company)
-        {
-            if (!GameState.UnlockState.Studies)
-            {
-                GameState.UnlockState.Studies = true;
-            }
-        }
-
         if (!GameState.UnlockState.Company)
         {
             GameState.UnlockState.Company = true;

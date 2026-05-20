@@ -7,9 +7,8 @@ using UnityEngine.UI;
 public class BuildingDefinition : MonoBehaviour
 {
     public BuildingInstance Building;
-
-    public TMP_Text Name;
     private BuildingUi Ui;
+    public Image BuildingIcon;
 
     public bool Note;
 
@@ -19,16 +18,10 @@ public class BuildingDefinition : MonoBehaviour
 
         Ui = ui;
 
-        if (GameState.ActualLanguage == GameState.Language.English)
-        {
-            Name.text = building.NameEN;
-        }
+        Sprite icon = Resources.Load<Sprite>($"Sprites/Buildings/{building.Id}");
 
-        if (GameState.ActualLanguage == GameState.Language.Portugues)
-        {
-            Name.text = building.NamePT;
-        }
-
+        if (icon != null)
+            BuildingIcon.sprite = icon;
     }
 
     public void OnClick()

@@ -71,7 +71,7 @@ public class TripulationUi : MonoBehaviour
             ui.Setup(tripulation.Value, UnlockService, this);
         }
 
-        int max = GameState.ExpeditionState.Ship.MaxTripulation;
+        int max = GameState.ExpeditionState.ActualMaxTripulation;
         int remainingSlots = max - unlockedCount;
 
         for (int i = 0; i < remainingSlots; i++)

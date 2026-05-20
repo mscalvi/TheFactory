@@ -8,8 +8,6 @@ using static CurrencyHelper;
 public class ExpeditionUi : MonoBehaviour
 {
     private GameState GameState;
-    private DataState DataState;
-    private ExpeditionState ExpeditionState;
     private PurchaseService PurchaseService;
     private ConfigurationsService ConfigurationsService;
 
@@ -19,12 +17,16 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] GameObject SettingsPanel;
 
     [SerializeField] TextMeshProUGUI DaysPastText;
+    [SerializeField] Slider DaysCycleSlider;
 
-    [SerializeField] TextMeshProUGUI CycleText;
+    [SerializeField] TextMeshProUGUI MissionsText;
 
     [SerializeField] TextMeshProUGUI PathText;
+    [SerializeField] TextMeshProUGUI BiomeText;
+    [SerializeField] TextMeshProUGUI ChangeText;
 
     [SerializeField] TextMeshProUGUI CurrentLifeText;
+    [SerializeField] Slider LifeSlider;
 
     [SerializeField] TextMeshProUGUI GameSpeedText;
 
@@ -40,13 +42,13 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] ExpeditionUpgradeDefinition UpgradePrefab;
     Dictionary<string, ExpeditionUpgradeDefinition> shipUpgradeUI = new();
 
+    float MissionsTextTimer = 2000f;
+    float MissionsTimer = 0;
+    bool MissionTextShown = false;
+
     public void Initialize(GameState gameState, PurchaseService purchaseService, ConfigurationsService configs)
     {               
         GameState = gameState;
-
-        ExpeditionState = GameState.ExpeditionState;
-
-        DataState = GameState.DataState;
 
         PurchaseService = purchaseService;
 
@@ -65,6 +67,39 @@ public class ExpeditionUi : MonoBehaviour
 
         LanguagesDropdownSet();
         GameSpeedText.text = GameState.ActualGameSpeed.ToString();
+    }
+
+    private void Update()
+    {
+        if (MissionTextShown)
+        {
+            MissionsTimer++;
+        }
+
+        if (MissionsTimer >= MissionsTextTimer)
+        {
+            MissionsTimer = 0;
+            MissionsTextSet();
+        }
+
+        float phaseProgress = GameState.ExpeditionState.phaseTimer / GameState.ExpeditionState.PhaseDuration;
+
+        if (GameState.ExpeditionState.IsDay)
+        {
+            DaysCycleSlider.value = phaseProgress * 0.5f;
+        }
+        else
+        {
+            DaysCycleSlider.value = 0.5f + (phaseProgress * 0.5f);
+        }
+
+        float lifeProgress = 1 - (float)(GameState.ExpeditionState.Ship.CurrentLife / GameState.ExpeditionState.Ship.ActualLife);
+
+        LifeSlider.value = lifeProgress;
+
+        DayCycleTextSet();
+        PathChangeSet();
+        LifeTextSet();
     }
 
     // Troca de Menu de Upgrades
@@ -99,24 +134,23 @@ public class ExpeditionUi : MonoBehaviour
     // Changers
     private void DayCycleTextSet()
     {
-        if (ExpeditionState.IsDay)
-        {
-            CycleText.text = "Dia";
-            DaysPastText.text = ExpeditionState.DayCounter.ToString();
-        } else
-        {
-            CycleText.text = "Noite";
-        }
-
-        DaysPastText.text = ExpeditionState.DayCounter.ToString("N0") + " / " + ExpeditionState.NextDestination.ToString("N0");
+        DaysPastText.text = GameState.ExpeditionState.DayCounter.ToString("N0") + " -> " + GameState.ExpeditionState.NextDestination.ToString("N0");
     }
     private void LifeTextSet()
     {
-        CurrentLifeText.text = ExpeditionState.Ship.CurrentLife.ToString("N0") + " / " + ExpeditionState.Ship.ActualLife.ToString("N0");
+        CurrentLifeText.text = GameState.ExpeditionState.Ship.CurrentLife.ToString("N0");
     }
     private void PathChangeSet()
     {
-        PathText.text = GameState.ExpeditionState.ActualPath.Type.ToString() + " " + GameState.ExpeditionState.ActualPath.Environment.ToString();
+        var path = GameState.ExpeditionState.ActualPath;
+
+        var language = GameState.ActualLanguage;
+
+        PathText.text = PathHelper.GetPathTypeName(path.Type, language);
+
+        BiomeText.text = PathHelper.GetEnvironmentName(path.Environment.Value, language);
+
+        ChangeText.text = PathHelper.GetModifierName(path.Modifier.Value, language);
     }
     private void CurrencySet(CurrencyType type)
     {
@@ -130,12 +164,12 @@ public class ExpeditionUi : MonoBehaviour
             if (!currencyUi.TryGetValue(type, out var ui))
                 return;
 
-            ui.Setup(currency, DataState);
+            ui.Setup(currency, GameState.DataState);
         }
     }
     private void UpgradesSet(CurrencyHelper.CurrencyType type)
     {
-        foreach (var upgrade in DataState.upgrades)
+        foreach (var upgrade in GameState.DataState.upgrades)
         {
             if (upgrade.Value.Currency != type)
                 continue;
@@ -152,6 +186,26 @@ public class ExpeditionUi : MonoBehaviour
             return;
 
         ui.Setup(upgrade, PurchaseService, GameState);
+    }
+    private void MissionsTextSet()
+    {
+        Debug.Log("Texto de Missões Limpo");
+        MissionTextShown = false;
+        MissionsText.text = "";
+    }
+    private void MissionUpdate(MissionInstance mission)
+    {
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            MissionsText.text = "Missão " + mission.NamePT + " Finalizada!";
+        }
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            MissionsText.text = "Mission " + mission.NameEN + " Finished!";
+        }
+
+        Debug.Log("Texto de Missões Preenchido");
+        MissionTextShown = true;
     }
 
 
@@ -188,14 +242,14 @@ public class ExpeditionUi : MonoBehaviour
             var obj = Instantiate(CurrencyPrefab, parent);
 
             var ui = obj.GetComponent<ExpeditionCurrencyDefinition>();
-            ui.Setup(currency, DataState);
+            ui.Setup(currency, GameState.DataState);
             
             currencyUi[currency.Type] = ui;
         }
     }
     private void BuildShipUpgrades(Transform parent)
     {
-        var upgrades = DataState.upgrades;
+        var upgrades = GameState.DataState.upgrades;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
@@ -221,7 +275,7 @@ public class ExpeditionUi : MonoBehaviour
     }
     private void BuildCrewUpgrades(Transform parent)
     {
-        var upgrades = DataState.upgrades;
+        var upgrades = GameState.DataState.upgrades;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
@@ -247,7 +301,7 @@ public class ExpeditionUi : MonoBehaviour
     }
     private void BuildItensUpgrades(Transform parent)
     {
-        var upgrades = DataState.upgrades;
+        var upgrades = GameState.DataState.upgrades;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
@@ -305,6 +359,10 @@ public class ExpeditionUi : MonoBehaviour
     {
         ConfigurationsService.SelectLanguage(index);
     }
+    public void ExitExpedition()
+    {
+        GameEvents.LifeTest?.Invoke();
+    }
 
     // Eventos
     void OnEnable()
@@ -313,6 +371,7 @@ public class ExpeditionUi : MonoBehaviour
         GameEvents.OnUpgradeBuy += RefreshUpgradeUi;
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
+        GameEvents.OnMissionUpdate += MissionUpdate;
 
         GameEvents.OnLanguageChange += RefreshLanguageUi;
 
@@ -329,6 +388,7 @@ public class ExpeditionUi : MonoBehaviour
         GameEvents.OnUpgradeBuy -= RefreshUpgradeUi;
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
+        GameEvents.OnMissionUpdate -= MissionUpdate;
 
         GameEvents.OnLanguageChange -= RefreshLanguageUi;
 

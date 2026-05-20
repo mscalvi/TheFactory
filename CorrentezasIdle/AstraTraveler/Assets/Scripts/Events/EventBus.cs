@@ -35,6 +35,7 @@ public static class GameEvents
 {
     // Test Events
     public static Action MoneyTest;
+    public static Action LifeTest;
 
     // Main Events
     public static Action OnGameSave;
@@ -44,6 +45,7 @@ public static class GameEvents
     // Mission Events
     public static Action<MissionInstance> OnMissionComplete;
     public static Action<MissionInstance> OnMissionCanceled;
+    public static Action<MissionInstance> OnMissionUpdate;
     public static Action MissionSlotAtualize;
 
     // Progress Events
@@ -68,8 +70,5 @@ public static class GameEvents
     public static Action<AcquisitionInstance> OnAcquisitionBuy;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCanBuyChange;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
-
-    // Tripulation Events
-    public static Action<TripulationInstance> OnTripulationChange;
 }
 

@@ -11,6 +11,7 @@ public class ExpeditionUpgradeDefinition : MonoBehaviour
     public TMP_Text UpgradeActualValue;
     public TMP_Text UpgradePrice;
     public Button UpgradeButton;
+    public Image CurrencyIcon;
 
     private bool CanBuyUpgrade;
 
@@ -26,25 +27,25 @@ public class ExpeditionUpgradeDefinition : MonoBehaviour
         if (GameState.ActualLanguage == GameState.Language.English)
         {
             UpgradeName.text = upgrade.NameEN;
-            UpgradeDescription.text = upgrade.DescriptionEN;
+            //UpgradeDescription.text = upgrade.DescriptionEN;
         }
 
         if (GameState.ActualLanguage == GameState.Language.Portugues)
         {
             UpgradeName.text = upgrade.NamePT;
-            UpgradeDescription.text = upgrade.DescriptionPT;
+            //UpgradeDescription.text = upgrade.DescriptionPT;
         }
 
         if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
         {
             if(upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
-                UpgradeActualValue.text = "+" + (upgrade.ActualUpgradeValue).ToString("N2");
+                UpgradeActualValue.text = "+" + (upgrade.CurrentValue).ToString("N2");
             }
 
             if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
             {
-                UpgradeActualValue.text = "x" + (upgrade.ActualUpgradeValue).ToString("N2");
+                UpgradeActualValue.text = "x" + (upgrade.CurrentValue).ToString("N2");
             }
         }
         else
@@ -53,6 +54,21 @@ public class ExpeditionUpgradeDefinition : MonoBehaviour
         }
 
         UpgradePrice.text = upgrade.ActualCost.ToString("N0");
+
+        string curId = ".";
+
+        foreach (var currency in GameState.DataState.currencies.Values)
+        {
+            if (currency.Type == upgrade.Currency)
+            {
+                curId = currency.Id;
+            }
+        }
+
+        Sprite icon = Resources.Load<Sprite>($"Sprites/Currencies/{curId}");
+
+        if (icon != null)
+            CurrencyIcon.sprite = icon;
 
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);

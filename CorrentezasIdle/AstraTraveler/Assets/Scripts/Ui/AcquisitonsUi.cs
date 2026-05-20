@@ -60,6 +60,21 @@ public class AcquisitonsUi : MonoBehaviour
         {
             if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
+                if (upgrade.Value.UnlockType == TripulationHelper.Type.Coach && !GameState.ProgressState.Coach)
+                    continue;
+                if (upgrade.Value.UnlockType == TripulationHelper.Type.Shipbuilder && !GameState.ProgressState.Shipbuilder)
+                    continue;
+                if (upgrade.Value.UnlockType == TripulationHelper.Type.Merchant && !GameState.ProgressState.Merchant)
+                    continue;
+                if (upgrade.Value.UnlockType == TripulationHelper.Type.Fisherman && !GameState.ProgressState.Fisherman)
+                    continue;
+                if (upgrade.Value.UnlockType == TripulationHelper.Type.Weaponsmith && !GameState.ProgressState.Weaponsmith)
+                    continue;
+                if (upgrade.Value.UnlockType == TripulationHelper.Type.Hunter && !GameState.ProgressState.Hunter)
+                    continue;
+                if (upgrade.Value.UnlockType == TripulationHelper.Type.Alchemist && !GameState.ProgressState.Alchemist)
+                    continue;
+
                 var go = Instantiate(AcquisitonDefinition, UpgradesPanel.transform);
                 var ui = go.GetComponent<AcquisitonDefinition>();
 

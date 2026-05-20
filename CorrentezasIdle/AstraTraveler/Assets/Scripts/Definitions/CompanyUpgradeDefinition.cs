@@ -12,6 +12,7 @@ public class CompanyUpgradeDefinition : MonoBehaviour
     public TMP_Text UpgradeActualValue;
     public TMP_Text UpgradePrice;
     public Button UpgradeButton;
+    public Image CurrencyIcon;
 
     private bool CanBuyUpgrade;
 
@@ -55,6 +56,21 @@ public class CompanyUpgradeDefinition : MonoBehaviour
         }
 
         UpgradePrice.text = upgrade.ActualCost.ToString("N0");
+
+        string curId = ".";
+
+        foreach (var currency in GameState.DataState.currencies.Values)
+        {
+            if (currency.Type == upgrade.Currency)
+            {
+                curId = currency.Id;
+            }
+        }
+
+        Sprite icon = Resources.Load<Sprite>($"Sprites/Currencies/{curId}");
+
+        if (icon != null)
+            CurrencyIcon.sprite = icon;
 
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);
