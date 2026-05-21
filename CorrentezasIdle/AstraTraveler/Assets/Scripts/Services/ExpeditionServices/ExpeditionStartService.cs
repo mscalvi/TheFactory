@@ -36,6 +36,7 @@ public class ExpeditionStartService : MonoBehaviour
         Expedition.ReachedDestinations = 0;
         Expedition.LastPath = new PathHelper.PathTagSet();
         Expedition.ActualPath = new PathHelper.PathTagSet();
+        Expedition.phaseTimer = 0f;
 
         Expedition.ActiveEnemies.Clear();
         Expedition.DamageTaken = false;
@@ -61,6 +62,14 @@ public class ExpeditionStartService : MonoBehaviour
         Expedition.ActualDestinationGapIncrease = Expedition.BaseDestinationGapIncrease;
         Expedition.ActualMaximalDestinationGap = Expedition.BaseMaximalDestinationGap;
         Expedition.ActualMinimalDestinationGap = Expedition.BaseMinimalDestinationGap;
+
+        foreach (var upgrade in GameState.DataState.upgrades.Values)
+        {
+            if (upgrade.Scope != UpgradeHelper.UpgradeScope.Expedition)
+                continue;
+
+            upgrade.CurrentValue = upgrade.StartUpgradeValue + upgrade.FirstValue;
+        }
     }
 
     void LoadShip(GameState Game)

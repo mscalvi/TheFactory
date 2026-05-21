@@ -60,17 +60,13 @@ public class ExpeditionUi : MonoBehaviour
         // Inicialização dos Paineis
         HideAllMenus();
         ShipPanel.SetActive(true);
-
-        DayCycleTextSet();
-        PathChangeSet();
-        LifeTextSet();
-
-        LanguagesDropdownSet();
-        GameSpeedText.text = GameState.ActualGameSpeed.ToString();
     }
 
     private void Update()
     {
+        if (GameState.ExpeditionState.ExpeditionStatus != GameHelper.ExpeditionStatus.Running)
+            return;
+
         if (MissionTextShown)
         {
             MissionsTimer++;
@@ -100,6 +96,9 @@ public class ExpeditionUi : MonoBehaviour
         DayCycleTextSet();
         PathChangeSet();
         LifeTextSet();
+
+        LanguagesDropdownSet();
+        GameSpeedText.text = GameState.ActualGameSpeed.ToString();
     }
 
     // Troca de Menu de Upgrades
@@ -380,6 +379,7 @@ public class ExpeditionUi : MonoBehaviour
         ExpeditionEvents.OnNightFinish += DayCycleTextSet;
 
         ExpeditionEvents.OnDestinationArrival += PathChangeSet;
+        ExpeditionEvents.OnPathSet += PathChangeSet;
     }
 
     void OnDisable()
@@ -397,6 +397,7 @@ public class ExpeditionUi : MonoBehaviour
         ExpeditionEvents.OnNightFinish -= DayCycleTextSet;
 
         ExpeditionEvents.OnDestinationArrival -= PathChangeSet;
+        ExpeditionEvents.OnPathSet -= PathChangeSet;
     }
 
     void GameStart()

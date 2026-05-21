@@ -62,6 +62,16 @@ public class BuildingUi : MonoBehaviour
         ClearContainer();
         upgradesUI.Clear();
 
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            BuildingName.text = building.NamePT.ToString();
+        }
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            BuildingName.text = building.NameEN.ToString();
+        }
+
+
         foreach (var currency in GameState.DataState.currencies)
         {
             if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)

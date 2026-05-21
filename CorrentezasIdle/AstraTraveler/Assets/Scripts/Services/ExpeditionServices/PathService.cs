@@ -69,6 +69,11 @@ public class PathService : MonoBehaviour
         };
 
         GameState.ExpeditionState.ActualPath = newPathTag;
+
+        if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running)
+        {
+            ExpeditionEvents.OnPathSet?.Invoke();
+        }
     }
 
     private void IncreaseDestinationGap()

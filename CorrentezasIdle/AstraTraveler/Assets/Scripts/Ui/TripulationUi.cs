@@ -17,8 +17,8 @@ public class TripulationUi : MonoBehaviour
     private PurchaseService PurchaseService;
     private CurrencyService CurrencyService;
 
-    public TMP_Text Name;
     public TMP_Text TripulationName;
+    public TMP_Text TripulationClass;
     
     public Button CancelButton;
 
@@ -28,6 +28,10 @@ public class TripulationUi : MonoBehaviour
 
     [SerializeField] Transform Recruit;
     [SerializeField] RecruitDefinition RecruitPrefab;
+
+    [SerializeField] Transform CompanyCurrencyPanel;
+    [SerializeField] CompanyCurrencyDefinition CurrencyPrefab;
+    Dictionary<CurrencyType, CompanyCurrencyDefinition> currencyUi = new();
 
     [SerializeField] GameObject TrainingPanel;
     [SerializeField] GameObject RecruitPanel;
@@ -50,6 +54,8 @@ public class TripulationUi : MonoBehaviour
         RecruitPanel.SetActive(false);
 
         Populate();
+
+        BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
     }
 
     void Populate()
@@ -84,6 +90,41 @@ public class TripulationUi : MonoBehaviour
         }
     }
 
+    public void BuildCurrencies(CurrencyScope scope, Transform parent)
+    {
+        var currencies = GameState.DataState.currencies;
+
+        foreach (Transform child in parent)
+            Destroy(child.gameObject);
+
+        if (scope == CurrencyScope.Company)
+            currencyUi.Clear();
+
+        var ordered = new List<CurrencyInstance>();
+
+        foreach (var pair in currencies)
+        {
+            var c = pair.Value;
+
+            if (c.Scope != scope)
+                continue;
+
+            ordered.Add(c);
+        }
+
+        ordered.Sort((a, b) => string.Compare(a.Id, b.Id));
+
+        foreach (var currency in ordered)
+        {
+            var obj = Instantiate(CurrencyPrefab, parent);
+
+            var ui = obj.GetComponent<CompanyCurrencyDefinition>();
+            ui.Setup(currency, DataState);
+
+            currencyUi[currency.Type] = ui;
+        }
+    }
+
     void ClearContainer()
     {
         foreach (Transform child in Tripulation)
@@ -106,6 +147,7 @@ public class TripulationUi : MonoBehaviour
         RecruitPanel.SetActive(false);
 
         TripulationName.text = tripulation.Name;
+        TripulationClass.text = tripulation.Type.ToString();
     }
 
     public void ShowRecruit()
@@ -117,6 +159,7 @@ public class TripulationUi : MonoBehaviour
         RecruitPanel.SetActive(true);
 
         TripulationName.text = "Novo Recruta!";
+        TripulationClass.text = "";
 
         RecruitmentService.GenerateRecruitOptions();
 

@@ -25,6 +25,7 @@ public static class ExpeditionEvents
     // Destination Events
     public static Action OnDestinationArrival;
     public static Action OnPathOptionsCalculated;
+    public static Action OnPathSet;
 
     // Day Cycle Events
     public static Action OnDayFinish;

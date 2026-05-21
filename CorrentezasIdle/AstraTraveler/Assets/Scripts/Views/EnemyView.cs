@@ -28,6 +28,8 @@ public class EnemyView : MonoBehaviour
     {
         if (Enemy == null) return;
 
+        UpdateMarkedVisual();
+
         UpdateTargetPosition();
 
         transform.position = Vector3.Lerp(
@@ -41,8 +43,6 @@ public class EnemyView : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         transform.rotation = Quaternion.Euler(0, 0, angle);
-
-        UpdateMarkedVisual();
     }
 
     void UpdateTargetPosition()
@@ -66,11 +66,13 @@ public class EnemyView : MonoBehaviour
 
     void UpdateMarkedVisual()
     {
-        ApplySprite();
-
         if (Enemy.MarkedEnemy)
         {
-            transform.localScale = Vector3.one * 1.15f;
+            transform.localScale = Vector3.one * 1.05f;
+        }
+        else
+        {
+            ApplySprite();
         }
     }
 

@@ -276,6 +276,12 @@ public class UpgradeService : MonoBehaviour
             case UpgradeHelper.TargetType.Meta:
                 switch (upgrade.EffectType)
                 {
+                    case UpgradeHelper.EffectType.GameSpeed:
+                        GameSpeedModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.TripulationMax:
+                        TripulationMaxModifier(upgrade);
+                        break;
                     case UpgradeHelper.EffectType.ExperiencePerKill:
                         ExperienceKillModifier(upgrade);
                         break;
@@ -290,9 +296,6 @@ public class UpgradeService : MonoBehaviour
                         break;
                     case UpgradeHelper.EffectType.ClickRarity:
                         ClickRarityModifier(upgrade);
-                        break;
-                    case UpgradeHelper.EffectType.GameSpeed:
-                        GameSpeedModifier(upgrade);
                         break;
                     default:
                         Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
@@ -639,6 +642,12 @@ public class UpgradeService : MonoBehaviour
         CalculateUpgradeValue(upgrade);
 
         GameState.MaxGameSpeed += (int)upgrade.CurrentValue;
+    }
+    private void TripulationMaxModifier(UpgradeInstance upgrade)
+    {
+        CalculateUpgradeValue(upgrade);
+
+        GameState.ExpeditionState.ActualMaxTripulation += (int)upgrade.CurrentValue;
     }
     private void ExperienceKillModifier(UpgradeInstance upgrade)
     {
