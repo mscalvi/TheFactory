@@ -41,3 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Ship
+    uniqueID: 3145554099
+    locked: 0
+  - name: Enemies
+    uniqueID: 1877699711
+    locked: 0
+  - name: Projectiles
+    uniqueID: 3821522285
+    locked: 0

@@ -201,16 +201,16 @@ public class MissionsService : MonoBehaviour
         switch (mission.MissionRarity)
         {
             case GameHelper.ItemRarity.Common:
-                mission.Reward1Ammount = 25;
-                mission.Reward2Ammount = 25;
-                mission.Reward3Ammount = 25;
-                mission.Reward4Ammount = 25;
+                mission.Reward1Ammount = 40;
+                mission.Reward2Ammount = 200;
+                mission.Reward3Ammount = 1;
+                mission.Reward4Ammount = 1;
                 break;
             case GameHelper.ItemRarity.Uncommon:
-                mission.Reward1Ammount = 45;
-                mission.Reward2Ammount = 45;
-                mission.Reward3Ammount = 45;
-                mission.Reward4Ammount = 45;
+                mission.Reward1Ammount = 60;
+                mission.Reward2Ammount = 450;
+                mission.Reward3Ammount = 2;
+                mission.Reward4Ammount = 2;
                 break;
         }
 

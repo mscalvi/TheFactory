@@ -7,6 +7,7 @@ public class EnemyView : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     private Vector3 targetPosition;
+    private Vector3 originalScale;
 
     void Awake()
     {
@@ -17,6 +18,8 @@ public class EnemyView : MonoBehaviour
     {
         Enemy = enemy;
         Ship = ship;
+
+        originalScale = transform.localScale;
 
         ApplySprite();
 
@@ -68,11 +71,11 @@ public class EnemyView : MonoBehaviour
     {
         if (Enemy.MarkedEnemy)
         {
-            transform.localScale = Vector3.one * 1.05f;
+            transform.localScale = originalScale * 1.25f;
         }
         else
         {
-            ApplySprite();
+            transform.localScale = originalScale;
         }
     }
 

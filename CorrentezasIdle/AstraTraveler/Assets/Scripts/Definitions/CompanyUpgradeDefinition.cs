@@ -55,7 +55,7 @@ public class CompanyUpgradeDefinition : MonoBehaviour
             UpgradeActualValue.text = "";
         }
 
-        UpgradePrice.text = upgrade.ActualCost.ToString("N0");
+        UpgradePrice.text = NumberHelper.Format(upgrade.ActualCost);
 
         string curId = ".";
 

@@ -14,19 +14,19 @@ usc004;;Reparos;;Aumenta a Reparo do Navio do Navio;Company;Additive;ShipRepair;
 usc005;;Ganho de Reparo;;Aumenta a taxa de ganho do Reparo do Navio;Company;Multiplicative;UpgradeShipRepairRate;None;ShipImproveRoom;0,2;1;Upgrade;usc004;0;50;1,16;Marcos;;Unknow
 usc101;;Experiência por Dia;;Aumenta o ganho de Experiência ao final de um dia sobrevivido;Company;Additive;ExperienceIncome;None;PlanningRoom;1;0;Meta;;0;2;1,11;Marcos;;Unknow
 usc102;;Crescimento de Experiência por Abate;;"Aumenta a taxa de crescimento da Melhoria ""Experiência por Abate""";Company;Multiplicative;UpgradeExperiencePerKillRate;None;PlanningRoom;0,2;1;Upgrade;use101;0;15;1,12;Marcos;;Unknow
-usc103;;Experiência em Expedição;;Aumenta o ganho de Experiência por abate;Company;Multiplicative;ExperiencePerKill;None;PlanningRoom;0,1;1;Meta;;0;10;1,11;Marcos;;Unknow
+usc103;;Experiência em Expedição;;Aumenta o ganho de Experiência por abate;Company;Multiplicative;ExperiencePerKill;None;PlanningRoom;0,1;1;Meta;;0;8;1,1;Marcos;;Unknow
 use001;;Vida Máxima;;Aumenta a Vida Máxima do Navio;Expedition;Multiplicative;ShipMaxLife;Ship;None;0,1;1;Ship;;0;4;1,11;Experience;Start;Available
 use002;;Armadura;;Aumenta a Armadura do Navio;Expedition;Additive;ShipArmor;Ship;None;1;0;Ship;;0;12;1,12;Experience;;Unknow
 use003;;Reistência;;Aumenta a Reistência do Navio;Expedition;Additive;ShipResistence;Ship;None;0,5;0;Ship;;50;13;1,12;Experience;;Unknow
 use004;;Reparos;;Aumenta a Reparo do Navio do Navio;Expedition;Additive;ShipRepair;Ship;None;1;0;Ship;;0;8;1,11;Experience;;Unknow
 use101;;Experiência por Abate;;Aumenta o ganho de Experiência por Abate;Expedition;Multiplicative;ExperiencePerKill;Crew;None;0,1;1;Meta;;0;10;1,11;Experience;;Unknow
+utc001;;Limite de Tripulação;;Aumenta o Limite de membros na Tripulação;Company;Additive;TripulationMax;None;CompanyRoom;1;0;Meta;;0;300;2,8;Marcos;Start;Available
 uub001;;Estudar a Contrução de Edifícios;;Libera a aquisição de novas salas e edifícios para a Companhia, no menu de Melhorias;Company;Study;Unlock;None;StudyRoom;0;0;Meta;;1;1;1;Knowledge;Start;Available
 uub002;;Estudar os Princípios da Alquimia;;Libera o Laboratório de Alquimia, para futura realização de misturas, pesquisas e melhorias Alquímicas;Company;Study;Unlock;None;StudyRoom;0;0;Meta;;1;100;1;Knowledge;a1008;Unknow
 uub003;;Estudar o Treino Corporal;;Libera a Academia, que permite treinar a Tripulação;Company;Study;Unlock;None;StudyRoom;0;0;Meta;;1;10;1;Knowledge;a1007;Unknow
 uub004;;Estudar a Composição de Companhias;;Libera recrutar novos Tripulantes;Company;Study;Unlock;None;StudyRoom;0;0;Meta;;1;1;1;Knowledge;a1005;Unknow
-uwc001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Company;Multiplicative;WeaponDamage;None;ArmoryRoom;0,1;1;Weapon;w001;0;5;1,11;Marcos;Start;Available
+uwc001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Company;Multiplicative;WeaponDamage;None;ArmoryRoom;0,1;1;Weapon;w001;0;5;1,08;Marcos;Start;Available
 uwc001002;;Velocidade de Disparo do Estilingue;;Aumenta a Velocidade de Disparo do Estilingue;Company;Multiplicative;WeaponAtackSpeed;None;ArmoryRoom;0,1;1;Weapon;w001;10;15;1,3;Marcos;Start;Available
-uwe001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Expedition;Multiplicative;WeaponDamage;Itens;None;0,1;1;Weapon;w001;0;5;1,11;Experience;Start;Available
+uwe001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Expedition;Multiplicative;WeaponDamage;Itens;None;0,1;1;Weapon;w001;0;5;1,08;Experience;Start;Available
 uwe001002;;Velocidade de Disparo do Estilingue;;Aumenta a Velocidade de Disparo do Estilingue;Expedition;Multiplicative;WeaponAtackSpeed;Itens;None;0,1;1;Weapon;w001;0;15;1,3;Experience;Start;Available
 uwe001003;;Alcande do Estilingue;;Aumenta o Alcance do Estilingue;Expedition;Additive;WeaponRange;Itens;None;1;0;Weapon;w001;0;20;1,16;Experience;;Unknow
-utc001;;Limite de Tripulação;;Aumenta o Limite de membros na Tripulação;Company;Additive;TripulationMax;None;CompanyRoom;1;0;Meta;;0;300;2,8;Marcos;Start;Available

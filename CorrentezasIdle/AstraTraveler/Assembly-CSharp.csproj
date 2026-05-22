@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Controllers\GameController.cs" />
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\ProjectileService.cs" />
+    <Compile Include="Assets\Scripts\Helpers\NumberHelper.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
     <Compile Include="Assets\Scripts\Ui\StudiesUi.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\DestinationsPopUp.cs" />

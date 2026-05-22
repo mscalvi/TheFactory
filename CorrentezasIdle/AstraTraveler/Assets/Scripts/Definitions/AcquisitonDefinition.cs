@@ -49,7 +49,7 @@ public class AcquisitonDefinition : MonoBehaviour
         string time = FormatTime(acq.TotalTime);
         TotalTime.text = time;
 
-        UpgradePrice.text = Acquisition.ActualCost.ToString("N0");
+        UpgradePrice.text = NumberHelper.Format(acq.ActualCost);
 
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);

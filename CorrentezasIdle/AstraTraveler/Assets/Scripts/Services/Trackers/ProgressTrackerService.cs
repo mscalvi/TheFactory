@@ -26,6 +26,18 @@ public class ProgressTrackerService : MonoBehaviour
             if (unlockDay <= GameState.ExpeditionState.DayCounter)
             {
                 enemy.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                Debug.Log($"Inimigo Desbloqueado: {enemy.NamePT} - Dia {unlockDay}");
+            }
+        }
+
+        foreach (var tripulation in GameState.DataState.tripulations.Values)
+        {
+            int.TryParse(tripulation.UnlockId, out int unlockDay);
+
+            if (unlockDay <= GameState.ExpeditionState.DayCounter)
+            {
+                tripulation.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                Debug.Log($"Membro Desbloqueado: {tripulation.Name} - Dia {unlockDay}");
             }
         }
     }

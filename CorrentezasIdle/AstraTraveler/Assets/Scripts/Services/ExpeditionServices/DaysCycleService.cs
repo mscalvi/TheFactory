@@ -40,7 +40,7 @@ public class DaysCycleService : MonoBehaviour, ITickable
                 ExpeditionState.DayCounter++;
                 ExpeditionEvents.OnNightFinish?.Invoke();
 
-                if (ExpeditionState.DayCounter >= ExpeditionState.NextDestination)
+                if (ExpeditionState.DayCounter > ExpeditionState.NextDestination)
                 {
                     ExpeditionState.ReachedDestinations++;
                     ExpeditionEvents.OnDestinationArrival?.Invoke();

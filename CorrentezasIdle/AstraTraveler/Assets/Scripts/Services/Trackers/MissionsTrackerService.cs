@@ -75,7 +75,10 @@ public class MissionsTrackerService : MonoBehaviour
             if (mission.MissionType == MissionType.DaySurvival)
             {
                 if (ExpeditionState.DayCounter >= mission.TargetValue)
+                {
                     toComplete.Add(mission);
+                    GameEvents.OnMissionUpdate?.Invoke(mission);
+                }
             }
 
             if (mission.MissionType == MissionType.DayNoDamage)
