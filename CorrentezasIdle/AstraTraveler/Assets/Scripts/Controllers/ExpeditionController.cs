@@ -27,6 +27,7 @@ public class ExpeditionController : MonoBehaviour
     [SerializeField] ProjectileService ProjectileService;
     [SerializeField] WeaponsService WeaponsService;
     [SerializeField] RepairService RepairService;
+    [SerializeField] AmmosService AmmosService;
 
     private void Awake()
     {
@@ -89,6 +90,8 @@ public class ExpeditionController : MonoBehaviour
         DecisionsService.Initialize(Game, TickService, PathService);
 
         RepairService.Initialize(Game);
+
+        AmmosService.Initialize(Game, TickService);
 
         ExpeditionEvents.OnExpeditionStart?.Invoke();
         Expedition.ExpeditionStatus = ExpeditionStatus.Running;

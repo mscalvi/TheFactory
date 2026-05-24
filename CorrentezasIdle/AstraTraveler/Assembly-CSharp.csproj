@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\Instances\IngredientInstance.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\EventService.cs" />
     <Compile Include="Assets\Scripts\Instances\UpgradeInstance.cs" />
+    <Compile Include="Assets\Scripts\Services\GameCreation\SaveService.cs" />
     <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />
     <Compile Include="Assets\Scripts\Controllers\GameController.cs" />
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\WeaponsService.cs" />
+    <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\AmmosService.cs" />
     <Compile Include="Assets\Scripts\Data\CurrenciesData.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\RewardService.cs" />
     <Compile Include="Assets\Scripts\Helpers\IngredientHelper.cs" />

@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField] GameCreationService GameCreationService;
     [SerializeField] DatabaseService DatabaseService;
+    [SerializeField] SaveService SaveService;
     [SerializeField] public ProgressTrackerService ProgressTrackerService;
     [SerializeField] public MissionsService MissionsService;
     [SerializeField] public MissionsTrackerService MissionsTrackerService;
@@ -44,6 +45,8 @@ public class GameController : MonoBehaviour
             Database = DatabaseService.Initialize();
         }
 
+        GameState = SaveService.Load();
+
         if (GameState == null)
         {
             GameState = new GameState();
@@ -54,6 +57,8 @@ public class GameController : MonoBehaviour
             GameState.UnlockState = new UnlockState();
             GameState.MissionsState = new MissionsState();
             GameState.BestiaryState = new BestiaryState();
+
+            FirstInitialization = true;
         } else
         {
             FirstInitialization = false;
@@ -62,22 +67,26 @@ public class GameController : MonoBehaviour
         if (FirstInitialization)
         {
             GameCreationService.Initialize(GameState, Database);
-            ProgressTrackerService.Initialize(GameState);
-            MissionsService.Initialize(GameState);
-            MissionsTrackerService.Initialize(GameState, MissionsService);
-            CurrencyService.Initialize(GameState);
-            PurchaseService.Initialize(GameState, CurrencyService);
-            UnlockService.Initialize(GameState);
-            UpgradeService.Initialize(GameState, UnlockService);
-            IngredientService.Initialize(GameState);
-            EventService.Initialize(GameState, UnlockService);
-            AcquisitonsService.Initialize(GameState);
-            RecruitmentService.Initialize(GameState);
-            RewardService.Initialize(GameState, CurrencyService);
-            ConfigurationsService.Initialize(GameState);
         } else
         {
             // service de Load
         }
+
+        SaveService.Initialize(GameState);
+        ProgressTrackerService.Initialize(GameState);
+        MissionsService.Initialize(GameState);
+        MissionsTrackerService.Initialize(GameState, MissionsService);
+        CurrencyService.Initialize(GameState);
+        PurchaseService.Initialize(GameState, CurrencyService);
+        UnlockService.Initialize(GameState);
+        UpgradeService.Initialize(GameState, UnlockService);
+        IngredientService.Initialize(GameState);
+        EventService.Initialize(GameState, UnlockService);
+        AcquisitonsService.Initialize(GameState);
+        RecruitmentService.Initialize(GameState);
+        RewardService.Initialize(GameState, CurrencyService);
+        ConfigurationsService.Initialize(GameState);
+
+        SaveService.Save();
     }
 }

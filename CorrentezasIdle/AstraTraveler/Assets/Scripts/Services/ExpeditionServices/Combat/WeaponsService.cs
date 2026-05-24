@@ -126,27 +126,32 @@ public class WeaponsService : MonoBehaviour, ITickable
         return best;
     }
 
-    void HandleCooldown(WeaponInstance room, float dt)
+    void HandleCooldown(WeaponInstance weapon, float dt)
     {
-        if (room.Cooldown > 0)
-            room.Cooldown -= dt;
+        if (weapon.Cooldown > 0)
+            weapon.Cooldown -= dt;
     }
 
-    bool CanShoot(WeaponInstance room)
+    bool CanShoot(WeaponInstance weapon)
     {
-        if (room.CurrentTarget != null)
+        if (GameState.ExpeditionState.ActiveEnemies.Count <= 0)
+            return false;
+
+        if (weapon.Ammo.CurrentAmmount <= 0)
         {
-            if (room.Cooldown <= 0)
+            return false;
+        }
+
+        if (weapon.CurrentTarget != null)
+        {
+            if (weapon.Cooldown <= 0)
             {
-                if (room.CurrentTarget.ActualLife > 0)
+                if (weapon.CurrentTarget.ActualLife > 0)
                 {
                     return true;
                 }
             }
         }
-
-        if (GameState.ExpeditionState.ActiveEnemies.Count <= 0)
-            return false;
 
         return false;
     }
@@ -167,6 +172,14 @@ public class WeaponsService : MonoBehaviour, ITickable
         ExpeditionEvents.OnShoot?.Invoke(weapon, target);
 
         ShipDamage(weapon, target);
+
+        weapon.Ammo.CurrentAmmount--;
+        Debug.Log(weapon.Ammo.CurrentAmmount);
+
+        if (weapon.Ammo.CurrentAmmount <= 0)
+        {
+            weapon.Ammo.IsReloading = true;
+        }
 
         weapon.Cooldown = 1 / weapon.ActualAttackSpeed;
     }

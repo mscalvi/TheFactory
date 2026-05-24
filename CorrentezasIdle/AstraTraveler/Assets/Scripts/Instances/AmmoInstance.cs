@@ -21,10 +21,14 @@ public class AmmoInstance
     public double StartRecharge;
     public double BaseRecharge;
     public double ActualRecharge;
+    public double CurrentRecharge;
+
+    public bool IsReloading;
 
     public int StartAmmount;
     public int BaseAmmount;
     public int ActualAmmount;
+    public int CurrentAmmount;
 
     public WeaponHelper.SpecialType Special;
 
@@ -55,10 +59,14 @@ public class AmmoInstance
         StartRecharge = model.Recharge;
         BaseRecharge = model.Recharge;
         ActualRecharge = model.Recharge;
+        CurrentRecharge = model.Recharge;
+
+        IsReloading = false;
 
         StartAmmount = model.Ammount;
         BaseAmmount = model.Ammount;
         ActualAmmount = model.Ammount;
+        CurrentAmmount = model.Ammount;
 
         Special = model.Special;
 

@@ -27,6 +27,7 @@ public class ExpeditionState
     public List<TripulationInstance> ActiveTripulation = new List<TripulationInstance>();
     public List<TripulationInstance> ActiveRecruits = new List<TripulationInstance>();
 
+   public List<AmmoInstance> ActiveAmmos;
 
     // Valores Start
     public Dictionary<GameHelper.ItemRarity, float> StartIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
