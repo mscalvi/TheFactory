@@ -32,7 +32,8 @@ public class AmmoInstance
 
     public WeaponHelper.SpecialType Special;
 
-    public ProjectileInstance Projectile;
+    public string ProjectileId;
+    public ProjectileModel Projectile;
 
     public float StartProjectileSpeed;
     public float BaseProjectileSpeed;
@@ -43,6 +44,8 @@ public class AmmoInstance
 
     public AmmoInstance(AmmoModel model)
     {
+        Model = model;
+
         Id = model.Id;
 
         NamePT = model.NamePT;
@@ -70,7 +73,7 @@ public class AmmoInstance
 
         Special = model.Special;
 
-        Projectile = null;
+        ProjectileId = model.ProjectileId;
 
         StartProjectileSpeed = model.ProjectileSpeed;
         BaseProjectileSpeed = model.ProjectileSpeed;
@@ -78,5 +81,10 @@ public class AmmoInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public AmmoInstance()
+    {
+
     }
 }

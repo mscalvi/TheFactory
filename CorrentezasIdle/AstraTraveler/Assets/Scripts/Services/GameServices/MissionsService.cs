@@ -26,9 +26,9 @@ public class MissionsService : MonoBehaviour
         }
     }
 
-    public List<MissionInstance> GenerateMissionOptions(int maxMissionOptions)
+    public List<MissionRuntime> GenerateMissionOptions(int maxMissionOptions)
     {
-        List<MissionInstance> missionOptions = new();
+        List<MissionRuntime> missionOptions = new();
 
         int safety = 100;
 
@@ -59,7 +59,7 @@ public class MissionsService : MonoBehaviour
         return missionOptions;
     }
 
-    private void ApplyHistoricScaling(MissionInstance mission)
+    private void ApplyHistoricScaling(MissionRuntime mission)
     {
         switch (mission.MissionType)
         {
@@ -102,13 +102,13 @@ public class MissionsService : MonoBehaviour
         }
     }
 
-    private MissionSlotModel GetSlot(MissionInstance mission)
+    private MissionSlotModel GetSlot(MissionRuntime mission)
     {
         return GameState.MissionsState.Slots
             .FirstOrDefault(s => s.ActiveMission == mission);
     }
 
-    public void CompleteMission(MissionInstance mission)
+    public void CompleteMission(MissionRuntime mission)
     {
         var slot = GetSlot(mission);
         if (slot == null) return;
@@ -134,7 +134,7 @@ public class MissionsService : MonoBehaviour
         slot.ActiveMission = null;
     }
 
-    public void CancelMission(MissionInstance mission)
+    public void CancelMission(MissionRuntime mission)
     {
         var slot = GetSlot(mission);
         if (slot == null) return;
@@ -154,13 +154,13 @@ public class MissionsService : MonoBehaviour
         slot.CooldownEnd = System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 86400;
     }
 
-    public void AssignMissionToSlot(MissionInstance mission, MissionSlotModel slot)
+    public void AssignMissionToSlot(MissionRuntime mission, MissionSlotModel slot)
     {
         slot.ActiveMission = mission;
     }
 
     // Helpers
-    private MissionInstance CreateMissionsFromTemplate()
+    private MissionRuntime CreateMissionsFromTemplate()
     {
         var Templates = new List<MissionInstance>();
 
@@ -177,7 +177,7 @@ public class MissionsService : MonoBehaviour
 
         var template = Templates[Random.Range(0, Templates.Count)];
 
-        var mission = new MissionInstance(template);
+        var mission = new MissionRuntime(template);
 
         switch (mission.MissionType)
         {
@@ -219,7 +219,7 @@ public class MissionsService : MonoBehaviour
 
 
     // Missions Types
-    private void EnemyKillingPrepare(MissionInstance mission)
+    private void EnemyKillingPrepare(MissionRuntime mission)
     {
         var validTargets = new List<EnemyInstance>();
 
@@ -263,7 +263,7 @@ public class MissionsService : MonoBehaviour
         mission.DescriptionPT = "Eliminar " + mission.TargetValue + " " + chosenTarget.NamePT + ".";
     }
 
-    private void DaySurvivalPrepare(MissionInstance mission)
+    private void DaySurvivalPrepare(MissionRuntime mission)
     {
         int maxSurvival = GameState.ProgressState.MaxDaysTraveling;
 
@@ -286,7 +286,7 @@ public class MissionsService : MonoBehaviour
         mission.Reward1Ammount += mission.TargetValue * 5;
     }
 
-    private void DayNoDamagePrepare(MissionInstance mission)
+    private void DayNoDamagePrepare(MissionRuntime mission)
     {
         int maxSurvival = GameState.ProgressState.MaxDaysTraveling;
 
@@ -298,7 +298,7 @@ public class MissionsService : MonoBehaviour
         mission.Reward1Ammount += mission.TargetValue * 5;
     }
 
-    private void IngredientFindingPrepare(MissionInstance mission)
+    private void IngredientFindingPrepare(MissionRuntime mission)
     {
         var validTargets = new List<IngredientInstance>();
 

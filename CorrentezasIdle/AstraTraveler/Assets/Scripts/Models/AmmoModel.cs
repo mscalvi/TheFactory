@@ -12,6 +12,8 @@ public class AmmoModel
     public string DescriptionPT;
     public string DescriptionEN;
 
+    public string ProjectileId;
+
     public WeaponHelper.AmmoType Type;
 
     public double Damage;

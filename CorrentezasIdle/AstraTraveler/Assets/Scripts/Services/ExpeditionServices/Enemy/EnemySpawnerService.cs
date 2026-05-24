@@ -15,7 +15,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     int spawnTickCounter = 0;
     float spawnTimer = 4f;
 
-    Queue<EnemyInstance> spawnQueue = new();
+    Queue<EnemyRuntime> spawnQueue = new();
 
     public void Initialize(GameState gameState, TickService Tick, EnemyProgressService progress)
     {
@@ -81,9 +81,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         var instance = spawnQueue.Dequeue();
 
-        instance.Angle = SpawnAngle(30, 330);
-
         ProgressService.ApplyProgression(instance);
+
+        instance.Angle = SpawnAngle(30, 330);
 
         Expedition.ActiveEnemies.Add(instance);
 
@@ -132,7 +132,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
             budget -= cost;
 
-            spawnQueue.Enqueue(new EnemyInstance(chosen));
+            spawnQueue.Enqueue(new EnemyRuntime(chosen));
         }
     }
 

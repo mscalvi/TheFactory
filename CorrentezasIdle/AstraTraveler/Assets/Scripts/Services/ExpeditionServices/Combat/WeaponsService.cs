@@ -70,7 +70,7 @@ public class WeaponsService : MonoBehaviour, ITickable
         if (enemies == null || enemies.Count == 0)
             return;
 
-        List<EnemyInstance> valid = new();
+        List<EnemyRuntime> valid = new();
 
         foreach (var enemy in enemies)
         {
@@ -89,9 +89,9 @@ public class WeaponsService : MonoBehaviour, ITickable
         weapon.CurrentTarget = SelectTarget(valid, weapon.TargetType);
     }
 
-    EnemyInstance SelectTarget(List<EnemyInstance> enemies, WeaponHelper.WeaponTarget type)
+    EnemyRuntime SelectTarget(List<EnemyRuntime> enemies, WeaponHelper.WeaponTarget type)
     {
-        EnemyInstance best = enemies[0];
+        EnemyRuntime best = enemies[0];
 
         switch (type)
         {
@@ -184,7 +184,7 @@ public class WeaponsService : MonoBehaviour, ITickable
         weapon.Cooldown = 1 / weapon.ActualAttackSpeed;
     }
 
-    private void ShipDamage(WeaponInstance weapon, EnemyInstance target)
+    private void ShipDamage(WeaponInstance weapon, EnemyRuntime target)
     {
         double damage = weapon.ActualDamage + weapon.Ammo.ActualDamage;
 

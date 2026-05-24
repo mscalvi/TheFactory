@@ -24,6 +24,8 @@ public class IngredientInstance
 
     public IngredientInstance(IngredientModel model)
     {
+        Model = model;
+
         Id = model.Id;
 
         NamePT = model.NamePT;
@@ -39,5 +41,10 @@ public class IngredientInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public IngredientInstance()
+    {
+
     }
 }

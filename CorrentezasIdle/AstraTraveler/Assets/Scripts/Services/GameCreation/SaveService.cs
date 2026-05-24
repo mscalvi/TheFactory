@@ -1,21 +1,23 @@
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class SaveService : MonoBehaviour
 {
     private GameState GameState;
+
+    private string SavePath =>
+        Path.Combine(Application.persistentDataPath, "save.json");
 
     public void Initialize(GameState gameState)
     {
         GameState = gameState;
     }
 
-    private string SavePath =>
-        Path.Combine(Application.persistentDataPath, "save.json");
-
     public void Save()
     {
-        string json = JsonUtility.ToJson(GameState, true);
+        string json =
+            JsonConvert.SerializeObject(GameState, Formatting.Indented);
 
         File.WriteAllText(SavePath, json);
 
@@ -33,7 +35,7 @@ public class SaveService : MonoBehaviour
         string json = File.ReadAllText(SavePath);
 
         GameState gameState =
-            JsonUtility.FromJson<GameState>(json);
+            JsonConvert.DeserializeObject<GameState>(json);
 
         Debug.Log("Jogo Carregado");
 
@@ -42,22 +44,20 @@ public class SaveService : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        Save();
+        if (GameState.ExpeditionState.ExpeditionStatus != GameHelper.ExpeditionStatus.Running)
+        {
+            Save();
+        }
     }
 
     private void OnApplicationPause(bool pause)
     {
         if (pause)
         {
-            Save();
-        }
-    }
-
-    private void OnApplicationFocus(bool focus)
-    {
-        if (!focus)
-        {
-            Save();
+            if (GameState.ExpeditionState.ExpeditionStatus != GameHelper.ExpeditionStatus.Running)
+            {
+                Save();
+            }
         }
     }
 }

@@ -9,8 +9,8 @@ public class ProjectileService : MonoBehaviour
     public Transform Container;
     public Transform Ship;
 
-    private List<ProjectileInstance> projectiles = new();
-    private Dictionary<ProjectileInstance, ProjectileView> views = new();
+    private List<ProjectileRuntime> projectiles = new();
+    private Dictionary<ProjectileRuntime, ProjectileView> views = new();
 
     public void Initialize(GameState game)
     {
@@ -47,10 +47,12 @@ public class ProjectileService : MonoBehaviour
         }
     }
 
-    void SpawnProjectile(WeaponInstance weapon, EnemyInstance enemy)
+    void SpawnProjectile(WeaponInstance weapon, EnemyRuntime enemy)
     {
-        var instance = new ProjectileInstance(weapon.Ammo.Projectile)
+        var instance = new ProjectileRuntime()
         {
+            Model = weapon.Ammo.Projectile,
+
             Position = Ship.position,
             Target = enemy,
             Speed = (float)weapon.Ammo.ActualProjectileSpeed,
@@ -67,7 +69,7 @@ public class ProjectileService : MonoBehaviour
         view.SetPosition(instance.Position);
     }
 
-    void RemoveProjectile(ProjectileInstance proj)
+    void RemoveProjectile(ProjectileRuntime proj)
     {
         if (views.TryGetValue(proj, out var view))
         {
@@ -78,7 +80,7 @@ public class ProjectileService : MonoBehaviour
         projectiles.Remove(proj);
     }
 
-    Vector3 GetEnemyWorldPosition(EnemyInstance enemy)
+    Vector3 GetEnemyWorldPosition(EnemyRuntime enemy)
     {
         float radius = UiHelper.ToWorld(enemy.Distance);
         float angleRad = (float)(enemy.Angle * Mathf.Deg2Rad);

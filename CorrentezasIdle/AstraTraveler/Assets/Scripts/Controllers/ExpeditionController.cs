@@ -54,9 +54,12 @@ public class ExpeditionController : MonoBehaviour
             return;
         }
 
-        Expedition.ExpeditionStatus = ExpeditionStatus.Loading;
+        if (Expedition.ExpeditionStatus != ExpeditionStatus.Running)
+        {
+            Expedition.ExpeditionStatus = ExpeditionStatus.Loading;
 
-        StartService.Initialize(Game, PathService);
+            StartService.Initialize(Game, PathService);
+        }
 
         var Ship = GameController.Instance.GameState.ExpeditionState.Ship;
         if (Ship == null)
@@ -66,12 +69,13 @@ public class ExpeditionController : MonoBehaviour
         }
 
         var Configs = GameController.Instance.ConfigurationsService;
+        var Save = GameController.Instance.SaveService;
 
         ExpeditionControlService.Initialize(Game, TickService);
 
         ExpeditionUiService.Initialize(Game, PurchaseService, Configs);
 
-        DaysCycleService.Initialize(Game, TickService);
+        DaysCycleService.Initialize(Game, TickService, Save);
 
         EnemyProgressService.Initialize(Game);
 

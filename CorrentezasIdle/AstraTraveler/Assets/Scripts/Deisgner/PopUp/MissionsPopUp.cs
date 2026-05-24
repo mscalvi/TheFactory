@@ -25,7 +25,7 @@ public class MissionsPopUp : MonoBehaviour
     [SerializeField] TextMeshProUGUI Opt4Text;
     [SerializeField] TextMeshProUGUI Title;
 
-    public void ShowMissions(List<MissionInstance> options, Action<MissionInstance> onSelected, GameState GameState)
+    public void ShowMissions(List<MissionRuntime> options, Action<MissionRuntime> onSelected, GameState GameState)
     {
         Hide();
 

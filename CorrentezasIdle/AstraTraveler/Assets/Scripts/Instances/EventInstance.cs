@@ -24,6 +24,8 @@ public class EventInstance
 
     public EventInstance(EventModel model)
     {
+        Model = model;
+
         Id = model.Id;
         TitleEN = model.NameEN;
         TitlePT = model.NamePT;
@@ -38,5 +40,10 @@ public class EventInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public EventInstance()
+    {
+
     }
 }

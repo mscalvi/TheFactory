@@ -16,7 +16,7 @@ public class RewardService : MonoBehaviour
         CurrencyService = currency;
     }
 
-    void EnemyDeathReward(EnemyInstance enemy)
+    void EnemyDeathReward(EnemyRuntime enemy)
     {
         var total = enemy.Experience * GameState.ExpeditionState.ActualExperienceKillBonus;
 
@@ -35,7 +35,7 @@ public class RewardService : MonoBehaviour
         CurrencyService.Add(CurrencyHelper.CurrencyType.Experience, reward);
     }
 
-    private void MissionCompleteReward(MissionInstance mission)
+    private void MissionCompleteReward(MissionRuntime mission)
     {
         if (mission.MissionStatus == MissionHelper.MissionStatus.Finished)
         {

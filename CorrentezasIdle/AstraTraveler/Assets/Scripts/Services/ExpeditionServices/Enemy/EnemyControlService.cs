@@ -114,7 +114,7 @@ public class EnemyControllerService : MonoBehaviour, ITickable
         }
     }
 
-    void CheckEnemyLife(ProjectileInstance projectile, EnemyInstance enemy)
+    void CheckEnemyLife(ProjectileRuntime projectile, EnemyRuntime enemy)
     {
         var enemies = Expedition.ActiveEnemies;
 

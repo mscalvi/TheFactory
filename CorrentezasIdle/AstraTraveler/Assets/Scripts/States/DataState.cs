@@ -8,7 +8,6 @@ public class DataState
 
     public Dictionary<string, WeaponInstance> weapons;
     public Dictionary<string, AmmoInstance> ammos;
-    public Dictionary<string, ProjectileInstance> projectiles;
     
     public Dictionary<string, TripulationInstance> tripulations;
 

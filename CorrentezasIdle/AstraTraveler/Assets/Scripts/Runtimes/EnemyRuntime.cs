@@ -1,12 +1,18 @@
+using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static EnemyHelper;
+using static UnlockHelper;
 
-public class EnemyInstance
+public class EnemyRuntime
 {
-    public EnemyModel Model;
+    [JsonIgnore]
+    public EnemyInstance Model;
 
     public string Id;
+
     public string NamePT;
     public string NameEN;
     public string DescriptionPT;
@@ -63,7 +69,12 @@ public class EnemyInstance
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
-    public EnemyInstance(EnemyModel model)
+    public EnemyRuntime()
+    {
+
+    }
+
+    public EnemyRuntime(EnemyInstance model)
     {
         Model = model;
 
@@ -79,8 +90,8 @@ public class EnemyInstance
         MarkedEnemy = false;
         EnemyType = model.EnemyType;
 
-        StartLife = model.Life;
-        ActualLife = model.Life;
+        StartLife = model.StartLife;
+        ActualLife = model.StartLife;
         LifeGrowth = model.LifeGrowth;
         LifeRegen = model.LifeRegen;
         LifeRegenGrowth = model.LifeRegenGrowth;

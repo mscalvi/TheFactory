@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyView : MonoBehaviour
 {
-    public EnemyInstance Enemy;
+    public EnemyRuntime Enemy;
     public Transform Ship;
     private SpriteRenderer spriteRenderer;
 
@@ -14,7 +14,7 @@ public class EnemyView : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Setup(EnemyInstance enemy, Transform ship)
+    public void Setup(EnemyRuntime enemy, Transform ship)
     {
         Enemy = enemy;
         Ship = ship;

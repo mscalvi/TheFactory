@@ -12,7 +12,7 @@ public class MissionsTrackerService : MonoBehaviour
 
     private List<MissionSlotModel> Slots;
 
-    private List<MissionInstance> toComplete = new();
+    private List<MissionRuntime> toComplete = new();
 
     public void Initialize(GameState gameState, MissionsService missions)
     {
@@ -32,7 +32,7 @@ public class MissionsTrackerService : MonoBehaviour
         toComplete.Clear();
     }
 
-    private void OnEnemyKilled(EnemyInstance enemy)
+    private void OnEnemyKilled(EnemyRuntime enemy)
     {
         toComplete.Clear();
 

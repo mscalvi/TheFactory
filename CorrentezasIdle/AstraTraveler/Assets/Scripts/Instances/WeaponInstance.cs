@@ -40,7 +40,7 @@ public class WeaponInstance
     public AmmoInstance Ammo;
     
     public WeaponHelper.WeaponTarget TargetType;
-    public EnemyInstance CurrentTarget;
+    public EnemyRuntime CurrentTarget;
     public double Cooldown;
 
     public string UnlockId;
@@ -48,6 +48,8 @@ public class WeaponInstance
 
     public WeaponInstance(WeaponModel model)
     {
+        Model = model;
+
         Id = model.Id;
 
         NamePT = model.NamePT;
@@ -86,5 +88,10 @@ public class WeaponInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public WeaponInstance()
+    {
+
     }
 }

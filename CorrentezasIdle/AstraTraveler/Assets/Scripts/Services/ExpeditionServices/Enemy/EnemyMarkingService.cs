@@ -8,7 +8,7 @@ public class EnemyMarkingService : MonoBehaviour
 
     private UnlockState UnlockState;
 
-    private List<EnemyInstance> markedEnemies = new();
+    private List<EnemyRuntime> markedEnemies = new();
 
     public void Initialize(GameState game)
     {
@@ -19,7 +19,7 @@ public class EnemyMarkingService : MonoBehaviour
         UnlockState = GameState.UnlockState;
     }
 
-    void HandleClick(EnemyInstance enemy)
+    void HandleClick(EnemyRuntime enemy)
     {
         if (enemy == null) return;
 
@@ -40,19 +40,19 @@ public class EnemyMarkingService : MonoBehaviour
         }
     }
 
-    void Mark(EnemyInstance enemy)
+    void Mark(EnemyRuntime enemy)
     {
         enemy.MarkedEnemy = true;
         markedEnemies.Add(enemy);
     }
 
-    void Unmark(EnemyInstance enemy)
+    void Unmark(EnemyRuntime enemy)
     {
         enemy.MarkedEnemy = false;
         markedEnemies.Remove(enemy);
     }
 
-    void HandleDeath(EnemyInstance enemy)
+    void HandleDeath(EnemyRuntime enemy)
     {
         if (enemy.MarkedEnemy)
         {

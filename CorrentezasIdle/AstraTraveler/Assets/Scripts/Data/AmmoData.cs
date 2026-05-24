@@ -22,6 +22,8 @@ public static class AmmoData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
+            model.ProjectileId = row["ProjectileId"];
+
             model.Type = System.Enum.Parse<WeaponHelper.AmmoType>(row["Type"]);
 
             model.Damage = double.Parse(row["Damage"]);

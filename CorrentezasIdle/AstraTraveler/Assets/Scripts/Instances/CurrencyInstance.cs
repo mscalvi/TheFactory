@@ -37,4 +37,9 @@ public class CurrencyInstance
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
+
+    public CurrencyInstance()
+    {
+
+    }
 }

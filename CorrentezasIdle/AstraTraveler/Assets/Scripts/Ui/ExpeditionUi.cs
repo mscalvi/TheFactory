@@ -192,7 +192,7 @@ public class ExpeditionUi : MonoBehaviour
         MissionTextShown = false;
         MissionsText.text = "";
     }
-    private void MissionUpdate(MissionInstance mission)
+    private void MissionUpdate(MissionRuntime mission)
     {
         if (GameState.ActualLanguage == GameState.Language.Portugues)
         {

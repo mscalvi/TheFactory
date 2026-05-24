@@ -6,15 +6,15 @@ using UnityEngine;
 public static class ExpeditionEvents
 {
     // Enemy Events
-    public static Action<EnemyInstance> OnEnemySpawn;
-    public static Action<EnemyInstance> OnEnemyClicked;
-    public static Action<EnemyInstance> OnEnemyDeath;
-    public static Action<EnemyInstance> OnMarkedEnemyDeath;
+    public static Action<EnemyRuntime> OnEnemySpawn;
+    public static Action<EnemyRuntime> OnEnemyClicked;
+    public static Action<EnemyRuntime> OnEnemyDeath;
+    public static Action<EnemyRuntime> OnMarkedEnemyDeath;
     public static Action NoWaveSpawn;
 
     // Ship Events
-    public static Action<WeaponInstance, EnemyInstance> OnShoot;
-    public static Action<ProjectileInstance, EnemyInstance> OnProjectileHit;
+    public static Action<WeaponInstance, EnemyRuntime> OnShoot;
+    public static Action<ProjectileRuntime, EnemyRuntime> OnProjectileHit;
     public static Action OnShipAtributeChange;
 
     // Expedition Status Events
@@ -44,9 +44,9 @@ public static class GameEvents
     public static Action OnLanguageChange;
 
     // Mission Events
-    public static Action<MissionInstance> OnMissionComplete;
-    public static Action<MissionInstance> OnMissionCanceled;
-    public static Action<MissionInstance> OnMissionUpdate;
+    public static Action<MissionRuntime> OnMissionComplete;
+    public static Action<MissionRuntime> OnMissionCanceled;
+    public static Action<MissionRuntime> OnMissionUpdate;
     public static Action MissionSlotAtualize;
 
     // Progress Events

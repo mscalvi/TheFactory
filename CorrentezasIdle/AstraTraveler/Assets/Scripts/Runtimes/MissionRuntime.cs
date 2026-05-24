@@ -1,10 +1,12 @@
+using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class MissionInstance
+public class MissionRuntime
 {
-    public MissionModel Model;
+    [JsonIgnore]
+    public MissionInstance Model;
 
     public string Id;
     public string NamePT;
@@ -36,7 +38,7 @@ public class MissionInstance
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
-    public MissionInstance(MissionModel model)
+    public MissionRuntime(MissionInstance model)
     {
         Model = model;
 
@@ -59,7 +61,7 @@ public class MissionInstance
 
         MissionRarity = model.MissionRarity;
         MissionType = model.MissionType;
-        MissionStatus = MissionHelper.MissionStatus.Available;
+        MissionStatus = model.MissionStatus;
 
         TargetValue = 1;
         TargetMultiplier = 1;
@@ -69,6 +71,7 @@ public class MissionInstance
         UnlockStatus = model.UnlockStatus;
         UnlockId = model.UnlockId;
     }
+
     public string GetMissionKey()
     {
         string targetId = TargetsIds.Count > 0 ? TargetsIds[0] : "none";
@@ -76,7 +79,7 @@ public class MissionInstance
         return $"{Id}_{targetId}";
     }
 
-    public MissionInstance()
+    public MissionRuntime()
     {
 
     }

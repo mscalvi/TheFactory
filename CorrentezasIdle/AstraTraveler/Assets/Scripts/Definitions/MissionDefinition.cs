@@ -10,7 +10,7 @@ public class MissionDefinition : MonoBehaviour
     public TMP_Text Description;
     public TMP_Text Progress;
 
-    public void Setup(MissionInstance mission, GameState GameState)
+    public void Setup(MissionRuntime mission, GameState GameState)
     {
         if (GameState.ActualLanguage == GameState.Language.English)
         {

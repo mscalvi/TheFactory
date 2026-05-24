@@ -7,14 +7,14 @@ public class EnemyViewService : MonoBehaviour
     public Transform Ship;
     public GameObject EnemyPrefab;
 
-    private Dictionary<EnemyInstance, EnemyView> views = new();
+    private Dictionary<EnemyRuntime, EnemyView> views = new();
 
-    public EnemyView GetView(EnemyInstance enemy)
+    public EnemyView GetView(EnemyRuntime enemy)
     {
         return views.TryGetValue(enemy, out var view) ? view : null;
     }
 
-    void SpawnEnemy(EnemyInstance enemy)
+    void SpawnEnemy(EnemyRuntime enemy)
     {
         var obj = Instantiate(EnemyPrefab, Container);
         var view = obj.GetComponent<EnemyView>();
@@ -24,7 +24,7 @@ public class EnemyViewService : MonoBehaviour
         views[enemy] = view;
     }
 
-    void RemoveEnemy(EnemyInstance enemy)
+    void RemoveEnemy(EnemyRuntime enemy)
     {
         if (!views.TryGetValue(enemy, out var view))
             return;

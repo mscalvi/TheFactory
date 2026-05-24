@@ -1,5 +1,5 @@
 public class MissionSlotModel
 {
-    public MissionInstance ActiveMission;
+    public MissionRuntime ActiveMission;
     public long CooldownEnd;
 }

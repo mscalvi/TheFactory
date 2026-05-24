@@ -21,7 +21,7 @@ public class ExpeditionState
     public PathHelper.PathTagSet LastPath = new PathHelper.PathTagSet();
     public PathHelper.PathTagSet ActualPath = new PathHelper.PathTagSet();
 
-    public List<EnemyInstance> ActiveEnemies = new List<EnemyInstance>();
+    public List<EnemyRuntime> ActiveEnemies = new List<EnemyRuntime>();
     public bool DamageTaken = false;
 
     public List<TripulationInstance> ActiveTripulation = new List<TripulationInstance>();

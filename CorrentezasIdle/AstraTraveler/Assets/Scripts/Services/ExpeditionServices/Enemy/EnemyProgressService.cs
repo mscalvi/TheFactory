@@ -12,7 +12,7 @@ public class EnemyProgressService : MonoBehaviour
         Expedition = GameState.ExpeditionState;
     }
 
-    public void ApplyProgression(EnemyInstance enemy)
+    public void ApplyProgression(EnemyRuntime enemy)
     {
         int days = Expedition.DayCounter - 1;
 

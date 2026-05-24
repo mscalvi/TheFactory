@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AcquisitionInstance : MonoBehaviour
+public class AcquisitionInstance
 {
     public AcquisitionModel Model;
 
@@ -66,5 +66,10 @@ public class AcquisitionInstance : MonoBehaviour
         UnlockType = model.Type;
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public AcquisitionInstance()
+    {
+
     }
 }

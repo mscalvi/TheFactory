@@ -1,9 +1,9 @@
-﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Type;Damage;Special;Recharge;Ammount;ProjectileSpeed;UnlockId;UnlockStatus
-a001;Small Stone;Pedra;;;Throw;1;None;3;10;2;Start;Unlocked
-a002;Shipped Stone;Pedra Lascada;;;Throw;2;None;3;10;2.2;;Unknow
-a003;Crude Arrow;Flecha Simples;;;Arrows;3;None;4;20;2.3;;Unknow
-a004;Arrow;Flecha Comum;;;Arrows;5;None;4;20;2.8;;Unknow
-a005;Dented Arrow;Flecha Serrilhada;;;Arrows;7;Slow;4;20;2.6;;Unknow
-a006;Crude Bolt;Dardo Simples;;;Bolts;5;None;5;20;2.8;;Unknow
-a007;Bolt;Dardo Comum;;;Bolts;7;None;5;20;3.2;;Unknow
-a008;Braided Bolt;Dardo Trançado;;;Bolts;9;Piercing;5;20;3.5;;Unknow
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;ProjectileId;Type;Damage;Special;Recharge;Ammount;ProjectileSpeed;UnlockId;UnlockStatus
+a001;Small Stone;Pedra;;;r001;Throw;1;None;3;10;2;Start;Unlocked
+a002;Shipped Stone;Pedra Lascada;;;r001;Throw;2;None;3;10;2.2;;Unknow
+a003;Crude Arrow;Flecha Simples;;;r001;Arrows;3;None;4;20;2.3;;Unknow
+a004;Arrow;Flecha Comum;;;r001;Arrows;5;None;4;20;2.8;;Unknow
+a005;Dented Arrow;Flecha Serrilhada;;;r001;Arrows;7;Slow;4;20;2.6;;Unknow
+a006;Crude Bolt;Dardo Simples;;;r001;Bolts;5;None;5;20;2.8;;Unknow
+a007;Bolt;Dardo Comum;;;r001;Bolts;7;None;5;20;3.2;;Unknow
+a008;Braided Bolt;Dardo Trançado;;;r001;Bolts;9;Piercing;5;20;3.5;;Unknow

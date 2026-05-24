@@ -5,7 +5,7 @@ using UnityEngine;
 public class MissionsState
 {
     // Progresso das Missões Secondárias
-    public List<MissionInstance> ActiveMissions = new List<MissionInstance>();
+    public List<MissionRuntime> ActiveMissions = new List<MissionRuntime>();
     public Dictionary<(string, string), int> MissionHistoric = new Dictionary<(string, string), int>();
 
     public int MaxOnGoingMissions = 0;

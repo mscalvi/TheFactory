@@ -11,7 +11,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField] GameCreationService GameCreationService;
     [SerializeField] DatabaseService DatabaseService;
-    [SerializeField] SaveService SaveService;
+    [SerializeField] public SaveService SaveService;
     [SerializeField] public ProgressTrackerService ProgressTrackerService;
     [SerializeField] public MissionsService MissionsService;
     [SerializeField] public MissionsTrackerService MissionsTrackerService;
@@ -25,8 +25,6 @@ public class GameController : MonoBehaviour
     [SerializeField] public RecruitmentService RecruitmentService;
     [SerializeField] public RewardService RewardService;
     [SerializeField] public ConfigurationsService ConfigurationsService;
-
-    bool FirstInitialization = true;
 
     private void Awake()
     {
@@ -46,6 +44,7 @@ public class GameController : MonoBehaviour
         }
 
         GameState = SaveService.Load();
+        Debug.Log(Application.persistentDataPath);
 
         if (GameState == null)
         {
@@ -58,18 +57,7 @@ public class GameController : MonoBehaviour
             GameState.MissionsState = new MissionsState();
             GameState.BestiaryState = new BestiaryState();
 
-            FirstInitialization = true;
-        } else
-        {
-            FirstInitialization = false;
-        }
-
-        if (FirstInitialization)
-        {
             GameCreationService.Initialize(GameState, Database);
-        } else
-        {
-            // service de Load
         }
 
         SaveService.Initialize(GameState);

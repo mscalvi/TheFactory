@@ -35,4 +35,9 @@ public class BuildingInstance
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
+
+    public BuildingInstance()
+    {
+
+    }
 }

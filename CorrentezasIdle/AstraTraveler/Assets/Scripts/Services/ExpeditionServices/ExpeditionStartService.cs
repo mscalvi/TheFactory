@@ -8,7 +8,6 @@ public class ExpeditionStartService : MonoBehaviour
 {
 
     private GameState GameState;
-    private ExpeditionState ExpeditionState;
 
     private PathService PathService;
 
@@ -17,8 +16,6 @@ public class ExpeditionStartService : MonoBehaviour
         GameState = game;
 
         PathService = path;
-
-        ExpeditionState = GameState.ExpeditionState;
 
         LoadExpedition(GameState);
         LoadShip(GameState);

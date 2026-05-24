@@ -29,7 +29,6 @@ public class GameCreationService : MonoBehaviour
         var tripulation = new Dictionary<string, TripulationInstance>();
         var weapons = new Dictionary<string, WeaponInstance>();
         var ammos = new Dictionary<string, AmmoInstance>();
-        var projectiles = new Dictionary<string, ProjectileInstance>();
         var enemies = new Dictionary<string, EnemyInstance>();     
         var currencies = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
         var ingredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
@@ -61,12 +60,6 @@ public class GameCreationService : MonoBehaviour
         {
             var instance = new AmmoInstance(ammo);
             ammos.Add(ammo.Id, instance);
-        }
-
-        foreach (var projectile in DataBase.projectiles.Values)
-        {
-            var instance = new ProjectileInstance(projectile);
-            projectiles.Add(projectile.Id, instance);
         }
 
         foreach (var enemy in DataBase.enemies.Values)
@@ -121,7 +114,6 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.tripulations = tripulation;
         GameState.DataState.weapons = weapons;
         GameState.DataState.ammos = ammos;
-        GameState.DataState.projectiles = projectiles;
         GameState.DataState.enemies = enemies;
         GameState.DataState.currencies = currencies;
         GameState.DataState.ingredients = ingredients;
@@ -168,9 +160,9 @@ public class GameCreationService : MonoBehaviour
 
     private void BuildAmmos()
     {
-        foreach (var ammo in GameState.DataState.ammos.Values)
+        foreach (var ammo in GameState.DataState.ammos)
         {
-            ammo.Projectile = GameState.DataState.projectiles["r001"];
+            ammo.Value.Projectile = DataBase.projectiles[ammo.Value.ProjectileId];
         }
     }
 }

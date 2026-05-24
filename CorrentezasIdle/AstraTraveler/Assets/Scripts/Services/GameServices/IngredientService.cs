@@ -54,7 +54,7 @@ public class IngredientService : MonoBehaviour
         return true;
     }
 
-    private IngredientHelper.IngredientType RollIngredient(EnemyInstance enemy)
+    private IngredientHelper.IngredientType RollIngredient(EnemyRuntime enemy)
     {
         GameHelper.ItemRarity rarity = RollRarity();
 
@@ -142,7 +142,7 @@ public class IngredientService : MonoBehaviour
         return false;
     }
 
-    void EnemyDeathReward(EnemyInstance enemy)
+    void EnemyDeathReward(EnemyRuntime enemy)
     {
         if (enemy.MarkedEnemy)
         {

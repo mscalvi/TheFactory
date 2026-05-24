@@ -45,6 +45,8 @@ public class UpgradeInstance
 
     public UpgradeInstance(UpgradeModel model)
     {
+        Model = model;
+
         Id = model.Id;
 
         NameEN = model.NameEN;
@@ -82,5 +84,10 @@ public class UpgradeInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public UpgradeInstance()
+    {
+
     }
 }

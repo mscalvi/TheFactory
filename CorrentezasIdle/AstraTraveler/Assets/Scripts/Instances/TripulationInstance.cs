@@ -25,6 +25,8 @@ public class TripulationInstance
 
     public TripulationInstance(TripulationModel model)
     {
+        Model = model;
+
         Id = model.Id;
         Name = model.Name;
         DescriptionPT = model.DescriptionPT;
@@ -42,5 +44,10 @@ public class TripulationInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public TripulationInstance()
+    {
+
     }
 }

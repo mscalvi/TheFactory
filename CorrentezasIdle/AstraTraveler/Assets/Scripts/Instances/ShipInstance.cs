@@ -48,6 +48,8 @@ public class ShipInstance
 
     public ShipInstance(ShipModel model)
     {
+        Model = model;
+
         Id = model.Id;
         NameEN = model.NameEN;
         DescriptionEN = model.DescriptionEN;
@@ -83,5 +85,10 @@ public class ShipInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public ShipInstance()
+    {
+
     }
 }
