@@ -41,7 +41,15 @@ public class DaysCycleService : MonoBehaviour, ITickable
             if (ExpeditionState.IsDay)
             {
                 ExpeditionState.DayCounter++;
+                
                 ExpeditionEvents.OnNightFinish?.Invoke();
+
+                if (ExpeditionState.DayCounter == ExpeditionState.NextDestination)
+                {
+                    Debug.Log("Dia de Boss!");
+                    ExpeditionEvents.SpawnBoss?.Invoke();
+                }
+
                 SaveService.Save();
 
                 if (ExpeditionState.DayCounter > ExpeditionState.NextDestination)

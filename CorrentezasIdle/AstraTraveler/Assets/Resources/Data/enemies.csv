@@ -1,9 +1,11 @@
 ﻿Id;NamePT;NameEN;DescriptionPT;DescriptionEN;DayEnemy;BossEnemy;EnemyType;Life;LifeGrowth;LifeRegen;LifeRegenGrowth;Speed;SpeedGrowth;Armor;ArmorGrowth;Range;RangeGrowth;Damage;DamageGrowth;AttackSpeed;AttackSpeedGrowth;SpawnDistance;SpawnDistanceGrowth;ExperienceKill;Special;CommonIngredient;UncommonIngredient;RareIngredient;LegendaryIngredient;Rarity;SpawnCost;Stage;PathTypes;PathEnvironments;PathModifiers;UnlockId;UnlockStatus
-e0001;Goby;Goby;;;True;False;Fish;2;0.05;0;0;2.5;0;0;0;0;0;1;0.05;1;0;20;0;1;None;Scale;None;None;None;1000;2;;;;;Start;Available
-e0002;Anchova;Anchovy;;;True;False;Fish;2;0.2;0;0;2.8;0;0;0;0;0;1;0.05;1;0;20;0;1;None;Scale;None;None;None;1000;2;;;;;5;Unknow
-e0004;Peixe-Donzela;Damselfish;;;True;False;Fish;3;0.05;0;0;2.2;0;0;0;0;0;1;0.05;1;0;10;0;1;None;Scale;None;None;None;1000;2;;;;;10;Unknow
-e0004;Baiacú Pequeno;Small Pufferfish;;;True;False;Fish;3;0.15;0;0;1.2;0;0;0;0;0;2;0.15;0.4;0;30;0;2;None;Scale;None;None;None;1000;3;;;;;15;Unknow
-e1001;Peixe-Machadinha;Hatchetfish;;;False;False;Fish;1;0.02;0;0;1.8;0;0;0;0;0;1;0.03;1.1;0;20;0;1;None;Scale;None;None;None;1000;2;;;;;Start;Available
-e1002;Peixe-Cardeal;Cardinalfish;;;False;False;Fish;1;0.02;0;0;1.7;0;0;0;0;0;1;0.01;0.6;0;20;0;1;None;Scale;None;None;None;1000;2;;;;;5;Unknow
-e1003;Peixe-Lanterna;Lanternfish;;;False;False;Fish;2;0.05;0;0;1.7;0;0;0;0;0;1;0.01;0.7;0;10;0;1;None;Scale;None;None;None;1000;2;;;;;10;Unknow
-e1004;Peixe-Esquilo;Squirrelfish;;;False;False;Fish;3;0.05;0;0;3.1;0;0;0;0;0;1;0.06;1.4;0;20;0;2;None;Scale;None;None;None;1000;3;;;;;15;Unknow
+e0001;Goby;Goby;;;True;False;Fish;2;0.05;0;0;2.5;0;0;0;0;0;1;0.05;1;0;20;0;1;None;Scale;None;None;None;1000;2;;All;All;;Start;Available
+e0002;Anchova;Anchovy;;;True;False;Fish;2;0.2;0;0;2.8;0;0;0;0;0;1;0.05;1;0;20;0;1;None;Scale;None;None;None;1000;2;;All;All;;5;Unknow
+e0004;Peixe-Donzela;Damselfish;;;True;False;Fish;3;0.05;0;0;2.2;0;0;0;0;0;1;0.05;1;0;10;0;1;None;Scale;None;None;None;1000;2;;All;All;;10;Unknow
+e0004;Baiacú Pequeno;Small Pufferfish;;;True;False;Fish;3;0.15;0;0;1.2;0;0;0;0;0;2;0.15;0.4;0;30;0;2;None;Scale;None;None;None;1000;3;;All;All;;15;Unknow
+e1001;Peixe-Machadinha;Hatchetfish;;;False;False;Fish;1;0.02;0;0;1.8;0;0;0;0;0;1;0.03;1.1;0;20;0;1;None;Scale;None;None;None;1000;2;;All;All;;Start;Available
+e1002;Peixe-Cardeal;Cardinalfish;;;False;False;Fish;1;0.02;0;0;1.7;0;0;0;0;0;1;0.01;0.6;0;20;0;1;None;Scale;None;None;None;1000;2;;All;All;;5;Unknow
+e1003;Peixe-Lanterna;Lanternfish;;;False;False;Fish;2;0.05;0;0;1.7;0;0;0;0;0;1;0.01;0.7;0;10;0;1;None;Scale;None;None;None;1000;2;;All;All;;10;Unknow
+e1004;Peixe-Esquilo;Squirrelfish;;;False;False;Fish;3;0.05;0;0;3.1;0;0;0;0;0;1;0.06;1.4;0;20;0;2;None;Scale;None;None;None;1000;3;;All;All;;15;Unknow
+e2001;Anchova Gigante;Giant Anchovy;;;True;True;Fish;20;0.2;0;0;2.3;0;0;0;0;0;10;0.5;1;0;30;0;10;None;Scale;None;None;None;1000;2;;All;All;;5;Unknow
+e3001;Cardeal Gigante;Giant Cardinal;;;False;True;Fish;10;0.02;1;0;1.2;0;0;0;0;0;30;0.1;0.6;0;30;0;10;None;Scale;None;None;None;1000;2;;All;All;;5;Unknow

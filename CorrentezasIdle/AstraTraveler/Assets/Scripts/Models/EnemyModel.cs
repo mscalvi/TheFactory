@@ -44,9 +44,9 @@ public class EnemyModel
     public double SpawnCost;
     public List<EnemyHelper.EnemyStage> Stage;
 
-    public List<PathHelper.PathType> PathTypes;
-    public List<PathHelper.PathEnvironment> PathEnvironments;
-    public List<PathHelper.PathModifier> PathModifiers;
+    public PathHelper.PathType PathTypes;
+    public PathHelper.PathEnvironment PathEnvironments;
+    public PathHelper.PathModifier PathModifiers;
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;

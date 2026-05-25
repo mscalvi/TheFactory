@@ -195,8 +195,14 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         Dictionary<string, EnemyInstance> validEnemies = new();
 
         foreach (var enemy in DataState.enemies)
-        {            
+        {
+            if (enemy.Value.BossEnemy)
+                continue;
+
             if (enemy.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
+            if ((enemy.Value.PathTypes & GameState.ExpeditionState.ActualPath.Type) == 0)
                 continue;
 
             if (Expedition.IsDay && enemy.Value.DayEnemy)
@@ -219,5 +225,56 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         enemy.Known = true;
 
         GameEvents.NewEnemySeen?.Invoke(enemy);
+    }
+
+    private void SpawnBoss()
+    {
+        Debug.Log("Spawn em Boss! Preparado?");
+
+        List<EnemyInstance> validBosses = new();
+
+        foreach (var enemy in GameState.DataState.enemies.Values)
+        {
+            if (!enemy.BossEnemy)
+                continue;
+
+            if ((enemy.PathTypes & GameState.ExpeditionState.ActualPath.Type) == 0)
+                continue;
+
+            if ((enemy.PathEnvironments & GameState.ExpeditionState.ActualPath.Environment) == 0)
+                continue;
+
+            if (enemy.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
+            if (Expedition.IsDay && enemy.DayEnemy)
+                validBosses.Add(enemy);
+            else if (!Expedition.IsDay && !enemy.DayEnemy)
+                validBosses.Add(enemy);
+        }
+
+        if (validBosses.Count <= 0)
+            return;
+
+        int randomIndex = Random.Range(0, validBosses.Count);
+
+        var chosen = validBosses[randomIndex];
+
+        var chosenRuntime = new EnemyRuntime(chosen);
+
+        spawnQueue.Enqueue(chosenRuntime);
+
+        ExpeditionEvents.OnBossSpawn?.Invoke(chosenRuntime);
+        Debug.Log($"Boss {chosen.NamePT} Spawnado!\nVida: {chosen.ActualLife} Dano: {chosen.Damage} Loot: {chosen.Experience} XP");
+    }
+
+    void OnEnable()
+    {
+        ExpeditionEvents.SpawnBoss += SpawnBoss;
+    }
+
+    void OnDisable()
+    {
+        ExpeditionEvents.SpawnBoss -= SpawnBoss;
     }
 }

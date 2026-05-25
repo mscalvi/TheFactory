@@ -133,8 +133,8 @@
     <Compile Include="Assets\Scripts\Services\GameServices\CurrencyService.cs" />
     <Compile Include="Assets\Scripts\Data\EnemiesData.cs" />
     <Compile Include="Assets\Scripts\Models\MissionModel.cs" />
-    <Compile Include="Assets\Scripts\Runtimes\EnemyRuntime.cs" />
     <Compile Include="Assets\Scripts\Runtimes\MissionRuntime.cs" />
+    <Compile Include="Assets\Scripts\Runtimes\EnemyRuntime.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\WeaponsService.cs" />

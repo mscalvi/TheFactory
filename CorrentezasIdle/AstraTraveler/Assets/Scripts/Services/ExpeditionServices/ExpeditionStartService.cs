@@ -46,6 +46,7 @@ public class ExpeditionStartService : MonoBehaviour
         Expedition.ActualSpawnBudgetGrowth = Expedition.BaseSpawnBudgetGrowth;
         Expedition.ActualBossThreshold = Expedition.BaseBossThreshold;
 
+        Expedition.ActualStartExperience = Expedition.BaseStartExperience;
         Expedition.ActualExperienceKillBonus = Expedition.BaseExperienceKillBonus;
         Expedition.ActualDayReward = Expedition.BaseDayReward;
         Expedition.ActualNightReward = Expedition.BaseNightReward;
@@ -86,6 +87,11 @@ public class ExpeditionStartService : MonoBehaviour
             weapon.ActualRange = weapon.BaseRange;
             weapon.ActualCriticalDamage = weapon.BaseCriticalDamage;
             weapon.ActualPrecision = weapon.BasePrecision;
+            weapon.Ammo.ActualAmmount = weapon.Ammo.BaseAmmount;
+            weapon.Ammo.ActualDamage = weapon.Ammo.BaseDamage;
+            weapon.Ammo.ActualProjectileSpeed = weapon.Ammo.BaseProjectileSpeed;
+            weapon.Ammo.ActualRecharge = weapon.Ammo.BaseRecharge;
+            weapon.Ammo.CurrentRecharge = weapon.Ammo.BaseRecharge;
         }
 
         Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.ActualLife;

@@ -11,6 +11,8 @@ public static class ExpeditionEvents
     public static Action<EnemyRuntime> OnEnemyDeath;
     public static Action<EnemyRuntime> OnMarkedEnemyDeath;
     public static Action NoWaveSpawn;
+    public static Action SpawnBoss;
+    public static Action<EnemyRuntime> OnBossSpawn;
 
     // Ship Events
     public static Action<WeaponInstance, EnemyRuntime> OnShoot;

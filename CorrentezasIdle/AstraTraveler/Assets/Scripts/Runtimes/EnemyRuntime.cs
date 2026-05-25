@@ -56,9 +56,9 @@ public class EnemyRuntime
 
     public EnemyHelper.EnemyState State;
 
-    public List<PathHelper.PathType> PathTypes;
-    public List<PathHelper.PathEnvironment> PathEnvironments;
-    public List<PathHelper.PathModifier> PathModifiers;
+    public PathHelper.PathType PathTypes;
+    public PathHelper.PathEnvironment PathEnvironments;
+    public PathHelper.PathModifier PathModifiers;
 
     public double Distance;
     public double Angle;
@@ -127,6 +127,10 @@ public class EnemyRuntime
         Cooldown = 1 / model.AttackSpeed;
 
         Known = false;
+
+        PathTypes = model.PathTypes;
+        PathEnvironments = model.PathEnvironments;
+        PathModifiers = model.PathModifiers;
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;

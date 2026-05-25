@@ -9,8 +9,8 @@ public class PathHelper
     public struct PathTagSet
     {
         public PathType Type;
-        public PathEnvironment? Environment;
-        public PathModifier? Modifier;
+        public PathEnvironment Environment;
+        public PathModifier Modifier;
     }
 
     [Flags]
@@ -42,58 +42,87 @@ public class PathHelper
         InlandSea = 1 << 21,
         FloodedRuins = 1 << 22
     }
-
+    [Flags]
     public enum PathEnvironment
     {
-        ClearWater,
-        MurkyWater,
-        SedimentHeavy,
-        AlgaeRich,
-        Cold,
-        Freezing,
-        Warm,
-        OxygenPoor,
-        HighSalinity,
-        FreshWater,
-        StormAffected,
-        FogCovered,
-        OilContaminated,
-        DebrisFilled,
-        Industrialized,
-        Overfished,
-        ProtectedZone,
-        HighCurrent,
-        LowVisibility,
-        ShallowLight
+        None = 0,
+
+        ClearWater = 1 << 0,
+        MurkyWater = 1 << 1,
+        SedimentHeavy = 1 << 2,
+        AlgaeRich = 1 << 3,
+        Cold = 1 << 4,
+        Freezing = 1 << 5,
+        Warm = 1 << 6,
+        OxygenPoor = 1 << 7,
+        HighSalinity = 1 << 8,
+        FreshWater = 1 << 9,
+        StormAffected = 1 << 10,
+        FogCovered = 1 << 11,
+        OilContaminated = 1 << 12,
+        DebrisFilled = 1 << 13,
+        Industrialized = 1 << 14,
+        Overfished = 1 << 15,
+        ProtectedZone = 1 << 16,
+        HighCurrent = 1 << 17,
+        LowVisibility = 1 << 18,
+        ShallowLight = 1 << 19
     }
 
+    [Flags]
     public enum PathModifier
     {
-        Normal,
-        ElectricDischarge,
-        Bioluminescent,
-        ArmoredShell,
-        FastSwarm,
-        ApexPredators,
-        Camouflaged,
-        Venomous,
-        Parasitic,
-        Regenerative,
-        HighPressureAdapted,
-        SurfaceAmbush,
-        Burrowers,
-        Territorial,
-        Migratory,
-        Aggressive,
-        Defensive,
-        SonicSensitive,
-        HeatResistant,
-        ColdResistant,
-        ScavengerDominant
+        None = 0,
+
+        ElectricDischarge = 1 << 0,
+        Bioluminescent = 1 << 1,
+        ArmoredShell = 1 << 2,
+        FastSwarm = 1 << 3,
+        ApexPredators = 1 << 4,
+        Camouflaged = 1 << 5,
+        Venomous = 1 << 6,
+        Parasitic = 1 << 7,
+        Regenerative = 1 << 8,
+        HighPressureAdapted = 1 << 9,
+        SurfaceAmbush = 1 << 10,
+        Burrowers = 1 << 11,
+        Territorial = 1 << 12,
+        Migratory = 1 << 13,
+        Aggressive = 1 << 14,
+        Defensive = 1 << 15,
+        SonicSensitive = 1 << 16,
+        HeatResistant = 1 << 17,
+        ColdResistant = 1 << 18,
+        ScavengerDominant = 1 << 19
     }
 
     public static class PathTypeGroups
     {
+        public const PathHelper.PathType All =
+        PathHelper.PathType.CurrentEntrilhas |
+        PathHelper.PathType.UrbanRiver |
+        PathHelper.PathType.ForestRiver |
+        PathHelper.PathType.OpenOcean |
+        PathHelper.PathType.CoastalShelf |
+        PathHelper.PathType.DeepSea |
+        PathHelper.PathType.AbyssalPlain |
+        PathHelper.PathType.CoralReef |
+        PathHelper.PathType.KelpForest |
+        PathHelper.PathType.Mangrove |
+        PathHelper.PathType.Estuary |
+        PathHelper.PathType.RiverDelta |
+        PathHelper.PathType.FreshwaterRiver |
+        PathHelper.PathType.CanyonWaters |
+        PathHelper.PathType.UnderwaterRidge |
+        PathHelper.PathType.IceEdge |
+        PathHelper.PathType.GlacierRunoff |
+        PathHelper.PathType.VolcanicSeafloor |
+        PathHelper.PathType.ThermalVentField |
+        PathHelper.PathType.SaltFlatWaters |
+        PathHelper.PathType.Lagoon |
+        PathHelper.PathType.InlandSea |
+        PathHelper.PathType.FloodedRuins;
+
         public const PathHelper.PathType AllRivers =
             PathHelper.PathType.UrbanRiver |
             PathHelper.PathType.ForestRiver |
@@ -145,6 +174,56 @@ public class PathHelper
         public const PathHelper.PathType ArtificialZones =
             PathHelper.PathType.UrbanRiver |
             PathHelper.PathType.FloodedRuins;
+    }
+
+    public static class PathEnvironmentGroups
+    {
+        public const PathHelper.PathEnvironment All =
+            PathHelper.PathEnvironment.ClearWater |
+            PathHelper.PathEnvironment.MurkyWater |
+            PathHelper.PathEnvironment.SedimentHeavy |
+            PathHelper.PathEnvironment.AlgaeRich |
+            PathHelper.PathEnvironment.Cold |
+            PathHelper.PathEnvironment.Freezing |
+            PathHelper.PathEnvironment.Warm |
+            PathHelper.PathEnvironment.OxygenPoor |
+            PathHelper.PathEnvironment.HighSalinity |
+            PathHelper.PathEnvironment.FreshWater |
+            PathHelper.PathEnvironment.StormAffected |
+            PathHelper.PathEnvironment.FogCovered |
+            PathHelper.PathEnvironment.OilContaminated |
+            PathHelper.PathEnvironment.DebrisFilled |
+            PathHelper.PathEnvironment.Industrialized |
+            PathHelper.PathEnvironment.Overfished |
+            PathHelper.PathEnvironment.ProtectedZone |
+            PathHelper.PathEnvironment.HighCurrent |
+            PathHelper.PathEnvironment.LowVisibility |
+            PathHelper.PathEnvironment.ShallowLight;
+    }
+
+    public static class PathModifierGroups
+    {
+        public const PathHelper.PathModifier All =
+            PathHelper.PathModifier.ElectricDischarge |
+            PathHelper.PathModifier.Bioluminescent |
+            PathHelper.PathModifier.ArmoredShell |
+            PathHelper.PathModifier.FastSwarm |
+            PathHelper.PathModifier.ApexPredators |
+            PathHelper.PathModifier.Camouflaged |
+            PathHelper.PathModifier.Venomous |
+            PathHelper.PathModifier.Parasitic |
+            PathHelper.PathModifier.Regenerative |
+            PathHelper.PathModifier.HighPressureAdapted |
+            PathHelper.PathModifier.SurfaceAmbush |
+            PathHelper.PathModifier.Burrowers |
+            PathHelper.PathModifier.Territorial |
+            PathHelper.PathModifier.Migratory |
+            PathHelper.PathModifier.Aggressive |
+            PathHelper.PathModifier.Defensive |
+            PathHelper.PathModifier.SonicSensitive |
+            PathHelper.PathModifier.HeatResistant |
+            PathHelper.PathModifier.ColdResistant |
+            PathHelper.PathModifier.ScavengerDominant;
     }
 
     public static string GetPathTypeName(PathType type, GameState.Language language)
@@ -374,7 +453,7 @@ public class PathHelper
             case GameState.Language.Portugues:
                 switch (type)
                 {
-                    case PathModifier.Normal:
+                    case PathModifier.None:
                         return "Normal";
                     case PathModifier.ElectricDischarge:
                         return "Descarga Elétrica";
@@ -424,7 +503,7 @@ public class PathHelper
             case GameState.Language.English:
                 switch (type)
                 {
-                    case PathModifier.Normal:
+                    case PathModifier.None:
                         return "Normal";
                     case PathModifier.ElectricDischarge:
                         return "Electric Discharge";

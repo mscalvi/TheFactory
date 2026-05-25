@@ -34,10 +34,11 @@ public class SaveService : MonoBehaviour
 
         string json = File.ReadAllText(SavePath);
 
-        GameState gameState =
-            JsonConvert.DeserializeObject<GameState>(json);
+        GameState gameState = JsonConvert.DeserializeObject<GameState>(json);
 
         Debug.Log("Jogo Carregado");
+
+        gameState.ExpeditionState.ActiveEnemies.Clear();
 
         return gameState;
     }

@@ -6,7 +6,7 @@ public class MissionsState
 {
     // Progresso das Missões Secondárias
     public List<MissionRuntime> ActiveMissions = new List<MissionRuntime>();
-    public Dictionary<(string, string), int> MissionHistoric = new Dictionary<(string, string), int>();
+    public Dictionary<string, int> MissionHistoric = new Dictionary<string, int>();
 
     public int MaxOnGoingMissions = 0;
     public int MaxRewardItens = 1;
@@ -19,4 +19,5 @@ public class MissionsState
 
     public List<MissionSlotModel> Slots = new List<MissionSlotModel>();
     public int MaxSlots = 4;
+
 }

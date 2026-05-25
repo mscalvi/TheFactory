@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -46,7 +47,7 @@ public class WeaponsService : MonoBehaviour, ITickable
         }
     }
 
-    void ValidateTarget(WeaponInstance weapon)
+    private void ValidateTarget(WeaponInstance weapon)
     {
         if (weapon.CurrentTarget == null)
             return;
@@ -60,7 +61,10 @@ public class WeaponsService : MonoBehaviour, ITickable
         if (weapon.CurrentTarget.Distance > weapon.ActualRange)
         {
             weapon.CurrentTarget = null;
+            return;
         }
+
+        return;
     }
 
     void AcquireTarget(WeaponInstance weapon)

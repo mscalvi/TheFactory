@@ -21,4 +21,8 @@ public class MissionHelper
         Finished,
         Canceled,
     }
+    public static string MissionKey(string missionId, string variant)
+    {
+        return $"{missionId}|{variant}";
+    }
 }

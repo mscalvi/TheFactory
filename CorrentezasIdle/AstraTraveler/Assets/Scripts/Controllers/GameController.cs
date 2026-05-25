@@ -57,8 +57,12 @@ public class GameController : MonoBehaviour
             GameState.MissionsState = new MissionsState();
             GameState.BestiaryState = new BestiaryState();
 
+            Debug.Log($"a Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
+
             GameCreationService.Initialize(GameState, Database);
         }
+
+        Debug.Log($"A Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
 
         SaveService.Initialize(GameState);
         ProgressTrackerService.Initialize(GameState);
@@ -68,6 +72,7 @@ public class GameController : MonoBehaviour
         PurchaseService.Initialize(GameState, CurrencyService);
         UnlockService.Initialize(GameState);
         UpgradeService.Initialize(GameState, UnlockService);
+        Debug.Log($"B Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
         IngredientService.Initialize(GameState);
         EventService.Initialize(GameState, UnlockService);
         AcquisitonsService.Initialize(GameState);
@@ -76,5 +81,7 @@ public class GameController : MonoBehaviour
         ConfigurationsService.Initialize(GameState);
 
         SaveService.Save();
+
+        Debug.Log($"C Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
     }
 }

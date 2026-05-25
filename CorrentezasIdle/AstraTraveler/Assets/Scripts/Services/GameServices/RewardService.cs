@@ -16,6 +16,11 @@ public class RewardService : MonoBehaviour
         CurrencyService = currency;
     }
 
+    void StartCurrency()
+    {
+        CurrencyService.Add(CurrencyHelper.CurrencyType.Experience, GameState.ExpeditionState.ActualStartExperience);
+    }
+
     void EnemyDeathReward(EnemyRuntime enemy)
     {
         var total = enemy.Experience * GameState.ExpeditionState.ActualExperienceKillBonus;
@@ -88,6 +93,7 @@ public class RewardService : MonoBehaviour
     // Event
     void OnEnable()
     {
+        ExpeditionEvents.OnExpeditionStart += StartCurrency;
         ExpeditionEvents.OnEnemyDeath += EnemyDeathReward;
         ExpeditionEvents.OnDayFinish += DayFinishReward;
         ExpeditionEvents.OnNightFinish += NightFinishReward;
@@ -101,6 +107,7 @@ public class RewardService : MonoBehaviour
 
     void OnDisable()
     {
+        ExpeditionEvents.OnExpeditionStart -= StartCurrency;
         ExpeditionEvents.OnEnemyDeath -= EnemyDeathReward;
         ExpeditionEvents.OnDayFinish -= DayFinishReward;
         ExpeditionEvents.OnNightFinish -= NightFinishReward;

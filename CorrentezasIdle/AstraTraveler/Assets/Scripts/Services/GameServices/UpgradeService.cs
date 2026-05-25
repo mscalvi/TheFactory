@@ -308,6 +308,8 @@ public class UpgradeService : MonoBehaviour
 
     private void CalculateUpgradeValue(UpgradeInstance upgrade)
     {
+        upgrade.CurrentValue = upgrade.StartUpgradeValue;
+
         if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
         {
             for (int i = 1; i <= upgrade.ActualBuy; i++)

@@ -13,6 +13,8 @@ public class ConfigurationsService : MonoBehaviour
 
     public void IncreaseGameSpeed()
     {
+        Debug.Log(GameState.MaxGameSpeed);
+
         if (GameState.ActualGameSpeed < GameState.MaxGameSpeed)
         {
             GameState.ActualGameSpeed += 0.5f;
@@ -20,6 +22,8 @@ public class ConfigurationsService : MonoBehaviour
     }
     public void DecreaseGameSpeed()
     {
+        Debug.Log(GameState.MaxGameSpeed);
+
         if (GameState.ActualGameSpeed > 1)
         {
             GameState.ActualGameSpeed -= 0.5f;

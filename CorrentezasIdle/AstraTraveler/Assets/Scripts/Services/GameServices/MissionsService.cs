@@ -78,7 +78,7 @@ public class MissionsService : MonoBehaviour
             ? mission.TargetsIds[0]
             : "none";
 
-        var key = (mission.Id, targetId);
+        string key = MissionHelper.MissionKey(mission.Id, targetId);
 
         if (!GameState.MissionsState.MissionHistoric.ContainsKey(key))
             return;
@@ -122,7 +122,7 @@ public class MissionsService : MonoBehaviour
             ? mission.TargetsIds[0]
             : "none";
 
-        var key = (mission.Id, targetId);
+        string key = MissionHelper.MissionKey(mission.Id, targetId);
 
         if (!GameState.MissionsState.MissionHistoric.ContainsKey(key))
         {

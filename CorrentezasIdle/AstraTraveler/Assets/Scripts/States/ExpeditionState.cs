@@ -38,6 +38,7 @@ public class ExpeditionState
     public double StartSpawnBudgetGrowth = 0.69;
     public double StartBossThreshold = 200;
 
+    public double StartStartExperience = 0;
     public double StartExperienceKillBonus = 1;
     public double StartDayReward = 1;
     public double StartNightReward = 1;
@@ -62,6 +63,7 @@ public class ExpeditionState
     public double BaseSpawnBudgetGrowth = 0.69;
     public double BaseBossThreshold = 200;
 
+    public double BaseStartExperience = 0;
     public double BaseExperienceKillBonus = 1;
     public double BaseDayReward = 1;
     public double BaseNightReward = 1;
@@ -87,6 +89,7 @@ public class ExpeditionState
     public double ActualSpawnBudgetGrowth = 0.69;
     public double ActualBossThreshold = 200;
 
+    public double ActualStartExperience = 0;
     public double ActualExperienceKillBonus = 1;
     public double ActualDayReward = 1;
     public double ActualNightReward = 1;

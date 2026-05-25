@@ -105,7 +105,7 @@ public static class EnemiesData
                 string[] types = row["PathTypes"].Split('|');
 
                 model.PathTypes =
-                    ParseHelper.EnumList<PathHelper.PathType>(
+                    ParseHelper.EnumFlags<PathHelper.PathType>(
                         row["PathTypes"]
                     );
             }
@@ -117,7 +117,7 @@ public static class EnemiesData
                 string[] envs = row["PathEnvironments"].Split('|');
 
                 model.PathEnvironments =
-                    ParseHelper.EnumList<PathHelper.PathEnvironment>(
+                    ParseHelper.EnumFlags<PathHelper.PathEnvironment>(
                         row["PathEnvironments"]
                     );
             }
@@ -129,7 +129,7 @@ public static class EnemiesData
                 string[] mods = row["PathModifiers"].Split('|');
 
                 model.PathModifiers =
-                    ParseHelper.EnumList<PathHelper.PathModifier>(
+                    ParseHelper.EnumFlags<PathHelper.PathModifier>(
                         row["PathModifiers"]
                     );
             }

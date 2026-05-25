@@ -200,7 +200,7 @@ public class PathService : MonoBehaviour
     {
         List<PathHelper.PathModifier> available = new();
 
-        available.Add(PathHelper.PathModifier.Normal);
+        available.Add(PathHelper.PathModifier.None);
 
         if (day > 50)
         {

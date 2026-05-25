@@ -147,9 +147,9 @@ public class ExpeditionUi : MonoBehaviour
 
         PathText.text = PathHelper.GetPathTypeName(path.Type, language);
 
-        BiomeText.text = PathHelper.GetEnvironmentName(path.Environment.Value, language);
+        BiomeText.text = PathHelper.GetEnvironmentName(path.Environment, language);
 
-        ChangeText.text = PathHelper.GetModifierName(path.Modifier.Value, language);
+        ChangeText.text = PathHelper.GetModifierName(path.Modifier, language);
     }
     private void CurrencySet(CurrencyType type)
     {
