@@ -24,21 +24,21 @@ public static class AmmoData
 
             model.ProjectileId = row["ProjectileId"];
 
-            model.Type = System.Enum.Parse<WeaponHelper.AmmoType>(row["Type"]);
+            model.Type = ParseHelper.Enum<WeaponHelper.AmmoType>(row["Type"]);
 
-            model.Damage = double.Parse(row["Damage"]);
+            model.Damage = ParseHelper.Double(row["Damage"]);
 
-            model.Recharge = double.Parse(row["Recharge"]);
+            model.Recharge = ParseHelper.Double(row["Recharge"]);
 
-            model.Ammount = int.Parse(row["Ammount"]);
+            model.Ammount = ParseHelper.Int(row["Ammount"]);
 
-            model.Special = System.Enum.Parse<WeaponHelper.SpecialType>(row["Special"]);
+            model.Special = ParseHelper.Enum<WeaponHelper.SpecialType>(row["Special"]);
 
-            model.ProjectileSpeed = float.Parse(row["ProjectileSpeed"]);
+            model.ProjectileSpeed = ParseHelper.Float(row["ProjectileSpeed"]);
 
             model.UnlockId = row["UnlockId"];
 
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

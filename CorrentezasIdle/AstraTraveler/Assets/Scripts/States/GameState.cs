@@ -13,6 +13,7 @@ public class GameState
     public ExpeditionState ExpeditionState;
     public MissionsState MissionsState;
     public BestiaryState BestiaryState;
+    public UpgradesState UpgradesState;
 
     // Informações Necessárias
     public float WorldScale = 0.2f;

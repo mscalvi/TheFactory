@@ -125,7 +125,7 @@ public class GameCreationService : MonoBehaviour
     }
 
     private void BuildShips()
-    {                
+    {
         GameState.ExpeditionState.Ship = GameState.DataState.ships["s001"];
         GameState.ExpeditionState.Ship.Weapons.Add(GameState.DataState.weapons["w001"]);
         GameState.ExpeditionState.Ship.Weapons[0].Ammo = GameState.DataState.ammos["a001"];

@@ -20,7 +20,6 @@ public class UpgradeModel
     public UpgradeHelper.UpgradeBuilding Building;
 
     public double UpgradeValue;
-    public double StartValue;
 
     public UpgradeHelper.TargetType TargetType;
     public string TargetId;

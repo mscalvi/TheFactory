@@ -20,19 +20,19 @@ public static class TripulationData
             model.DescriptionEN = row["DescriptionEN"];
             model.DescriptionPT = row["DescriptionPT"];
 
-            model.Type = System.Enum.Parse<TripulationHelper.Type>(row["Type"]);
+            model.Type = ParseHelper.Enum<TripulationHelper.Type>(row["Type"]);
 
-            model.Rarity = System.Enum.Parse<GameHelper.ItemRarity>(row["Rarity"]);
+            model.Rarity = ParseHelper.Enum<GameHelper.ItemRarity>(row["Rarity"]);
 
-            model.Str = int.Parse(row["Str"]);
-            model.Dex = int.Parse(row["Dex"]);
-            model.Int = int.Parse(row["Int"]);
-            model.Luk = int.Parse(row["Luk"]);
-            model.Cha = int.Parse(row["Cha"]);
-            model.Con = int.Parse(row["Con"]);
+            model.Str = ParseHelper.Int(row["Str"]);
+            model.Dex = ParseHelper.Int(row["Dex"]);
+            model.Int = ParseHelper.Int(row["Int"]);
+            model.Luk = ParseHelper.Int(row["Luk"]);
+            model.Cha = ParseHelper.Int(row["Cha"]);
+            model.Con = ParseHelper.Int(row["Con"]);
 
             model.UnlockId = row["UnlockId"];
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

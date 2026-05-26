@@ -188,7 +188,6 @@ public class ExpeditionUi : MonoBehaviour
     }
     private void MissionsTextSet()
     {
-        Debug.Log("Texto de Missões Limpo");
         MissionTextShown = false;
         MissionsText.text = "";
     }
@@ -203,7 +202,6 @@ public class ExpeditionUi : MonoBehaviour
             MissionsText.text = "Mission " + mission.NameEN + " Finished!";
         }
 
-        Debug.Log("Texto de Missões Preenchido");
         MissionTextShown = true;
     }
 

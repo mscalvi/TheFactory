@@ -22,15 +22,15 @@ public static class IngredientsData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
-            model.Type = System.Enum.Parse<IngredientHelper.IngredientType>(row["Type"]);
+            model.Type = ParseHelper.Enum<IngredientHelper.IngredientType>(row["Type"]);
 
-            model.Rarity = System.Enum.Parse<GameHelper.ItemRarity>(row["Rarity"]);
+            model.Rarity = ParseHelper.Enum<GameHelper.ItemRarity>(row["Rarity"]);
 
-            model.Class = System.Enum.Parse<IngredientHelper.IngredientClass>(row["Class"]);
+            model.Class = ParseHelper.Enum<IngredientHelper.IngredientClass>(row["Class"]);
 
             model.UnlockId = row["UnlockId"];
 
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

@@ -16,9 +16,13 @@ public class SaveService : MonoBehaviour
 
     public void Save()
     {
-        string json =
-            JsonConvert.SerializeObject(GameState, Formatting.Indented);
+        JsonSerializerSettings settings = new JsonSerializerSettings
+        {
+            Formatting = Formatting.Indented,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        };
 
+        string json = JsonConvert.SerializeObject(GameState, settings);
         File.WriteAllText(SavePath, json);
 
         Debug.Log("Jogo Salvo");
@@ -34,9 +38,14 @@ public class SaveService : MonoBehaviour
 
         string json = File.ReadAllText(SavePath);
 
-        GameState gameState = JsonConvert.DeserializeObject<GameState>(json);
+        JsonSerializerSettings settings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        };
 
-        Debug.Log("Jogo Carregado");
+        GameState gameState = JsonConvert.DeserializeObject<GameState>(json, settings);
+
+        Debug.Log("Jogo Carregado e Referências Restauradas");
 
         gameState.ExpeditionState.ActiveEnemies.Clear();
 

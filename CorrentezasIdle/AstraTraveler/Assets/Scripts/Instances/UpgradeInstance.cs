@@ -25,7 +25,6 @@ public class UpgradeInstance
     public double BaseUpgradeValue;
     public double ActualUpgradeValue;
 
-    public double FirstValue;
     public double CurrentValue;
 
     public UpgradeHelper.TargetType TargetType;
@@ -66,8 +65,7 @@ public class UpgradeInstance
         BaseUpgradeValue = model.UpgradeValue;
         ActualUpgradeValue = model.UpgradeValue;
 
-        FirstValue = model.StartValue;
-        CurrentValue = model.StartValue;
+        CurrentValue = model.UpgradeValue;
 
         TargetType = model.TargetType;
         TargetId = model.TargetId;

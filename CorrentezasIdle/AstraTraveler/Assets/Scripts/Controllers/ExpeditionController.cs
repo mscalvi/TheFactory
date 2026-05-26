@@ -33,8 +33,6 @@ public class ExpeditionController : MonoBehaviour
     {
         var Game = GameController.Instance.GameState;
 
-        Debug.Log($"1 Expedição: {Game.ExpeditionState.ExpeditionStatus}");
-
         if (Game == null)
         {
             Debug.LogError("ExpeditionController - Game NULL!");
@@ -63,19 +61,16 @@ public class ExpeditionController : MonoBehaviour
 
         if (Expedition.ExpeditionStatus != ExpeditionStatus.Paused)
         {
-            Debug.Log($"2 Expedição: {Game.ExpeditionState.ExpeditionStatus}");
-
             Expedition.ExpeditionStatus = ExpeditionStatus.Loading;
 
-            StartService.Initialize(Game, PathService);
+            Debug.Log("Inicializou Expedição");
 
-            Debug.Log($"3 Expedição: {Game.ExpeditionState.ExpeditionStatus}");
+            StartService.Initialize(Game, PathService);
         }
 
         var Ship = GameController.Instance.GameState.ExpeditionState.Ship;
         if (Ship == null)
         {
-            Debug.Log("ExpeditionController - ShipState NULL");
             return;
         }
 
@@ -108,11 +103,10 @@ public class ExpeditionController : MonoBehaviour
 
         AmmosService.Initialize(Game, TickService);
 
+        ExpeditionEvents.OnShipAtributeChange?.Invoke();
         ExpeditionEvents.OnExpeditionStart?.Invoke();
 
-        Debug.Log($"4 Expedição: {Game.ExpeditionState.ExpeditionStatus}");
         Expedition.ExpeditionStatus = ExpeditionStatus.Running;
-        Debug.Log($"5 Expedição: {Game.ExpeditionState.ExpeditionStatus}");
 
         Save.Save();
     }

@@ -10,7 +10,6 @@ public class WeaponsService : MonoBehaviour, ITickable
     private GameState GameState;
     private ExpeditionState ExpeditionState;
 
-    double maxDamage = 0;
     public void Initialize(GameState gameState, TickService Tick)
     {
         GameState = gameState;
@@ -173,12 +172,14 @@ public class WeaponsService : MonoBehaviour, ITickable
         if (target.ActualLife <= 0)
             return;
 
+        if (GameState.ExpeditionState.ActiveEnemies.Count <= 0)
+            return;
+
         ExpeditionEvents.OnShoot?.Invoke(weapon, target);
 
         ShipDamage(weapon, target);
 
         weapon.Ammo.CurrentAmmount--;
-        Debug.Log(weapon.Ammo.CurrentAmmount);
 
         if (weapon.Ammo.CurrentAmmount <= 0)
         {
@@ -204,9 +205,8 @@ public class WeaponsService : MonoBehaviour, ITickable
             target.State = EnemyHelper.EnemyState.Dying;
         }
 
-        if(maxDamage < damage)
-        {
-            maxDamage = damage;
-        }
+        Debug.Log($"Tiro: {weapon.NamePT} -> Actual: {weapon.ActualDamage} x Base: {weapon.BaseDamage}");
+        Debug.Log($"Tiro: {damage} de Dano -> {weapon.ActualDamage} + {weapon.Ammo.ActualDamage}");
+        Debug.Log(weapon.GetHashCode());
     }
 }

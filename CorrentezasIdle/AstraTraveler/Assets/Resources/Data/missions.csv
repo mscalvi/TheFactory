@@ -1,5 +1,5 @@
 ﻿Id;NameEN;NamePT;DescriptionPT;DescriptionEN;Level;MissionRarity;MissionType;UnlockId;TargetValue;RewardType1;RewardType2;RewardType3;RewardType4;UnlockId;UnlockStatus
 m1001;;Caçada;Matar X Y;;1;Common;EnemyKilling;-;100/Cost;Marcos;Experience;Marcos;Marcos;Start;Available
-m1002;;Sobrevivência;Navegar por X Dias Completos;;2;Common;DaySurvival;;1,01x Dia Máximo;Marcos;Experience;Marcos;Marcos;umc001;Available
-m1003;;Calmaria;Navegar por X Dias Completos sem ser Atingido;;2;Uncommon;DayNoDamage;;0,5x Dia Máximo;Marcos;Experience;Marcos;Marcos;umc001;Available
-m1004;;Coleta;Coletar X Ingredientes do Tipo Y;;2;Uncommon;IngredientFinding;;100/Rarity;Marcos;Experience;Marcos;Marcos;;Unknow
+m1002;;Sobrevivência;Navegar por X Dias Completos;;2;Common;DaySurvival;;1,01x Dia Máximo;Marcos;Experience;Marcos;Marcos;7;Available
+m1003;;Calmaria;Navegar por X Dias Completos sem ser Atingido;;2;Uncommon;DayNoDamage;;0,5x Dia Máximo;Marcos;Experience;Marcos;Marcos;7;Available
+m1004;;Coleta;Coletar X Ingredientes do Tipo Y;;2;Uncommon;IngredientFinding;;100/Rarity;Marcos;Experience;Marcos;Marcos;500;Unknow

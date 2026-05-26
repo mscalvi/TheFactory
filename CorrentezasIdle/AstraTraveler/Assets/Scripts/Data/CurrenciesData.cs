@@ -22,13 +22,13 @@ public static class CurrenciesData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
-            model.Type = System.Enum.Parse<CurrencyHelper.CurrencyType>(row["Type"]);
+            model.Type = ParseHelper.Enum<CurrencyHelper.CurrencyType>(row["Type"]);
 
-            model.Scope = System.Enum.Parse<CurrencyHelper.CurrencyScope>(row["Scope"]);
+            model.Scope = ParseHelper.Enum<CurrencyHelper.CurrencyScope>(row["Scope"]);
 
             model.UnlockId = row["UnlockId"];
 
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

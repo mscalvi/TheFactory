@@ -22,19 +22,19 @@ public static class AcquisitionsData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
-            model.Type = System.Enum.Parse<TripulationHelper.Type>(row["Type"]);
+            model.Type = ParseHelper.Enum<TripulationHelper.Type>(row["Type"]);
 
-            model.TargetType = System.Enum.Parse<UpgradeHelper.TargetType>(row["TargetType"]);
+            model.TargetType = ParseHelper.Enum<UpgradeHelper.TargetType>(row["TargetType"]);
 
-            model.Cost = double.Parse(row["Cost"]);
+            model.Cost = ParseHelper.Double(row["Cost"]);
 
-            model.Currency = System.Enum.Parse<CurrencyHelper.CurrencyType>(row["Currency"]);
+            model.Currency = ParseHelper.Enum<CurrencyHelper.CurrencyType>(row["Currency"]);
 
-            model.Time = float.Parse(row["Time"]);
+            model.Time = ParseHelper.Float(row["Time"]);
 
             model.UnlockId = row["UnlockId"];
 
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

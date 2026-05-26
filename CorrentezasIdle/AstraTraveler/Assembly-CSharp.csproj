@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Instances\AmmoInstance.cs" />
+    <Compile Include="Assets\Scripts\Models\ModifierModel.cs" />
     <Compile Include="Assets\Scripts\Ui\AcquisitonsUi.cs" />
     <Compile Include="Assets\Scripts\Controllers\StudiesController.cs" />
     <Compile Include="Assets\Scripts\Instances\TripulationInstance.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Assets\Scripts\Definitions\CompanyUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Runtimes\ProjectileRuntime.cs" />
     <Compile Include="Assets\Scripts\Instances\IngredientInstance.cs" />
+    <Compile Include="Assets\Scripts\Services\Trackers\BestiaryTrackerService.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\EventService.cs" />
     <Compile Include="Assets\Scripts\Instances\UpgradeInstance.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\SaveService.cs" />
@@ -84,7 +86,6 @@
     <Compile Include="Assets\Scripts\Helpers\EventHelper.cs" />
     <Compile Include="Assets\Scripts\Data\ProjectilesData.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\UpgradeService.cs" />
-    <Compile Include="Assets\Scripts\Services\ExpeditionServices\BestiaryTrackerService.cs" />
     <Compile Include="Assets\Scripts\Controllers\LandingController.cs" />
     <Compile Include="Assets\Scripts\Controllers\TripulationController.cs" />
     <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Assets\Scripts\Runtimes\EnemyRuntime.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\WeaponHelper.cs" />
+    <Compile Include="Assets\Scripts\States\UpgradesState.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\WeaponsService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\AmmosService.cs" />
     <Compile Include="Assets\Scripts\Data\CurrenciesData.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Assets\Scripts\Events\EventBus.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemySpawnerService.cs" />
     <Compile Include="Assets\Scripts\Data\WeaponsData.cs" />
+    <Compile Include="Assets\Scripts\Services\GameServices\ModifierService.cs" />
     <Compile Include="Assets\Scripts\Models\CurrencyModel.cs" />
     <Compile Include="Assets\Scripts\Data\UpgradesData.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\GameCreationService.cs" />

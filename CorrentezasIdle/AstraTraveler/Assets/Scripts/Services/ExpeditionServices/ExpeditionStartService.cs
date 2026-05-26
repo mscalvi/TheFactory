@@ -16,7 +16,7 @@ public class ExpeditionStartService : MonoBehaviour
         GameState = game;
 
         PathService = path;
-
+               
         LoadExpedition(GameState);
         LoadShip(GameState);
         PathService.GenerateNextDestination();
@@ -63,11 +63,24 @@ public class ExpeditionStartService : MonoBehaviour
 
         foreach (var upgrade in GameState.DataState.upgrades.Values)
         {
-            if (upgrade.Scope != UpgradeHelper.UpgradeScope.Expedition)
-                continue;
+            if (upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+            {
+                upgrade.ActualBuy = 0;
+                upgrade.ActualCost = upgrade.BaseCost;
+                upgrade.ActualUpgradeValue = upgrade.BaseUpgradeValue;
 
-            upgrade.CurrentValue = upgrade.StartUpgradeValue + upgrade.FirstValue;
+                if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Finished)
+                {
+                    upgrade.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                }
+
+                upgrade.CurrentValue = upgrade.StartUpgradeValue;
+            }
         }
+
+        GameState.UpgradesState.Modifiers.RemoveAll(
+            x => x.Scope == UpgradeHelper.UpgradeScope.Expedition
+        );
     }
 
     void LoadShip(GameState Game)

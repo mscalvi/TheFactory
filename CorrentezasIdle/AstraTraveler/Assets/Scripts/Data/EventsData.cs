@@ -25,13 +25,13 @@ public static class EventsData
             model.Target = row["Target"];
             model.Trigger = row["Trigger"];
 
-            model.Frequency = System.Enum.Parse<GameHelper.ItemRarity>(row["Frequency"]);
+            model.Frequency = ParseHelper.Enum<GameHelper.ItemRarity>(row["Frequency"]);
 
-            model.EventType = System.Enum.Parse<EventHelper.EventType>(row["EventType"]);
+            model.EventType = ParseHelper.Enum<EventHelper.EventType>(row["EventType"]);
 
             model.UnlockId = row["UnlockId"];
 
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

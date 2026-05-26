@@ -22,22 +22,22 @@ public static class WeaponsData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
-            model.Damage = double.Parse(row["Damage"]);
-            model.Range = double.Parse(row["Range"]);
-            model.AttackSpeed = double.Parse(row["AttackSpeed"]);
-            model.Precision = double.Parse(row["Precision"]);
-            model.CriticalDamage = double.Parse(row["CriticalDamage"]);
+            model.Damage = ParseHelper.Double(row["Damage"]);
+            model.Range = ParseHelper.Double(row["Range"]);
+            model.AttackSpeed = ParseHelper.Double(row["AttackSpeed"]);
+            model.Precision = ParseHelper.Double(row["Precision"]);
+            model.CriticalDamage = ParseHelper.Double(row["CriticalDamage"]);
 
-            model.Special = System.Enum.Parse<WeaponHelper.SpecialType>(row["Special"]);
+            model.Special = ParseHelper.Enum<WeaponHelper.SpecialType>(row["Special"]);
 
-            model.Angle = int.Parse(row["Angle"]);
-            model.AngleMin = int.Parse(row["AngleMin"]);
-            model.AngleMax = int.Parse(row["AngleMax"]);
+            model.Angle = ParseHelper.Int(row["Angle"]);
+            model.AngleMin = ParseHelper.Int(row["AngleMin"]);
+            model.AngleMax = ParseHelper.Int(row["AngleMax"]);
 
-            model.AmmoType = System.Enum.Parse<WeaponHelper.AmmoType>(row["AmmoType"]);
+            model.AmmoType = ParseHelper.Enum<WeaponHelper.AmmoType>(row["AmmoType"]);
 
             model.UnlockId = row["UnlockId"];
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

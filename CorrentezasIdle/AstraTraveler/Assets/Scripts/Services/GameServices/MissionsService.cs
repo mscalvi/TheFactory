@@ -225,6 +225,9 @@ public class MissionsService : MonoBehaviour
 
         foreach (var enemy in GameState.DataState.enemies)
         {
+            if (enemy.Value.BossEnemy)
+                continue;
+            
             if (enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available
                 || enemy.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {

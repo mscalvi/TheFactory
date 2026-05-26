@@ -22,7 +22,10 @@ public static class UpgradesData
             model.DescriptionEN = row["DescriptionEN"];
             model.DescriptionPT = row["DescriptionPT"];
 
-            model.Scope = System.Enum.Parse<UpgradeHelper.UpgradeScope>(row["Scope"]);
+            model.Scope =
+                ParseHelper.Enum<UpgradeHelper.UpgradeScope>(
+                    row["Scope"]
+                );
 
             model.UpgradeType = System.Enum.Parse<UpgradeHelper.UpgradeType>(row["UpgradeType"]);
             model.EffectType = System.Enum.Parse<UpgradeHelper.EffectType>(row["EffectType"]);
@@ -30,17 +33,16 @@ public static class UpgradesData
             model.ExpeditionMenu = System.Enum.Parse<UpgradeHelper.UpgradeMenu>(row["ExpeditionMenu"]);
             model.Building = System.Enum.Parse<UpgradeHelper.UpgradeBuilding>(row["Building"]);
 
-            model.UpgradeValue = double.Parse(row["UpgradeValue"]);
-            model.StartValue = double.Parse(row["StartValue"]);
+            model.UpgradeValue = ParseHelper.Double(row["UpgradeValue"]);
 
             model.TargetType = System.Enum.Parse<UpgradeHelper.TargetType>(row["TargetType"]);
 
             model.TargetId = row["TargetId"];
 
-            model.MaxBuy = int.Parse(row["MaxBuy"]);
+            model.MaxBuy = ParseHelper.Int(row["MaxBuy"]);
 
-            model.Cost = double.Parse(row["Cost"]);
-            model.CostGrowth = double.Parse(row["CostGrowth"]);
+            model.Cost = ParseHelper.Double(row["Cost"]);
+            model.CostGrowth = ParseHelper.Double(row["CostGrowth"]);
 
             model.Currency = System.Enum.Parse<CurrencyHelper.CurrencyType>(row["Currency"]);
 

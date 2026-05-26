@@ -412,6 +412,7 @@ GameObject:
   - component: {fileID: 764383333}
   - component: {fileID: 764383334}
   - component: {fileID: 764383335}
+  - component: {fileID: 764383336}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -465,6 +466,7 @@ MonoBehaviour:
   MissionsService: {fileID: 764383326}
   MissionsTrackerService: {fileID: 764383321}
   UnlockService: {fileID: 764383324}
+  ModifierService: {fileID: 764383336}
   CurrencyService: {fileID: 764383329}
   PurchaseService: {fileID: 764383325}
   IngredientService: {fileID: 764383327}
@@ -652,6 +654,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4932deab97ba2e5408b058616461ed3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &764383336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764383316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054b0891316ca074d9c46674ab474971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1769090434

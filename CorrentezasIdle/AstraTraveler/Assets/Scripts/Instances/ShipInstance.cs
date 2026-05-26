@@ -14,27 +14,25 @@ public class ShipInstance
     public string DescriptionPT;
 
     public int Size;
-    //public int MaxTripulation;
 
-    // Model Base
     public double StartLife;
-    public double StartSpeed;
-    public double StartArmor;
-    public double StartResistence;
-    public double StartRepairPerTripulation;
-
-    // Permanent Increase
     public double BaseLife;
-    public double BaseSpeed;
-    public double BaseArmor;
-    public double BaseResistence;
-    public double BaseRepairPerTripulation;
-
-    // Expedition Increase
     public double ActualLife;
+
+    public double StartSpeed;
+    public double BaseSpeed;
     public double ActualSpeed;
+
+    public double StartArmor;
+    public double BaseArmor;
     public double ActualArmor;
+
+    public double StartResistence;
+    public double BaseResistence;
     public double ActualResistence;
+
+    public double StartRepairPerTripulation;
+    public double BaseRepairPerTripulation;
     public double ActualRepairPerTripulation;
 
     // Actual Value

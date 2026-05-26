@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public MissionsService MissionsService;
     [SerializeField] public MissionsTrackerService MissionsTrackerService;
     [SerializeField] public UnlockService UnlockService;
+    [SerializeField] public ModifierService ModifierService;
     [SerializeField] public CurrencyService CurrencyService;
     [SerializeField] public PurchaseService PurchaseService;
     [SerializeField] public IngredientService IngredientService;
@@ -56,13 +57,10 @@ public class GameController : MonoBehaviour
             GameState.UnlockState = new UnlockState();
             GameState.MissionsState = new MissionsState();
             GameState.BestiaryState = new BestiaryState();
-
-            Debug.Log($"a Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
+            GameState.UpgradesState = new UpgradesState();
 
             GameCreationService.Initialize(GameState, Database);
         }
-
-        Debug.Log($"A Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
 
         SaveService.Initialize(GameState);
         ProgressTrackerService.Initialize(GameState);
@@ -71,8 +69,8 @@ public class GameController : MonoBehaviour
         CurrencyService.Initialize(GameState);
         PurchaseService.Initialize(GameState, CurrencyService);
         UnlockService.Initialize(GameState);
-        UpgradeService.Initialize(GameState, UnlockService);
-        Debug.Log($"B Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
+        ModifierService.Initialize(GameState);
+        UpgradeService.Initialize(GameState, UnlockService, ModifierService);
         IngredientService.Initialize(GameState);
         EventService.Initialize(GameState, UnlockService);
         AcquisitonsService.Initialize(GameState);
@@ -81,7 +79,5 @@ public class GameController : MonoBehaviour
         ConfigurationsService.Initialize(GameState);
 
         SaveService.Save();
-
-        Debug.Log($"C Expedição: {GameState.ExpeditionState.ExpeditionStatus}");
     }
 }

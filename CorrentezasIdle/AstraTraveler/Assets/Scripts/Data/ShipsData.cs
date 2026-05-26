@@ -21,18 +21,18 @@ public static class ShipData
             model.DescriptionEN = row["DescriptionEN"];
             model.DescriptionPT = row["DescriptionPT"];
 
-            model.Life = int.Parse(row["Life"]);
-            model.Speed = int.Parse(row["Speed"]);
-            model.Armor = int.Parse(row["Armor"]);
-            model.Resistence = int.Parse(row["Resistence"]);
+            model.Life = ParseHelper.Int(row["Life"]);
+            model.Speed = ParseHelper.Int(row["Speed"]);
+            model.Armor = ParseHelper.Int(row["Armor"]);
+            model.Resistence = ParseHelper.Int(row["Resistence"]);
 
-            model.Size = int.Parse(row["Size"]);
-            model.Tripulation = int.Parse(row["Tripulation"]);
+            model.Size = ParseHelper.Int(row["Size"]);
+            model.Tripulation = ParseHelper.Int(row["Tripulation"]);
 
-            model.WeaponSlots = int.Parse(row["WeaponSlots"]);
+            model.WeaponSlots = ParseHelper.Int(row["WeaponSlots"]);
 
             model.UnlockId = row["UnlockId"];
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }

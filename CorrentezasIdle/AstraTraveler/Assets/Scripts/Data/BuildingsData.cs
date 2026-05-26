@@ -22,11 +22,11 @@ public static class BuildingsData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
-            model.Type = System.Enum.Parse<UpgradeHelper.UpgradeBuilding>(row["Type"]);
+            model.Type = ParseHelper.Enum<UpgradeHelper.UpgradeBuilding>(row["Type"]);
 
             model.UnlockId = row["UnlockId"];
 
-            model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+            model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
 
             All[model.Id] = model;
         }
