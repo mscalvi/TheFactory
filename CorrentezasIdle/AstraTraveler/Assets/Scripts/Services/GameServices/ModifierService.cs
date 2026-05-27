@@ -250,10 +250,6 @@ public class ModifierService : MonoBehaviour
 
         weapon.BaseDamage = (weapon.StartDamage + Modifier.AdCompMod) * Modifier.MtCompMod;
         weapon.ActualDamage = (weapon.BaseDamage + Modifier.AdExpeMod) * Modifier.MtExpeMod;
-
-        Debug.Log("Modificação do Dano da Arma");
-        Debug.Log($"Upgrade: {weapon.NamePT} -> Actual {weapon.ActualDamage} x Base {weapon.BaseDamage}");
-        Debug.Log(weapon.GetHashCode());
     }
     private void WeaponAtkSpeedModifier(UpgradeInstance upgrade)
     {

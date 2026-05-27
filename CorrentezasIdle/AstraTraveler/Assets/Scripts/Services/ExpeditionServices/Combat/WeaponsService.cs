@@ -193,9 +193,19 @@ public class WeaponsService : MonoBehaviour, ITickable
     {
         double damage = weapon.ActualDamage + weapon.Ammo.ActualDamage;
 
+
         if (target.MarkedEnemy)
         {
             damage *= 2;
+        }
+
+        double criticalRoll = Random.Range(0, 100);
+        double realRoll = criticalRoll / 100;
+
+        if (realRoll < weapon.ActualPrecision)
+        {
+            damage *= weapon.ActualCriticalDamage;
+            Debug.Log($"Crítico! Dano Total: {damage}");
         }
 
         target.ActualLife -= damage;
@@ -205,8 +215,8 @@ public class WeaponsService : MonoBehaviour, ITickable
             target.State = EnemyHelper.EnemyState.Dying;
         }
 
-        Debug.Log($"Tiro: {weapon.NamePT} -> Actual: {weapon.ActualDamage} x Base: {weapon.BaseDamage}");
-        Debug.Log($"Tiro: {damage} de Dano -> {weapon.ActualDamage} + {weapon.Ammo.ActualDamage}");
-        Debug.Log(weapon.GetHashCode());
+        Debug.Log($"Tiro: {damage} de Dano Total\n" +
+            $"Arma: {weapon.ActualDamage} + Munição: {weapon.Ammo.ActualDamage} " +
+            $"+ Critico: {realRoll < weapon.ActualPrecision} + Marcado: {target.MarkedEnemy}");
     }
 }

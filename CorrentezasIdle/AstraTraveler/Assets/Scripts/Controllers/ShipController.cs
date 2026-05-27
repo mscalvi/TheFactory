@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StudiesController : MonoBehaviour
+public class ShipController : MonoBehaviour
 {
-    [SerializeField] StudiesUi StudiesUi;
+    [SerializeField] ShipUi ShipUi;
 
     private void Awake()
     {
@@ -16,8 +16,6 @@ public class StudiesController : MonoBehaviour
             return;
         }
 
-        var PurchaseService = GameController.Instance.PurchaseService;
-
-        StudiesUi.Initialize(Game, PurchaseService);
+        ShipUi.Initialize(Game);
     }
 }
