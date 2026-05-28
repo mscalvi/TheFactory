@@ -196,6 +196,7 @@
     <Compile Include="Assets\Scripts\Models\CurrencyModel.cs" />
     <Compile Include="Assets\Scripts\Data\UpgradesData.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\GameCreationService.cs" />
+    <Compile Include="Assets\Scripts\Services\GameServices\ResponsiveGridService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionControlService.cs" />
   </ItemGroup>
   <ItemGroup>
