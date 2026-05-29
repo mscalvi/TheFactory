@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,7 @@ public class ExpeditionUpgradeDefinition : MonoBehaviour
     private UpgradeInstance upgrade;
     private PurchaseService PurchaseService;
 
+    private bool isFree;
     public void Setup(UpgradeInstance upgradeInstance, PurchaseService purchaseService, GameState GameState)
     {
         upgrade = upgradeInstance;
@@ -75,10 +77,46 @@ public class ExpeditionUpgradeDefinition : MonoBehaviour
 
         CanBuyUpgrade = PurchaseService.CanBuyUpgrade(upgrade);
         UpgradeButton.interactable = CanBuyUpgrade;
+
+        isFree = true;
     }
 
     void OnBuyClicked()
     {
-        PurchaseService.BuyUpgrade(upgrade);
+        if (isFree)
+        {
+            PurchaseService.BuyUpgrade(upgrade);
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    private void OnBuy(UpgradeInstance up)
+    {
+        if (upgrade != up)
+            return;
+
+        isFree = false;
+    }
+    private void OnFinish(UpgradeInstance up)
+    {
+        if (upgrade != up)
+            return;
+
+        isFree = true;
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnUpgradeBuy += OnBuy;
+        GameEvents.OnUpgradeBought += OnFinish;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnUpgradeBuy -= OnBuy;
+        GameEvents.OnUpgradeBought -= OnFinish;
     }
 }

@@ -47,6 +47,8 @@ public class GameController : MonoBehaviour
         GameState = SaveService.Load();
         Debug.Log(Application.persistentDataPath);
 
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         if (GameState == null)
         {
             GameState = new GameState();

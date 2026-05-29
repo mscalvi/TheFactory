@@ -31,6 +31,8 @@ public class LandingController : MonoBehaviour
             return;
         }
 
+        Screen.sleepTimeout = SleepTimeout.SystemSetting;
+
         // Landing
         Ui.Initialize(Game, MissionsService);
     }

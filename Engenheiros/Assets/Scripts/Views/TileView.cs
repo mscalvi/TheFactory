@@ -10,7 +10,6 @@ public class TileView : MonoBehaviour
     public void Setup(TileData tile)
     {
         Tile = tile;
-        Debug.Log("Aqui Chegou 5");
     }
 
     public void SetHeight(TileHeight height)

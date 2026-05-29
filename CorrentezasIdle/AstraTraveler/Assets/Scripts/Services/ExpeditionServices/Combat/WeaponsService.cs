@@ -145,6 +145,9 @@ public class WeaponsService : MonoBehaviour, ITickable
             return false;
         }
 
+        if (weapon.Ammo.IsReloading)
+            return false;
+
         if (weapon.CurrentTarget != null)
         {
             if (weapon.Cooldown <= 0)
@@ -175,15 +178,17 @@ public class WeaponsService : MonoBehaviour, ITickable
         if (GameState.ExpeditionState.ActiveEnemies.Count <= 0)
             return;
 
+        weapon.Ammo.CurrentAmmount--;
+
         ExpeditionEvents.OnShoot?.Invoke(weapon, target);
 
         ShipDamage(weapon, target);
 
-        weapon.Ammo.CurrentAmmount--;
-
         if (weapon.Ammo.CurrentAmmount <= 0)
         {
+            weapon.Ammo.CurrentRecharge = weapon.Ammo.ActualRecharge;
             weapon.Ammo.IsReloading = true;
+            ExpeditionEvents.OnRechargeStart?.Invoke(weapon.Ammo);
         }
 
         weapon.Cooldown = 1 / weapon.ActualAttackSpeed;
@@ -215,8 +220,6 @@ public class WeaponsService : MonoBehaviour, ITickable
             target.State = EnemyHelper.EnemyState.Dying;
         }
 
-        Debug.Log($"Tiro: {damage} de Dano Total\n" +
-            $"Arma: {weapon.ActualDamage} + Munição: {weapon.Ammo.ActualDamage} " +
-            $"+ Critico: {realRoll < weapon.ActualPrecision} + Marcado: {target.MarkedEnemy}");
+        //Debug.Log($"Tiro: {damage} de Dano Total\n Arma: {weapon.ActualDamage} + Munição: {weapon.Ammo.ActualDamage} Critico: {realRoll < weapon.ActualPrecision} + Marcado: {target.MarkedEnemy}");
     }
 }

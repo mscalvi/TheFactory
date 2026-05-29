@@ -121,6 +121,7 @@
     <Compile Include="Assets\Scripts\States\BestiaryState.cs" />
     <Compile Include="Assets\Scripts\Definitions\CompanyCurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\FinalPopUp.cs" />
+    <Compile Include="Assets\Scripts\Services\GameServices\ResponsiveUpgradesGridService.cs" />
     <Compile Include="Assets\Scripts\Definitions\StudyDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionStartService.cs" />
     <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Assets\Scripts\Definitions\ExpeditionUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Definitions\MissionButtonDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\PathService.cs" />
+    <Compile Include="Assets\Scripts\Definitions\ExpeditionWeaponDefinition.cs" />
     <Compile Include="Assets\Scripts\Models\BuildingModel.cs" />
     <Compile Include="Assets\Scripts\Ui\LandingUi.cs" />
     <Compile Include="Assets\Scripts\Models\TripulationModel.cs" />
@@ -196,7 +198,6 @@
     <Compile Include="Assets\Scripts\Models\CurrencyModel.cs" />
     <Compile Include="Assets\Scripts\Data\UpgradesData.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\GameCreationService.cs" />
-    <Compile Include="Assets\Scripts\Services\GameServices\ResponsiveGridService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionControlService.cs" />
   </ItemGroup>
   <ItemGroup>

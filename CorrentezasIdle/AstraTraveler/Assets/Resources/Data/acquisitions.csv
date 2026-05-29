@@ -7,3 +7,4 @@ a1005;Construir Sala de Confraternização;;;Constrói a Sala de Confraternizaç
 a1006;Construir Sala do Tesouro;;;Contrói a Sala do Tesouro, que permite comprar melhorias para ganhar mais Marcos;250;Marcos;1200;Merchant;Building;uub001;Unknow
 a1007;Construir a Academia;;;Constrói a Academia, que permite comprar melhorias para os treinamentos oferecidos para a Tripulação;2500;Marcos;3600;Coach;Building;uub001;Unknow
 a1008;Construir o Laboratório;;;Constrói o Laboratório, que permite comprar melhorias para as pesquisas realizadas;2500;Marcos;3600;Alchemist;Building;uub001;Unknow
+a1009;Construir a Sala dos Caçadores;;;Constrói a Sala dos Caçadores, que permite melhorar o conhecimento sobre os inimigos;10000;Marcos;36000;Hunter;Building;uub001;Unknow

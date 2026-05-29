@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -26,12 +27,13 @@ public class EnemyControllerService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
+        EnemyRegen(dt);
         EnemyContact(dt);
         EnemyMove(dt);
         EnemyDamage(dt);
     }
 
-    void EnemyMove(float dt)
+    void EnemyRegen(float dt)
     {
         var enemies = Expedition.ActiveEnemies;
 
@@ -39,18 +41,50 @@ public class EnemyControllerService : MonoBehaviour, ITickable
         {
             var enemy = enemies[i];
 
-            // Chegou na Área de Ataque ao Navio
+            if (enemy.ActualLife <= 0 || enemy.ActualLife >= enemy.StartLife)
+                continue;
+
+            enemy.RegenTimer += dt;
+
+            if (enemy.RegenTimer >= 1f)
+            {
+                enemy.RegenTimer = 0f;
+
+                enemy.ActualLife += enemy.LifeRegen;
+
+                if (enemy.ActualLife > enemy.StartLife)
+                {
+                    enemy.ActualLife = enemy.StartLife;
+                }
+            }
+        }
+    }
+
+    void EnemyMove(float dt)
+    {
+        var enemies = Expedition.ActiveEnemies;
+
+        double shipRadius = Expedition.Ship.Size / 2.0;
+
+        for (int i = enemies.Count - 1; i >= 0; i--)
+        {
+            var enemy = enemies[i];
+
             if (enemy.State == EnemyHelper.EnemyState.Moving || enemy.State == EnemyHelper.EnemyState.Dying)
             {
-                if (enemy.Distance - enemy.Range > enemy.Speed * dt)
+                double enemyRadius = enemy.Size / 2.0;
+                double stopDistance = enemy.Range + shipRadius + enemyRadius;
+
+                if (enemy.Distance - stopDistance > enemy.Speed * dt)
                 {
                     enemy.Distance -= enemy.Speed * dt;
-                } else
+                }
+                else
                 {
-                    enemy.Distance = enemy.Range;
+                    enemy.Distance = stopDistance;
                 }
 
-                if (enemy.Distance <= enemy.Range)
+                if (enemy.Distance <= stopDistance)
                 {
                     if (enemy.State != EnemyHelper.EnemyState.Dying)
                     {

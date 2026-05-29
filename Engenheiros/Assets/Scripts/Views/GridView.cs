@@ -17,7 +17,6 @@ public class GridView : MonoBehaviour
 
     public void BuildGrid(TileData[,] Grid)
     {
-        Debug.Log("Aqui Chegou 3");
         var width = Grid.GetLength(0);
         var height = Grid.GetLength(1);
 
@@ -29,6 +28,7 @@ public class GridView : MonoBehaviour
 
                 Vector3 position = GridService.GetWorldPosition(x, y);
 
+                Debug.Log($"Instanciando {x} {y}");
                 TileView view = Instantiate(
                     TilePrefab,
                     position,
@@ -39,6 +39,5 @@ public class GridView : MonoBehaviour
                 view.Setup(tile);
             }
         }
-        Debug.Log("Aqui Chegou 4");
     }
 }

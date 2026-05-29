@@ -55,6 +55,8 @@ public static class EnemiesData
             model.SpawnDistance = ParseHelper.Double(row["SpawnDistance"]);
             model.SpawnDistanceGrowth = ParseHelper.Double(row["SpawnDistanceGrowth"]);
 
+            model.Size = ParseHelper.Double(row["Size"]);
+
             model.Experience = ParseHelper.Double(row["ExperienceKill"]);
 
             model.Special =

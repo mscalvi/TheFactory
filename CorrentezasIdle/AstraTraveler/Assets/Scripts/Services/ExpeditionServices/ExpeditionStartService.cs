@@ -105,6 +105,7 @@ public class ExpeditionStartService : MonoBehaviour
             weapon.Ammo.ActualProjectileSpeed = weapon.Ammo.BaseProjectileSpeed;
             weapon.Ammo.ActualRecharge = weapon.Ammo.BaseRecharge;
             weapon.Ammo.CurrentRecharge = weapon.Ammo.BaseRecharge;
+            weapon.CurrentTarget = null;
         }
 
         Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.ActualLife;

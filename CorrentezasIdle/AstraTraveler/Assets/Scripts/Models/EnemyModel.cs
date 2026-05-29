@@ -31,6 +31,8 @@ public class EnemyModel
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
 
+    public double Size;
+
     public double Experience;
 
     public EnemyHelper.EnemySpecial Special;

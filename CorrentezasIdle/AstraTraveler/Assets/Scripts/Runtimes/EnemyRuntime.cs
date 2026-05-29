@@ -28,6 +28,7 @@ public class EnemyRuntime
     public double LifeGrowth;
     public double LifeRegen;
     public double LifeRegenGrowth;
+    public float RegenTimer;
     public double Speed;
     public double SpeedGrowth;
     public double Armor;
@@ -40,6 +41,8 @@ public class EnemyRuntime
     public double AttackSpeedGrowth;
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
+
+    public double Size;
 
     public double Experience;
 
@@ -95,6 +98,7 @@ public class EnemyRuntime
         LifeGrowth = model.LifeGrowth;
         LifeRegen = model.LifeRegen;
         LifeRegenGrowth = model.LifeRegenGrowth;
+        RegenTimer = 0;
         Speed = model.Speed;
         SpeedGrowth = model.SpeedGrowth;
         Armor = model.Armor;
@@ -107,6 +111,8 @@ public class EnemyRuntime
         AttackSpeedGrowth = model.AttackSpeedGrowth;
         SpawnDistance = model.SpawnDistance;
         SpawnDistanceGrowth = model.SpawnDistanceGrowth;
+
+        Size = model.Size;
 
         Experience = model.Experience;
 

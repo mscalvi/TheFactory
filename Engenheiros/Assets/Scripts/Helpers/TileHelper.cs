@@ -10,6 +10,8 @@ public class TileHelper
         Low,
         Normal,
         High,
+        Entry,
+        Laboratory,
     }
 
     public enum TileType
@@ -17,3 +19,5 @@ public class TileHelper
         None,
     }
 }
+
+

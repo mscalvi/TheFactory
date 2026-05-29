@@ -14,6 +14,7 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] GameObject ShipPanel;
     [SerializeField] GameObject CrewPanel;
     [SerializeField] GameObject ItensPanel;
+    [SerializeField] GameObject WeaponsPanel;
     [SerializeField] GameObject SettingsPanel;
 
     [SerializeField] TextMeshProUGUI DaysPastText;
@@ -39,7 +40,9 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] Transform ExpeditionShipUpgradesPanel;
     [SerializeField] Transform ExpeditionCrewUpgradesPanel;
     [SerializeField] Transform ExpeditionItensUpgradesPanel;
+    [SerializeField] Transform ExpeditionWeaponsControlPanel;
     [SerializeField] ExpeditionUpgradeDefinition UpgradePrefab;
+    [SerializeField] ExpeditionWeaponDefinition WeaponPrefab;
     Dictionary<string, ExpeditionUpgradeDefinition> shipUpgradeUI = new();
 
     float MissionsTextTimer = 2000f;
@@ -117,6 +120,14 @@ public class ExpeditionUi : MonoBehaviour
         HideAllMenus();
         ItensPanel.SetActive(true);
     }
+    public void OpenWeaponsMenu()
+    {
+        HideAllMenus();
+
+        WeaponsPanel.SetActive(true);
+
+        BuildWeapons(ExpeditionWeaponsControlPanel);
+    }
     public void OpenSettingMenu()
     {
         HideAllMenus();
@@ -127,6 +138,7 @@ public class ExpeditionUi : MonoBehaviour
         ShipPanel.SetActive(false);
         CrewPanel.SetActive(false);
         ItensPanel.SetActive(false);
+        WeaponsPanel.SetActive(false);
         SettingsPanel.SetActive(false);
     }
 
@@ -322,7 +334,22 @@ public class ExpeditionUi : MonoBehaviour
             shipUpgradeUI[upgrade.Value.Id] = ui;
         }
     }
+    private void BuildWeapons(Transform parent)
+    {
+        foreach (Transform child in parent)
+        {
+            Destroy(child.gameObject);
+        }
 
+        foreach (var weapon in GameState.ExpeditionState.Ship.Weapons)
+        {
+            var obj = Instantiate(WeaponPrefab, parent);
+
+            var ui = obj.GetComponent<ExpeditionWeaponDefinition>();
+
+            ui.Setup(weapon, GameState);
+        }
+    }
 
     // Configurações
     public void InreaseSpeedButton()
@@ -365,7 +392,7 @@ public class ExpeditionUi : MonoBehaviour
     void OnEnable()
     {
         ExpeditionEvents.OnShipAtributeChange += RefreshShipUi;
-        GameEvents.OnUpgradeBuy += RefreshUpgradeUi;
+        GameEvents.OnUpgradeBought += RefreshUpgradeUi;
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
         GameEvents.OnMissionUpdate += MissionUpdate;
@@ -383,7 +410,7 @@ public class ExpeditionUi : MonoBehaviour
     void OnDisable()
     {
         ExpeditionEvents.OnShipAtributeChange -= RefreshShipUi;
-        GameEvents.OnUpgradeBuy -= RefreshUpgradeUi;
+        GameEvents.OnUpgradeBought -= RefreshUpgradeUi;
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
         GameEvents.OnMissionUpdate -= MissionUpdate;
@@ -404,6 +431,7 @@ public class ExpeditionUi : MonoBehaviour
         BuildShipUpgrades(ExpeditionShipUpgradesPanel);
         BuildCrewUpgrades(ExpeditionCrewUpgradesPanel);
         BuildItensUpgrades(ExpeditionItensUpgradesPanel);
+        BuildWeapons(ExpeditionWeaponsControlPanel);
 
         foreach (var upgrade in GameState.DataState.upgrades)
         {

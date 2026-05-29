@@ -40,6 +40,8 @@ public class ExpeditionController : MonoBehaviour
 
         TickService.Initialize(Game);
 
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         var Missions = GameController.Instance.MissionsService;
         var CurrencyService = GameController.Instance.CurrencyService;
         var PurchaseService = GameController.Instance.PurchaseService;

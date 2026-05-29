@@ -34,6 +34,8 @@ public class UpgradeService : MonoBehaviour
         {
             UnlockService.UnlockUpgrade(upgrade);
         }
+
+        GameEvents.OnUpgradeBought?.Invoke(upgrade);
     }
 
     private void CalculateCurrentValue(UpgradeInstance upgrade)

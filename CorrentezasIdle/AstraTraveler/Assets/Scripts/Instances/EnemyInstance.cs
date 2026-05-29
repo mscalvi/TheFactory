@@ -35,6 +35,8 @@ public class EnemyInstance
     public double SpawnDistance;
     public double SpawnDistanceGrowth;
 
+    public double Size;
+
     public double Experience;
 
     public EnemyHelper.EnemySpecial Special;
@@ -96,6 +98,8 @@ public class EnemyInstance
         AttackSpeedGrowth = model.AttackSpeedGrowth;
         SpawnDistance = model.SpawnDistance;
         SpawnDistanceGrowth = model.SpawnDistanceGrowth;
+
+        Size = model.Size;
 
         Experience = model.Experience;
 

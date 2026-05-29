@@ -20,6 +20,9 @@ public class AmmosService : MonoBehaviour, ITickable
 
         foreach (var Weapon in GameState.ExpeditionState.Ship.Weapons)
         {
+            if (Weapon == null || Weapon.Ammo == null)
+                continue;
+
             GameState.ExpeditionState.ActiveAmmos.Add(Weapon.Ammo);
         }
     }
@@ -39,12 +42,14 @@ public class AmmosService : MonoBehaviour, ITickable
             }
 
             ammo.CurrentRecharge -= dt;
+            ExpeditionEvents.OnRechargeProgress?.Invoke(ammo);
 
             if (ammo.CurrentRecharge <= 0)
             {
                 ammo.IsReloading = false;
                 ammo.CurrentAmmount = ammo.ActualAmmount;
                 ammo.CurrentRecharge = ammo.ActualRecharge;
+                ExpeditionEvents.OnRechargeEnd?.Invoke(ammo);
             }
         }
     }

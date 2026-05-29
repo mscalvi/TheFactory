@@ -63,14 +63,14 @@
     <Compile Include="Assets\Scripts\States\GridState.cs" />
     <Compile Include="Assets\Scripts\Views\TileView.cs" />
     <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />
-    <Compile Include="Assets\Scripts\Controllers\GameController.cs" />
     <Compile Include="Assets\Scripts\Views\GridView.cs" />
-    <Compile Include="Assets\Scripts\Controllers\ExpeditionController.cs" />
     <Compile Include="Assets\Scripts\States\GameState.cs" />
     <Compile Include="Assets\Scripts\UI\BootstrapUi.cs" />
     <Compile Include="Assets\Scripts\Helpers\TileHelper.cs" />
     <Compile Include="Assets\Scripts\Services\GridService.cs" />
     <Compile Include="Assets\Scripts\Input\GridInput.cs" />
+    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\ExpeditionManager.cs" />
     <Compile Include="Assets\Scripts\Data\TileData.cs" />
     <Compile Include="Assets\Scripts\Events\EventBus.cs" />
   </ItemGroup>
