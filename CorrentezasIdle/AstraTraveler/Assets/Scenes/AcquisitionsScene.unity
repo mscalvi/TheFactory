@@ -526,6 +526,7 @@ GameObject:
   - component: {fileID: 424679803}
   - component: {fileID: 424679802}
   - component: {fileID: 424679804}
+  - component: {fileID: 424679805}
   m_Layer: 5
   m_Name: CurrencyPanel
   m_TagString: Untagged
@@ -549,8 +550,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.7534582}
   m_AnchorMax: {x: 0.5, y: 0.7534582}
-  m_AnchoredPosition: {x: 0, y: 115.79999}
-  m_SizeDelta: {x: 800, y: 165.83}
+  m_AnchoredPosition: {x: 0, y: 128.71}
+  m_SizeDelta: {x: 800, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &424679802
 MonoBehaviour:
@@ -607,13 +608,30 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 200, y: 75}
+  m_CellSize: {x: 0, y: 0}
   m_Spacing: {x: 0, y: 0}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_Constraint: 1
+  m_ConstraintCount: 4
+--- !u!114 &424679805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424679800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60611900f03d18a4291c227df659bbc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Grid: {fileID: 424679804}
+  Columns: 4
+  Lines: 1
+  Spacing: 10
+  Padding: 10
 --- !u!1 &456989459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,7 +1149,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 573092234}
   m_HandleRect: {fileID: 573092233}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1735,8 +1753,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 325544571}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
@@ -1773,13 +1791,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1192915562}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69be4b5f6d3420447966f124b9c2e607, type: 3}
+  m_Script: {fileID: 11500000, guid: 2e2b0651a6bf70c42a4a2f575f958173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Grid: {fileID: 1192915564}
   Columns: 1
-  Spacing: 10
-  Padding: 10
+  Spacing: 0
+  Padding: 0
 --- !u!1 &1275483641
 GameObject:
   m_ObjectHideFlags: 0
@@ -2220,8 +2238,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -135.48169}
-  m_SizeDelta: {x: 800, y: 1215.3965}
+  m_AnchoredPosition: {x: 0, y: -122.57}
+  m_SizeDelta: {x: 800, y: 1241.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1985426915
 MonoBehaviour:
@@ -2238,7 +2256,7 @@ MonoBehaviour:
   m_Content: {fileID: 1192915563}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 0
+  m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -2247,7 +2265,7 @@ MonoBehaviour:
   m_HorizontalScrollbar: {fileID: 807433653}
   m_VerticalScrollbar: {fileID: 116085667}
   m_HorizontalScrollbarVisibility: 1
-  m_VerticalScrollbarVisibility: 0
+  m_VerticalScrollbarVisibility: 1
   m_HorizontalScrollbarSpacing: -3
   m_VerticalScrollbarSpacing: -3
   m_OnValueChanged:

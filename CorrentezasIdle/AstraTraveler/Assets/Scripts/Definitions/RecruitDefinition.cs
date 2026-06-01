@@ -32,7 +32,7 @@ public class RecruitDefinition : MonoBehaviour
         if (PurchaseService.CanBuyRecruit())
         {
             Debug.Log("Contratando!");
-            GameEvents.OnTripulationPurchase?.Invoke(tripulation);
+            PurchaseService.BuyTripulation(tripulation);
         } else
         {
             Debug.Log("Te falta prestígio!");

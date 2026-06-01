@@ -32,6 +32,7 @@ public class UpgradeHelper
         ShipImproveRoom,
         StudyRoom,
         HuntersRoom,
+        StockRoom,
     }
 
     public enum UpgradeType
@@ -63,6 +64,7 @@ public class UpgradeHelper
         WeaponAtackSpeed,
         WeaponRange,
         AmmoDamage,
+        AmmoAmmount,
         ExperiencePerKill,
         ExperienceChance,
         ExperienceIncome,

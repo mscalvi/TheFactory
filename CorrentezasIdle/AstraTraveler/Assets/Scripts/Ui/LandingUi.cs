@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static CurrencyHelper;
 
 public class LandingUi : MonoBehaviour
 {
@@ -38,6 +39,10 @@ public class LandingUi : MonoBehaviour
 
     [SerializeField] MissionsPopUp MissionsPopUp;
 
+    Dictionary<CurrencyType, CompanyCurrencyDefinition> currencyUi = new();
+    [SerializeField] Transform CompanyCurrencyPanel;
+    [SerializeField] CompanyCurrencyDefinition CurrencyPrefab;
+
     public void Initialize(GameState gameState, MissionsService missionsService)
     {
         GameState = gameState;
@@ -46,6 +51,7 @@ public class LandingUi : MonoBehaviour
         BlockButtons();
         ReleaseButtons();
         MissionSet();
+        BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
     }
 
     // Missions
@@ -122,7 +128,6 @@ public class LandingUi : MonoBehaviour
         TrainingButton.interactable = false;
         AlchemyButton.interactable = false;
     }
-
     private void ReleaseButtons()
     {
         var Unlock = GameState.UnlockState;
@@ -166,12 +171,10 @@ public class LandingUi : MonoBehaviour
             BestiaryName.text = "Bestiário";
         }
     }
-
     public void ExpeditionButtonFunction()
     {
         SceneManager.LoadScene("ExpeditionScene");
     }
-
     public void SettingsButtonFuncion()
     {
         bool active = ConfigsPanel.activeSelf;
@@ -179,7 +182,6 @@ public class LandingUi : MonoBehaviour
         ConfigsPanel.SetActive(!active);
         MenusPanel.SetActive(active);
     }
-
     public void BotaoSecretoDaGrana()
     {
         GameEvents.MoneyTest?.Invoke();
@@ -215,5 +217,42 @@ public class LandingUi : MonoBehaviour
     public void AlchemyButtonFuncion()
     {
         SceneManager.LoadScene("AlchemyScene");
+    }
+
+    // Currency
+
+    public void BuildCurrencies(CurrencyScope scope, Transform parent)
+    {
+        var currencies = GameState.DataState.currencies;
+
+        foreach (Transform child in parent)
+            Destroy(child.gameObject);
+
+        if (scope == CurrencyScope.Company)
+            currencyUi.Clear();
+
+        var ordered = new List<CurrencyInstance>();
+
+        foreach (var pair in currencies)
+        {
+            var c = pair.Value;
+
+            if (c.Scope != scope)
+                continue;
+
+            ordered.Add(c);
+        }
+
+        ordered.Sort((a, b) => string.Compare(a.Id, b.Id));
+
+        foreach (var currency in ordered)
+        {
+            var obj = Instantiate(CurrencyPrefab, parent);
+
+            var ui = obj.GetComponent<CompanyCurrencyDefinition>();
+            ui.Setup(currency, GameState.DataState);
+
+            currencyUi[currency.Type] = ui;
+        }
     }
 }

@@ -57,7 +57,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         {
             accumulatedBudget += waveBudget;
             ExpeditionEvents.NoWaveSpawn?.Invoke();
-            Debug.Log("Sem Wave! Se Prepare!");
             return;
         }
 
@@ -229,9 +228,10 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
     private void SpawnBoss()
     {
-        Debug.Log("Spawn em Boss! Preparado?");
-
         List<EnemyInstance> validBosses = new();
+
+        if (GameState.ExpeditionState.DayCounter < 16)
+            return;
 
         foreach (var enemy in GameState.DataState.enemies.Values)
         {

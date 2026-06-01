@@ -15,6 +15,7 @@ public class AcquisitonDefinition : MonoBehaviour
 
     public GameObject BuyContainer;
     public TMP_Text UpgradePrice;
+    public Image CurrencyIcon;
     public Button UpgradeButton;
 
     public GameObject ProgressContainer;
@@ -45,6 +46,20 @@ public class AcquisitonDefinition : MonoBehaviour
             UpgradeDescription.text = Acquisition.DescriptionPT;
         }
 
+        string curId = ".";
+
+        foreach (var currency in GameState.DataState.currencies.Values)
+        {
+            if (currency.Type == acq.Currency)
+            {
+                curId = currency.Id;
+            }
+        }
+
+        Sprite icon = Resources.Load<Sprite>($"Sprites/Currencies/{curId}");
+
+        if (icon != null)
+            CurrencyIcon.sprite = icon;
 
         string time = FormatTime(acq.TotalTime);
         TotalTime.text = time;

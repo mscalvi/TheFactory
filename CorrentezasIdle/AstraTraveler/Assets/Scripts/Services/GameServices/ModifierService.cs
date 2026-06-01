@@ -68,6 +68,9 @@ public class ModifierService : MonoBehaviour
                     case UpgradeHelper.EffectType.AmmoDamage:
                         AmmoDamageModifier(upgrade);
                         break;
+                    case UpgradeHelper.EffectType.AmmoAmmount:
+                        AmmoAmmountModifier(upgrade);
+                        break;
                     default:
                         Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
                         break;
@@ -282,6 +285,15 @@ public class ModifierService : MonoBehaviour
 
         ammo.BaseDamage = (ammo.StartDamage + Modifier.AdCompMod) * Modifier.MtCompMod;
         ammo.ActualDamage = (ammo.BaseDamage + Modifier.AdExpeMod) * Modifier.MtExpeMod;
+    }
+    private void AmmoAmmountModifier(UpgradeInstance upgrade)
+    {
+        GameState.DataState.ammos.TryGetValue(upgrade.TargetId, out var ammo);
+
+        var Modifier = ApplyModifiers(upgrade);
+
+        ammo.BaseAmmount = (int)((ammo.StartAmmount + Modifier.AdCompMod) * Modifier.MtCompMod);
+        ammo.ActualAmmount = (int)((ammo.BaseAmmount + Modifier.AdExpeMod) * Modifier.MtExpeMod);
     }
 
     // Modificadores de Upgrades

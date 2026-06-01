@@ -80,12 +80,7 @@ public class RewardService : MonoBehaviour
 
     private void DestinationArrivalEvent()
     {
-        var prestige = GameState.DataState.currencies[CurrencyHelper.CurrencyType.Prestige];
-
-        if (prestige.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
-        {
-            prestige.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
-        }
+        Debug.Log($"Prestígio: +{GameState.ExpeditionState.ReachedDestinations}");
 
         CurrencyService.Add(CurrencyType.Prestige, GameState.ExpeditionState.ReachedDestinations);
     }
