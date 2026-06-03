@@ -1,0 +1,9 @@
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;InGame
+ucc001;;Coletar dos Peixes;;Permite coletar Ingredientes de Peixes;Company;Additive;ClickTarget;None;FishingRoom;1;Meta;Fish;1;50;1;Marcos;;Unknow;Ok
+ucc002;;Observar Alvos;;Aumenta o número de alvos marcados simultaneamente;Company;Additive;ClickMax;None;FishingRoom;1;Meta;;0;200;1.8;Marcos;;Unknow;Ok
+ucc003;;Raridade dos Ingredientes de Peixes;;Aumenta a raridade dos Ingredientes possíveis de serem encontrados em Peixes;Company;Additive;ClickRarity;None;FishingRoom;1;Meta;Fish;3;3000;3.8;Marcos;;Unknow;Ok
+ugc001;;Percepção do Tempo 1;;Permite Aumentar a Velocidade do Jogo;Company;Additive;GameSpeed;None;CompanyRoom;1;Meta;;1;100;1;Marcos;Start;Available;Ok
+umc001;;Trabalhos Simultâneos;;Permite realizar mais um Trabalho simultâneo;Company;Additive;MissionsMax;None;CompanyRoom;1;Missions;;4;3;1.8;Marcos;Start;Available;Ok
+umc002;;Pagamento por Trabalho;;Aumenta o total de cada recompensa ganha ao finalizar um Trabalho;Company;Multiplicative;MissionsReward;None;CompanyRoom;1.1;Missions;;0;15;1.11;Marcos;t008;Unknow;Ok
+umc003;;Formas de Pagamento;;Aumenta o número de recompensas ganhas ao finalizar um Trabalho;Company;Additive;MissionsOptions;None;CompanyRoom;1;Missions;;3;200;3.9;Marcos;t008;Unknow;Ok
+utc001;;Limite de Tripulação;;Aumenta o Limite de membros na Tripulação;Company;Additive;TripulationMax;None;LivingRoom;1;Meta;;0;300;2.8;Marcos;Start;Available;Ok

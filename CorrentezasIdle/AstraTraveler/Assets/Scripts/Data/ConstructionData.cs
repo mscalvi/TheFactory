@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 
-public static class AcquisitionsData
+public static class ConstructionData
 {
-    public static Dictionary<string, AcquisitionModel> All = new();
+    public static Dictionary<string, ConstructionModel> All = new();
 
     public static void Load()
     {
         All.Clear();
 
-        var rows = CSVLoaderService.Load("Data/Acquisitions");
+        var rows = CSVLoaderService.Load("Data/Constructions");
 
         foreach (var row in rows)
         {
-            AcquisitionModel model = new();
+            ConstructionModel model = new();
 
             model.Id = row["Id"];
 
@@ -31,6 +31,8 @@ public static class AcquisitionsData
             model.Currency = ParseHelper.Enum<CurrencyHelper.CurrencyType>(row["Currency"]);
 
             model.Time = ParseHelper.Float(row["Time"]);
+
+            model.Level = ParseHelper.Int(row["Level"]);
 
             model.UnlockId = row["UnlockId"];
 

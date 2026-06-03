@@ -1,15 +1,33 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class UpgradesData
 {
     public static Dictionary<string, UpgradeModel> All = new();
 
+    private static readonly string[] Files =
+    {
+    "Data/upweapons",
+    "Data/upammos",
+    "Data/upship",
+    "Data/upincome",
+    "Data/upmeta"
+    };
+
     public static void Load()
     {
         All.Clear();
 
-        var rows = CSVLoaderService.Load("Data/Upgrades");
+        foreach (var file in Files)
+        {
+            ColumnsToLoad(
+                CSVLoaderService.Load(file)
+            );
+        }
+    }
 
+    private static void ColumnsToLoad(List<Dictionary<string, string>> rows)
+    {
         foreach (var row in rows)
         {
             UpgradeModel model = new();
@@ -48,6 +66,14 @@ public static class UpgradesData
 
             model.UnlockId = row["UnlockId"];
             model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
+
+            if (All.ContainsKey(model.Id))
+            {
+                Debug.LogError($"Upgrade duplicado: {model.Id}");
+                continue;
+            }
+
+            All.Add(model.Id, model);
 
             All[model.Id] = model;
         }

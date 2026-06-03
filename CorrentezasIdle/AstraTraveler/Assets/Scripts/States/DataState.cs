@@ -17,7 +17,7 @@ public class DataState
     public Dictionary<IngredientHelper.IngredientType, IngredientInstance> ingredients;
 
     public Dictionary<string, UpgradeInstance> upgrades;
-    public Dictionary<string, AcquisitionInstance> acquisitions;
+    public Dictionary<string, ConstructionInstance> constructions;
 
     public Dictionary<string, BuildingInstance> buildings;
 

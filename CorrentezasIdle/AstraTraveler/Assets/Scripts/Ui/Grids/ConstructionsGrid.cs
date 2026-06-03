@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AcquisitonsGrid : MonoBehaviour
+public class ConstructionsGrid : MonoBehaviour
 {
     public GridLayoutGroup Grid;
 

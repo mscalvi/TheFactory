@@ -52,6 +52,8 @@ public class UpgradeHelper
         MissionsReward,
         MissionsOptions,
         MissionsCancel,
+        ConstructionTime,
+        ConstructionCost,
         ShipMaxLife,
         ShipArmor,
         ShipResistence,
@@ -63,8 +65,11 @@ public class UpgradeHelper
         WeaponDamage,
         WeaponAtackSpeed,
         WeaponRange,
+        WeaponCritical,
+        WeaponPrecision,
         AmmoDamage,
         AmmoAmmount,
+        AmmoRecharge,
         ExperiencePerKill,
         ExperienceChance,
         ExperienceIncome,
@@ -86,6 +91,7 @@ public class UpgradeHelper
         Missions,
         Upgrade,
         Ammo,
+        Construction,
     }
 
 }

@@ -42,15 +42,24 @@ public class UnlockService : MonoBehaviour
 
     public void UnlockBuilding(BuildingInstance buildingInstance)
     {
-        foreach (var upgradeData in DataState.upgrades)
+        if (buildingInstance.Level == 0)
         {
-            if (upgradeData.Value.UnlockId == buildingInstance.Id)
-            {
-                upgradeData.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-            }
-        }
+            buildingInstance.Level = 1;
 
-        GameState.DataState.buildings[buildingInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+            foreach (var upgradeData in DataState.upgrades)
+            {
+                if (upgradeData.Value.UnlockId == buildingInstance.Id)
+                {
+                    upgradeData.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                }
+            }
+
+            GameState.DataState.buildings[buildingInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        }
+        else
+        {
+            buildingInstance.Level++;
+        }
     }
 
     public void UnlockTripulation(TripulationInstance tripulationInstance)
@@ -90,7 +99,7 @@ public class UnlockService : MonoBehaviour
                 break;
         }
 
-        foreach (var acquistion in GameState.DataState.acquisitions)
+        foreach (var acquistion in GameState.DataState.constructions)
         {
             if (acquistion.Value.UnlockType == tripulationInstance.Type)
             {
@@ -105,7 +114,7 @@ public class UnlockService : MonoBehaviour
         GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
     }
 
-    private void AcquisitonUpgrade(AcquisitionInstance acq) 
+    private void ConstructionUpgrade(ConstructionInstance acq) 
     {
         string acqId = acq.Id.Substring(0,2);
 
@@ -123,32 +132,18 @@ public class UnlockService : MonoBehaviour
                 break;
         }
 
-        foreach (var upgrade in GameState.DataState.upgrades.Values)
-        {
-            if (upgrade.UnlockId == acq.Id)
-            {
-                upgrade.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-            }
-        }
-
-        foreach (var acquistion in GameState.DataState.acquisitions.Values)
-        {
-            if (acquistion.UnlockId == acq.Id)
-            {
-                acquistion.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-            }
-        }
+        GameEvents.OnConstructionUnlocked?.Invoke(acq);
     }
 
     private void OnEnable()
     {
-        GameEvents.OnAcquisitionFinished += AcquisitonUpgrade;
+        GameEvents.OnConstructionFinished += ConstructionUpgrade;
         GameEvents.OnTripulationPurchase += UnlockTripulation;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnAcquisitionFinished -= AcquisitonUpgrade;
+        GameEvents.OnConstructionFinished -= ConstructionUpgrade;
         GameEvents.OnTripulationPurchase -= UnlockTripulation;
     }
 }

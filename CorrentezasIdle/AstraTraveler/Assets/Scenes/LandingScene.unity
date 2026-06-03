@@ -1156,7 +1156,7 @@ GameObject:
   - component: {fileID: 374657813}
   - component: {fileID: 374657812}
   m_Layer: 5
-  m_Name: AquireBtn
+  m_Name: ConstructionBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1228,7 +1228,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 478217384}
         m_TargetAssemblyTypeName: LandingUi, Assembly-CSharp
-        m_MethodName: AcquisitionButtonFuncion
+        m_MethodName: ConstruvtionButtonFuncion
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1324,8 +1324,8 @@ MonoBehaviour:
   StudyName: {fileID: 926282684}
   UpgradesButton: {fileID: 886852703}
   UpgradesName: {fileID: 219518372}
-  AcquisitionsButton: {fileID: 374657812}
-  AcquisitonsName: {fileID: 506706753}
+  ConstructionsButton: {fileID: 374657812}
+  ConstructionsName: {fileID: 506706753}
   TrainingButton: {fileID: 561188967}
   TrainingName: {fileID: 1445572214}
   ShipButton: {fileID: 1325985025}

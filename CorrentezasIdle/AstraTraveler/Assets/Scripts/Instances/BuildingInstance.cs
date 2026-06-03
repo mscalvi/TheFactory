@@ -16,6 +16,8 @@ public class BuildingInstance
 
     public UpgradeHelper.UpgradeBuilding Type;
 
+    public int Level;
+
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
@@ -31,6 +33,8 @@ public class BuildingInstance
         Note = false;
 
         Type = model.Type;
+
+        Level = model.Level;
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;

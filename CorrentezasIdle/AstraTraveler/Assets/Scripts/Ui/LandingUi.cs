@@ -16,8 +16,8 @@ public class LandingUi : MonoBehaviour
     public TMP_Text StudyName;
     [SerializeField] Button UpgradesButton;
     public TMP_Text UpgradesName;
-    [SerializeField] Button AcquisitionsButton;
-    public TMP_Text AcquisitonsName;
+    [SerializeField] Button ConstructionsButton;
+    public TMP_Text ConstructionsName;
     [SerializeField] Button TrainingButton;
     public TMP_Text TrainingName;
     [SerializeField] Button ShipButton;
@@ -123,7 +123,7 @@ public class LandingUi : MonoBehaviour
 
         StudyButton.interactable = false;
         UpgradesButton.interactable = false;
-        AcquisitionsButton.interactable = false;
+        ConstructionsButton.interactable = false;
         ShipButton.interactable = false;
         TrainingButton.interactable = false;
         AlchemyButton.interactable = false;
@@ -137,7 +137,7 @@ public class LandingUi : MonoBehaviour
 
         StudyButton.interactable = Unlock.Studies;
         UpgradesButton.interactable = Unlock.Company;
-        AcquisitionsButton.interactable = Unlock.Acquisitions;
+        ConstructionsButton.interactable = Unlock.Constructions;
         ShipButton.interactable = Unlock.Ship;
         TrainingButton.interactable = Unlock.Training || Unlock.Recruiting;
         AlchemyButton.interactable = Unlock.Alchemy;
@@ -152,9 +152,9 @@ public class LandingUi : MonoBehaviour
         {
             UpgradesName.text = "Melhorias";
         }
-        if (Unlock.Acquisitions)
+        if (Unlock.Constructions)
         {
-            AcquisitonsName.text = "Construções";
+            ConstructionsName.text = "Construções";
         }
         if (Unlock.Ship)
         {
@@ -205,9 +205,9 @@ public class LandingUi : MonoBehaviour
     {
         SceneManager.LoadScene("BuildingsScene");
     }
-    public void AcquisitionButtonFuncion()
+    public void ConstruvtionButtonFuncion()
     {
-        SceneManager.LoadScene("AcquisitionsScene");
+        SceneManager.LoadScene("ConstructionsScene");
     }
     public void ShipButtonFuncion()
     {

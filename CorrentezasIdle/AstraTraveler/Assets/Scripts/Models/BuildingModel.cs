@@ -14,6 +14,8 @@ public class BuildingModel
 
     public UpgradeHelper.UpgradeBuilding Type;
 
+    public int Level;
+
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 }

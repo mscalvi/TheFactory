@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AcquisitionModel
+public class ConstructionModel
 {
     public string Id;
 
@@ -18,6 +18,8 @@ public class AcquisitionModel
     public CurrencyHelper.CurrencyType Currency;
 
     public float Time;
+
+    public int Level;
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;

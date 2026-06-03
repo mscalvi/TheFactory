@@ -64,10 +64,12 @@ public static class GameEvents
     public static Action<TripulationInstance> OnTripulationPurchase;
     public static Action<string> OnMechanicUnlock;
 
-    // Acquisition Events
-    public static Action<AcquisitionInstance> OnAcquisitionFinished;
-    public static Action<AcquisitionInstance> OnAcquisitionStarted;
-    public static Action<AcquisitionInstance, float, double> OnAcquisitionProgress;
+    // Construction Events
+    public static Action<ConstructionInstance> OnConstructionFinished;
+    public static Action<ConstructionInstance> OnConstructionStarted;
+    public static Action<ConstructionInstance, float, double> OnConstructionProgress;
+    public static Action<ConstructionInstance> OnConstructionUnlocked;
+
 
     // Event Events
     public static Action<EventInstance> OnEventTrigger;
@@ -75,7 +77,7 @@ public static class GameEvents
     // Purchase Events
     public static Action<UpgradeInstance> OnUpgradeBuy;
     public static Action<UpgradeInstance> OnUpgradeBought;
-    public static Action<AcquisitionInstance> OnAcquisitionBuy;
+    public static Action<ConstructionInstance> OnConstructionBuy;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCanBuyChange;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
 }

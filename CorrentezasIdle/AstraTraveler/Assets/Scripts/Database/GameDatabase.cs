@@ -17,7 +17,7 @@ public class GameDatabase
     public Dictionary<string, IngredientModel> ingredients;
 
     public Dictionary<string, UpgradeModel> upgrades;
-    public Dictionary<string, AcquisitionModel> acquisitions;
+    public Dictionary<string, ConstructionModel> constructions;
 
     public Dictionary<string, BuildingModel> buildings;
 

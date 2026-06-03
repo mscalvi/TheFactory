@@ -83,8 +83,7 @@ public class CompanyUpgradeDefinition : MonoBehaviour
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);
 
-        CanBuyUpgrade = PurchaseService.CanBuyUpgrade(upgrade);
-        UpgradeButton.interactable = CanBuyUpgrade;
+        UpgradeButton.interactable = PurchaseService.CanBuyUpgrade(upgrade);
     }
 
     void OnBuyClicked()

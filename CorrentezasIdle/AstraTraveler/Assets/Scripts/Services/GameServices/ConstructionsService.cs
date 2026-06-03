@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class AcquisitonsService : MonoBehaviour
+public class ConstructionsService : MonoBehaviour
 {
     private GameState GameState;
 
@@ -17,9 +17,9 @@ public class AcquisitonsService : MonoBehaviour
     {
         long now = GetNow();
 
-        var toFinish = new List<AcquisitionInstance>();
+        var toFinish = new List<ConstructionInstance>();
 
-        foreach (var acq in GameState.CompanyState.ActiveAcquisitons)
+        foreach (var acq in GameState.CompanyState.ActiveConstructions)
         {
             if (!acq.IsRunning) continue;
 
@@ -41,64 +41,66 @@ public class AcquisitonsService : MonoBehaviour
         FillSlotsFromQueue(now);
     }
 
-    void OnAcquisitionBuy(AcquisitionInstance acq)
+    void OnConstructionBuy(ConstructionInstance acq)
     {
         if (acq.IsRunning) return;
 
         long now = GetNow();
 
-        if (GameState.CompanyState.ActiveAcquisitons.Count < GameState.CompanyState.MaxAcquisitionsSlots)
+        if (GameState.CompanyState.ActiveConstructions.Count < GameState.CompanyState.MaxConstructionsSlots)
         {
             StartRunning(acq, now);
-            GameState.CompanyState.ActiveAcquisitons.Add(acq);
+            GameState.CompanyState.ActiveConstructions.Add(acq);
         }
         else
         {
-            if (GameState.CompanyState.AcquisitionsQueue.Count < GameState.CompanyState.MaxAcquisitonsQueue)
+            if (GameState.CompanyState.ConstructionsQueue.Count < GameState.CompanyState.MaxConstructionsQueue)
             {
                 acq.IsRunning = false;
-                GameState.CompanyState.AcquisitionsQueue.Enqueue(acq);
+                GameState.CompanyState.ConstructionsQueue.Enqueue(acq);
             }
             else
             {
-                Debug.LogError("AcquisitionsService - Sem slots e sem fila!");
+                Debug.LogError("ConstructionsService - Sem slots e sem fila!");
             }
         }
+
+        acq.Level++;
+        acq.StartCost *= 1.65;
+        acq.StartTime *= 1.5f;
     }
 
-    void UpdateProgress(AcquisitionInstance acq)
+    void UpdateProgress(ConstructionInstance acq)
     {
         if (!acq.IsRunning) return;
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-        double total = acq.TotalTime;
+        double total = acq.ActualTime;
         double remaining = acq.FinishTimestamp - now;
         double elapsed = total - remaining;
 
         float progress = (float)(elapsed / total);
 
-        GameEvents.OnAcquisitionProgress?.Invoke(acq, progress, remaining);
+        GameEvents.OnConstructionProgress?.Invoke(acq, progress, remaining);
     }
 
-    void Finish(AcquisitionInstance acq)
+    void Finish(ConstructionInstance acq)
     {
         acq.IsRunning = false;
-        acq.ElapsedTime = acq.TotalTime;
+        acq.ElapsedTime = acq.ActualTime;
 
-        acq.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        GameState.CompanyState.ActiveConstructions.Remove(acq);
 
-        GameEvents.OnAcquisitionFinished?.Invoke(acq);
-
-        GameState.CompanyState.ActiveAcquisitons.Remove(acq);
+        GameEvents.OnConstructionFinished?.Invoke(acq);
     }
 
     public void ResolveOfflineProgress()
     {
         long now = GetNow();
 
-        var toFinish = new List<AcquisitionInstance>();
+        var toFinish = new List<ConstructionInstance>();
 
-        foreach (var acq in GameState.CompanyState.ActiveAcquisitons)
+        foreach (var acq in GameState.CompanyState.ActiveConstructions)
         {
             if (now >= acq.FinishTimestamp)
             {
@@ -117,26 +119,26 @@ public class AcquisitonsService : MonoBehaviour
     void FillSlotsFromQueue(long now)
     {
         while (
-            GameState.CompanyState.ActiveAcquisitons.Count < GameState.CompanyState.MaxAcquisitionsSlots &&
-            GameState.CompanyState.AcquisitionsQueue.Count > 0
+            GameState.CompanyState.ActiveConstructions.Count < GameState.CompanyState.MaxConstructionsSlots &&
+            GameState.CompanyState.ConstructionsQueue.Count > 0
         )
         {
-            var next = GameState.CompanyState.AcquisitionsQueue.Dequeue();
+            var next = GameState.CompanyState.ConstructionsQueue.Dequeue();
 
             StartRunning(next, now);
 
-            GameState.CompanyState.ActiveAcquisitons.Add(next);
+            GameState.CompanyState.ActiveConstructions.Add(next);
         }
     }
 
-    void StartRunning(AcquisitionInstance acq, long now)
+    void StartRunning(ConstructionInstance acq, long now)
     {
         acq.IsRunning = true;
 
         acq.StartTimestamp = now;
-        acq.FinishTimestamp = now + (long)Math.Ceiling(acq.TotalTime);
+        acq.FinishTimestamp = now + (long)Math.Ceiling(acq.ActualTime);
 
-        GameEvents.OnAcquisitionStarted?.Invoke(acq);
+        GameEvents.OnConstructionStarted?.Invoke(acq);
     }
 
     long GetNow()
@@ -146,13 +148,13 @@ public class AcquisitonsService : MonoBehaviour
 
     void OnEnable()
     {
-        GameEvents.OnAcquisitionBuy += OnAcquisitionBuy;
+        GameEvents.OnConstructionBuy += OnConstructionBuy;
         GameEvents.OnGameLoad += ResolveOfflineProgress;
     }
 
     void OnDisable()
     {
-        GameEvents.OnAcquisitionBuy -= OnAcquisitionBuy;
+        GameEvents.OnConstructionBuy -= OnConstructionBuy;
         GameEvents.OnGameLoad -= ResolveOfflineProgress;
     }
 }

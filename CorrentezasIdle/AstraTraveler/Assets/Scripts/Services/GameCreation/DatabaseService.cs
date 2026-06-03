@@ -16,7 +16,7 @@ public class DatabaseService : MonoBehaviour
         AmmoData.Load();
         ProjectilesData.Load();
 
-        AcquisitionsData.Load();
+        ConstructionData.Load();
         BuildingsData.Load();
         UpgradesData.Load();
 
@@ -34,7 +34,7 @@ public class DatabaseService : MonoBehaviour
         Database.ammos = AmmoData.All;
         Database.projectiles = ProjectilesData.All;
 
-        Database.acquisitions = AcquisitionsData.All;
+        Database.constructions = ConstructionData.All;
         Database.buildings = BuildingsData.All;
         Database.upgrades = UpgradesData.All;
 

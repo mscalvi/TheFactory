@@ -24,6 +24,8 @@ public static class BuildingsData
 
             model.Type = ParseHelper.Enum<UpgradeHelper.UpgradeBuilding>(row["Type"]);
 
+            model.Level = ParseHelper.Int(row["Level"]);
+
             model.UnlockId = row["UnlockId"];
 
             model.UnlockStatus = ParseHelper.Enum<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);

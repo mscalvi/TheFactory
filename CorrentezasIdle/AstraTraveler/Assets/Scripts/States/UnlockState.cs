@@ -7,7 +7,7 @@ public class UnlockState
     // Unlock de Mecânicas
     public bool Studies = false;
     public bool Company = false;
-    public bool Acquisitions = false;
+    public bool Constructions = false;
     public bool Training = false;
     public bool Ship = false;
     public bool Alchemy = false;

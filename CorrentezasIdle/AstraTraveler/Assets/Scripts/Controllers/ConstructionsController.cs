@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AcquisitonsController : MonoBehaviour
+public class ConstructionController : MonoBehaviour
 {
-    [SerializeField] AcquisitonsUi AcquisitonsUi;
+    [SerializeField] ConstructionsUi ConstructionsUi;
 
     private void Awake()
     {
@@ -18,6 +18,6 @@ public class AcquisitonsController : MonoBehaviour
 
         var PurchaseService = GameController.Instance.PurchaseService;
 
-        AcquisitonsUi.Initialize(Game, PurchaseService);
+        ConstructionsUi.Initialize(Game, PurchaseService);
     }
 }

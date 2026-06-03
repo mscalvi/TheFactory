@@ -57,6 +57,12 @@ public class ModifierService : MonoBehaviour
                     case UpgradeHelper.EffectType.WeaponRange:
                         WeaponRangeModifier(upgrade);
                         break;
+                    case UpgradeHelper.EffectType.WeaponCritical:
+                        WeaponCriticalModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.WeaponPrecision:
+                        WeaponPrecisionModifier(upgrade);
+                        break;
                     default:
                         Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
                         break;
@@ -70,6 +76,9 @@ public class ModifierService : MonoBehaviour
                         break;
                     case UpgradeHelper.EffectType.AmmoAmmount:
                         AmmoAmmountModifier(upgrade);
+                        break;
+                    case UpgradeHelper.EffectType.AmmoRecharge:
+                        AmmoRechargeModifier(upgrade);
                         break;
                     default:
                         Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
@@ -166,7 +175,6 @@ public class ModifierService : MonoBehaviour
     {
         var mod = new Modifier();
 
-        int cont = 0;
         foreach(var modifier in GameState.UpgradesState.Modifiers)
         {
             if (modifier.Type != upgrade.EffectType)
@@ -275,6 +283,24 @@ public class ModifierService : MonoBehaviour
         weapon.BaseRange = (weapon.StartRange + Modifier.AdCompMod) * Modifier.MtCompMod;
         weapon.ActualRange = (weapon.BaseRange + Modifier.AdExpeMod) * Modifier.MtExpeMod;
     }
+    private void WeaponCriticalModifier(UpgradeInstance upgrade)
+    {
+        GameState.DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        var Modifier = ApplyModifiers(upgrade);
+
+        weapon.BaseCriticalDamage = (weapon.StartCriticalDamage + Modifier.AdCompMod) * Modifier.MtCompMod;
+        weapon.ActualCriticalDamage = (weapon.BaseCriticalDamage + Modifier.AdExpeMod) * Modifier.MtExpeMod;
+    }
+    private void WeaponPrecisionModifier(UpgradeInstance upgrade)
+    {
+        GameState.DataState.weapons.TryGetValue(upgrade.TargetId, out var weapon);
+
+        var Modifier = ApplyModifiers(upgrade);
+
+        weapon.BasePrecision = (weapon.StartPrecision + Modifier.AdCompMod) * Modifier.MtCompMod;
+        weapon.ActualPrecision = (weapon.BasePrecision + Modifier.AdExpeMod) * Modifier.MtExpeMod;
+    }
 
     // Modificadores Ammos
     private void AmmoDamageModifier(UpgradeInstance upgrade)
@@ -294,6 +320,15 @@ public class ModifierService : MonoBehaviour
 
         ammo.BaseAmmount = (int)((ammo.StartAmmount + Modifier.AdCompMod) * Modifier.MtCompMod);
         ammo.ActualAmmount = (int)((ammo.BaseAmmount + Modifier.AdExpeMod) * Modifier.MtExpeMod);
+    }
+    private void AmmoRechargeModifier(UpgradeInstance upgrade)
+    {
+        GameState.DataState.ammos.TryGetValue(upgrade.TargetId, out var ammo);
+
+        var Modifier = ApplyModifiers(upgrade);
+
+        ammo.BaseRecharge = (int)((ammo.StartRecharge + Modifier.AdCompMod) * Modifier.MtCompMod);
+        ammo.ActualRecharge = (int)((ammo.BaseRecharge + Modifier.AdExpeMod) * Modifier.MtExpeMod);
     }
 
     // Modificadores de Upgrades

@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AcquisitionInstance
+public class ConstructionInstance
 {
-    public AcquisitionModel Model;
+    public ConstructionModel Model;
 
     public string Id;
     public string NamePT;
@@ -25,18 +25,19 @@ public class AcquisitionInstance
     public float BaseTime;
     public float ActualTime;
 
-    public double TotalTime;
     public double ElapsedTime;
     public bool IsRunning;
 
     public long StartTimestamp;
     public long FinishTimestamp;
 
+    public int Level;
+
     public TripulationHelper.Type UnlockType;
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
-    public AcquisitionInstance(AcquisitionModel model)
+    public ConstructionInstance(ConstructionModel model)
     {
         Id = model.Id;
         NamePT = model.NamePT;
@@ -55,20 +56,21 @@ public class AcquisitionInstance
         StartTime = model.Time;
         BaseTime = model.Time;
         ActualTime = model.Time;
-        TotalTime = model.Time;
+
         ElapsedTime = 0;
         IsRunning = false;
 
         StartTimestamp = 0;
         FinishTimestamp = 0;
 
+        Level = model.Level;
 
         UnlockType = model.Type;
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
 
-    public AcquisitionInstance()
+    public ConstructionInstance()
     {
 
     }

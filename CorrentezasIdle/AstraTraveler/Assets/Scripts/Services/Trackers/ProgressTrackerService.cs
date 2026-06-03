@@ -29,11 +29,11 @@ public class ProgressTrackerService : MonoBehaviour
             GameEvents.NewDayRecord?.Invoke();
         }
 
-        if (GameState.UnlockState.Acquisitions != true)
+        if (GameState.UnlockState.Constructions != true)
         {
             if (GameState.ProgressState.MaxDaysTraveling >= 5)
             {
-                GameState.UnlockState.Acquisitions = true;
+                GameState.UnlockState.Constructions = true;
             }
         }
 

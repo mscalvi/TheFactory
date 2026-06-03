@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class CompanyState
 {
-    // Acquisitons
-    public Dictionary<string, AcquisitionInstance> CompanyAcquisitions = new Dictionary<string, AcquisitionInstance>();
+    // Constructions
+    public Dictionary<string, ConstructionInstance> CompanyConstructions = new Dictionary<string, ConstructionInstance>();
 
-    public List<AcquisitionInstance> ActiveAcquisitons = new List<AcquisitionInstance>();
+    public List<ConstructionInstance> ActiveConstructions = new List<ConstructionInstance>();
 
-    public Queue<AcquisitionInstance> AcquisitionsQueue = new Queue<AcquisitionInstance>();
+    public Queue<ConstructionInstance> ConstructionsQueue = new Queue<ConstructionInstance>();
 
-    public int MaxAcquisitionsSlots = 1;
-    public int MaxAcquisitonsQueue = 0;
-    public float AcquistionTime = 0;
+    public int MaxConstructionsSlots = 1;
+    public int MaxConstructionsQueue = 0;
+    public float ConstructionTime = 0;
 }

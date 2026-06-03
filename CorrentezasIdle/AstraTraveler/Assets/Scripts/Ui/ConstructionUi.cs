@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static CurrencyHelper;
 
-public class AcquisitonsUi : MonoBehaviour
+public class ConstructionsUi : MonoBehaviour
 {
     private GameState GameState;
     private DataState DataState;
@@ -21,9 +21,9 @@ public class AcquisitonsUi : MonoBehaviour
 
     [SerializeField] GameObject UpgradesPanel;
 
-    [SerializeField] AcquisitonDefinition AcquisitonDefinition;
+    [SerializeField] ConstructionDefinition ConstructionDefinition;
 
-    Dictionary<string, AcquisitonDefinition> acquisitonUi = new();
+    Dictionary<string, ConstructionDefinition> constructionUi = new();
     Dictionary<CurrencyType, CompanyCurrencyDefinition> currencyUI = new();
 
     public void Initialize(GameState gameState, PurchaseService purchaseService)
@@ -43,7 +43,7 @@ public class AcquisitonsUi : MonoBehaviour
     void PopulateUpgrades()
     {
         ClearContainer();
-        acquisitonUi.Clear();
+        constructionUi.Clear();
 
         foreach (var currency in GameState.DataState.currencies)
         {
@@ -53,7 +53,7 @@ public class AcquisitonsUi : MonoBehaviour
             }
         }
 
-        foreach (var upgrade in GameState.DataState.acquisitions)
+        foreach (var upgrade in GameState.DataState.constructions)
         {
             if (upgrade.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
@@ -72,12 +72,12 @@ public class AcquisitonsUi : MonoBehaviour
                 if (upgrade.Value.UnlockType == TripulationHelper.Type.Alchemist && !GameState.ProgressState.Alchemist)
                     continue;
 
-                var go = Instantiate(AcquisitonDefinition, UpgradesPanel.transform);
-                var ui = go.GetComponent<AcquisitonDefinition>();
+                var go = Instantiate(ConstructionDefinition, UpgradesPanel.transform);
+                var ui = go.GetComponent<ConstructionDefinition>();
 
                 ui.Setup(upgrade.Value, PurchaseService, GameState);
 
-                acquisitonUi[upgrade.Value.Id] = ui;
+                constructionUi[upgrade.Value.Id] = ui;
             }
         }
     }
@@ -102,9 +102,9 @@ public class AcquisitonsUi : MonoBehaviour
     // Helpers
     private void BuildTexts()
     {
-        Queue.text = GameState.CompanyState.AcquisitionsQueue.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitonsQueue.ToString("N0");
+        Queue.text = GameState.CompanyState.ConstructionsQueue.Count.ToString("N0") + " / " + GameState.CompanyState.MaxConstructionsQueue.ToString("N0");
 
-        Slots.text = GameState.CompanyState.ActiveAcquisitons.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitionsSlots.ToString("N0");
+        Slots.text = GameState.CompanyState.ActiveConstructions.Count.ToString("N0") + " / " + GameState.CompanyState.MaxConstructionsSlots.ToString("N0");
     }
     private void BuildCurrencies(Transform parent)
     {
@@ -147,7 +147,7 @@ public class AcquisitonsUi : MonoBehaviour
     {
         CurrencySet(type);
 
-        foreach (var upgrade in GameState.DataState.acquisitions)
+        foreach (var upgrade in GameState.DataState.constructions)
         {
             if (upgrade.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
                 continue;
@@ -159,17 +159,17 @@ public class AcquisitonsUi : MonoBehaviour
         }
     }
 
-    void RefreshUpgradeUi(AcquisitionInstance upgrade)
+    void RefreshUpgradeUi(ConstructionInstance upgrade)
     {
         BuildTexts();
 
-        if (acquisitonUi.TryGetValue(upgrade.Id, out var ui))
+        if (constructionUi.TryGetValue(upgrade.Id, out var ui))
         {
             ui.Setup(upgrade, PurchaseService, GameState);
         }
     }
 
-    private void ReloadScreen(AcquisitionInstance acq)
+    private void ReloadScreen(ConstructionInstance acq)
     {
         PopulateUpgrades();
     }
@@ -192,17 +192,19 @@ public class AcquisitonsUi : MonoBehaviour
     {
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
-        GameEvents.OnAcquisitionBuy += ReloadScreen;
-        GameEvents.OnAcquisitionFinished += ReloadScreen;
-        GameEvents.OnAcquisitionStarted += RefreshUpgradeUi;
+        GameEvents.OnConstructionBuy += ReloadScreen;
+        GameEvents.OnConstructionFinished += ReloadScreen;
+        GameEvents.OnConstructionStarted += RefreshUpgradeUi;
+        GameEvents.OnConstructionUnlocked += ReloadScreen;
     }
 
     void OnDisable()
     {
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
-        GameEvents.OnAcquisitionBuy -= ReloadScreen;
-        GameEvents.OnAcquisitionFinished -= ReloadScreen;
-        GameEvents.OnAcquisitionStarted -= RefreshUpgradeUi;
+        GameEvents.OnConstructionBuy -= ReloadScreen;
+        GameEvents.OnConstructionFinished -= ReloadScreen;
+        GameEvents.OnConstructionStarted -= RefreshUpgradeUi;
+        GameEvents.OnConstructionUnlocked -= ReloadScreen;
     }
 }

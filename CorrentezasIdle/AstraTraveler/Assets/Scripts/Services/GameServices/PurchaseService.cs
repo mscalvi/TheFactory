@@ -39,7 +39,7 @@ public class PurchaseService : MonoBehaviour
         CanBuyCurrency(upgrade.Currency);
     }
 
-    public void BuyAcquisition(AcquisitionInstance upgrade)
+    public void BuyConstruction(ConstructionInstance upgrade)
     {
         if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var Currency))
             return;
@@ -48,7 +48,7 @@ public class PurchaseService : MonoBehaviour
         {
             CurrencyService.Spend(upgrade.Currency, upgrade.ActualCost);
 
-            GameEvents.OnAcquisitionBuy?.Invoke(upgrade);
+            GameEvents.OnConstructionBuy?.Invoke(upgrade);
         }
 
         CanBuyCurrency(upgrade.Currency);
@@ -113,6 +113,20 @@ public class PurchaseService : MonoBehaviour
         if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var currency))
             return false;
 
+        if (upgrade.Scope == UpgradeHelper.UpgradeScope.Company)
+        {
+            var building = upgrade.Building;
+
+            foreach(var build in GameState.DataState.buildings.Values)
+            {
+                if (build.Type != building)
+                    continue;
+
+                if (build.Level * 10 <= upgrade.ActualBuy)
+                    return false;
+            }
+        }
+
         return currency.Amount >= upgrade.ActualCost;
     }
 
@@ -127,14 +141,14 @@ public class PurchaseService : MonoBehaviour
         }
     }
 
-    public bool CanBuyAcquisition(AcquisitionInstance upgrade)
+    public bool CanBuyConstruction(ConstructionInstance upgrade)
     {
         if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var currency))
             return false;
 
-        if (GameState.CompanyState.ActiveAcquisitons.Count >= GameState.CompanyState.MaxAcquisitionsSlots)
+        if (GameState.CompanyState.ActiveConstructions.Count >= GameState.CompanyState.MaxConstructionsSlots)
         {
-            if (GameState.CompanyState.AcquisitionsQueue.Count >= GameState.CompanyState.MaxAcquisitonsQueue)
+            if (GameState.CompanyState.ConstructionsQueue.Count >= GameState.CompanyState.MaxConstructionsQueue)
             {
                 return false;
             }
@@ -156,13 +170,11 @@ public class PurchaseService : MonoBehaviour
     void OnEnable()
     {
         GameEvents.OnCurrencyChange += CurrencyCheck;
-        GameEvents.OnTripulationPurchase += BuyTripulation;
     }
 
     void OnDisable()
     {
         GameEvents.OnCurrencyChange -= CurrencyCheck;
-        GameEvents.OnTripulationPurchase -= BuyTripulation;
     }
 
     void CurrencyCheck(CurrencyHelper.CurrencyType type, CurrencyHelper.CurrencyScope scope)

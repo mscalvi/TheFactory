@@ -205,7 +205,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1422331532}
   m_HandleRect: {fileID: 1422331531}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -351,10 +351,10 @@ RectTransform:
   - {fileID: 1192915563}
   m_Father: {fileID: 1985426914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -17}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -400, y: 621}
+  m_SizeDelta: {x: 800, y: 1225}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &325544572
 MonoBehaviour:
@@ -1149,7 +1149,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 573092234}
   m_HandleRect: {fileID: 573092233}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1376,7 +1376,7 @@ MonoBehaviour:
   CompanyCurrencyPanel: {fileID: 424679801}
   CurrencyPrefab: {fileID: 1171126640441101197, guid: 59b576b6db9915444b8ecc530161dc9a, type: 3}
   UpgradesPanel: {fileID: 1192915562}
-  AcquisitonDefinition: {fileID: 6826111226273142700, guid: 5a2b18c8cacaac94fbf1a2444e7a030d, type: 3}
+  ConstructionDefinition: {fileID: 6826111226273142700, guid: 5a2b18c8cacaac94fbf1a2444e7a030d, type: 3}
 --- !u!1 &1129005845
 GameObject:
   m_ObjectHideFlags: 0
@@ -1389,7 +1389,7 @@ GameObject:
   - component: {fileID: 1129005848}
   - component: {fileID: 1129005847}
   m_Layer: 5
-  m_Name: AcquisitionsTitle
+  m_Name: ConstructionsTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1434,7 +1434,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Aquisi\xE7\xF5es"
+  m_text: "Constru\xE7\xF5es"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1568,7 +1568,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Fila de Aquisi\xE7\xF5es"
+  m_text: "Fila de Constru\xE7\xF5es"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1753,10 +1753,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 325544571}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -386.9014, y: 612.4998}
+  m_SizeDelta: {x: 762.8875, y: 1210.9014}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1192915564
 MonoBehaviour:
@@ -1779,7 +1779,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 0, y: 0}
-  m_Spacing: {x: 0, y: 5}
+  m_Spacing: {x: 0, y: 0}
   m_Constraint: 1
   m_ConstraintCount: 1
 --- !u!114 &1192915565
@@ -2078,7 +2078,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Aquisi\xE7\xF5es Ativas"
+  m_text: "Constru\xE7\xF5es Ativas"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2199,7 +2199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e65deed883db3c041b99b15366b0ec95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AcquisitonsUi: {fileID: 896056253}
+  ConstructionsUi: {fileID: 896056253}
 --- !u!1 &1985426913
 GameObject:
   m_ObjectHideFlags: 0
@@ -2213,7 +2213,7 @@ GameObject:
   - component: {fileID: 1985426916}
   - component: {fileID: 1985426915}
   m_Layer: 5
-  m_Name: AcquisitionsScrollView
+  m_Name: ConstructionsScrollView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2257,7 +2257,7 @@ MonoBehaviour:
   m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
-  m_Elasticity: 0.1
+  m_Elasticity: 0.05
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1

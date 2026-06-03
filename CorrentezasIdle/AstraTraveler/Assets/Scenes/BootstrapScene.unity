@@ -472,7 +472,7 @@ MonoBehaviour:
   IngredientService: {fileID: 764383327}
   UpgradeService: {fileID: 764383322}
   EventService: {fileID: 764383328}
-  AcquisitonsService: {fileID: 764383330}
+  ConstructionsService: {fileID: 764383330}
   RecruitmentService: {fileID: 764383331}
   RewardService: {fileID: 764383332}
   ConfigurationsService: {fileID: 764383334}

@@ -33,7 +33,7 @@ public class GameCreationService : MonoBehaviour
         var currencies = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
         var ingredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
-        var acquisitions = new Dictionary<string, AcquisitionInstance>();
+        var constructions = new Dictionary<string, ConstructionInstance>();
         var buildings = new Dictionary<string, BuildingInstance>();
         var events = new Dictionary<string, EventInstance>();
         var missions = new Dictionary<string, MissionInstance>();
@@ -86,10 +86,10 @@ public class GameCreationService : MonoBehaviour
             upgrades.Add(upgrade.Id, instance);
         }
 
-        foreach (var acquisition in DataBase.acquisitions.Values)
+        foreach (var construction in DataBase.constructions.Values)
         {
-            var instance = new AcquisitionInstance(acquisition);
-            acquisitions.Add(acquisition.Id, instance);
+            var instance = new ConstructionInstance(construction);
+            constructions.Add(construction.Id, instance);
         }
 
         foreach (var building in DataBase.buildings.Values)
@@ -118,7 +118,7 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.currencies = currencies;
         GameState.DataState.ingredients = ingredients;
         GameState.DataState.upgrades = upgrades;
-        GameState.DataState.acquisitions = acquisitions;
+        GameState.DataState.constructions = constructions;
         GameState.DataState.buildings = buildings;
         GameState.DataState.events = events;
         GameState.DataState.missions = missions;
