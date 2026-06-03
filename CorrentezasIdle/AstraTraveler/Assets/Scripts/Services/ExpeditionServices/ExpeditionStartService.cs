@@ -20,6 +20,8 @@ public class ExpeditionStartService : MonoBehaviour
         LoadExpedition(GameState);
         LoadShip(GameState);
         PathService.GenerateNextDestination();
+
+        GameState.ExpeditionState.ExpeditionsDone++;
     }
 
     void LoadExpedition(GameState Game)
@@ -93,6 +95,11 @@ public class ExpeditionStartService : MonoBehaviour
 
         Game.ExpeditionState.Ship.ActualSpeed = Game.ExpeditionState.Ship.BaseSpeed;
 
+        Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.ActualLife;
+
+        if (Game.ExpeditionState.Ship.Weapons.Count <= 0)
+            return;
+
         foreach (var weapon in Game.ExpeditionState.Ship.Weapons)
         {
             weapon.ActualDamage = weapon.BaseDamage;
@@ -100,14 +107,19 @@ public class ExpeditionStartService : MonoBehaviour
             weapon.ActualRange = weapon.BaseRange;
             weapon.ActualCriticalDamage = weapon.BaseCriticalDamage;
             weapon.ActualPrecision = weapon.BasePrecision;
+
+            weapon.CurrentTarget = null;
+
+            if (weapon.Ammo == null)
+                continue;
+
             weapon.Ammo.ActualAmmount = weapon.Ammo.BaseAmmount;
             weapon.Ammo.ActualDamage = weapon.Ammo.BaseDamage;
             weapon.Ammo.ActualProjectileSpeed = weapon.Ammo.BaseProjectileSpeed;
             weapon.Ammo.ActualRecharge = weapon.Ammo.BaseRecharge;
-            weapon.Ammo.CurrentRecharge = weapon.Ammo.BaseRecharge;
-            weapon.CurrentTarget = null;
-        }
 
-        Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.ActualLife;
+            weapon.Ammo.CurrentAmmount = weapon.Ammo.ActualAmmount;
+            weapon.Ammo.CurrentRecharge = weapon.Ammo.BaseRecharge;
+        }
     }
 }

@@ -34,24 +34,14 @@ public class EventService : MonoBehaviour
         }
     }
 
-    private void ExpeditionEndEvent()
-    {
-        if (!GameState.UnlockState.Company)
-        {
-            GameState.UnlockState.Company = true;
-        }
-    }
-
     // Events
     void OnEnable()
     {
-        ExpeditionEvents.OnExpeditionEnd += ExpeditionEndEvent;
         GameEvents.OnEventTrigger += EventHandler;
     }
 
     void OnDisable()
     {
-        ExpeditionEvents.OnExpeditionEnd -= ExpeditionEndEvent;
         GameEvents.OnEventTrigger -= EventHandler;
     }
 }

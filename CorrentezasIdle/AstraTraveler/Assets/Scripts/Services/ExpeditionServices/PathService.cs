@@ -18,12 +18,17 @@ public class PathService : MonoBehaviour
         int minGap = GameState.ExpeditionState.ActualMinimalDestinationGap;
         int maxGap = GameState.ExpeditionState.ActualMaximalDestinationGap;
 
-        int gap = UnityEngine.Random.Range(minGap, maxGap + 1);
+        int gap = UnityEngine.Random.Range(minGap, maxGap);
 
         GameState.ExpeditionState.NextDestination = GameState.ExpeditionState.ActualDestination + gap;
 
         GenerateNextPath();
         IncreaseDestinationGap();
+
+        if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running)
+        {
+            ExpeditionEvents.OnPathSet?.Invoke();
+        }
     }
 
     private void GenerateNextPath()
@@ -69,20 +74,20 @@ public class PathService : MonoBehaviour
         };
 
         GameState.ExpeditionState.ActualPath = newPathTag;
-
-        if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running)
-        {
-            ExpeditionEvents.OnPathSet?.Invoke();
-        }
     }
 
     private void IncreaseDestinationGap()
     {
-        float Increase = UnityEngine.Random.Range(0, GameState.ExpeditionState.ActualDestinationGapIncrease);
-        GameState.ExpeditionState.ActualMinimalDestinationGap += (int)(GameState.ExpeditionState.ActualMinimalDestinationGap * Increase);
+        int Increase = UnityEngine.Random.Range(0, GameState.ExpeditionState.ActualDestinationGapIncrease);
+        GameState.ExpeditionState.ActualMinimalDestinationGap += GameState.ExpeditionState.ActualMinimalDestinationGap * Increase;
 
         Increase = UnityEngine.Random.Range(0, GameState.ExpeditionState.ActualDestinationGapIncrease);
-        GameState.ExpeditionState.ActualMaximalDestinationGap += (int)(GameState.ExpeditionState.ActualMaximalDestinationGap * Increase);
+        GameState.ExpeditionState.ActualMaximalDestinationGap += GameState.ExpeditionState.ActualMaximalDestinationGap * Increase;
+
+        if (GameState.ExpeditionState.ActualMinimalDestinationGap >= GameState.ExpeditionState.ActualMaximalDestinationGap)
+        {
+            GameState.ExpeditionState.ActualMaximalDestinationGap = GameState.ExpeditionState.ActualMinimalDestinationGap + 1;
+        }
     }
 
     private PathHelper.PathType GetRandomType(int day)

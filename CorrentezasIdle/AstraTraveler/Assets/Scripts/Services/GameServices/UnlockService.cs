@@ -32,19 +32,6 @@ public class UnlockService : MonoBehaviour
             }
         }
 
-        if (upgrade.Id.StartsWith("uu"))
-        {
-            StudyUpgrade(upgrade);
-
-            foreach (var acquistion in GameState.DataState.acquisitions.Values)
-            {
-                if (acquistion.UnlockId == upgrade.Id)
-                {
-                    acquistion.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-                }
-            }
-        }
-
         if(upgrade.ActualBuy >= upgrade.MaxBuy)
         {
             GameState.DataState.upgrades[upgrade.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
@@ -116,25 +103,6 @@ public class UnlockService : MonoBehaviour
         GameState.ExpeditionState.ActiveRecruits.Clear();
 
         GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
-    }
-
-    private void StudyUpgrade(UpgradeInstance upgrade)
-    {
-        switch (upgrade.Id)
-        {
-            case "uub001":
-                GameState.UnlockState.Acquisitions = true;
-                break;
-            case "uub002":
-                GameState.UnlockState.Alchemy = true;
-                break;
-            case "uub003":
-                GameState.UnlockState.Training = true;
-                break;
-            case "uub004":
-                GameState.UnlockState.Recruiting = true;
-                break;
-        }
     }
 
     private void AcquisitonUpgrade(AcquisitionInstance acq) 

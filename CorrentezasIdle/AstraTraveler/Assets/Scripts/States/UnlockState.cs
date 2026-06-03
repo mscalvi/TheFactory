@@ -12,6 +12,7 @@ public class UnlockState
     public bool Ship = false;
     public bool Alchemy = false;
 
+    public bool Missions = false;
     public bool Bestiary = false;
 
     public bool Click = true;

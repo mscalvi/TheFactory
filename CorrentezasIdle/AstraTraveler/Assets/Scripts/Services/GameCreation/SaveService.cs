@@ -25,7 +25,7 @@ public class SaveService : MonoBehaviour
         string json = JsonConvert.SerializeObject(GameState, settings);
         File.WriteAllText(SavePath, json);
 
-        Debug.Log("Jogo Salvo");
+        Debug.Log("Jogo Salvo -> " + GameState.ExpeditionState.ExpeditionStatus);
     }
 
     public GameState Load()
@@ -45,7 +45,7 @@ public class SaveService : MonoBehaviour
 
         GameState gameState = JsonConvert.DeserializeObject<GameState>(json, settings);
 
-        Debug.Log("Jogo Carregado e Referências Restauradas");
+        Debug.Log("Jogo Carregado e Referências Restauradas -> " + gameState.ExpeditionState.ExpeditionStatus);
 
         gameState.ExpeditionState.ActiveEnemies.Clear();
 

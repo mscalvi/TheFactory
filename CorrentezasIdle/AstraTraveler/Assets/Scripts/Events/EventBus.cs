@@ -28,6 +28,7 @@ public static class ExpeditionEvents
     public static Action OnFinalPopUpClose;
 
     // Destination Events
+    public static Action BeforeDestinationArrival;
     public static Action OnDestinationArrival;
     public static Action OnPathOptionsCalculated;
     public static Action OnPathSet;

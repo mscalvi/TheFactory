@@ -78,7 +78,7 @@ public class ExpeditionController : MonoBehaviour
         var Configs = GameController.Instance.ConfigurationsService;
         var Save = GameController.Instance.SaveService;
 
-        ExpeditionControlService.Initialize(Game, TickService);
+        ExpeditionControlService.Initialize(Game, TickService, Save);
 
         ExpeditionUiService.Initialize(Game, PurchaseService, Configs);
 

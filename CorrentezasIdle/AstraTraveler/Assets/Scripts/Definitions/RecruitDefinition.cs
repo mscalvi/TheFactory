@@ -25,6 +25,8 @@ public class RecruitDefinition : MonoBehaviour
 
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnBuyClicked);
+
+        UpgradeButton.interactable = PurchaseService.CanBuyRecruit();
     }
 
     void OnBuyClicked()
@@ -33,7 +35,8 @@ public class RecruitDefinition : MonoBehaviour
         {
             Debug.Log("Contratando!");
             PurchaseService.BuyTripulation(tripulation);
-        } else
+        }
+        else
         {
             Debug.Log("Te falta prestígio!");
         }

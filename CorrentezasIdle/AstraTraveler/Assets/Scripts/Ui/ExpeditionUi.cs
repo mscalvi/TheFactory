@@ -96,7 +96,6 @@ public class ExpeditionUi : MonoBehaviour
 
         LifeSlider.value = lifeProgress;
 
-        DayCycleTextSet();
         PathChangeSet();
         LifeTextSet();
 
@@ -162,6 +161,8 @@ public class ExpeditionUi : MonoBehaviour
         BiomeText.text = PathHelper.GetEnvironmentName(path.Environment, language);
 
         ChangeText.text = PathHelper.GetModifierName(path.Modifier, language);
+
+        DayCycleTextSet();
     }
     private void CurrencySet(CurrencyType type)
     {

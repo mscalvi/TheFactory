@@ -33,12 +33,9 @@ public class AcquisitonsUi : MonoBehaviour
         DataState = GameState.DataState;
 
         PurchaseService = purchaseService;
-
-        Queue.text = GameState.CompanyState.AcquisitionsQueue.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitonsQueue.ToString("N0");
-
-        Slots.text = GameState.CompanyState.ActiveAcquisitons.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitionsSlots.ToString("N0");
-
-        BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
+    
+        BuildTexts();
+        BuildCurrencies(CompanyCurrencyPanel);
 
         PopulateUpgrades();
     }
@@ -103,15 +100,20 @@ public class AcquisitonsUi : MonoBehaviour
 
 
     // Helpers
-    public void BuildCurrencies(CurrencyScope scope, Transform parent)
+    private void BuildTexts()
+    {
+        Queue.text = GameState.CompanyState.AcquisitionsQueue.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitonsQueue.ToString("N0");
+
+        Slots.text = GameState.CompanyState.ActiveAcquisitons.Count.ToString("N0") + " / " + GameState.CompanyState.MaxAcquisitionsSlots.ToString("N0");
+    }
+    private void BuildCurrencies(Transform parent)
     {
         var currencies = GameState.DataState.currencies;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
 
-        if (scope == CurrencyScope.Company)
-            currencyUI.Clear();
+        currencyUI.Clear();
 
         var ordered = new List<CurrencyInstance>();
 
@@ -119,7 +121,10 @@ public class AcquisitonsUi : MonoBehaviour
         {
             var c = pair.Value;
 
-            if (c.Scope != scope)
+            if (c.Scope != CurrencyScope.Company)
+                continue;
+
+            if (c.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
                 continue;
 
             ordered.Add(c);
@@ -156,6 +161,8 @@ public class AcquisitonsUi : MonoBehaviour
 
     void RefreshUpgradeUi(AcquisitionInstance upgrade)
     {
+        BuildTexts();
+
         if (acquisitonUi.TryGetValue(upgrade.Id, out var ui))
         {
             ui.Setup(upgrade, PurchaseService, GameState);

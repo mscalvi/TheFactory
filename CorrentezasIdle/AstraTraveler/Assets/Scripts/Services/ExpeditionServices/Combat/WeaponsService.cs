@@ -198,10 +198,9 @@ public class WeaponsService : MonoBehaviour, ITickable
     {
         double damage = weapon.ActualDamage + weapon.Ammo.ActualDamage;
 
-
         if (target.MarkedEnemy)
         {
-            damage *= 2;
+            damage *= GameState.ExpeditionState.ActualClickDamage;
         }
 
         double criticalRoll = Random.Range(0, 100);

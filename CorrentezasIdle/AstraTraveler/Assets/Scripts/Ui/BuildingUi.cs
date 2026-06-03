@@ -53,7 +53,8 @@ public class BuildingUi : MonoBehaviour
             }
         }
 
-        BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
+        BuildCurrencies(CompanyCurrencyPanel);
+        ShowUpgrades(GameState.DataState.buildings["b00"]);
     }
 
     public void ShowUpgrades(BuildingInstance building)
@@ -69,7 +70,6 @@ public class BuildingUi : MonoBehaviour
         {
             BuildingName.text = building.NameEN.ToString();
         }
-
 
         foreach (var currency in GameState.DataState.currencies)
         {
@@ -113,15 +113,14 @@ public class BuildingUi : MonoBehaviour
     }
 
     // Helpers
-    public void BuildCurrencies(CurrencyScope scope, Transform parent)
+    public void BuildCurrencies(Transform parent)
     {
         var currencies = GameState.DataState.currencies;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
 
-        if (scope == CurrencyScope.Company)
-            currencyUi.Clear();
+        currencyUi.Clear();
 
         var ordered = new List<CurrencyInstance>();
 
@@ -129,7 +128,10 @@ public class BuildingUi : MonoBehaviour
         {
             var c = pair.Value;
 
-            if (c.Scope != scope)
+            if (c.Scope != CurrencyScope.Company)
+                continue;
+
+            if (c.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
                 continue;
 
             ordered.Add(c);

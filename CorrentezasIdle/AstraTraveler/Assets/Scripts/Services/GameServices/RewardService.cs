@@ -75,11 +75,17 @@ public class RewardService : MonoBehaviour
 
     private void EnemyAvailableReward(EnemyInstance enemy)
     {
+        if (GameState.DataState.currencies[CurrencyType.Knowledge].UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+            return;
+
         CurrencyService.Add(CurrencyType.Knowledge, enemy.SpawnCost);
     }
 
     private void DestinationArrivalEvent()
     {
+        if (GameState.DataState.currencies[CurrencyType.Prestige].UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+            return;
+
         Debug.Log($"Prestígio: +{GameState.ExpeditionState.ReachedDestinations}");
 
         CurrencyService.Add(CurrencyType.Prestige, GameState.ExpeditionState.ReachedDestinations);

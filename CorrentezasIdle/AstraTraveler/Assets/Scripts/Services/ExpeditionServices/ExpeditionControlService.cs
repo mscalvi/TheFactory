@@ -7,14 +7,17 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
 {
     private GameState GameState;
     private ExpeditionState ExpeditionState;
-
+    
+    private SaveService SaveService;
     private TickService TickService;
 
-    public void Initialize(GameState game, TickService Tick)
+    public void Initialize(GameState game, TickService Tick, SaveService save)
     {
         GameState = game;
 
         ExpeditionState = GameState.ExpeditionState;
+
+        SaveService = save;
 
         TickService = Tick;
 
@@ -48,6 +51,7 @@ public class ExpeditionControlService : MonoBehaviour, ITickable
         GameState.DataState.currencies[CurrencyHelper.CurrencyType.Experience].Amount = 0;
 
         ExpeditionEvents.OnExpeditionEnd?.Invoke();
+        SaveService.Save();
     }
 
     public void LoadLandingPage()

@@ -24,11 +24,7 @@ use001;;Vida Máxima;;Aumenta a Vida Máxima do Navio;Expedition;Multiplicative;
 use002;;Armadura;;Aumenta a Armadura do Navio;Expedition;Additive;ShipArmor;Ship;None;1;Ship;;0;12;1.12;Experience;t007;Unknow
 use003;;Reistência;;Aumenta a Reistência do Navio;Expedition;Additive;ShipResistence;Ship;None;1.5;Ship;;50;13;1.12;Experience;t002;Unknow
 use004;;Reparos;;Aumenta a Reparo do Navio do Navio;Expedition;Additive;ShipRepair;Ship;None;1;Ship;;0;8;1.11;Experience;t002;Unknow
-utc001;;Limite de Tripulação;;Aumenta o Limite de membros na Tripulação;Company;Additive;TripulationMax;None;LivingRoom;1;Meta;;0;300;2.8;Marcos;uub004;Available
-uub001;;Estudar a Contrução de Edifícios;;Libera a aquisição de novas salas e edifícios para a Companhia, no menu de Melhorias;Company;Study;Unlock;None;StudyRoom;0;Meta;;1;1;1;Knowledge;Start;Available
-uub002;;Estudar os Princípios da Alquimia;;Libera o Laboratório de Alquimia, para futura realização de misturas, pesquisas e melhorias Alquímicas;Company;Study;Unlock;None;StudyRoom;0;Meta;;1;100;1;Knowledge;a1008;Unknow
-uub003;;Estudar o Treino Corporal;;Libera a Academia, que permite treinar a Tripulação;Company;Study;Unlock;None;StudyRoom;0;Meta;;1;10;1;Knowledge;a1007;Unknow
-uub004;;Estudar a Composição de Companhias;;Libera recrutar novos Tripulantes;Company;Study;Unlock;None;StudyRoom;0;Meta;;1;1;1;Knowledge;a1005;Unknow
+utc001;;Limite de Tripulação;;Aumenta o Limite de membros na Tripulação;Company;Additive;TripulationMax;None;LivingRoom;1;Meta;;0;300;2.8;Marcos;;Unknow
 uwc001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Company;Multiplicative;WeaponDamage;None;ArmoryRoom;1.1;Weapon;w001;0;5;1.08;Marcos;Start;Available
 uwc001002;;Velocidade de Disparo do Estilingue;;Aumenta a Velocidade de Disparo do Estilingue;Company;Multiplicative;WeaponAtackSpeed;None;ArmoryRoom;1.1;Weapon;w001;10;15;1.3;Marcos;Start;Available
 uwe001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Expedition;Multiplicative;WeaponDamage;Itens;None;1.1;Weapon;w001;0;5;1.08;Experience;Start;Available

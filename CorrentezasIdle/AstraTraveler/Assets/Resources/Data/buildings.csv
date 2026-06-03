@@ -1,6 +1,6 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Type;UnlockId;UnlockStatus
 b00;;Salão da Companhia;;;CompanyRoom;Start;Unlocked
-b01;;Sala de Planejamento;;;PlanningRoom;a1003;Available
+b01;;Escritório de Planejamento;;;PlanningRoom;a1003;Available
 b02;;Sala de Pescaria;;;FishingRoom;a1004;Available
 b03;;Ferraria;;;ArmoryRoom;a1002;Available
 b04;;Sala de Confraternização;;;LivingRoom;a1005;Available
@@ -8,6 +8,5 @@ b05;;Sala do Tesouro;;;TreasureRoom;a1006;Available
 b06;;Academia;;;TrainingRoom;a1007;Available
 b07;;Laboratório;;;LaboratoryRoom;a1008;Available
 b08;;Marcenaria;;;ShipImproveRoom;a1001;Available
-b09;;Escritório;;;StudyRoom;Start;Unlocked
-b10;;Sala dos Caçadores;;;HuntersRoom;;Available
-b11;;Estoque;;;StockRoom;;Available
+b10;;Sala dos Caçadores;;;HuntersRoom;a1009;Available
+b11;;Estoque;;;StockRoom;a1010;Available

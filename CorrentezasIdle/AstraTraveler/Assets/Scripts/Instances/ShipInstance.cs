@@ -70,9 +70,9 @@ public class ShipInstance
         BaseResistence = model.Resistence;
         ActualResistence = model.Resistence;
 
-        StartRepairPerTripulation = 0;
-        BaseRepairPerTripulation = 0;
-        ActualRepairPerTripulation = 0;
+        StartRepairPerTripulation = 1;
+        BaseRepairPerTripulation = 1;
+        ActualRepairPerTripulation = 1;
 
         StartArmor = model.Armor;
         BaseArmor = model.Armor;

@@ -38,21 +38,29 @@ public class CompanyUpgradeDefinition : MonoBehaviour
         }
 
 
-        if(upgrade.Scope == UpgradeHelper.UpgradeScope.Expedition)
+        if (upgrade.ActualBuy > 0)
         {
-            if(upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+            if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
             {
-                UpgradeActualValue.text = "+" + (upgrade.ActualUpgradeValue).ToString("N2");
+                UpgradeActualValue.text = "+" + (upgrade.CurrentValue).ToString("N2");
             }
 
             if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
             {
-                UpgradeActualValue.text = "x" + (upgrade.ActualUpgradeValue).ToString("N2");
+                UpgradeActualValue.text = "x" + (upgrade.CurrentValue).ToString("N2");
             }
         }
         else
         {
-            UpgradeActualValue.text = "";
+            if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Additive)
+            {
+                UpgradeActualValue.text = "+0,00";
+            }
+
+            if (upgrade.UpgradeType == UpgradeHelper.UpgradeType.Multiplicative)
+            {
+                UpgradeActualValue.text = "x1,00";
+            }
         }
 
         UpgradePrice.text = NumberHelper.Format(upgrade.ActualCost);

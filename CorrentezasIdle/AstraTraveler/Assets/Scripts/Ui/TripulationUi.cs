@@ -54,7 +54,7 @@ public class TripulationUi : MonoBehaviour
 
         Populate();
 
-        BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
+        BuildCurrencies(CompanyCurrencyPanel);
     }
 
     void Populate()
@@ -89,15 +89,14 @@ public class TripulationUi : MonoBehaviour
         }
     }
 
-    public void BuildCurrencies(CurrencyScope scope, Transform parent)
+    public void BuildCurrencies(Transform parent)
     {
         var currencies = GameState.DataState.currencies;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
 
-        if (scope == CurrencyScope.Company)
-            currencyUi.Clear();
+        currencyUi.Clear();
 
         var ordered = new List<CurrencyInstance>();
 
@@ -105,7 +104,10 @@ public class TripulationUi : MonoBehaviour
         {
             var c = pair.Value;
 
-            if (c.Scope != scope)
+            if (c.Scope != CurrencyScope.Company)
+                continue;
+
+            if(c.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked) 
                 continue;
 
             ordered.Add(c);

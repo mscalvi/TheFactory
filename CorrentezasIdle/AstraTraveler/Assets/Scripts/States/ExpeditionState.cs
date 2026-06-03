@@ -8,10 +8,11 @@ public class ExpeditionState
     public ShipInstance Ship;
     public GameHelper.ExpeditionStatus ExpeditionStatus;
 
+    public int ExpeditionsDone = 0;
+
     public float phaseTimer = 0f;
     public float PhaseDuration = 15f;
     public int ticksBetweenSpawns = 5;
-
     public bool IsDay { get; set; } = true;
     public int DayCounter = 1;
     public int StartDay = 1;
@@ -48,12 +49,13 @@ public class ExpeditionState
     public int StartMaxMarkedLoot = 1;
     public double StartNextLootChance = 0;
     public double StartNextLootDecay = 0;
+    public double StartClickDamage = 2;
 
     public int StartMinimalDestinationGap = 5;
     public int StartMaximalDestinationGap = 7;
     public int StartDestinationGapIncrease = 2;
 
-    public int StartMaxTripulation = 1;
+    public int StartMaxTripulation = 2;
 
     // Valores Base
     public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
@@ -73,12 +75,13 @@ public class ExpeditionState
     public int BaseMaxMarkedLoot = 1;
     public double BaseNextLootChance = 0;
     public double BaseNextLootDecay = 0;
+    public double BaseClickDamage = 2;
 
     public int BaseMinimalDestinationGap = 5;
     public int BaseMaximalDestinationGap = 7;
     public int BaseDestinationGapIncrease = 2;
 
-    public int BaseMaxTripulation = 1;
+    public int BaseMaxTripulation = 2;
     
     // Valores Atuais
     public Dictionary<GameHelper.ItemRarity, float> ActualIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
@@ -99,10 +102,11 @@ public class ExpeditionState
     public int ActualMaxMarkedLoot = 1;
     public double ActualNextLootChance = 0;
     public double ActualNextLootDecay = 0;
+    public double ActualClickDamage = 2;
 
     public int ActualMinimalDestinationGap = 5;
     public int ActualMaximalDestinationGap = 7;
     public int ActualDestinationGapIncrease = 2;
 
-    public int ActualMaxTripulation = 1;
+    public int ActualMaxTripulation = 2;
 }

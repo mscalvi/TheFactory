@@ -51,7 +51,7 @@ public class LandingUi : MonoBehaviour
         BlockButtons();
         ReleaseButtons();
         MissionSet();
-        BuildCurrencies(CurrencyScope.Company, CompanyCurrencyPanel);
+        BuildCurrencies(CompanyCurrencyPanel);
     }
 
     // Missions
@@ -132,6 +132,9 @@ public class LandingUi : MonoBehaviour
     {
         var Unlock = GameState.UnlockState;
 
+        if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running)
+            return;
+
         StudyButton.interactable = Unlock.Studies;
         UpgradesButton.interactable = Unlock.Company;
         AcquisitionsButton.interactable = Unlock.Acquisitions;
@@ -175,7 +178,7 @@ public class LandingUi : MonoBehaviour
     {
         SceneManager.LoadScene("ExpeditionScene");
     }
-    public void SettingsButtonFuncion()
+    public void SettingsButtonFunction()
     {
         bool active = ConfigsPanel.activeSelf;
 
@@ -220,16 +223,14 @@ public class LandingUi : MonoBehaviour
     }
 
     // Currency
-
-    public void BuildCurrencies(CurrencyScope scope, Transform parent)
+    public void BuildCurrencies(Transform parent)
     {
         var currencies = GameState.DataState.currencies;
 
         foreach (Transform child in parent)
             Destroy(child.gameObject);
 
-        if (scope == CurrencyScope.Company)
-            currencyUi.Clear();
+        currencyUi.Clear();
 
         var ordered = new List<CurrencyInstance>();
 
@@ -237,7 +238,10 @@ public class LandingUi : MonoBehaviour
         {
             var c = pair.Value;
 
-            if (c.Scope != scope)
+            if (c.Scope != CurrencyScope.Company)
+                continue;
+
+            if (c.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
                 continue;
 
             ordered.Add(c);
