@@ -34,6 +34,7 @@ public class ProgressTrackerService : MonoBehaviour
             if (GameState.ProgressState.MaxDaysTraveling >= 5)
             {
                 GameState.UnlockState.Constructions = true;
+                GameEvents.OnMechanicUnlock?.Invoke("Constructions");
             }
         }
 
@@ -106,6 +107,11 @@ public class ProgressTrackerService : MonoBehaviour
 
                     currencyData.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
                     Debug.Log($"Dinheiro Desbloqueado: {currencyData.Type} - Dia {unlockDay}");
+
+                    if(currencyData.Type == CurrencyHelper.CurrencyType.Prestige)
+                    {
+                        GameEvents.OnMechanicUnlock?.Invoke("Recruiting");
+                    }
                 }
             }
         }

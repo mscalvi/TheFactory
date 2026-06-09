@@ -6,4 +6,4 @@ ugc001;;Percepção do Tempo 1;;Permite Aumentar a Velocidade do Jogo;Company;Ad
 umc001;;Trabalhos Simultâneos;;Permite realizar mais um Trabalho simultâneo;Company;Additive;MissionsMax;None;CompanyRoom;1;Missions;;4;3;1.8;Marcos;Start;Available;Ok
 umc002;;Pagamento por Trabalho;;Aumenta o total de cada recompensa ganha ao finalizar um Trabalho;Company;Multiplicative;MissionsReward;None;CompanyRoom;1.1;Missions;;0;15;1.11;Marcos;t008;Unknow;Ok
 umc003;;Formas de Pagamento;;Aumenta o número de recompensas ganhas ao finalizar um Trabalho;Company;Additive;MissionsOptions;None;CompanyRoom;1;Missions;;3;200;3.9;Marcos;t008;Unknow;Ok
-utc001;;Limite de Tripulação;;Aumenta o Limite de membros na Tripulação;Company;Additive;TripulationMax;None;LivingRoom;1;Meta;;0;300;2.8;Marcos;Start;Available;Ok
+utc001;;Limite de Tripulação;;Aumenta o Limite de membros na Tripulação;Company;Additive;TripulationMax;None;LivingRoom;1;Meta;;0;300;1.7;Marcos;Start;Available;Ok

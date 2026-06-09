@@ -46,7 +46,6 @@ public class DaysCycleService : MonoBehaviour, ITickable
 
                 if (ExpeditionState.DayCounter == ExpeditionState.NextDestination)
                 {
-                    Debug.Log("Dia de Boss!");
                     ExpeditionEvents.SpawnBoss?.Invoke();
                 }
 

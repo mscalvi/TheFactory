@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -199,11 +200,24 @@ public class BuildingUi : MonoBehaviour
     {
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
+        GameEvents.OnUpgradeBought += RefreshBuildingUi;
     }
 
     void OnDisable()
     {
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
+        GameEvents.OnUpgradeBought -= RefreshBuildingUi;
+    }
+
+    private void RefreshBuildingUi(UpgradeInstance upgrade)
+    {
+        foreach (var building in GameState.DataState.buildings.Values)
+        {
+            if (building.Type == upgrade.Building)
+            {
+                ShowUpgrades(building);
+            }
+        }
     }
 }

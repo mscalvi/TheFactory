@@ -64,10 +64,6 @@ public class ConstructionsService : MonoBehaviour
                 Debug.LogError("ConstructionsService - Sem slots e sem fila!");
             }
         }
-
-        acq.Level++;
-        acq.StartCost *= 1.65;
-        acq.StartTime *= 1.5f;
     }
 
     void UpdateProgress(ConstructionInstance acq)
@@ -90,6 +86,10 @@ public class ConstructionsService : MonoBehaviour
         acq.ElapsedTime = acq.ActualTime;
 
         GameState.CompanyState.ActiveConstructions.Remove(acq);
+
+        acq.Level++;
+        acq.StartCost *= 1.65;
+        acq.StartTime *= 1.5f;
 
         GameEvents.OnConstructionFinished?.Invoke(acq);
     }

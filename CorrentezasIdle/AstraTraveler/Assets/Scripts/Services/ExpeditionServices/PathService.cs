@@ -25,6 +25,8 @@ public class PathService : MonoBehaviour
         GenerateNextPath();
         IncreaseDestinationGap();
 
+        GameState.ExpeditionState.ActualDestination = GameState.ExpeditionState.NextDestination;
+
         if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running)
         {
             ExpeditionEvents.OnPathSet?.Invoke();
@@ -35,7 +37,7 @@ public class PathService : MonoBehaviour
     {
         GameState.ExpeditionState.LastPath = GameState.ExpeditionState.ActualPath;
 
-        int day = GameState.ExpeditionState.ActualDestination;
+        int day = GameState.ExpeditionState.NextDestination;
 
         var type = GetRandomType(day);
 

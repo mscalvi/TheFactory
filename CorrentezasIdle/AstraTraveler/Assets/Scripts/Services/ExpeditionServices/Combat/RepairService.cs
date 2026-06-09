@@ -23,7 +23,6 @@ public class RepairService : MonoBehaviour
             Ship.CurrentLife = Ship.ActualLife;
         }
 
-        Debug.Log($"Navio Reparado em {Ship.ActualRepairPerTripulation} x {GameState.ExpeditionState.ActiveTripulation.Count}");
         ExpeditionEvents.OnShipAtributeChange?.Invoke();
     }
 

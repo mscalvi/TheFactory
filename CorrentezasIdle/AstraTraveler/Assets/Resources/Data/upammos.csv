@@ -1,6 +1,6 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;InGame
 uac001001;;Dano das Pedras;;Aumenta o Dano causado com Pedras;Company;Multiplicative;AmmoDamage;None;StockRoom;1.1;Ammo;a001;0;4;1.11;Marcos;t014;Unknow;Ok
-uac001002;;Pedras Acumuladas;;Aumenta a quantidade máxima de Pedras acumuladas como munição;Company;Additive;AmmoAmmount;None;StockRoom;1;Ammo;a001;0;3;1.12;Marcos;Start;Available;Ok
+uac001002;;Pedras Acumuladas;;Aumenta a quantidade máxima de Pedras acumuladas como munição;Company;Additive;AmmoAmmount;None;StockRoom;1;Ammo;a001;0;3;1.05;Marcos;Start;Available;Ok
 uac001003;;Reabastecimento das Pedras;;Aumenta a Velocidade com que as Pedras são reabastecidas;Company;Multiplicative;AmmoRecharge;None;StockRoom;0.9;Ammo;a001;0;15;1.14;Marcos;t014;Unknow;Ok
 uae001001;;Dano das Pedras;;Aumenta o Dano causado com Pedras;Expedition;Multiplicative;AmmoDamage;Itens;None;1.1;Ammo;a001;0;4;1.11;Experience;t015;Unknow;Ok
 uae001003;;Reabastecimento das Pedras;;Aumenta a Velocidade com que as Pedras são reabastecidas;Expedition;Multiplicative;AmmoRecharge;Itens;None;0.9;Ammo;a001;0;15;1.14;Experience;t015;Unknow;Ok

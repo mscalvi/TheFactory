@@ -80,15 +80,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         var instance = spawnQueue.Dequeue();
 
-        ProgressService.ApplyProgression(instance);
-
-        instance.Angle = SpawnAngle(30, 330);
-
-        Expedition.ActiveEnemies.Add(instance);
-
-        ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
-
-        //Debug.Log($"Spawn: {instance.NamePT} \n-Vida: {instance.ActualLife} -Dano: {instance.Damage} -Speed: {instance.Speed}");
+        SpawnEnemy(instance);
 
         if (instance.Known == false)
         {
@@ -100,6 +92,19 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
                 }
             }
         }
+    }
+
+    private void SpawnEnemy(EnemyRuntime instance)
+    {
+        ProgressService.ApplyProgression(instance);
+
+        instance.Angle = SpawnAngle(30, 330);
+
+        Expedition.ActiveEnemies.Add(instance);
+
+        ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
+
+        Debug.Log($"Spawn: {instance.NamePT} \n-Vida: {instance.ActualLife} -Dano: {instance.Damage} -Speed: {instance.Speed}");
     }
 
     void FillSpawnQueue(double budget)
@@ -262,10 +267,9 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         var chosenRuntime = new EnemyRuntime(chosen);
 
-        spawnQueue.Enqueue(chosenRuntime);
+        SpawnEnemy(chosenRuntime);
 
         ExpeditionEvents.OnBossSpawn?.Invoke(chosenRuntime);
-        Debug.Log($"Boss {chosen.NamePT} Spawnado!\nVida: {chosen.ActualLife} Dano: {chosen.Damage} Loot: {chosen.Experience} XP");
     }
 
     void OnEnable()

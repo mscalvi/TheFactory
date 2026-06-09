@@ -123,8 +123,8 @@
     <Compile Include="Assets\Scripts\Deisgner\PopUp\FinalPopUp.cs" />
     <Compile Include="Assets\Scripts\Definitions\StudyDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionStartService.cs" />
-    <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
     <Compile Include="Assets\Scripts\Ui\ConstructionUi.cs" />
+    <Compile Include="Assets\Scripts\Helpers\GameHelper.cs" />
     <Compile Include="Assets\Scripts\Instances\CurrencyInstance.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\RepairService.cs" />
     <Compile Include="Assets\Scripts\Helpers\EnemyHelper.cs" />

@@ -182,7 +182,7 @@ public class TripulationUi : MonoBehaviour
 
             var ui = go.GetComponent<RecruitDefinition>();
 
-            ui.Setup(option, PurchaseService);
+            ui.Setup(option, PurchaseService, GameState);
         }
     }
 
@@ -194,7 +194,7 @@ public class TripulationUi : MonoBehaviour
 
         var prestige = GameState.DataState.currencies[CurrencyType.Prestige];
 
-        double loss = Mathf.CeilToInt((float)(prestige.Amount * 0.5f));
+        double loss = Mathf.CeilToInt((float)(prestige.Amount * 0.2f));
 
         loss = Mathf.Min((float)loss, (float)prestige.Amount);
 
@@ -206,5 +206,21 @@ public class TripulationUi : MonoBehaviour
     public void Return()
     {
         SceneManager.LoadScene("LandingScene");
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnTripulationPurchase += RefreshTripulationUi;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnTripulationPurchase -= RefreshTripulationUi;
+    }
+
+    private void RefreshTripulationUi(TripulationInstance tripulation)
+    {
+        Populate();
+        BuildCurrencies(CompanyCurrencyPanel);
     }
 }

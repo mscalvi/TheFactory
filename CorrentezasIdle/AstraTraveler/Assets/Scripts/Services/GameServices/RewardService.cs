@@ -81,14 +81,30 @@ public class RewardService : MonoBehaviour
         CurrencyService.Add(CurrencyType.Knowledge, enemy.SpawnCost);
     }
 
-    private void DestinationArrivalEvent()
+    private void DestinationArrivalReward()
     {
         if (GameState.DataState.currencies[CurrencyType.Prestige].UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
             return;
 
-        Debug.Log($"Prestígio: +{GameState.ExpeditionState.ReachedDestinations}");
+        CurrencyService.Add(CurrencyType.Prestige, 1);
+    }
 
-        CurrencyService.Add(CurrencyType.Prestige, GameState.ExpeditionState.ReachedDestinations);
+    private void MechanicUnlockReward(string mechanic)
+    {
+        Debug.Log("Mecânica Desbloqueada: " + mechanic);
+
+        switch(mechanic)
+        {
+            case "Constructions":
+                CurrencyService.Add(CurrencyType.Marcos, 10);
+                break;
+            case "Recruiting":
+                CurrencyService.Add(CurrencyType.Prestige, 10);
+                break;
+            default:
+                Debug.Log("Mecânica sem Reward: " + mechanic);
+                break;
+        }
     }
 
     // Event
@@ -98,10 +114,11 @@ public class RewardService : MonoBehaviour
         ExpeditionEvents.OnEnemyDeath += EnemyDeathReward;
         ExpeditionEvents.OnDayFinish += DayFinishReward;
         ExpeditionEvents.OnNightFinish += NightFinishReward;
-        ExpeditionEvents.OnDestinationArrival += DestinationArrivalEvent;
+        ExpeditionEvents.OnDestinationArrival += DestinationArrivalReward;
 
         GameEvents.OnMissionComplete += MissionCompleteReward;
         GameEvents.NewEnemySeen += EnemyAvailableReward;
+        GameEvents.OnMechanicUnlock += MechanicUnlockReward;
 
         GameEvents.MoneyTest += MoneyTestEvent;
     }
@@ -112,10 +129,11 @@ public class RewardService : MonoBehaviour
         ExpeditionEvents.OnEnemyDeath -= EnemyDeathReward;
         ExpeditionEvents.OnDayFinish -= DayFinishReward;
         ExpeditionEvents.OnNightFinish -= NightFinishReward;
-        ExpeditionEvents.OnDestinationArrival -= DestinationArrivalEvent;
+        ExpeditionEvents.OnDestinationArrival -= DestinationArrivalReward;
 
         GameEvents.OnMissionComplete -= MissionCompleteReward;
         GameEvents.NewEnemySeen -= EnemyAvailableReward;
+        GameEvents.OnMechanicUnlock -= MechanicUnlockReward;
 
         GameEvents.MoneyTest -= MoneyTestEvent;
     }
