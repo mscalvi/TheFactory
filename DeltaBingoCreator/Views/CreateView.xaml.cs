@@ -36,9 +36,9 @@ namespace DeltaBingoCreator.Views
 
         public void CreateListViewOpen(object sender, RoutedEventArgs e)
         {
-            var createView = new CreateView(NavService);
+            var createListView = new CreateListView(NavService);
 
-            NavService.NavigateTo(createView);
+            NavService.NavigateTo(createListView);
         }
 
         public void CreateCardsViewOpen(object sender, RoutedEventArgs e)
