@@ -18,12 +18,12 @@
         </Grid.RowDefinitions>
 
         <Button x:Name="CreateElementBtn" Grid.Row="0" Grid.Column="0" Content="Criar Item" FontSize="20" Margin="10,10,10,10" Click="CreateItemViewOpen"/>
-        <Button x:Name="CreateListBtn" Grid.Row="0" Grid.Column="1" Content="Criar e Alocar Lista" FontSize="20" Margin="10,10,10,10" Click="CreateListViewOpen"/>
+        <Button x:Name="CreateListBtn" Grid.Row="0" Grid.Column="1" Content="Criar Lista" FontSize="20" Margin="10,10,10,10" Click="CreateListViewOpen"/>
         <Button x:Name="CreateCardsBtn" Grid.Row="0" Grid.Column="2" Content="Criar Cartelas" FontSize="20" Margin="10,10,10,10" Click="CreateCardsViewOpen"/>
 
         <Button x:Name="ImportListTxtBtn" Grid.Row="1" Grid.Column="0" Content="Importar Arquivo de Texto" FontSize="20" Margin="10,10,10,10" />
         <Button x:Name="ImportListFolderBtn" Grid.Row="1" Grid.Column="1" Content="Importar Pasta de Imagens" FontSize="20" Margin="10,10,10,10" />
-        <Button x:Name="ReturnBtn" Grid.Row="1" Grid.Column="2" Content="Retornar" FontSize="20" Margin="10,10,10,10" Click="ReturnMain"/>
+        <Button x:Name="ReturnBtn" Grid.Row="1" Grid.Column="2" Content="Voltar" FontSize="20" Margin="10,10,10,10" Click="ReturnMain"/>
 
     </Grid>
 </UserControl>
