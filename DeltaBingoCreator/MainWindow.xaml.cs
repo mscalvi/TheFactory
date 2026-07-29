@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DeltaBingoCreator.Database;
 
 namespace DeltaBingoCreator
 {
@@ -21,11 +22,24 @@ namespace DeltaBingoCreator
         {
             InitializeComponent();
 
+            InitializeDatabase();
+            InitializeViews();
+        }
+
+        private void InitializeViews()
+        {
             NavService = new NavService(MainContent);
 
             var mainView = new MainView(NavService);
 
             NavService.NavigateTo(mainView);
+
+            //CreateViewService.InitializeViews();
+        }
+
+        private void InitializeDatabase()
+        {
+            MainDataBase.InitializeDatabase();
         }
     }
 }

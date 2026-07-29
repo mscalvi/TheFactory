@@ -1,0 +1,11 @@
+﻿Id;NamePT;NameEN;DescriptionEN;DescriptionPT;Cost;Currency;Time;Type;TargetType;Level;UnlockId;UnlockStatus
+a1002;Construir a Ferraria;;;Constrói a Ferraria, que permite comprar melhorias para Armas;10;Marcos;60;Captain;Building;0;Start;Available
+a1001;Construir a Marcenaria;;;Constrói a Marcenaria, que permite comprar melhorias para o Navio;10;Marcos;60;Captain;Building;0;Start;Available
+a1003;Construir o Escritório de Planejamento;;;Constrói o Escritório de Planejamentos, que permite comprar melhorias para ganhar mais Experiência;50;Marcos;300;Merchant;Building;0;Start;Available
+a1004;Construir a Sala de Pescaria;;;Constrói a Sala de Pescaria, que permite comprar melhorias para a observação e o aproveitamento de Peixes;500;Marcos;600;Fisherman;Building;0;Start;Available
+a1005;Construir a Sala de Confraternização;;;Constrói a Sala de Confraternização, que permite comprar melhorias para aumentar o tamanho da Tripulação e atrair melhores Tripulantes;250;Marcos;600;Captain;Building;0;Start;Available
+a1006;Construir a Sala do Tesouro;;;Constrói a Sala do Tesouro, que permite comprar melhorias para ganhar mais Marcos;250;Marcos;600;Merchant;Building;0;Start;Available
+a1007;Construir a Academia;;;Constrói a Academia, que permite comprar melhorias para os treinamentos oferecidos para a Tripulação;2500;Marcos;3600;Coach;Building;0;Start;Available
+a1008;Construir o Laboratório;;;Constrói o Laboratório, que permite comprar melhorias para as pesquisas realizadas;2500;Marcos;3600;Alchemist;Building;0;Start;Available
+a1009;Construir a Sala dos Caçadores;;;Constrói a Sala dos Caçadores, que permite melhorar o conhecimento sobre os inimigos;10000;Marcos;36000;Hunter;Building;0;Start;Available
+a1010;Construir o Estoque;;;Constrói o Estoque, que permite aumentar a quantidade de iten acumuláveis;50;Marcos;300;Captain;Building;0;Start;Available

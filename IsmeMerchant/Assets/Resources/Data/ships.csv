@@ -1,0 +1,6 @@
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Life;Speed;Armor;Resistence;Size;Tripulation;WeaponSlots;UnlockId;UnlockStatus
+s001;Shallop;Chalupa;;;10;2;0;0;1;3;1;Start;Unlocked
+s002;Skiff;Batel;;;15;3;0;0;1;5;2;;Unknow
+s003;Longboat;Bote;;;50;3;0;0;2;10;3;;Unknow
+s004;Small Barque;Barca;;;300;3;5;10;2;15;4;;Unknow
+s005;Small Caravel;Caravelão;;;1500;3;5;10;3;30;4;;Unknow

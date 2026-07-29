@@ -1,0 +1,8 @@
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;UnlockTrigger;InGame
+uic011;;Experiência por Dia;;Aumenta o ganho de Experiência ao final de um dia sobrevivido;Company;Additive;ExperienceIncome;None;PlanningRoom;1;Meta;;0;2;1.11;Marcos;2;Unknow;Start;Ok
+uic012;;Crescimento de Experiência por Abate;;"Aumenta a taxa de crescimento da Melhoria ""Experiência por Abate""";Company;Multiplicative;UpgradeExperiencePerKillRate;None;PlanningRoom;1.2;Upgrade;use101;0;15;1.12;Marcos;20;Unknow;Empty;Ok
+uic013;;Experiência por Abate;;Aumenta o ganho de Experiência por abate;Company;Multiplicative;ExperiencePerKill;None;PlanningRoom;1.1;Meta;;0;8;1.1;Marcos;5;Unknow;Empty;Ok
+uic111;;Marcos por Dia;;Aumenta o ganho de Marcos ao final de um dia sobrevivido;Company;Additive;MarcosIncome;None;TreasureRoom;1;Meta;;0;20;1.11;Marcos;10;Unknow;Empty;Ok
+uie011;;Experiência por Abate;;Aumenta o ganho de Experiência por Abate;Expedition;Multiplicative;ExperiencePerKill;Crew;None;1.1;Meta;;0;10;1.11;Experience;5;Unknow;Empty;Ok
+uie012;;Experiência por Dia;;Aumenta o ganho de Experiência ao final de um dia sobrevivido;Expedition;Additive;ExperienceIncome;Crew;None;1;Meta;;0;2;1.11;Experience;10;Unknow;Empty;Ok
+uie111;;Marcos por Dia;;Aumenta o ganho de Marcos ao final de um dia sobrevivido;Expedition;Additive;MarcosIncome;Crew;None;1;Meta;;0;20;1.11;Experience;20;Unknow;Empty;Ok

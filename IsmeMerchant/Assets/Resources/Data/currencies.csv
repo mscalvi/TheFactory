@@ -1,0 +1,5 @@
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;Type;UnlockId;UnlockStatus
+c01;Experience;;;;Expedition;Experience;Start;Unlocked
+c11;Marcos;;;;Company;Marcos;Start;Unlocked
+c12;Knowledge;;;;Company;Knowledge;999999;Unknow
+c13;Prestige;;;;Company;Prestige;10;Unknow

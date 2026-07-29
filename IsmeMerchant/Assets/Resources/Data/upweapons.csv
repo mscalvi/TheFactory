@@ -1,0 +1,11 @@
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;UnlockTrigger;InGame
+uwc001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Company;Multiplicative;WeaponDamage;None;ArmoryRoom;1.1;Weapon;w001;0;5;1.08;Marcos;Start;Available;Start;Ok
+uwc001002;;Velocidade de Disparo do Estilingue;;Aumenta a Velocidade de Disparo do Estilingue;Company;Multiplicative;WeaponAtackSpeed;None;ArmoryRoom;1.1;Weapon;w001;10;15;1.3;Marcos;2;Unknow;Start;Ok
+uwc001003;;Alcande do Estilingue;;Aumenta o Alcance do Estilingue;Company;Additive;WeaponRange;None;ArmoryRoom;0.4;Weapon;w001;0;20;1.16;Experience;5;Unknow;Empty;Ok
+uwc001004;;Precisão do Estilingue;;Aumenta a Chance de Crítico do Estilingue;Company;Additive;WeaponPrecision;None;ArmoryRoom;0.0025;Weapon;w001;0;3;1.12;Marcos;10;Unknow;Empty;Ok
+uwe001001;;Dano do Estilingue;;Aumenta a Dano do Estilingue;Expedition;Multiplicative;WeaponDamage;Itens;None;1.1;Weapon;w001;0;5;1.08;Experience;Start;Available;Start;Ok
+uwe001002;;Velocidade de Disparo do Estilingue;;Aumenta a Velocidade de Disparo do Estilingue;Expedition;Multiplicative;WeaponAtackSpeed;Itens;None;1.1;Weapon;w001;0;15;1.3;Experience;2;Unknow;Start;Ok
+uwe001003;;Alcande do Estilingue;;Aumenta o Alcance do Estilingue;Expedition;Additive;WeaponRange;Itens;None;0.4;Weapon;w001;0;20;1.16;Experience;5;Unknow;Empty;Ok
+uwe001004;;Precisão do Estilingue;;Aumenta a Chance de Crítico do Estilingue;Expedition;Additive;WeaponPrecision;Itens;None;0.0025;Weapon;w001;0;3;1.12;Experience;10;Unknow;Empty;Ok
+uwe001005;;Dano Crítico do Estilingue;;Aumenta o Dano Crítico do Estilingue;Expedition;Multiplicative;WeaponCritical;Itens;None;1.1;Weapon;w001;0;4;1.12;Experience;20;Unknow;Empty;Ok
+uwc001005;;Dano Crítico do Estilingue;;Aumenta o Dano Crítico do Estilingue;Company;Multiplicative;WeaponCritical;None;ArmoryRoom;1.1;Weapon;w001;0;4;1.12;Marcos;20;Unknow;Empty;Ok
