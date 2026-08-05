@@ -33,6 +33,6 @@ public class ProgressState
     public bool Bestiary = false;
 
     public bool Click = true;
-    public bool Ingredients = false;
+    public bool Ingredients = true;
     public bool Recruiting = false;
 }

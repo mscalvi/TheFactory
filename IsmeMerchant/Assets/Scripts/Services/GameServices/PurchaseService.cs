@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using static CurrencyHelper;
 
@@ -110,9 +111,20 @@ public class PurchaseService : MonoBehaviour
 
     private void AtualizePrice(UpgradeInstance upgrade)
     {
-        upgrade.ActualCost = 1 + upgrade.ActualCost * System.Math.Pow(upgrade.CostGrowth, upgrade.ActualBuy + 1);
+        double lastCost = upgrade.ActualCost;
 
-        upgrade.ActualCost = (int)upgrade.ActualCost;
+        Debug.Log($"Upgrade lastCost: {lastCost}");
+
+        upgrade.ActualCost = upgrade.StartCost * System.Math.Pow(upgrade.CostGrowth, upgrade.ActualBuy + 1);
+
+        upgrade.ActualCost = (int)Math.Ceiling(upgrade.ActualCost);
+
+        if (upgrade.ActualCost <= lastCost)
+        {
+            upgrade.ActualCost = lastCost + 1;
+        }
+
+        Debug.Log($"Upgrade New Cost: {upgrade.ActualCost}");
 
         CanBuyUpgrade(upgrade);
     }

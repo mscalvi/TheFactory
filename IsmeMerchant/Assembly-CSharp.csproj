@@ -63,7 +63,6 @@
     <Compile Include="Assets\Scripts\Instances\AmmoInstance.cs" />
     <Compile Include="Assets\Scripts\Models\ModifierModel.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
-    <Compile Include="Assets\Scripts\Definitions\BuildingDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\DecisionsService.cs" />
     <Compile Include="Assets\Scripts\Definitions\CompanyUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Runtimes\ProjectileRuntime.cs" />
@@ -76,7 +75,6 @@
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\ProjectileService.cs" />
     <Compile Include="Assets\Scripts\Helpers\NumberHelper.cs" />
-    <Compile Include="Assets\Scripts\Definitions\WeaponOptionDefinition.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
     <Compile Include="Assets\Scripts\Data\ProjectilesData.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\UpgradeService.cs" />
@@ -85,9 +83,7 @@
     <Compile Include="Assets\Scripts\Definitions\ExpeditionCurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\MissionsPopUp.cs" />
     <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
-    <Compile Include="Assets\Scripts\Ui\BuildingUi.cs" />
     <Compile Include="Assets\Scripts\Services\Trackers\ProgressTrackerService.cs" />
-    <Compile Include="Assets\Scripts\Definitions\ShipOptionDefinition.cs" />
     <Compile Include="Assets\Scripts\Helpers\MissionHelper.cs" />
     <Compile Include="Assets\Scripts\Controllers\ExpeditionController.cs" />
     <Compile Include="Assets\Scripts\States\DataState.cs" />
@@ -104,7 +100,6 @@
     <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\DatabaseService.cs" />
     <Compile Include="Assets\Scripts\Definitions\MissionDefinition.cs" />
-    <Compile Include="Assets\Scripts\Definitions\AmmoOptionDefinition.cs" />
     <Compile Include="Assets\Scripts\Ui\Grids\WeaponsGrid.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\DaysCycleService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyMarkingService.cs" />
@@ -126,7 +121,6 @@
     <Compile Include="Assets\Scripts\Ui\Grids\ConstructionsGrid.cs" />
     <Compile Include="Assets\Scripts\Data\EnemiesData.cs" />
     <Compile Include="Assets\Scripts\Ui\Grids\MissionsGrid.cs" />
-    <Compile Include="Assets\Scripts\Definitions\WeaponPanelDefinition.cs" />
     <Compile Include="Assets\Scripts\Models\MissionModel.cs" />
     <Compile Include="Assets\Scripts\Runtimes\MissionRuntime.cs" />
     <Compile Include="Assets\Scripts\Runtimes\EnemyRuntime.cs" />
@@ -148,7 +142,6 @@
     <Compile Include="Assets\Scripts\Data\IngredientsData.cs" />
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyViewService.cs" />
-    <Compile Include="Assets\Scripts\Ui\ShipUi.cs" />
     <Compile Include="Assets\Scripts\Instances\ShipInstance.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyControlService.cs" />
     <Compile Include="Assets\Scripts\Ui\Grids\UpgradesGrid.cs" />

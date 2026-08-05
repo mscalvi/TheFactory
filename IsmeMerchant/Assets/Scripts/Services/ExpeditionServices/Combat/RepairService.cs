@@ -16,9 +16,7 @@ public class RepairService : MonoBehaviour
     {
         var Ship = GameState.ExpeditionState.Ship;
 
-        Ship.CurrentLife += Ship.ActualRepair * 1;
-
-        Debug.Log("Lembrar de Mudar o Repair");
+        Ship.CurrentLife += Ship.ActualRepair;
 
         if (Ship.CurrentLife > Ship.ActualLife)
         {

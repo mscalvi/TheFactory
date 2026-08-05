@@ -200,5 +200,8 @@ public class LandingUi : MonoBehaviour
                 }, GameState);
             }
         }
+
+        GameState.ProgressState.UnlockableExpeditionUpgrades = 0;
+        GameState.ProgressState.UnlockableCompanyUpgrades = 0;
     }
 }

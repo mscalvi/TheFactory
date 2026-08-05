@@ -44,15 +44,15 @@ public class ExpeditionState
 
     public int StartMaxMarkedEnemies = 1;
     public int StartMaxMarkedLoot = 1;
-    public double StartNextLootChance = 0;
-    public double StartNextLootDecay = 0;
-    public double StartClickDamage = 2;
+    public double StartNextLootChance = 1;
+    public double StartNextLootDecay = 0.1;
+    public double StartClickDamage = 1;
 
     public int StartMinimalDestinationGap = 5;
     public int StartMaximalDestinationGap = 7;
     public int StartDestinationGapIncrease = 2;
 
-    public int StartMaxTripulation = 2;
+    public int StartMaxTripulation = 1;
 
     // Valores Base
     public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
@@ -70,15 +70,15 @@ public class ExpeditionState
 
     public int BaseMaxMarkedEnemies = 1;
     public int BaseMaxMarkedLoot = 1;
-    public double BaseNextLootChance = 0;
-    public double BaseNextLootDecay = 0;
-    public double BaseClickDamage = 2;
+    public double BaseNextLootChance = 1;
+    public double BaseNextLootDecay = 0.1;
+    public double BaseClickDamage = 1;
 
     public int BaseMinimalDestinationGap = 5;
     public int BaseMaximalDestinationGap = 7;
     public int BaseDestinationGapIncrease = 2;
 
-    public int BaseMaxTripulation = 2;
+    public int BaseMaxTripulation = 1;
     
     // Valores Atuais
     public Dictionary<GameHelper.ItemRarity, float> ActualIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
@@ -97,13 +97,13 @@ public class ExpeditionState
 
     public int ActualMaxMarkedEnemies = 1;
     public int ActualMaxMarkedLoot = 1;
-    public double ActualNextLootChance = 0;
-    public double ActualNextLootDecay = 0;
-    public double ActualClickDamage = 2;
+    public double ActualNextLootChance = 1;
+    public double ActualNextLootDecay = 0.1;
+    public double ActualClickDamage = 1;
 
     public int ActualMinimalDestinationGap = 5;
     public int ActualMaximalDestinationGap = 7;
     public int ActualDestinationGapIncrease = 2;
 
-    public int ActualMaxTripulation = 2;
+    public int ActualMaxTripulation = 1;
 }

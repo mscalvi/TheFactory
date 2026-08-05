@@ -28,10 +28,10 @@ public class ProgressTrackerService : MonoBehaviour
 
         if (GameState.ProgressState.MaxDaysTraveling < GameState.ExpeditionState.DayCounter)
         {
-            ExpeditionUpgradesTreshold = GameState.ExpeditionState.DayCounter / 5;
+            ExpeditionUpgradesTreshold = GameState.ExpeditionState.DayCounter / 10;
             CompanyUpgradesTreshold = GameState.ExpeditionState.DayCounter / 10;
 
-            LastExpeditionUpgradesTreshold = GameState.ProgressState.MaxDaysTraveling / 5;
+            LastExpeditionUpgradesTreshold = GameState.ProgressState.MaxDaysTraveling / 10;
             LastCompanyUpgradesTreshold = GameState.ProgressState.MaxDaysTraveling / 10;
 
             if(ExpeditionUpgradesTreshold > LastExpeditionUpgradesTreshold)

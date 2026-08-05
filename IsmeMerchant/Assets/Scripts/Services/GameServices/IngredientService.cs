@@ -31,7 +31,7 @@ public class IngredientService : MonoBehaviour
         {
             if (ingred.Value.Type == type)
             {
-                if (ingred.Value.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+                if (ingred.Value.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked && ingred.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
                     return;
             }
         }
@@ -134,7 +134,8 @@ public class IngredientService : MonoBehaviour
 
         float chance = (float)(GameState.ExpeditionState.ActualNextLootChance * Mathf.Pow((float)GameState.ExpeditionState.ActualNextLootDecay, time));
 
-        if (roll < chance)
+
+        if (roll <= chance)
         {
             return true;
         }
@@ -148,9 +149,9 @@ public class IngredientService : MonoBehaviour
         {
             bool Luck = true;
 
-            for (int i = 0; i < GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
+            for (int i = 0; i <= GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
             {
-                if (i > 1)
+                if (i >= 1)
                 {
                     Luck = RollChance(i);
                 }
