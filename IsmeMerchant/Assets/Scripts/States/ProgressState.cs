@@ -21,14 +21,6 @@ public class ProgressState
     public int UnlockableCompanyUpgrades = 0;
     public int UnlockableExpeditionUpgrades = 0;
 
-    public Dictionary<UnlockTrigger, bool> UpgradeTriggers = new()
-    {
-        { UnlockTrigger.Start, true },
-        { UnlockTrigger.FirstWeapon, false },
-        { UnlockTrigger.FirstAmmo, false },
-        { UnlockTrigger.FirstShip, false }
-    };
-
     // Unlock de Mecânicas
     public bool Studies = false;
     public bool Company = false;

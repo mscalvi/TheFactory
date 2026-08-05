@@ -104,17 +104,9 @@ public class ProgressTrackerService : MonoBehaviour
                 if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Available || upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked || upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Blocked)
                     continue;
 
-                foreach (var trigger in GameState.ProgressState.UpgradeTriggers)
-                {
-                    if (upgrade.UnlockTrigger == trigger.Key)
-                    {
-                        if (trigger.Value)
-                        {
-                            upgrade.UnlockStatus = UnlockHelper.UnlockStatus.Blocked;
-                            Debug.Log($"Upgrade Conhecido: {upgrade.NamePT} - Dia {unlockDay}");
-                        }
-                    }
-                }
+
+                upgrade.UnlockStatus = UnlockHelper.UnlockStatus.Blocked;
+                Debug.Log($"Upgrade Conhecido: {upgrade.NamePT} - Dia {unlockDay}");            
             }
             else
             {
@@ -122,22 +114,6 @@ public class ProgressTrackerService : MonoBehaviour
             }
         }
 
-        if (GameState.ProgressState.Company == true)
-        {
-            foreach (var tripulation in GameState.DataState.tripulations.Values)
-            {
-                int.TryParse(tripulation.UnlockId, out int unlockDay);
-
-                if (unlockDay <= GameState.ProgressState.MaxDaysTraveling)
-                {
-                    if (tripulation.UnlockStatus == UnlockHelper.UnlockStatus.Available || tripulation.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-                        continue;
-
-                    tripulation.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-                    Debug.Log($"Membro Desbloqueado: {tripulation.Name} - Dia {unlockDay}");
-                }
-            }
-        }
 
         if(GameState.ProgressState.Missions == true)
         {

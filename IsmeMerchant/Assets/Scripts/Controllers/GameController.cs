@@ -21,9 +21,6 @@ public class GameController : MonoBehaviour
     [SerializeField] public PurchaseService PurchaseService;
     [SerializeField] public IngredientService IngredientService;
     [SerializeField] public UpgradeService UpgradeService;
-    [SerializeField] public EventService EventService;
-    [SerializeField] public ConstructionsService ConstructionsService;
-    [SerializeField] public RecruitmentService RecruitmentService;
     [SerializeField] public RewardService RewardService;
     [SerializeField] public ConfigurationsService ConfigurationsService;
 
@@ -73,9 +70,6 @@ public class GameController : MonoBehaviour
         ModifierService.Initialize(GameState);
         UpgradeService.Initialize(GameState, UnlockService, ModifierService);
         IngredientService.Initialize(GameState);
-        EventService.Initialize(GameState, UnlockService);
-        ConstructionsService.Initialize(GameState);
-        RecruitmentService.Initialize(GameState);
         RewardService.Initialize(GameState, CurrencyService);
         ConfigurationsService.Initialize(GameState);
 

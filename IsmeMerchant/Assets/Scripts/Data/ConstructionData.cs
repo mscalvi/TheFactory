@@ -22,8 +22,6 @@ public static class ConstructionData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
-            model.Type = ParseHelper.Enum<TripulationHelper.Type>(row["Type"]);
-
             model.TargetType = ParseHelper.Enum<UpgradeHelper.TargetType>(row["TargetType"]);
 
             model.Cost = ParseHelper.Double(row["Cost"]);

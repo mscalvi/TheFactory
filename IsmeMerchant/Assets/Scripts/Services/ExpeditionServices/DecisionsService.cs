@@ -15,10 +15,8 @@ public class DecisionsService : MonoBehaviour
     private ExpeditionState ExpeditionState;
 
     //[SerializeField] EventPopUp EventPanel;
-    [SerializeField] DestinationsPopUp DecisionPanel;
     [SerializeField] FinalPopUp FinalPanel;
 
-    private Queue<EventInstance> eventQueue = new Queue<EventInstance>();
     private bool isShowingEvent = false;
 
     public void Initialize(GameState game, TickService tick, PathService path)
@@ -29,36 +27,6 @@ public class DecisionsService : MonoBehaviour
         GameState = game;
         ExpeditionState = GameState.ExpeditionState;
         DataState = GameState.DataState;
-    }
-
-    // Events
-    private void EventHappen(EventInstance eventInstance)
-    {
-        eventQueue.Enqueue(eventInstance);
-
-        TryShowNextEvent();
-    }
-
-    private void TryShowNextEvent()
-    {
-        if (isShowingEvent) return;
-
-        if (eventQueue.Count == 0) return;
-
-        var nextEvent = eventQueue.Dequeue();
-
-        isShowingEvent = true;
-
-        //EventPanel.ShowEvent(nextEvent, EventConfirm);
-    }
-
-    private void EventConfirm(bool Confirmed)
-    {
-        //EventPanel.Hide();
-
-        isShowingEvent = false;
-
-        TryShowNextEvent();
     }
 
     // Game Over
@@ -79,12 +47,10 @@ public class DecisionsService : MonoBehaviour
     void OnEnable()
     {
         ExpeditionEvents.OnExpeditionEnd += LastDecision;
-        GameEvents.OnEventTrigger += EventHappen;
     }
 
     void OnDisable()
     {
         ExpeditionEvents.OnExpeditionEnd -= LastDecision;
-        GameEvents.OnEventTrigger -= EventHappen;
     }
 }

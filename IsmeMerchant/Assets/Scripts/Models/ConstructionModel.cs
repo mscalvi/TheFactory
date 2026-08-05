@@ -11,7 +11,6 @@ public class ConstructionModel
     public string DescriptionPT;
     public string DescriptionEN;
 
-    public TripulationHelper.Type Type;
     public UpgradeHelper.TargetType TargetType;
 
     public double Cost;

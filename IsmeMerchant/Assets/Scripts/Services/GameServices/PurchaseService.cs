@@ -39,28 +39,6 @@ public class PurchaseService : MonoBehaviour
         CanBuyCurrency(upgrade.Currency);
     }
 
-    public void BuyConstruction(ConstructionInstance upgrade)
-    {
-        if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var Currency))
-            return;
-
-        if (Currency.Amount >= upgrade.ActualCost)
-        {
-            CurrencyService.Spend(upgrade.Currency, upgrade.ActualCost);
-
-            GameEvents.OnConstructionBuy?.Invoke(upgrade);
-        }
-
-        CanBuyCurrency(upgrade.Currency);
-    }
-
-    public void BuyTripulation(TripulationInstance tripulation)
-    {
-        CurrencyService.Spend(CurrencyType.Prestige, GameState.ExpeditionState.ActiveTripulation.Count * 10);
-
-        GameEvents.OnTripulationPurchase?.Invoke(tripulation);
-    }
-
     public void CanBuyCurrency(CurrencyHelper.CurrencyType type)
     {
         if (!GameState.DataState.currencies.TryGetValue(type, out var Currency))
@@ -124,33 +102,6 @@ public class PurchaseService : MonoBehaviour
 
                 if (build.Level * 10 <= upgrade.ActualBuy)
                     return false;
-            }
-        }
-
-        return currency.Amount >= upgrade.ActualCost;
-    }
-
-    public bool CanBuyRecruit()
-    {
-        if (GameState.DataState.currencies[CurrencyHelper.CurrencyType.Prestige].Amount >= GameState.ExpeditionState.ActiveTripulation.Count * 10)
-        {
-            return true;
-        } else
-        {
-            return false;
-        }
-    }
-
-    public bool CanBuyConstruction(ConstructionInstance upgrade)
-    {
-        if (!GameState.DataState.currencies.TryGetValue(upgrade.Currency, out var currency))
-            return false;
-
-        if (GameState.CompanyState.ActiveConstructions.Count >= GameState.CompanyState.MaxConstructionsSlots)
-        {
-            if (GameState.CompanyState.ConstructionsQueue.Count >= GameState.CompanyState.MaxConstructionsQueue)
-            {
-                return false;
             }
         }
 

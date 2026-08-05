@@ -31,5 +31,4 @@ public class UpgradeModel
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
-    public UnlockHelper.UnlockTrigger UnlockTrigger;
 }

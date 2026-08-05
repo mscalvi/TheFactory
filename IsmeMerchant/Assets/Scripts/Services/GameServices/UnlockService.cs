@@ -64,79 +64,6 @@ public class UnlockService : MonoBehaviour
         }
     }
 
-    public void UnlockTripulation(TripulationInstance tripulationInstance)
-    {
-        var ship = GameState.ExpeditionState.Ship;
-
-        foreach (var upgradeData in DataState.upgrades)
-        {
-            if (upgradeData.Value.UnlockId == tripulationInstance.Id)
-            {
-                upgradeData.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-            }
-        }
-
-        switch (tripulationInstance.Type)
-        {
-            case TripulationHelper.Type.Shipbuilder:
-                GameState.ProgressState.Shipbuilder = true;
-                break;
-            case TripulationHelper.Type.Hunter:
-                GameState.ProgressState.Hunter = true;
-                break;
-            case TripulationHelper.Type.Merchant:
-                GameState.ProgressState.Merchant = true;
-                break;
-            case TripulationHelper.Type.Alchemist:
-                GameState.ProgressState.Alchemist = true;
-                break;
-            case TripulationHelper.Type.Fisherman:
-                GameState.ProgressState.Fisherman = true;
-                break;
-            case TripulationHelper.Type.Coach:
-                GameState.ProgressState.Coach = true;
-                break;
-            case TripulationHelper.Type.Weaponsmith:
-                GameState.ProgressState.Weaponsmith = true;
-                break;
-        }
-
-        foreach (var acquistion in GameState.DataState.constructions)
-        {
-            if (acquistion.Value.UnlockType == tripulationInstance.Type)
-            {
-                acquistion.Value.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-            }
-        }
-
-        GameState.ExpeditionState.ActiveTripulation.Add(tripulationInstance);
-
-        GameState.ExpeditionState.ActiveRecruits.Clear();
-
-        GameState.DataState.tripulations[tripulationInstance.Id].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
-    }
-
-    private void ConstructionUpgrade(ConstructionInstance acq) 
-    {
-        string acqId = acq.Id.Substring(0,2);
-
-        switch (acqId)
-        {
-            case "a1":
-                foreach (var building in GameState.DataState.buildings)
-                {
-                    if (building.Value.UnlockId == acq.Id)
-                    {
-                        UnlockBuilding(building.Value);
-                        Debug.Log(building.Value.NamePT + " -> " + building.Value.UnlockStatus);
-                    }
-                }
-                break;
-        }
-
-        GameEvents.OnConstructionUnlocked?.Invoke(acq);
-    }
-
     public List<UpgradeInstance> UpgradeOptions(UpgradeHelper.UpgradeScope Scope)
     {
         List<UpgradeInstance> list = new List<UpgradeInstance>();
@@ -157,17 +84,5 @@ public class UnlockService : MonoBehaviour
                 .OrderBy(_ => Guid.NewGuid())
                 .Take(4)
                 .ToList();
-    }
-
-    private void OnEnable()
-    {
-        GameEvents.OnConstructionFinished += ConstructionUpgrade;
-        GameEvents.OnTripulationPurchase += UnlockTripulation;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnConstructionFinished -= ConstructionUpgrade;
-        GameEvents.OnTripulationPurchase -= UnlockTripulation;
     }
 }

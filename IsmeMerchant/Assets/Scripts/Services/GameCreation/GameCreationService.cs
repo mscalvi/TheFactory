@@ -19,35 +19,25 @@ public class GameCreationService : MonoBehaviour
         BuildShips();
         BuildIngredients();
         BuildBestiary();
-        BuildTripulation();
         BuildAmmos();
     }
 
     private void CreateDataState(GameDatabase DataBase)
     {
         var ships = new Dictionary<string, ShipInstance>();
-        var tripulation = new Dictionary<string, TripulationInstance>();
         var weapons = new Dictionary<string, WeaponInstance>();
         var ammos = new Dictionary<string, AmmoInstance>();
         var enemies = new Dictionary<string, EnemyInstance>();     
         var currencies = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
         var ingredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
-        var constructions = new Dictionary<string, ConstructionInstance>();
         var buildings = new Dictionary<string, BuildingInstance>();
-        var events = new Dictionary<string, EventInstance>();
         var missions = new Dictionary<string, MissionInstance>();
 
         foreach (var ship in DataBase.ships.Values)
         {
             var instance = new ShipInstance(ship);
             ships.Add(ship.Id, instance);
-        }
-
-        foreach (var trip in DataBase.tripulations.Values)
-        {
-            var instance = new TripulationInstance(trip);
-            tripulation.Add(trip.Id, instance);
         }
 
         foreach (var weapon in DataBase.weapons.Values)
@@ -86,22 +76,10 @@ public class GameCreationService : MonoBehaviour
             upgrades.Add(upgrade.Id, instance);
         }
 
-        foreach (var construction in DataBase.constructions.Values)
-        {
-            var instance = new ConstructionInstance(construction);
-            constructions.Add(construction.Id, instance);
-        }
-
         foreach (var building in DataBase.buildings.Values)
         {
             var instance = new BuildingInstance(building);
             buildings.Add(building.Id, instance);
-        }
-
-        foreach (var eventModel in DataBase.events.Values)
-        {
-            var instance = new EventInstance(eventModel);
-            events.Add(eventModel.Id, instance);
         }
 
         foreach (var missiomModel in DataBase.missions.Values)
@@ -111,16 +89,13 @@ public class GameCreationService : MonoBehaviour
         }
 
         GameState.DataState.ships = ships;
-        GameState.DataState.tripulations = tripulation;
         GameState.DataState.weapons = weapons;
         GameState.DataState.ammos = ammos;
         GameState.DataState.enemies = enemies;
         GameState.DataState.currencies = currencies;
         GameState.DataState.ingredients = ingredients;
         GameState.DataState.upgrades = upgrades;
-        GameState.DataState.constructions = constructions;
         GameState.DataState.buildings = buildings;
-        GameState.DataState.events = events;
         GameState.DataState.missions = missions;
     }
 
@@ -151,11 +126,6 @@ public class GameCreationService : MonoBehaviour
         {
             GameState.BestiaryState.Bestiary.Add(enemy.Value.Id, new BestiaryEntry());
         }
-    }
-
-    private void BuildTripulation()
-    {
-        GameState.ExpeditionState.ActiveTripulation.Add(GameState.DataState.tripulations["t001"]);
     }
 
     private void BuildAmmos()

@@ -66,7 +66,6 @@ public static class UpgradesData
 
             model.UnlockId = row["UnlockId"];
             model.UnlockStatus = System.Enum.Parse<UnlockHelper.UnlockStatus>(row["UnlockStatus"]);
-            model.UnlockTrigger = System.Enum.Parse<UnlockHelper.UnlockTrigger>(row["UnlockTrigger"]);
 
             if (All.ContainsKey(model.Id))
             {

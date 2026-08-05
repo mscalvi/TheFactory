@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponHelper
-{    public enum AmmoType
+{    
+    public enum AmmoType
     {
         None,
         Throw,

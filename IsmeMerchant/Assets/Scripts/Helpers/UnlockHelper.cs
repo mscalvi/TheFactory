@@ -14,13 +14,4 @@ public class UnlockHelper
         Deleted,    // Dados obsoletos
         Finished,   // Completamente Comprado
     }
-
-    public enum UnlockTrigger
-    {
-        Start,
-        Empty,
-        FirstWeapon,
-        FirstShip,
-        FirstAmmo,
-    }
 }

@@ -8,7 +8,6 @@ public class DatabaseService : MonoBehaviour
     {
         Database = new GameDatabase();
 
-        TripulationData.Load();
         EnemiesData.Load();
 
         ShipData.Load();
@@ -23,10 +22,8 @@ public class DatabaseService : MonoBehaviour
         CurrenciesData.Load();
         IngredientsData.Load();
 
-        EventsData.Load();
         MissionsData.Load();
 
-        Database.tripulations = TripulationData.All;
         Database.enemies = EnemiesData.All;
 
         Database.ships = ShipData.All;
@@ -41,7 +38,6 @@ public class DatabaseService : MonoBehaviour
         Database.currencies = CurrenciesData.All;
         Database.ingredients = IngredientsData.All;
 
-        Database.events = EventsData.All;
         Database.missions = MissionsData.All;
 
         return Database;

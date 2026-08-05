@@ -25,9 +25,6 @@ public class ExpeditionState
     public List<EnemyRuntime> ActiveEnemies = new List<EnemyRuntime>();
     public bool DamageTaken = false;
 
-    public List<TripulationInstance> ActiveTripulation = new List<TripulationInstance>();
-    public List<TripulationInstance> ActiveRecruits = new List<TripulationInstance>();
-
     public List<AmmoInstance> ActiveAmmos;
 
     // Valores Start

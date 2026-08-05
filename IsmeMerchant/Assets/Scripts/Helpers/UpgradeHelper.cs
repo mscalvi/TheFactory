@@ -78,7 +78,6 @@ public class UpgradeHelper
         MarcosIncome,
         UpgradeShipRepairRate,
         UpgradeExperiencePerKillRate,
-        TripulationMax,
     }
 
     public enum TargetType 

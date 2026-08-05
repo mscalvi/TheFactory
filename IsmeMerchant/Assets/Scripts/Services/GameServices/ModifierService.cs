@@ -125,9 +125,6 @@ public class ModifierService : MonoBehaviour
                     case UpgradeHelper.EffectType.GameSpeed:
                         GameSpeedModifier(upgrade);
                         break;
-                    case UpgradeHelper.EffectType.TripulationMax:
-                        TripulationMaxModifier(upgrade);
-                        break;
                     case UpgradeHelper.EffectType.ExperiencePerKill:
                         ExperienceKillModifier(upgrade);
                         break;
@@ -251,8 +248,8 @@ public class ModifierService : MonoBehaviour
 
         var Modifier = ApplyModifiers(upgrade);
 
-        ship.BaseRepairPerTripulation = (ship.StartRepairPerTripulation + Modifier.AdCompMod) * Modifier.MtCompMod;
-        ship.ActualRepairPerTripulation = (ship.BaseRepairPerTripulation + Modifier.AdExpeMod) * Modifier.MtExpeMod;
+        ship.BaseRepair = (ship.StartRepair + Modifier.AdCompMod) * Modifier.MtCompMod;
+        ship.ActualRepair = (ship.BaseRepair + Modifier.AdExpeMod) * Modifier.MtExpeMod;
     }
 
     // Modificadores Weapons

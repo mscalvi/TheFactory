@@ -91,7 +91,7 @@ public class ExpeditionStartService : MonoBehaviour
         Game.ExpeditionState.Ship.ActualResistence = Game.ExpeditionState.Ship.BaseResistence;
 
         Game.ExpeditionState.Ship.ActualLife = Game.ExpeditionState.Ship.BaseLife;
-        Game.ExpeditionState.Ship.ActualRepairPerTripulation = Game.ExpeditionState.Ship.BaseRepairPerTripulation;
+        Game.ExpeditionState.Ship.ActualRepair = Game.ExpeditionState.Ship.BaseRepair;
 
         Game.ExpeditionState.Ship.ActualSpeed = Game.ExpeditionState.Ship.BaseSpeed;
 

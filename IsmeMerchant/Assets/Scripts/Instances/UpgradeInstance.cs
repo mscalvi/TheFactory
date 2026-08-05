@@ -41,7 +41,6 @@ public class UpgradeInstance
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
-    public UnlockHelper.UnlockTrigger UnlockTrigger;
 
     public UpgradeInstance(UpgradeModel model)
     {
@@ -83,6 +82,5 @@ public class UpgradeInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
-        UnlockTrigger = model.UnlockTrigger;
     }
 }

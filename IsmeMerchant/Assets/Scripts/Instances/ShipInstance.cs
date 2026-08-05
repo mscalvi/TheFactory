@@ -31,9 +31,9 @@ public class ShipInstance
     public double BaseResistence;
     public double ActualResistence;
 
-    public double StartRepairPerTripulation;
-    public double BaseRepairPerTripulation;
-    public double ActualRepairPerTripulation;
+    public double StartRepair;
+    public double BaseRepair;
+    public double ActualRepair;
 
     // Actual Value
     public double CurrentLife;
@@ -55,7 +55,6 @@ public class ShipInstance
         DescriptionPT = model.DescriptionPT;
 
         Size = model.Size;
-        //MaxTripulation = model.Tripulation;
 
         StartLife = model.Life;
         BaseLife = model.Life;
@@ -70,9 +69,9 @@ public class ShipInstance
         BaseResistence = model.Resistence;
         ActualResistence = model.Resistence;
 
-        StartRepairPerTripulation = 1;
-        BaseRepairPerTripulation = 1;
-        ActualRepairPerTripulation = 1;
+        StartRepair = 1;
+        BaseRepair = 1;
+        ActualRepair = 1;
 
         StartArmor = model.Armor;
         BaseArmor = model.Armor;
@@ -83,10 +82,5 @@ public class ShipInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
-    }
-
-    public ShipInstance()
-    {
-
     }
 }
