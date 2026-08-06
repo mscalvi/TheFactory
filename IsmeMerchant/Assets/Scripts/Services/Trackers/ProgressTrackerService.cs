@@ -20,66 +20,64 @@ public class ProgressTrackerService : MonoBehaviour
 
     private void DayRecordeCheck()
     {
-        int ExpeditionUpgradesTreshold = 0;
-        int CompanyUpgradesTreshold = 0;
+        if (FirstRunCheck()) return;
 
-        int LastExpeditionUpgradesTreshold = 0;
-        int LastCompanyUpgradesTreshold = 0;
+        ComputeRecorde();
 
-        if (GameState.ProgressState.MaxDaysTraveling < GameState.ExpeditionState.DayCounter)
-        {
-            ExpeditionUpgradesTreshold = GameState.ExpeditionState.DayCounter / 10;
-            CompanyUpgradesTreshold = GameState.ExpeditionState.DayCounter / 10;
+        NewEnemiesUnlock();
 
-            LastExpeditionUpgradesTreshold = GameState.ProgressState.MaxDaysTraveling / 10;
-            LastCompanyUpgradesTreshold = GameState.ProgressState.MaxDaysTraveling / 10;
+        NewUpgradesUnlock();
 
-            if(ExpeditionUpgradesTreshold > LastExpeditionUpgradesTreshold)
-            {
-                GameState.ProgressState.UnlockableExpeditionUpgrades = ExpeditionUpgradesTreshold - LastExpeditionUpgradesTreshold;
-                Debug.Log("Upgrade Expedition Disponível");
-            }
-            else
-            {
-                GameState.ProgressState.UnlockableExpeditionUpgrades = 0;
-            }
-            if (CompanyUpgradesTreshold > LastCompanyUpgradesTreshold)
-            {
-                GameState.ProgressState.UnlockableCompanyUpgrades = CompanyUpgradesTreshold - LastCompanyUpgradesTreshold;
-                Debug.Log("Upgrade Company Disponível");
-            }
-            else
-            {
-                GameState.ProgressState.UnlockableCompanyUpgrades = 0;
-            }
+        NewMissionsUnlock();
 
-            if (GameState.ExpeditionState.ExpeditionsDone <= 1)
-                return;
+        NewCurrencyUnlocked();
+    }
 
-            GameState.ProgressState.MaxDaysTraveling = GameState.ExpeditionState.DayCounter;
-            GameEvents.NewDayRecord?.Invoke();
-        }
-        else
-        {
+    private bool FirstRunCheck()
+    {
+        if (GameState.ExpeditionState.ExpeditionsDone <= 1)
+            return true;
+
+        return false;
+    }
+
+    private void ComputeRecorde()
+    {
+        Debug.Log($"Recorde Atual: {GameState.ProgressState.MaxDaysTraveling} dias");
+        Debug.Log($"Run: {GameState.ExpeditionState.DayCounter} dias");
+
+        int currentDays = GameState.ExpeditionState.DayCounter;
+        int previousMax = GameState.ProgressState.MaxDaysTraveling;
+
+        if (currentDays <= previousMax)
             return;
+
+        int newThreshold5 = (currentDays + 5) / 10;
+        int oldThreshold5 = (previousMax + 5) / 10;
+        int expeditionUpgradesEarned = newThreshold5 - oldThreshold5;
+
+        if (expeditionUpgradesEarned > 0)
+        {
+            GameState.ProgressState.UnlockableExpeditionUpgrades += expeditionUpgradesEarned;
+            Debug.Log($"Upgrades de Expedição ganhos: {expeditionUpgradesEarned}");
         }
 
-        if (GameState.ProgressState.Constructions != true)
+        int newThreshold10 = (currentDays + 0) / 10;
+        int oldThreshold10 = (previousMax + 0) / 10;
+        int companyUpgradesEarned = newThreshold10 - oldThreshold10;
+
+        if (companyUpgradesEarned > 0)
         {
-            if (GameState.ProgressState.MaxDaysTraveling >= 5)
-            {
-                GameState.ProgressState.Constructions = true;
-                GameEvents.OnMechanicUnlock?.Invoke("Constructions");
-            }
+            GameState.ProgressState.UnlockableCompanyUpgrades += companyUpgradesEarned;
+            Debug.Log($"Upgrades de Companhia ganhos: {companyUpgradesEarned}");
         }
 
-        if (GameState.ProgressState.Recruiting != true)
-        {
-            if (GameState.ProgressState.MaxDaysTraveling >= 10)
-            {
-                GameState.ProgressState.Recruiting = true;
-            }
-        }
+        GameState.ProgressState.MaxDaysTraveling = currentDays;
+        GameEvents.NewDayRecord?.Invoke();
+    }
+
+    private void NewEnemiesUnlock()
+    {
 
         foreach (var enemy in GameState.DataState.enemies.Values)
         {
@@ -94,7 +92,10 @@ public class ProgressTrackerService : MonoBehaviour
                 Debug.Log($"Inimigo Desbloqueado: {enemy.NamePT} - Dia {unlockDay}");
             }
         }
+    }
 
+    private void NewUpgradesUnlock()
+    {
         foreach (var upgrade in GameState.DataState.upgrades.Values)
         {
             int.TryParse(upgrade.UnlockId, out int unlockDay);
@@ -106,16 +107,15 @@ public class ProgressTrackerService : MonoBehaviour
 
 
                 upgrade.UnlockStatus = UnlockHelper.UnlockStatus.Blocked;
-                Debug.Log($"Upgrade Conhecido: {upgrade.NamePT} - Dia {unlockDay}");            
-            }
-            else
-            {
-                Debug.Log($"{upgrade.NamePT} - Trigger Desconhecido");
+
+                Debug.Log($"Upgrade Conhecido: {upgrade.NamePT} - Dia {unlockDay}");
             }
         }
+    }
 
-
-        if(GameState.ProgressState.Missions == true)
+    private void NewMissionsUnlock()
+    {
+        if (GameState.ProgressState.Missions == true)
         {
             foreach (var mission in GameState.DataState.missions.Values)
             {
@@ -131,26 +131,21 @@ public class ProgressTrackerService : MonoBehaviour
                 }
             }
         }
+    }
 
-        if (GameState.ProgressState.Recruiting == true)
+    private void NewCurrencyUnlocked()
+    {
+        foreach (var currencyData in GameState.DataState.currencies.Values)
         {
-            foreach (var currencyData in GameState.DataState.currencies.Values)
+            int.TryParse(currencyData.UnlockId, out int unlockDay);
+
+            if (unlockDay <= GameState.ProgressState.MaxDaysTraveling)
             {
-                int.TryParse(currencyData.UnlockId, out int unlockDay);
+                if (currencyData.UnlockStatus == UnlockHelper.UnlockStatus.Available || currencyData.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+                    continue;
 
-                if (unlockDay <= GameState.ProgressState.MaxDaysTraveling)
-                {
-                    if (currencyData.UnlockStatus == UnlockHelper.UnlockStatus.Available || currencyData.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-                        continue;
-
-                    currencyData.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
-                    Debug.Log($"Dinheiro Desbloqueado: {currencyData.Type} - Dia {unlockDay}");
-
-                    if(currencyData.Type == CurrencyHelper.CurrencyType.Prestige)
-                    {
-                        GameEvents.OnMechanicUnlock?.Invoke("Recruiting");
-                    }
-                }
+                currencyData.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+                Debug.Log($"Dinheiro Desbloqueado: {currencyData.Type} - Dia {unlockDay}");
             }
         }
     }
@@ -172,13 +167,13 @@ public class ProgressTrackerService : MonoBehaviour
         {
             if (!GameState.ProgressState.Company)
             {
-                GameState.ProgressState.Company = true;
+                // GameState.ProgressState.Company = true;
             }
         }
 
         if (GameState.ExpeditionState.ExpeditionsDone > 2)
         {
-            GameState.ProgressState.Missions = true;
+            // GameState.ProgressState.Missions = true;
         }
     }
 

@@ -63,6 +63,8 @@
     <Compile Include="Assets\Scripts\Instances\AmmoInstance.cs" />
     <Compile Include="Assets\Scripts\Models\ModifierModel.cs" />
     <Compile Include="Assets\Scripts\Views\ProjectileView.cs" />
+    <Compile Include="Assets\Scripts\Definitions\BuildingDefinition.cs" />
+    <Compile Include="Assets\Scripts\Deisgner\PopUp\BuildingsPopUp.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\DecisionsService.cs" />
     <Compile Include="Assets\Scripts\Definitions\CompanyUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Runtimes\ProjectileRuntime.cs" />

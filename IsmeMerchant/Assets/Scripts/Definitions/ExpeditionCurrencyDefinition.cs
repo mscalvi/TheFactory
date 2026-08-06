@@ -1,4 +1,5 @@
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ public class ExpeditionCurrencyDefinition : MonoBehaviour
 
     public void Setup(CurrencyInstance currency, DataState db)
     {
-        CurrencyAmount.text = currency.Amount.ToString("N0");
+        CurrencyAmount.text = Math.Floor(currency.Amount).ToString("N0");
 
         Sprite icon = Resources.Load<Sprite>($"Sprites/Currencies/{currency.Id}");
 

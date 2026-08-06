@@ -134,9 +134,11 @@ public class IngredientService : MonoBehaviour
 
         float chance = (float)(GameState.ExpeditionState.ActualNextLootChance * Mathf.Pow((float)GameState.ExpeditionState.ActualNextLootDecay, time));
 
+        Debug.Log($"Chance de Ingrediente: {chance * 100}");
 
         if (roll <= chance)
         {
+            Debug.Log("Sucesso!");
             return true;
         }
 
@@ -151,10 +153,7 @@ public class IngredientService : MonoBehaviour
 
             for (int i = 0; i <= GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
             {
-                if (i >= 1)
-                {
-                    Luck = RollChance(i);
-                }
+                Luck = RollChance(i);
 
                 if (Luck)
                 {

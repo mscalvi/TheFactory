@@ -1,12 +1,7 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Type;Level;UnlockId;UnlockStatus
 b00;;Salão da Companhia;;;CompanyRoom;1;Start;Unlocked
-b01;;Escritório de Planejamento;;;PlanningRoom;0;a1003;Available
-b02;;Sala de Pescaria;;;FishingRoom;0;a1004;Available
-b03;;Ferraria;;;ArmoryRoom;0;a1002;Available
-b04;;Sala de Confraternização;;;LivingRoom;0;a1005;Available
-b05;;Sala do Tesouro;;;TreasureRoom;0;a1006;Available
-b06;;Academia;;;TrainingRoom;0;a1007;Available
-b07;;Laboratório;;;LaboratoryRoom;0;a1008;Available
-b08;;Marcenaria;;;ShipImproveRoom;0;a1001;Available
-b10;;Sala dos Caçadores;;;HuntersRoom;0;a1009;Available
-b11;;Estoque;;;StockRoom;0;a1010;Available
+b01;;Escritório de Planejamento;;;TreasureRoom;1;Start;Unlocked
+b02;;Sala de Pescaria;;;FishingRoom;0;;Unlocked
+b03;;Sala de Armamentos;;;ArmoryRoom;1;Start;Unlocked
+b05;;Marcenaria;;;ShipImproveRoom;1;Start;Unlocked
+b07;;Laboratório;;;LaboratoryRoom;0;;Unlocked

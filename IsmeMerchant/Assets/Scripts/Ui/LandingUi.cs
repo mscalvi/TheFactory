@@ -12,6 +12,7 @@ public class LandingUi : MonoBehaviour
 
     private MissionsService MissionsService;
     private UnlockService UnlockService;
+    private PurchaseService PurchaseService;
 
     [SerializeField] Button ExpeditionButton;
 
@@ -25,6 +26,7 @@ public class LandingUi : MonoBehaviour
 
     [SerializeField] MissionsPopUp MissionsPopUp;
     [SerializeField] UpgradesPopUp UpgradesPopUp;
+    [SerializeField] BuildingsPopUp BuildingsPopUp;
     [SerializeField] GameObject ConfigsPopUp;
     [SerializeField] Transform MissionPopUp;
 
@@ -32,11 +34,12 @@ public class LandingUi : MonoBehaviour
     [SerializeField] Transform CompanyCurrencyPanel;
     [SerializeField] CompanyCurrencyDefinition CurrencyPrefab;
 
-    public void Initialize(GameState gameState, MissionsService missionsService, UnlockService unlockService)
+    public void Initialize(GameState gameState, MissionsService missionsService, UnlockService unlockService, PurchaseService purchaseSercice)
     {
         GameState = gameState;
         MissionsService = missionsService;
         UnlockService = unlockService;
+        PurchaseService = purchaseSercice;
 
         BlockButtons();
         // MissionSet();
@@ -128,6 +131,15 @@ public class LandingUi : MonoBehaviour
         SceneManager.LoadScene("ExpeditionScene");
     }
 
+    public void BestiaryButtonFuncion()
+    {
+
+    }
+    public void RoomsButtonFuncion()
+    {
+        BuildingsPopUp.Show(GameState, PurchaseService);
+    }
+
     // Currency
     public void BuildCurrencies(Transform parent)
     {
@@ -172,14 +184,14 @@ public class LandingUi : MonoBehaviour
         Debug.Log($"Checando Upgrades: {GameState.ProgressState.UnlockableExpeditionUpgrades}/{GameState.ProgressState.UnlockableCompanyUpgrades}");
         if (GameState.ProgressState.UnlockableExpeditionUpgrades > 0)
         {
-            Debug.Log("Encontrado Upgrade");
+            Debug.Log("Encontrado Upgrade de Expedição");
             for (int i = GameState.ProgressState.UnlockableExpeditionUpgrades; i > 0; i--)
             {
                 var expUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Expedition);
 
                 UpgradesPopUp.ShowUpgrades(expUpgradesOptions, (selected) =>
                 {
-                    selected.Model.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                    selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
 
                     UpgradesPopUp.Hide();
                 }, GameState);
@@ -187,14 +199,14 @@ public class LandingUi : MonoBehaviour
         }
         if (GameState.ProgressState.UnlockableCompanyUpgrades > 0)
         {
-            Debug.Log("Encontrado Upgrade");
+            Debug.Log("Encontrado Upgrade de Companhia");
             for (int i = GameState.ProgressState.UnlockableCompanyUpgrades; i > 0; i--)
             {
                 var compUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Company);
 
                 UpgradesPopUp.ShowUpgrades(compUpgradesOptions, (selected) =>
                 {
-                    selected.Model.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                    selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
 
                     UpgradesPopUp.Hide();
                 }, GameState);
@@ -203,5 +215,23 @@ public class LandingUi : MonoBehaviour
 
         GameState.ProgressState.UnlockableExpeditionUpgrades = 0;
         GameState.ProgressState.UnlockableCompanyUpgrades = 0;
+    }
+
+    // Eventos
+    void OnEnable()
+    {
+        GameEvents.OnCurrencyChange += RefreshCurrencyUi;
+        GameEvents.OnCanBuyChange += RefreshCurrencyUi;
+    }
+
+    void OnDisable()
+    {
+        GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
+        GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
+    }
+
+    void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)
+    {
+        BuildCurrencies(CompanyCurrencyPanel);
     }
 }

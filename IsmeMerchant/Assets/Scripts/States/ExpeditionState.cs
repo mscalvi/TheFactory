@@ -32,8 +32,8 @@ public class ExpeditionState
 
     public double StartSpawnChance = 1;
     public float StartSpawnInterval = 5f;
-    public double StartSpawnBudget = 3;
-    public double StartSpawnBudgetGrowth = 0.69;
+    public double StartSpawnBudget = 4;
+    public double StartSpawnBudgetGrowth = 0.55;
     public double StartBossThreshold = 200;
 
     public double StartStartExperience = 0;
@@ -44,8 +44,8 @@ public class ExpeditionState
 
     public int StartMaxMarkedEnemies = 1;
     public int StartMaxMarkedLoot = 1;
-    public double StartNextLootChance = 1;
-    public double StartNextLootDecay = 0.1;
+    public double StartNextLootChance = 0.05;
+    public double StartNextLootDecay = 0.01;
     public double StartClickDamage = 1;
 
     public int StartMinimalDestinationGap = 5;
@@ -56,10 +56,11 @@ public class ExpeditionState
 
     // Valores Base
     public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
+    
     public double BaseSpawnChance = 1;
     public float BaseSpawnInterval = 5f;
-    public double BaseSpawnBudget = 3;
-    public double BaseSpawnBudgetGrowth = 0.69;
+    public double BaseSpawnBudget = 4;
+    public double BaseSpawnBudgetGrowth = 0.55;
     public double BaseBossThreshold = 200;
 
     public double BaseStartExperience = 0;
@@ -70,8 +71,8 @@ public class ExpeditionState
 
     public int BaseMaxMarkedEnemies = 1;
     public int BaseMaxMarkedLoot = 1;
-    public double BaseNextLootChance = 1;
-    public double BaseNextLootDecay = 0.1;
+    public double BaseNextLootChance = 0.05;
+    public double BaseNextLootDecay = 0.01;
     public double BaseClickDamage = 1;
 
     public int BaseMinimalDestinationGap = 5;
@@ -85,8 +86,8 @@ public class ExpeditionState
 
     public double ActualSpawnChance = 1;
     public float ActualSpawnInterval = 5f;
-    public double ActualSpawnBudget = 3;
-    public double ActualSpawnBudgetGrowth = 0.69;
+    public double ActualSpawnBudget = 4;
+    public double ActualSpawnBudgetGrowth = 0.55;
     public double ActualBossThreshold = 200;
 
     public double ActualStartExperience = 0;
@@ -97,8 +98,8 @@ public class ExpeditionState
 
     public int ActualMaxMarkedEnemies = 1;
     public int ActualMaxMarkedLoot = 1;
-    public double ActualNextLootChance = 1;
-    public double ActualNextLootDecay = 0.1;
+    public double ActualNextLootChance = 0.05;
+    public double ActualNextLootDecay = 0.01;
     public double ActualClickDamage = 1;
 
     public int ActualMinimalDestinationGap = 5;

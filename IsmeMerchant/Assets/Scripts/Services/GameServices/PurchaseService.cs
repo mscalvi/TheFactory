@@ -113,8 +113,6 @@ public class PurchaseService : MonoBehaviour
     {
         double lastCost = upgrade.ActualCost;
 
-        Debug.Log($"Upgrade lastCost: {lastCost}");
-
         upgrade.ActualCost = upgrade.StartCost * System.Math.Pow(upgrade.CostGrowth, upgrade.ActualBuy + 1);
 
         upgrade.ActualCost = (int)Math.Ceiling(upgrade.ActualCost);
@@ -123,8 +121,6 @@ public class PurchaseService : MonoBehaviour
         {
             upgrade.ActualCost = lastCost + 1;
         }
-
-        Debug.Log($"Upgrade New Cost: {upgrade.ActualCost}");
 
         CanBuyUpgrade(upgrade);
     }

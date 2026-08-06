@@ -24,6 +24,7 @@ public class LandingController : MonoBehaviour
 
         var MissionsService = GameController.Instance.MissionsService;
         var UnlockService = GameController.Instance.UnlockService;
+        var PurchaseService = GameController.Instance.PurchaseService;
 
         var Ship = GameController.Instance.GameState.ExpeditionState.Ship;
         if (Ship == null)
@@ -35,6 +36,6 @@ public class LandingController : MonoBehaviour
         Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
         // Landing
-        Ui.Initialize(Game, MissionsService, UnlockService);
+        Ui.Initialize(Game, MissionsService, UnlockService, PurchaseService);
     }
 }
