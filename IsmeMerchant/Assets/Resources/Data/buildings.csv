@@ -1,7 +1,7 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Type;Level;UnlockId;UnlockStatus
 b00;;Salão da Companhia;;;CompanyRoom;1;Start;Unlocked
 b01;;Escritório de Planejamento;;;TreasureRoom;1;Start;Unlocked
-b02;;Sala de Pescaria;;;FishingRoom;0;;Unlocked
+b02;;Sala de Pescaria;;;FishingRoom;1;999;Blocked
 b03;;Sala de Armamentos;;;ArmoryRoom;1;Start;Unlocked
 b05;;Marcenaria;;;ShipImproveRoom;1;Start;Unlocked
-b07;;Laboratório;;;LaboratoryRoom;0;;Unlocked
+b07;;Laboratório;;;LaboratoryRoom;1;999;Blocked

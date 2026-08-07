@@ -83,10 +83,10 @@ public class RewardService : MonoBehaviour
 
     private void DestinationArrivalReward()
     {
-        if (GameState.DataState.currencies[CurrencyType.Prestige].UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
-            return;
+        // if (GameState.DataState.currencies[CurrencyType.Prestige].UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+        //    return;
 
-        CurrencyService.Add(CurrencyType.Prestige, 1);
+        // CurrencyService.Add(CurrencyType.Prestige, 1);
     }
 
     private void MechanicUnlockReward(string mechanic)

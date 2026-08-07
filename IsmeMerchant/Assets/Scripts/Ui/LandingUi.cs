@@ -16,10 +16,8 @@ public class LandingUi : MonoBehaviour
 
     [SerializeField] Button ExpeditionButton;
 
-    [SerializeField] GameObject MenusPanel;
-
-    [SerializeField] Transform MainButtonsPanel;
-    [SerializeField] Transform SubButtonsPanel;
+    [SerializeField] GameObject BigBtnPanel;
+    [SerializeField] GameObject SmallBtnPanel;
 
     [SerializeField] MissionDefinition MissionDefinition;
     [SerializeField] MissionButtonDefinition MissionButtonDefinition;
@@ -27,6 +25,8 @@ public class LandingUi : MonoBehaviour
     [SerializeField] MissionsPopUp MissionsPopUp;
     [SerializeField] UpgradesPopUp UpgradesPopUp;
     [SerializeField] BuildingsPopUp BuildingsPopUp;
+    [SerializeField] BestiaryPopUp BestiaryPopUp;
+
     [SerializeField] GameObject ConfigsPopUp;
     [SerializeField] Transform MissionPopUp;
 
@@ -111,14 +111,22 @@ public class LandingUi : MonoBehaviour
     // Buttons
     private void BlockButtons()
     {
-
+        SmallBtnPanel.SetActive(false);
+        BigBtnPanel.SetActive(false);
     }
+
     private void ReleaseButtons()
     {
         var Unlock = GameState.ProgressState;
 
         if (GameState.ExpeditionState.ExpeditionStatus == GameHelper.ExpeditionStatus.Running)
-            return;                
+            return;
+
+        if (GameState.ExpeditionState.ExpeditionsDone < 1) 
+            return;
+
+        SmallBtnPanel.SetActive(true);
+        BigBtnPanel.SetActive(true);
     }    
 
     public void BotaoSecretoDaGrana()
@@ -133,7 +141,7 @@ public class LandingUi : MonoBehaviour
 
     public void BestiaryButtonFuncion()
     {
-
+        BestiaryPopUp.Show(GameState);
     }
     public void RoomsButtonFuncion()
     {

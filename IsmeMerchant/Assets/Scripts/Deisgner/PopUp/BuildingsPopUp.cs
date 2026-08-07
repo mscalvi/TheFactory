@@ -34,6 +34,7 @@ public class BuildingsPopUp : MonoBehaviour
         GameState = gameState;
         PurchaseService = purchaseService;
 
+        ClearMainContainer();
         Hide();
 
         UpgBuildingsPanel.SetActive(true);
@@ -71,8 +72,6 @@ public class BuildingsPopUp : MonoBehaviour
         ClearContainer();
         upgradesUI.Clear();
 
-        Debug.Log($"Tentando Mostrar: {building.Id}");
-
         if (GameState.ActualLanguage == GameState.Language.Portugues)
         {
             BuildingName.text = building.NamePT.ToString();
@@ -94,12 +93,8 @@ public class BuildingsPopUp : MonoBehaviour
         {
             if (upgrade.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
-                Debug.Log($"Upgrade Disponível: {upgrade.Id}");
-
                 if (upgrade.Building != building.Type)
                     continue;
-
-                Debug.Log($"Building Disponível: {upgrade.Id}");
 
                 var go = Instantiate(CompanyUpgradeDefinition, UpgradesPanel.transform);
                 var ui = go.GetComponent<CompanyUpgradeDefinition>();
@@ -107,8 +102,6 @@ public class BuildingsPopUp : MonoBehaviour
                 ui.Setup(upgrade, PurchaseService, GameState);
 
                 upgradesUI[upgrade.Id] = ui;
-
-                Debug.Log($"Upgrade Instansciado: {upgrade.Id}");
             }
         }
     }
@@ -116,6 +109,13 @@ public class BuildingsPopUp : MonoBehaviour
     private void ClearContainer()
     {
         foreach (Transform child in UpgradesPanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+    private void ClearMainContainer()
+    {
+        foreach (Transform child in BuildingsPanel.transform)
         {
             Destroy(child.gameObject);
         }

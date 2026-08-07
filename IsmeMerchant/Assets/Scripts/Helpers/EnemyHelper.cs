@@ -41,4 +41,13 @@ public class EnemyHelper
     {
         None,
     }
+
+    public static readonly int[] KillThresholds =
+    {
+        1,      // Nome
+        50,     // Vida
+        100,    // Velocidade
+        150,    // Dano
+        200     // Velocidade de Ataque
+    };
 }

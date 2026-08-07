@@ -151,7 +151,7 @@ public class IngredientService : MonoBehaviour
         {
             bool Luck = true;
 
-            for (int i = 0; i <= GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
+            for (int i = 0; i < GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
             {
                 Luck = RollChance(i);
 

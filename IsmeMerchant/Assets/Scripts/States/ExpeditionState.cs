@@ -11,7 +11,7 @@ public class ExpeditionState
     public int ExpeditionsDone = 0;
 
     public float phaseTimer = 0f;
-    public float PhaseDuration = 15f;
+    public float PhaseDuration = 20f;
     public int ticksBetweenSpawns = 5;
     public bool IsDay { get; set; } = true;
     public int DayCounter = 1;

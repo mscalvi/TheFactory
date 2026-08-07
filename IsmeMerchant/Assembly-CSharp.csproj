@@ -69,10 +69,12 @@
     <Compile Include="Assets\Scripts\Definitions\CompanyUpgradeDefinition.cs" />
     <Compile Include="Assets\Scripts\Runtimes\ProjectileRuntime.cs" />
     <Compile Include="Assets\Scripts\Instances\IngredientInstance.cs" />
+    <Compile Include="Assets\Scripts\Ui\Grids\EnemyTypesGrid.cs" />
     <Compile Include="Assets\Scripts\Services\Trackers\BestiaryTrackerService.cs" />
     <Compile Include="Assets\Scripts\Instances\UpgradeInstance.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\SaveService.cs" />
     <Compile Include="Assets\Scripts\States\ExpeditionState.cs" />
+    <Compile Include="Assets\Scripts\Definitions\EnemyBestiaryDefinition.cs" />
     <Compile Include="Assets\Scripts\Controllers\GameController.cs" />
     <Compile Include="Assets\Scripts\Database\GameDatabase.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\ProjectileService.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Assets\Scripts\Definitions\ExpeditionCurrencyDefinition.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\MissionsPopUp.cs" />
     <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
+    <Compile Include="Assets\Scripts\Deisgner\PopUp\BestiaryPopUp.cs" />
     <Compile Include="Assets\Scripts\Services\Trackers\ProgressTrackerService.cs" />
     <Compile Include="Assets\Scripts\Helpers\MissionHelper.cs" />
     <Compile Include="Assets\Scripts\Controllers\ExpeditionController.cs" />
@@ -120,7 +123,6 @@
     <Compile Include="Assets\Scripts\States\CompanyState.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\CurrencyService.cs" />
     <Compile Include="Assets\Scripts\Ui\Grids\LandingCurrencyGrid.cs" />
-    <Compile Include="Assets\Scripts\Ui\Grids\ConstructionsGrid.cs" />
     <Compile Include="Assets\Scripts\Data\EnemiesData.cs" />
     <Compile Include="Assets\Scripts\Ui\Grids\MissionsGrid.cs" />
     <Compile Include="Assets\Scripts\Models\MissionModel.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="Assets\Scripts\Data\ShipsData.cs" />
     <Compile Include="Assets\Scripts\Instances\BuildingInstance.cs" />
     <Compile Include="Assets\Scripts\Data\IngredientsData.cs" />
+    <Compile Include="Assets\Scripts\Definitions\EnemyTypeDefinition.cs" />
     <Compile Include="Assets\Scripts\Helpers\UnlockHelper.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyViewService.cs" />
     <Compile Include="Assets\Scripts\Instances\ShipInstance.cs" />
@@ -175,6 +178,7 @@
     <Compile Include="Assets\Scripts\Data\UpgradesData.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\GameCreationService.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\UpgradesPopUp.cs" />
+    <Compile Include="Assets\Scripts\Ui\Grids\BestiaryGrid.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\ExpeditionControlService.cs" />
   </ItemGroup>
   <ItemGroup>

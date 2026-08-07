@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ConstructionsGrid : MonoBehaviour
+public class BestiaryGrid : MonoBehaviour
 {
     public GridLayoutGroup Grid;
 
-    public int Columns = 1;
-    public float Spacing = 0f;
-    public float Padding = 0f;
+    public int Columns = 4;
+    public int Lines = 1;
+    public float Spacing = 10f;
+    public float Padding = 10f;
 
     void Start()
     {
@@ -17,6 +18,7 @@ public class ConstructionsGrid : MonoBehaviour
     void Resize()
     {
         float width = ((RectTransform)transform).rect.width;
+        float height = ((RectTransform)transform).rect.height;
 
         float totalSpacing =
             Spacing * (Columns - 1);
@@ -28,7 +30,11 @@ public class ConstructionsGrid : MonoBehaviour
             (width - totalSpacing - totalPadding)
             / Columns;
 
+        float cellHeight =
+            (height - totalSpacing - totalPadding)
+            / Lines;
+
         Grid.cellSize =
-            new Vector2(cellWidth, 250f);
+            new Vector2(cellWidth, cellHeight);
     }
 }

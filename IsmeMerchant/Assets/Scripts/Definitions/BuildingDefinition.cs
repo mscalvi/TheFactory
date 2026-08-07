@@ -25,7 +25,6 @@ public class BuildingDefinition : MonoBehaviour
 
     public void OnClick()
     {
-        Debug.Log($"Building Clicada: {Building.Id}");
         Ui.ShowUpgrades(Building);
     }
 }
