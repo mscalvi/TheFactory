@@ -22,6 +22,9 @@ public class DatabaseService : MonoBehaviour
         CurrenciesData.Load();
         IngredientsData.Load();
 
+        ProductData.Load();
+        LabsData.Load();
+
         MissionsData.Load();
 
         Database.enemies = EnemiesData.All;
@@ -37,6 +40,9 @@ public class DatabaseService : MonoBehaviour
 
         Database.currencies = CurrenciesData.All;
         Database.ingredients = IngredientsData.All;
+
+        Database.products = ProductData.All;
+        Database.labs = LabsData.All;
 
         Database.missions = MissionsData.All;
 

@@ -29,9 +29,11 @@ public class GameCreationService : MonoBehaviour
         var ammos = new Dictionary<string, AmmoInstance>();
         var enemies = new Dictionary<string, EnemyInstance>();     
         var currencies = new Dictionary<CurrencyHelper.CurrencyType, CurrencyInstance>();
-        var ingredients = new Dictionary<IngredientHelper.IngredientType, IngredientInstance>();
+        var ingredients = new Dictionary<AlchemyHelper.IngredientType, IngredientInstance>();
         var upgrades = new Dictionary<string, UpgradeInstance>();
         var buildings = new Dictionary<string, BuildingInstance>();
+        var products = new Dictionary<string, ProductInstance>();
+        var labs = new Dictionary<string, LabInstance>();
         var missions = new Dictionary<string, MissionInstance>();
 
         foreach (var ship in DataBase.ships.Values)
@@ -82,6 +84,20 @@ public class GameCreationService : MonoBehaviour
             buildings.Add(building.Id, instance);
         }
 
+        foreach (var product in DataBase.products.Values)
+        {
+            Debug.Log($"Instanciando {product.Id}");
+            var instance = new ProductInstance(product);
+            products.Add(product.Id, instance);
+        }
+
+        foreach (var lab in DataBase.labs.Values)
+        {
+            Debug.Log($"Instanciando {lab.Id}");
+            var instance = new LabInstance(lab);
+            labs.Add(lab.Id, instance);
+        }
+
         foreach (var missiomModel in DataBase.missions.Values)
         {
             var instance = new MissionInstance(missiomModel);
@@ -96,6 +112,8 @@ public class GameCreationService : MonoBehaviour
         GameState.DataState.ingredients = ingredients;
         GameState.DataState.upgrades = upgrades;
         GameState.DataState.buildings = buildings;
+        GameState.DataState.products = products;
+        GameState.DataState.labs = labs;
         GameState.DataState.missions = missions;
     }
 

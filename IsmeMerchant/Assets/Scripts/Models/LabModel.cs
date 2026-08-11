@@ -1,7 +1,8 @@
-
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class IngredientModel
+public class LabModel
 {
     public string Id;
 
@@ -10,11 +11,9 @@ public class IngredientModel
     public string DescriptionPT;
     public string DescriptionEN;
 
-    public AlchemyHelper.IngredientType Type;
+    public AlchemyHelper.LabType Type;
 
-    public GameHelper.ItemRarity Rarity;
-
-    public AlchemyHelper.IngredientClass Class;
+    public int Level;
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;

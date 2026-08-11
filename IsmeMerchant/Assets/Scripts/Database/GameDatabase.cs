@@ -19,5 +19,8 @@ public class GameDatabase
 
     public Dictionary<string, BuildingModel> buildings;
 
+    public Dictionary<string, ProductModel> products;
+    public Dictionary<string, LabModel> labs;
+
     public Dictionary<string, MissionModel> missions;
 }

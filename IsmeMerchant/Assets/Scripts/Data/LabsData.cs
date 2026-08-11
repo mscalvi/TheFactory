@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 
-public static class IngredientsData
+public static class LabsData
 {
-    public static Dictionary<string, IngredientModel> All = new();
+    public static Dictionary<string, LabModel> All = new();
 
     public static void Load()
     {
         All.Clear();
 
-        var rows = CSVLoaderService.Load("Data/Ingredients");
+        var rows = CSVLoaderService.Load("Data/Labs");
 
         foreach (var row in rows)
         {
-            IngredientModel model = new();
+            LabModel model = new();
 
             model.Id = row["Id"];
 
@@ -22,11 +22,9 @@ public static class IngredientsData
             model.DescriptionPT = row["DescriptionPT"];
             model.DescriptionEN = row["DescriptionEN"];
 
-            model.Type = ParseHelper.Enum<AlchemyHelper.IngredientType>(row["Type"]);
+            model.Type = ParseHelper.Enum<AlchemyHelper.LabType>(row["Type"]);
 
-            model.Rarity = ParseHelper.Enum<GameHelper.ItemRarity>(row["Rarity"]);
-
-            model.Class = ParseHelper.Enum<AlchemyHelper.IngredientClass>(row["Class"]);
+            model.Level = ParseHelper.Int(row["Level"]);
 
             model.UnlockId = row["UnlockId"];
 

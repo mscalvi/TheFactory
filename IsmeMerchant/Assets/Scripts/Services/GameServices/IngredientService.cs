@@ -12,7 +12,7 @@ public class IngredientService : MonoBehaviour
         GameState = game;
     }
 
-    public double Get(IngredientHelper.IngredientType type)
+    public double Get(AlchemyHelper.IngredientType type)
     {
         var ingredients = GameState.DataState.ingredients;
 
@@ -23,7 +23,7 @@ public class IngredientService : MonoBehaviour
         return ingredientAmount;
     }
 
-    public void AddIngredient(IngredientHelper.IngredientType type, double amount)
+    public void AddIngredient(AlchemyHelper.IngredientType type, double amount)
     {
         var dataIngredients = GameState.DataState.ingredients;
 
@@ -41,7 +41,7 @@ public class IngredientService : MonoBehaviour
         Debug.Log($"Adicionando {type} > {amount}. Novo total: {dataIngredients[type].Amount}");
     }
 
-    public bool Spend(IngredientHelper.IngredientType type, double amount)
+    public bool Spend(AlchemyHelper.IngredientType type, double amount)
     {
         var ingredients = GameState.DataState.ingredients;
         double current = Get(type);
@@ -54,13 +54,24 @@ public class IngredientService : MonoBehaviour
         return true;
     }
 
-    private IngredientHelper.IngredientType RollIngredient(EnemyRuntime enemy)
+    public void BuyProduct(ProductInstance product)
+    {
+
+    }
+
+    public void CanBuyIngredient(AlchemyHelper.IngredientType ingredient)
+    {
+
+    }
+
+    // Drop
+    private AlchemyHelper.IngredientType RollIngredient(EnemyRuntime enemy)
     {
         GameHelper.ItemRarity rarity = RollRarity();
 
         while (true)
         {
-            IngredientHelper.IngredientType ingredient = rarity switch
+            AlchemyHelper.IngredientType ingredient = rarity switch
             {
                 GameHelper.ItemRarity.Common => enemy.CommonIngredient,
                 GameHelper.ItemRarity.Uncommon => enemy.UncommonIngredient,
@@ -69,7 +80,7 @@ public class IngredientService : MonoBehaviour
                 _ => enemy.CommonIngredient
             };
 
-            if (ingredient != IngredientHelper.IngredientType.None)
+            if (ingredient != AlchemyHelper.IngredientType.None)
             {
                 var instance = GameState.DataState.ingredients[ingredient];
 

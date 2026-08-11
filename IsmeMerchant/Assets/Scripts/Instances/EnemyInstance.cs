@@ -41,10 +41,10 @@ public class EnemyInstance
 
     public EnemyHelper.EnemySpecial Special;
 
-    public IngredientHelper.IngredientType CommonIngredient;
-    public IngredientHelper.IngredientType UncommonIngredient;
-    public IngredientHelper.IngredientType RareIngredient;
-    public IngredientHelper.IngredientType LegendaryIngredient;
+    public AlchemyHelper.IngredientType CommonIngredient;
+    public AlchemyHelper.IngredientType UncommonIngredient;
+    public AlchemyHelper.IngredientType RareIngredient;
+    public AlchemyHelper.IngredientType LegendaryIngredient;
 
     public double Rarity;
     public double SpawnCost;
@@ -127,5 +127,10 @@ public class EnemyInstance
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
+    }
+
+    public EnemyInstance()
+    {
+
     }
 }

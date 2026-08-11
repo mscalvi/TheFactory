@@ -65,22 +65,22 @@ public static class EnemiesData
                 );
 
             model.CommonIngredient =
-                ParseHelper.Enum<IngredientHelper.IngredientType>(
+                ParseHelper.Enum<AlchemyHelper.IngredientType>(
                     row["CommonIngredient"]
                 );
 
             model.UncommonIngredient =
-                ParseHelper.Enum<IngredientHelper.IngredientType>(
+                ParseHelper.Enum<AlchemyHelper.IngredientType>(
                     row["UncommonIngredient"]
                 );
 
             model.RareIngredient =
-                ParseHelper.Enum<IngredientHelper.IngredientType>(
+                ParseHelper.Enum<AlchemyHelper.IngredientType>(
                     row["RareIngredient"]
                 );
 
             model.LegendaryIngredient =
-                ParseHelper.Enum<IngredientHelper.IngredientType>(
+                ParseHelper.Enum<AlchemyHelper.IngredientType>(
                     row["LegendaryIngredient"]
                 );
 

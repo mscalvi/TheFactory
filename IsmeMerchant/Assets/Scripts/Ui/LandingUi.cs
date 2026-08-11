@@ -13,6 +13,8 @@ public class LandingUi : MonoBehaviour
     private MissionsService MissionsService;
     private UnlockService UnlockService;
     private PurchaseService PurchaseService;
+    private AlchemyService AlchemyService;
+    private IngredientService IngredientService;
 
     [SerializeField] Button ExpeditionButton;
     [SerializeField] TextMeshProUGUI RecordText;
@@ -23,6 +25,7 @@ public class LandingUi : MonoBehaviour
     [SerializeField] UpgradesPopUp UpgradesPopUp;
     [SerializeField] BuildingsPopUp BuildingsPopUp;
     [SerializeField] BestiaryPopUp BestiaryPopUp;
+    [SerializeField] AlchemyPopUp AlchemyPopUp;
 
     [SerializeField] GameObject ConfigsPopUp;
     [SerializeField] Transform MissionPopUp;
@@ -31,15 +34,22 @@ public class LandingUi : MonoBehaviour
     [SerializeField] Transform CompanyCurrencyPanel;
     [SerializeField] CompanyCurrencyDefinition CurrencyPrefab;
 
-    public void Initialize(GameState gameState, MissionsService missionsService, UnlockService unlockService, PurchaseService purchaseSercice)
+    Dictionary<AlchemyHelper.IngredientType, CompanyIngredientDefinition> ingredientsUi = new();
+    [SerializeField] Transform IngredientPanel;
+    [SerializeField] CompanyIngredientDefinition IngredientPrefab;
+
+    public void Initialize(GameState gameState, MissionsService missionsService, UnlockService unlockService, PurchaseService purchaseSercice, AlchemyService alchemy, IngredientService ingredients)
     {
         GameState = gameState;
         MissionsService = missionsService;
         UnlockService = unlockService;
         PurchaseService = purchaseSercice;
+        AlchemyService = alchemy;
+        IngredientService = ingredients;
 
         BlockButtons();
         BuildCurrencies(CompanyCurrencyPanel);
+        BuildIngredients(IngredientPanel);
         CheckUpgrades();
         ReleaseButtons();
         BuildRecord();
@@ -84,6 +94,10 @@ public class LandingUi : MonoBehaviour
     {
         BuildingsPopUp.Show(GameState, PurchaseService);
     }
+    public void AlchemyButtonFunction()
+    {
+        AlchemyPopUp.Show(GameState, AlchemyService, IngredientService);
+    }
 
     // Currency
     public void BuildCurrencies(Transform parent)
@@ -120,6 +134,39 @@ public class LandingUi : MonoBehaviour
             ui.Setup(currency, GameState.DataState);
 
             currencyUi[currency.Type] = ui;
+        }
+    }
+    public void BuildIngredients(Transform parent)
+    {
+        var currencies = GameState.DataState.ingredients;
+
+        foreach (Transform child in parent)
+            Destroy(child.gameObject);
+
+        ingredientsUi.Clear();
+
+        var ordered = new List<IngredientInstance>();
+
+        foreach (var pair in currencies)
+        {
+            var c = pair.Value;
+
+            if (c.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked && c.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
+            ordered.Add(c);
+        }
+
+        ordered.Sort((a, b) => string.Compare(a.Id, b.Id));
+
+        foreach (var ingredient in ordered)
+        {
+            var obj = Instantiate(IngredientPrefab, parent);
+
+            var ui = obj.GetComponent<CompanyIngredientDefinition>();
+            ui.Setup(ingredient, GameState.DataState);
+
+            ingredientsUi[ingredient.Type] = ui;
         }
     }
 

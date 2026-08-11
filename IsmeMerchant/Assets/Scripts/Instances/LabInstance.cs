@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IngredientInstance
+public class LabInstance
 {
-    public IngredientModel Model;
+    public LabModel Model;
 
     public string Id;
     public string NamePT;
@@ -12,38 +12,34 @@ public class IngredientInstance
     public string DescriptionPT;
     public string DescriptionEN;
 
-    public AlchemyHelper.IngredientType Type;
-    public GameHelper.ItemRarity Rarity;
-    public AlchemyHelper.IngredientClass Class;
+    public bool Note;
 
-    public double Amount;
-    public int VisualAmount => (int)Amount;
+    public AlchemyHelper.LabType Type;
+
+    public int Level;
 
     public string UnlockId;
     public UnlockHelper.UnlockStatus UnlockStatus;
 
-    public IngredientInstance(IngredientModel model)
+    public LabInstance(LabModel model)
     {
-        Model = model;
-
         Id = model.Id;
 
-        NamePT = model.NamePT;
         NameEN = model.NameEN;
+        NamePT = model.NamePT;
         DescriptionPT = model.DescriptionPT;
         DescriptionEN = model.DescriptionEN;
 
-        Type = model.Type;
-        Rarity = model.Rarity;
-        Class = model.Class;
+        Note = false;
 
-        Amount = 0;
+        Type = model.Type;
+
+        Level = model.Level;
 
         UnlockId = model.UnlockId;
         UnlockStatus = model.UnlockStatus;
     }
-
-    public IngredientInstance()
+    public LabInstance()
     {
 
     }
