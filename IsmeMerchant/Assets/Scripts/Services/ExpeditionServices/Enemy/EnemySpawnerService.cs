@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemySpawnerService : MonoBehaviour, ITickable
@@ -73,7 +74,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         spawnTickCounter++;
 
-        if (spawnTickCounter < GameState.ExpeditionState.ticksBetweenSpawns)
+        if (spawnTickCounter < GameState.ExpeditionState.ActualTicksBetweenSpawns)
             return;
 
         spawnTickCounter = 0;
@@ -272,13 +273,34 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         ExpeditionEvents.OnBossSpawn?.Invoke(chosenRuntime);
     }
 
+    private void ClearSpawnQueue()
+    {
+        Debug.Log($"Limpando {spawnQueue.Count()} spawns.");
+
+        spawnQueue.Clear();
+
+        if (GameState.ExpeditionState.IsDay)
+        {
+            if (GameState.ExpeditionState.ActualTicksBetweenSpawns > 1)
+            {
+                GameState.ExpeditionState.ActualTicksBetweenSpawns -= 0.1;
+            }
+        }
+
+        Debug.Log($"Velocidade de Spawn: {GameState.ExpeditionState.ActualTicksBetweenSpawns}.");
+    }
+
     void OnEnable()
     {
         ExpeditionEvents.SpawnBoss += SpawnBoss;
+        ExpeditionEvents.OnDayFinish += ClearSpawnQueue;
+        ExpeditionEvents.OnNightFinish += ClearSpawnQueue;
     }
 
     void OnDisable()
     {
         ExpeditionEvents.SpawnBoss -= SpawnBoss;
+        ExpeditionEvents.OnDayFinish -= ClearSpawnQueue;
+        ExpeditionEvents.OnNightFinish -= ClearSpawnQueue;
     }
 }

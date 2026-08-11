@@ -47,6 +47,7 @@ public class ExpeditionStartService : MonoBehaviour
         Expedition.ActualSpawnBudget = Expedition.BaseSpawnBudget;
         Expedition.ActualSpawnBudgetGrowth = Expedition.BaseSpawnBudgetGrowth;
         Expedition.ActualBossThreshold = Expedition.BaseBossThreshold;
+        Expedition.ActualTicksBetweenSpawns = Expedition.BaseTicksBetweenSpawns;
 
         Expedition.ActualStartExperience = Expedition.BaseStartExperience;
         Expedition.ActualExperienceKillBonus = Expedition.BaseExperienceKillBonus;

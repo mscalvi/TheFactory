@@ -15,14 +15,11 @@ public class LandingUi : MonoBehaviour
     private PurchaseService PurchaseService;
 
     [SerializeField] Button ExpeditionButton;
+    [SerializeField] TextMeshProUGUI RecordText;
 
     [SerializeField] GameObject BigBtnPanel;
     [SerializeField] GameObject SmallBtnPanel;
 
-    [SerializeField] MissionDefinition MissionDefinition;
-    [SerializeField] MissionButtonDefinition MissionButtonDefinition;
-
-    [SerializeField] MissionsPopUp MissionsPopUp;
     [SerializeField] UpgradesPopUp UpgradesPopUp;
     [SerializeField] BuildingsPopUp BuildingsPopUp;
     [SerializeField] BestiaryPopUp BestiaryPopUp;
@@ -42,70 +39,10 @@ public class LandingUi : MonoBehaviour
         PurchaseService = purchaseSercice;
 
         BlockButtons();
-        // MissionSet();
         BuildCurrencies(CompanyCurrencyPanel);
         CheckUpgrades();
         ReleaseButtons();
-    }
-
-    // Missions
-    public void SelectNewMission(MissionSlotModel slot)
-    {
-        if (IsSlotOnCooldown(slot))
-            return;
-
-        var missionsOptions = MissionsService.GenerateMissionOptions(GameState.MissionsState.MaxMissionsOptions);
-
-        if (missionsOptions.Count == 0)
-        {
-            return;
-        }
-
-        MissionsPopUp.ShowMissions(missionsOptions, (selected) =>
-        {
-            MissionsService.AssignMissionToSlot(selected, slot);
-
-            MissionsPopUp.Hide();
-
-            MissionSet();
-        }, GameState);
-    }
-    private bool IsSlotOnCooldown(MissionSlotModel slot)
-    {
-        long now = System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        return slot.CooldownEnd > now;
-    }
-    private void MissionSet()
-    {
-        foreach (Transform child in MissionPopUp)
-            Destroy(child.gameObject);
-
-        var slots = GameState.MissionsState.Slots;
-
-        foreach (var slot in slots)
-        {
-            if (slot.ActiveMission != null)
-            {
-                var go = Instantiate(MissionDefinition, MissionPopUp);
-                var ui = go.GetComponent<MissionDefinition>();
-
-                ui.Setup(slot.ActiveMission, GameState);
-            }
-            else if (IsSlotOnCooldown(slot))
-            {
-                var go = Instantiate(MissionButtonDefinition, MissionPopUp);
-                var ui = go.GetComponent<MissionButtonDefinition>();
-
-                ui.SetupCooldown(slot);
-            }
-            else
-            {
-                var go = Instantiate(MissionButtonDefinition, MissionPopUp);
-                var ui = go.GetComponent<MissionButtonDefinition>();
-
-                ui.SetupAvailable(this, slot);
-            }
-        }
+        BuildRecord();
     }
 
     // Buttons
@@ -189,40 +126,65 @@ public class LandingUi : MonoBehaviour
     // Upgrades
     private void CheckUpgrades()
     {
-        Debug.Log($"Checando Upgrades: {GameState.ProgressState.UnlockableExpeditionUpgrades}/{GameState.ProgressState.UnlockableCompanyUpgrades}");
-        if (GameState.ProgressState.UnlockableExpeditionUpgrades > 0)
+        do
         {
-            Debug.Log("Encontrado Upgrade de Expedição");
-            for (int i = GameState.ProgressState.UnlockableExpeditionUpgrades; i > 0; i--)
+            Debug.Log($"Checando Upgrades: {GameState.ProgressState.UnlockableExpeditionUpgrades}/{GameState.ProgressState.UnlockableCompanyUpgrades}");
+            if (GameState.ProgressState.UnlockableExpeditionUpgrades > 0)
             {
-                var expUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Expedition);
-
-                UpgradesPopUp.ShowUpgrades(expUpgradesOptions, (selected) =>
+                Debug.Log("Encontrado Upgrade de Expedição");
+                for (int i = GameState.ProgressState.UnlockableExpeditionUpgrades; i > 0; i--)
                 {
-                    selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                    var expUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Expedition);
 
-                    UpgradesPopUp.Hide();
-                }, GameState);
+                    UpgradesPopUp.ShowUpgrades(expUpgradesOptions, (selected) =>
+                    {
+                        selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+
+                        UpgradesPopUp.Hide();
+                    }, GameState);
+                }
             }
-        }
-        if (GameState.ProgressState.UnlockableCompanyUpgrades > 0)
-        {
-            Debug.Log("Encontrado Upgrade de Companhia");
-            for (int i = GameState.ProgressState.UnlockableCompanyUpgrades; i > 0; i--)
+            if (GameState.ProgressState.UnlockableCompanyUpgrades > 0)
             {
-                var compUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Company);
-
-                UpgradesPopUp.ShowUpgrades(compUpgradesOptions, (selected) =>
+                Debug.Log("Encontrado Upgrade de Companhia");
+                for (int i = GameState.ProgressState.UnlockableCompanyUpgrades; i > 0; i--)
                 {
-                    selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+                    var compUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Company);
 
-                    UpgradesPopUp.Hide();
-                }, GameState);
+                    UpgradesPopUp.ShowUpgrades(compUpgradesOptions, (selected) =>
+                    {
+                        selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+
+                        UpgradesPopUp.Hide();
+                    }, GameState);
+                }
             }
-        }
+
+            GameState.ProgressState.UnlockableExpeditionUpgrades--;
+            GameState.ProgressState.UnlockableCompanyUpgrades--;
+
+            Debug.Log($"Faltam Upgrades de Companhia: {GameState.ProgressState.UnlockableCompanyUpgrades}");
+            Debug.Log($"Faltam Upgrades de Expedição: {GameState.ProgressState.UnlockableExpeditionUpgrades}");
+
+        } while (GameState.ProgressState.UnlockableExpeditionUpgrades > 0 && GameState.ProgressState.UnlockableCompanyUpgrades > 0);
 
         GameState.ProgressState.UnlockableExpeditionUpgrades = 0;
         GameState.ProgressState.UnlockableCompanyUpgrades = 0;
+    }
+
+    // Ui
+
+    private void BuildRecord()
+    {
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            RecordText.text = GameState.ProgressState.MaxDaysTraveling.ToString() + " dias";
+        }
+
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            RecordText.text = GameState.ProgressState.MaxDaysTraveling.ToString() + " days";
+        }
     }
 
     // Eventos

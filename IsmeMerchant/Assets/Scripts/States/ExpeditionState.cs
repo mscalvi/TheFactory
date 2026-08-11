@@ -12,7 +12,6 @@ public class ExpeditionState
 
     public float phaseTimer = 0f;
     public float PhaseDuration = 20f;
-    public int ticksBetweenSpawns = 5;
     public bool IsDay { get; set; } = true;
     public int DayCounter = 1;
     public int StartDay = 1;
@@ -35,6 +34,7 @@ public class ExpeditionState
     public double StartSpawnBudget = 4;
     public double StartSpawnBudgetGrowth = 0.55;
     public double StartBossThreshold = 200;
+    public double StartTicksBetweenSpawns = 5;
 
     public double StartStartExperience = 0;
     public double StartExperienceKillBonus = 1;
@@ -62,6 +62,7 @@ public class ExpeditionState
     public double BaseSpawnBudget = 4;
     public double BaseSpawnBudgetGrowth = 0.55;
     public double BaseBossThreshold = 200;
+    public double BaseTicksBetweenSpawns = 5;
 
     public double BaseStartExperience = 0;
     public double BaseExperienceKillBonus = 1;
@@ -89,6 +90,7 @@ public class ExpeditionState
     public double ActualSpawnBudget = 4;
     public double ActualSpawnBudgetGrowth = 0.55;
     public double ActualBossThreshold = 200;
+    public double ActualTicksBetweenSpawns = 5;
 
     public double ActualStartExperience = 0;
     public double ActualExperienceKillBonus = 1;

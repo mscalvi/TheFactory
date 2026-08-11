@@ -85,7 +85,6 @@
     <Compile Include="Assets\Scripts\Controllers\LandingController.cs" />
     <Compile Include="Assets\Scripts\Models\UpgradeModel.cs" />
     <Compile Include="Assets\Scripts\Definitions\ExpeditionCurrencyDefinition.cs" />
-    <Compile Include="Assets\Scripts\Deisgner\PopUp\MissionsPopUp.cs" />
     <Compile Include="Assets\Scripts\Helpers\UpgradeHelper.cs" />
     <Compile Include="Assets\Scripts\Deisgner\PopUp\BestiaryPopUp.cs" />
     <Compile Include="Assets\Scripts\Services\Trackers\ProgressTrackerService.cs" />
@@ -104,7 +103,6 @@
     <Compile Include="Assets\Scripts\Data\ConstructionData.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponModel.cs" />
     <Compile Include="Assets\Scripts\Services\GameCreation\DatabaseService.cs" />
-    <Compile Include="Assets\Scripts\Definitions\MissionDefinition.cs" />
     <Compile Include="Assets\Scripts\Ui\Grids\WeaponsGrid.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\DaysCycleService.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Enemy\EnemyMarkingService.cs" />
@@ -159,7 +157,6 @@
     <Compile Include="Assets\Scripts\Models\IngredientModel.cs" />
     <Compile Include="Assets\Scripts\Helpers\PathHelper.cs" />
     <Compile Include="Assets\Scripts\Definitions\ExpeditionUpgradeDefinition.cs" />
-    <Compile Include="Assets\Scripts\Definitions\MissionButtonDefinition.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\PathService.cs" />
     <Compile Include="Assets\Scripts\Definitions\ExpeditionWeaponDefinition.cs" />
     <Compile Include="Assets\Scripts\Models\BuildingModel.cs" />
