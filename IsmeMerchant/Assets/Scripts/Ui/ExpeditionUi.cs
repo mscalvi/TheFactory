@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,7 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] TextMeshProUGUI DaysPastText;
     [SerializeField] Slider DaysCycleSlider;
 
-    [SerializeField] TextMeshProUGUI MissionsText;
+    [SerializeField] TextMeshProUGUI MessagesText;
 
     [SerializeField] TextMeshProUGUI PathText;
     [SerializeField] TextMeshProUGUI BiomeText;
@@ -45,8 +46,8 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] ExpeditionWeaponDefinition WeaponPrefab;
     Dictionary<string, ExpeditionUpgradeDefinition> shipUpgradeUI = new();
 
-    float MissionsTextTimer = 2000f;
-    float MissionsTimer = 0;
+    float MessagesTextTimer = 2000f;
+    float MessagesTimer = 0;
     bool MissionTextShown = false;
 
     public void Initialize(GameState gameState, PurchaseService purchaseService, ConfigurationsService configs)
@@ -72,12 +73,12 @@ public class ExpeditionUi : MonoBehaviour
 
         if (MissionTextShown)
         {
-            MissionsTimer++;
+            MessagesTimer++;
         }
 
-        if (MissionsTimer >= MissionsTextTimer)
+        if (MessagesTimer >= MessagesTextTimer)
         {
-            MissionsTimer = 0;
+            MessagesTimer = 0;
             MissionsTextSet();
         }
 
@@ -199,20 +200,37 @@ public class ExpeditionUi : MonoBehaviour
 
         ui.Setup(upgrade, PurchaseService, GameState);
     }
+
+    // Missions
     private void MissionsTextSet()
     {
         MissionTextShown = false;
-        MissionsText.text = "";
+        MessagesText.text = "";
     }
     private void MissionUpdate(MissionRuntime mission)
     {
         if (GameState.ActualLanguage == GameState.Language.Portugues)
         {
-            MissionsText.text = "Missão " + mission.NamePT + " Finalizada!";
+            MessagesText.text = "Missão " + mission.NamePT + " Finalizada!";
         }
         if (GameState.ActualLanguage == GameState.Language.English)
         {
-            MissionsText.text = "Mission " + mission.NameEN + " Finished!";
+            MessagesText.text = "Mission " + mission.NameEN + " Finished!";
+        }
+
+        MissionTextShown = true;
+    }
+
+    // Reload
+    private void WeaponReloadMessage(WeaponInstance weapon)
+    {
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            MessagesText.text = "Recarregando " + weapon.NamePT;
+        }
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            MessagesText.text = "Recharging " + weapon.NameEN;
         }
 
         MissionTextShown = true;
@@ -406,6 +424,8 @@ public class ExpeditionUi : MonoBehaviour
 
         ExpeditionEvents.OnDestinationArrival += PathChangeSet;
         ExpeditionEvents.OnPathSet += PathChangeSet;
+
+        ExpeditionEvents.OnRechargeStart += WeaponReloadMessage;
     }
 
     void OnDisable()
@@ -424,6 +444,8 @@ public class ExpeditionUi : MonoBehaviour
 
         ExpeditionEvents.OnDestinationArrival -= PathChangeSet;
         ExpeditionEvents.OnPathSet -= PathChangeSet;
+
+        ExpeditionEvents.OnRechargeStart -= WeaponReloadMessage;
     }
 
     void GameStart()

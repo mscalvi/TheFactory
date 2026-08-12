@@ -71,7 +71,7 @@ public class GameController : MonoBehaviour
         ModifierService.Initialize(GameState);
         UpgradeService.Initialize(GameState, UnlockService, ModifierService);
         IngredientService.Initialize(GameState);
-        AlchemyService.Initialize(GameState, IngredientService);
+        AlchemyService.Initialize(GameState, IngredientService, CurrencyService);
         RewardService.Initialize(GameState, CurrencyService);
         ConfigurationsService.Initialize(GameState);
 

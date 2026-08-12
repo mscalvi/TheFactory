@@ -8,6 +8,8 @@ public class AmmosService : MonoBehaviour, ITickable
 
     private TickService TickService;
 
+    private Dictionary<AmmoInstance, WeaponInstance> ActiveWeapons;
+
     public void Initialize(GameState gameState, TickService tick)
     {
         GameState = gameState;
@@ -17,6 +19,7 @@ public class AmmosService : MonoBehaviour, ITickable
         TickService.Subscribe(this);
 
         GameState.ExpeditionState.ActiveAmmos = new List<AmmoInstance>();
+        ActiveWeapons = new Dictionary<AmmoInstance, WeaponInstance>();
 
         foreach (var Weapon in GameState.ExpeditionState.Ship.Weapons)
         {
@@ -24,6 +27,7 @@ public class AmmosService : MonoBehaviour, ITickable
                 continue;
 
             GameState.ExpeditionState.ActiveAmmos.Add(Weapon.Ammo);
+            ActiveWeapons.Add(Weapon.Ammo, Weapon);
         }
     }
 
@@ -34,22 +38,22 @@ public class AmmosService : MonoBehaviour, ITickable
 
     public void OnTick(float dt)
     {
-        foreach (var ammo in GameState.ExpeditionState.ActiveAmmos)
+        foreach (var weapon in ActiveWeapons)
         {
-            if (!ammo.IsReloading)
+            if (!weapon.Key.IsReloading)
             {
                 continue;
             }
 
-            ammo.CurrentRecharge -= dt;
-            ExpeditionEvents.OnRechargeProgress?.Invoke(ammo);
+            weapon.Key.CurrentRecharge -= dt;
+            ExpeditionEvents.OnRechargeProgress?.Invoke(weapon.Value);
 
-            if (ammo.CurrentRecharge <= 0)
+            if (weapon.Key.CurrentRecharge <= 0)
             {
-                ammo.IsReloading = false;
-                ammo.CurrentAmmount = ammo.ActualAmmount;
-                ammo.CurrentRecharge = ammo.ActualRecharge;
-                ExpeditionEvents.OnRechargeEnd?.Invoke(ammo);
+                weapon.Key.IsReloading = false;
+                weapon.Key.CurrentAmmount = weapon.Key.ActualAmmount;
+                weapon.Key.CurrentRecharge = weapon.Key.ActualRecharge;
+                ExpeditionEvents.OnRechargeEnd?.Invoke(weapon.Value);
             }
         }
     }

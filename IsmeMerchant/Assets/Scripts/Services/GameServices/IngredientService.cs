@@ -54,14 +54,74 @@ public class IngredientService : MonoBehaviour
         return true;
     }
 
-    public void BuyProduct(ProductInstance product)
+    public bool BuyProduct(ProductInstance product)
     {
+        if (!CanBuyProduct(product))
+            return false;
 
+        if (!(product.UnlockStatus == UnlockHelper.UnlockStatus.Available || product.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked))
+            return false;
+
+        List<AlchemyHelper.IngredientType> affectedIngredients =
+            new(product.ActualCosts.Keys);
+
+        foreach (var cost in product.ActualCosts)
+        {
+            Spend(cost.Key, cost.Value);
+        }
+
+        product.BuyCount++;
+        UpdateProductCosts(product);
+
+        product.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+        product.CanBuy = false;
+
+        foreach (var ingredient in affectedIngredients)
+        {
+            CanBuyIngredient(ingredient);
+        }
+
+        return true;
     }
 
     public void CanBuyIngredient(AlchemyHelper.IngredientType ingredient)
     {
+        foreach (var product in GameState.DataState.products.Values)
+        {
+            if (!product.ActualCosts.ContainsKey(ingredient))
+                continue;
 
+            product.CanBuy = CanBuyProduct(product);
+        }
+    }
+
+    public bool CanBuyProduct(ProductInstance product)
+    {
+        if (product.UnlockStatus != UnlockHelper.UnlockStatus.Available &&
+            product.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+            return false;
+
+        foreach (var cost in product.ActualCosts)
+        {
+            if (Get(cost.Key) < cost.Value)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void UpdateProductCosts(ProductInstance product)
+    {
+        product.ActualCosts.Clear();
+
+        foreach (var cost in product.BaseCosts)
+        {
+            double actualCost =
+                cost.Value * Math.Pow(1.3, product.BuyCount);
+
+            product.ActualCosts[cost.Key] =
+                Math.Ceiling(actualCost);
+        }
     }
 
     // Drop

@@ -72,15 +72,15 @@ public class ExpeditionWeaponDefinition : MonoBehaviour
         return $"{t.Seconds:D2}:{t.Milliseconds / 10:D2}";
     }
 
-    void OnStart(AmmoInstance ammo)
+    void OnStart(WeaponInstance weapon)
     {
-        if (ammo == null)
+        if (weapon.Ammo == null)
             return;
 
         if (Weapon == null || Weapon.Ammo == null)
             return;
 
-        if (ammo.Id != Weapon.Ammo.Id) return;
+        if (weapon.Ammo.Id != Weapon.Ammo.Id) return;
 
         // Efeitos
     }
@@ -140,18 +140,18 @@ public class ExpeditionWeaponDefinition : MonoBehaviour
         }
     }
 
-    void OnProgress(AmmoInstance ammo)
+    void OnProgress(WeaponInstance weapon)
     {
-        if (ammo == null)
+        if (weapon.Ammo == null)
             return;
 
         if (Weapon == null || Weapon.Ammo == null)
             return;
 
-        if (ammo.Id != Weapon.Ammo.Id) return;
+        if (weapon.Ammo.Id != Weapon.Ammo.Id) return;
 
-        float progress = 1f - (float)(ammo.CurrentRecharge / ammo.ActualRecharge);
-        float remaining = (float)ammo.CurrentRecharge;
+        float progress = 1f - (float)(weapon.Ammo.CurrentRecharge / weapon.Ammo.ActualRecharge);
+        float remaining = (float)weapon.Ammo.CurrentRecharge;
 
         RechargeBar.value = progress;
         TimeText.text = FormatTime(remaining);
@@ -165,12 +165,12 @@ public class ExpeditionWeaponDefinition : MonoBehaviour
         AmmoCurrentAmmount.text = weapon.Ammo.CurrentAmmount.ToString();
     }
 
-    void OnEnd(AmmoInstance ammo)
+    void OnEnd(WeaponInstance weapon)
     {
-        if (ammo == null)
+        if (weapon.Ammo == null)
             return;
 
-        AmmoCurrentAmmount.text = ammo.CurrentAmmount.ToString();
+        AmmoCurrentAmmount.text = weapon.Ammo.CurrentAmmount.ToString();
 
         RechargeBar.value = 0f;
 

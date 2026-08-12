@@ -36,7 +36,9 @@ public class ProductData
             model.Cost4 = ParseHelper.Double(row["Cost4"]);
             model.Cost5 = ParseHelper.Double(row["Cost5"]);
 
-            model.Income = ParseHelper.Double(row["Income"]);
+            model.IncomeAmmount = ParseHelper.Double(row["IncomeAmmount"]);
+            model.IncomeType = ParseHelper.Enum<CurrencyHelper.CurrencyType>(row["IncomeType"]);
+
             model.Time = ParseHelper.Double(row["Time"]);
 
             model.Level = ParseHelper.Int(row["Level"]);

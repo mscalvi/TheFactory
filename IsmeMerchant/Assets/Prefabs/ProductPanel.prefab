@@ -789,6 +789,9 @@ MonoBehaviour:
   BrewName: {fileID: 5844653475365273516}
   BrewActualValue: {fileID: 7237275419415653200}
   BrewButton: {fileID: 1242317212871143629}
+  CostsContainer: {fileID: 9116600638033949547}
+  IngredientCostDefinition: {fileID: 4275470691215576098, guid: 23e7b61ee75cecd4b90cfe1a61626f37, type: 3}
+  ProgressBar: {fileID: 1883512560038922471}
 --- !u!1 &8299421901302884525
 GameObject:
   m_ObjectHideFlags: 0

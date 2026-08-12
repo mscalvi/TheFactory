@@ -5376,7 +5376,7 @@ GameObject:
   - component: {fileID: 837158291}
   - component: {fileID: 837158292}
   m_Layer: 5
-  m_Name: MissionsUpdate
+  m_Name: Messages
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7303,7 +7303,7 @@ MonoBehaviour:
   SettingsPanel: {fileID: 1651685408}
   DaysPastText: {fileID: 357129234}
   DaysCycleSlider: {fileID: 1386310135}
-  MissionsText: {fileID: 837158292}
+  MessagesText: {fileID: 837158292}
   PathText: {fileID: 2017479800}
   BiomeText: {fileID: 860990764}
   ChangeText: {fileID: 1962997918}

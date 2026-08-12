@@ -18,9 +18,9 @@ public static class ExpeditionEvents
     public static Action<WeaponInstance, EnemyRuntime> OnShoot;
     public static Action<ProjectileRuntime, EnemyRuntime> OnProjectileHit;
     public static Action OnShipAtributeChange;
-    public static Action<AmmoInstance> OnRechargeStart;
-    public static Action<AmmoInstance> OnRechargeProgress;
-    public static Action<AmmoInstance> OnRechargeEnd;
+    public static Action<WeaponInstance> OnRechargeStart;
+    public static Action<WeaponInstance> OnRechargeProgress;
+    public static Action<WeaponInstance> OnRechargeEnd;
 
     // Expedition Status Events
     public static Action OnExpeditionStart;

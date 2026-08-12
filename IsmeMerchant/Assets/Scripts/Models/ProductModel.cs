@@ -23,7 +23,8 @@ public class ProductModel
     public double Cost5;
 
     public double Time;
-    public double Income;
+    public CurrencyHelper.CurrencyType IncomeType;
+    public double IncomeAmmount;
 
     public int Level;
     

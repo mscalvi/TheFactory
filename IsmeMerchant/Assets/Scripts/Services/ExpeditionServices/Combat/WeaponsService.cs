@@ -188,7 +188,7 @@ public class WeaponsService : MonoBehaviour, ITickable
         {
             weapon.Ammo.CurrentRecharge = weapon.Ammo.ActualRecharge;
             weapon.Ammo.IsReloading = true;
-            ExpeditionEvents.OnRechargeStart?.Invoke(weapon.Ammo);
+            ExpeditionEvents.OnRechargeStart?.Invoke(weapon);
         }
 
         weapon.Cooldown = 1 / weapon.ActualAttackSpeed;
