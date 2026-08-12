@@ -14,16 +14,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ExpeditionScene.unity
     guid: a0a614296c531fe4682cfae99040bd8c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/BuildingsScene.unity
     guid: 30c8ab089e434464d8dc5071c223e3fb
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ShipScene.unity
     guid: 1dd1fa401222a45408ea3f67d7f45b15
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ConstructionsScene.unity
     guid: 4ed2df3631374df4f91d2e41efea6637
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TripulationScene.unity
     guid: df604b085f2d8a241a1d74238eb46637
   m_configObjects: {}

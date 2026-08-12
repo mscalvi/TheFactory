@@ -36,6 +36,10 @@ public static class ExpeditionEvents
     // Day Cycle Events
     public static Action OnDayFinish;
     public static Action OnNightFinish;
+
+    // Ui Events
+    public static Action<CurrencyInstance, double> CurrencyIncome;
+    public static Action<IngredientInstance, double> IngredientIncome;
 }
 
 public static class GameEvents

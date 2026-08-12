@@ -46,6 +46,10 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] ExpeditionWeaponDefinition WeaponPrefab;
     Dictionary<string, ExpeditionUpgradeDefinition> shipUpgradeUI = new();
 
+    [SerializeField] CurrencyView CurrencyIncomePrefab;
+    [SerializeField] IngredientView IngredientIncomePrefab;
+    [SerializeField] Transform ShipView;
+
     float MessagesTextTimer = 2000f;
     float MessagesTimer = 0;
     bool MissionTextShown = false;
@@ -407,6 +411,28 @@ public class ExpeditionUi : MonoBehaviour
         GameEvents.LifeTest?.Invoke();
     }
 
+    // Reward View
+    private void CurrencyIncome(CurrencyInstance currency, double amount)
+    {
+        var income = Instantiate(CurrencyIncomePrefab);
+
+        income.Setup(
+            currency,
+            amount,
+            ShipView
+        );
+    }
+    private void IngredientIncome(IngredientInstance currency, double amount)
+    {
+        var income = Instantiate(IngredientIncomePrefab);
+
+        income.Setup(
+            currency,
+            amount,
+            ShipView
+        );
+    }
+
     // Eventos
     void OnEnable()
     {
@@ -426,6 +452,9 @@ public class ExpeditionUi : MonoBehaviour
         ExpeditionEvents.OnPathSet += PathChangeSet;
 
         ExpeditionEvents.OnRechargeStart += WeaponReloadMessage;
+
+        ExpeditionEvents.CurrencyIncome += CurrencyIncome;
+        ExpeditionEvents.IngredientIncome += IngredientIncome;
     }
 
     void OnDisable()
@@ -446,6 +475,9 @@ public class ExpeditionUi : MonoBehaviour
         ExpeditionEvents.OnPathSet -= PathChangeSet;
 
         ExpeditionEvents.OnRechargeStart -= WeaponReloadMessage;
+
+        ExpeditionEvents.CurrencyIncome -= CurrencyIncome;
+        ExpeditionEvents.IngredientIncome -= IngredientIncome;
     }
 
     void GameStart()

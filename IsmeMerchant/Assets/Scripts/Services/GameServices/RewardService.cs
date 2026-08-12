@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using static CurrencyHelper;
 
@@ -19,6 +20,9 @@ public class RewardService : MonoBehaviour
     void StartCurrency()
     {
         CurrencyService.Add(CurrencyHelper.CurrencyType.Experience, GameState.ExpeditionState.ActualStartExperience);
+
+        if (GameState.ExpeditionState.ActualStartExperience <= 0) return;
+        ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Experience], GameState.ExpeditionState.ActualStartExperience);
     }
 
     void EnemyDeathReward(EnemyRuntime enemy)
@@ -32,12 +36,18 @@ public class RewardService : MonoBehaviour
     {
         double reward = GameState.ExpeditionState.ActualDayReward;
         CurrencyService.Add(CurrencyHelper.CurrencyType.Marcos, reward);
+
+        if (reward <= 0) return;
+        ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Marcos], reward);
     }
 
     void NightFinishReward()
     {
         double reward = GameState.ExpeditionState.ActualNightReward;
         CurrencyService.Add(CurrencyHelper.CurrencyType.Experience, reward);
+
+        if (reward <= 0) return;
+        ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Experience], reward);
     }
 
     private void MissionCompleteReward(MissionRuntime mission)
@@ -54,21 +64,25 @@ public class RewardService : MonoBehaviour
         if (GameState.MissionsState.MaxRewardItens > 0)
         {
             Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward1Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType1}");
+            ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[mission.RewardType1], mission.Reward1Ammount * GameState.MissionsState.RewardBonus);
             CurrencyService.Add(mission.RewardType1, mission.Reward1Ammount * GameState.MissionsState.RewardBonus);
         }
         if (GameState.MissionsState.MaxRewardItens > 1)
         {
             Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward2Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType2}");
+            ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[mission.RewardType2], mission.Reward2Ammount * GameState.MissionsState.RewardBonus);
             CurrencyService.Add(mission.RewardType2, mission.Reward2Ammount * GameState.MissionsState.RewardBonus);
         }
         if (GameState.MissionsState.MaxRewardItens > 2)
         {
             Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward3Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType4}");
+            ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[mission.RewardType3], mission.Reward3Ammount * GameState.MissionsState.RewardBonus);
             CurrencyService.Add(mission.RewardType3, mission.Reward3Ammount * GameState.MissionsState.RewardBonus);
         }
         if (GameState.MissionsState.MaxRewardItens > 3)
         {
             Debug.Log($"CurrencyService - Reward da Mission {mission.NamePT}: {mission.Reward4Ammount * GameState.MissionsState.RewardBonus} {mission.RewardType4}");
+            ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[mission.RewardType4], mission.Reward4Ammount * GameState.MissionsState.RewardBonus);
             CurrencyService.Add(mission.RewardType4, mission.Reward4Ammount * GameState.MissionsState.RewardBonus);
         }
     }
@@ -79,6 +93,7 @@ public class RewardService : MonoBehaviour
             return;
 
         CurrencyService.Add(CurrencyType.Knowledge, enemy.SpawnCost);
+        ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Knowledge], enemy.SpawnCost);
     }
 
     private void DestinationArrivalReward()

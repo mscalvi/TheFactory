@@ -38,6 +38,8 @@ public class LandingUi : MonoBehaviour
     [SerializeField] Transform IngredientPanel;
     [SerializeField] CompanyIngredientDefinition IngredientPrefab;
 
+    private Queue<UpgradeHelper.UpgradeScope> upgradeQueue = new();
+
     public void Initialize(GameState gameState, MissionsService missionsService, UnlockService unlockService, PurchaseService purchaseSercice, AlchemyService alchemy, IngredientService ingredients)
     {
         GameState = gameState;
@@ -173,50 +175,46 @@ public class LandingUi : MonoBehaviour
     // Upgrades
     private void CheckUpgrades()
     {
-        do
+        upgradeQueue.Clear();
+
+        for (int i = 0; i < GameState.ProgressState.UnlockableExpeditionUpgrades; i++)
         {
-            Debug.Log($"Checando Upgrades: {GameState.ProgressState.UnlockableExpeditionUpgrades}/{GameState.ProgressState.UnlockableCompanyUpgrades}");
-            if (GameState.ProgressState.UnlockableExpeditionUpgrades > 0)
-            {
-                Debug.Log("Encontrado Upgrade de Expedição");
-                for (int i = GameState.ProgressState.UnlockableExpeditionUpgrades; i > 0; i--)
-                {
-                    var expUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Expedition);
+            upgradeQueue.Enqueue(UpgradeHelper.UpgradeScope.Expedition);
+        }
 
-                    UpgradesPopUp.ShowUpgrades(expUpgradesOptions, (selected) =>
-                    {
-                        selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-
-                        UpgradesPopUp.Hide();
-                    }, GameState);
-                }
-            }
-            if (GameState.ProgressState.UnlockableCompanyUpgrades > 0)
-            {
-                Debug.Log("Encontrado Upgrade de Companhia");
-                for (int i = GameState.ProgressState.UnlockableCompanyUpgrades; i > 0; i--)
-                {
-                    var compUpgradesOptions = UnlockService.UpgradeOptions(UpgradeHelper.UpgradeScope.Company);
-
-                    UpgradesPopUp.ShowUpgrades(compUpgradesOptions, (selected) =>
-                    {
-                        selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-
-                        UpgradesPopUp.Hide();
-                    }, GameState);
-                }
-            }
-
-            GameState.ProgressState.UnlockableExpeditionUpgrades--;
-            GameState.ProgressState.UnlockableCompanyUpgrades--;
-
-            Debug.Log($"Faltam Upgrades de Companhia: {GameState.ProgressState.UnlockableCompanyUpgrades}");
-            Debug.Log($"Faltam Upgrades de Expedição: {GameState.ProgressState.UnlockableExpeditionUpgrades}");
-
-        } while (GameState.ProgressState.UnlockableExpeditionUpgrades > 0 && GameState.ProgressState.UnlockableCompanyUpgrades > 0);
+        for (int i = 0; i < GameState.ProgressState.UnlockableCompanyUpgrades; i++)
+        {
+            upgradeQueue.Enqueue(UpgradeHelper.UpgradeScope.Company);
+        }
 
         GameState.ProgressState.UnlockableExpeditionUpgrades = 0;
         GameState.ProgressState.UnlockableCompanyUpgrades = 0;
+
+        ShowNextUpgrade();
+    }
+    private void ShowNextUpgrade()
+    {
+        if (upgradeQueue.Count == 0)
+            return;
+
+        var scope = upgradeQueue.Dequeue();
+
+        var options = UnlockService.UpgradeOptions(scope);
+
+        if (options == null || options.Count == 0)
+        {
+            ShowNextUpgrade();
+            return;
+        }
+
+        UpgradesPopUp.ShowUpgrades(options, (selected) =>
+        {
+            selected.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+
+            UpgradesPopUp.Hide();
+
+            ShowNextUpgrade();
+        }, GameState);
     }
 
     // Ui

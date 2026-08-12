@@ -94,6 +94,7 @@
     <Compile Include="Assets\Scripts\Deisgner\PopUp\BestiaryPopUp.cs" />
     <Compile Include="Assets\Scripts\Services\Trackers\ProgressTrackerService.cs" />
     <Compile Include="Assets\Scripts\Helpers\MissionHelper.cs" />
+    <Compile Include="Assets\Scripts\Views\IngredientView.cs" />
     <Compile Include="Assets\Scripts\Controllers\ExpeditionController.cs" />
     <Compile Include="Assets\Scripts\States\DataState.cs" />
     <Compile Include="Assets\Scripts\Helpers\CurrencyHelper.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Assets\Scripts\Services\GameCreation\CSVLoaderService.cs" />
     <Compile Include="Assets\Scripts\States\CompanyState.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\AlchemyService.cs" />
+    <Compile Include="Assets\Scripts\Views\CurrencyView.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\CurrencyService.cs" />
     <Compile Include="Assets\Scripts\Ui\Grids\LandingCurrencyGrid.cs" />
     <Compile Include="Assets\Scripts\Data\EnemiesData.cs" />

@@ -39,6 +39,7 @@ public class IngredientService : MonoBehaviour
         dataIngredients[type].Amount = Get(type) + amount;
 
         Debug.Log($"Adicionando {type} > {amount}. Novo total: {dataIngredients[type].Amount}");
+        ExpeditionEvents.IngredientIncome?.Invoke(GameState.DataState.ingredients[type], amount);
     }
 
     public bool Spend(AlchemyHelper.IngredientType type, double amount)
