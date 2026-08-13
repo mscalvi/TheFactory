@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\Ui\Grids\AlchemyProductsGrid.cs" />
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\Combat\ProjectileService.cs" />
     <Compile Include="Assets\Scripts\Helpers\NumberHelper.cs" />
+    <Compile Include="Assets\Scripts\Services\GameServices\TutorialService.cs" />
     <Compile Include="Assets\Scripts\Models\LabModel.cs" />
     <Compile Include="Assets\Scripts\Instances\WeaponInstance.cs" />
     <Compile Include="Assets\Scripts\Definitions\ProductIngredientsDefinition.cs" />

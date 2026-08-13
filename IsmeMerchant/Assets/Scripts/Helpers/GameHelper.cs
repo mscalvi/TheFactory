@@ -32,4 +32,19 @@ public class GameHelper
         Unique,
     }
 
+    public enum Tutorial
+    {
+        ExpeditionTut,
+        ShipTut,
+        ClickTut,
+        UpgradesTut,
+        BuildingsTut,
+        AlchemyTut,
+        BestiaryTut,
+        StartTut,
+        ExperienceTut,
+        MarcosTut,
+        DestinationsTut,
+        WeaponsTut,
+    }
 }

@@ -24,6 +24,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public UpgradeService UpgradeService;
     [SerializeField] public RewardService RewardService;
     [SerializeField] public ConfigurationsService ConfigurationsService;
+    [SerializeField] public TutorialService TutorialService;
 
     private void Awake()
     {
@@ -74,6 +75,7 @@ public class GameController : MonoBehaviour
         AlchemyService.Initialize(GameState, IngredientService, CurrencyService);
         RewardService.Initialize(GameState, CurrencyService);
         ConfigurationsService.Initialize(GameState);
+        TutorialService.Initialize(GameState);
 
         SaveService.Save();
     }

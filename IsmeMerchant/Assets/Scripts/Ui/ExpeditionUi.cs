@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using static CurrencyHelper;
@@ -27,8 +28,20 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] TextMeshProUGUI BiomeText;
     [SerializeField] TextMeshProUGUI ChangeText;
 
+    [SerializeField] GameObject LifePanel;
+    [SerializeField] GameObject InfoPanel;
+    private bool InfoPanelActive = false;
     [SerializeField] TextMeshProUGUI CurrentLifeText;
     [SerializeField] Slider LifeSlider;
+
+    [SerializeField] TextMeshProUGUI ShipNameText;
+    [SerializeField] TextMeshProUGUI WeaponsText;
+    [SerializeField] TextMeshProUGUI RegenText;
+    [SerializeField] TextMeshProUGUI ArmorText;
+    [SerializeField] TextMeshProUGUI BestTravelText;
+    [SerializeField] TextMeshProUGUI MarcosDayText;
+    [SerializeField] TextMeshProUGUI ExperienceDayText;
+    [SerializeField] TextMeshProUGUI DefenseText;
 
     [SerializeField] TextMeshProUGUI GameSpeedText;
 
@@ -50,7 +63,7 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] IngredientView IngredientIncomePrefab;
     [SerializeField] Transform ShipView;
 
-    float MessagesTextTimer = 2000f;
+    float MessagesTextTimer = 2f;
     float MessagesTimer = 0;
     bool MissionTextShown = false;
 
@@ -77,7 +90,12 @@ public class ExpeditionUi : MonoBehaviour
 
         if (MissionTextShown)
         {
-            MessagesTimer++;
+            MessagesTimer += Time.deltaTime;
+
+            if (MessagesTimer >= MessagesTextTimer)
+            {
+                MissionsTextSet();
+            }
         }
 
         if (MessagesTimer >= MessagesTextTimer)
@@ -137,6 +155,21 @@ public class ExpeditionUi : MonoBehaviour
         HideAllMenus();
         SettingsPanel.SetActive(true);
     }
+    public void OpenInfoPanel()
+    {
+        if (InfoPanelActive)
+        {
+            LifePanel.SetActive(true);
+            InfoPanel.SetActive(false);
+            InfoPanelActive = false;
+        }
+        else
+        {
+            LifePanel.SetActive(false);
+            InfoPanel.SetActive(true);
+            InfoPanelActive = true;
+        }
+    }
     void HideAllMenus()
     {
         ShipPanel.SetActive(false);
@@ -144,16 +177,45 @@ public class ExpeditionUi : MonoBehaviour
         ItensPanel.SetActive(false);
         WeaponsPanel.SetActive(false);
         SettingsPanel.SetActive(false);
+        InfoPanel.SetActive(false);
+        LifePanel.SetActive(true);
     }
 
     // Changers
     private void DayCycleTextSet()
     {
-        DaysPastText.text = GameState.ExpeditionState.DayCounter.ToString("N0") + " -> " + GameState.ExpeditionState.NextDestination.ToString("N0");
+        DaysPastText.text = GameState.ExpeditionState.DayCounter.ToString("N0") + " > " + GameState.ExpeditionState.NextDestination.ToString("N0");
     }
     private void LifeTextSet()
     {
-        CurrentLifeText.text = GameState.ExpeditionState.Ship.CurrentLife.ToString("N0");
+        CurrentLifeText.text =
+              Math.Ceiling(GameState.ExpeditionState.Ship.CurrentLife).ToString("N0")
+              + " / " +
+              Math.Ceiling(GameState.ExpeditionState.Ship.ActualLife).ToString("N0");
+
+        if (GameState.ActualLanguage == GameState.Language.Portugues)
+        {
+            ShipNameText.text = GameState.ExpeditionState.Ship.NamePT;
+            WeaponsText.text = "Armas Equipadas: " + GameState.ExpeditionState.Ship.Weapons.Count.ToString();
+            RegenText.text = "Reparos: " + GameState.ExpeditionState.Ship.ActualRepair;
+            ArmorText.text = "Armadura: " + GameState.ExpeditionState.Ship.ActualResistence + "%";
+            BestTravelText.text = "Destinos Encontrados: " + GameState.ExpeditionState.ReachedDestinations;
+            MarcosDayText.text = "Marcos por Dia: " + GameState.ExpeditionState.ActualDayReward;
+            ExperienceDayText.text = "Exp. por Dia: " + GameState.ExpeditionState.ActualNightReward;
+            DefenseText.text = "Defesa: " + GameState.ExpeditionState.Ship.ActualArmor;
+        }
+        if (GameState.ActualLanguage == GameState.Language.English)
+        {
+            ShipNameText.text = GameState.ExpeditionState.Ship.NameEN;
+            WeaponsText.text = "Equiped Weapons: " + GameState.ExpeditionState.Ship.Weapons.Count.ToString();
+            RegenText.text = "Repair: " + GameState.ExpeditionState.Ship.ActualRepair;
+            ArmorText.text = "Armor: " + GameState.ExpeditionState.Ship.ActualResistence + "%";
+            BestTravelText.text = "Destinations Found: " + GameState.ExpeditionState.ReachedDestinations;
+            MarcosDayText.text = "Marcos per Day: " + GameState.ExpeditionState.ActualDayReward;
+            ExperienceDayText.text = "Exp. per Day: " + GameState.ExpeditionState.ActualNightReward;
+            DefenseText.text = "Defense: " + GameState.ExpeditionState.Ship.ActualArmor;
+        }
+
     }
     private void PathChangeSet()
     {
@@ -217,11 +279,12 @@ public class ExpeditionUi : MonoBehaviour
         {
             MessagesText.text = "Missão " + mission.NamePT + " Finalizada!";
         }
-        if (GameState.ActualLanguage == GameState.Language.English)
+        else if (GameState.ActualLanguage == GameState.Language.English)
         {
             MessagesText.text = "Mission " + mission.NameEN + " Finished!";
         }
 
+        MessagesTimer = 0f;
         MissionTextShown = true;
     }
 
@@ -237,6 +300,7 @@ public class ExpeditionUi : MonoBehaviour
             MessagesText.text = "Recharging " + weapon.NameEN;
         }
 
+        MessagesTimer = 0f;
         MissionTextShown = true;
     }
 

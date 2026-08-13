@@ -27,6 +27,7 @@ public class LandingController : MonoBehaviour
         var PurchaseService = GameController.Instance.PurchaseService;
         var AlchemyService = GameController.Instance.AlchemyService;
         var IngredientService = GameController.Instance.IngredientService;
+        var TutorialService = GameController.Instance.TutorialService;
 
         var Ship = GameController.Instance.GameState.ExpeditionState.Ship;
         if (Ship == null)
@@ -38,6 +39,6 @@ public class LandingController : MonoBehaviour
         Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
         // Landing
-        Ui.Initialize(Game, MissionsService, UnlockService, PurchaseService, AlchemyService, IngredientService);
+        Ui.Initialize(Game, MissionsService, UnlockService, PurchaseService, AlchemyService, IngredientService, TutorialService);
     }
 }

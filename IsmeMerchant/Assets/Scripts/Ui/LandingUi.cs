@@ -15,6 +15,11 @@ public class LandingUi : MonoBehaviour
     private PurchaseService PurchaseService;
     private AlchemyService AlchemyService;
     private IngredientService IngredientService;
+    private TutorialService TutorialService;
+
+    [SerializeField] GameObject TutorialPopUp;
+    [SerializeField] TextMeshProUGUI TutorialTitleText;
+    [SerializeField] TextMeshProUGUI TutorialInfoText;
 
     [SerializeField] Button ExpeditionButton;
     [SerializeField] TextMeshProUGUI RecordText;
@@ -40,7 +45,7 @@ public class LandingUi : MonoBehaviour
 
     private Queue<UpgradeHelper.UpgradeScope> upgradeQueue = new();
 
-    public void Initialize(GameState gameState, MissionsService missionsService, UnlockService unlockService, PurchaseService purchaseSercice, AlchemyService alchemy, IngredientService ingredients)
+    public void Initialize(GameState gameState, MissionsService missionsService, UnlockService unlockService, PurchaseService purchaseSercice, AlchemyService alchemy, IngredientService ingredients, TutorialService tutorial)
     {
         GameState = gameState;
         MissionsService = missionsService;
@@ -48,13 +53,24 @@ public class LandingUi : MonoBehaviour
         PurchaseService = purchaseSercice;
         AlchemyService = alchemy;
         IngredientService = ingredients;
+        TutorialService = tutorial;
 
         BlockButtons();
         BuildCurrencies(CompanyCurrencyPanel);
         BuildIngredients(IngredientPanel);
         CheckUpgrades();
+        ShowTutorial();
         ReleaseButtons();
         BuildRecord();
+
+        if (!GameState.ProgressState.StartTut)
+        {
+            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.StartTut).Item1;
+            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.StartTut).Item2;
+            ShowTutorial();
+
+            return;
+        }
     }
 
     // Buttons
@@ -90,15 +106,53 @@ public class LandingUi : MonoBehaviour
 
     public void BestiaryButtonFuncion()
     {
+        if (!GameState.ProgressState.BestiaryTut)
+        {
+            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.BestiaryTut).Item1;
+            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.BestiaryTut).Item2;
+            ShowTutorial();
+
+            return;
+        }
+
         BestiaryPopUp.Show(GameState);
     }
+
     public void RoomsButtonFuncion()
     {
+        if (!GameState.ProgressState.BuildingsTut)
+        {
+            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.BuildingsTut).Item1;
+            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.BuildingsTut).Item2;
+            ShowTutorial();
+
+            return;
+        }
+
         BuildingsPopUp.Show(GameState, PurchaseService);
     }
     public void AlchemyButtonFunction()
     {
+        if (!GameState.ProgressState.AlchemyTut)
+        {
+            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.AlchemyTut).Item1;
+            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.AlchemyTut).Item2;
+            ShowTutorial();
+
+            return;
+        }
+
         AlchemyPopUp.Show(GameState, AlchemyService, IngredientService);
+    }
+
+    // Tutorial
+    private void ShowTutorial()
+    {
+        BestiaryPopUp.Hide();
+        AlchemyPopUp.Hide();
+        BuildingsPopUp.Hide();
+
+        TutorialPopUp.SetActive(true);
     }
 
     // Currency
@@ -218,7 +272,6 @@ public class LandingUi : MonoBehaviour
     }
 
     // Ui
-
     private void BuildRecord()
     {
         if (GameState.ActualLanguage == GameState.Language.Portugues)
