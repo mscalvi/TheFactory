@@ -25,7 +25,7 @@ public class RewardService : MonoBehaviour
         ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Experience], GameState.ExpeditionState.ActualStartExperience);
     }
 
-    void EnemyDeathReward(EnemyRuntime enemy)
+    void EnemyDeathReward(EnemyRuntime enemy, Vector3 position)
     {
         var total = enemy.Experience * GameState.ExpeditionState.ActualExperienceKillBonus;
 

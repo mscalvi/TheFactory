@@ -24,7 +24,7 @@ public class EnemyViewService : MonoBehaviour
         views[enemy] = view;
     }
 
-    void RemoveEnemy(EnemyRuntime enemy)
+    void RemoveEnemy(EnemyRuntime enemy, Vector3 position)
     {
         if (!views.TryGetValue(enemy, out var view))
             return;

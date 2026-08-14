@@ -11,7 +11,7 @@ public class BestiaryTrackerService : MonoBehaviour
         GameState = gameState;
     }
 
-    private void BestiaryTracker(EnemyRuntime enemy)
+    private void BestiaryTracker(EnemyRuntime enemy, Vector3 position)
     {
         var Bestiary = GameState.BestiaryState.Bestiary;
 

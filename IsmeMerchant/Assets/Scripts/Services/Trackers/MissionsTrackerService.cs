@@ -32,7 +32,7 @@ public class MissionsTrackerService : MonoBehaviour
         toComplete.Clear();
     }
 
-    private void OnEnemyKilled(EnemyRuntime enemy)
+    private void OnEnemyKilled(EnemyRuntime enemy, Vector3 position)
     {
         toComplete.Clear();
 

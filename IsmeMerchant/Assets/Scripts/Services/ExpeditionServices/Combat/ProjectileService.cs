@@ -41,7 +41,7 @@ public class ProjectileService : MonoBehaviour
 
             if (Vector3.Distance(proj.Position, targetPos) <= proj.HitRadius)
             {
-                ExpeditionEvents.OnProjectileHit?.Invoke(proj, proj.Target);
+                ExpeditionEvents.OnProjectileHit?.Invoke(proj, proj.Target, targetPos);
                 RemoveProjectile(proj);
             }
         }

@@ -12,6 +12,8 @@ public class ExpeditionUi : MonoBehaviour
     private GameState GameState;
     private PurchaseService PurchaseService;
     private ConfigurationsService ConfigurationsService;
+    private TutorialService TutorialService;
+    private TickService TickService;
 
     [SerializeField] GameObject ShipPanel;
     [SerializeField] GameObject CrewPanel;
@@ -63,17 +65,25 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] IngredientView IngredientIncomePrefab;
     [SerializeField] Transform ShipView;
 
+    [SerializeField] GameObject TutorialPopUp;
+    [SerializeField] TextMeshProUGUI TutorialTitleText;
+    [SerializeField] TextMeshProUGUI TutorialInfoText;
+
     float MessagesTextTimer = 2f;
     float MessagesTimer = 0;
-    bool MissionTextShown = false;
+    bool MessageTextShown = false;
 
-    public void Initialize(GameState gameState, PurchaseService purchaseService, ConfigurationsService configs)
+    public void Initialize(GameState gameState, PurchaseService purchaseService, ConfigurationsService configs, TutorialService tutorial, TickService tick)
     {               
         GameState = gameState;
 
         PurchaseService = purchaseService;
 
         ConfigurationsService = configs;
+
+        TutorialService = tutorial;
+
+        TickService = tick;
     }
 
     void Start()
@@ -88,7 +98,7 @@ public class ExpeditionUi : MonoBehaviour
         if (GameState.ExpeditionState.ExpeditionStatus != GameHelper.ExpeditionStatus.Running)
             return;
 
-        if (MissionTextShown)
+        if (MessageTextShown)
         {
             MessagesTimer += Time.deltaTime;
 
@@ -185,6 +195,22 @@ public class ExpeditionUi : MonoBehaviour
     private void DayCycleTextSet()
     {
         DaysPastText.text = GameState.ExpeditionState.DayCounter.ToString("N0") + " > " + GameState.ExpeditionState.NextDestination.ToString("N0");
+
+        if (GameState.ExpeditionState.DayCounter > 1)
+        {
+            if (!GameState.ProgressState.MarcosTut && !GameState.ExpeditionState.IsDay)
+            {
+                ShowTutorial(GameHelper.Tutorial.MarcosTut);
+            }
+        }
+
+        if (GameState.ExpeditionState.DayCounter > 1)
+        {
+            if (!GameState.ProgressState.ExperienceTut && GameState.ExpeditionState.IsDay)
+            {
+                ShowTutorial(GameHelper.Tutorial.ExperienceTut);
+            }
+        }
     }
     private void LifeTextSet()
     {
@@ -230,6 +256,14 @@ public class ExpeditionUi : MonoBehaviour
         ChangeText.text = PathHelper.GetModifierName(path.Modifier, language);
 
         DayCycleTextSet();
+
+        if (GameState.ExpeditionState.DayCounter > 5)
+        {
+            if (!GameState.ProgressState.DestinationsTut)
+            {
+                ShowTutorial(GameHelper.Tutorial.DestinationsTut);
+            }
+        }
     }
     private void CurrencySet(CurrencyType type)
     {
@@ -267,10 +301,11 @@ public class ExpeditionUi : MonoBehaviour
         ui.Setup(upgrade, PurchaseService, GameState);
     }
 
+
     // Missions
     private void MissionsTextSet()
     {
-        MissionTextShown = false;
+        MessageTextShown = false;
         MessagesText.text = "";
     }
     private void MissionUpdate(MissionRuntime mission)
@@ -285,8 +320,9 @@ public class ExpeditionUi : MonoBehaviour
         }
 
         MessagesTimer = 0f;
-        MissionTextShown = true;
+        MessageTextShown = true;
     }
+
 
     // Reload
     private void WeaponReloadMessage(WeaponInstance weapon)
@@ -301,7 +337,12 @@ public class ExpeditionUi : MonoBehaviour
         }
 
         MessagesTimer = 0f;
-        MissionTextShown = true;
+        MessageTextShown = true;
+
+        if (!GameState.ProgressState.WeaponsTut)
+        {
+            ShowTutorial(GameHelper.Tutorial.WeaponsTut);
+        }
     }
 
 
@@ -438,6 +479,7 @@ public class ExpeditionUi : MonoBehaviour
         }
     }
 
+
     // Configurações
     public void InreaseSpeedButton()
     {
@@ -475,6 +517,7 @@ public class ExpeditionUi : MonoBehaviour
         GameEvents.LifeTest?.Invoke();
     }
 
+
     // Reward View
     private void CurrencyIncome(CurrencyInstance currency, double amount)
     {
@@ -483,7 +526,7 @@ public class ExpeditionUi : MonoBehaviour
         income.Setup(
             currency,
             amount,
-            ShipView
+            ShipView.position
         );
     }
     private void IngredientIncome(IngredientInstance currency, double amount)
@@ -496,6 +539,49 @@ public class ExpeditionUi : MonoBehaviour
             ShipView
         );
     }
+    private void EnemyIncome(EnemyRuntime enemy, Vector3 position)
+    {
+        var income = Instantiate(CurrencyIncomePrefab, position, Quaternion.identity);
+
+        income.Setup(
+            GameState.DataState.currencies[CurrencyType.Experience],
+            enemy.Experience,
+            position
+        );
+
+        if (!GameState.ProgressState.ClickTut)
+        {
+            ShowTutorial(GameHelper.Tutorial.ClickTut);
+        }
+    }
+
+
+    // Tutorial
+    private void ShowTutorial(GameHelper.Tutorial type)
+    {
+        TickService.Pause();
+
+        var text = TutorialService.SetText(type);
+
+        TutorialTitleText.text = text.Item1;
+        TutorialInfoText.text = text.Item2;
+
+        TutorialService.SetText(type);
+        TutorialPopUp.SetActive(true);
+    }
+    public void CloseTutorial()
+    {
+        TutorialPopUp.SetActive(false);
+        TickService.Resume();
+    }
+    private void NewEnemy(EnemyInstance enemy)
+    {
+        if (!GameState.ProgressState.KnowledgeTut)
+        {
+            ShowTutorial(GameHelper.Tutorial.KnowledgeTut);
+        }
+    }
+
 
     // Eventos
     void OnEnable()
@@ -519,6 +605,9 @@ public class ExpeditionUi : MonoBehaviour
 
         ExpeditionEvents.CurrencyIncome += CurrencyIncome;
         ExpeditionEvents.IngredientIncome += IngredientIncome;
+        ExpeditionEvents.OnEnemyDeath += EnemyIncome;
+
+        GameEvents.NewEnemySeen += NewEnemy;
     }
 
     void OnDisable()
@@ -542,6 +631,9 @@ public class ExpeditionUi : MonoBehaviour
 
         ExpeditionEvents.CurrencyIncome -= CurrencyIncome;
         ExpeditionEvents.IngredientIncome -= IngredientIncome;
+        ExpeditionEvents.OnEnemyDeath -= EnemyIncome;
+
+        GameEvents.NewEnemySeen -= NewEnemy;
     }
 
     void GameStart()
@@ -559,6 +651,11 @@ public class ExpeditionUi : MonoBehaviour
                 RefreshUpgradeUi(upgrade.Value);
             }
         }
+
+        if (!GameState.ProgressState.ExpeditionTut)
+        {
+            ShowTutorial(GameHelper.Tutorial.ExpeditionTut);
+        }
     }
 
     void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)
@@ -570,11 +667,24 @@ public class ExpeditionUi : MonoBehaviour
     void RefreshShipUi()
     {
         LifeTextSet();
+
+        if (!GameState.ProgressState.ShipTut)
+        {
+            if (GameState.ExpeditionState.Ship.CurrentLife < GameState.ExpeditionState.Ship.ActualLife)
+            {
+                ShowTutorial(GameHelper.Tutorial.ShipTut);
+            }
+        }
     }
 
     void RefreshUpgradeUi(UpgradeInstance upgrade)
     {
         UpgradeSet(upgrade);
+
+        if (!GameState.ProgressState.UpgradesTut)
+        {
+            ShowTutorial(GameHelper.Tutorial.UpgradesTut);
+        }
     }
 
     private void RefreshLanguageUi()

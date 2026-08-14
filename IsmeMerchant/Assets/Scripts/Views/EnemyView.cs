@@ -88,4 +88,9 @@ public class EnemyView : MonoBehaviour
         if (sprite != null)
             spriteRenderer.sprite = sprite;
     }
+
+    public Vector3 GetWorldPosition()
+    {
+        return transform.position;
+    }
 }

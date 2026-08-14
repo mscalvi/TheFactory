@@ -45,6 +45,7 @@ public class ExpeditionController : MonoBehaviour
         var Missions = GameController.Instance.MissionsService;
         var CurrencyService = GameController.Instance.CurrencyService;
         var PurchaseService = GameController.Instance.PurchaseService;
+        var TutorialService = GameController.Instance.TutorialService;
 
         PathService.Initialize(Game);
 
@@ -80,7 +81,7 @@ public class ExpeditionController : MonoBehaviour
 
         ExpeditionControlService.Initialize(Game, TickService, Save);
 
-        ExpeditionUiService.Initialize(Game, PurchaseService, Configs);
+        ExpeditionUiService.Initialize(Game, PurchaseService, Configs, TutorialService, TickService);
 
         DaysCycleService.Initialize(Game, TickService, Save);
 

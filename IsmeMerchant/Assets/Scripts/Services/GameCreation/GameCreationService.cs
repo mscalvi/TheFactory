@@ -86,14 +86,12 @@ public class GameCreationService : MonoBehaviour
 
         foreach (var product in DataBase.products.Values)
         {
-            Debug.Log($"Instanciando {product.Id}");
             var instance = new ProductInstance(product);
             products.Add(product.Id, instance);
         }
 
         foreach (var lab in DataBase.labs.Values)
         {
-            Debug.Log($"Instanciando {lab.Id}");
             var instance = new LabInstance(lab);
             labs.Add(lab.Id, instance);
         }

@@ -7,9 +7,13 @@ public class AlchemyHelper : MonoBehaviour
     public enum IngredientType
     {
         None,
-        Scale,
-        Feather,
-        Bone,
+        BlueScale,
+        RedScale,
+        YellowScale,
+        BrownScale,
+        GoldenScale,
+        PinkScale,
+        SilverScale,
     }
 
     public enum IngredientClass

@@ -24,15 +24,16 @@ public class CurrencyView : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Setup(CurrencyInstance currency, double amount, Transform incomePoint)
+    public void Setup(CurrencyInstance currency, double amount, Vector3 incomePoint)
     {
         Currency = currency;
-        IncomePoint = incomePoint;
+        //IncomePoint = incomePoint;
 
         ApplySprite();
         ApplyValue(amount);
 
-        startPosition = IncomePoint.position;
+        //startPosition = IncomePoint.position;
+        startPosition = incomePoint;
         targetPosition = startPosition + Vector3.up * riseDistance;
 
         transform.position = startPosition;

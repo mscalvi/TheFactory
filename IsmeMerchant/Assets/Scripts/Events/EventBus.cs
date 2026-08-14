@@ -8,7 +8,7 @@ public static class ExpeditionEvents
     // Enemy Events
     public static Action<EnemyRuntime> OnEnemySpawn;
     public static Action<EnemyRuntime> OnEnemyClicked;
-    public static Action<EnemyRuntime> OnEnemyDeath;
+    public static Action<EnemyRuntime, Vector3> OnEnemyDeath;
     public static Action<EnemyRuntime> OnMarkedEnemyDeath;
     public static Action NoWaveSpawn;
     public static Action SpawnBoss;
@@ -16,7 +16,7 @@ public static class ExpeditionEvents
 
     // Ship Events
     public static Action<WeaponInstance, EnemyRuntime> OnShoot;
-    public static Action<ProjectileRuntime, EnemyRuntime> OnProjectileHit;
+    public static Action<ProjectileRuntime, EnemyRuntime, Vector3> OnProjectileHit;
     public static Action OnShipAtributeChange;
     public static Action<WeaponInstance> OnRechargeStart;
     public static Action<WeaponInstance> OnRechargeProgress;

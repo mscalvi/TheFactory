@@ -49,4 +49,5 @@ public class ProgressState
     public bool ExperienceTut = false;
     public bool DestinationsTut = false;
     public bool WeaponsTut = false;
+    public bool KnowledgeTut = false;
 }

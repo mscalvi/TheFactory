@@ -52,7 +52,7 @@ public class EnemyMarkingService : MonoBehaviour
         markedEnemies.Remove(enemy);
     }
 
-    void HandleDeath(EnemyRuntime enemy)
+    void HandleDeath(EnemyRuntime enemy, Vector3 position)
     {
         if (enemy.MarkedEnemy)
         {

@@ -59,15 +59,12 @@ public class LandingUi : MonoBehaviour
         BuildCurrencies(CompanyCurrencyPanel);
         BuildIngredients(IngredientPanel);
         CheckUpgrades();
-        ShowTutorial();
         ReleaseButtons();
         BuildRecord();
 
         if (!GameState.ProgressState.StartTut)
         {
-            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.StartTut).Item1;
-            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.StartTut).Item2;
-            ShowTutorial();
+            ShowTutorial(GameHelper.Tutorial.StartTut);
 
             return;
         }
@@ -108,9 +105,7 @@ public class LandingUi : MonoBehaviour
     {
         if (!GameState.ProgressState.BestiaryTut)
         {
-            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.BestiaryTut).Item1;
-            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.BestiaryTut).Item2;
-            ShowTutorial();
+            ShowTutorial(GameHelper.Tutorial.BestiaryTut);
 
             return;
         }
@@ -122,9 +117,7 @@ public class LandingUi : MonoBehaviour
     {
         if (!GameState.ProgressState.BuildingsTut)
         {
-            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.BuildingsTut).Item1;
-            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.BuildingsTut).Item2;
-            ShowTutorial();
+            ShowTutorial(GameHelper.Tutorial.BuildingsTut);
 
             return;
         }
@@ -135,9 +128,7 @@ public class LandingUi : MonoBehaviour
     {
         if (!GameState.ProgressState.AlchemyTut)
         {
-            TutorialTitleText.text = TutorialService.SetText(GameHelper.Tutorial.AlchemyTut).Item1;
-            TutorialInfoText.text = TutorialService.SetText(GameHelper.Tutorial.AlchemyTut).Item2;
-            ShowTutorial();
+            ShowTutorial(GameHelper.Tutorial.AlchemyTut);
 
             return;
         }
@@ -145,15 +136,26 @@ public class LandingUi : MonoBehaviour
         AlchemyPopUp.Show(GameState, AlchemyService, IngredientService);
     }
 
+
     // Tutorial
-    private void ShowTutorial()
+    private void ShowTutorial(GameHelper.Tutorial type)
     {
         BestiaryPopUp.Hide();
         AlchemyPopUp.Hide();
         BuildingsPopUp.Hide();
 
+        var text = TutorialService.SetText(type);
+
+        TutorialTitleText.text = text.Item1;
+        TutorialInfoText.text = text.Item2;
+
         TutorialPopUp.SetActive(true);
     }
+    public void CloseTutorial()
+    {
+        TutorialPopUp.SetActive(false);
+    }
+
 
     // Currency
     public void BuildCurrencies(Transform parent)
@@ -226,6 +228,7 @@ public class LandingUi : MonoBehaviour
         }
     }
 
+
     // Upgrades
     private void CheckUpgrades()
     {
@@ -271,6 +274,7 @@ public class LandingUi : MonoBehaviour
         }, GameState);
     }
 
+
     // Ui
     private void BuildRecord()
     {
@@ -284,6 +288,7 @@ public class LandingUi : MonoBehaviour
             RecordText.text = GameState.ProgressState.MaxDaysTraveling.ToString() + " days";
         }
     }
+
 
     // Eventos
     void OnEnable()

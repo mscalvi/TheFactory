@@ -152,7 +152,7 @@ public class EnemyControllerService : MonoBehaviour, ITickable
         }
     }
 
-    void CheckEnemyLife(ProjectileRuntime projectile, EnemyRuntime enemy)
+    void CheckEnemyLife(ProjectileRuntime projectile, EnemyRuntime enemy, Vector3 position)
     {
         var enemies = Expedition.ActiveEnemies;
 
@@ -162,7 +162,7 @@ public class EnemyControllerService : MonoBehaviour, ITickable
         if (enemy.State == EnemyHelper.EnemyState.Dying || enemy.ActualLife <= 0)
         {
             enemy.State = EnemyHelper.EnemyState.Dead;
-            ExpeditionEvents.OnEnemyDeath?.Invoke(enemy);
+            ExpeditionEvents.OnEnemyDeath?.Invoke(enemy, position);
             enemies.Remove(enemy);
         }
     }
