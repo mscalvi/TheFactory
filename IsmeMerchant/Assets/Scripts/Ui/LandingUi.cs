@@ -147,6 +147,8 @@ public class LandingUi : MonoBehaviour
         var text = TutorialService.SetText(type);
 
         TutorialTitleText.text = text.Item1;
+        Debug.Log(text.Item1);
+        Debug.Log(text.Item2);
         TutorialInfoText.text = text.Item2;
 
         TutorialPopUp.SetActive(true);

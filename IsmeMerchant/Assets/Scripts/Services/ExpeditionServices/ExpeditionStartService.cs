@@ -42,12 +42,8 @@ public class ExpeditionStartService : MonoBehaviour
 
         Expedition.ActualIngredientRarityWeights = Expedition.BaseIngredientRarityWeights;
 
-        Expedition.ActualSpawnChance = Expedition.BaseSpawnChance;
-        Expedition.ActualSpawnInterval = Expedition.BaseSpawnInterval;
-        Expedition.ActualSpawnBudget = Expedition.BaseSpawnBudget;
-        Expedition.ActualSpawnBudgetGrowth = Expedition.BaseSpawnBudgetGrowth;
-        Expedition.ActualBossThreshold = Expedition.BaseBossThreshold;
-        Expedition.ActualTicksBetweenSpawns = Expedition.BaseTicksBetweenSpawns;
+        Expedition.ActualWaveSize = Expedition.BaseWaveSize;
+        Expedition.ActualBossChance = Expedition.BaseBossChance;
 
         Expedition.ActualStartExperience = Expedition.BaseStartExperience;
         Expedition.ActualExperienceKillBonus = Expedition.BaseExperienceKillBonus;

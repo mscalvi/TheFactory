@@ -22,6 +22,7 @@ public class ExpeditionState
     public PathHelper.PathTagSet ActualPath = new PathHelper.PathTagSet();
 
     public List<EnemyRuntime> ActiveEnemies = new List<EnemyRuntime>();
+    public int MaxWaveSize = 81;
     public bool DamageTaken = false;
 
     public List<AmmoInstance> ActiveAmmos;
@@ -29,12 +30,8 @@ public class ExpeditionState
     // Valores Start
     public Dictionary<GameHelper.ItemRarity, float> StartIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
 
-    public double StartSpawnChance = 1;
-    public float StartSpawnInterval = 5f;
-    public double StartSpawnBudget = 4;
-    public double StartSpawnBudgetGrowth = 0.55;
-    public double StartBossThreshold = 200;
-    public double StartTicksBetweenSpawns = 5;
+    public int StartBossChance = 1;
+    public int StartWaveSize = 4;
 
     public double StartStartExperience = 0;
     public double StartExperienceKillBonus = 1;
@@ -57,12 +54,8 @@ public class ExpeditionState
     // Valores Base
     public Dictionary<GameHelper.ItemRarity, float> BaseIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
     
-    public double BaseSpawnChance = 1;
-    public float BaseSpawnInterval = 5f;
-    public double BaseSpawnBudget = 4;
-    public double BaseSpawnBudgetGrowth = 0.55;
-    public double BaseBossThreshold = 200;
-    public double BaseTicksBetweenSpawns = 5;
+    public int BaseBossChance = 1;
+    public int BaseWaveSize = 4;
 
     public double BaseStartExperience = 0;
     public double BaseExperienceKillBonus = 1;
@@ -85,12 +78,8 @@ public class ExpeditionState
     // Valores Atuais
     public Dictionary<GameHelper.ItemRarity, float> ActualIngredientRarityWeights = new Dictionary<GameHelper.ItemRarity, float>();
 
-    public double ActualSpawnChance = 1;
-    public float ActualSpawnInterval = 5f;
-    public double ActualSpawnBudget = 4;
-    public double ActualSpawnBudgetGrowth = 0.55;
-    public double ActualBossThreshold = 200;
-    public double ActualTicksBetweenSpawns = 5;
+    public int ActualBossChance = 1;
+    public int ActualWaveSize = 4;
 
     public double ActualStartExperience = 0;
     public double ActualExperienceKillBonus = 1;

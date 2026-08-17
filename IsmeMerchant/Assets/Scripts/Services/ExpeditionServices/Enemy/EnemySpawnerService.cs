@@ -6,219 +6,224 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 {
     private TickService TickService;
     private GameState GameState;
-    private ExpeditionState Expedition;
-    private DataState DataState;
     private EnemyProgressService ProgressService;
 
-    public Dictionary<string, double> EnemyWeights = new();
+    private Dictionary<string, double> ValidEnemies = new();
 
-    double accumulatedBudget = 0;
-    int spawnTickCounter = 0;
-    float spawnTimer = 4f;
+    private float spawnTimer = 0;
+    private float SpawnInterval = 20f;
 
-    Queue<EnemyRuntime> spawnQueue = new();
+    private Queue<EnemyRuntime> spawnQueue = new();
 
-    public void Initialize(GameState gameState, TickService Tick, EnemyProgressService progress)
+
+    public void Initialize(
+        GameState gameState,
+        TickService Tick,
+        EnemyProgressService progress)
     {
         GameState = gameState;
-        Expedition = GameState.ExpeditionState;
-        DataState = GameState.DataState;
 
         TickService = Tick;
         ProgressService = progress;
 
         TickService.Subscribe(this);
 
-        foreach (var enemy in DataState.enemies)
-        {
-            EnemyWeights.Add(enemy.Key, enemy.Value.Rarity);
-        }
+        ProcessWave();
     }
 
     public void OnTick(float dt)
     {
         spawnTimer += dt;
 
-        if (spawnTimer >= Expedition.ActualSpawnInterval)
+        if (spawnTimer >= SpawnInterval)
         {
             spawnTimer = 0;
-            ProcessWave();
+            ProcessSpawnQueue();
         }
-
-        ProcessSpawnQueue();
     }
 
-    void ProcessWave()
+    // WAVE
+    private void ProcessWave()
     {
-        double waveBudget = GenerateWaveBudget();
+        ValidEnemies.Clear();
 
-        float roll = Random.Range(0f, 100f);
+        SpawnInterval = GameState.ExpeditionState.PhaseDuration / GameState.ExpeditionState.ActualWaveSize;
 
-        if (roll < Expedition.ActualSpawnChance)
+        float bossRoll = Random.Range(0f, 100f);
+
+        if (bossRoll < GameState.ExpeditionState.ActualBossChance)
         {
-            accumulatedBudget += waveBudget;
-            ExpeditionEvents.NoWaveSpawn?.Invoke();
+            SpawnBoss();
+        }
+
+        BuildValidEnemies();
+
+        if (ValidEnemies.Count == 0)
+        {
+            Debug.Log("Nenhum inimigo válido para spawn.");
             return;
         }
 
-        double totalBudget = waveBudget + accumulatedBudget;
-        accumulatedBudget = 0;
-
-        FillSpawnQueue(totalBudget);
+        FillSpawnQueue();
     }
 
-    void ProcessSpawnQueue()
+    private void BuildValidEnemies()
+    {
+        foreach (var enemy in GameState.DataState.enemies)
+        {
+            EnemyInstance data = enemy.Value;
+
+            if (data.BossEnemy)
+                continue;
+
+            if (data.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+                continue;
+
+            if ((data.PathTypes & GameState.ExpeditionState.ActualPath.Type) == 0)
+                continue;
+
+            if ((data.PathEnvironments & GameState.ExpeditionState.ActualPath.Environment) == 0)
+                continue;
+
+            if (GameState.ExpeditionState.IsDay)
+            {
+                if (!data.DayEnemy)
+                    continue;
+            }
+            else
+            {
+                if (data.DayEnemy)
+                    continue;
+            }
+
+            ValidEnemies.Add(
+                enemy.Key,
+                data.Rarity
+            );
+        }
+    }
+
+    // SPAWN QUEUE
+    private void FillSpawnQueue()
+    {
+        int waveSize = GameState.ExpeditionState.ActualWaveSize;
+
+        for (int i = 0; i < waveSize; i++)
+        {
+            EnemyInstance chosen = ChooseEnemy();
+
+            if (chosen == null)
+                continue;
+
+            EnemyRuntime runtime = new EnemyRuntime(chosen);
+
+            spawnQueue.Enqueue(runtime);
+        }
+
+        Debug.Log(
+            $"Wave criada: máximo {waveSize} inimigos. " +
+            $"Fila atual: {spawnQueue.Count}"
+        );
+    }
+
+    private void ProcessSpawnQueue()
     {
         if (spawnQueue.Count == 0)
             return;
 
-        spawnTickCounter++;
-
-        if (spawnTickCounter < GameState.ExpeditionState.ActualTicksBetweenSpawns)
-            return;
-
-        spawnTickCounter = 0;
-
-        var instance = spawnQueue.Dequeue();
+        EnemyRuntime instance = spawnQueue.Dequeue();
 
         SpawnEnemy(instance);
 
-        if (instance.Known == false)
+        if (!instance.Known)
         {
-            foreach (var enemy in DataState.enemies)
-            {
-                if (enemy.Key == instance.Id)
-                {
-                    EnemyKnow(enemy.Value);
-                }
-            }
+            EnemyInstance enemy = GameState.DataState.enemies[instance.Id];
+
+            EnemyKnow(enemy);
         }
     }
 
+    // ESCOLHA DO INIMIGO
+    private EnemyInstance ChooseEnemy()
+    {
+        double totalRarity = 0;
+
+        foreach (var enemy in ValidEnemies)
+        {
+            totalRarity += enemy.Value;
+        }
+
+        if (totalRarity <= 0)
+            return null;
+
+        float roll = Random.Range(
+            0f,
+            (float)totalRarity
+        );
+
+        foreach (var enemy in ValidEnemies)
+        {
+            roll -= (float)enemy.Value;
+
+            if (roll <= 0)
+            {
+                return GameState.DataState.enemies[enemy.Key];
+            }
+        }
+
+        return null;
+    }
+
+    // SPAWN
     private void SpawnEnemy(EnemyRuntime instance)
     {
         ProgressService.ApplyProgression(instance);
 
         instance.Angle = SpawnAngle(30, 330);
 
-        Expedition.ActiveEnemies.Add(instance);
+        GameState.ExpeditionState.ActiveEnemies.Add(instance);
 
         ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
 
-        Debug.Log($"Spawn: {instance.NamePT} \n-Vida: {instance.ActualLife} -Dano: {instance.Damage} -Speed: {instance.Speed}");
+        Debug.Log(
+            $"Spawn: {instance.NamePT}\n" +
+            $"-Vida: {instance.ActualLife} " +
+            $"-Dano: {instance.Damage} " +
+            $"-Speed: {instance.Speed}"
+        );
     }
 
-    void FillSpawnQueue(double budget)
-    {
-        var validEnemies = SpawnChance();
-
-        if (validEnemies.Count == 0)
-            return;
-
-        double cheapest = double.MaxValue;
-
-        foreach (var e in validEnemies)
-        {
-            if (e.Value.SpawnCost < cheapest)
-                cheapest = e.Value.SpawnCost;
-        }
-
-        while (budget >= cheapest)
-        {
-            var chosen = ChooseEnemy(validEnemies);
-
-            if (chosen == null)
-                break;
-
-            double cost = chosen.SpawnCost;
-
-            if (budget < cost)
-                break;
-
-            budget -= cost;
-
-            spawnQueue.Enqueue(new EnemyRuntime(chosen));
-        }
-    }
-
-    double GenerateWaveBudget()
-    {
-        double baseBud = Expedition.ActualSpawnBudget;
-        double growth = Expedition.ActualSpawnBudgetGrowth;
-
-        double actualBud = baseBud * (Expedition.DayCounter * growth);
-
-        return actualBud;
-    }
-
-    EnemyInstance ChooseEnemy(Dictionary<string, EnemyInstance> validEnemies)
-    {
-        float totalWeight = 0;
-
-        foreach (var enemy in validEnemies)
-            totalWeight += (float)EnemyWeights[enemy.Key];
-
-        float roll = Random.Range(0, totalWeight);
-
-        foreach (var enemy in validEnemies)
-        {
-            roll -= (float)EnemyWeights[enemy.Key];
-
-            if (roll <= 0)
-                return enemy.Value;
-        }
-
-        return null;
-    }
-
-    double SpawnAngle(double min, double max)
+    // ANGLE
+    private double SpawnAngle(double min, double max)
     {
         min %= 360;
         max %= 360;
 
         if (min <= max)
         {
-            return Random.Range((float)min, (float)max);
+            return Random.Range(
+                (float)min,
+                (float)max
+            );
         }
-        else
-        {
-            double range1 = 360 - min;
-            double range2 = max;
 
-            double total = range1 + range2;
-            double roll = Random.Range(0f, (float)total);
+        double range1 = 360 - min;
+        double range2 = max;
 
-            if (roll < range1)
-                return min + roll;
-            else
-                return roll - range1;
-        }
+        double total = range1 + range2;
+
+        double roll = Random.Range(
+            0f,
+            (float)total
+        );
+
+        if (roll < range1)
+            return min + roll;
+
+        return roll - range1;
     }
 
-    Dictionary<string, EnemyInstance> SpawnChance()
-    {
-        Dictionary<string, EnemyInstance> validEnemies = new();
-
-        foreach (var enemy in DataState.enemies)
-        {
-            if (enemy.Value.BossEnemy)
-                continue;
-
-            if (enemy.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
-                continue;
-
-            if ((enemy.Value.PathTypes & GameState.ExpeditionState.ActualPath.Type) == 0)
-                continue;
-
-            if (Expedition.IsDay && enemy.Value.DayEnemy)
-                validEnemies.Add(enemy.Key, enemy.Value);
-            else if (!Expedition.IsDay && !enemy.Value.DayEnemy)
-                validEnemies.Add(enemy.Key, enemy.Value);
-        }
-
-        return validEnemies;
-    }
-
+    // BESTIARY
     private void EnemyKnow(EnemyInstance enemy)
     {
         if (enemy == null)
@@ -232,6 +237,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         GameEvents.NewEnemySeen?.Invoke(enemy);
     }
 
+    // BOSS
     private void SpawnBoss()
     {
         List<EnemyInstance> validBosses = new();
@@ -244,63 +250,82 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
             if (!enemy.BossEnemy)
                 continue;
 
-            if ((enemy.PathTypes & GameState.ExpeditionState.ActualPath.Type) == 0)
+            if ((enemy.PathTypes &
+                 GameState.ExpeditionState.ActualPath.Type) == 0)
                 continue;
 
-            if ((enemy.PathEnvironments & GameState.ExpeditionState.ActualPath.Environment) == 0)
+            if ((enemy.PathEnvironments &
+                 GameState.ExpeditionState.ActualPath.Environment) == 0)
                 continue;
 
-            if (enemy.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+            if (enemy.UnlockStatus !=
+                UnlockHelper.UnlockStatus.Available)
                 continue;
 
-            if (Expedition.IsDay && enemy.DayEnemy)
-                validBosses.Add(enemy);
-            else if (!Expedition.IsDay && !enemy.DayEnemy)
-                validBosses.Add(enemy);
+            if (GameState.ExpeditionState.IsDay)
+            {
+                if (!enemy.DayEnemy)
+                    continue;
+            }
+            else
+            {
+                if (enemy.DayEnemy)
+                    continue;
+            }
+
+            validBosses.Add(enemy);
         }
 
-        if (validBosses.Count <= 0)
+        if (validBosses.Count == 0)
             return;
 
-        int randomIndex = Random.Range(0, validBosses.Count);
+        int randomIndex = Random.Range(
+            0,
+            validBosses.Count
+        );
 
-        var chosen = validBosses[randomIndex];
+        EnemyInstance chosen = validBosses[randomIndex];
 
-        var chosenRuntime = new EnemyRuntime(chosen);
+        EnemyRuntime chosenRuntime =
+            new EnemyRuntime(chosen);
 
         SpawnEnemy(chosenRuntime);
 
-        ExpeditionEvents.OnBossSpawn?.Invoke(chosenRuntime);
+        ExpeditionEvents.OnBossSpawn?.Invoke(
+            chosenRuntime
+        );
     }
 
-    private void ClearSpawnQueue()
+
+    // Aumenta o Tamanho da Wave
+    private void UpdateWaveSize()
     {
-        Debug.Log($"Limpando {spawnQueue.Count()} spawns.");
+        GameState.ExpeditionState.ActualWaveSize++;
 
         spawnQueue.Clear();
 
-        if (GameState.ExpeditionState.IsDay)
-        {
-            if (GameState.ExpeditionState.ActualTicksBetweenSpawns > 1)
-            {
-                GameState.ExpeditionState.ActualTicksBetweenSpawns -= 0.1;
-            }
-        }
-
-        Debug.Log($"Velocidade de Spawn: {GameState.ExpeditionState.ActualTicksBetweenSpawns}.");
+        if (GameState.ExpeditionState.ActualWaveSize > GameState.ExpeditionState.MaxWaveSize)
+            GameState.ExpeditionState.ActualWaveSize = GameState.ExpeditionState.MaxWaveSize; 
+    
+        Debug.Log($"Tamanho da Wave: {GameState.ExpeditionState.ActualWaveSize}");
     }
 
-    void OnEnable()
+    // EVENTOS
+    private void OnEnable()
     {
         ExpeditionEvents.SpawnBoss += SpawnBoss;
-        ExpeditionEvents.OnDayFinish += ClearSpawnQueue;
-        ExpeditionEvents.OnNightFinish += ClearSpawnQueue;
+
+        ExpeditionEvents.OnNightFinish += UpdateWaveSize;
+        ExpeditionEvents.OnNightFinish += ProcessWave;
+        ExpeditionEvents.OnDayFinish += ProcessWave;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         ExpeditionEvents.SpawnBoss -= SpawnBoss;
-        ExpeditionEvents.OnDayFinish -= ClearSpawnQueue;
-        ExpeditionEvents.OnNightFinish -= ClearSpawnQueue;
+
+        ExpeditionEvents.OnNightFinish -= UpdateWaveSize;
+        ExpeditionEvents.OnNightFinish -= ProcessWave;
+        ExpeditionEvents.OnDayFinish -= ProcessWave;
     }
 }

@@ -40,6 +40,10 @@ public class EnemyHelper
     public enum EnemySpecial
     {
         None,
+        Fly,
+        Swarm,
+        Invisibility,
+        Shield,
     }
 
     public static readonly int[] KillThresholds =

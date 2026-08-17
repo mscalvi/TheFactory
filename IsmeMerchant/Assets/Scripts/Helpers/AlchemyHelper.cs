@@ -14,6 +14,11 @@ public class AlchemyHelper : MonoBehaviour
         GoldenScale,
         PinkScale,
         SilverScale,
+        OrangeScale,
+        BlackScale,
+        WhiteScale,
+        InvisibleScale,
+        LuminescentScale,
     }
 
     public enum IngredientClass

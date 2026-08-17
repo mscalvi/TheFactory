@@ -44,10 +44,10 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Navio";
-                    Info = "Quando a Vida do Navio chega a 0, a Expedição termina. Clicando na Barra de Vida, no canto" +
+                    Info = "Quando a Vida do Navio chega a 0, a Expedição termina. Clicando na Barra de Vida, no canto " +
                         "superior direito, é possível ver outras informações do Navio, como Resistência e Reparos." +
                         "\n" +
-                        "Além disso, ao longo do jogo, é possível trocar de Navio, conseguindo mais espaços para Armas" +
+                        "Além disso, ao longo do jogo, é possível trocar de Navio, conseguindo mais espaços para Armas " +
                         "e valores de atributos maiores.";
                 }
                 GameState.ProgressState.ShipTut = true;
@@ -64,7 +64,7 @@ public class TutorialService : MonoBehaviour
                 {
                     Title = "Expedição";
                     Info = "A Expedição representa uma empreitada de coleta de dinheiro e recursos, através da " +
-                        "exploração dos mares e rios de Furma. Ela segue por incontáveis destinos e dias, até que o Navio" +
+                        "exploração dos mares e rios de Furma. Ela segue por incontáveis destinos e dias, até que o Navio " +
                         "não tenha mais condições de continuar.";
                 }
                 GameState.ProgressState.ExpeditionTut = true;
@@ -80,7 +80,7 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Melhorias";
-                    Info = "As melhorias compradas durante uma Expedição só são válidas até o final dela. Servem para" +
+                    Info = "As melhorias compradas durante uma Expedição só são válidas até o final dela. Servem para " +
                         "aumentar as capacidades do Navio, das Armas e dos ganhos financeiros." +
                         "\n" +
                         "Melhorias compradas fora da Expedição são permanentes.";
@@ -98,8 +98,8 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Marcando Alvos";
-                    Info = "Durante uma Expedição, você pode clicar em um inimigo para marcá-lo. Um alvo marcado" +
-                        "tem chances de deixar cair Ingredientes e outros recursos, que alimentam outras funcionalidades" +
+                    Info = "Durante uma Expedição, você pode clicar em um inimigo para marcá-lo. Um alvo marcado " +
+                        "tem chances de deixar cair Ingredientes e outros recursos, que alimentam outras funcionalidades " +
                         "do jogo. Além disso, é possível causar danos maiores a inimigos marcados." +
                         "\n" +
                         "Inicialmente, só é possível marcar um inimigo por vez.";
@@ -117,7 +117,7 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Salas de Melhorias";
-                    Info = "As Melhorias permanentes são divididas em Salas, cada uma com sua categoria de melhorias," +
+                    Info = "As Melhorias permanentes são divididas em Salas, cada uma com sua categoria de melhorias, " +
                         "como Armas e Munições, qualidade do Navio, ganho de recursos e avanço da Companhia.";
                 }
                 GameState.ProgressState.BuildingsTut = true;
@@ -133,8 +133,8 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Alquimia";
-                    Info = "A Alquimia é feita com os Ingredientes coletados durante uma Expedição, e serve para gerar" +
-                        "Marcos de forma constante. Após liberado um novo Produto, ele irá, a cada ciclo, gerar uma quantidade" +
+                    Info = "A Alquimia é feita com os Ingredientes coletados durante uma Expedição, e serve para gerar " +
+                        "Marcos de forma constante. Após liberado um novo Produto, ele irá, a cada ciclo, gerar uma quantidade " +
                         "determinada de Marcos, podendo ser recomprado para acumular valores.";
                 }
                 GameState.ProgressState.AlchemyTut = true;
@@ -151,7 +151,7 @@ public class TutorialService : MonoBehaviour
                 {
                     Title = "Bestiário";
                     Info = "O Bestiário mostra informações dos inimigos conhecidos, divididos em categorias." +
-                        "Conforme mais inimigos de determinado tipo são mortos, mais informações ficam" +
+                        "Conforme mais inimigos de determinado tipo são mortos, mais informações ficam " +
                         "disponíveis no Bestiário.";
                 }
                 GameState.ProgressState.BestiaryTut = true;
@@ -167,8 +167,8 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Marcos";
-                    Info = "Os Marcos são a principal moeda fora de uma Expedição. São utilizados para comprar Melhorias" +
-                        "e outros recursos do jogo. Podem ser obtidos ao final de um Dia, com a Alquimia, ou ao eliminar alvos" +
+                    Info = "Os Marcos são a principal moeda fora de uma Expedição. São utilizados para comprar Melhorias " +
+                        "e outros recursos do jogo. Podem ser obtidos ao final de um Dia, com a Alquimia, ou ao eliminar alvos " +
                         "especiais.";
                 }
                 GameState.ProgressState.MarcosTut = true;
@@ -184,8 +184,8 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Experiência";
-                    Info = "A Experiência é a moeda interna de uma Expedição. Ela reinicia a cada nova Expedição, não" +
-                        "podendo ser acumulada, e serve para comprar Melhorias internas. Pode ser obtida através de abates" +
+                    Info = "A Experiência é a moeda interna de uma Expedição. Ela reinicia a cada nova Expedição, não " +
+                        "podendo ser acumulada, e serve para comprar Melhorias internas. Pode ser obtida através de abates " +
                         "de inimigos, ao final de uma Noite e no começo de uma Expedição.";
                 }
                 GameState.ProgressState.ExperienceTut = true;
@@ -201,7 +201,7 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Rotas";
-                    Info = "O contador no canto superior esquerdo indica o dia atual e o dia final para sair de uma Rota," +
+                    Info = "O contador no canto superior esquerdo indica o dia atual e o dia final para sair de uma Rota, " +
                         "sendo que essa define os tipos de inimigos que podem aparecer, além de seus modificadores." +
                         "Terminar uma Rota implica no ganho de Prestígio.";
                 }
@@ -218,10 +218,10 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Armas e Munições";
-                    Info = "O Navio é carregado com Armas, e cada Arma possui sua Munição. Para ver as características" +
+                    Info = "O Navio é carregado com Armas, e cada Arma possui sua Munição. Para ver as características " +
                         "das Armas e Muniçõe equipadas, utilize o quarto menu inferior." +
                         "\n" +
-                        "Todo conjunto de Arma e Munição precisa ser recarregado. O progresso da recarga é automático," +
+                        "Todo conjunto de Arma e Munição precisa ser recarregado. O progresso da recarga é automático, " +
                         "e pode ser visto no mesmo menu.";
                 }
                 GameState.ProgressState.WeaponsTut = true;
