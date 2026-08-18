@@ -38,7 +38,6 @@ public class IngredientService : MonoBehaviour
 
         dataIngredients[type].Amount = Get(type) + amount;
 
-        Debug.Log($"Adicionando {type} > {amount}. Novo total: {dataIngredients[type].Amount}");
         ExpeditionEvents.IngredientIncome?.Invoke(GameState.DataState.ingredients[type], amount);
     }
 
@@ -51,6 +50,8 @@ public class IngredientService : MonoBehaviour
             return false;
 
         ingredients[type].Amount = current - amount;
+
+        GameEvents.OnIngredientChange?.Invoke(type);
 
         return true;
     }
@@ -206,11 +207,8 @@ public class IngredientService : MonoBehaviour
 
         float chance = (float)(GameState.ExpeditionState.ActualNextLootChance * Mathf.Pow((float)GameState.ExpeditionState.ActualNextLootDecay, time));
 
-        Debug.Log($"Chance de Ingrediente: {chance * 100}");
-
         if (roll <= chance)
         {
-            Debug.Log("Sucesso!");
             return true;
         }
 

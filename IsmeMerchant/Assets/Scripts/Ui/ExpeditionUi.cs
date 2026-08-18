@@ -64,6 +64,7 @@ public class ExpeditionUi : MonoBehaviour
     [SerializeField] CurrencyView CurrencyIncomePrefab;
     [SerializeField] IngredientView IngredientIncomePrefab;
     [SerializeField] Transform ShipView;
+    [SerializeField] CriticalView CriticalStrikePrefab;
 
     [SerializeField] GameObject TutorialPopUp;
     [SerializeField] TextMeshProUGUI TutorialTitleText;
@@ -518,7 +519,7 @@ public class ExpeditionUi : MonoBehaviour
     }
 
 
-    // Reward View
+    // Effects View
     private void CurrencyIncome(CurrencyInstance currency, double amount)
     {
         var income = Instantiate(CurrencyIncomePrefab);
@@ -554,6 +555,15 @@ public class ExpeditionUi : MonoBehaviour
             ShowTutorial(GameHelper.Tutorial.ClickTut);
         }
     }
+    private void CriticalStrike(EnemyRuntime enemy, Vector3 position)
+    {
+        var critico = Instantiate(CriticalStrikePrefab, position, Quaternion.identity);
+
+        critico.Setup(
+            position,
+            GameState
+        );
+    }
 
 
     // Tutorial
@@ -587,6 +597,8 @@ public class ExpeditionUi : MonoBehaviour
     void OnEnable()
     {
         ExpeditionEvents.OnShipAtributeChange += RefreshShipUi;
+        ExpeditionEvents.CriticalDamage += CriticalStrike;
+
         GameEvents.OnUpgradeBought += RefreshUpgradeUi;
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
@@ -613,6 +625,8 @@ public class ExpeditionUi : MonoBehaviour
     void OnDisable()
     {
         ExpeditionEvents.OnShipAtributeChange -= RefreshShipUi;
+        ExpeditionEvents.CriticalDamage -= CriticalStrike;
+
         GameEvents.OnUpgradeBought -= RefreshUpgradeUi;
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;

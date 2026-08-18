@@ -1,2 +1,2 @@
 ﻿Id;NamePT;NameEN;DescriptionEN;DescriptionPT;Ing1;Cost1;Ing2;Cost2;Ing3;Cost3;Ing4;Cost4;Ing5;Cost5;Time;IncomeAmmount;IncomeType;Level;LabType;UnlockId;UnlockStatus
-p11;Mistura de Escamas;;;;RedScale;5;BlueScale;2;BrownScale;2;None;0;None;0;60;1;Marcos;0;ScalesLab;Start;Available
+p11;Mistura de Escamas;;;;RedScale;1;None;0;None;0;None;0;None;0;60;1;Marcos;0;ScalesLab;Start;Available

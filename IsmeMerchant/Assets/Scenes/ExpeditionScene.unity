@@ -7827,6 +7827,7 @@ MonoBehaviour:
   CurrencyIncomePrefab: {fileID: 5908929028769386177, guid: b3ac7be7785786f438cd78377ae71d05, type: 3}
   IngredientIncomePrefab: {fileID: 490388099692524685, guid: 4ae1fae79037bb8409177377af739ed2, type: 3}
   ShipView: {fileID: 583734790}
+  CriticalStrikePrefab: {fileID: 4000547452945300503, guid: 253edc3258f0e854c861f86a78c0f2d9, type: 3}
   TutorialPopUp: {fileID: 209050939}
   TutorialTitleText: {fileID: 2141985324}
   TutorialInfoText: {fileID: 700293004}
@@ -7969,6 +7970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959a1cce180e7a24099e511d8ca779fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Ship: {fileID: 583734790}
 --- !u!114 &1193086836
 MonoBehaviour:
   m_ObjectHideFlags: 0

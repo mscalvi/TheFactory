@@ -16,6 +16,7 @@ public static class ExpeditionEvents
 
     // Ship Events
     public static Action<WeaponInstance, EnemyRuntime> OnShoot;
+    public static Action<EnemyRuntime, Vector3> CriticalDamage;
     public static Action<ProjectileRuntime, EnemyRuntime, Vector3> OnProjectileHit;
     public static Action OnShipAtributeChange;
     public static Action<WeaponInstance> OnRechargeStart;
@@ -73,5 +74,6 @@ public static class GameEvents
     public static Action<UpgradeInstance> OnUpgradeBought;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCanBuyChange;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
+    public static Action<AlchemyHelper.IngredientType> OnIngredientChange;
 }
 

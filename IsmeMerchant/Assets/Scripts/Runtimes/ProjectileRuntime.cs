@@ -17,4 +17,6 @@ public class ProjectileRuntime
     public float Speed;
 
     public float HitRadius;
+
+    public double Damage;
 }

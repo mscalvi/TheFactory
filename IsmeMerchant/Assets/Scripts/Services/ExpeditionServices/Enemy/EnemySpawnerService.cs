@@ -301,6 +301,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     private void UpdateWaveSize()
     {
         GameState.ExpeditionState.ActualWaveSize++;
+        GameState.ExpeditionState.ActualWaveSize++;
 
         spawnQueue.Clear();
 

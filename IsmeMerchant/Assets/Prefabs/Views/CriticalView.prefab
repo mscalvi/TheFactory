@@ -285,9 +285,9 @@ GameObject:
   - component: {fileID: 1635758702192940915}
   - component: {fileID: 2091809757093920498}
   - component: {fileID: 3012858436577881473}
-  - component: {fileID: 490388099692524685}
+  - component: {fileID: 4000547452945300503}
   m_Layer: 0
-  m_Name: IngredientView
+  m_Name: CriticalView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -376,7 +376,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &490388099692524685
+--- !u!114 &4000547452945300503
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -385,12 +385,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6067573359929466728}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4acca7d8aacd2844abf76de2a67e18c9, type: 3}
+  m_Script: {fileID: 11500000, guid: 81ca78fec3cb7f046a41229569150dd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IncomePoint: {fileID: 0}
   valueText: {fileID: 1398409514393327228}
-  currencyIcon: {fileID: 1143293423897212011}
-  riseDistance: 0.5
-  duration: 0.8
+  riseDistance: 0.3
+  duration: 0.3
   incomePosition: {x: 0, y: 1.0425, z: 0}

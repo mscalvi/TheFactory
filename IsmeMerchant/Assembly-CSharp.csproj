@@ -151,6 +151,7 @@
     <Compile Include="Assets\Scripts\Services\ExpeditionServices\TickService.cs" />
     <Compile Include="Assets\Scripts\Ui\BootstrapUi.cs" />
     <Compile Include="Assets\Scripts\Services\GameServices\UnlockService.cs" />
+    <Compile Include="Assets\Scripts\Ui\Grids\AlchemyCostGrid.cs" />
     <Compile Include="Assets\Scripts\Data\ShipsData.cs" />
     <Compile Include="Assets\Scripts\Instances\BuildingInstance.cs" />
     <Compile Include="Assets\Scripts\Data\IngredientsData.cs" />
@@ -164,6 +165,7 @@
     <Compile Include="Assets\Scripts\Data\AmmoData.cs" />
     <Compile Include="Assets\Scripts\Instances\EnemyInstance.cs" />
     <Compile Include="Assets\Scripts\Models\MissionSlotModel.cs" />
+    <Compile Include="Assets\Scripts\Views\CriticalView.cs" />
     <Compile Include="Assets\Scripts\Services\Trackers\MissionsTrackerService.cs" />
     <Compile Include="Assets\Scripts\States\MissionsState.cs" />
     <Compile Include="Assets\Scripts\Data\LabsData.cs" />

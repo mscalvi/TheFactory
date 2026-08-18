@@ -297,16 +297,23 @@ public class LandingUi : MonoBehaviour
     {
         GameEvents.OnCurrencyChange += RefreshCurrencyUi;
         GameEvents.OnCanBuyChange += RefreshCurrencyUi;
+        GameEvents.OnIngredientChange += RefreshIngredientUi;
     }
 
     void OnDisable()
     {
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
+        GameEvents.OnIngredientChange += RefreshIngredientUi;
     }
 
     void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)
     {
         BuildCurrencies(CompanyCurrencyPanel);
+        BuildIngredients(IngredientPanel);
+    }
+    void RefreshIngredientUi(AlchemyHelper.IngredientType type)
+    {
+        BuildIngredients(IngredientPanel);
     }
 }

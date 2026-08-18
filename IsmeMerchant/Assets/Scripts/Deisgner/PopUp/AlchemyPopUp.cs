@@ -81,17 +81,9 @@ public class AlchemyPopUp : MonoBehaviour
             LabName.text = lab.NameEN.ToString();
         }
 
-        foreach (var currency in GameState.DataState.ingredients)
-        {
-            if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-            {
-                IngredientService.CanBuyIngredient(currency.Value.Type);
-            }
-        }
-
         foreach (var product in GameState.DataState.products.Values)
         {
-            if (product.UnlockStatus == UnlockHelper.UnlockStatus.Available)
+            if (product.UnlockStatus == UnlockHelper.UnlockStatus.Available || product.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 if (product.LabType != lab.Type)
                     continue;
@@ -102,6 +94,14 @@ public class AlchemyPopUp : MonoBehaviour
                 ui.Setup(product, IngredientService, GameState, AlchemyService);
 
                 productsUI[product.Id] = ui;
+            }
+        }
+
+        foreach (var currency in GameState.DataState.ingredients)
+        {
+            if (currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked || currency.Value.UnlockStatus == UnlockHelper.UnlockStatus.Available)
+            {
+                IngredientService.CanBuyIngredient(currency.Value.Type);
             }
         }
     }

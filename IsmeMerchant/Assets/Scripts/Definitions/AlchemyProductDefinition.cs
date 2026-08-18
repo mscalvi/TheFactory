@@ -17,7 +17,7 @@ public class AlchemyProductDefinition : MonoBehaviour
     [SerializeField] private ProductIngredientsDefinition IngredientCostDefinition;
 
     [Header("Production")]
-    [SerializeField] private Image ProgressBar;
+    [SerializeField] private Slider ProgressBar;
 
     private ProductInstance ProductInstance;
     private IngredientService IngredientService;
@@ -88,6 +88,7 @@ public class AlchemyProductDefinition : MonoBehaviour
 
         SetupCosts();
         Refresh();
+
     }
 
     public void Refresh()
@@ -116,13 +117,13 @@ public class AlchemyProductDefinition : MonoBehaviour
     {
         if (ProductInstance.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
         {
-            ProgressBar.fillAmount = 0f;
+            ProgressBar.value = 0f;
             return;
         }
 
         if (ProductInstance.NextProduction == default)
         {
-            ProgressBar.fillAmount = 0f;
+            ProgressBar.value = 0f;
             return;
         }
 
@@ -141,7 +142,7 @@ public class AlchemyProductDefinition : MonoBehaviour
         float progress =
             1f - Mathf.Clamp01((float)(remaining / total));
 
-        ProgressBar.fillAmount = progress;
+        ProgressBar.value = progress;
     }
 
     private void Update()
@@ -149,6 +150,6 @@ public class AlchemyProductDefinition : MonoBehaviour
         if (ProductInstance == null)
             return;
 
-        RefreshProgress();
+        Refresh();
     }
 }

@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static GameHelper;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyControllerService : MonoBehaviour, ITickable
 {

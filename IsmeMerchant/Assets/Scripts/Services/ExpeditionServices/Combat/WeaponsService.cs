@@ -10,6 +10,8 @@ public class WeaponsService : MonoBehaviour, ITickable
     private GameState GameState;
     private ExpeditionState ExpeditionState;
 
+    bool CriticalDamage = false;
+
     public void Initialize(GameState gameState, TickService Tick)
     {
         GameState = gameState;
@@ -206,9 +208,11 @@ public class WeaponsService : MonoBehaviour, ITickable
         double criticalRoll = Random.Range(0, 100);
         double realRoll = criticalRoll / 100;
 
+
         if (realRoll < weapon.ActualPrecision)
         {
             damage *= weapon.ActualCriticalDamage;
+            CriticalDamage = true;
             Debug.Log($"Crítico! Dano Total: {damage}");
         }
 
@@ -220,5 +224,24 @@ public class WeaponsService : MonoBehaviour, ITickable
         }
 
         //Debug.Log($"Tiro: {damage} de Dano Total\n Arma: {weapon.ActualDamage} + Munição: {weapon.Ammo.ActualDamage} Critico: {realRoll < weapon.ActualPrecision} + Marcado: {target.MarkedEnemy}");
+    }
+
+    private void CallCritical(ProjectileRuntime projectile, EnemyRuntime enemy, Vector3 position)
+    {
+        if (CriticalDamage)
+        {
+            ExpeditionEvents.CriticalDamage?.Invoke(enemy, position);
+            CriticalDamage = false;
+        }
+    }
+
+    void OnEnable()
+    {
+        ExpeditionEvents.OnProjectileHit += CallCritical;
+    }
+
+    void OnDisable()
+    {
+        ExpeditionEvents.OnProjectileHit -= CallCritical;
     }
 }

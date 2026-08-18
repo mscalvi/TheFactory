@@ -31,10 +31,10 @@ RectTransform:
   - {fileID: 59761636755270232}
   m_Father: {fileID: 632917960858583483}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.25}
-  m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -4.9999847, y: 0}
-  m_SizeDelta: {x: -20, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -5, y: 0}
+  m_SizeDelta: {x: 540, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1006491465516259470
 GameObject:
@@ -70,8 +70,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 199.5, y: 25}
-  m_SizeDelta: {x: 201.01, y: 50}
+  m_AnchoredPosition: {x: 215.76, y: 16.681}
+  m_SizeDelta: {x: 249.4629, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &548697708967329469
 CanvasRenderer:
@@ -128,8 +128,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -202,10 +202,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 632917960858583483}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.25}
-  m_AnchorMax: {x: 1, y: 0.75}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 560, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1801771879345160546
 CanvasRenderer:
@@ -256,6 +256,8 @@ GameObject:
   - component: {fileID: 9116600638033949547}
   - component: {fileID: 2784664549371547667}
   - component: {fileID: 4101298145944110898}
+  - component: {fileID: 2485693413650619523}
+  - component: {fileID: 4896971887747900669}
   m_Layer: 5
   m_Name: CostPanel
   m_TagString: Untagged
@@ -270,17 +272,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1223118092768451427}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 174710414800935857}
+  m_Father: {fileID: 7968708433096176255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 65}
+  m_SizeDelta: {x: 680.99, y: 46.6387}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2784664549371547667
 CanvasRenderer:
@@ -320,6 +322,47 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2485693413650619523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1223118092768451427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c62b5e06f5a8c1542849ae99770c66c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Grid: {fileID: 4896971887747900669}
+  Columns: 5
+  Lines: 1
+  Spacing: 0
+  Padding: 0
+--- !u!114 &4896971887747900669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1223118092768451427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &3637888481629337998
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,9 +397,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -51.007, y: 25}
+  m_AnchoredPosition: {x: -58.971, y: 16.681}
   m_SizeDelta: {x: 300, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5000008}
 --- !u!222 &8661335621958431834
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -412,8 +455,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -565,8 +608,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 49.495003, y: -25}
-  m_SizeDelta: {x: 501.01, y: 50}
+  m_AnchoredPosition: {x: 60, y: -47.237}
+  m_SizeDelta: {x: 560.99, y: 62.1637}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9181285782297493311
 MonoBehaviour:
@@ -607,7 +650,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1883512560038922471}
   m_FillRect: {fileID: 59761636755270232}
   m_HandleRect: {fileID: 3161025002482647760}
@@ -706,6 +749,7 @@ GameObject:
   - component: {fileID: 147957427960312737}
   - component: {fileID: 8496306865811668572}
   - component: {fileID: 4726806822158221967}
+  - component: {fileID: 7130845131245291565}
   m_Layer: 5
   m_Name: ProductPanel
   m_TagString: Untagged
@@ -728,14 +772,15 @@ RectTransform:
   - {fileID: 174710414800935857}
   - {fileID: 3366334806116554148}
   - {fileID: 469601221690029932}
+  - {fileID: 9116600638033949547}
   - {fileID: 632917960858583483}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!222 &147957427960312737
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -791,7 +836,21 @@ MonoBehaviour:
   BrewButton: {fileID: 1242317212871143629}
   CostsContainer: {fileID: 9116600638033949547}
   IngredientCostDefinition: {fileID: 4275470691215576098, guid: 23e7b61ee75cecd4b90cfe1a61626f37, type: 3}
-  ProgressBar: {fileID: 1883512560038922471}
+  ProgressBar: {fileID: 9181285782297493311}
+--- !u!114 &7130845131245291565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8204506463710507294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 0
 --- !u!1 &8299421901302884525
 GameObject:
   m_ObjectHideFlags: 0
@@ -823,10 +882,10 @@ RectTransform:
   - {fileID: 3161025002482647760}
   m_Father: {fileID: 632917960858583483}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -20, y: 0}
+  m_SizeDelta: {x: 540, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8665471251925907668
 GameObject:
@@ -858,15 +917,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 9116600638033949547}
+  m_Children: []
   m_Father: {fileID: 7968708433096176255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -251.00687, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -340.49, y: -78.319}
+  m_SizeDelta: {x: 120, y: 120}
+  m_Pivot: {x: 0, y: 0}
 --- !u!222 &2590389337376736338
 CanvasRenderer:
   m_ObjectHideFlags: 0
