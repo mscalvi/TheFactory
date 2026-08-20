@@ -3,11 +3,11 @@ i001;Blue Scale;Escama Azul;;;BlueScale;Common;AnimalProduct;;Available
 i002;Red Scale;Escama Vermelha;;;RedScale;Common;AnimalProduct;;Available
 i003;Yellow Scale;Escama Amarela;;;YellowScale;Common;AnimalProduct;;Available
 i004;Brown Scale;Escama Marrom;;;BrownScale;Common;AnimalProduct;;Available
-i005;Golden Scale;Escama Dourada;;;GoldenScale;Uncommon;AnimalProduct;;Blocked
-i006;Pink Scale;Escama Rosa;;;PinkScale;Rare;AnimalProduct;;Blocked
-i007;Silver Scale;Escama Prata;;;SilverScale;Uncommon;AnimalProduct;;Blocked
+i005;Golden Scale;Escama Dourada;;;GoldenScale;Uncommon;AnimalProduct;;Available
+i006;Pink Scale;Escama Rosa;;;PinkScale;Rare;AnimalProduct;;Available
+i007;Silver Scale;Escama Prata;;;SilverScale;Uncommon;AnimalProduct;;Available
 i008;Orange Scale;Escama Laranja;;;OrangeScale;Common;AnimalProduct;;Available
 i009;Black Scale;Escama Negra;;;BlackScale;Common;AnimalProduct;;Available
 i010;White Scale;Escapa Branca;;;WhiteScale;Common;AnimalProduct;;Available
-i011;Invisible Scale;Escama Transparente;;;InvisibleScale;Legendary;AnimalProduct;;Blocked
-i012;Luminescent Scale;Escama Luminescente;;;LuminescentScale;Legendary;AnimalProduct;;Blocked
+i011;Invisible Scale;Escama Transparente;;;InvisibleScale;Legendary;AnimalProduct;;Available
+i012;Luminescent Scale;Escama Luminescente;;;LuminescentScale;Legendary;AnimalProduct;;Available

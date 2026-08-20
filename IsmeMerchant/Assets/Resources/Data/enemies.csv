@@ -1,51 +1,51 @@
-﻿Id;NamePT;NameEN;DescriptionPT;DescriptionEN;DayEnemy;BossEnemy;EnemyType;Life;LifeGrowth;LifeRegen;LifeRegenGrowth;Speed;SpeedGrowth;Armor;ArmorGrowth;Range;RangeGrowth;Damage;DamageGrowth;AttackSpeed;AttackSpeedGrowth;SpawnDistance;SpawnDistanceGrowth;ExperienceKill;Size;Special;CommonIngredient;UncommonIngredient;RareIngredient;LegendaryIngredient;Rarity;SpawnCost;Stage;PathTypes;PathEnvironments;PathModifiers;UnlockId;UnlockStatus
-e0001;Peixe-Papagaio;;;;True;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;BlueScale;None;None;None;1000;1;;All;All;;Start;Available
-e0002;Peixe-Cirurgião;Lalala;;;True;False;Fish;2;0.02;0;0;1.9;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;BlueScale;None;None;None;1000;1;;All;All;;Start;Available
-e0003;Peixe-Anjo;Lalala;;;True;False;Fish;2;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;YellowScale;None;None;None;1000;1;;All;All;;Start;Available
-e0004;Peixe-Borboleta;Lalala;;;True;False;Fish;2;0.02;0;0;1.9;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;YellowScale;GoldenScale;None;None;10;1;;All;All;;Start;Available
-e0005;Peixe-Palhaço;Lalala;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;OrangeScale;None;None;None;1000;1;;All;All;;Start;Available
-e0006;Donzela Azul;Lalala;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;BlueScale;None;None;None;500;1;;All;All;;Start;Available
-e0007;Donzela Amarela;Lalala;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;YellowScale;None;None;None;500;1;;All;All;;Start;Available
-e0008;Peixe-Voador;Lalala;;;True;False;Fish;2;0.03;0;0;2.2;0;0;0;0;0;1;0.03;1;0;20;0;1;1;Fly;BlueScale;None;PinkScale;None;10;5;;All;All;;Start;Available
-e0009;Peixe-Flecha;Lalala;;;True;False;Fish;2;0.03;0;0;2.7;0.001;0;0;0;0;0.7;0.03;1;0;10;0;1;0.7;None;None;SilverScale;None;None;10;2;;All;All;;Start;Available
-e0010;Peixe-Vidro;Lalala;;;True;False;Fish;2;0.02;0;0;1.4;0;0;0;0;0;0.9;0.02;1;0;10;0;1;0.9;Invisibility;None;None;None;InvisibleScale;10;5;;All;All;;Start;Available
-e0011;Anchova;Anchovy;;;True;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;None;None;None;None;250;2;;All;All;;Start;Available
-e0012;Goby;Goby;;;True;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;RedScale;None;None;None;250;2;;All;All;;Start;Available
-e0013;Donzela Vermelha;Red Damselfish;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;RedScale;None;PinkScale;None;500;1;;All;All;;Start;Available
-e0014;Baiacú Pequeno;Small Pufferfish;;;True;False;Fish;4;0.06;0;0;1.1;0;0;0;0;0;1.2;0.06;0.4;0;30;0;1;1.2;None;None;None;None;None;10;2;;All;All;;Start;Available
-e0015;Peixe-Esquilo;Squirrelfish;;;True;False;Fish;2;0.02;0;0;3.1;0;0;0;0;0;0.8;0.02;1.5;0;10;0;1;0.8;None;RedScale;None;None;None;250;2;;All;All;;Start;Available
-e0016;Dentão;Lalala;;;True;False;Fish;5;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;OrangeScale;None;None;None;100;3;;All;All;;Start;Available
-e0017;Pargo;Lalala;;;True;False;Fish;5;0.05;0;0;1.9;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;RedScale;None;PinkScale;None;100;3;;All;All;;Start;Available
-e0018;Tainha;Lalala;;;True;False;Fish;5;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;None;None;None;None;250;3;;All;All;;Start;Available
-e0019;Cavala;Lalala;;;True;False;Fish;5;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;None;None;None;None;100;3;;All;All;;Start;Available
-e0020;Bonito;Lalala;;;True;False;Fish;5;0.05;0;0;1.9;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;None;SilverScale;None;None;100;3;;All;All;;Start;Available
-e0021;Peixe-Elefante;Lalala;;;True;False;Fish;6;0.07;0;0;0.5;0;3;0.01;0;0;1.2;0.07;1;0;30;0;1;1.2;None;BrownScale;None;None;None;10;4;;All;All;;Start;Available
-e0022;Peixe-Leão;Lalala;;;True;False;Fish;3;0.02;0;0;1.2;0;0;0;0;0;0.9;0.02;0.4;0;10;0;1;0.9;None;OrangeScale;None;PinkScale;None;5;5;;All;All;;Start;Available
-e0023;Atum;Lalala;;;True;False;Fish;6;0.07;0;0;2.9;0;0;0;0;0;1.9;0.07;1;0;30;0;1;1.9;None;None;None;None;None;5;5;;All;All;;Start;Available
-e0024;Dourado;Lalala;;;True;False;Fish;5;0.05;0;0;1.9;0;0;0;0;0;1.6;0.05;1;0;30;0;1;1.6;None;YellowScale;GoldenScale;None;None;10;4;;All;All;;Start;Available
-e1001;Peixe-Porco;Lalala;;;False;False;Fish;3;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;BrownScale;None;None;None;1000;2;;All;All;;Start;Available
-e1002;Peixe-Bodião;Lalala;;;False;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1.1;0.03;1;0;30;0;1;1.1;None;BrownScale;None;None;None;250;1;;All;All;;Start;Available
-e1003;Peixe-Cabra;Lalala;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;OrangeScale;None;PinkScale;None;10;1;;All;All;;Start;Available
-e1004;Peixe-Médico;Lalala;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;0.7;0.06;1.2;0.01;10;0;1;0.7;Swarm;None;None;None;None;10;1;;All;All;;Start;Available
-e1005;Peixe-Agulha;Lalala;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1.2;0.01;20;0;1;1;None;None;SilverScale;None;None;100;2;;All;All;;Start;Available
-e1006;Peixe-Folha;Lalala;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;BrownScale;None;None;None;250;1;;All;All;;Start;Available
-e1007;Peixe-Cachimbo;Lalala;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;YellowScale;GoldenScale;None;None;250;2;;All;All;;Start;Available
-e1008;Peixe-Machadinha;Hatchetfish;;;False;False;Fish;2;0.04;0;0;2.1;0.001;0;0;0;0;1;0.04;1;0;20;0;1;1;None;None;SilverScale;None;None;250;1;;All;All;;Start;Available
-e1009;Peixe-Cardeal;Cardinalfish;;;False;False;Fish;2;0.04;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;RedScale;None;None;None;1000;1;;All;All;;Start;Available
-e1010;Peixe-Lanterna;Lanternfish;;;False;False;Fish;2;0.05;0;0;2.0;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;None;None;None;LuminescentScale;5;1;;All;All;;Start;Available
-e1011;Garoupa;Lalala;;;False;False;Fish;4;0.07;0;0;1.7;0;0;0;0;0;1.2;0.07;1;0;30;0;1;1.2;None;BrownScale;None;None;None;500;2;;All;All;;Start;Available
-e1012;Badejo;Lalala;;;False;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;BrownScale;None;None;None;500;2;;All;All;;Start;Available
-e1013;Cioba;Lalala;;;False;False;Fish;3;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;RedScale;None;None;None;500;3;;All;All;;Start;Available
-e1014;Robalo;Lalala;;;False;False;Fish;3;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;None;SilverScale;None;None;10;3;;All;All;;Start;Available
-e1015;Serra;Lalala;;;False;False;Fish;2;0.06;0;0;1.9;0;0;0;0;0;1;0.06;2.3;0.03;20;0;1;1;None;None;None;None;None;250;2;;All;All;;Start;Available
-e1016;Peixe-Rei;Lalala;;;False;False;Fish;3;0.02;0;0;2.4;0;0;0;0;0;0.7;0.02;1;0;10;0;1;0.7;Swarm;BrownScale;GoldenScale;None;None;10;1;;All;All;;Start;Available
-e1017;Peixe-Lua;Lalala;;;False;False;Fish;22;0.09;0;0;1.2;0;1;0.02;0;0;1.8;0.04;1;0;30;0;1;1.8;Shield;None;None;None;None;100;3;;All;All;;Start;Available
-e1018;Peixe-Galo;Lalala;;;False;False;Fish;2;0.05;0;0;1.7;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;BlueScale;None;None;None;1000;2;;All;All;;Start;Available
-e1019;Peixe-Coió;Lalala;;;False;False;Fish;2;0.04;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;BlueScale;SilverScale;None;None;10;2;;All;All;;Start;Available
-e1020;Peixe-Morcego;Lalala;;;False;False;Fish;2;0.04;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;BrownScale;None;None;None;1000;4;;All;All;;Start;Available
-e1021;Peixe-Escorpião;Lalala;;;False;False;Fish;2;0.05;0;0;1.7;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;BrownScale;None;None;None;250;4;;All;All;;Start;Available
-e1022;Peixe-Pedra;Lalala;;;False;False;Fish;22;0.11;0;0;0.3;0;4;0.03;0;0;1;0.07;1;0;20;0;1;1;Shield;None;None;None;None;10;5;;All;All;;Start;Available
-e1023;Barracuda;Lalala;;;False;False;Fish;9;0.09;0;0;1.0;0;0;0;0;0;1.1;0.02;1;0;30;0;1;1.1;Swarm;None;SilverScale;None;None;10;5;;All;All;;Start;Available
-e2001;Cardeal Gigante;Giant Cardinal;;;False;True;Fish;45;0.05;0;0;1.9;0;0;0;0;0;12;0.05;1;0;40;0;10;2.5;None;None;None;None;None;10;0;;All;All;;Start;Available
-e2002;Garoupa-Gigante;Lalala;;;True;True;Fish;45;0.05;0;0;1.9;0;1;0.02;0;0;10;0.05;1;0;40;0;10;2.5;None;BrownScale;None;None;None;1;0;;All;All;;Start;Available
-e2003;Bodião Gigante;Lalala;;;False;True;Fish;45;0.05;0;0;1.5;0;1;0.01;0;0;10;0.05;1;0;40;0;10;2.5;None;None;None;None;None;10;0;;All;All;;Start;Available
+﻿Id;NamePT;NameEN;Color;DescriptionPT;DescriptionEN;DayEnemy;BossEnemy;EnemyType;Life;LifeGrowth;LifeRegen;LifeRegenGrowth;Speed;SpeedGrowth;Armor;ArmorGrowth;Range;RangeGrowth;Damage;DamageGrowth;AttackSpeed;AttackSpeedGrowth;SpawnDistance;SpawnDistanceGrowth;ExperienceKill;Size;Special;CommonIngredient;UncommonIngredient;RareIngredient;LegendaryIngredient;Rarity;SpawnCost;Stage;PathTypes;PathEnvironments;PathModifiers;UnlockId;UnlockStatus
+e0003;Peixe-Anjo;;Amarelo;;;True;False;Fish;2;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;YellowScale;None;None;None;1000;1;;ShallowWaters;All;All;Start;Available
+e0004;Peixe-Borboleta;;Amarelo;;;True;False;Fish;2;0.02;0;0;1.9;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;YellowScale;GoldenScale;None;None;10;1;;ShallowWaters;All;All;Start;Available
+e0007;Donzela Amarela;;Amarelo;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;YellowScale;None;None;None;500;1;;CurrentEntrilhas;All;All;Start;Available
+e1007;Peixe-Cachimbo;;Amarelo;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;YellowScale;GoldenScale;None;None;250;2;;ShallowWaters;All;All;Start;Available
+e0001;Peixe-Papagaio;;Azul;;;True;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;BlueScale;None;None;None;1000;1;;ShallowWaters;All;All;Start;Available
+e0002;Peixe-Cirurgião;;Azul;;;True;False;Fish;2;0.02;0;0;1.9;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;BlueScale;None;None;None;1000;1;;ShallowWaters;All;All;Start;Available
+e0006;Donzela Azul;;Azul;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;BlueScale;None;None;None;500;1;;CurrentEntrilhas;All;All;Start;Available
+e1002;Peixe-Bodião;;Azul;;;False;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1.1;0.03;1;0;30;0;1;1.1;None;BrownScale;None;None;None;250;1;;AllOcean;All;All;Start;Available
+e1005;Peixe-Agulha;;Azul;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1.2;0.01;20;0;1;1;None;None;SilverScale;None;None;100;2;;CurrentEntrilhas;All;All;Start;Available
+e1019;Peixe-Coió;;Azul;;;False;False;Fish;2;0.04;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;BlueScale;SilverScale;None;None;10;2;;AllOcean;All;All;Start;Available
+e2003;Bodião Gigante;;Azul;;;False;True;Fish;45;0.05;0;0;1.5;0;1;0.01;0;0;10;0.05;1;0;40;0;10;2.5;None;None;None;None;None;10;0;;AllOcean;All;All;Start;Available
+e0008;Peixe-Voador;;Cinza;;;True;False;Fish;2;0.03;0;0;2.2;0;0;0;0;0;1;0.03;1;0;20;0;1;1;Fly;BlueScale;None;PinkScale;None;10;5;;ShallowWaters;All;All;Start;Available
+e0009;Peixe-Flecha;;Cinza;;;True;False;Fish;2;0.03;0;0;2.7;0.001;0;0;0;0;0.7;0.03;1;0;10;0;1;0.7;None;None;SilverScale;None;None;10;2;;ShallowWaters;All;All;Start;Available
+e0011;Anchova;Anchovy;Cinza;;;True;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;None;None;None;None;250;2;;AllOcean;All;All;Start;Available
+e0018;Tainha;;Cinza;;;True;False;Fish;5;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;None;None;None;None;250;3;;AllOcean;All;All;Start;Available
+e0019;Cavala;;Cinza;;;True;False;Fish;5;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;None;None;None;None;100;3;;AllOcean;All;All;Start;Available
+e0020;Bonito;;Cinza;;;True;False;Fish;5;0.05;0;0;1.9;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;None;SilverScale;None;None;100;3;;AllOcean;All;All;Start;Available
+e0023;Atum;;Cinza;;;True;False;Fish;6;0.07;0;0;2.9;0;0;0;0;0;1.9;0.07;1;0;30;0;1;1.9;None;None;None;None;None;5;5;;AllOcean;All;All;Start;Available
+e1004;Peixe-Médico;;Cinza;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;0.7;0.06;1.2;0.01;10;0;1;0.7;Swarm;None;None;None;None;10;1;;ShallowWaters;All;All;Start;Available
+e1011;Garoupa;;Cinza;;;False;False;Fish;4;0.07;0;0;1.7;0;0;0;0;0;1.2;0.07;1;0;30;0;1;1.2;None;BrownScale;None;None;None;500;2;;AllOcean;All;All;Start;Available
+e1014;Robalo;;Cinza;;;False;False;Fish;3;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;None;SilverScale;None;None;10;3;;AllOcean;All;All;Start;Available
+e1015;Peixe-Serra;;Cinza;;;False;False;Fish;2;0.06;0;0;1.9;0;0;0;0;0;1;0.06;2.3;0.03;20;0;1;1;None;None;None;None;None;250;2;;AllOcean;All;All;Start;Available
+e1016;Peixe-Rei;;Cinza;;;False;False;Fish;3;0.02;0;0;2.4;0;0;0;0;0;0.7;0.02;1;0;10;0;1;0.7;Swarm;BrownScale;GoldenScale;None;None;10;1;;AllOcean;All;All;Start;Available
+e1017;Peixe-Lua;;Cinza;;;False;False;Fish;22;0.09;0;0;1.2;0;1;0.02;0;0;1.8;0.04;1;0;30;0;1;1.8;Shield;None;None;None;None;100;3;;DeepWaters;All;All;Start;Available
+e1018;Peixe-Galo;;Cinza;;;False;False;Fish;2;0.05;0;0;1.7;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;WhiteScale;None;None;None;1000;2;;CurrentEntrilhas;All;All;Start;Available
+e2002;Garoupa-Gigante;;Cinza;;;True;True;Fish;45;0.05;0;0;1.9;0;1;0.02;0;0;10;0.05;1;0;40;0;10;2.5;None;BrownScale;None;None;None;1;0;;AllOcean;All;All;Start;Available
+e0024;Dourado;;Dourado;;;True;False;Fish;5;0.05;0;0;1.9;0;0;0;0;0;1.6;0.05;1;0;30;0;1;1.6;None;YellowScale;GoldenScale;None;None;10;4;;AllOcean;All;All;Start;Available
+e0005;Peixe-Palhaço;;Laranja;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;OrangeScale;None;None;None;1000;1;;ShallowWaters;All;All;Start;Available
+e0014;Baiacú Pequeno;Small Pufferfish;Marrom;;;True;False;Fish;4;0.06;0;0;1.1;0;0;0;0;0;1.2;0.06;0.4;0;30;0;1;1.2;None;BrownScale;None;None;None;10;2;;AllOcean;All;All;Start;Available
+e0021;Peixe-Elefante;;Marrom;;;True;False;Fish;6;0.07;0;0;0.5;0;3;0.01;0;0;1.2;0.07;1;0;30;0;1;1.2;None;BrownScale;None;None;None;10;4;;AllOcean;All;All;Start;Available
+e1001;Peixe-Porco;;Marrom;;;False;False;Fish;3;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;BrownScale;None;None;None;1000;2;;CurrentEntrilhas;All;All;Start;Available
+e1006;Peixe-Folha;;Marrom;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;BrownScale;None;None;None;250;1;;ShallowWaters;All;All;Start;Available
+e1010;Peixe-Lanterna;Lanternfish;Marrom;;;False;False;Fish;2;0.05;0;0;2.0;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;None;None;None;LuminescentScale;5;1;;DeepWaters;All;All;Start;Available
+e1012;Badejo;;Marrom;;;False;False;Fish;2;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;BrownScale;None;None;None;500;2;;AllOcean;All;All;Start;Available
+e1020;Peixe-Morcego;;Marrom;;;False;False;Fish;2;0.04;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;BrownScale;None;None;None;1000;4;;AllOcean;All;All;Start;Available
+e1022;Peixe-Pedra;;Marrom;;;False;False;Fish;22;0.11;0;0;0.3;0;4;0.03;0;0;1;0.07;1;0;20;0;1;1;Shield;None;None;None;None;10;5;;AllOcean;All;All;Start;Available
+e1023;Barracuda;;Preto;;;False;False;Fish;9;0.09;0;0;1.0;0;0;0;0;0;1.1;0.02;1;0;30;0;1;1.1;Swarm;BlackScale;SilverScale;None;None;10;5;;AllOcean;All;All;Start;Available
+e0010;Peixe-Vidro;;Transparente;;;True;False;Fish;2;0.02;0;0;1.4;0;0;0;0;0;0.9;0.02;1;0;10;0;1;0.9;Invisibility;None;None;None;InvisibleScale;10;5;;DeepWaters;All;All;Start;Available
+e1008;Peixe-Machadinha;Hatchetfish;Transparente;;;False;False;Fish;2;0.04;0;0;2.1;0.001;0;0;0;0;1;0.04;1;0;20;0;1;1;None;None;SilverScale;None;None;250;1;;AllOcean;All;All;Start;Available
+e0012;Goby;Goby;Vermelho;;;True;False;Fish;1;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;0.7;None;RedScale;None;None;None;250;2;;CurrentEntrilhas;All;All;Start;Available
+e0013;Donzela Vermelha;Red Damselfish;Vermelho;;;True;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;RedScale;None;PinkScale;None;500;1;;CurrentEntrilhas;All;All;Start;Available
+e0015;Peixe-Esquilo;Squirrelfish;Vermelho;;;True;False;Fish;2;0.02;0;0;3.1;0;0;0;0;0;0.8;0.02;1.5;0;10;0;1;0.8;None;RedScale;None;None;None;250;2;;CurrentEntrilhas;All;All;Start;Available
+e0016;Dentão;;Vermelho;;;True;False;Fish;5;0.04;0;0;1.9;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;OrangeScale;None;None;None;100;3;;AllOcean;All;All;Start;Available
+e0017;Pargo;;Vermelho;;;True;False;Fish;5;0.05;0;0;1.9;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;RedScale;None;PinkScale;None;100;3;;AllOcean;All;All;Start;Available
+e0022;Peixe-Leão;;Vermelho;;;True;False;Fish;3;0.02;0;0;1.2;0;0;0;0;0;0.9;0.02;0.4;0;10;0;1;0.9;None;OrangeScale;None;PinkScale;None;5;5;;DeepWaters;All;All;Start;Available
+e1003;Peixe-Cabra;;Vermelho;;;False;False;Fish;2;0.02;0;0;1.7;0;0;0;0;0;1;0.02;1;0;20;0;1;1;None;OrangeScale;None;PinkScale;None;10;1;;CurrentEntrilhas;All;All;Start;Available
+e1009;Peixe-Cardeal;Cardinalfish;Vermelho;;;False;False;Fish;2;0.04;0;0;1.7;0;0;0;0;0;1;0.04;1;0;20;0;1;1;None;RedScale;None;None;None;1000;1;;CurrentEntrilhas;All;All;Start;Available
+e1013;Cioba;;Vermelho;;;False;False;Fish;3;0.03;0;0;1.7;0;0;0;0;0;1;0.03;1;0;20;0;1;1;None;RedScale;None;None;None;500;3;;AllOcean;All;All;Start;Available
+e1021;Peixe-Escorpião;;Vermelho;;;False;False;Fish;2;0.05;0;0;1.7;0;0;0;0;0;1;0.05;1;0;20;0;1;1;None;BrownScale;None;None;None;250;4;;AllOcean;All;All;Start;Available
+e2001;Cardeal Gigante;Giant Cardinal;Vermelho;;;False;True;Fish;45;0.05;0;0;1.9;0;0;0;0;0;12;0.05;1;0;40;0;10;2.5;None;None;None;None;None;10;0;;AllOcean;All;All;Start;Available

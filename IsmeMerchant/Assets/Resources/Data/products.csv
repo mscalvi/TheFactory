@@ -1,2 +1,7 @@
 ﻿Id;NamePT;NameEN;DescriptionEN;DescriptionPT;Ing1;Cost1;Ing2;Cost2;Ing3;Cost3;Ing4;Cost4;Ing5;Cost5;Time;IncomeAmmount;IncomeType;Level;LabType;UnlockId;UnlockStatus
-p11;Mistura de Escamas;;;;RedScale;1;None;0;None;0;None;0;None;0;60;1;Marcos;0;ScalesLab;Start;Available
+p01;Mistura de Escamas 1;;;;RedScale;1;BlueScale;1;YellowScale;1;None;0;None;0;900;1;Marcos;0;ScalesLab;Start;Available
+p02;Mistura de Escamas 2;;;;RedScale;2;OrangeScale;2;YellowScale;2;None;0;None;0;750;1;Marcos;0;ScalesLab;Start;Available
+p03;Mistura de Escamas 3;;;;BrownScale;3;BlackScale;3;WhiteScale;3;None;0;None;0;600;1;Marcos;0;ScalesLab;Start;Available
+p04;Mistura de Escamas 4;;;;BrownScale;4;BlueScale;4;YellowScale;4;None;0;None;0;450;1;Marcos;0;ScalesLab;Start;Available
+p05;Mistura de Escamas 5;;;;BlackScale;5;BrownScale;5;OrangeScale;5;None;0;None;0;300;1;Marcos;0;ScalesLab;Start;Available
+p06;Mistura de Escamas 6;;;;WhiteScale;2;BlackScale;2;GoldenScale;2;SilverScale;2;PinkScale;2;150;1;Marcos;0;ScalesLab;Start;Available
