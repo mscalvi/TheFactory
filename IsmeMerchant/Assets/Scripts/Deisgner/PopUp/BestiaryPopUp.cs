@@ -97,6 +97,8 @@ public class BestiaryPopUp : MonoBehaviour
         {
             if (enemy.EnemyType != EnemyType) continue;
 
+            if (!enemy.Known) continue;
+
             if (enemy.UnlockStatus == UnlockHelper.UnlockStatus.Available)
             {
                 var obj = Instantiate(EnemyBestiaryDefinition, SpeciesPanel);

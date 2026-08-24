@@ -119,11 +119,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
             spawnQueue.Enqueue(runtime);
         }
-
-        Debug.Log(
-            $"Wave criada: máximo {waveSize} inimigos. " +
-            $"Fila atual: {spawnQueue.Count}"
-        );
     }
 
     private void ProcessSpawnQueue()
@@ -185,12 +180,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
 
         ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
 
-        Debug.Log(
-            $"Spawn: {instance.NamePT}\n" +
-            $"-Vida: {instance.ActualLife} " +
-            $"-Dano: {instance.Damage} " +
-            $"-Speed: {instance.Speed}"
-        );
     }
 
     // ANGLE
@@ -308,7 +297,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         if (GameState.ExpeditionState.ActualWaveSize > GameState.ExpeditionState.MaxWaveSize)
             GameState.ExpeditionState.ActualWaveSize = GameState.ExpeditionState.MaxWaveSize; 
     
-        Debug.Log($"Tamanho da Wave: {GameState.ExpeditionState.ActualWaveSize}");
     }
 
     // EVENTOS

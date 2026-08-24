@@ -59,7 +59,8 @@ public class ExpeditionWeaponDefinition : MonoBehaviour
 
     string FormatTime(double seconds)
     {
-        if (seconds < 0) seconds = 0;
+        if (seconds < 0)
+            seconds = 0;
 
         TimeSpan t = TimeSpan.FromSeconds(seconds);
 

@@ -207,7 +207,7 @@ public class IngredientService : MonoBehaviour
 
         float chance = (float)(GameState.ExpeditionState.ActualNextLootChance * Mathf.Pow((float)GameState.ExpeditionState.ActualNextLootDecay, time));
 
-        if (roll <= chance)
+        if (roll <= 100)
         {
             return true;
         }
