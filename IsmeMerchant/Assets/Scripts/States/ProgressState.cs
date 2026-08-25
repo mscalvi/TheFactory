@@ -22,19 +22,12 @@ public class ProgressState
     public int UnlockableExpeditionUpgrades = 0;
 
     // Unlock de Mecânicas
-    public bool Studies = false;
-    public bool Company = false;
-    public bool Constructions = false;
-    public bool Training = false;
     public bool Ship = false;
-    public bool Alchemy = false;
-
-    public bool Missions = false;
-    public bool Bestiary = false;
-
+    public bool Alchemy = true;
+    public bool Bestiary = true;
     public bool Click = true;
     public bool Ingredients = true;
-    public bool Recruiting = false;
+    public bool Fumac = false;
 
     // Tutorial
     public bool ExpeditionTut = false;
@@ -50,4 +43,5 @@ public class ProgressState
     public bool DestinationsTut = false;
     public bool WeaponsTut = false;
     public bool KnowledgeTut = false;
+    public bool FumacTut = false;
 }

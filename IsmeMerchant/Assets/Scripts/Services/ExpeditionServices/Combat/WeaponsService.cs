@@ -213,7 +213,6 @@ public class WeaponsService : MonoBehaviour, ITickable
         {
             damage *= weapon.ActualCriticalDamage;
             CriticalDamage = true;
-            Debug.Log($"Crítico! Dano Total: {damage}");
         }
 
         target.ActualLife -= damage;

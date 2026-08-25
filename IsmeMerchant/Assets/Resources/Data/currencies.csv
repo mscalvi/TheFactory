@@ -1,4 +1,6 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;Type;UnlockId;UnlockStatus
-c01;Experience;;;;Expedition;Experience;Start;Unlocked
-c11;Marcos;;;;Company;Marcos;Start;Unlocked
-c12;Knowledge;;;;Company;Knowledge;Start;Unlocked
+c01;Experience;Experiência;;;Expedition;Experience;Start;Unlocked
+c11;Marcos;Marcos;;;Company;Marcos;Start;Unlocked
+c12;Knowledge;Conhecimento;;;Company;Knowledge;Start;Unlocked
+c13;Fame;Fama;;;Company;Fame;1;Blocked
+c14;Fumac;Fumac;;;Company;Fumac;Start;Unlocked

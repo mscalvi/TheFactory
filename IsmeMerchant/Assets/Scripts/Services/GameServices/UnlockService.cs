@@ -16,6 +16,11 @@ public class UnlockService : MonoBehaviour
         DataState = GameState.DataState;
     }
 
+    private void UnlockCurrency(CurrencyInstance currency)
+    {
+        GameState.DataState.currencies[currency.Type].UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
+    }
+
     public void UnlockUpgrade(UpgradeInstance upgrade)
     {
         foreach (var upgradeData in DataState.upgrades)
@@ -42,7 +47,7 @@ public class UnlockService : MonoBehaviour
         }
     }
 
-    public void UnlockBuilding(BuildingInstance buildingInstance)
+    private void UnlockBuilding(BuildingInstance buildingInstance)
     {
         if (buildingInstance.Level == 0)
         {
@@ -84,5 +89,24 @@ public class UnlockService : MonoBehaviour
                 .OrderBy(_ => Guid.NewGuid())
                 .Take(4)
                 .ToList();
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.StartedProduction += ProductionStarted;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.StartedProduction -= ProductionStarted;
+    }
+
+    private void ProductionStarted(ProductInstance product)
+    {
+        if (!GameState.ProgressState.Fumac)
+        {
+            UnlockCurrency(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Fumac]);
+            GameState.ProgressState.Fumac = true;
+        }
     }
 }

@@ -45,7 +45,7 @@ public class TutorialService : MonoBehaviour
                 {
                     Title = "Navio";
                     Info = "Quando a Vida do Navio chega a 0, a Expedição termina. Clicando na Barra de Vida, no canto " +
-                        "superior direito, é possível ver outras informações do Navio, como Resistência e Reparos." +
+                        "superior direito, é possível ver outras informações do Navio, como Resistência e Reparos. " +
                         "\n" +
                         "Além disso, ao longo do jogo, é possível trocar de Navio, conseguindo mais espaços para Armas " +
                         "e valores de atributos maiores.";
@@ -81,7 +81,7 @@ public class TutorialService : MonoBehaviour
                 {
                     Title = "Melhorias";
                     Info = "As melhorias compradas durante uma Expedição só são válidas até o final dela. Servem para " +
-                        "aumentar as capacidades do Navio, das Armas e dos ganhos financeiros." +
+                        "aumentar as capacidades do Navio, das Armas e dos ganhos financeiros. " +
                         "\n" +
                         "Melhorias compradas fora da Expedição são permanentes.";
                 }
@@ -100,7 +100,7 @@ public class TutorialService : MonoBehaviour
                     Title = "Marcando Alvos";
                     Info = "Durante uma Expedição, você pode clicar em um inimigo para marcá-lo. Um alvo marcado " +
                         "tem chances de deixar cair Ingredientes e outros recursos, que alimentam outras funcionalidades " +
-                        "do jogo. Além disso, é possível causar danos maiores a inimigos marcados." +
+                        "do jogo. Além disso, é possível causar danos maiores a inimigos marcados. " +
                         "\n" +
                         "Inicialmente, só é possível marcar um inimigo por vez.";
                 }
@@ -150,14 +150,14 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Bestiário";
-                    Info = "O Bestiário mostra informações dos inimigos conhecidos, divididos em categorias." +
+                    Info = "O Bestiário mostra informações dos inimigos conhecidos, divididos em categorias. " +
                         "Conforme mais inimigos de determinado tipo são mortos, mais informações ficam " +
                         "disponíveis no Bestiário.";
                 }
                 GameState.ProgressState.BestiaryTut = true;
                 return (Title, Info);
 
-            // Final do Dia 1, na Expedition
+            // Início do Produto, na Landing
             case GameHelper.Tutorial.MarcosTut:
                 if (GameState.ActualLanguage == GameState.Language.English)
                 {
@@ -167,9 +167,8 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Marcos";
-                    Info = "Os Marcos são a principal moeda fora de uma Expedição. São utilizados para comprar Melhorias " +
-                        "e outros recursos do jogo. Podem ser obtidos ao final de um Dia, com a Alquimia, ou ao eliminar alvos " +
-                        "especiais.";
+                    Info = "Os Marcos são a moeda do império, e utilizada para grandes negócios. É possível conseguir com inimigos especiais, " +
+                        "ou através da venda de produtos alquímicos.";
                 }
                 GameState.ProgressState.MarcosTut = true;
                 return (Title, Info);
@@ -202,7 +201,7 @@ public class TutorialService : MonoBehaviour
                 {
                     Title = "Rotas";
                     Info = "O contador no canto superior esquerdo indica o dia atual e o dia final para sair de uma Rota, " +
-                        "sendo que essa define os tipos de inimigos que podem aparecer, além de seus modificadores." +
+                        "sendo que essa define os tipos de inimigos que podem aparecer, além de seus modificadores. " +
                         "Terminar uma Rota implica no ganho de Prestígio.";
                 }
                 GameState.ProgressState.DestinationsTut = true;
@@ -237,10 +236,29 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Conhecimento";
-                    Info = "Sempre que um novo tipo de inimgo for avistado, você ganhará pontos de Conhecimento.";
+                    Info = "Sempre que um novo tipo de inimgo for avistado, você ganhará pontos de Conhecimento. ";
                 }
                 GameState.ProgressState.KnowledgeTut = true;
                 return (Title, Info);
+
+            // Final do Dia 1, na Expedition
+            case GameHelper.Tutorial.FumacTut:
+                if (GameState.ActualLanguage == GameState.Language.English)
+                {
+                    Title = "";
+                    Info = "";
+                }
+                if (GameState.ActualLanguage == GameState.Language.Portugues)
+                {
+                    Title = "Fumac";
+                    Info = "A Moeda local em Lapa Liandra, ainda utilizada em pequenos comércios e empreitadas locais. " +
+                    "São a principal moeda fora de uma Expedição. São utilizados para comprar Melhorias " +
+                    "e outros recursos do jogo. Podem ser obtidos ao final de um Dia ou ao eliminar alvos " +
+                    "especiais.";
+                }
+                GameState.ProgressState.FumacTut = true;
+                return (Title, Info);
+
         }
 
         return (Title, Info);

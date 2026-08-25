@@ -199,9 +199,9 @@ public class ExpeditionUi : MonoBehaviour
 
         if (GameState.ExpeditionState.DayCounter > 1)
         {
-            if (!GameState.ProgressState.MarcosTut && !GameState.ExpeditionState.IsDay)
+            if (!GameState.ProgressState.FumacTut && !GameState.ExpeditionState.IsDay)
             {
-                ShowTutorial(GameHelper.Tutorial.MarcosTut);
+                ShowTutorial(GameHelper.Tutorial.FumacTut);
             }
         }
 
@@ -576,7 +576,6 @@ public class ExpeditionUi : MonoBehaviour
         TutorialTitleText.text = text.Item1;
         TutorialInfoText.text = text.Item2;
 
-        TutorialService.SetText(type);
         TutorialPopUp.SetActive(true);
     }
     public void CloseTutorial()

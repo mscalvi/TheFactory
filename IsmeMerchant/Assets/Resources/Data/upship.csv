@@ -1,9 +1,9 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;InGame
-usc001;;Vida Máxima;;Aumenta a Vida Máxima do Navio ;Company;Multiplicative;ShipMaxLife;None;ShipImproveRoom;1.1;Ship;;0;4;1.11;Marcos;Start;Available;Ok
-usc002;;Armadura;;Aumenta a Armadura do Navio;Company;Additive;ShipArmor;None;ShipImproveRoom;1;Ship;;0;12;1.12;Marcos;10;Unknow;Ok
-usc003;;Reistência;;Aumenta a Reistência do Navio;Company;Additive;ShipResistence;None;ShipImproveRoom;1.5;Ship;;50;13;1.12;Marcos;10;Unknow;Ok
-usc004;;Reparos;;Aumenta a Reparo do Navio do Navio;Company;Additive;ShipRepair;None;ShipImproveRoom;1;Ship;;0;8;1.11;Marcos;10;Unknow;Ok
-usc011;;Ganho de Reparo;;Aumenta a taxa de ganho do Reparo do Navio;Company;Multiplicative;UpgradeShipRepairRate;None;ShipImproveRoom;1.2;Upgrade;usc004;0;50;1.16;Marcos;10;Unknow;Ok
+usc001;;Vida Máxima;;Aumenta a Vida Máxima do Navio ;Company;Multiplicative;ShipMaxLife;None;ShipImproveRoom;1.1;Ship;;0;4;1.11;Fumac;Start;Available;Ok
+usc002;;Armadura;;Aumenta a Armadura do Navio;Company;Additive;ShipArmor;None;ShipImproveRoom;1;Ship;;0;12;1.12;Fumac;10;Unknow;Ok
+usc003;;Reistência;;Aumenta a Reistência do Navio;Company;Additive;ShipResistence;None;ShipImproveRoom;1.5;Ship;;50;13;1.12;Fumac;10;Unknow;Ok
+usc004;;Reparos;;Aumenta a Reparo do Navio do Navio;Company;Additive;ShipRepair;None;ShipImproveRoom;1;Ship;;0;8;1.11;Fumac;10;Unknow;Ok
+usc011;;Ganho de Reparo;;Aumenta a taxa de ganho do Reparo do Navio;Company;Multiplicative;UpgradeShipRepairRate;None;ShipImproveRoom;1.2;Upgrade;usc004;0;50;1.16;Fumac;10;Unknow;Ok
 use001;;Vida Máxima;;Aumenta a Vida Máxima do Navio;Expedition;Multiplicative;ShipMaxLife;Ship;None;1.1;Ship;;0;4;1.11;Experience;Start;Available;Ok
 use002;;Armadura;;Aumenta a Armadura Total do Navio;Expedition;Additive;ShipArmor;Ship;None;1;Ship;;0;12;1.12;Experience;15;Unknow;Ok
 use003;;Reistência;;Aumenta a Reistência % do Navio;Expedition;Additive;ShipResistence;Ship;None;1.5;Ship;;50;13;1.12;Experience;15;Unknow;Ok

@@ -25,6 +25,8 @@ public class EnemyView : MonoBehaviour
 
         UpdateTargetPosition();
         transform.position = targetPosition;
+
+        enemy.MarkedEnemy = false;
     }
 
     void Update()

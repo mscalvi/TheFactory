@@ -115,22 +115,22 @@ public class ProgressTrackerService : MonoBehaviour
 
     private void NewMissionsUnlock()
     {
-        if (GameState.ProgressState.Missions == true)
-        {
-            foreach (var mission in GameState.DataState.missions.Values)
-            {
-                int.TryParse(mission.UnlockId, out int unlockDay);
+        //if (GameState.ProgressState.Missions == true)
+        //{
+        //    foreach (var mission in GameState.DataState.missions.Values)
+        //    {
+        //        int.TryParse(mission.UnlockId, out int unlockDay);
 
-                if (unlockDay <= GameState.ProgressState.MaxDaysTraveling)
-                {
-                    if (mission.UnlockStatus == UnlockHelper.UnlockStatus.Available || mission.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-                        continue;
+        //        if (unlockDay <= GameState.ProgressState.MaxDaysTraveling)
+        //        {
+        //            if (mission.UnlockStatus == UnlockHelper.UnlockStatus.Available || mission.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
+        //                continue;
 
-                    mission.UnlockStatus = UnlockHelper.UnlockStatus.Available;
-                    Debug.Log($"Missão Desbloqueada: {mission.NamePT} - Dia {unlockDay}");
-                }
-            }
-        }
+        //            mission.UnlockStatus = UnlockHelper.UnlockStatus.Available;
+        //            Debug.Log($"Missão Desbloqueada: {mission.NamePT} - Dia {unlockDay}");
+        //        }
+        //    }
+        //}
     }
 
     private void NewCurrencyUnlocked()
@@ -163,18 +163,7 @@ public class ProgressTrackerService : MonoBehaviour
 
     private void ExpeditionCounterCheck()
     {
-        if (GameState.ExpeditionState.ExpeditionsDone > 0)
-        {
-            if (!GameState.ProgressState.Company)
-            {
-                // GameState.ProgressState.Company = true;
-            }
-        }
 
-        if (GameState.ExpeditionState.ExpeditionsDone > 2)
-        {
-            // GameState.ProgressState.Missions = true;
-        }
     }
 
     // Events
