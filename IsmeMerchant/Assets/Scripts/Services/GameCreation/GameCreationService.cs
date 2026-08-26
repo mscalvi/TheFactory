@@ -102,6 +102,7 @@ public class GameCreationService : MonoBehaviour
             missions.Add(missiomModel.Id, instance);
         }
 
+
         GameState.DataState.ships = ships;
         GameState.DataState.weapons = weapons;
         GameState.DataState.ammos = ammos;

@@ -11,7 +11,9 @@ public static class UpgradesData
     "Data/upammos",
     "Data/upship",
     "Data/upincome",
-    "Data/upmeta"
+    "Data/upmeta",
+    "Data/upalch",
+    "Data/upshop"
     };
 
     public static void Load()

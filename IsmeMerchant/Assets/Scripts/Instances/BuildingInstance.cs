@@ -15,6 +15,7 @@ public class BuildingInstance
     public bool Note;
 
     public UpgradeHelper.UpgradeBuilding Type;
+    public UpgradeHelper.BuildingScope Scope;
 
     public int Level;
 
@@ -29,6 +30,8 @@ public class BuildingInstance
         NamePT = model.NamePT;
         DescriptionPT = model.DescriptionPT;
         DescriptionEN = model.DescriptionEN;
+
+        Scope = model.Scope;
 
         Note = false;
 

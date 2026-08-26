@@ -47,6 +47,7 @@ public class GameHelper
         DestinationsTut,
         WeaponsTut,
         KnowledgeTut,
-        FumacTut
+        FumacTut,
+        ShopTut
     }
 }

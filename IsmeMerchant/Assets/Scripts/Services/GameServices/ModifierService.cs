@@ -105,6 +105,17 @@ public class ModifierService : MonoBehaviour
                         break;
                 }
                 break;
+            case UpgradeHelper.TargetType.Product:
+                switch (upgrade.EffectType)
+                {
+                    case UpgradeHelper.EffectType.ProductGeneration:
+                        ProductGenerationModifier(upgrade);
+                        break;
+                    default:
+                        Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
+                        break;
+                }
+                break;
             case UpgradeHelper.TargetType.Upgrade:
                 switch (upgrade.EffectType)
                 {
@@ -326,6 +337,17 @@ public class ModifierService : MonoBehaviour
 
         ammo.BaseRecharge = (int)((ammo.StartRecharge + Modifier.AdCompMod) * Modifier.MtCompMod);
         ammo.ActualRecharge = (int)((ammo.BaseRecharge + Modifier.AdExpeMod) * Modifier.MtExpeMod);
+    }
+
+    // Modificadores de Products
+    private void ProductGenerationModifier(UpgradeInstance upgrade)
+    {
+        GameState.DataState.products.TryGetValue(upgrade.TargetId, out var product);
+
+        var Modifier = ApplyModifiers(upgrade);
+
+        product.BaseIncomeAmmount = (int)((product.StartIncomeAmmount + Modifier.AdCompMod) * Modifier.MtCompMod);
+        product.ActualIncomeAmmount = (int)((product.BaseIncomeAmmount + Modifier.AdExpeMod) * Modifier.MtExpeMod);
     }
 
     // Modificadores de Upgrades

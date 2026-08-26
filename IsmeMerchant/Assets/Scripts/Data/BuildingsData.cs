@@ -23,6 +23,7 @@ public static class BuildingsData
             model.DescriptionEN = row["DescriptionEN"];
 
             model.Type = ParseHelper.Enum<UpgradeHelper.UpgradeBuilding>(row["Type"]);
+            model.Scope = ParseHelper.Enum<UpgradeHelper.BuildingScope>(row["Scope"]);
 
             model.Level = ParseHelper.Int(row["Level"]);
 

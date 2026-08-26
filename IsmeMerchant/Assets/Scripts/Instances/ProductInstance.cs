@@ -44,7 +44,9 @@ public class ProductInstance
     public DateTime NextProduction;
 
     public CurrencyHelper.CurrencyType IncomeType;
-    public double IncomeAmmount;
+    public double StartIncomeAmmount;
+    public double BaseIncomeAmmount;
+    public double ActualIncomeAmmount;
 
     public int Level;
     public int BuyCount;
@@ -141,8 +143,10 @@ public class ProductInstance
         ActualTime = model.Time;
 
         IncomeType = model.IncomeType;
-        IncomeAmmount = model.IncomeAmmount;
-            
+        StartIncomeAmmount = model.IncomeAmmount;
+        BaseIncomeAmmount = model.IncomeAmmount;
+        ActualIncomeAmmount = model.IncomeAmmount;
+
         Level = model.Level;
         BuyCount = 0;
 

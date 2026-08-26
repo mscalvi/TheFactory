@@ -52,13 +52,17 @@ public class BuildingsPopUp : MonoBehaviour
 
         foreach (var building in GameState.DataState.buildings)
         {
+            Debug.Log($"Testando {building.Value.NamePT}");
+
+            if (building.Value.Scope != UpgradeHelper.BuildingScope.Room) continue;
+
             if (building.Value.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
             {
                 var obj = Instantiate(BuildingDefinition, BuildingsPanel);
 
                 var ui = obj.GetComponent<BuildingDefinition>();
 
-                ui.Setup(building.Value, this, GameState);
+                ui.SetupBuilding(building.Value, this, GameState);
 
                 unlockedBuildings.Add(ui);
             }

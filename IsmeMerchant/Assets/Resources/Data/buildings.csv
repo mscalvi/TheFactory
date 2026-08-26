@@ -1,7 +1,11 @@
-﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Type;Level;UnlockId;UnlockStatus
-b00;;Salão da Companhia;;;CompanyRoom;1;Start;Unlocked
-b01;;Escritório de Planejamento;;;TreasureRoom;1;Start;Unlocked
-b02;;Sala de Pescaria;;;FishingRoom;1;999;Blocked
-b03;;Sala de Armamentos;;;ArmoryRoom;1;Start;Unlocked
-b05;;Marcenaria;;;ShipImproveRoom;1;Start;Unlocked
-b07;;Laboratório;;;LaboratoryRoom;1;999;Blocked
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Type;Scope;Level;UnlockId;UnlockStatus
+b00;;Salão da Companhia;;;CompanyRoom;Room;1;Start;Unlocked
+b01;;Escritório de Planejamento;;;TreasureRoom;Room;1;Start;Unlocked
+b02;;Sala de Pescaria;;;FishingRoom;Room;1;999;Blocked
+b03;;Sala de Armamentos;;;ArmoryRoom;Room;1;Start;Unlocked
+b05;;Marcenaria;;;ShipImproveRoom;Room;1;Start;Unlocked
+b07;;Laboratório;;;LaboratoryRoom;Room;1;999;Blocked
+b10;;Contratos;;;ContractsShop;Shop;1;Start;Unlocked
+b11;;Navio;;;ShipsShop;Shop;1;Start;Unlocked
+b12;;Armas;;;WeaponsShop;Shop;1;Start;Unlocked
+b13;;Munições;;;AmmosShop;Shop;1;Start;Unlocked

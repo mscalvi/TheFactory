@@ -7,6 +7,12 @@ public static class CSVLoaderService
     {
         TextAsset file = Resources.Load<TextAsset>(path);
 
+        if (file == null)
+        {
+            Debug.LogError($"CSV NÃO ENCONTRADO: {path}");
+            return new List<Dictionary<string, string>>();
+        }
+
         List<Dictionary<string, string>> rows = new();
 
         string[] lines = file.text.Split('\n');
