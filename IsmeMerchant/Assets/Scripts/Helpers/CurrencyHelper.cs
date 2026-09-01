@@ -11,7 +11,7 @@ public class CurrencyHelper
         Knowledge,
         Prestige,
         Fame,
-        Fumac,
+        Fume,
     }
 
     public enum CurrencyScope

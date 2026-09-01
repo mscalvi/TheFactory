@@ -1,3 +1,3 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;InGame
-uwa1101;;Valor da X Add;;Aumenta a geração de Marcos da X;Company;Additive;ProductGeneration;None;LaboratoryRoom;1;Product;p01;0;30;1.12;Fumac;100;Blocked;
-uwa1102;;Valor da X Mult;;Aumenta a geração de Marcos da X;Company;Multiplicative;ProductGeneration;None;LaboratoryRoom;2;Product;p01;0;10000;1.12;Fumac;200;Blocked;
+uwa1101;;Valor da X Add;;Aumenta a geração de Marcos da X;Company;Additive;ProductGeneration;None;LaboratoryRoom;1;Product;p01;0;30;1.12;Fume;200;Unknow;
+uwa1102;;Valor da X Mult;;Aumenta a geração de Marcos da X;Company;Multiplicative;ProductGeneration;None;LaboratoryRoom;2;Product;p01;0;10000;1.12;Fume;200;Unknow;

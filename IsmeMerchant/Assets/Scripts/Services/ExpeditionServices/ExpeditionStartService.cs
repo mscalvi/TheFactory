@@ -94,6 +94,8 @@ public class ExpeditionStartService : MonoBehaviour
 
         Game.ExpeditionState.Ship.CurrentLife = Game.ExpeditionState.Ship.ActualLife;
 
+        Game.ExpeditionState.Ship.ActualSpikes = Game.ExpeditionState.Ship.BaseSpikes;
+
         if (Game.ExpeditionState.Ship.Weapons.Count <= 0)
             return;
 

@@ -1,4 +1,5 @@
-﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;UnlockTrigger;InGame
-ucc001;;Observar Alvos;;Aumenta o número de alvos marcados simultaneamente;Company;Additive;ClickMax;None;FishingRoom;1;Meta;;0;200;1.8;Fumac;50;Unknow;Empty;Ok
-ucc002;;Raridade dos Ingredientes de Peixes;;Aumenta a raridade dos Ingredientes possíveis de serem encontrados em Peixes;Company;Additive;ClickRarity;None;FishingRoom;1;Meta;Fish;3;3000;3.8;Fumac;50;Unknow;Empty;Ok
-ugc001;;Percepção do Tempo 1;;Permite Aumentar a Velocidade do Jogo;Company;Additive;GameSpeed;None;CompanyRoom;1;Meta;;1;100;1;Fumac;Start;Available;Empty;Ok
+﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;InGame
+ucc001;;Observar Alvos;;Aumenta o número de alvos marcados simultaneamente;Company;Additive;ClickMax;None;FishingRoom;1;Meta;;0;200;1.8;Fume;50;Unknow;Ok
+ucc002;;Raridade dos Ingredientes de Peixes;;Aumenta a raridade dos Ingredientes possíveis de serem encontrados em Peixes;Company;Additive;ClickRarity;None;FishingRoom;1;Meta;Fish;3;3000;3.8;Fume;50;Unknow;Ok
+ugc001;;Percepção do Tempo 1;;Permite Aumentar a Velocidade do Jogo;Company;Additive;GameSpeed;None;CompanyRoom;1;Meta;;1;100;1;Fume;Start;Available;Ok
+ucc003;;Chance de Ingredientes;;Aumenta a chance de encontrar Ingredientes;Company;Additive;ClickChance;None;FishingRoom;1;Meta;;95;25;1.15;Fume;50;Unknow;Ok

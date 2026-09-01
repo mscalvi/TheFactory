@@ -242,7 +242,7 @@ public class TutorialService : MonoBehaviour
                 return (Title, Info);
 
             // Final do Dia 1, na Expedition
-            case GameHelper.Tutorial.FumacTut:
+            case GameHelper.Tutorial.FumeTut:
                 if (GameState.ActualLanguage == GameState.Language.English)
                 {
                     Title = "";
@@ -250,13 +250,29 @@ public class TutorialService : MonoBehaviour
                 }
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
-                    Title = "Fumac";
+                    Title = "Fume";
                     Info = "A Moeda local em Lapa Liandra, ainda utilizada em pequenos comércios e empreitadas locais. " +
                     "São a principal moeda fora de uma Expedição. São utilizados para comprar Melhorias " +
                     "e outros recursos do jogo. Podem ser obtidos ao final de um Dia ou ao eliminar alvos " +
                     "especiais.";
                 }
-                GameState.ProgressState.FumacTut = true;
+                GameState.ProgressState.FumeTut = true;
+                return (Title, Info);
+
+            // Clicar em Shop, na Landing
+            case GameHelper.Tutorial.ShopTut:
+                if (GameState.ActualLanguage == GameState.Language.English)
+                {
+                    Title = "";
+                    Info = "";
+                }
+                if (GameState.ActualLanguage == GameState.Language.Portugues)
+                {
+                    Title = "Compras";
+                    Info = "Aqui você pode gastar os Marcos acumulados, trocando por produtos permanentes, como novos Navios " +
+                        "e Armas, ou por melhorias contínuas, os Contratos.";
+                }
+                GameState.ProgressState.ShopTut = true;
                 return (Title, Info);
 
         }

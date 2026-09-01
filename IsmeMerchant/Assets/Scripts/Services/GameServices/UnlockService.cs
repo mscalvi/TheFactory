@@ -103,10 +103,10 @@ public class UnlockService : MonoBehaviour
 
     private void ProductionStarted(ProductInstance product)
     {
-        if (!GameState.ProgressState.Fumac)
+        if (!GameState.ProgressState.MarcosTut)
         {
-            UnlockCurrency(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Fumac]);
-            GameState.ProgressState.Fumac = true;
+            UnlockCurrency(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Marcos]);
+            GameState.ProgressState.MarcosTut = true;
         }
     }
 }

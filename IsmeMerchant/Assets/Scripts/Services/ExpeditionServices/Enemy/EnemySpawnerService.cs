@@ -231,7 +231,7 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
     {
         List<EnemyInstance> validBosses = new();
 
-        if (GameState.ExpeditionState.DayCounter < 16)
+        if (GameState.ExpeditionState.DayCounter < 10)
             return;
 
         foreach (var enemy in GameState.DataState.enemies.Values)
@@ -251,16 +251,16 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
                 UnlockHelper.UnlockStatus.Available)
                 continue;
 
-            if (GameState.ExpeditionState.IsDay)
-            {
-                if (!enemy.DayEnemy)
-                    continue;
-            }
-            else
-            {
-                if (enemy.DayEnemy)
-                    continue;
-            }
+            //if (GameState.ExpeditionState.IsDay)
+            //{
+            //    if (!enemy.DayEnemy)
+            //        continue;
+            //}
+            //else
+            //{
+            //    if (enemy.DayEnemy)
+            //        continue;
+            //}
 
             validBosses.Add(enemy);
         }

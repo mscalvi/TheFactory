@@ -43,6 +43,6 @@ public class ProgressState
     public bool DestinationsTut = false;
     public bool WeaponsTut = false;
     public bool KnowledgeTut = false;
-    public bool FumacTut = false;
+    public bool FumeTut = false;
     public bool ShopTut = false;
 }

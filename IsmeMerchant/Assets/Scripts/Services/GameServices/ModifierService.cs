@@ -40,6 +40,9 @@ public class ModifierService : MonoBehaviour
                     case UpgradeHelper.EffectType.ShipRepair:
                         ShipRepairModifier(upgrade);
                         break;
+                    case UpgradeHelper.EffectType.ShipSpikes:
+                        ShipSpikesModifier(upgrade);
+                        break;
                     default:
                         Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
                         break;
@@ -154,6 +157,9 @@ public class ModifierService : MonoBehaviour
                     case UpgradeHelper.EffectType.ClickRarity:
                         ClickRarityModifier(upgrade);
                         break;
+                    case UpgradeHelper.EffectType.ClickChance:
+                        ClickChanceModifier(upgrade);
+                        break;
                     default:
                         Debug.Log($"UPGRADE NÃO IMPLEMENTADO! {upgrade.NamePT}");
                         break;
@@ -261,6 +267,20 @@ public class ModifierService : MonoBehaviour
 
         ship.BaseRepair = (ship.StartRepair + Modifier.AdCompMod) * Modifier.MtCompMod;
         ship.ActualRepair = (ship.BaseRepair + Modifier.AdExpeMod) * Modifier.MtExpeMod;
+    }
+    private void ShipSpikesModifier(UpgradeInstance upgrade)
+    {
+        var ship = GameState.ExpeditionState.Ship;
+
+        var Modifier = ApplyModifiers(upgrade);
+
+        if (ship.StartSpikes == 0)
+        {
+            ship.StartSpikes = 1;
+        }
+
+        ship.BaseSpikes = (ship.StartSpikes + Modifier.AdCompMod) * Modifier.MtCompMod;
+        ship.ActualSpikes = (ship.BaseSpikes + Modifier.AdExpeMod) * Modifier.MtExpeMod;
     }
 
     // Modificadores Weapons
@@ -371,13 +391,6 @@ public class ModifierService : MonoBehaviour
 
         GameState.MaxGameSpeed = (float)((1 + Modifier.AdCompMod + Modifier.AdExpeMod) * Modifier.MtCompMod * Modifier.MtExpeMod);
     }
-    private void TripulationMaxModifier(UpgradeInstance upgrade)
-    {
-        var Modifier = ApplyModifiers(upgrade);
-
-        GameState.ExpeditionState.BaseMaxTripulation = (int)((GameState.ExpeditionState.StartMaxTripulation + Modifier.AdCompMod) * Modifier.MtCompMod);
-        GameState.ExpeditionState.ActualMaxTripulation = (int)((GameState.ExpeditionState.BaseMaxTripulation + Modifier.AdExpeMod) * Modifier.MtExpeMod);
-    }
     private void ExperienceKillModifier(UpgradeInstance upgrade)
     {
         var Modifier = ApplyModifiers(upgrade);
@@ -451,6 +464,17 @@ public class ModifierService : MonoBehaviour
                 }
                 break;
         }
+    }
+    private void ClickChanceModifier(UpgradeInstance upgrade)
+    {
+        var weight = GameState.ExpeditionState.ActualIngredientRarityWeights;
+
+        var Modifier = ApplyModifiers(upgrade);
+
+        weight[GameHelper.ItemRarity.Common] = weight[GameHelper.ItemRarity.Common] + (float)Modifier.AdCompMod;
+        weight[GameHelper.ItemRarity.Uncommon] = weight[GameHelper.ItemRarity.Uncommon] + (float)Modifier.AdCompMod * 0.250f;
+        weight[GameHelper.ItemRarity.Rare] = weight[GameHelper.ItemRarity.Rare] + (float)Modifier.AdCompMod * 0.12f;          
+        weight[GameHelper.ItemRarity.Legendary] = weight[GameHelper.ItemRarity.Legendary] + (float)Modifier.AdCompMod * 0.011f; 
     }
 
     // Modificadores Missions

@@ -199,9 +199,9 @@ public class ExpeditionUi : MonoBehaviour
 
         if (GameState.ExpeditionState.DayCounter > 1)
         {
-            if (!GameState.ProgressState.FumacTut && !GameState.ExpeditionState.IsDay)
+            if (!GameState.ProgressState.FumeTut && !GameState.ExpeditionState.IsDay)
             {
-                ShowTutorial(GameHelper.Tutorial.FumacTut);
+                ShowTutorial(GameHelper.Tutorial.FumeTut);
             }
         }
 

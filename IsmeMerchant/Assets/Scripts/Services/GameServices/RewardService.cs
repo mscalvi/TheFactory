@@ -35,10 +35,10 @@ public class RewardService : MonoBehaviour
     void DayFinishReward()
     {
         double reward = GameState.ExpeditionState.ActualDayReward;
-        CurrencyService.Add(CurrencyHelper.CurrencyType.Fumac, reward);
+        CurrencyService.Add(CurrencyHelper.CurrencyType.Fume, reward);
 
         if (reward <= 0) return;
-        ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Fumac], reward);
+        ExpeditionEvents.CurrencyIncome?.Invoke(GameState.DataState.currencies[CurrencyHelper.CurrencyType.Fume], reward);
     }
 
     void NightFinishReward()
@@ -155,6 +155,6 @@ public class RewardService : MonoBehaviour
 
     private void MoneyTestEvent()
     {
-        CurrencyService.Add(CurrencyType.Fumac, 100);
+        CurrencyService.Add(CurrencyType.Fume, 100);
     }
 }

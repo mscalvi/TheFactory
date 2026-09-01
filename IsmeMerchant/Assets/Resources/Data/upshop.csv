@@ -1,2 +1,2 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;InGame
-uws002;;Desbloquear Navio;;Desbloqueia o s002;Company;Change;Unlock;None;ShipsShop;0;Ship;s002;1;1000;1;Fumac;Start;Available;
+uws002;;Desbloquear Navio;;Desbloqueia o s002;Company;Change;Unlock;None;ShipsShop;0;Ship;s002;1;1000;1;Fume;Start;Available;
