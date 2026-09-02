@@ -13,6 +13,7 @@ public class BuildingModel
     public string DescriptionEN;
 
     public UpgradeHelper.UpgradeBuilding Type;
+    public UpgradeHelper.BuildingScope Scope;
 
     public int Level;
 

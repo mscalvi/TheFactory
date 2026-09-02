@@ -35,6 +35,10 @@ public class ShipInstance
     public double BaseRepair;
     public double ActualRepair;
 
+    public double StartSpikes;
+    public double BaseSpikes;
+    public double ActualSpikes;
+
     // Actual Value
     public double CurrentLife;
 
@@ -76,6 +80,10 @@ public class ShipInstance
         StartArmor = model.Armor;
         BaseArmor = model.Armor;
         ActualArmor = model.Armor;
+
+        StartSpikes = 0;
+        BaseSpikes = 0;
+        ActualSpikes = 0;
 
         WeaponSlots = model.WeaponSlots;
         Weapons = new List<WeaponInstance>();

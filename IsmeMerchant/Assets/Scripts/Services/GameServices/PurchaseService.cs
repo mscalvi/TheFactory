@@ -101,8 +101,8 @@ public class PurchaseService : MonoBehaviour
                 if (build.Type != building)
                     continue;
 
-                if (build.Level * 10 <= upgrade.ActualBuy)
-                    return false;
+                //if (build.Level * 10 <= upgrade.ActualBuy)
+                //    return false;
             }
         }
 

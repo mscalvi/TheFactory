@@ -75,5 +75,8 @@ public static class GameEvents
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCanBuyChange;
     public static Action<CurrencyHelper.CurrencyType, CurrencyHelper.CurrencyScope> OnCurrencyChange;
     public static Action<AlchemyHelper.IngredientType> OnIngredientChange;
+
+    // Alchemy Events
+    public static Action<ProductInstance> StartedProduction;
 }
 

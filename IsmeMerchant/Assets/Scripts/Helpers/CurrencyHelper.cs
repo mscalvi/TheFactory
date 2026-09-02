@@ -10,6 +10,8 @@ public class CurrencyHelper
         Marcos,
         Knowledge,
         Prestige,
+        Fame,
+        Fume,
     }
 
     public enum CurrencyScope

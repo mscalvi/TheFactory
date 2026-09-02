@@ -16,34 +16,34 @@ public class IngredientService : MonoBehaviour
     {
         var ingredients = GameState.DataState.ingredients;
 
-        var ingredient = ingredients.TryGetValue(type, out var value) ? value.Amount : 0;
+        if (!ingredients.TryGetValue(type, out var value))
+            return 0;
 
-        var ingredientAmount = ingredients[type].Amount;
-
-        return ingredientAmount;
+        return value.Amount;
     }
 
     public void AddIngredient(AlchemyHelper.IngredientType type, double amount)
     {
         var dataIngredients = GameState.DataState.ingredients;
 
-        foreach (var ingred in dataIngredients)
-        {
-            if (ingred.Value.Type == type)
-            {
-                if (ingred.Value.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked && ingred.Value.UnlockStatus != UnlockHelper.UnlockStatus.Available)
-                    return;
-            }
-        }
+        if (!dataIngredients.ContainsKey(type))
+            return;
 
-        dataIngredients[type].Amount = Get(type) + amount;
+        var ingredient = dataIngredients[type];
 
-        ExpeditionEvents.IngredientIncome?.Invoke(GameState.DataState.ingredients[type], amount);
+        if (ingredient.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked &&
+            ingredient.UnlockStatus != UnlockHelper.UnlockStatus.Available)
+            return;
+
+        ingredient.Amount = Get(type) + amount;
+
+        ExpeditionEvents.IngredientIncome?.Invoke(ingredient, amount);
     }
 
     public bool Spend(AlchemyHelper.IngredientType type, double amount)
     {
         var ingredients = GameState.DataState.ingredients;
+
         double current = Get(type);
 
         if (current < amount)
@@ -61,7 +61,8 @@ public class IngredientService : MonoBehaviour
         if (!CanBuyProduct(product))
             return false;
 
-        if (!(product.UnlockStatus == UnlockHelper.UnlockStatus.Available || product.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked))
+        if (product.UnlockStatus != UnlockHelper.UnlockStatus.Available &&
+            product.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
             return false;
 
         List<AlchemyHelper.IngredientType> affectedIngredients =
@@ -73,6 +74,7 @@ public class IngredientService : MonoBehaviour
         }
 
         product.BuyCount++;
+
         UpdateProductCosts(product);
 
         product.UnlockStatus = UnlockHelper.UnlockStatus.Unlocked;
@@ -126,123 +128,123 @@ public class IngredientService : MonoBehaviour
         }
     }
 
-    // Drop
-    private AlchemyHelper.IngredientType RollIngredient(EnemyRuntime enemy)
+    // =========================================================
+    // LOOT DE INGREDIENTES
+    // =========================================================
+
+    private void EnemyDeathReward(EnemyRuntime enemy)
     {
-        GameHelper.ItemRarity rarity = RollRarity();
+        if (!enemy.MarkedEnemy)
+            return;
 
-        while (true)
+        for (int i = 0; i < GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
         {
-            AlchemyHelper.IngredientType ingredient = rarity switch
-            {
-                GameHelper.ItemRarity.Common => enemy.CommonIngredient,
-                GameHelper.ItemRarity.Uncommon => enemy.UncommonIngredient,
-                GameHelper.ItemRarity.Rare => enemy.RareIngredient,
-                GameHelper.ItemRarity.Legendary => enemy.LegendaryIngredient,
-                _ => enemy.CommonIngredient
-            };
+            RollIngredientDrop(
+                GameHelper.ItemRarity.Common,
+                enemy.CommonIngredient
+            );
 
-            if (ingredient != AlchemyHelper.IngredientType.None)
-            {
-                var instance = GameState.DataState.ingredients[ingredient];
+            RollIngredientDrop(
+                GameHelper.ItemRarity.Uncommon,
+                enemy.UncommonIngredient
+            );
 
-                if (instance.UnlockStatus == UnlockHelper.UnlockStatus.Unlocked)
-                {
-                    return ingredient;
-                }
-            }
+            RollIngredientDrop(
+                GameHelper.ItemRarity.Rare,
+                enemy.RareIngredient
+            );
 
-            // downgrade
-            switch (rarity)
-            {
-                case GameHelper.ItemRarity.Legendary:
-                    rarity = GameHelper.ItemRarity.Rare;
-                    break;
-
-                case GameHelper.ItemRarity.Rare:
-                    rarity = GameHelper.ItemRarity.Uncommon;
-                    break;
-
-                case GameHelper.ItemRarity.Uncommon:
-                    rarity = GameHelper.ItemRarity.Common;
-                    break;
-
-                default:
-                    return enemy.CommonIngredient;
-            }
+            RollIngredientDrop(
+                GameHelper.ItemRarity.Legendary,
+                enemy.LegendaryIngredient
+            );
         }
     }
 
-    private GameHelper.ItemRarity RollRarity()
+    private void RollIngredientDrop(
+        GameHelper.ItemRarity rarity,
+        AlchemyHelper.IngredientType ingredient)
     {
-        var weight = GameState.ExpeditionState.ActualIngredientRarityWeights;
+        // O inimigo não possui ingrediente dessa raridade.
+        if (ingredient == AlchemyHelper.IngredientType.None)
+            return;
 
-        float common = weight[GameHelper.ItemRarity.Common];
-        float uncommon = weight[GameHelper.ItemRarity.Uncommon];
-        float rare = weight[GameHelper.ItemRarity.Rare];
-        float legendary = weight[GameHelper.ItemRarity.Legendary];
+        // O ingrediente ainda não está desbloqueado.
+        if (!GameState.DataState.ingredients.TryGetValue(
+                ingredient,
+                out var instance))
+            return;
 
-        float total = common + uncommon + rare + legendary;
-        float roll = UnityEngine.Random.value * total;
+        if (instance.UnlockStatus != UnlockHelper.UnlockStatus.Unlocked)
+            return;
 
-        if (roll < common)
-            return GameHelper.ItemRarity.Common;
+        // Verifica a chance da raridade.
+        if (!RollRarityChance(rarity))
+            return;
 
-        roll -= common;
-
-        if (roll < uncommon)
-            return GameHelper.ItemRarity.Uncommon;
-
-        roll -= uncommon;
-
-        if (roll < rare)
-            return GameHelper.ItemRarity.Rare;
-
-        return GameHelper.ItemRarity.Legendary;
+        // Deu certo!
+        AddIngredient(ingredient, 1);
     }
+
+    private bool RollRarityChance(GameHelper.ItemRarity rarity)
+    {
+        var weights =
+            GameState.ExpeditionState.ActualIngredientRarityWeights;
+
+        if (!weights.TryGetValue(rarity, out float chance))
+            return false;
+
+        // Se a chance estiver armazenada como porcentagem:
+        // 50 = 50%
+        // chance /= 100f;
+
+        chance = Mathf.Clamp01(chance);
+
+        float roll = UnityEngine.Random.value;
+
+        Debug.Log(
+            $"Loot {rarity}: " +
+            $"Chance = {chance * 100f:F1}% | " +
+            $"Roll = {roll * 100f:F1}%"
+        );
+
+        return roll <= chance;
+    }
+
+    // =========================================================
+    // CHANCE EXTRA DE LOOT
+    // =========================================================
 
     private bool RollChance(int time)
     {
         float roll = UnityEngine.Random.value;
 
-        float chance = (float)(GameState.ExpeditionState.ActualNextLootChance * Mathf.Pow((float)GameState.ExpeditionState.ActualNextLootDecay, time));
+        float chance =
+            (float)(
+                GameState.ExpeditionState.ActualNextLootChance *
+                Mathf.Pow(
+                    (float)GameState.ExpeditionState.ActualNextLootDecay,
+                    time
+                )
+            );
 
         if (roll <= chance)
-        {
             return true;
-        }
 
         return false;
     }
 
-    void EnemyDeathReward(EnemyRuntime enemy)
-    {
-        if (enemy.MarkedEnemy)
-        {
-            bool Luck = true;
+    // =========================================================
+    // EVENTS
+    // =========================================================
 
-            for (int i = 0; i < GameState.ExpeditionState.ActualMaxMarkedLoot; i++)
-            {
-                Luck = RollChance(i);
-
-                if (Luck)
-                {
-                    var ingredient = RollIngredient(enemy);
-                    AddIngredient(ingredient, 1);
-                }
-            }
-        }
-    }
-
-    // Event
-    void OnEnable()
+    private void OnEnable()
     {
         ExpeditionEvents.OnMarkedEnemyDeath += EnemyDeathReward;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         ExpeditionEvents.OnMarkedEnemyDeath -= EnemyDeathReward;
     }
-
 }

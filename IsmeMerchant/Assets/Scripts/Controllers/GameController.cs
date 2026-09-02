@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField] GameCreationService GameCreationService;
     [SerializeField] DatabaseService DatabaseService;
+    [SerializeField] public VersionService VersionService;
     [SerializeField] public SaveService SaveService;
     [SerializeField] public ProgressTrackerService ProgressTrackerService;
     [SerializeField] public MissionsService MissionsService;
@@ -43,6 +44,7 @@ public class GameController : MonoBehaviour
             Database = DatabaseService.Initialize();
         }
 
+        VersionService.CheckVersion();
         GameState = SaveService.Load();
         Debug.Log(Application.persistentDataPath);
 

@@ -31,6 +31,7 @@ public class LandingUi : MonoBehaviour
     [SerializeField] BuildingsPopUp BuildingsPopUp;
     [SerializeField] BestiaryPopUp BestiaryPopUp;
     [SerializeField] AlchemyPopUp AlchemyPopUp;
+    [SerializeField] AcquisitionsPopUp AcquisitionsPopUp;
 
     [SerializeField] GameObject ConfigsPopUp;
     [SerializeField] Transform MissionPopUp;
@@ -135,6 +136,17 @@ public class LandingUi : MonoBehaviour
 
         AlchemyPopUp.Show(GameState, AlchemyService, IngredientService);
     }
+    public void ShopButtonFunction()
+    {
+        //if (!GameState.ProgressState.ShopTut)
+        //{
+        //    ShowTutorial(GameHelper.Tutorial.ShopTut);
+
+        //    return;
+        //}
+
+        AcquisitionsPopUp.Show(GameState, PurchaseService);
+    }
 
 
     // Tutorial
@@ -147,8 +159,6 @@ public class LandingUi : MonoBehaviour
         var text = TutorialService.SetText(type);
 
         TutorialTitleText.text = text.Item1;
-        Debug.Log(text.Item1);
-        Debug.Log(text.Item2);
         TutorialInfoText.text = text.Item2;
 
         TutorialPopUp.SetActive(true);
@@ -304,7 +314,7 @@ public class LandingUi : MonoBehaviour
     {
         GameEvents.OnCurrencyChange -= RefreshCurrencyUi;
         GameEvents.OnCanBuyChange -= RefreshCurrencyUi;
-        GameEvents.OnIngredientChange += RefreshIngredientUi;
+        GameEvents.OnIngredientChange -= RefreshIngredientUi;
     }
 
     void RefreshCurrencyUi(CurrencyType type, CurrencyScope scope)

@@ -1,13 +1,17 @@
+using System;
 using System.IO;
-using UnityEngine;
 using Newtonsoft.Json;
+using UnityEngine;
 
 public class SaveService : MonoBehaviour
 {
     private GameState GameState;
 
     private string SavePath =>
-        Path.Combine(Application.persistentDataPath, "save.json");
+        Path.Combine(
+            Application.persistentDataPath,
+            "save.json"
+        );
 
     public void Initialize(GameState gameState)
     {
@@ -16,16 +20,38 @@ public class SaveService : MonoBehaviour
 
     public void Save()
     {
-        JsonSerializerSettings settings = new JsonSerializerSettings
+        if (GameState == null)
         {
-            Formatting = Formatting.Indented,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects
-        };
+            Debug.LogWarning("Tentativa de salvar GameState nulo.");
+            return;
+        }
 
-        string json = JsonConvert.SerializeObject(GameState, settings);
-        File.WriteAllText(SavePath, json);
+        try
+        {
+            JsonSerializerSettings settings =
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    PreserveReferencesHandling =
+                        PreserveReferencesHandling.Objects
+                };
 
-        Debug.Log("Jogo Salvo -> " + GameState.ExpeditionState.ExpeditionStatus);
+            string json =
+                JsonConvert.SerializeObject(GameState, settings);
+
+            File.WriteAllText(SavePath, json);
+
+            Debug.Log(
+                "Jogo Salvo -> " +
+                GameState.ExpeditionState.ExpeditionStatus
+            );
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(
+                $"Erro ao salvar jogo:\n{e}"
+            );
+        }
     }
 
     public GameState Load()
@@ -33,28 +59,98 @@ public class SaveService : MonoBehaviour
         if (!File.Exists(SavePath))
         {
             Debug.Log("Nenhum Jogo Salvo Encontrado");
+
             return null;
         }
 
-        string json = File.ReadAllText(SavePath);
-
-        JsonSerializerSettings settings = new JsonSerializerSettings
+        try
         {
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects
-        };
+            string json = File.ReadAllText(SavePath);
 
-        GameState gameState = JsonConvert.DeserializeObject<GameState>(json, settings);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                Debug.LogWarning(
+                    "Save encontrado, mas está vazio."
+                );
 
-        Debug.Log("Jogo Carregado e Referências Restauradas -> " + gameState.ExpeditionState.ExpeditionStatus);
+                DeleteSave();
 
-        gameState.ExpeditionState.ActiveEnemies.Clear();
+                return null;
+            }
 
-        return gameState;
+            JsonSerializerSettings settings =
+                new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling =
+                        PreserveReferencesHandling.Objects
+                };
+
+            GameState gameState =
+                JsonConvert.DeserializeObject<GameState>(
+                    json,
+                    settings
+                );
+
+            if (gameState == null)
+            {
+                Debug.LogWarning(
+                    "Save não pôde ser convertido para GameState."
+                );
+
+                DeleteSave();
+
+                return null;
+            }
+
+            Debug.Log(
+                "Jogo Carregado -> " +
+                gameState.ExpeditionState.ExpeditionStatus
+            );
+
+            // Segurança contra referências antigas.
+            if (gameState.ExpeditionState != null &&
+                gameState.ExpeditionState.ActiveEnemies != null)
+            {
+                gameState.ExpeditionState.ActiveEnemies.Clear();
+            }
+
+            return gameState;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(
+                $"ERRO AO CARREGAR SAVE:\n{e}"
+            );
+
+            Debug.LogWarning(
+                "Save incompatível ou corrompido. " +
+                "Apagando e criando um novo jogo."
+            );
+
+            DeleteSave();
+
+            return null;
+        }
+    }
+
+    public void DeleteSave()
+    {
+        if (File.Exists(SavePath))
+        {
+            File.Delete(SavePath);
+
+            Debug.Log("Save deletado.");
+        }
     }
 
     private void OnApplicationQuit()
     {
-        if (GameState.ExpeditionState.ExpeditionStatus != GameHelper.ExpeditionStatus.Running)
+        if (GameState == null ||
+            GameState.ExpeditionState == null)
+            return;
+
+        if (GameState.ExpeditionState.ExpeditionStatus !=
+            GameHelper.ExpeditionStatus.Running)
         {
             Save();
         }
@@ -62,12 +158,17 @@ public class SaveService : MonoBehaviour
 
     private void OnApplicationPause(bool pause)
     {
-        if (pause)
+        if (!pause)
+            return;
+
+        if (GameState == null ||
+            GameState.ExpeditionState == null)
+            return;
+
+        if (GameState.ExpeditionState.ExpeditionStatus !=
+            GameHelper.ExpeditionStatus.Running)
         {
-            if (GameState.ExpeditionState.ExpeditionStatus != GameHelper.ExpeditionStatus.Running)
-            {
-                Save();
-            }
+            Save();
         }
     }
 }

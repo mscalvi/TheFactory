@@ -1,8 +1,8 @@
 ﻿Id;NameEN;NamePT;DescriptionEN;DescriptionPT;Scope;UpgradeType;EffectType;ExpeditionMenu;Building;UpgradeValue;TargetType;TargetId;MaxBuy;Cost;CostGrowth;Currency;UnlockId;UnlockStatus;InGame
-uic011;;Experiência por Dia;;Aumenta o ganho de Experiência ao final de um dia sobrevivido;Company;Additive;ExperienceIncome;None;TreasureRoom;1;Meta;;0;2;1.11;Marcos;10;Unknow;Ok
-uic012;;Crescimento de Experiência por Abate;;"Aumenta a taxa de crescimento da Melhoria ""Experiência por Abate""";Company;Multiplicative;UpgradeExperiencePerKillRate;None;TreasureRoom;1.01;Upgrade;use101;0;15;1.12;Marcos;10;Unknow;Ok
-uic013;;Experiência por Abate;;Aumenta o ganho de Experiência por abate;Company;Multiplicative;ExperiencePerKill;None;TreasureRoom;1.01;Meta;;0;8;1.3;Marcos;Start;Available;Ok
-uic111;;Marcos por Dia;;Aumenta o ganho de Marcos ao final de um dia sobrevivido;Company;Additive;MarcosIncome;None;TreasureRoom;1;Meta;;0;20;1.11;Marcos;10;Unknow;Ok
-uie011;;Experiência por Abate;;Aumenta o ganho de Experiência por Abate;Expedition;Multiplicative;ExperiencePerKill;Crew;None;1.01;Meta;;0;4;1.13;Experience;5;Unknow;Ok
+uic011;;Experiência por Dia;;Aumenta o ganho de Experiência ao final de um dia sobrevivido;Company;Additive;ExperienceIncome;None;TreasureRoom;1;Meta;;0;2;1.11;Fume;20;Unknow;Ok
+uic012;;Crescimento de Experiência por Abate;;"Aumenta a taxa de crescimento da Melhoria ""Experiência por Abate""";Company;Multiplicative;UpgradeExperiencePerKillRate;None;TreasureRoom;1.01;Upgrade;use101;0;15;1.12;Fume;20;Unknow;Ok
+uic013;;Experiência por Abate;;Aumenta o ganho de Experiência por abate;Company;Multiplicative;ExperiencePerKill;None;TreasureRoom;1.01;Meta;;0;4;1.15;Fume;20;Unknow;Ok
+uic111;;Fumes por Dia;;Aumenta o ganho de Fumes ao final de um dia sobrevivido;Company;Additive;MarcosIncome;None;TreasureRoom;1;Meta;;0;20;1.11;Fume;10;Unknow;Ok
+uie011;;Experiência por Abate;;Aumenta o ganho de Experiência por Abate;Expedition;Multiplicative;ExperiencePerKill;Crew;None;1.01;Meta;;0;4;1.13;Experience;15;Unknow;Ok
 uie012;;Experiência por Dia;;Aumenta o ganho de Experiência ao final de um dia sobrevivido;Expedition;Additive;ExperienceIncome;Crew;None;1;Meta;;0;5;1.11;Experience;15;Unknow;Ok
-uie111;;Marcos por Dia;;Aumenta o ganho de Marcos ao final de um dia sobrevivido;Expedition;Additive;MarcosIncome;Crew;None;1;Meta;;0;20;1.11;Experience;15;Unknow;Ok
+uie111;;Fumes por Dia;;Aumenta o ganho de Fumes ao final de um dia sobrevivido;Expedition;Additive;MarcosIncome;Crew;None;1;Meta;;0;20;1.11;Experience;15;Unknow;Ok

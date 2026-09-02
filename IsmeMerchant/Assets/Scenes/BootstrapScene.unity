@@ -412,6 +412,7 @@ GameObject:
   - component: {fileID: 764383336}
   - component: {fileID: 764383337}
   - component: {fileID: 764383338}
+  - component: {fileID: 764383339}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -460,6 +461,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameCreationService: {fileID: 764383318}
   DatabaseService: {fileID: 764383333}
+  VersionService: {fileID: 764383339}
   SaveService: {fileID: 764383335}
   ProgressTrackerService: {fileID: 764383320}
   MissionsService: {fileID: 764383326}
@@ -652,6 +654,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d99d130ad4d18944afb14c4345ab69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &764383339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764383316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aea668155aaa0446b3db338ce898e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1958573461

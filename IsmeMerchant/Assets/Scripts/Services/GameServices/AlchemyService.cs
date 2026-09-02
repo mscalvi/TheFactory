@@ -30,6 +30,8 @@ public class AlchemyService : MonoBehaviour
 
         product.NextProduction =
             DateTime.UtcNow.AddSeconds(product.ActualTime);
+
+        GameEvents.StartedProduction?.Invoke(product);
     }
 
     private void UpdateProductions()
@@ -68,7 +70,7 @@ public class AlchemyService : MonoBehaviour
             (long)Math.Floor(elapsedSeconds / productionTime) + 1;
 
         double amount =
-            product.IncomeAmmount *
+            product.ActualIncomeAmmount *
             product.BuyCount *
             cycles;
 

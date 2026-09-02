@@ -17,6 +17,11 @@ public class UpgradeHelper
         Crew,
         Itens,
     }
+    public enum BuildingScope
+    {
+        Room,
+        Shop,
+    }
 
     public enum UpgradeBuilding
     {
@@ -33,6 +38,10 @@ public class UpgradeHelper
         StudyRoom,
         HuntersRoom,
         StockRoom,
+        ContractsShop,
+        ShipsShop,
+        WeaponsShop,
+        AmmosShop
     }
 
     public enum UpgradeType
@@ -59,9 +68,11 @@ public class UpgradeHelper
         ShipResistence,
         ShipRepair,
         ShipRepairCost,
+        ShipSpikes,
         ClickTarget,
         ClickRarity,
         ClickMax,
+        ClickChance,
         WeaponDamage,
         WeaponAtackSpeed,
         WeaponRange,
@@ -78,6 +89,7 @@ public class UpgradeHelper
         MarcosIncome,
         UpgradeShipRepairRate,
         UpgradeExperiencePerKillRate,
+        ProductGeneration,
     }
 
     public enum TargetType 
@@ -91,6 +103,7 @@ public class UpgradeHelper
         Upgrade,
         Ammo,
         Construction,
+        Product,
     }
 
 }
