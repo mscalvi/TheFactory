@@ -149,6 +149,8 @@ public class LandingUi : MonoBehaviour
 
             player.Name = PlayerNameInput.text;
 
+            if (player.Name == null) return;
+
             switch (FavoritePositionDropdown.value)
             {
                 case 0:
@@ -176,6 +178,8 @@ public class LandingUi : MonoBehaviour
 
             deck.Name = DeckNameInput.text;
 
+            if (deck.Name == null) return;
+
             deck.White = WhiteToggle.isOn;
             deck.Blue = BlueToggle.isOn;
             deck.Black = BlackToggle.isOn;
@@ -202,6 +206,4 @@ public class LandingUi : MonoBehaviour
 
         RegisterPanel.SetActive(false);
     }
-
-
 }
