@@ -20,8 +20,6 @@ public class ProgressTrackerService : MonoBehaviour
 
     private void DayRecordeCheck()
     {
-        if (FirstRunCheck()) return;
-
         ComputeRecorde();
 
         NewEnemiesUnlock();
@@ -31,14 +29,6 @@ public class ProgressTrackerService : MonoBehaviour
         NewMissionsUnlock();
 
         NewCurrencyUnlocked();
-    }
-
-    private bool FirstRunCheck()
-    {
-        if (GameState.ExpeditionState.ExpeditionsDone <= 1)
-            return true;
-
-        return false;
     }
 
     private void ComputeRecorde()

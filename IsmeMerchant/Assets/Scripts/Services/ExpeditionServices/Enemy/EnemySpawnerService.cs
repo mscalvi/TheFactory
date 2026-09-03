@@ -179,7 +179,6 @@ public class EnemySpawnerService : MonoBehaviour, ITickable
         GameState.ExpeditionState.ActiveEnemies.Add(instance);
 
         ExpeditionEvents.OnEnemySpawn?.Invoke(instance);
-
     }
 
     // ANGLE

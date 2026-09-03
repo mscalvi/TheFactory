@@ -22,6 +22,7 @@ public class EnemyViewService : MonoBehaviour
         view.Setup(enemy, Ship);
 
         views[enemy] = view;
+
     }
 
     void RemoveEnemy(EnemyRuntime enemy, Vector3 position)

@@ -6,12 +6,16 @@ public class EnemyView : MonoBehaviour
     public Transform Ship;
     private SpriteRenderer spriteRenderer;
 
+    [SerializeField] private GameObject markedCircle;
+    private BoxCollider2D coll;
+
     private Vector3 targetPosition;
     private Vector3 originalScale;
 
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        coll = GetComponent<BoxCollider2D>();
     }
 
     public void Setup(EnemyRuntime enemy, Transform ship)
@@ -22,6 +26,7 @@ public class EnemyView : MonoBehaviour
         originalScale = transform.localScale;
 
         ApplySprite();
+        AdjustCollider();
 
         UpdateTargetPosition();
         transform.position = targetPosition;
@@ -71,14 +76,10 @@ public class EnemyView : MonoBehaviour
 
     void UpdateMarkedVisual()
     {
-        if (Enemy.MarkedEnemy)
-        {
-            transform.localScale = originalScale * 1.25f;
-        }
-        else
-        {
-            transform.localScale = originalScale;
-        }
+        if (markedCircle == null)
+            return;
+
+        markedCircle.SetActive(Enemy.MarkedEnemy);
     }
 
     void ApplySprite()
@@ -94,5 +95,18 @@ public class EnemyView : MonoBehaviour
     public Vector3 GetWorldPosition()
     {
         return transform.position;
+    }
+
+    void AdjustCollider()
+    {
+        if (coll == null || spriteRenderer.sprite == null)
+            return;
+
+        Bounds bounds = spriteRenderer.sprite.bounds;
+
+        float padding = 0.2f;
+
+        coll.size = bounds.size + Vector3.one * padding;
+        coll.offset = bounds.center;
     }
 }

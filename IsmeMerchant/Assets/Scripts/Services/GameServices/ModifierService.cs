@@ -145,8 +145,8 @@ public class ModifierService : MonoBehaviour
                     case UpgradeHelper.EffectType.ExperienceIncome:
                         ExperienceIncomeModifier(upgrade);
                         break;
-                    case UpgradeHelper.EffectType.MarcosIncome:
-                        MarcosIncomeModifier(upgrade);
+                    case UpgradeHelper.EffectType.FumeIncome:
+                        FumeIncomeModifier(upgrade);
                         break;
                     case UpgradeHelper.EffectType.ClickTarget:
                         ClickTargetModifier(upgrade);
@@ -402,15 +402,15 @@ public class ModifierService : MonoBehaviour
     {
         var Modifier = ApplyModifiers(upgrade);
 
-        GameState.ExpeditionState.ActualNightReward = (GameState.ExpeditionState.StartNightReward + Modifier.AdCompMod) * Modifier.MtCompMod;
-        GameState.ExpeditionState.ActualNightReward = (GameState.ExpeditionState.StartNightReward + Modifier.AdExpeMod) * Modifier.MtExpeMod;
+        GameState.ExpeditionState.BaseNightReward = (GameState.ExpeditionState.StartNightReward + Modifier.AdCompMod) * Modifier.MtCompMod;
+        GameState.ExpeditionState.ActualNightReward = (GameState.ExpeditionState.BaseNightReward + Modifier.AdExpeMod) * Modifier.MtExpeMod;
     }
-    private void MarcosIncomeModifier(UpgradeInstance upgrade)
+    private void FumeIncomeModifier(UpgradeInstance upgrade)
     {
         var Modifier = ApplyModifiers(upgrade);
 
-        GameState.ExpeditionState.ActualDayReward = (GameState.ExpeditionState.StartDayReward + Modifier.AdCompMod) * Modifier.MtCompMod;
-        GameState.ExpeditionState.ActualDayReward = (GameState.ExpeditionState.StartDayReward + Modifier.AdExpeMod) * Modifier.MtExpeMod;
+        GameState.ExpeditionState.BaseDayReward = (GameState.ExpeditionState.StartDayReward + Modifier.AdCompMod) * Modifier.MtCompMod;
+        GameState.ExpeditionState.ActualDayReward = (GameState.ExpeditionState.BaseDayReward + Modifier.AdExpeMod) * Modifier.MtExpeMod;
     }
     private void ClickTargetModifier(UpgradeInstance upgrade)
     {

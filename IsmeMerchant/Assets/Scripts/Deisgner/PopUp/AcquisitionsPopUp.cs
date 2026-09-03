@@ -49,6 +49,8 @@ public class AcquisitionsPopUp : MonoBehaviour
 
         unlockedBuildings = new List<BuildingDefinition>();
 
+        ClearMainContainer();
+
         foreach (var building in GameState.DataState.buildings)
         {
             Debug.Log($"Testando {building.Value.NamePT}");
@@ -103,6 +105,13 @@ public class AcquisitionsPopUp : MonoBehaviour
     private void ClearContainer()
     {
         foreach (Transform child in ItemsPanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+    private void ClearMainContainer()
+    {
+        foreach (Transform child in ShopsPanel.transform)
         {
             Destroy(child.gameObject);
         }

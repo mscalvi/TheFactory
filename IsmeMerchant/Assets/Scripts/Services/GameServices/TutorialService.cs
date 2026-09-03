@@ -236,7 +236,7 @@ public class TutorialService : MonoBehaviour
                 if (GameState.ActualLanguage == GameState.Language.Portugues)
                 {
                     Title = "Conhecimento";
-                    Info = "Sempre que um novo tipo de inimgo for avistado, você ganhará pontos de Conhecimento. ";
+                    Info = "Sempre que um novo tipo de inimigo for avistado você ganhará pontos de Conhecimento.";
                 }
                 GameState.ProgressState.KnowledgeTut = true;
                 return (Title, Info);

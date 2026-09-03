@@ -138,12 +138,12 @@ public class LandingUi : MonoBehaviour
     }
     public void ShopButtonFunction()
     {
-        //if (!GameState.ProgressState.ShopTut)
-        //{
-        //    ShowTutorial(GameHelper.Tutorial.ShopTut);
+        if (!GameState.ProgressState.ShopTut)
+        {
+            ShowTutorial(GameHelper.Tutorial.ShopTut);
 
-        //    return;
-        //}
+            return;
+        }
 
         AcquisitionsPopUp.Show(GameState, PurchaseService);
     }
