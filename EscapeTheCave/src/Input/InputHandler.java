@@ -5,27 +5,53 @@ import java.awt.event.KeyListener;
 
 public class InputHandler implements KeyListener {
 
-    private boolean up;
+    private boolean upPressed;
+    private boolean rightPressed;
+    private boolean leftPressed;
 
-    public boolean isUp() {
-        return up;
+    public boolean consumeUp() {
+        if (upPressed) {
+            upPressed = false;
+            return true;
+        }
+
+        return false;
+    }
+    public boolean consumeLeft() {
+        if (leftPressed) {
+            leftPressed = false;
+            return true;
+        }
+
+        return false;
+    }
+    public boolean consumeRight() {
+        if (rightPressed) {
+            rightPressed = false;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
 
-        System.out.println("Tecla pressionada: " + e.getKeyCode());
-
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            up = true;
+            upPressed = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            leftPressed = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            rightPressed = true;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            up = false;
-        }
     }
 
     @Override

@@ -16,6 +16,10 @@ public class Platform {
         this.height = height;
     }
 
+    public void moveY(int amount) {
+        y += amount;
+    }
+
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }

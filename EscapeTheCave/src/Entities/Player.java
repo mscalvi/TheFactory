@@ -25,11 +25,21 @@ public class Player {
         return new Rectangle(x, y, width, height);
     }
 
+    // Posição
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public void setFloor(int floor) {
         this.floor = floor;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(int floor, int position) {
+        this.floor = floor;
         this.position = position;
     }
 

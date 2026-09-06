@@ -9,7 +9,7 @@ public class GameFrame extends JFrame {
 
     public GameFrame() {
         setTitle("Escape the Cave");
-        setSize(600, 700);
+        setSize(620, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
