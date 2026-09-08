@@ -12,8 +12,12 @@ public class ScoreService {
         score++;
     }
 
-    public void addTonic() {
+    public void addPinkElixir() {
         score += 10;
+    }
+
+    public void addGreenElixir() {
+        score += 5;
     }
 
     public int getScore() {

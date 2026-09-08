@@ -2,16 +2,14 @@ package Ui;
 
 import Input.InputHandler;
 
-import Services.PlayerService;
-import Services.BatsService;
-import Services.GameService;
-import Services.CameraService;
+import Services.*;
 
 import Entities.CaveWall;
 import Entities.Floor;
 import Entities.Platform;
 import Entities.Player;
 import Entities.Bats;
+import Entities.Elixir;
 
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -25,6 +23,9 @@ public class GamePanel extends JPanel {
 
     private GameService gameService;
     private CameraService cameraService;
+    private ScoreService scoreService;
+    private ElixirService elixirService;
+    private SpriteService spriteService;
 
     private List<Floor> floors;
 
@@ -37,7 +38,7 @@ public class GamePanel extends JPanel {
     private Bats bats;
     private BatsService batsService;
 
-    public GamePanel() {
+    public GamePanel(ScoreService ScoreService) {
         setBackground(Color.BLACK);
 
         inputHandler = new InputHandler();
@@ -61,6 +62,9 @@ public class GamePanel extends JPanel {
         batsService = new BatsService(bats);
 
         cameraService = new CameraService(player);
+        scoreService = ScoreService;
+        elixirService = new ElixirService(player, floors, scoreService, batsService);
+        spriteService = new SpriteService();
 
         gameService = new GameService(
                 player,
@@ -75,9 +79,9 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.setColor(Color.WHITE);
 
         // Paredes
+        g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 3));
         g.fillRect(
                 leftWall.getBounds().x,
                 leftWall.getBounds().y,
@@ -92,9 +96,11 @@ public class GamePanel extends JPanel {
                 rightWall.getBounds().height
         );
 
-        // Plataformas
+        // Andares
         for (Floor floor : floors) {
 
+            // Plataforma
+            g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 0));
             for (Platform platform : floor.getPlatforms()) {
 
                 g.fillRect(
@@ -105,6 +111,8 @@ public class GamePanel extends JPanel {
                 );
             }
 
+            // Stalagmites
+            g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 4));
             for (Entities.Stalagmite stalagmite : floor.getStalagmites()) {
 
                 Platform platform =
@@ -127,10 +135,45 @@ public class GamePanel extends JPanel {
 
                 g.fillPolygon(xPoints, yPoints, 3);
             }
+
+            // Elixir
+            if (floor.getElixir() != null) {
+
+                Elixir elixir = floor.getElixir();
+
+                Platform platform =
+                        floor.getPlatforms().get(elixir.getPosition() - 1);
+
+                int x = platform.getBounds().x;
+                int y = platform.getBounds().y - cameraService.getCameraY();
+
+                if (elixir.getType() == Elixir.Type.PINK) {
+
+                    g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 5));
+
+                    g.fillOval(
+                            x + 20,
+                            y - 25,
+                            20,
+                            20
+                    );
+
+                } else if (elixir.getType() == Elixir.Type.GREEN) {
+
+                    g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 6));
+
+                    g.fillOval(
+                            x + 22,
+                            y - 20,
+                            15,
+                            15
+                    );
+                }
+            }
         }
 
         // Morcegos
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 2));
 
         g.fillRect(
                 0,
@@ -140,7 +183,7 @@ public class GamePanel extends JPanel {
         );
 
         // Player
-        g.setColor(Color.RED);
+        g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 1));
 
         g.fillRect(
                 player.getBounds().x,
@@ -169,6 +212,8 @@ public class GamePanel extends JPanel {
 
         if (inputHandler.consumeUp()) {
             if (playerService.moveUp()) {
+                elixirService.collect();
+                scoreService.addFloor();
                 cameraService.update();
                 generateFloorsIfNeeded();
 
@@ -180,6 +225,8 @@ public class GamePanel extends JPanel {
 
         if (inputHandler.consumeRight()) {
             if (playerService.moveRight()) {
+                elixirService.collect();
+                scoreService.addFloor();
                 cameraService.update();
                 generateFloorsIfNeeded();
 
@@ -191,6 +238,8 @@ public class GamePanel extends JPanel {
 
         if (inputHandler.consumeLeft()) {
             if (playerService.moveLeft()) {
+                elixirService.collect();
+                scoreService.addFloor();
                 cameraService.update();
                 generateFloorsIfNeeded();
 

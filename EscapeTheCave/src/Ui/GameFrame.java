@@ -1,6 +1,7 @@
 package Ui;
 
 import Game.GameLoop;
+import Services.ScoreService;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -15,15 +16,18 @@ public class GameFrame extends JFrame {
 
         setLayout(new BorderLayout());
 
-        GamePanel gamePanel = new GamePanel();
+        ScoreService scoreService = new ScoreService();
 
-        GameLoop gameLoop = new GameLoop(gamePanel);
+        GamePanel gamePanel = new GamePanel(scoreService);
+        LorePanel lorePanel = new LorePanel(scoreService);
+
+        GameLoop gameLoop = new GameLoop(gamePanel, lorePanel);
         Thread gameThread = new Thread(gameLoop);
 
         gameThread.start();
 
         add(gamePanel, BorderLayout.CENTER);
-        add(new LorePanel(), BorderLayout.SOUTH);
+        add(lorePanel, BorderLayout.SOUTH);
 
         setVisible(true);
 

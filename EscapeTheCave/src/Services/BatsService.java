@@ -19,4 +19,7 @@ public class BatsService {
     public void increaseSpeed(double amount) {
         speed += amount;
     }
+    public void decreaseSpeed(double amount) {
+        if (speed > 0.3) speed -= amount;
+    }
 }

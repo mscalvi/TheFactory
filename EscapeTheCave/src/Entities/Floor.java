@@ -1,5 +1,7 @@
 package Entities;
 
+import Services.ElixirService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
@@ -11,6 +13,8 @@ public class Floor {
     private int y;
     private int floorNumber;
     private List<Platform> platforms;
+    private Elixir elixir;
+    private ElixirService elixirService;
 
     public Floor(int floorNumber, int y) {
         this.floorNumber = floorNumber;
@@ -60,6 +64,35 @@ public class Floor {
                     new Stalagmite(position)
             );
         }
+
+        elixir = null;
+
+        if (floorNumber % 15 == 0) {
+
+            int position;
+
+            do {
+                position = (int) (Math.random() * 7) + 1;
+            } while (!isPositionFree(position));
+
+            elixir = new Elixir(
+                    Elixir.Type.PINK,
+                    position
+            );
+
+        } else if (Math.random() < 0.2) {
+
+            int position;
+
+            do {
+                position = (int) (Math.random() * 7) + 1;
+            } while (!isPositionFree(position));
+
+            elixir = new Elixir(
+                    Elixir.Type.GREEN,
+                    position
+            );
+        }
     }
 
     public void moveY(int amount) {
@@ -101,5 +134,13 @@ public class Floor {
 
     public boolean isPositionFree(int position) {
         return !hasStalagmite(position);
+    }
+
+    public Elixir getElixir() {
+        return elixir;
+    }
+
+    public void removeElixir() {
+        elixir = null;
     }
 }
