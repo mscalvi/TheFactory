@@ -52,7 +52,7 @@ public class GamePanel extends JPanel {
             floors.add(new Floor(i + 1, 580 - i * 100));
         }
 
-        player = new Player(3, 4, 285, 580 - 2 * 100 - 30, 30, 30);
+        player = new Player(1, 4, 285, 580 - 2 * 100 - 30, 30, 30);
         playerService = new PlayerService(player, floors);
 
         leftWall = new CaveWall(0, 0, 55, 800);
@@ -276,4 +276,14 @@ public class GamePanel extends JPanel {
     private void increaseBatsSpeed(){
         batsService.increaseSpeed(0.1);
     }
+
+    public GameService getGameService() {
+        return gameService;
+    }
+
+    public int getPlayerFloor()
+    {
+        return player.getFloor();
+    }
+
 }

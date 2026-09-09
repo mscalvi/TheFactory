@@ -3,9 +3,13 @@ package Services;
 public class ScoreService {
 
     private int score;
+    private int record;
+    private String recordName;
 
     public ScoreService() {
         score = 0;
+        record = 0;
+        recordName = "AAA";
     }
 
     public void addFloor() {
@@ -20,7 +24,26 @@ public class ScoreService {
         score += 5;
     }
 
+    public void checkRecord(String playerName) {
+        if (score > record) {
+            record = score;
+            recordName = playerName;
+        }
+    }
+
     public int getScore() {
         return score;
+    }
+
+    public int getRecord() {
+        return record;
+    }
+
+    public void resetScore() {
+        score = 0;
+    }
+
+    public String getRecordName() {
+        return recordName;
     }
 }

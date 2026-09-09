@@ -38,14 +38,14 @@ public class Floor {
 
         stalagmites = new ArrayList<>();
 
-        int amount = 1;
+        int amount = 0;
 
         if (floorNumber >= 101) {
-            amount = 4;
-        } else if (floorNumber >= 51) {
             amount = 3;
-        } else if (floorNumber >= 26) {
+        } else if (floorNumber >= 36) {
             amount = 2;
+        } else if (floorNumber >= 3){
+            amount = 1;
         }
 
         Set<Integer> occupiedPositions = new HashSet<>();
