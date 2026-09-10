@@ -17,8 +17,8 @@ public class CameraService {
 
         int playerY = player.getBounds().y;
 
-        if (playerY < 200) {
-            cameraY = playerY - 200;
+        if (playerY < 350) {
+            cameraY = playerY - 350;
         }
     }
 

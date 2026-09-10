@@ -1,6 +1,8 @@
 package Ui;
 
 import Services.DataService;
+import Services.LoreService;
+
 import Entities.Record;
 
 import javax.swing.*;

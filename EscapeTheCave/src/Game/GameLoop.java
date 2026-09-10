@@ -58,13 +58,16 @@ public class GameLoop implements Runnable {
 
                     String playerName = askPlayerName();
 
-                    scoreService.checkRecord(playerName);
+                    if (!playerName.isBlank()) {
 
-                    dataService.saveRecord(
-                            playerName,
-                            scoreService.getScore(),
-                            gamePanel.getPlayerFloor()
-                    );
+                        scoreService.checkRecord(playerName);
+
+                        dataService.saveRecord(
+                                playerName,
+                                scoreService.getScore(),
+                                gamePanel.getPlayerFloor()
+                        );
+                    }
 
                     gameFrame.showGameOver();
                 });
@@ -127,7 +130,11 @@ public class GameLoop implements Runnable {
 
             if (result == JOptionPane.OK_OPTION) {
 
-                String name = textField.getText();
+                String name = textField.getText().trim();
+
+                if (name.isBlank()) {
+                    return "";
+                }
 
                 if (name.length() == 3) {
                     return name.toUpperCase();
@@ -141,7 +148,7 @@ public class GameLoop implements Runnable {
                 );
 
             } else {
-                textField.setText("");
+                return "";
             }
         }
     }

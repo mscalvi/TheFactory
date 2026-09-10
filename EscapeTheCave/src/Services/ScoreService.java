@@ -35,15 +35,7 @@ public class ScoreService {
         return score;
     }
 
-    public int getRecord() {
-        return record;
-    }
-
     public void resetScore() {
         score = 0;
-    }
-
-    public String getRecordName() {
-        return recordName;
     }
 }

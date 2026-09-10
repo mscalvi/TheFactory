@@ -1,61 +1,81 @@
 package Services;
 
-import java.awt.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class SpriteService {
-    public Color getSprite(int elixirCounter, int type)
-    {
-        // 0 plataforma
-        // 1 player
-        // 2 morcego
-        // 3 paredes
-        // 4 stalagmite
-        // 5 elixir rosa
-        // 6 elixir verde
 
-        switch (elixirCounter) {
-            case 0:
-                return Color.WHITE;
+    private BufferedImage platform;
+    private BufferedImage player;
+    private BufferedImage bats;
+    private BufferedImage wall;
+    private BufferedImage stalagmite;
+    private BufferedImage elixirPink;
+    private BufferedImage elixirGreen;
 
-            case 1:
-                switch (type){
-                    case 0:
-                        return new Color(77, 77, 88);
-                    case 1:
-                        return new Color(50, 9, 9);
-                    case 2:
-                        return new Color(34, 34, 41);
-                    case 3:
-                        return new Color(57, 57, 66);
-                    case 4:
-                        return new Color(143, 143, 159);
-                    case 5:
-                        return new Color(128, 0, 128);
-                    case 6:
-                        return new Color(43, 101, 19);
-                    default:
-                        return Color.RED;
-                }
-            default:
-                switch (type){
-                    case 0:
-                        return new Color(77, 77, 88);
-                    case 1:
-                        return new Color(50, 9, 9);
-                    case 2:
-                        return new Color(34, 34, 41);
-                    case 3:
-                        return new Color(57, 57, 66);
-                    case 4:
-                        return new Color(143, 143, 159);
-                    case 5:
-                        return new Color(128, 0, 128);
-                    case 6:
-                        return new Color(43, 101, 19);
-                    default:
-                        return Color.RED;
-                }
+    public SpriteService() {
+
+        try {
+
+            platform = loadSprite("/Sprites/platform.png");
+            player = loadSprite("/Sprites/player.png");
+            bats = loadSprite("/Sprites/bats.png");
+            wall = loadSprite("/Sprites/wall.png");
+            stalagmite = loadSprite("/Sprites/stalagmite.png");
+            elixirPink = loadSprite("/Sprites/elixir_pink.png");
+            elixirGreen = loadSprite("/Sprites/elixir_green.png");
+
+        } catch (IOException e) {
+
+            throw new RuntimeException(
+                    "Erro ao carregar sprites.",
+                    e
+            );
         }
     }
 
+    private BufferedImage loadSprite(String path)
+            throws IOException {
+
+        var input = getClass().getResourceAsStream(path);
+
+        if (input == null) {
+            throw new IOException(
+                    "Sprite não encontrado: " + path
+            );
+        }
+
+        return ImageIO.read(input);
+    }
+
+    public BufferedImage getSprite(int type) {
+
+        switch (type) {
+
+            case 0:
+                return platform;
+
+            case 1:
+                return player;
+
+            case 2:
+                return bats;
+
+            case 3:
+                return wall;
+
+            case 4:
+                return stalagmite;
+
+            case 5:
+                return elixirPink;
+
+            case 6:
+                return elixirGreen;
+
+            default:
+                return null;
+        }
+    }
 }

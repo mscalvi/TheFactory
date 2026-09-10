@@ -25,7 +25,9 @@ public class GamePanel extends JPanel {
     private CameraService cameraService;
     private ScoreService scoreService;
     private ElixirService elixirService;
+    private ColorService colorService;
     private SpriteService spriteService;
+    private LoreService loreService;
 
     private List<Floor> floors;
 
@@ -38,7 +40,7 @@ public class GamePanel extends JPanel {
     private Bats bats;
     private BatsService batsService;
 
-    public GamePanel(ScoreService ScoreService) {
+    public GamePanel(ScoreService ScoreService, LoreService LoreService) {
         setBackground(Color.BLACK);
 
         inputHandler = new InputHandler();
@@ -52,7 +54,15 @@ public class GamePanel extends JPanel {
             floors.add(new Floor(i + 1, 580 - i * 100));
         }
 
-        player = new Player(1, 4, 285, 580 - 2 * 100 - 30, 30, 30);
+        player = new Player(
+                1,
+                4,
+                285,
+                580 - 2 * 100 - 30,
+                30,
+                30
+        );
+
         playerService = new PlayerService(player, floors);
 
         leftWall = new CaveWall(0, 0, 55, 800);
@@ -62,8 +72,19 @@ public class GamePanel extends JPanel {
         batsService = new BatsService(bats);
 
         cameraService = new CameraService(player);
+
         scoreService = ScoreService;
-        elixirService = new ElixirService(player, floors, scoreService, batsService);
+        loreService = LoreService;
+
+        elixirService = new ElixirService(
+                player,
+                floors,
+                scoreService,
+                batsService,
+                loreService
+        );
+
+        colorService = new ColorService();
         spriteService = new SpriteService();
 
         gameService = new GameService(
@@ -73,128 +94,321 @@ public class GamePanel extends JPanel {
                 cameraService
         );
 
+        loreService.startLore();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        int elixirCounter = elixirService.getElixirCounter();
+
+        if (elixirCounter >= 2) {
+            setBackground(Color.LIGHT_GRAY);
+        } else {
+            setBackground(Color.BLACK);
+        }
 
         // Paredes
-        g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 3));
-        g.fillRect(
-                leftWall.getBounds().x,
-                leftWall.getBounds().y,
-                leftWall.getBounds().width,
-                leftWall.getBounds().height
-        );
+        if (elixirCounter < 2) {
 
-        g.fillRect(
-                rightWall.getBounds().x,
-                rightWall.getBounds().y,
-                rightWall.getBounds().width,
-                rightWall.getBounds().height
-        );
+            g.setColor(
+                    colorService.getSprite(elixirCounter, 3)
+            );
+
+            g.fillRect(
+                    leftWall.getBounds().x,
+                    leftWall.getBounds().y,
+                    leftWall.getBounds().width,
+                    leftWall.getBounds().height
+            );
+
+            g.fillRect(
+                    rightWall.getBounds().x,
+                    rightWall.getBounds().y,
+                    rightWall.getBounds().width,
+                    rightWall.getBounds().height
+            );
+
+        } else {
+            for (int y = 0; y < getHeight(); y += 30) {
+
+                g.drawImage(
+                        spriteService.getSprite(3),
+                        leftWall.getBounds().x,
+                        y,
+                        leftWall.getBounds().width,
+                        30,
+                        null
+                );
+
+                g.drawImage(
+                        spriteService.getSprite(3),
+                        rightWall.getBounds().x,
+                        y,
+                        rightWall.getBounds().width,
+                        30,
+                        null
+                );
+            }
+        }
 
         // Andares
+
         for (Floor floor : floors) {
 
-            // Plataforma
-            g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 0));
-            for (Platform platform : floor.getPlatforms()) {
+            // Plataformas
 
-                g.fillRect(
-                        platform.getBounds().x,
-                        platform.getBounds().y - cameraService.getCameraY(),
-                        platform.getBounds().width,
-                        platform.getBounds().height
+            if (elixirCounter < 2) {
+
+                g.setColor(
+                        colorService.getSprite(elixirCounter, 0)
                 );
+
+                for (Platform platform : floor.getPlatforms()) {
+
+                    g.fillRect(
+                            platform.getBounds().x,
+                            platform.getBounds().y
+                                    - cameraService.getCameraY(),
+                            platform.getBounds().width,
+                            platform.getBounds().height
+                    );
+                }
+
+            } else {
+
+                for (Platform platform : floor.getPlatforms()) {
+
+                    g.drawImage(
+                            spriteService.getSprite(0),
+                            platform.getBounds().x,
+                            platform.getBounds().y
+                                    - cameraService.getCameraY(),
+                            platform.getBounds().width,
+                            platform.getBounds().height,
+                            null
+                    );
+                }
             }
 
             // Stalagmites
-            g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 4));
-            for (Entities.Stalagmite stalagmite : floor.getStalagmites()) {
 
-                Platform platform =
-                        floor.getPlatforms().get(stalagmite.getPosition() - 1);
+            if (elixirCounter < 2) {
 
-                int x = platform.getBounds().x;
-                int y = platform.getBounds().y - cameraService.getCameraY();
+                g.setColor(
+                        colorService.getSprite(elixirCounter, 4)
+                );
 
-                int[] xPoints = {
-                        x + 15,
-                        x + 30,
-                        x + 45
-                };
+                for (Entities.Stalagmite stalagmite
+                        : floor.getStalagmites()) {
 
-                int[] yPoints = {
-                        y,
-                        y - 30,
-                        y
-                };
+                    Platform platform =
+                            floor.getPlatforms().get(
+                                    stalagmite.getPosition() - 1
+                            );
 
-                g.fillPolygon(xPoints, yPoints, 3);
+                    int x = platform.getBounds().x;
+
+                    int y = platform.getBounds().y
+                            - cameraService.getCameraY();
+
+                    int[] xPoints = {
+                            x + 15,
+                            x + 30,
+                            x + 45
+                    };
+
+                    int[] yPoints = {
+                            y,
+                            y - 30,
+                            y
+                    };
+
+                    g.fillPolygon(
+                            xPoints,
+                            yPoints,
+                            3
+                    );
+                }
+
+            } else {
+
+                for (Entities.Stalagmite stalagmite
+                        : floor.getStalagmites()) {
+
+                    Platform platform =
+                            floor.getPlatforms().get(
+                                    stalagmite.getPosition() - 1
+                            );
+
+                    int x = platform.getBounds().x;
+
+                    int y = platform.getBounds().y
+                            - cameraService.getCameraY();
+
+                    g.drawImage(
+                            spriteService.getSprite(4),
+                            x,
+                            y - 30,
+                            60,
+                            30,
+                            null
+                    );
+                }
             }
 
-            // Elixir
+            // Elixires
             if (floor.getElixir() != null) {
 
                 Elixir elixir = floor.getElixir();
 
                 Platform platform =
-                        floor.getPlatforms().get(elixir.getPosition() - 1);
+                        floor.getPlatforms().get(
+                                elixir.getPosition() - 1
+                        );
 
                 int x = platform.getBounds().x;
-                int y = platform.getBounds().y - cameraService.getCameraY();
+
+                int y = platform.getBounds().y
+                        - cameraService.getCameraY();
 
                 if (elixir.getType() == Elixir.Type.PINK) {
 
-                    g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 5));
+                    if (elixirCounter < 2) {
 
-                    g.fillOval(
-                            x + 20,
-                            y - 25,
-                            20,
-                            20
-                    );
+                        g.setColor(
+                                colorService.getSprite(
+                                        elixirCounter,
+                                        5
+                                )
+                        );
+
+                        g.fillOval(
+                                x + 20,
+                                y - 25,
+                                20,
+                                20
+                        );
+
+                    } else {
+
+                        g.drawImage(
+                                spriteService.getSprite(5),
+                                x + 20,
+                                y - 25,
+                                20,
+                                20,
+                                null
+                        );
+                    }
 
                 } else if (elixir.getType() == Elixir.Type.GREEN) {
 
-                    g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 6));
+                    if (elixirCounter < 2) {
 
-                    g.fillOval(
-                            x + 22,
-                            y - 20,
-                            15,
-                            15
-                    );
+                        g.setColor(
+                                colorService.getSprite(
+                                        elixirCounter,
+                                        6
+                                )
+                        );
+
+                        g.fillOval(
+                                x + 22,
+                                y - 20,
+                                15,
+                                15
+                        );
+
+                    } else {
+
+                        g.drawImage(
+                                spriteService.getSprite(6),
+                                x + 22,
+                                y - 20,
+                                15,
+                                15,
+                                null
+                        );
+                    }
                 }
             }
         }
 
         // Morcegos
-        g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 2));
+        if (elixirCounter < 2) {
 
-        g.fillRect(
-                0,
-                (int) bats.getY(),
-                getWidth(),
-                getHeight() - (int) bats.getY()
-        );
+            g.setColor(
+                    colorService.getSprite(elixirCounter, 2)
+            );
+
+            g.fillRect(
+                    0,
+                    (int) bats.getY(),
+                    getWidth(),
+                    getHeight() - (int) bats.getY()
+            );
+
+        } else {
+            int batsY = (int) bats.getY();
+
+            int spriteWidth =
+                    spriteService.getSprite(2).getWidth();
+
+            int spriteHeight =
+                    spriteService.getSprite(2).getHeight();
+
+            for (int y = batsY;
+                 y < getHeight();
+                 y += spriteHeight) {
+
+                for (int x = 0;
+                     x < getWidth();
+                     x += spriteWidth) {
+
+                    g.drawImage(
+                            spriteService.getSprite(2),
+                            x,
+                            y,
+                            null
+                    );
+                }
+            }
+        }
 
         // Player
-        g.setColor(spriteService.getSprite(elixirService.getElixirCounter(), 1));
+        if (elixirCounter < 2) {
 
-        g.fillRect(
-                player.getBounds().x,
-                player.getBounds().y - cameraService.getCameraY(),
-                player.getBounds().width,
-                player.getBounds().height
-        );
+            g.setColor(
+                    colorService.getSprite(elixirCounter, 1)
+            );
+
+            g.fillRect(
+                    player.getBounds().x,
+                    player.getBounds().y
+                            - cameraService.getCameraY(),
+                    player.getBounds().width,
+                    player.getBounds().height
+            );
+
+        } else {
+
+            g.drawImage(
+                    spriteService.getSprite(1),
+                    player.getBounds().x,
+                    player.getBounds().y
+                            - cameraService.getCameraY(),
+                    player.getBounds().width,
+                    player.getBounds().height,
+                    null
+            );
+        }
     }
 
     public void update() {
         processInput();
+
         batsService.update();
 
         cameraService.update();
@@ -211,10 +425,18 @@ public class GamePanel extends JPanel {
     private void processInput() {
 
         if (inputHandler.consumeUp()) {
+
             if (playerService.moveUp()) {
+
                 elixirService.collect();
                 scoreService.addFloor();
+
+                loreService.floorLore(
+                        player.getFloor()
+                );
+
                 cameraService.update();
+
                 generateFloorsIfNeeded();
 
                 if (player.getFloor() % 10 == 0) {
@@ -224,10 +446,18 @@ public class GamePanel extends JPanel {
         }
 
         if (inputHandler.consumeRight()) {
+
             if (playerService.moveRight()) {
+
                 elixirService.collect();
                 scoreService.addFloor();
+
+                loreService.floorLore(
+                        player.getFloor()
+                );
+
                 cameraService.update();
+
                 generateFloorsIfNeeded();
 
                 if (player.getFloor() % 10 == 0) {
@@ -237,10 +467,18 @@ public class GamePanel extends JPanel {
         }
 
         if (inputHandler.consumeLeft()) {
+
             if (playerService.moveLeft()) {
+
                 elixirService.collect();
                 scoreService.addFloor();
+
+                loreService.floorLore(
+                        player.getFloor()
+                );
+
                 cameraService.update();
+
                 generateFloorsIfNeeded();
 
                 if (player.getFloor() % 10 == 0) {
@@ -252,7 +490,7 @@ public class GamePanel extends JPanel {
 
     private void generateFloorsIfNeeded() {
 
-        while (floors.size() - player.getFloor() <= 3) {
+        while (floors.size() - player.getFloor() <= 5) {
             generateNextFloor();
         }
     }
@@ -273,17 +511,15 @@ public class GamePanel extends JPanel {
         );
     }
 
-    private void increaseBatsSpeed(){
-        batsService.increaseSpeed(0.1);
+    private void increaseBatsSpeed() {
+        batsService.increaseSpeed(0.05);
     }
 
     public GameService getGameService() {
         return gameService;
     }
 
-    public int getPlayerFloor()
-    {
+    public int getPlayerFloor() {
         return player.getFloor();
     }
-
 }

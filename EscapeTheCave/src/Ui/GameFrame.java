@@ -2,6 +2,7 @@ package Ui;
 
 import Game.GameLoop;
 
+import Services.LoreService;
 import Services.ScoreService;
 import Services.DataService;
 
@@ -12,19 +13,21 @@ public class GameFrame extends JFrame {
 
     private ScoreService scoreService;
     private DataService dataService;
+    private LoreService loreService;
 
     public GameFrame(DataService dataService) {
 
         this.dataService = dataService;
 
         setTitle("Escape the Cave");
-        setSize(620, 800);
+        setSize(620, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         setLayout(new BorderLayout());
 
         scoreService = new ScoreService();
+        loreService = new LoreService();
 
         showLanding();
 
@@ -50,9 +53,9 @@ public class GameFrame extends JFrame {
 
         scoreService.resetScore();
 
-        GamePanel gamePanel = new GamePanel(scoreService);
+        GamePanel gamePanel = new GamePanel(scoreService, loreService);
 
-        LorePanel lorePanel = new LorePanel(scoreService, dataService);
+        LorePanel lorePanel = new LorePanel(scoreService, dataService, loreService);
 
         GameLoop gameLoop = new GameLoop(gamePanel, lorePanel, this, scoreService, dataService);
 

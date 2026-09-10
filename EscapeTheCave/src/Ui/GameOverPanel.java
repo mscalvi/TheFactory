@@ -48,7 +48,6 @@ public class GameOverPanel extends JPanel {
         Record record = dataService.getRecord(1);
 
         if (record != null) {
-
             recordLabel = new JLabel(
                     "Recorde: "
                             + record.getScore()
