@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 552499675}
   - component: {fileID: 552499674}
   - component: {fileID: 552499676}
+  - component: {fileID: 552499677}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -182,6 +183,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1f061a2778bb04a958b6cd042367a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &552499677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552499673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992e14ea0357a22488d6bd377848c176, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyPrefab: {fileID: 7520580634209800905, guid: afc509334c6267146b0d9fd7e70ee829, type: 3}
+  speed: 2
 --- !u!1 &934785103
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,6 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MapService: {fileID: 552499674}
   PathService: {fileID: 552499676}
+  EnemyService: {fileID: 552499677}
 --- !u!1 &1576245416
 GameObject:
   m_ObjectHideFlags: 0
