@@ -9,6 +9,8 @@ public class ExpeditionManager : MonoBehaviour
 
     [SerializeField] EnemyService EnemyService;
 
+    [SerializeField] TowerService TowerService;
+
     void Start()
     {
         MapData mapData = new MapData();
@@ -17,5 +19,7 @@ public class ExpeditionManager : MonoBehaviour
         PathService.Initialize(MapService);
 
         EnemyService.Initialize(PathService);
+
+        TowerService.Initialize(MapService);
     }
 }

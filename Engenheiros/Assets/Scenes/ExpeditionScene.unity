@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 552499674}
   - component: {fileID: 552499676}
   - component: {fileID: 552499677}
+  - component: {fileID: 552499678}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -197,6 +198,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 7520580634209800905, guid: afc509334c6267146b0d9fd7e70ee829, type: 3}
   speed: 2
+--- !u!114 &552499678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552499673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1012916a7677a3c48a384f1e74f906f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  towerPrefab: {fileID: 4549142158987572731, guid: 047b5f9e54fd0cd419cc8366540f77e1, type: 3}
 --- !u!1 &934785103
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,6 +258,7 @@ MonoBehaviour:
   MapService: {fileID: 552499674}
   PathService: {fileID: 552499676}
   EnemyService: {fileID: 552499677}
+  TowerService: {fileID: 552499678}
 --- !u!1 &1576245416
 GameObject:
   m_ObjectHideFlags: 0

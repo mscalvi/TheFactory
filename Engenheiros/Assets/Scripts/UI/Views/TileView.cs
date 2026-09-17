@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -5,6 +6,8 @@ public class TileView : MonoBehaviour
 {
     private TileModel model;
     private SpriteRenderer spriteRenderer;
+
+    public Action<TileModel> OnClicked;
 
     public void Initialize(TileModel model)
     {
@@ -31,5 +34,10 @@ public class TileView : MonoBehaviour
 
             _ => Color.white
         };
+    }
+
+    private void OnMouseDown()
+    {
+        OnClicked?.Invoke(model);
     }
 }

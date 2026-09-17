@@ -69,15 +69,19 @@
     <Compile Include="Assets\Scripts\Manager\GameManager.cs" />
     <Compile Include="Assets\Scripts\Manager\ExpeditionManager.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Enemies\EnemyService.cs" />
+    <Compile Include="Assets\Scripts\Models\TowerModel.cs" />
     <Compile Include="Assets\Scripts\Data\MapData.cs" />
     <Compile Include="Assets\Scripts\UI\Scenes\ExpeditionUI.cs" />
+    <Compile Include="Assets\Scripts\UI\Views\TowerView.cs" />
     <Compile Include="Assets\Scripts\Models\TileModel.cs" />
+    <Compile Include="Assets\Scripts\Services\Expedition\Towers\TowerService.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Creation\MapService.cs" />
     <Compile Include="Assets\Scripts\UI\Scenes\LandingUI.cs" />
     <Compile Include="Assets\Scripts\UI\Views\TileView.cs" />
     <Compile Include="Assets\Scripts\Models\EnemyModel.cs" />
     <Compile Include="Assets\Scripts\Services\Expedition\Creation\PathService.cs" />
     <Compile Include="Assets\Scripts\Manager\LandingManager.cs" />
+    <Compile Include="Assets\Scripts\Events\EventBus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

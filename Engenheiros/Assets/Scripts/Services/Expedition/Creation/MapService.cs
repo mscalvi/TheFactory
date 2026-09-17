@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
+using System;
 
 public class MapService : MonoBehaviour
 {
@@ -54,6 +55,8 @@ public class MapService : MonoBehaviour
         TileView view = tileObject.GetComponent<TileView>();
 
         view.Initialize(model);
+
+        view.OnClicked += HandleTileClicked;
     }
 
     private TileHelper.TileType GetTileType(int x, int y)
@@ -83,4 +86,10 @@ public class MapService : MonoBehaviour
     }
     public int Width => tiles.GetLength(0);
     public int Height => tiles.GetLength(1);
+
+    // Click
+    private void HandleTileClicked(TileModel tile)
+    {
+        ExpeditionEvents.TileClicked?.Invoke(tile);
+    }
 }
